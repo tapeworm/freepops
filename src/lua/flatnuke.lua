@@ -23,7 +23,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "flatnuke"
 
 -- Configuration:
@@ -133,6 +133,7 @@ end
 -- Build a mail header
 --
 function build_mail_header(title,uidl)
+	_,_,uidl=string.find(uidl,"/(%d*).xml")
 	return 
 	"Message-Id: <"..uidl..">\r\n"..
 	"To: "..internal_state.name.."@"..internal_state.password.."\r\n"..
@@ -162,15 +163,14 @@ function retr_or_top(pstate,msg,data,lines)
 	local b = internal_state.b
 	
 	-- build the uri
-	local uri = internal_state.password.."/news/"..uidl..".xml"
+	local uri = uidl
 	
 	-- tell the browser to get the uri
-	local s,rc = b:get_uri(uri)
+	local s =  b:get_uri(uri)
 
 	--check it
 	if s == nil then
 		log.error_print("Asking for "..uri.."\n")
-		log.error_print(rc.error.."\n")
 		return POPSERVER_ERR_NETWORK
 	end
 
@@ -307,7 +307,7 @@ function stat(pstate)
 
 			--fucking default size
 			local size=1000
-			_,_,uidl = string.find(uidl,".*/(%d+)")
+			_,_,uidl = string.find(uidl,"about=\"(.*)\"")
 
 			if not uidl or not size then
 				return nil,"Unable to parse uidl"

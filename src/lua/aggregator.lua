@@ -106,8 +106,11 @@ function html2txt(str)
 	str=string.gsub(str,"&egrave;","è") 
 	str=string.gsub(str,"&ograve;","ò") 
 	str=string.gsub(str,"&quot;","\"") 
+	str=string.gsub(str,"&gt;",">") 
+	str=string.gsub(str,"&lt;","<") 
 
 	str=string.gsub(str,"<.->","") 
+	
 	
 	return str
 end

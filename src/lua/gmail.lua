@@ -249,7 +249,8 @@ end
 function key()
 	return (internal_state.name or "")..
 		("gmail.com")..
-		(internal_state.password or "")
+		(internal_state.password or "")..
+		(internal_state.folder or "")
 end
 
 --------------------------------------------------------------------------------

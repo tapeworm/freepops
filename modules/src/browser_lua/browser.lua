@@ -279,18 +279,22 @@ function Hidden.mangle_location(self,loc)
 	if x == nil then 
 		-- ok, this cookie is rotten
 		-- we have to add the whole "http://host/path/"
+		local part_path = nil
 		local u = cookie.parse_url(self.referrer)
-                local _,_,part_path = string.find(u.path or "/", "(.*/)")
+		if u ~= nil then
+	                local _,_,part_path = string.find(u.path or "/","(.*/)")
+		end
                 loc = (part_path or "/") .. loc
 	end
 	-- now find where we have to go!
 	if string.byte(loc,1) == string.byte("/",1) then
 		local u = cookie.parse_url(self.referrer)
-		return u.scheme .. "://" .. u.host .. ":" .. 
-			(u.port or "80") .. loc
-	else
-		return loc
-	end
+		if u ~= nil then
+			loc = u.scheme .. "://" .. u.host .. ":" .. 
+				(u.port or "80") .. loc
+		end
+	end	
+	return loc
 end
 
 --<==========================================================================>--

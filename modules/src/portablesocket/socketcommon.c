@@ -29,57 +29,86 @@
 #include "win32_compatibility.h"
 
 #include "log.h"
-#define LOG_ZONE "SOCK"
+#define LOG_ZONE "socketcommon"
+
+struct sock_state_t
+	{
+	//! the socket handler
+	 int socket;
+	//! hostname
+	 char *hostname;
+	//! string with the IP in xxx.xxx.xxx.xxx form
+	 char *ipaddress;
+	//! real port
+	 unsigned long realport;
+	//! buffer for altsocklib
+	 recvbuffer_t *prb;
+	//! function used for debug printing
+	 void (*print)(char *);
+	//! flag used to inhibit commands
+	 int error_occurred;
+	//! line len
+	 int maxlinelen;
+	};
+
+
 
 /************************** output functions ****************************/
-void sock_error(char *type,int ernum,struct sock_state_t *s)
-{
-char tmp[s->maxlinelen];
-
-strncpy(tmp,SOCK_ERROR,s->maxlinelen);
-strncat(tmp,type,s->maxlinelen);
-
-// uncomment for shell debug
-//sockerror(tmp);
-
-snprintf(tmp,s->maxlinelen,"Error calling \"%s\" (code %d - %s)",
-         type,ernum,strerror(errno));
-
-sock_print(SOCK_ERROR,tmp,s);
-//exit(1);
-s->error_occurred=1;
-}
-
-void sock_print(char *prebuffer,char *buffer,struct sock_state_t *s)
+static void sock_print(char *prebuffer,char *buffer,struct sock_state_t *s)
 {
 char tmp[s->maxlinelen];
 
 snprintf(tmp,s->maxlinelen,"%s%s\n",prebuffer,buffer);
 
 s->print(tmp);
-
 }
 
-void sock_received(char *buffer,struct sock_state_t *s)
+static void sock_error(char *type,int ernum,struct sock_state_t *s)
+{
+char tmp[s->maxlinelen];
+
+strncpy(tmp,SOCK_ERROR,s->maxlinelen);
+strncat(tmp,type,s->maxlinelen);
+
+snprintf(tmp,s->maxlinelen,"Error calling \"%s\" (code %d - %s)",
+         type,ernum,strerror(errno));
+
+sock_print(SOCK_ERROR,tmp,s);
+s->error_occurred=1;
+}
+
+
+static void sock_received(char *buffer,struct sock_state_t *s)
 {
 sock_print(SOCK_RECEIVED,buffer,s);
 }
 
-void sock_sent(char *buffer,struct sock_state_t *s)
+static void sock_sent(char *buffer,struct sock_state_t *s)
 {
-//if ( buffer[0] == '.' && buffer[1] == '.' )
-//	buffer++; // omits double .
 sock_print(SOCK_SENT,buffer,s);
 }
 
-void sock_info(char *buffer,struct sock_state_t *s)
+static void sock_info(char *buffer,struct sock_state_t *s)
 {
 sock_print(SOCK_INFO,buffer,s);
 }
 
+int sock_error_occurred(struct sock_state_t *s){
+return s->error_occurred;
+}
+
 /***************************** SEND /RECIVED checked **********************/
 
-void sock_send(struct sock_state_t *s,char* buffer)
+#define SKIP(s,a...) \
+else {\
+	char tmp[s->maxlinelen];\
+	snprintf(tmp,s -> maxlinelen,\
+		"A previous error occurred, skipping : " a);\
+	sock_info(tmp,s);\
+	return -1;\
+}
+
+int sock_send(struct sock_state_t *s,char* buffer)
 {
 int rc;
 	
@@ -88,20 +117,12 @@ if ( s != NULL && ! s->error_occurred )
 	if ( (rc=sendstring(s->socket, buffer)) < 0 ) 
 		sock_error("sendstring",rc,s);
 	else sock_sent(buffer,s);
+	return 0;
 	}
-else
-	{
-	char tmp[s->maxlinelen];
-	
-	strncpy(tmp,"A previous error occurred, skipping : sock_send(\"",
-		s->maxlinelen);
-	strncat(tmp,buffer,s->maxlinelen);
-	strncat(tmp,"\")",s->maxlinelen);
-	sock_info(tmp,s);
-	}
-
+SKIP(s,"sock_send(\"%s\")",buffer);
 }
-void sock_sendraw(struct sock_state_t *s,char* buffer)
+
+int sock_sendraw(struct sock_state_t *s,char* buffer)
 {
 int rc;
 	
@@ -110,18 +131,9 @@ if ( s != NULL && ! s->error_occurred )
 	if ( (rc=sendstring_raw(s->socket, buffer)) < 0 ) 
 		sock_error("sendstring",rc,s);
 	else sock_sent(buffer,s);
+	return 0;
 	}
-else
-	{
-	char tmp[s->maxlinelen];
-	
-	strncpy(tmp,"A previous error occurred, skipping : sock_send(\"",
-		s->maxlinelen);
-	strncat(tmp,buffer,s->maxlinelen);
-	strncat(tmp,"\")",s->maxlinelen);
-	sock_info(tmp,s);
-	}
-
+SKIP(s,"sock_sendraw(\"%s\")",buffer);
 }
 
 int sock_receive(struct sock_state_t *s,char* buffer,int maxlen)
@@ -129,7 +141,6 @@ int sock_receive(struct sock_state_t *s,char* buffer,int maxlen)
 if ( ! s->error_occurred)
 	{
 	int tmp = recvstring( s->socket, buffer, maxlen , s->prb);
-	//int tmp = recvstring_with_timeout(s->socket,buffer,maxlen,s->prb,20);
 	
 	if ( tmp < 0 )
 		sock_error("recvstring",tmp,s);
@@ -138,45 +149,28 @@ if ( ! s->error_occurred)
 	
 	return tmp;
 	}
-else
-	{
-	char tmp[s->maxlinelen];
-	
-	strncpy(tmp,"A previous error occurred, skipping : sock_receive",s->maxlinelen);
-	
-	sock_info(tmp,s);
-	
-	return -1;
-	}
+SKIP(s,"sock_receive");
 }
 
-int sock_receive_with_timeout(struct sock_state_t *s,char* buffer,int maxlen, int timeout)
+int sock_receive_with_timeout(struct sock_state_t *s,char* buffer,
+	int maxlen, int timeout)
 {
 if ( ! s->error_occurred)
 	{
-	int tmp = recvstring_with_timeout( s->socket, buffer, maxlen , s->prb, timeout);
+	int tmp = recvstring_with_timeout(s->socket,buffer,
+		maxlen,s->prb,timeout);
+	
 	if ( tmp == -2 )
 		sock_error("recvstring_with_timeout timeout",tmp,s);
-	else
-		if ( tmp == -1 )
-			sock_error("recvstring_with_timeout error",tmp,s);
-		else	{
+	else if ( tmp == -1 )
+		sock_error("recvstring_with_timeout error",tmp,s);
+	else	{
 		sock_received(buffer,s);
-		}
+	}
 		
 	return tmp;
 	}
-else
-	{
-	char tmp[s->maxlinelen];
-	
-	strncpy(tmp,"A previous error occurred, skipping : sock_receive",
-		s->maxlinelen);
-	
-	sock_info(tmp,s);
-	
-	return -1;
-	}
+SKIP(s,"sock_receive");
 }
 
 static void get_info(struct sock_state_t* tmp)
@@ -190,12 +184,7 @@ snprintf( tmp->ipaddress, strlen("255.255.255.255") + 1,
 tmp->realport =  info[4] * 256 + info[5] ;
 }
 
-
-
 /*********************** connect *********************************************/
-
-
-
 struct sock_state_t * sock_connect(char *hostname,
 	unsigned long port,int maxlinelen,void (*print)(char *))
 {
@@ -214,7 +203,6 @@ if(tmp == NULL)
 tmp->maxlinelen = maxlinelen;
 tmp->hostname  = strdup(hostname);
 tmp->ipaddress = strdup("255.255.255.255");
-tmp->welcomestring = (char *) calloc( maxlinelen ,sizeof(char));
 tmp->prb = recvBufferCreate(maxlinelen); // maybe too long ??
 tmp->print = print; // print function
 tmp->error_occurred = 0; // no errors
@@ -223,7 +211,6 @@ tmp->error_occurred = 0; // no errors
 
 if ( ( tmp->socket = sockopen( hostname , anyaddress , port ) ) == -1 )
 	{
-	
 	sock_error("sockopen",-1,tmp);
 	}
 
@@ -231,9 +218,6 @@ if ( ( tmp->socket = sockopen( hostname , anyaddress , port ) ) == -1 )
 get_info(tmp);
 sprintf(infostring,"Ip address %s real port %ld",tmp->ipaddress,tmp->realport);
 sock_info(infostring,tmp);
-
-// <- WELCOME
-sock_receive(tmp, tmp->welcomestring, maxlinelen);
 
 return(tmp);
 }
@@ -245,7 +229,6 @@ if ( sockclose( server->socket ) == -1 )
 	
 recvBufferDestroy(server->prb);
 free(server->ipaddress);
-free(server->welcomestring);
 free(server->hostname);
 free(server);
 }
@@ -264,7 +247,6 @@ if(tmp == NULL)
 tmp->maxlinelen = maxlinelen;
 tmp->hostname  = strdup("localhost");
 tmp->ipaddress = strdup("255.255.255.255");
-tmp->welcomestring = NULL;
 tmp->prb = recvBufferCreate(maxlinelen); // maybe too long ??
 tmp->print = print; // print function
 tmp->error_occurred = 0; // no errors
@@ -316,7 +298,6 @@ if (newsock != -1)
 	tmp->maxlinelen = s->maxlinelen;
 	tmp->hostname  = strdup("localhost");
 	tmp->ipaddress = strdup("255.255.255.255");
-	tmp->welcomestring = NULL;
 	tmp->prb = recvBufferCreate(tmp->maxlinelen); 
 	tmp->print = s->print; // print function
 	tmp->error_occurred = 0; // no errors

@@ -25,6 +25,7 @@ MODULES-Common= lua		\
 		curl_lua	\
 		browser_lua	\
 		stringhack_lua	\
+		portablesocket_lua \
 		luadoc
 	
 MODULES-Windows-pre=regex pthread 

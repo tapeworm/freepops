@@ -311,7 +311,7 @@ int rc = 0;
 P("%s ANSWER FOLLOW",RFC_1939_OK);
 sock_send(s,ans);
 
-if(s->error_occurred)
+if(sock_error_occurred(s))
 		{
 		rc = POPSERVER_ERR_NETWORK;
 		return err_next[MIN(rc-1,numerr-1)];
@@ -327,7 +327,7 @@ if(rc != POPSERVER_ERR_OK && rc != POPSERVER_ERR_EOF)
 P(".");
 sock_send(s,ans);
 
-if(s->error_occurred)
+if(sock_error_occurred(s))
 		{
 		rc = POPSERVER_ERR_NETWORK;
 		return err_next[MIN(rc-1,numerr-1)];
@@ -345,7 +345,7 @@ if(buffer != NULL)
 		sock_sendraw(s,buffer);
 		}
 
-if(s->error_occurred)
+if(sock_error_occurred(s))
 		{
 		return POPSERVER_ERR_NETWORK;
 		}
@@ -405,7 +405,7 @@ enum states_e next;
 int rc=0;
 
 sock_receive(s,ask,RFC_1939_MAXLINELEN);
-if(s->error_occurred)
+if(sock_error_occurred(s))
 	return POPSTATE_AUTH;
 
 if(matches(RFC_1939_QUIT,ask)) /*** QUIT *********************/
@@ -490,7 +490,7 @@ enum states_e next=POPSTATE_ERR;
 int rc=0;
 
 sock_receive(s,ask,RFC_1939_MAXLINELEN);
-if(s->error_occurred)
+if(sock_error_occurred(s))
 	return POPSTATE_TRANS;
 
 if(matches(RFC_1939_STAT,ask)) /*** STAT *********************/
@@ -712,7 +712,7 @@ sock_send(s,ans);
 
 while(!stop)
 	{
-	if (s->error_occurred)
+	if (sock_error_occurred(s))
 		{
 		if(state != POPSTATE_END)
 			f->quit(p);	
@@ -803,7 +803,7 @@ while(1)
 		{
 		sock_disconnect(new);
 		thread_notborn(pth);
-		sock_info("unable to handle connection, no more threads",s);
+		SAY("unable to handle connection, no more threads",s);
 		continue;
 		}
 

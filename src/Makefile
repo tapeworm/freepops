@@ -43,6 +43,7 @@ LIBS=		stringhack_lua	\
                 session_lua     \
                 pop3server_lua  \
                 pop3server      \
+		portablesocket_lua \
                 portablesocket  \
                 session         \
                 dictionary      \

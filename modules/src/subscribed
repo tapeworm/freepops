@@ -22,7 +22,8 @@ MK_TEMPLATE=	base64 \
 		getdate_lua \
 		browser_lua \
 		stringhack_lua \
-		mlex_lua
+		mlex_lua \
+		portablesocket_lua
 
 MK_TEMPL_CTRIB=	lua \
 		tolua++ \

@@ -1074,6 +1074,18 @@ for(i = 0 ; i < STR_SIZE ; i++)
 	free(c->strings[i]);
 if(c->post != NULL)
 	curl_formfree(c->post);	
+
+lua_pushlightuserdata(L,CURL_WRITECB_OFF(c));
+lua_pushnil(L);
+lua_rawset(L,LUA_REGISTRYINDEX);
+
+lua_pushlightuserdata(L,CURL_READCB_OFF(c));
+lua_pushnil(L);
+lua_rawset(L,LUA_REGISTRYINDEX);
+
+lua_pushlightuserdata(L,CURL_HEADCB_OFF(c));
+lua_pushnil(L);
+lua_rawset(L,LUA_REGISTRYINDEX);
 	
 return 0;
 }

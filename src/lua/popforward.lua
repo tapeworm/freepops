@@ -7,6 +7,10 @@
 --  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
+-- ************************************************************************** --
+-- WARNING        the bindings for psock in lua are really poor       WARNING --
+-- ************************************************************************** --
+
 PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "POPforward"
 
@@ -29,19 +33,15 @@ function init(pstate)
 end
 
 function single_line(cmd,f)
-	local l,err = pf_state.socket:send(cmd)
-	if not l then 
-		log.error_print(err)
-		return POPSERVER_ERR_NETWORK 
-	end
+	local l = pf_state.socket:send(cmd)
 	
-	if l ~= string.len(cmd) then 
+	if l < 0 then 
 		log.error_print("Short send of "..l..
 			" instead of "..string.len(cmd).."\n")
 		return POPSERVER_ERR_NETWORK 
 	end
 
-	local l,err,time = pf_state.socket:receive('*l')
+	local l = pf_state.socket:recv()
 	if not (string.find(l,"^+OK")) then 
 		log.error_print(l)
 		return POPSERVER_ERR_UNKNOWN 
@@ -59,9 +59,9 @@ function do_pipe(pdata)
 	local l,err,time = nil,nil,nil
 	
 	while l ~= "." do
-		l,err,time = pf_state.socket:receive('*l')
+		l = pf_state.socket:recv()
 		if not l then 
-			log.error_print(err)
+			log.error_print("ERROR??")
 			return POPSERVER_ERR_NETWORK 
 		end
 		
@@ -75,12 +75,12 @@ end
 
 function do_repeat(f)
 	return function(s)
-	local l,err,time = nil,nil,nil
+	local l = nil
 	
 	while l ~= "." do
-		l,err,time = pf_state.socket:receive('*l')
+		l = pf_state.socket:recv()
 		if not l then 
-			log.error_print(err)
+			log.error_print("ERROR?")
 			return POPSERVER_ERR_NETWORK 
 		end
 		
@@ -96,37 +96,30 @@ end
 -- Must save the mailbox name
 function user(pstate,username)
 	local l,err,time = nil,nil,nil
-	pf_state.socket,err = socket.tcp()
-	if not pf_state.socket then
-		log.error_print(err)
-		return POPSERVER_ERR_NETWORK
-	end
-	
-	l,err = pf_state.socket:connect(freepops.MODULE_ARGS.host,
+	pf_state.socket = psock.connect(freepops.MODULE_ARGS.host,
 		freepops.MODULE_ARGS.port)
-	if not l then
-		log.error_print(err)
+	if not pf_state.socket then
+		log.error_print("unable to connect")
 		return POPSERVER_ERR_NETWORK
 	end
-
-	l,err,time = pf_state.socket:receive('*l')
+	
+	l = pf_state.socket:recv()
 	if not l then
 		log.error_print(err)
 		return POPSERVER_ERR_NETWORK
 	end
 	
-	return single_line("USER "..username.."\r\n",nil)
+	return single_line("USER "..username,nil)
 end
 
 -- Must login
 function pass(pstate,password)
-	return single_line("PASS "..password.."\r\n",nil)
+	return single_line("PASS "..password,nil)
 end
 
 -- Must quit without updating
 function quit(pstate)
-	local rc = single_line("QUIT\r\n",nil)
-	pf_state.socket:close()
+	local rc = single_line("QUIT",nil)
 	return rc
 end
 
@@ -160,7 +153,7 @@ function uidl(pstate,msg)
 		return POPSERVER_ERR_UNKNOWN
 	end
 
-	return single_line("UIDL "..msg.."\r\n",f)
+	return single_line("UIDL "..msg,f)
 end
 
 -- Fill all messages uidl field
@@ -172,7 +165,7 @@ function uidl_all(pstate)
 		end
 		end)
 
-	return single_line("UIDL\r\n",f)
+	return single_line("UIDL",f)
 end
 
 -- Fill msg size
@@ -185,7 +178,7 @@ function list(pstate,msg)
 		return POPSERVER_ERR_UNKNOWN
 	end
 
-	return single_line("LIST "..msg.."\r\n",f)
+	return single_line("LIST "..msg,f)
 end
 
 -- Fill all messages size
@@ -196,34 +189,34 @@ function list_all(pstate)
 		end
 		end)
 
-	return single_line("LIST\r\n",f)
+	return single_line("LIST",f)
 end
 
 -- Unflag each message merked for deletion
 function rset(pstate)
-	return single_line("RSET\r\n",nil)
+	return single_line("RSET",nil)
 end
 
 -- Mark msg for deletion
 function dele(pstate,msg)
-	return single_line("DELE "..msg.."\r\n",nil)
+	return single_line("DELE "..msg,nil)
 end
 
 -- Do nothing
 function noop(pstate)
-	return single_line("NOOP\r\n",nil)
+	return single_line("NOOP",nil)
 end
 
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
 function top(pstate,msg,lines,pdata)
-	return single_line("TOP "..msg.." "..lines.."\r\n",do_pipe(pdata))
+	return single_line("TOP "..msg.." "..lines,do_pipe(pdata))
 end
 
 -- Get message msg, must call 
 -- popserver_callback to send the data
 function retr(pstate,msg,pdata)
-	return single_line("RETR "..msg.."\r\n",do_pipe(pdata))
+	return single_line("RETR "..msg,do_pipe(pdata))
 end
 
 -- EOF

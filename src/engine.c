@@ -35,6 +35,7 @@
 #include "session_lua.h"
 #include "curl_lua.h"
 #include "getdate_lua.h"
+#include "psock_lua.h"
 
 #include "log.h"
 #define LOG_ZONE "ENGINE"
@@ -211,6 +212,7 @@ luaopen_mlex(tmp->l);
 luaopen_stringhack(tmp->l);
 tolua_session_lua_open(tmp->l);
 luacurl_open(tmp->l);
+luaopen_psock(tmp->l);
 tolua_getdate_lua_open(tmp->l);
 luay_emptystack(tmp->l);
 

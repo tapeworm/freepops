@@ -98,6 +98,7 @@ Section "FreePOPs (required)"
   SetOutPath $INSTDIR\LUA
   File "*.lua"
   SetOutPath $INSTDIR
+  CreateDirectory $INSTDIR\LUA_UNOFFICIAL
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\NSIS_FreePOPs "Install_Dir" "$INSTDIR"
   ; Write the uninstall keys for Windows

@@ -186,5 +186,7 @@ end
 
 -- since this can be loaded as plugin it must have at least the init function
 if init == nil then
-	init = function() return 0 end
+	_G.init = function(p) return 0 end
 end
+
+-- eof

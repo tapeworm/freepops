@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -18,7 +18,7 @@ PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {
 "@aol.com","@aol.com.ar","@aol.fr","@aol.com.mx","@aol.com.au","@aol.de",
 "@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com", 
-"netscape.com"} 
+"netscape.net"} 
 PLUGIN_PARAMETERS = 
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
@@ -41,7 +41,7 @@ and your real password as the password.]]
 
 -- Domains supported:  aol.com, aol.com.ar, aol.fr, aol.com.mx, aol.com.au,
 --                     aol.de, aol.com.pr, aol.com.br, jp.aol.com, aol.co.uk,
---                     aol.ca, aola.com, netscape.com
+--                     aol.ca, aola.com, netscape.net
 
 -- ************************************************************************** --
 --  Global Strings
@@ -424,7 +424,7 @@ function user(pstate, username)
 
   -- Set the site id
   -- 
-  if domain == "netscape.com" then
+  if domain == "netscape.net" then
     internalState.strSiteId = globals.strNetscapeID
   else
     internalState.strSiteId = globals.strAOLID

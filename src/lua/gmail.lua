@@ -290,6 +290,10 @@ function gmail_login()
 	end
 	--print(f)
 	local _,_,uri = string.find(f,'(CheckCookie[^%"]*)"')
+	if uri == nil then
+		log.error_print(e)
+		return POPSERVER_ERR_UNKNOWN
+	end
 	uri = "http://" .. b:wherearewe() .. "/accounts/" .. uri
 	
 	--local retrive_f = support.retry_n(

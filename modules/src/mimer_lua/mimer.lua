@@ -303,7 +303,7 @@ end
 function Private.attach_it(browser,boundary,send_cb)
 	return function(k,uri)
 
-		local h,err = browser:get_head(uri)
+		local h,err = browser:get_head(uri,{},true)
 
 		local _,_,x = string.find(h or "",
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")

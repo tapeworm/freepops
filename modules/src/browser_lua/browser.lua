@@ -6,9 +6,11 @@
 -- "http://" form,exhed are extra header lines you want to add
 -- , for example {"Range: bytes 0-100","User-agent: fake" }<BR/>
 -- <BR/>
--- <B>get_head(uri,exhed)</B> : returns string,err and takes the uri in 
+-- <B>get_head(uri,exhed,fallback)</B> : returns string,err and takes 
+-- the uri in 
 -- "http://" form,exhed are extra header lines you want to add. 
--- returns only the header, not the the body<BR/>
+-- returns only the header, not the the body. If fallback is true then
+-- a GET with range: bytes 0 is tryed<BR/>
 -- <BR/>
 -- <B>pipe_uri(uri,callback,exhed)</B> : 
 -- Gets the uri and uses callback on the data
@@ -393,7 +395,7 @@ function Private.get_cookie(self,name)
 		end)
 end
 
-function Private.get_head(self,url,exhed)
+function Private.get_head(self,url,exhed,fallback)
 	local gl_b,gl_h = {},{}
 	
 	self.curl:setopt(curl.OPT_HTTPGET,1)
@@ -403,8 +405,18 @@ function Private.get_head(self,url,exhed)
 	Hidden.build_header(self,url,exhed)
 	
 	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
-
+	
 	self.curl:setopt(curl.OPT_NOBODY,0)
+
+	-- since some server do not implement it we try the last thing
+	if rc == nil and fallback then
+		gl_b,gl_h = {},{}
+		self.curl:setopt(curl.OPT_HTTPGET,1)
+		self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
+		Hidden.build_header(self,url,{"Range: bytes=0-1"})
+		
+		rc,err = Hidden.perform(self,url,gl_h,gl_b)
+	end
 
 	return Hidden.continue_or_return(rc,err,gl_h,
 		Private.get_head,self,Hidden.mangle_location(self,err),exhed)

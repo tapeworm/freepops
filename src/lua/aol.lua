@@ -7,9 +7,11 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "aol.com"
-PLUGIN_REQUIRE_VERSION = "0.0.15"
+-- This will need to be 0.0.21 when cookie.lua is updated!
+--
+PLUGIN_REQUIRE_VERSION = "0.0.20"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=aol.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
@@ -71,7 +73,7 @@ local globals = {
   
   -- Pattern to extract the URL to go to get the login form
   --
-  strLoginPageParamsPattern='goToLoginUrl.*mcRedir."([^"]+)"',
+  strLoginPageParamsPattern='goToLoginUrl.-Redir."([^"]+)"',
 
   -- Pattern to pull out the url's we need to go to set some cookies.
   --
@@ -79,9 +81,9 @@ local globals = {
 
   -- Extract the server to post the login data to
   --
-  strLoginPostUrlPattern1='[Nn][Aa][Mm][Ee]="[^"]*" [Aa][Cc][Tt][Ii][Oo][Nn]="([^"]*)"',
+  strLoginPostUrlPattern1='[Mm][Ee][Tt][Hh][Oo][Dd]="[^"]*" [Aa][Cc][Tt][Ii][Oo][Nn]="([^"]*)"',
   strLoginPostUrlPattern2='[Tt][Yy][Pp][Ee]="[Hh][Ii][Dd][Dd][Ee][Nn]" [Nn][Aa][Mm][Ee]="([^"]*)" [Vv][Aa][Ll][Uu][Ee]="([^"]*)"',
-  strLoginPostUrlPattern3='[Nn][Aa][Mm][Ee]="[^"]*" METHOD="POST" [Aa][Cc][Tt][Ii][Oo][Nn]="([^"]*)"',
+  strLoginPostUrlPattern3='[Nn][Aa][Mm][Ee]="[^"]*" [Mm][Ee][Tt][Hh][Oo][Dd]="POST" [Aa][Cc][Tt][Ii][Oo][Nn]="([^"]*)"',
   
   -- Used by Stat to pull out the message ID and the size
   --
@@ -217,7 +219,10 @@ function loginAOL()
   -- don't run javascript and thus must do the work here of pulling out the URL that
   -- the javascript would redirect too.
   _, _, url = string.find(body, globals.strLoginPageParamsPattern)
-  url = "http://" .. browser:wherearewe() .. url
+  if (url == nil) then
+    log.error_print("Unable to figure out the redirect on the login page.")
+    return POPSERVER_ERR_UNKNOWN
+  end
   body, err = browser:get_uri(url)
 
   -- We are now at the signin page.  Let's pull out the action of the signin form and
@@ -233,16 +238,24 @@ function loginAOL()
       postdata = name .. "=" .. value 
     end
   end
-
   postdata = postdata .. "&" .. 
     string.format(globals.strLoginPostData, username, password)
+  url = "http://" .. browser:wherearewe() .. url
   body, err = browser:post_uri(url, postdata)
 
   -- This is where things get a little hokey.  AOL returns a page with three javascript
   -- links that need to be "GET'ed" and then a form that needs to be submitted.  We don't
   -- care at all about the results of the get's other than the cookies...YUM!.
   for value in string.gfind(body, globals.strLoginRetUrlPattern1) do
-    _, err = browser:get_uri(value)
+    local body2, err2 = browser:get_uri(value)
+    local _, _, cval = string.find(body2, 'hl0ckVal="([^"]+)"')
+    if (cval ~= nil) then
+      browser:add_cookie(value, "MC_CMP_ESKX=" .. cval .."; domain=.aol.com; path=/")
+    end
+    _, _, cval = string.find(body2, 'hckVal="([^"]+)"')
+    if (cval ~= nil) then
+      browser:add_cookie(value, "MC_CMP_ESK=" .. cval .. "; domain=.aol.com; path=/")
+    end
   end
 
   _, _, url = string.find(body, globals.strLoginPostUrlPattern3)

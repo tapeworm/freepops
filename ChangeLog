@@ -1,3 +1,15 @@
+30/01/2005 0.0.24
+- yahoo.lua: traduzione descrizione in italiano (ncocchiaro)
+- tre.lua: another purge fix... (dpeddi)
+- yahoo.lua: Fixed a variety of bugs including missing ending crlf and dealing with changing msgids (russell822)
+- es, fr: changed slackware link (alessiofender)
+- freepopsd.vbs: added rojous patch to delete log files from freepopsd.vbs (gareuselesinge)
+- tre.lua: fixed problem with purge (dpeddi)
+- fr: added fr website (gareuselesinge)
+- fr: *** empty log message *** (fvancaen)
+- es, fr: fixed rss (gareuselesinge)
+- es: *** empty log message *** (lisar314)
+- yahoo.lua: Some minor tweaks to yahoo. (russell822)
 - fixed Location handling in case a non rfc conformin web server (IIS)
 sends a relativeURI instead an absoluteURI
 - added @unforgettable.com to mailcom (thanks tranx)

@@ -23,3 +23,5 @@ for version 0.0.14:
 		genera molto traffico, con una stima decente.
 	http://liberopops.diludovico.it/index.php?showtopic=859&st=0&#entry4412
 	http://liberopops.diludovico.it/index.php?showtopic=858
+	add help GLOBAL variable to plugins so that one can read the 
+		instructions readin the file (used by MacFP)

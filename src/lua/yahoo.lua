@@ -365,7 +365,7 @@ function user(pstate, username)
   -- Get the folder (also supports yahoo.it folders)
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder or globals.strInbox
-  if mbox == "bulk" or mbox == "Bulk" or mbox == "Anti-Spam" or mbox == "antispam" then
+  if mbox == "bulk" or mbox == "Bulk" or mbox == "Anti-spam" or mbox == "antispam" then
     mbox = globals.strBulk
   elseif mbox == "InArrivo" or mbox == "inarrivo" then
     mbox = globals.strInbox

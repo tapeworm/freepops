@@ -684,7 +684,19 @@ setup file, under Unix you probably need OpenSSL installed).
 
 This is the webmail support for \texttt{@yahoo.com} mailboxes. To
 use this plugin you have to use your full email address as the username
-and your real password as the password. 
+and your real password as the password. This plugin accepts the following 
+parameters:
+
+\begin{description}
+\item [folder]is used to select the folder (\texttt{Inbox} is the default)
+you want to interact with. The folders that are available are the standard 
+Yahoo folders, called 
+\texttt{Inbox}, \texttt{Draft}, \texttt{Sent}, \texttt{Bulk} and 
+\texttt{Trash} (for yahoo.it domains you may use the same folder names or the 
+corresponding names in Italian: \texttt{InArrivo}, \texttt{Bozza}, 
+\texttt{Inviati}, \texttt{Anti-spam}, \texttt{Cestino}). If you created some 
+folders you can use them using their names. 
+\end{description}
 
 \subsection{squirrelmail.lua}
 

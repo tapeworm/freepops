@@ -100,7 +100,7 @@ ifeq "$(OS)" "Windows"
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
 		-lregex -lm -lcurl -lmingw32 -lwsock32 \
-			-lpthread -lexpat -lgdi32 -mwindows
+			-lpthread -lexpat -lgdi32 -mwindows -lcrypto
 
 else
 ifeq "$(OS)" "Darwin"

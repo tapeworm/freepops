@@ -60,13 +60,18 @@ Private.html_tags = {
 	["p"] = "",
 	["/p"] = "\n",
 	["a"] = function (s,base_uri) 
-		local _,_,x = string.find(s,'[Hh][Rr][Ee][Ff]%s*="?([^" ]*)"?') 
-		if x ~= nil then
-			if string.sub(x,1,1) == '/' then
-				x = base_uri .. x
-			end
+		local start,stop = string.find(s,'[Hh][Rr][Ee][Ff]%s*=%s*')
+		local _,x = nil,nil
+		if string.byte(s,stop+1) == string.byte('"') then
+			_,_,x = string.find(string.sub(s,stop+2,-1),'^([^"]*)')
+		else
+			_,_,x = string.find(string.sub(s,stop+1,-1),'^([^ ]*)')
 		end
-		return "[" .. (x or "link") .. "]"
+		x = x or "link"
+		if string.sub(x,1,1) == '/' then
+			x = (base_uri or '/') .. x
+		end
+		return "[" .. x .. "]"
 		end,
 	["/a"] = "",
 	["hr"] = "\n" .. string.rep("-",72) .. "\n",

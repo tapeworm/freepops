@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.1"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "Lycos.IT"
 
 -- ************************************************************************** --
@@ -234,7 +234,8 @@ end
 function mangle_body(s)
 	local _,_,x = string.find(s,"^%s*(<[Pp][Rr][Ee]>)")
 	if x ~= nil then
-		s = mimer.html2txtmail(s)
+		local base = "http://" .. internal_state.b:wherearewe()
+		s = mimer.html2txtmail(s,base)
 		return s,nil
 	else
 		-- the webmail damages these tags
@@ -253,7 +254,8 @@ end
 --
 --
 function mangle_head(s)
-	s = mimer.html2txtplain(s)
+	local base = "http://" .. internal_state.b:wherearewe()
+	s = mimer.html2txtplain(s,base)
 	
 	local subst = 1
 	while subst > 0 do
@@ -285,40 +287,40 @@ function lycos_parse_webmessage(pstate,msg)
 	
 	-- get the main mail page
 	local f,rc = b:get_uri(uri,cb)
-
+	
 	-- extract the body an the attach
 	local from,to = string.find(f,lycos_string.attach_begin)
 	local f1 = string.sub(f,to+1,-1)
 	local from1,to1 = string.find(f1,lycos_string.attach_end)
 	local body = string.sub(f1,1,from1-1)
 	local attach = string.sub(f1,from1,-1)
-
+	
 	-- extracts the attach list
 	local x = mlex.match(attach,lycos_string.attachE,lycos_string.attachG)
 	--x:print()
 	
 	local n = x:count()
 	local attach = {}
-
+	
 	for i = 1,n do
 		--print("addo fino a " .. n)
 		local _,_,url = string.find(x:get(0,n-1),'href="([^"]*)"')
 		attach[x:get(1,n-1)] = "http://" .. b:wherearewe() .. url
 		table.setn(attach,table.getn(attach) + 1)
 	end
-
+	
 	-- mangles the body
 	local body,body_html = mangle_body(body)
 	
 	-- gets the header
 	local f,rc = b:get_uri(urih,cb)
-
+	
 	-- extracts the important part
 	local from,to = string.find(f,lycos_string.head_begin)
 	local f1 = string.sub(f,to+1,-1)
 	local from1,to1 = string.find(f1,lycos_string.head_end)
 	local head = string.sub(f1,1,from1-1)
-
+	
 	-- mangles the header
 	head = mangle_head(head)
 	
@@ -558,7 +560,7 @@ function stat(pstate)
 		session.remove(key())
 		return POPSERVER_ERR_UNKNOWN
 	end
-
+	
 	-- save the computed values
 	internal_state["stat_done"] = true
 	
@@ -624,9 +626,10 @@ end
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
 function retr(pstate,msg,data)
+	log.say("-- before parsing\n")
 	local head,body,body_html,attach = lycos_parse_webmessage(pstate,msg)
 	local b = internal_state.b
-
+	log.say("-- after parsing\n")
 	mimer.pipe_msg(
 		head,body,body_html,
 		"http://" .. b:wherearewe(),attach,b,

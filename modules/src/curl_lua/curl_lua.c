@@ -1182,6 +1182,30 @@ return 1;
 }
 
 /******************************************************************************
+ * curl_unescape
+ *
+ */ 
+static int luacurl_unescape(lua_State* L) {
+const char* data = luaL_checkstring(L,1);
+size_t len = lua_strlen(L,1);
+char * tmp;
+L_checknarg(L,1,"unescape wants 1 argument (string)");
+
+tmp = curl_unescape(data,len);
+
+lua_pushstring(L,tmp);
+
+#if CURL_NEWER(7,10,0)
+curl_free(tmp);
+#else
+free(tmp);
+#endif
+	
+return 1;
+}
+
+
+/******************************************************************************
  * curl_version
  *
  */ 
@@ -1258,6 +1282,7 @@ return 1;
 static const struct luaL_reg curl_f [] = {
   {"easy_init",luacurl_easy_init},
   {"escape",luacurl_escape},
+  {"unescape",luacurl_unescape},
   {"version",luacurl_version},
 #if CURL_NEWER(7,10,0)
   {"version_info",luacurl_version_info},

@@ -95,6 +95,11 @@ function perform() end
 function curl.escape(s) end
 
 ---
+-- URLdecodes the string.
+-- @return string The unescaped string.
+function curl.unescape(s) end
+
+---
 -- version.
 -- @return string The version string.
 function curl.version() end

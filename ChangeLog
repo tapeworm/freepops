@@ -1,4 +1,6 @@
 18/11/2004 0.0.21
+- fixed S_ISSOCK for BeOS in luafilesystem
+- curl.unescape
 - yahoo.lua: tweaked the status update process (russell822)
 - es: *** empty log message *** (lisar314)
 - aol.lua: Fix for new UI (russell822)

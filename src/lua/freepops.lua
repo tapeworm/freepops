@@ -215,7 +215,7 @@ freepops.set_sanity_checks = function()
 		__index = function(t,k)
 			local d = debug.getinfo(2,"lSn")or debug.getinfo(1,"lS")
 			local s = "\tBUG found in '".. d.source ..
-				"' at line " .. d.currentline".\n"..
+				"' at line " .. d.currentline .. ".\n"..
 				"\tFunction '".. d.name .. 
 				"' uses an undefined global '" ..k.. "'\n"..[[
 

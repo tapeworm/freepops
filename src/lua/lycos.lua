@@ -286,7 +286,7 @@ function lycos_parse_webmessage(pstate,msg)
 	local urih = string.format(lycos_string.save_header,b:wherearewe(),uidl)
 	
 	-- get the main mail page
-	local f,rc = b:get_uri(uri,cb)
+	local f,rc = b:get_uri(uri)
 	
 	-- extract the body an the attach
 	local from,to = string.find(f,lycos_string.attach_begin)
@@ -313,7 +313,7 @@ function lycos_parse_webmessage(pstate,msg)
 	local body,body_html = mangle_body(body)
 	
 	-- gets the header
-	local f,rc = b:get_uri(urih,cb)
+	local f,rc = b:get_uri(urih)
 	
 	-- extracts the important part
 	local from,to = string.find(f,lycos_string.head_begin)
@@ -607,10 +607,8 @@ end
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
 function retr(pstate,msg,data)
-	log.say("-- before parsing\n")
 	local head,body,body_html,attach = lycos_parse_webmessage(pstate,msg)
 	local b = internal_state.b
-	log.say("-- after parsing\n")
 	mimer.pipe_msg(
 		head,body,body_html,
 		"http://" .. b:wherearewe(),attach,b,

@@ -57,11 +57,6 @@ done
 
 }
 
-function prepare_dsc(){
-#dpkg-source -b freepops-*
-true
-}
-
 function prepare_tgz(){
 make realclean || true
 ./configure.sh linux
@@ -85,7 +80,7 @@ D=`pwd`
 TMP=`mktemp -d`
 prepare_tgz $TMP
 cd $TMP
-prepare_dsc
+#prepare_dsc
 for X in $TODO; do
 	build $X $D			
 done

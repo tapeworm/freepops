@@ -21,6 +21,9 @@
 #include "socketcommon.h"
 #include "luabind.h"
 
+#include "log.h"
+#define LOG_ZONE "psock"
+
 #define METANAME "sockstate.type"
 #define BUFSIZE 2048
 
@@ -30,8 +33,12 @@
 #define DBG_INFO (1<<2)
 #define DBG_ALL (DBG_INFO|DBG_RECV|DBG_SEND)
 
-#define DBG(a) ((a) & (debug_opt))
+#define IS_ACTIVE(a) ((a) & (debug_opt))
+#define BEGIN_WITH(s,a) (!strncmp((s),(a),strlen(a)))
 
+// only one debug mode for the whole library...
+// FIXME write more selective_print and choose the right one or add extra 
+// parameter to print in the sockets..
 static int debug_opt = DBG_NONE;
 
 // returns and checks a stringhack from the stack
@@ -42,16 +49,16 @@ static struct sock_state_t* check_sockstate(lua_State*L)
   return *(struct sock_state_t**)tmp;
 }
 
-static void fake_print(char*s) { 
-	if (!strncmp(s,SOCK_ERROR,strlen(SOCK_ERROR))) {
-		fprintf(stderr,"%s",s);
-	} else if (DBG(DBG_INFO) && !strncmp(s,SOCK_INFO,strlen(SOCK_INFO))) {
-		fprintf(stderr,"%s",s);
-	} else if (DBG(DBG_SEND) && !strncmp(s,SOCK_SENT,strlen(SOCK_SENT))) {
-		fprintf(stderr,"%s",s);
-	} else if (DBG(DBG_RECV) && 
-		!strncmp(s,SOCK_RECEIVED,strlen(SOCK_RECEIVED))) {
-		fprintf(stderr,"%s",s);
+// prints only selected messages (third connect parameter)
+static void selective_print(char*s) { 
+	if (BEGIN_WITH(s,SOCK_ERROR)) {
+		ERROR_PRINT(s);
+	} else if (IS_ACTIVE(DBG_INFO) && BEGIN_WITH(s,SOCK_INFO)) {
+		DBG("%s",s);
+	} else if (IS_ACTIVE(DBG_SEND) && BEGIN_WITH(s,SOCK_SENT)) {
+		DBG("%s",s);
+	} else if (IS_ACTIVE(DBG_RECV) && BEGIN_WITH(s,SOCK_RECEIVED)) {
+		DBG("%s",s);
 	}
 }
 
@@ -68,9 +75,9 @@ L_checknarg(L,3,"connect wants 'host', 'port' and 'flag'");
 	
 host = luaL_checkstring(L,1);
 port = luaL_checkint(L,2);
-flag = luaL_optint(L,3,0);
+flag = luaL_checkint(L,3);
 
-tmp = sock_connect((char*)host,port,BUFSIZE*2,fake_print);
+tmp = sock_connect((char*)host,port,BUFSIZE*2,selective_print);
 
 if(tmp == NULL || sock_error_occurred(tmp)) {
 	lua_pushnil(L);

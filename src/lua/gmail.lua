@@ -317,30 +317,65 @@ end
 --------------------------------------------------------------------------------
 -- The callbach factory for retr
 --
+
+function auto_learn(s)
+	local correction = ""
+	
+	local _,_,x = string.find(s,"[^\r\n](\r\n)[^\r\n]")
+	if x ~= nil then
+		-- no correction
+		correction = nil
+		--print("correnction nil")
+	end
+	local _,_,x = string.find(s,"[^\r\n](\r)[^\r\n]")
+	if x ~= nil then
+		-- \r -> \r\n 
+		correction = "\r"
+		--print("correnction \\r")
+	end
+	local _,_,x = string.find(s,"[^\r\n](\n)[^\r\n]")
+	if x ~= nil then
+		-- \n -> \r\n
+		correction = "\n"
+		--print("correnction \\n")
+	end
+	return correction
+end
+
 function retr_cb(data)
 	local a = stringhack.new()
 	local FirstBlock = true
+
+	-- setted in the First Block
+	local correction = ""
 	
 	return function(s,len)
-		s = string.gsub(s,"\n","\r\n")
-		s = a:dothack(s).."\0"
--- without the above string end of stream is: 00 00 00 0a 0a 2e 0d 0a
-		-- \r = 13 = 0d                        \n \n .  \r \n
-		-- \n = 10 = 0a
-
-		-- fix that some clients don't know that the 
-		-- message was finished
-		-- because at the end of the message we got \r\n\n
---		s = string.gsub(s,"\r$","")
 		if FirstBlock then
+			--try to understand the correction
+			correction = auto_learn(s)
+						
+			if correction ~= nil then
+				 s = string.gsub(s,correction,"\r\n")
+			end
+			
 			s = string.gsub(s,"^%s*","")
-			s = string.gsub(s,"\r\r\n","\r\n")
+--			s = string.gsub(s,"\r\r\n","\r\n")
 --			s = string.gsub(s,"\r\n\r\n","\r\n")
 			FirstBlock = false
+		else
+			if correction ~= nil then
+				 s = string.gsub(s,correction,"\r\n")
+			end
 		end
-
+		
+		s = a:dothack(s).."\0"
 		popserver_callback(s,data)
-			
+		
+		-- dump to file, debug only
+		--local f = io.open("dump.txt","a")
+		--f:write(s)
+		--f:close()
+		
 		return len,nil
 	end
 end
@@ -352,20 +387,32 @@ end
 function top_cb(global,data)
 	local purge = false
 	local FirstBlock = true
+	local correction = ""
+	
 	return function(s,len)
---		print("GOT:",len)
 		if purge == true then
-			--print("purging: "..string.len(s))
 			return len,nil
 		end
+		
 		if FirstBlock then
+			correction = auto_learn(s)
+			
 			s = string.gsub(s,"^%s*","")
-			s = string.gsub(s,"\r\r\n","\r\n")
---			s = string.gsub(s,"\r\n\r\n","\r\n")
+--			s = string.gsub(s,"\r\r\n","\r\n")
+--			s = string.gsub(s,"\r\n\r\n","\r\n")			
+			
+			if correction ~= nil then
+				 s = string.gsub(s,correction,"\r\n")
+			end
+			
 			FirstBlock = false
-		end	
+		else
+			if correction ~= nil then
+				 s = string.gsub(s,correction,"\r\n")
+			end
+		end
+	
 		s = global.a:tophack(s,global.lines_requested)
-		s = string.gsub(s,"\n","\r\n")
 		s = global.a:dothack(s).."\0"
 			
 		popserver_callback(s,data)

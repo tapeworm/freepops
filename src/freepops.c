@@ -99,6 +99,10 @@ HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "suid", required_argument, NULL, 's' },
 				 { "kill", no_argument, NULL, 'k' },
 				 { "toxml", required_argument, NULL, 'x' },
+				 { "force-proxy-auth-type", 
+					 required_argument, NULL, 1000 },
+				 { "fpat", 
+					 required_argument, NULL, 1000 },
 	                         { NULL, 0, NULL, 0 } };
 
 void usage(const char *progname) {
@@ -115,6 +119,7 @@ void usage(const char *progname) {
 "\t\t\t[-d|--daemonize]\n"
 "\t\t\t[-l|--logmode (syslog|filename|stdout)]\n"
 "\t\t\t[-x|--toxml pluginfile]\n"
+"\t\t\t[--fpat|--force-proxy-auth-type (basic|digest|ntlm|gss)]\n"
 #if !defined(WIN32) && !defined(BEOS)			
 "\t\t\t[-s|--suid user.group]\n"
 "\t\t\t[-k|--kill]\n"
@@ -360,7 +365,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	int threads_num = MAXTHREADS;
 	unsigned short port = POP3PORT;
 	struct in_addr address;
-	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL;
+	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL, *fpat = NULL;
 
 #if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)	
         pid_t this_pid;
@@ -480,6 +485,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		} else if (res == 'w') {
 			/* --veryverbose */
 			verbose_output+=2;
+		} else if (res == 1000) {
+			/* --fpat */
+			free(fpat);
+			
+			if (optarg != NULL)
+				fpat = strdup(optarg);
+			else
+				fprintf(stderr,"fpat has NULL arg");
+			
+			if ( strcmp(fpat,"gss") && 
+			     strcmp(fpat,"ntlm") &&
+			     strcmp(fpat,"basic") && 
+			     strcmp(fpat,"digest") ) {
+				fprintf(stderr, "--fpath accepts only one of"
+					"these: gss, ntlm, basic, digest\n\n");
+				usage(argv[0]);
+				exit(1);
+			}
 	#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)
 		} else if (res == 'k') {
 			/* --kill */
@@ -514,6 +537,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	my_putenv("LUA_HTTP_USERAGENT",useragent);
 	my_putenv("LUA_HTTP_PROXY",proxy);
 	my_putenv("LUA_HTTP_PROXYAUTH",proxyauth);
+	my_putenv("LUA_FORCE_PROXY_AUTH_TYPE",fpat);
 	
 /*** INITIALIZATION UNIX ***/
 #if !(defined(WIN32) && !defined(CYGWIN)) && ! defined(BEOS)

@@ -44,12 +44,10 @@ Binds over addr instead INADDR_ANY (0.0.0.0). addr must be a character string
 containing an IPv4 network address in the dotted-quad format, 
 "ddd.ddd.ddd.ddd" or a host name.
 .TP
-.\"\fB \-c \fRconfigfile, \fB\-\-config \fRconfigfile
-.\"Use configfile as configuration file for the libero webmail. This option overrides configurations specified in default files.
-.\".TP
 \fB \-l \fIlogfacility, \fB\-\-logmode \fIlogfacility
-Can be used to specify the logging facility. \fIlogfacility\fR can be "stdout" 
-for stdout (the default), "syslog" to use the logging daemon or 
+Can be used to specify the logging facility. \fIlogfacility\fR can be 
+\fIstdout\fR
+for stdout (the default), \fIsyslog\fR to use the logging daemon or 
 a valid filename to log to this file.
 .TP
 \fB \-d\fR, \fB\-\-daemonize
@@ -82,6 +80,10 @@ Kills a running freepopsd.
 .TP
 \fB \-x \fRpluginfile, \fB\-\-toxml \fRpluginfile
 Prints on standard output the XML description of the plugin.
+.TP
+\fB \-\-fpat \fIauthtype\fR, \fB\-\-force\-proxy\-auth\-type \fIauthtype
+Force the use of a specific proxy auth method. Accepted types are
+\fIbasic\fR, \fIdigest\fR, \fIntlm\fR and \fIgss\fR.
 .TP
 \fB \-h\fR, \fB\-\-help
 Prints the usage message.

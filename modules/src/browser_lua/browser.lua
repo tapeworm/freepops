@@ -438,9 +438,11 @@ function Private.init_curl(self)
 	-- to debug
 	--self.curl:setopt(curl.OPT_VERBOSE,1)
 	
-	-- go!
+	-- useragent 
 	self.curl:setopt(curl.OPT_USERAGENT,self.useragent or 
 		"cURL/browser.lua (;;;;) FreePOPs")
+
+	-- proxy
 	if self.proxy ~= nil then
 		self.curl:setopt(curl.OPT_PROXY,self.proxy)
 		-- old cURL < 7.10.0 ?? have no OPT_PROXYTYPE
@@ -448,25 +450,52 @@ function Private.init_curl(self)
 			self.curl:setopt(curl.OPT_PROXYTYPE,curl.PROXY_HTTP)
 		end
 	end
+
+	-- init the proxy authentication stuff 
+	-- some functions to make the code more readable
+	local function init_generic_proxy()
+		if browser.ssl_enabled() then
+			self.curl:setopt(curl.OPT_PROXYAUTH,
+				curl.AUTH_BASIC + curl.AUTH_NTLM + 
+				curl.AUTH_GSSNEGOTIATE + 
+				curl.AUTH_DIGEST)
+		else
+			self.curl:setopt(curl.OPT_PROXYAUTH,
+				curl.AUTH_BASIC)
+		end
+	end
+
+	local fpat_2_curl = {
+		["gss"] = curl.AUTH_GSSNEGOTIATE,
+		["ntlm"] = curl.AUTH_NTLM,
+		["digest"] = curl.AUTH_DIGEST,
+		["basic"] = curl.AUTH_BASIC,
+	}
+
+	local function init_specific_proxy(at)
+		local a = fpat_2_curl[at]
+		if a ~= nil then
+			self.curl:setopt(curl.OPT_PROXYAUTH,a)
+		else
+			log.error_print("Internal error, invalid fpat " .. at)
+		end
+	end
+	
 	if self.proxyauth ~= nil then
 		self.curl:setopt(curl.OPT_PROXYUSERPWD,self.proxyauth)
 		-- old cURL < 7.10.7 have no OPT_PROXYAUTH
 		if curl.OPT_PROXYAUTH ~= nil then
-			if browser.ssl_enabled() then
-				self.curl:setopt(curl.OPT_PROXYAUTH,
-					curl.AUTH_BASIC + curl.AUTH_NTLM + 
-					curl.AUTH_GSSNEGOTIATE + 
-					curl.AUTH_DIGEST)
+			if self.fpat ~= nil then
+				init_specific_proxy(self.fpat)
 			else
-				self.curl:setopt(curl.OPT_PROXYAUTH,
-					curl.AUTH_BASIC)
+				init_generic_proxy()
 			end
 		end
 	end
+	
 	-- tells the library to follow any Location:
         -- header that the server sends as part of an HTTP header
 	self.curl:setopt(curl.OPT_FOLLOWLOCATION,0)
-
 end
 
 function Private.serialize(self,name)
@@ -518,6 +547,7 @@ function browser.new()
 		proxy = os.getenv("LUA_HTTP_PROXY"),
 		proxyauth = os.getenv("LUA_HTTP_PROXYAUTH"),
 		useragent = os.getenv("LUA_HTTP_USERAGENT"),
+		fpat = os.getenv("LUA_FORCE_PROXY_AUTH_TYPE"),
 		followRefreshHeader = false,
 	}
 
@@ -532,7 +562,7 @@ function browser.new()
 	b:init_curl()
 	
 	-- see what we have done
-	--b:show()
+	b:show()
 	
 	return b
 end

@@ -185,7 +185,9 @@ end
 function Hidden.parse_header(self,gl_h)
 	local _,_,ret = string.find(gl_h[1],"[^%s]+%s+(%d%d%d)")
 	if ret == nil then
-	
+		print("STRANGE HEADER!")
+		table.foreach(gl_h,print)
+		return Hidden.error("malformed HTTP header line: "..gl_h[1])
 	end
 	
 	-- HTTP 1xx

@@ -14,7 +14,7 @@ PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.org/download.php?file=owa.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
-PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
+PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@lycos.co.uk","@lycos.ch","@lycos.de","@lycos.es",
 	"@lycos.it","@lycos.at","@lycos.nl","@spray.se"}
 PLUGIN_PARAMETERS = {}

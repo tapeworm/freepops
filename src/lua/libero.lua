@@ -36,7 +36,7 @@ PLUGIN_HOMEPAGE = "http://freepops.org/"
 
 -- list of strings, one required, one contact for each author
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
-PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
+PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
 
 -- list of strings, one required
 PLUGIN_DOMAINS = {"@libero.it","@inwind.it","@aol.it","@blu.it"}

@@ -10,11 +10,11 @@
 
 PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "Foo web mail"
-PLUGIN_REQUIRE_VERSION = "----"
+PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sf.net/download.php?file=foo.lua"
+PLUGIN_URL = "http://freepops.sf.net/"
 PLUGIN_HOMEPAGE = "http://freepops.sf.net"
-PLUGIN_AUTHORS_NAMES = {"--- "}
+PLUGIN_AUTHORS_NAMES = {"FP tutorial"}
 PLUGIN_AUTHORS_CONTACTS = {"-----"}
 PLUGIN_DOMAINS = {"@..."}
 PLUGIN_PARAMETERS = { 

@@ -14,7 +14,7 @@ PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.org/download.php?file=aol.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
-PLUGIN_AUTHORS_CONTACTS = {"russells@despammed.com"}
+PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {
 "@aol.com","@aol.com.ar","@aol.fr","@aol.com.mx","@aol.com.au","@aol.de",
 "@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com"} 

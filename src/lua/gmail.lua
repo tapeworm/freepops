@@ -15,7 +15,7 @@ PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.org/download.php?file=gmail.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Rami Kattan"}
-PLUGIN_AUTHORS_CONTACTS = {"rkattan{at}gmail.com"}
+PLUGIN_AUTHORS_CONTACTS = {"rkattan (at) gmail (.) com"}
 PLUGIN_DOMAINS = {"@gmail.com"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {

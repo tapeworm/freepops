@@ -15,7 +15,7 @@ PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.org/download.php?file=tin.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
-PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
+PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@tin.it","@virgilio.it"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {

@@ -18,7 +18,7 @@ PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.org/download.php?file=popforward.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
-PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
+PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@..."}
 PLUGIN_PARAMETERS = {
 	{name = "realusername", description = {

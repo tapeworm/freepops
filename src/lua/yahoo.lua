@@ -16,7 +16,8 @@ PLUGIN_URL = "http://freepops.org/download.php?file=yahoo.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
-	{"russells@despammed.com","ncocchiaro@users.sourceforge.net"}
+	{"russells (at) despammed (.) com",
+	 "ncocchiaro (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {

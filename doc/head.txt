@@ -1,0 +1,34 @@
+//for .h files
+
+/******************************************************************************
+ * $Id$
+ * This file is part of FreePOPs (http://freepops.sf.net)                     *
+ * This file is distributed under the terms of GNU GPL license.               *
+ ******************************************************************************/
+
+
+/******************************************************************************/
+ /*!
+  * \file   filename.h
+  * \brief  short description
+  * eventual long description
+  * \author Name <nickname@users.sourceforge.net>
+  */
+/******************************************************************************/
+
+//for .c files
+
+/******************************************************************************
+ * $Id$
+ * This file is part of FreePOPs (http://freepops.sf.net)                     *
+ * This file is distributed under the terms of GNU GPL license.               *
+ ******************************************************************************/
+
+/******************************************************************************
+ * File description:
+ *	bla bla bla
+ * Notes:
+ *	blablabla
+ * Authors:
+ * 	Name <nickname@users.sourceforge.net>
+ ******************************************************************************/

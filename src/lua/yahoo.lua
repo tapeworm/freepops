@@ -3,6 +3,7 @@
 --  
 --  Released under the GNU/GPL license
 --  Written by Russell Schwager <russells@despammed.com>
+--  Yahoo.it added by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
 -- ************************************************************************** --
 
 -- Globals
@@ -61,6 +62,8 @@ local globals = {
   strInbox = "Inbox",
   strBulk = "@B@Bulk",
   strTrash = "Trash",
+  strDraft = "Draft",
+  strSent = "Sent",
 
   -- Command URLS
   --
@@ -359,13 +362,21 @@ function user(pstate, username)
     globals.strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&head=f&toc=1&MsgId=%s&bodyPart=%s"
   end
   
-  -- Get the folder
+  -- Get the folder (also supports yahoo.it folders)
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder or globals.strInbox
-  if mbox == "bulk" or mbox == "Bulk" then
+  if mbox == "bulk" or mbox == "Bulk" or mbox == "Anti-Spam" or mbox == "antispam" then
     mbox = globals.strBulk
+  elseif mbox == "InArrivo" or mbox == "inarrivo" then
+    mbox = globals.strInbox
+  elseif mbox == "Bozza" or mbox == "bozza" then
+    mbox = globals.strDraft
+  elseif mbox == "Cestino" or mbox == "cestino" then
+    mbox = globals.strTrash
+  elseif mbox == "Inviati" or mbox == "inviati" then
+    mbox = globals.strSent
   end
-
+  
   internalState.strMBox = mbox
   return POPSERVER_ERR_OK
 end

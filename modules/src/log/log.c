@@ -82,6 +82,11 @@ void copy_file(char *src, char* dst){
 	fpin = fopen(src,"r");
 	fpout = fopen(dst,"w");
 
+	if ( fpin == NULL || fpout == NULL) {
+		fprintf(stderr,"Unable to open %s or %s\n",src,dst);
+		return;
+	}
+
 	for(;;){
 		n = fread(buf, 1, 512, fpin);
 
@@ -92,7 +97,6 @@ void copy_file(char *src, char* dst){
 
 	fclose(fpin);
 	fclose(fpout);
-
 }
 
 // controls logfile size
@@ -109,18 +113,21 @@ int log_rotate(char *logfile)
 
 	rc = stat(logfile, &filestats);
 	
-	if (rc != -1 && filestats.st_size > MAX_LOG_SIZE){
+	if (rc != -1 && filestats.st_size > MAX_LOG_SIZE) {
 		char *freefile=get_free_logfile(logfile);
 		// creates backup file
 		copy_file(logfile, freefile);
 		free(freefile);
-		if(fd != NULL)
-			fclose(fd);
 		remove(logfile);
 	}
 
-	if(reopen)
+	if(reopen) {
+		fclose(fd);
 		fd = fopen(logfile, "a");
+		if (fd == NULL) {
+			fprintf(stderr,"Unable to open %s\n",logfile);
+		}
+	}
 	
 	pthread_mutex_unlock(&mutex);
 

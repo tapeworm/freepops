@@ -146,6 +146,8 @@ www.libero.it
 , 
 \family typewriter 
 @blu.it
+\family default 
+.
 \layout Description
 
 popforward.lua This is a plugin mainly used for testing some FreePOPs modules.
@@ -154,26 +156,26 @@ popforward.lua This is a plugin mainly used for testing some FreePOPs modules.
  This allowed us to test FreePOPs without having any real plugin already
  written.
  You may consider using it to masquerade a really buggy POP3 server that
- can be easily compromised trought malicious requests.
+ can be easily compromised trough malicious requests.
  Obviously We suggest you to examine properly this plugin, and hack on it
  to prevent malicious requests to your server.
 \layout Description
 
-aggregator.lua Many sites provide an RSS backend for indexing theys news.
- This plugin make this RSS behave as a mailbox in wich you can find a mail
- for each news
+aggregator.lua Many sites provide an RSS backend for indexing theirs news.
+ This plugin make this RSS behave as a mailbox in which you can find a mail
+ for each news.
 \layout Description
 
-flatnuke.lua This is a more powerful aggregator for the flatnuke
+flatnuke.lua This is a more powerful aggregator for the FlatNuke
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
 See HTTP://flatnuke.sourceforge.net for the project homepage
 \end_inset 
 
- based sites, and allows the download of all the news body.
+-based websites, and allows the download of the whole news body.
 \layout Section
 
 History
@@ -255,6 +257,14 @@ config.lua
 /etc/freepops/
 \family default 
  in a posix environment.
+\layout Standard
+
+Later you will learn that plugins are associated with a mail address domain,
+ and some of these plugins are aliased to other domains to make it easier
+ to fetch some news from some sites.
+ Read the plugin documentation for more info about them, and maybe send
+ as a mail with you new alias if you want it to be integrated in the next
+ FreePOPs release.
 \layout Section
 
 FreePOPs command line parameters
@@ -320,7 +330,7 @@ To configure your email client you must change the pop3 server settings.
 -p
 \family default 
  switch you should now what you are doing.
- You have to use a full username, for examlple 
+ You have to use a full username, for example 
 \family typewriter 
 something@libero.it
 \family default 
@@ -329,8 +339,8 @@ something@libero.it
 something
 \family default 
 .
- This is beacause FreePOPs chooses the plugin to load looking at you username.
- Later we will present all the plugins and theyr associated domains.
+ This is because FreePOPs chooses the plugin to load looking at you username.
+ Later we will present all the plugins and their associated domains.
 \layout Section
 
 Plugins
@@ -340,15 +350,526 @@ Here we give a detailed description of each plugin.
 \layout Subsection
 
 libero.lua
+\layout Standard
+
+This plugin allows you to read the mails you have in a 
+\family typewriter 
+@libero.it
+\family default 
+, 
+\family typewriter 
+@iol.it
+\family default 
+, 
+\family typewriter 
+@inwind.it
+\family default 
+ and 
+\family typewriter 
+@blu.it 
+\family default 
+mailbox.
+ This means you can still use your favorite mail reader instead of using
+ the webmail.
+ This plugin acts as a browser that surfs you webmail account and make it
+ appear as a POP3 server.
+ For more info on this plugin you may read the LiberoPOPs (FreePOPs ancestor)
+ website at 
+\family typewriter 
+http://liberopops.sourceforge.net
+\layout Standard
+
+To use this plugin you have to use your full email address as the username
+ and your real password as the password.
 \layout Subsection
 
 popforward.lua
+\layout Standard
+
+This plugin was developed to test FreePOPs before any real plugins were
+ written.
+ It simply forwards to a real POP3 server your local requests.
+ This can be used for masquerading a buggy POP3 server, but if you think
+ you need this you should examine carefully the plugin code and add checks
+ to improve the detection/avoidance of malicious requests, since the plugins
+ was not born with security in mind.
+ 
+\layout Standard
+
+To use this plugin you have to edit the config.lua file.
+ This because we can't add all the existing POP3 server to this file :)
+ The plugin wants two arguments, the POP3 host and the port (usually 
+\family typewriter 
+110
+\family default 
+) on which the server listens.
+ This is an example of a configuration line for this plugin, in which all
+ email addresses of the 
+\family typewriter 
+@virgilio.it
+\family default 
+ domain are forwarded to 
+\family typewriter 
+in.virgilio.it:110
+\family default 
+:
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- popforward plugin 
+\layout Standard
+freepops.MODULES_MAP["virgilio.it"]     = {         
+\layout Standard
+       name="popforward.lua",         
+\layout Standard
+       args={ 
+\layout Standard
+              port=110,
+\layout Standard
+              host="in.virgilio.it"
+\layout Standard
+       } 
+\layout Standard
+} 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
 \layout Subsection
 
 aggregator.lua
+\layout Standard
+
+Usually you can benefit from the W3C's RSS format when you read some website
+ news.
+ The RSS file indexes the news, providing a link to them.
+ This plugin can make you mail client see the RSS file as a mailbox from
+ which you can download each news as if it was a mail message.
+ The only limitation is that this plugin can fetch only a news summary plus
+ the news link.
+ 
+\layout Standard
+
+To use this plugin you have to use a casual username with the 
+\family typewriter 
+@aggregator
+\family default 
+ suffix (ex: 
+\family typewriter 
+foo@aggregator
+\family default 
+) and as the password the URL of the RSS file(ex: 
+\family typewriter 
+http://www.securityfocus.com/rss/vulnerabilities.xml
+\family default 
+).
+ For your commodity we added some alias for you.
+ This means you have not to search by hand the URL of the RSS file.
+ We added some domain, for example 
+\family typewriter 
+@securityfocus.com
+\family default 
+, that can be used to directly use the aggregator plugin with these website.
+ To use these alias you have to use a username in the form 
+\family typewriter 
+something@aggregatordomain
+\family default 
+ and a casual password.
+ This is the list of aliases for the aggregator plugin.
+\newline 
+
+\newline 
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="8" columns="2">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+aggregatordomain
+\end_inset 
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+freepops.rss.en
+\end_inset 
+</cell>
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://freepops.sourceforge.net/
+\family default 
+ news (English)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+freepops.rss.it
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://freepops.sourceforge.net/
+\family default 
+ news (Italian)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+flatnuke.sf.net
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://flatnuke.sourceforge.net/
+\family default 
+ news (Italian)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+ziobudda.net
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://ziobudda.net/
+\family default 
+ news (both Italian and English)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+punto-informatico.it
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://punto-informatico.it/
+\family default 
+ news (Italian)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+linuxdevices.com
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://linuxdevices.com/
+\family default 
+ news (English)
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+securityfocus.com
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://www.securityfocus.com/ 
+\family default 
+new vulnerabilities (English)
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
 \layout Subsection
 
 flatnuke.lua
+\layout Standard
+
+This plugin is an aggregator plugin specialized in the websites made with
+ the FlatNuke
+\begin_inset Foot
+collapsed false
+
+\layout Standard
+
+HTTP://flatnuke.sourceforge.net
+\end_inset 
+
+ content management system, or other sites that use the same news format
+ like the FreePOPs website.
+ Since in a FlatNuke site the news are stored in plain xml files this plugin
+ is able to fetch the whole news, and not only the headings as the aggregator
+ plugin.
+ This is really useful if you don't want to surf the website to read the
+ news.
+\layout Standard
+
+To use this plugin you have to use a username with the 
+\family typewriter 
+@flatnuke
+\family default 
+ domain (ex: 
+\family typewriter 
+something@flatnuke
+\family default 
+) and a flatnuke homepage URL as the password (ex: 
+\family typewriter 
+http://flatnuke.sourceforge.net/
+\family default 
+, no need for the RSS file URL since FlatNuke puts the RSS in a fixed and
+ well known position.
+ There are some alias for FlatNuke sites, see the aggregator plugin documentatio
+n to know what this means):
+\newline 
+
+\newline 
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+aggregatordomain
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+freepops.en
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://freepops.sourceforge.net/
+\family default 
+ full news (English)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+freepops.it
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://freepops.sourceforge.net/
+\family default 
+ full news (Italian)
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+flatnuke.it
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://flatnuke.sourceforge.net/
+\family default 
+ full news (Italian)
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
 \layout Section
 
 Creating a plugin
@@ -901,8 +1422,13 @@ Send to the developers the log, plus any other info like your system type
 Authors
 \layout Standard
 
-This manual has been written by Enico Tassi <gareuselesinge@users.sourceforge.net>
- and revised by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+This manual has been written by Enico Tassi 
+\family typewriter 
+<gareuselesinge@users.sourceforge.net>
+\family default 
+ and revised by Nicola Cocchiaro 
+\family typewriter 
+<ncocchiaro@users.sourceforge.net>
 \layout Subsection
 
 Developers
@@ -911,34 +1437,52 @@ Developers
 FreePOPs is developed by:
 \layout Itemize
 
-Enico Tassi <gareuselesinge@users.sourceforge.net>
+Enico Tassi 
+\family typewriter 
+<gareuselesinge@users.sourceforge.net>
 \layout Itemize
 
-Alessio Caprari <alessiofender@users.sourceforge.net>
+Alessio Caprari 
+\family typewriter 
+<alessiofender@users.sourceforge.net>
 \layout Itemize
 
-Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+Nicola Cocchiaro 
+\family typewriter 
+<ncocchiaro@users.sourceforge.net>
 \layout Itemize
 
-Simone Vellei <simone_vellei@users.sourceforge.net>
+Simone Vellei 
+\family typewriter 
+<simone_vellei@users.sourceforge.net>
 \layout Standard
 
 LiberoPOPs id developed by:
 \layout Itemize
 
-Enico Tassi <gareuselesinge@users.sourceforge.net>
+Enico Tassi 
+\family typewriter 
+<gareuselesinge@users.sourceforge.net>
 \layout Itemize
 
-Alessio Caprari <alessiofender@users.sourceforge.net>
+Alessio Caprari 
+\family typewriter 
+<alessiofender@users.sourceforge.net>
 \layout Itemize
 
-Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+Nicola Cocchiaro 
+\family typewriter 
+<ncocchiaro@users.sourceforge.net>
 \layout Itemize
 
-Simone Vellei <simone_vellei@users.sourceforge.net>
+Simone Vellei 
+\family typewriter 
+<simone_vellei@users.sourceforge.net>
 \layout Itemize
 
-Giacomo Tenaglia <sonicsmith@users.sourceforge.net>
+Giacomo Tenaglia 
+\family typewriter 
+<sonicsmith@users.sourceforge.net>
 \layout Section
 
 Thanks

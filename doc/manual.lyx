@@ -58,11 +58,15 @@ rule{15cm}{2mm}
 \layout Standard
 
 \backslash 
-vspace{5mm}
+vspace{2mm}
 \layout Standard
 
 \backslash 
 normalsize{Written by Enrico Tassi, Nicola Cocchiaro}
+\layout Standard
+
+\backslash 
+vspace{1cm}
 \layout Standard
 $Date$
 \layout Standard

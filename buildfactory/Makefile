@@ -34,6 +34,10 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/buildfactory/freepopsd.vbs \
 		_win_/freepops/
+	$(H)cp _win_/freepops-$(VERSION)/buildfactory/README.FPM.*.txt \
+		_win_/freepops/
+	$(H)cp _win_/freepops-$(VERSION)/buildfactory/SERVICE.*.txt \
+		_win_/freepops/	
 	$(H)cp win/*.exe _win_/freepops/
 	$(H)#cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/
 	$(H)#cp _win_/freepops-$(VERSION)/doc/manual-it.pdf _win_/freepops/

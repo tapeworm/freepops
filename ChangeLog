@@ -1,3 +1,5 @@
+- added pegasus manual to win installer
+- finished win service with manual alinks
 - fixed aggregator.lua
 - added FreePOPsService.exe to the win distribution, not completely working.
 - fixed debian chroot jail (thanks Alessandro B.).

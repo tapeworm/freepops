@@ -1,0 +1,27 @@
+                              FreePOPs Service Manual
+
+* Installation
+
+  The service will start during boot process. To change options you 
+  must uninstall and install it again.
+
+  syntax:
+    freeservice.exe install [options]
+
+  examples:
+    freeservice.exe install
+    freeservice.exe install -p110
+    freeservice.exe install -p110 -w
+
+
+* Uninstallation
+
+  This will remove the service so it will not start on boot. 
+  HKLM\\Software\\NSIS_FreePOPs Command_Line value will not be removed.
+  FreePOPs uninstall process will remove it.
+
+  syntax:
+    freeservice.exe uninstall
+
+  exsample:
+    freeservice.exe uninstall

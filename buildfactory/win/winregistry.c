@@ -124,10 +124,10 @@ LONG rc;
 HKEY k;
 HKEY kroot;
 
-rc = RegOpenKeyEx(root,NULL,0,KEY_QUERY_VALUE,&kroot);
+rc = RegOpenKeyEx(root,NULL,0,KEY_SET_VALUE,&kroot);
 ERROR_CHECK(rc);
 
-rc = RegOpenKeyEx(kroot,path,0,KEY_QUERY_VALUE,&k);
+rc = RegOpenKeyEx(kroot,path,0,KEY_SET_VALUE,&k);
 ERROR_CHECK(rc);
 
 //printf("setto %s a %s\n",key,val);

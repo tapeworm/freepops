@@ -1,5 +1,3 @@
-// non parte il filgio !!!! XXX
-
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>

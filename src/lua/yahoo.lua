@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.0"
+PLUGIN_VERSION = "0.1.1"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -439,7 +439,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   if internalState.bMarkMsgAsUnread == true then
     local cmdUrl = string.format(globals.strCmdUnread, internalState.strMailServer,
       internalState.strMBox, uidl, internalState.strCrumb);
-    browser:get(cmdUrl) -- We don't care about the results.
+    browser:get_uri(cmdUrl) -- We don't care about the results.
   end
 
   return POPSERVER_ERR_OK

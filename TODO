@@ -23,5 +23,6 @@ for next version or later:
 	http://freepops.diludovico.it/index.php?showtopic=1296&st=0&#entry7332
 	fix cookie for _secure
 	fix gmail exportation
+	fix gmail 695 tonumber(nil)
 
 - eof -

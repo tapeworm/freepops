@@ -29,6 +29,13 @@ Private.html_tags = {
 	["/li"] = '\n',
 	["img"] = '[image]',
 	["/tr"] = '\n',
+	["tr"] = "",
+	["td"] = "\t",
+	["/td"] = "",
+	["th"] = "",
+	["/th"] = "",
+	["table"] = "",
+	["/table"] ="",
 	["pre"] = "",
 	["/pre"] = "",
 	["b"] = " *",
@@ -57,7 +64,7 @@ Private.html_tags = {
 		return "[" .. (x or "link") .. "]"
 		end,
 	["/a"] = "",
-	["tr"] = "\n" .. string.rep("-",72) .. "\n",
+	["hr"] = "\n" .. string.rep("-",72) .. "\n",
 	["font"] = "",
 	["/font"] = "",
 	["em"] = "",
@@ -97,7 +104,7 @@ Private.html_tags_plain = {
 	["/p"] = "",
 	["a"] = "",
 	["/a"] = "",
-	["tr"] = "",
+	["hr"] = "",
 	["font"] = "",
 	["/font"] = "",
 	["em"] = "",
@@ -108,6 +115,13 @@ Private.html_tags_plain = {
 	["style"] = "",
 	["/style"] = "",
 	["meta"] = "",
+	["tr"] = "",
+	["td"] = "\t",
+	["/td"] = "",
+	["table"] = "",
+	["/table"] ="",
+	["th"] = "",
+	["/th"] = "",
 }
 
 
@@ -391,3 +405,107 @@ function mimer.txt2mail(s)
 		return s
 	end
 end
+
+Private.extra = {
+	string.byte("%",1),
+	string.byte("-",1)
+}
+
+function Private.is_an_extra(c)
+	return table.foreach(Private.extra,
+		function(_,m) 
+			if m == c then 
+				return true 
+			end 
+		end) or false
+end
+
+function Private.domatch(b,v,a)
+	local vU = string.upper(v)
+	local vL = string.lower(v)
+	local r = {}
+	for i=1,string.len(v) do
+		if Private.is_an_extra(string.byte(vU,i)) then
+			r[i] = string.char(string.byte(vU,i))
+		else
+			r[i]="["..string.char(string.byte(vU,i))..
+				string.char(string.byte(vL,i)).."]"
+		end
+	end
+	return b .. table.concat(r) .. a
+end
+
+---
+--Removes unwanted tags from an html string.
+--@param p table a list of tags in this form {"head","p"}.
+--@return string the cleaned html.
+function mimer.remove_tags(s,p)
+	table.foreachi(p,function(k,v)
+		s = string.gsub(s,Private.domatch("<%s*[!/]?",v,"[^>]*>"),"")
+	end)
+	return s
+end
+
+function Private.lines_of_string(s)
+	local result = {}
+	while s ~= "" do
+		local a,b = string.find(s,"\n")
+		if a == nil then
+			table.insert(result,s)
+			break
+		end
+		table.insert(result,string.sub(s,1,a))
+		s = string.sub(s,b+1,-1)
+	end
+	return result
+end
+
+---
+-- Deletes some fields in a mail header.
+--@param s string a valid mail header.
+--@param p table a list of mail headers in this form {"content%-type","date"} 
+-- 	(with - escaped with %).
+--@return string the cleaned header.
+function mimer.remove_lines_in_proper_mail_header(s,p)
+	local s1 = Private.lines_of_string(s)
+	local remove_next = false
+	local result = {}
+	
+	for i,l in ipairs(s1) do
+		local skip = false
+		if remove_next then
+			if string.byte(l,1)==string.byte(" ") or
+				string.byte(l,1)==string.byte("\t")then
+				skip = true
+			else
+				remove_next = false
+			end
+		end
+			
+		if not skip then
+			local match = table.foreach(p,function(k,m)
+				local _,_,x = string.find (l,
+					Private.domatch("^(",m,")"))
+				if x ~= nil then
+					return true
+				end
+			end)
+
+			if match == nil then
+				table.insert(result,l)
+			else
+				remove_next = true
+			end
+		end
+	end
+	return table.concat(result)
+end
+
+---
+-- Reproduces some bugs of the MSHTML.
+-- @return string the altered html.
+function mimer.mshtm_shitify(s)
+	return string.gsub(s,"<([^>]*)>",function(c)
+		return "<"..string.gsub(c,"=","=3D")..">" end)
+end
+

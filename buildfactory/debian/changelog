@@ -1,8 +1,14 @@
+freepops (0.0.6-1) unstable; urgency=low
+
+  * fixed lycos 
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sat, 19 Jun 2004 15:30:33 +0200
+
 freepops (0.0.5-1) unstable; urgency=low
 
   * lycos
 
- -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Tue, 15 Jun 2004 16:15:50 +0200
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sat, 19 Jun 2004 15:30:31 +0200
 
 freepops (0.0.4-1) unstable; urgency=low
 

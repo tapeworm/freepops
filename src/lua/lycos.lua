@@ -59,6 +59,26 @@ local lycos_string = {
 	attach_end = '\n</P>\n%s+</div>\n',
 	head_begin = '<div style="text%-align:left;" class="whitecontent">',
 	head_end = '</div>',
+	html_preamble = [[
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META http-equiv="Content-type" content="text/html;charset=iso-8859-1">
+	<META content="MSHTML 6.00.2800.1400" name="FPGENERATOR" >
+	<STYLE type="text/css">
+	<!--
+ 	body {
+	color: #000000;
+	font-family: Helvetica;
+  	}
+	-->
+	</STYLE>
+</HEAD>
+<BODY>]],
+	html_conclusion = [[
+</BODY>
+</HTML>]]
+
 }
 
 -- ************************************************************************** --
@@ -208,6 +228,47 @@ function lycos_login()
 end
 
 -- -------------------------------------------------------------------------- --
+-- Produces a better body to pass to the mimer
+--
+--
+function mangle_body(s)
+	local _,_,x = string.find(s,"^%s*(<[Pp][Rr][Ee]>)")
+	if x ~= nil then
+		s = mimer.html2txtmail(s)
+		return s,nil
+	else
+		-- the webmail damages these tags
+		s = mimer.remove_tags(s,
+			{"html","head","body","doctype","void","style"})
+	
+		s = lycos_string.html_preamble .. s .. 
+			lycos_string.html_conclusion
+
+		s = mimer.mshtm_shitify(s)
+
+		return nil,s
+	end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Produces a hopefully standard header
+--
+--
+function mangle_head(s)
+	s = mimer.html2txtplain(s)
+	
+	local subst = 1
+	while subst > 0 do
+		s,subst = string.gsub(s,"\n\n","\n")
+	end
+	
+	s = mimer.remove_lines_in_proper_mail_header(s,{"content%-type",
+		"content%-disposition","mime%-version"})
+
+	s = mimer.txt2mail(s)
+	return s
+end
+-- -------------------------------------------------------------------------- --
 -- Parse the message an returns head + body + attachments list
 --
 --
@@ -224,70 +285,19 @@ function lycos_parse_webmessage(pstate,msg)
 	local uri = string.format(lycos_string.save,b:wherearewe(),uidl)
 	local urih = string.format(lycos_string.save_header,b:wherearewe(),uidl)
 	
+	-- get the main mail page
 	local f,rc = b:get_uri(uri,cb)
-	
+
+	-- extract the body an the attach
 	local from,to = string.find(f,lycos_string.attach_begin)
-
-	--print(from,to)
-
 	local f1 = string.sub(f,to+1,-1)
-
 	local from1,to1 = string.find(f1,lycos_string.attach_end)
-
-	--print(from1,to1)
-
 	local body = string.sub(f1,1,from1-1)
-
 	local attach = string.sub(f1,from1,-1)
 
-	local function mangle_body(s)
-		local _,_,x = string.find(s,"^%s*(<[Pp][Rr][Ee]>)")
-		if x ~= nil then
-			s = mimer.html2txtmail(s)
-			return s,nil
-		else
-			-- the webmail damages these tags
-			s = string.gsub(s,"<%s*/?[Hh][Tt][Mm][Ll][^>]*>","")
-			s = string.gsub(s,"<%s*/?[Bb][Oo][Dd][Yy][^>]*>","")
-			s = string.gsub(s,"<%s*/?[Hh][Ee][Aa][Dd][^>]*>","")
-			s = "<html><head></head><body>"..s.."</body></html>"
-			return nil,s
-		end
-	end
-
-	local body,body_html = mangle_body(body)
-	
-	local f,rc = b:get_uri(urih,cb)
-	
-	local from,to = string.find(f,lycos_string.head_begin)
-	local f1 = string.sub(f,to+1,-1)
-	
-	local from1,to1 = string.find(f1,lycos_string.head_end)
-
-	local head = string.sub(f1,1,from1-1)
-
-	--print(from,to,from1,to1)
-
-	local function mangle_head(s)
-		s = mimer.html2txtplain(s)
-		-- FIXME: remove headers multiple lines
-		s = string.gsub(s,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*[^\n]*\n","")
-		s = string.gsub(s,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Dd][Ii][Ss][Pp][Oo][Ss][Ii][Tt][Ii][Oo][Nn]%s*:%s*[^\n]*\n","")
-		s = string.gsub(s,"[Mm][Ii][Mm][Ee]%-[Vv][Ee][Rr][Ss][Ii][Oo][Nn]%s*:%s*[^\n]*\n","")
-
-		local subst = 1
-		while subst > 0 do
-			s,subst = string.gsub(s,"\n\n","\n")
-		end
-		s = mimer.txt2mail(s)
-		return s
-	end
-
-	head = mangle_head(head)
-	
+	-- extracts the attach list
 	local x = mlex.match(attach,lycos_string.attachE,lycos_string.attachG)
 	--x:print()
-	--print(head)
 	
 	local n = x:count()
 	local attach = {}
@@ -299,6 +309,21 @@ function lycos_parse_webmessage(pstate,msg)
 		table.setn(attach,table.getn(attach) + 1)
 	end
 
+	-- mangles the body
+	local body,body_html = mangle_body(body)
+	
+	-- gets the header
+	local f,rc = b:get_uri(urih,cb)
+
+	-- extracts the important part
+	local from,to = string.find(f,lycos_string.head_begin)
+	local f1 = string.sub(f,to+1,-1)
+	local from1,to1 = string.find(f1,lycos_string.head_end)
+	local head = string.sub(f1,1,from1-1)
+
+	-- mangles the header
+	head = mangle_head(head)
+	
 	return head,body,body_html,attach
 end
 
@@ -437,9 +462,6 @@ function stat(pstate)
 		-- calls match on the page s, with the mlexpressions
 		-- statE and statG
 		local x = mlex.match(s,lycos_string.statE,lycos_string.statG)
-
-		--print(">>>"..s.."<<<<")
-
 		--x:print()
 
 		-- the number of results

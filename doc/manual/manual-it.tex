@@ -118,8 +118,16 @@ per mailbox con domini come \texttt{@libero.it}, \texttt{@iol.it},
 \texttt{@inwind.it}, \texttt{@blu.it}.
 \item [tin.lua]Questo plugin supporta in pieno la webmail di \texttt{communicator.virgilio.it}
 per mailbox con domini come \texttt{@tin.it}, \texttt{@virgilio.it}.
-\item [lycos.lua]Questo plugin supporta la webmail \texttt{mail.lycos.it}
-per mailbox col dominio \texttt{@lycos.it}.
+\item [owa.lua]Questo plugin supporta le webmail che usano HTTPMAIL.
+Supporta i domini
+\texttt{@lycos.it}, 
+\texttt{@lycos.co.uk},
+\texttt{@lycos.ch},
+\texttt{@lycos.de},
+\texttt{@lycos.es},
+\texttt{@lycos.at} e
+\texttt{@lycos.nl}; potenzialmente puo' essere esteso anche ad altre
+webmail che usano tale protocollo.
 \item [popforward.lua]Questo è un plugin usato principalmente per testare
 moduli di FreePOPs. Esso agisce come un forward POP3, semplicemente
 si comporta come mediatore tra voi ed un vero server POP3. Questo
@@ -530,12 +538,18 @@ Ecco un esempio di username per controllare la cartella \texttt{Spam}:\\
 \texttt{foo@virgilio.it?folder=Spam }
 
 
-\subsection{lycos.lua}
+\subsection{owa.lua}
 
 Questo plugin vi permette di leggere le mail che avete in una mailbox
-\texttt{@lycos.it}. Per usare questo plugin dovete usare il vostro
+\texttt{@lycos.it}, 
+\texttt{@lycos.co.uk},
+\texttt{@lycos.ch},
+\texttt{@lycos.de},
+\texttt{@lycos.es},
+\texttt{@lycos.at} e
+\texttt{@lycos.nl}. Per usare questo plugin dovete usare il vostro
 indirizzo email completo come username e la vostra password reale
-come password.
+come password. Supporta il parametro folder (NON TESTATO).
 
 
 \subsection{popforward.lua}

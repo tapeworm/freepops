@@ -4,11 +4,11 @@
 --  $Id$
 -- 
 --  Released under the GNU/GPL license
---  Written by --put Name here-- <--put email here-->
+--  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "--put version here--"
-PLUGIN_NAME = "--put name here--"
+PLUGIN_VERSION = ".0.0.1"
+PLUGIN_NAME = "O.W.A."
 
 internal_state = {
 	b = nil,

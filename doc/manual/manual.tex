@@ -114,8 +114,17 @@ webmail for mailboxes with domains like \texttt{@libero.it}, \texttt{@iol.it},
 \texttt{@inwind.it}, \texttt{@blu.it}.
 \item [tin.lua]This plugin fully supports the \texttt{communicator.virgilio.it}
 webmail for mailboxes with domains like \texttt{@tin.it}, \texttt{@virgilio.it}.
-\item [lycos.lua]This plugin supports the \texttt{mail.lycos.it} webmail
-for mailboxes with \texttt{@lycos.it} domains.
+\item [owa.lua]This plugin supports the HTTPMAIL webmails.
+Supports 
+\texttt{@lycos.it}, 
+\texttt{@lycos.co.uk},
+\texttt{@lycos.ch},
+\texttt{@lycos.de},
+\texttt{@lycos.es},
+\texttt{@lycos.at} and
+\texttt{@lycos.nl}
+%\texttt{@spray.se} 
+domains. Potentially it supports every HTTPMAIL based webmails.
 \item [popforward.lua]This is a plugin mainly used for testing some FreePOPs
 modules. It acts as a POP3 forward, it simply works as a man in the
 middle of you and a real POP3 server. This allowed us to test FreePOPs
@@ -498,12 +507,19 @@ but other folder may work. This is an example of a username for the
 \texttt{foo@virgilio.it?folder=Spam }
 
 
-\subsection{lycos.lua}
+\subsection{owa.lua}
 
-This is the webmail support for \texttt{@lycos.it} mailboxes. To use
+This is the webmail support for 
+\texttt{@lycos.it}, 
+\texttt{@lycos.co.uk},
+\texttt{@lycos.ch},
+\texttt{@lycos.de},
+\texttt{@lycos.es},
+\texttt{@lycos.at} and
+\texttt{@lycos.nl} mailboxes. To use
 this plugin you have to use your full email address as the username
-and your real password as the password.
-
+and your real password as the password. It supports the folder
+parameter. (FIXME: not tested).
 
 \subsection{popforward.lua}
 

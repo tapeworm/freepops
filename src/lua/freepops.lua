@@ -108,13 +108,56 @@ loadlib = freepops.loadlib
 
 -- load needed module for handling domain
 freepops.load_module_for = function (mailaddress)
+	local function err_format(dom,mail) 
+		return string.format(
+			"Unable to find a module that handles '%s' domain,"..
+			" requested by '%s' mail account\n",dom,mail)
+	end
+	local function err_rtfm()
+		return [[
+		
+	*************************************************************
+	*                      LEGGIMI                              *
+	*                                                           * 
+	* Sembra che tu abbia usato uno username privo della        *
+	* parte @qualcosa. FreePOPs ha bisogno di username con      *
+	* un dominio. Se eri un utente LiberoPOPs puoi leggere      *
+	*                                                           *
+	*   http://freepops.sourceforge.net/it/lp_to_fp.shtml       *
+	*                                                           *
+	* che spiega cosa devi esattamente fare. Per favore non     *
+	* mettere richieste di aiuto sul forum se non hai           *
+	* semplicemente messo il dominio nello username             *
+	*                                                           *
+	*************************************************************
+]],[[
+	
+	*************************************************************
+	*                      README                               *
+	*                                                           *
+	* FreePOPs needs a username wit ha domain part. You         *
+	* must use a username in the form foo@sonothing to use      *
+	* FreePOPs. Please read the manual available at             *
+	*                                                           *
+        *   http://freepops.sourceforge.net/it/files/manual-it.pdf  *
+	*                                                           *
+	* or the tutorial                                           *
+	*                                                           *
+	*   http://freepops.sourceforge.net/en/tutorial/index.shtml *
+	*                                                           *
+	*************************************************************
+]]
+	end
 	local domain = freepops.get_domain(mailaddress)
 	local module,args = freepops.choose_module(domain)
 	if module == nil then
-		log.error_print(string.format(
-			"Unable to find a module that handles '%s' domain,"..
-			" requested by '%s' mail account\n",
-			domain or "",mailaddress))
+		if domain ~= nil then
+			log.error_print(err_format(domain,mailaddress))
+		else
+			local it,en = err_rtfm()
+			log.error_print(it)
+			log.error_print(en)
+		end
 		return nil --ERR
 	else
 		freepops.MODULE_ARGS = args

@@ -36,6 +36,12 @@
 -- <BR/>
 -- <B>add_cookie(url,c)</B> :adds cookie c as if received browsing
 -- url<BR/>
+-- <BR/>
+-- <B>get_cookie(name)</B> :returns the table containing all cookie 
+-- attributes. Since the returned table is the same table the browser uses
+-- (ie, passed by references) be careful. If you modify its values the
+-- browser eill be affected too.
+-- url<BR/>
 
 --============================================================================--
 -- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
@@ -305,6 +311,14 @@ function Private.add_cookie(self,url,c)
 	local u = cookie.parse_url(url)
 	local b = cookie.parse_cookies(c,u.host)
 	cookie.merge(self.cookies,b)
+end
+
+function Private.get_cookie(self,name)
+	return table.foreach(self.cookies,function(k,v)
+			if v.name == name then
+				return v
+			end
+		end)
 end
 
 function Private.get_head(self,url,exhed)

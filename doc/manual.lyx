@@ -2891,7 +2891,7 @@ We have not listed here how we added the dummy return POPSERVER_ERR_OK line
  The source code listed before uses mlex to extract the two interesting
  strings, then parses them searching for the size and the size multiplier
  and the uidl.
- Then sets the mailmessage attributes.
+ Then sets the mail message attributes.
  But here you can see that we just matched the first message.
  To match the other messages we have to inform the mlex module that the
  <b> tag is optional (you can see that only the first message is in bold).
@@ -2993,8 +2993,8 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-Now we have a proper function stat that fill the pstate data structure with
- the info the popserver needs to respond to a stat request.
+Now we have a proper function stat that fill the popstate data structure
+ with the info the popserver needs to respond to a stat request.
  Since the list, uidl, list_all and uidl_all requests can be satisfied with
  the same data we will use the standard function provided by the common.lua
  module.
@@ -3291,9 +3291,9 @@ end{footnotesize}
 \end_inset 
 
 Consider we do the post only if at least one message is marked for deletion.
- anothere important think to keep in mind that making only one port for
- all messages is better than making a single post for each message.
- When it is possible you should reduce the number of http requests as much
+ another important think to keep in mind that making only one port for all
+ messages is better than making a single post for each message.
+ When it is possible you should reduce the number of HTTP requests as much
  as you can since it is here we more freepops from a rabbit to a tortoise.
 \layout Subsubsection
 
@@ -3315,13 +3315,13 @@ You may ask why I talk about this only at point 6, while having the mail
 
 Big messages are a cause of timeout.
  Yes, the most simple way of downloading a message is calling b:get_uri(...)
- and store the message in a variable, and the send it to the mail clinet
- with popserver_callbak().
+ and store the message in a variable, and the send it to the mail client
+ with popserver_callback().
  But think a 5MB mail, downloaded with a 640Kb DSL connection, at full 80KB
  speed, it takes 64 seconds to download.
  This means your plugin will not send any data to the mail client for more
  than one minute.
- And this will make the mail client to diconnect from FreePOPs thinking
+ And this will make the mail client to disconnect from FreePOPs thinking
  the POP3 server is dead.
  So we must send the data to the mail client as soon as we can.
  For this we have the b:pipe_uri() function that calls a callback whenever
@@ -3383,13 +3383,13 @@ Here you see that the callback simply uses popserver_callback to pass the
  But this is the second interesting point.
 \layout Standard
 
-The POP3 protocol should end the retr command answer with a line then containt
+The POP3 protocol should end the retr command answer with a line that contains
  only 3 bytes, .
 \backslash 
 r
 \backslash 
 n.
- But what if a line, inside the mail body, is a simple pont? We have to
+ But what if a line, inside the mail body, is a simple point? We have to
  escape it to ..
 \backslash 
 r
@@ -3431,12 +3431,12 @@ n
  but not in the case of callbacks.
  The send callback will be called with some fresh data, and called more
  than one time if the mail is big.
- And if the searched pattern is truncated betwee two calls the string.gsub(...)
+ And if the searched pattern is truncated between two calls the string.gsub(...)
  method will fail.
  This is why the stringhack module helps us.
  The a object lives as long as the callback function will be called (see
  the closure page of the lua tutorial) and will keep in mind that the searched
- pattern may be trucated.
+ pattern may be truncated.
 \layout Standard
 
 Finally the retr() code
@@ -3526,8 +3526,8 @@ end{footnotesize}
 \layout Standard
 
 Making a good plugin needs a lot of testing.
- You should ask for betha testers at the FreePOPs forum (http://freepops.diludovi
-co.it) and ask the software authors to include it in the main distribuition.
+ You should ask for betha testers at the FreePOPs forum (HTTP://freepops.diludovi
+co.it) and ask the software authors to include it in the main distribution.
  You should also read the webmail contract, check if there is something
  like 
 \begin_inset Quotes eld
@@ -3543,10 +3543,20 @@ I'll never use webmail->pop3 server to read my mail
 (step 8) the so mentioned last part of the tutorial
 \layout Standard
 
-There are a lot of things we hav omitted here.
-\layout Standard
+There are a lot of things we have omitted here.
+\layout Description
 
-
+The\SpecialChar ~
+multi-page\SpecialChar ~
+stat is the real good implementation for stat().
+ We mentioned before that our implementation lists only the messages in
+ the first page.
+ The code for parsing and extracting interesting info from a page is already
+ written, we simply need a function that checks if we are in the last page
+ and if not it changed the value of a uri variable.
+ The uri variable will be used by the fetch function.
+ In this case you should use the support module with the do_until cycle.
+ This is a simple example of do_until 
 \begin_inset ERT
 status Collapsed
 
@@ -3563,6 +3573,186 @@ begin{footnotesize}
 \backslash 
 begin{verbatim}
 \layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill the number of messages and their size 
+\layout Standard
+function stat(pstate)
+\layout Standard
+        ... some code as before ...
+\layout Standard
+
+\layout Standard
+        -- this string will contain the uri to get. it may be updated by        
+\layout Standard
+        -- the check_f function, see later      
+\layout Standard
+        local uri = string.format(libero_string.first,popserver,session_id)
+\layout Standard
+
+\layout Standard
+        -- The action for do_until      
+\layout Standard
+        --      
+\layout Standard
+        -- uses mlex to extract all the messages uidl and size  
+\layout Standard
+        local function action_f (s)
+\layout Standard
+                 -- calls match on the page s, with the mlexpressions
+\layout Standard
+                 -- statE and statG              
+\layout Standard
+                 local x = mlex.match(s,e,g)                 
+\layout Standard
+               
+\layout Standard
+                 -- the number of results                
+\layout Standard
+                 local n = x:count()
+\layout Standard
+                
+\layout Standard
+                 if n == 0 then return true,nil end
+\layout Standard
+ 
+\layout Standard
+                 -- this is not really needed since the structure                
+\layout Standard
+                 -- grows automatically... maybe... don't remember now 
+\layout Standard
+                 local nmesg_old = get_popstate_nummesg(pstate)
+\layout Standard
+                 local nmesg = nmesg_old + n 
+\layout Standard
+                 set_popstate_nummesg(pstate,nmesg)
+\layout Standard
+      
+\layout Standard
+                 -- gets all the results and puts them in the popstate structure                              for i = 1,n do                        
+\layout Standard
+                         ... some code as before ...
+\layout Standard
+ 
+\layout Standard
+                         set_mailmessage_size(pstate,i+nmesg_old,size)                     
+\layout Standard
+                         set_mailmessage_uidl(pstate,i+nmesg_old,uidl)           
+\layout Standard
+                 end     
+\layout Standard
+                
+\layout Standard
+                 return true,nil         
+\layout Standard
+        end
+\layout Standard
+        
+\layout Standard
+        -- check must control if we are not in the last page and        
+\layout Standard
+        -- eventually change uri to tell retrive_f the next page to retrive     
+\layout Standard
+        local function check_f (s)              
+\layout Standard
+                 local tmp1,tmp2 = string.find(s,next_check)              
+\layout Standard
+                 if tmp1 ~= nil then                     
+\layout Standard
+                          -- change retrive behaviour                     
+\layout Standard
+                          uri = "--build the uri for the next page--"
+\layout Standard
+
+\layout Standard
+                          -- continue the loop
+\layout Standard
+                          return false       
+\layout Standard
+                 else
+\layout Standard
+                          return true
+\layout Standard
+                 end
+\layout Standard
+        end
+\layout Standard
+
+\layout Standard
+        -- this is simple and uri-dependent
+\layout Standard
+        local function retrive_f ()
+\layout Standard
+                 local f,err = b:get_uri(uri)
+\layout Standard
+                 if f == nil then 
+\layout Standard
+                         return f,err
+\layout Standard
+                 end
+\layout Standard
+      
+\layout Standard
+                 local _,_,c = string.find(f,"--timeout string--")
+\layout Standard
+                 if c ~= nil then
+\layout Standard
+                         internal_state.login_done = nil                                
+\layout Standard
+                         session.remove(key())
+\layout Standard
+                         local rc = libero_login()                       
+\layout Standard
+                         if rc ~= POPSERVER_ERR_OK then                          
+\layout Standard
+                                 return nil,"Session ended,unable to recover"                                         end             
+\layout Standard
+                        
+\layout Standard
+                         uri = "--uri for the first page--"      
+\layout Standard
+                         return b:get_uri(uri)           
+\layout Standard
+                  end     
+\layout Standard
+               
+\layout Standard
+                  return f,err    
+\layout Standard
+        end
+\layout Standard
+
+\layout Standard
+        -- initialize the data structure
+\layout Standard
+        set_popstate_nummesg(pstate,0)
+\layout Standard
+ 
+\layout Standard
+        -- do it        
+\layout Standard
+        if not support.do_until(retrive_f,check_f,action_f) then
+\layout Standard
+                  log.error_print("Stat failed
+\backslash 
+n")
+\layout Standard
+                  session.remove(key())           
+\layout Standard
+                  return POPSERVER_ERR_UNKNOWN    
+\layout Standard
+        end
+\layout Standard
+        
+\layout Standard
+        -- save the computed values     
+\layout Standard
+        internal_state["stat_done"] = true 
+\layout Standard
+        return POPSERVER_ERR_OK 
+\layout Standard
+end 
+\layout Standard
 
 \backslash 
 end{verbatim}
@@ -3572,7 +3762,19 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
+The only strange things are the retrieve function and the session saving
+ stuff.
+ Since webmail sometimes timeout you should check if the retrieved page
+ is valid or not, and eventually retry the login.
+ The session saving is the next issue.
+\layout Description
 
+Saving\SpecialChar ~
+the\SpecialChar ~
+session is the way to make FreePOPs really similar to a browser.
+ This means the next time you check the mail FreePOPs will simply reload
+ the inbox page and doesn't login again.
+ To do this you need a key() function that gives a unique id for each session
 \begin_inset ERT
 status Collapsed
 
@@ -3589,6 +3791,227 @@ begin{footnotesize}
 \backslash 
 begin{verbatim}
 \layout Standard
+-------------------------------------------------------------------------------- 
+\layout Standard
+-- The key used to store session info 
+\layout Standard
+-- 
+\layout Standard
+-- This key must be unique for all webmails, since the session pool is one  
+\layout Standard
+-- for all the webmails 
+\layout Standard
+-- 
+\layout Standard
+function key()
+\layout Standard
+        return foo_globals.username .. foo_globals.password
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+and a foo_globals serialization function
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-------------------------------------------------------------------------------- 
+\layout Standard
+-- Serialize the internal state 
+\layout Standard
+-- 
+\layout Standard
+-- serial.serialize is not enough powerful to correcly serialize the  
+\layout Standard
+-- internal state. The field b is the problem. b is an object. This means 
+\layout Standard
+-- that it is a table (and no problem for this) that has some field that are 
+\layout Standard
+-- pointers to functions. this is the problem. there is no easy way for the  
+\layout Standard
+-- serial module to know how to serialize this. so we call b:serialize  
+\layout Standard
+-- method by hand hacking a bit on names 
+\layout Standard
+-- 
+\layout Standard
+function serialize_state()   
+\layout Standard
+        internal_state.stat_done = false; 
+\layout Standard
+        return serial.serialize("foo_globals",foo_globals) ..            
+\layout Standard
+                internal_state.b:serialize("foo_globals.b") 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Now you have to tell FreePOPs to save the state in the quit_update() function
+ and load it back in the pass() one.
+ This is the new pass() structure
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+function pass(pstate,password)  
+\layout Standard
+        -- save the password
+\layout Standard
+        internal_state.password = password
+\layout Standard
+
+\layout Standard
+        -- eventually load session
+\layout Standard
+        local s = session.load_lock(key())
+\layout Standard
+
+\layout Standard
+        -- check if loaded properly
+\layout Standard
+        if s ~= nil then
+\layout Standard
+                 -- "
+\backslash 
+a" means locked
+\layout Standard
+                 if s == "
+\backslash 
+a" then
+\layout Standard
+                          log.say("Session for "..internal_state.name..
+\layout Standard
+                              " is already locked
+\backslash 
+n")
+\layout Standard
+                          return POPSERVER_ERR_LOCKED
+\layout Standard
+                 end 
+\layout Standard
+     
+\layout Standard
+                 -- load the session
+\layout Standard
+                 local c,err = loadstring(s)
+\layout Standard
+                 if not c then
+\layout Standard
+                          log.error_print("Unable to load saved session: "..err)
+\layout Standard
+                          return foo_login()
+\layout Standard
+                 end     
+\layout Standard
+       
+\layout Standard
+                 -- exec the code loaded from the session string
+\layout Standard
+                 c()
+\layout Standard
+
+\layout Standard
+                log.say("Session loaded for " .. internal_state.name .. "@" ..
+\layout Standard
+                         internal_state.domain ..
+\layout Standard
+                         "(" .. internal_state.session_id .. ")
+\backslash 
+n")      
+\layout Standard
+
+\layout Standard
+                return POPSERVER_ERR_OK
+\layout Standard
+        else
+\layout Standard
+                -- call the login procedure
+\layout Standard
+                return foo_login()
+\layout Standard
+        end
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+where foo_login() is the old pass() function with minor changes.
+ Don't forget to call session.unlock(key()) in the quit() function, since
+ you have to release the session in case of failure (and quit() is called
+ here) and to save the session in quit_update()
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- save fails if it is already saved    session.save(key(),serialize_state(),session.OVERWRITE)
+\layout Standard
+-- unlock is useless if it have just been saved, but if we save
+\layout Standard
+-- without overwriting the session must be unlocked manually
+\layout Standard
+-- since it would fail instead overwriting
+\layout Standard
+session.unlock(key()) 
+\layout Standard
 
 \backslash 
 end{verbatim}
@@ -3599,6 +4022,65 @@ end{footnotesize}
 \end_inset 
 
 
+\layout Description
+
+The\SpecialChar ~
+top()\SpecialChar ~
+function is a complex thing.
+ I'll not describe it in a complete way, but I suggest you to look at the
+ libero.lua plugin if the web server that sends you the message source supports
+ the Range: HTTP request field, or the tin.lua plugin if the server needs
+ to be interrupted in a bad way.
+ Remember that the top() need someone that counts the lines and here we
+ have again the stringhack module that counts and eventually purges some
+ lines.
+\layout Description
+
+The\SpecialChar ~
+javascript is the hell of webmails.
+ Javascript can do anything and you have to read them to emulate what they
+ do.
+ For example they may add some cookies (and you'll have to do this by hand
+ with the b:add_cookie() as in tin.lua) or they may change some form fields
+ (like in the libero.lua login load balancing code).
+\layout Description
+
+The\SpecialChar ~
+cookies are sweet enough for us, since the browser module will handle
+ them for us.
+\layout Description
+
+The\SpecialChar ~
+standard\SpecialChar ~
+files are really system dependent.
+ Under Windows you'll have to constantly look at the stderr.txt and stdout.txt,
+ while under Unix you will just have to start it with the -w switch and
+ look at the console.
+\layout Description
+
+The\SpecialChar ~
+brute\SpecialChar ~
+force is called ethereal.
+ Sometimes things don't work in the right way and the only way to debug
+ them is to activate curl debugging to see what FreePOPs does (b.curl:setopt(curl.
+OPT_VERBOSE,1)) and sniff what a real browser does.
+\layout Description
+
+The\SpecialChar ~
+open\SpecialChar ~
+source\SpecialChar ~
+way is the best way of having a good quality peace of software.
+ This means you'll have to release really often your plugin in the development
+ phase and interact much with your testers.
+ Trust me it works, or read 
+\begin_inset Quotes eld
+\end_inset 
+
+the cathedral and the bazaar
+\begin_inset Quotes erd
+\end_inset 
+
+ by Eric Raymond.
 \layout Section
 
 Submitting a bug

@@ -7,7 +7,7 @@
 --  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
-PLUGIN_VERSION = ".0.0.1"
+PLUGIN_VERSION = ".0.0.2"
 PLUGIN_NAME = "O.W.A."
 
 internal_state = {
@@ -276,6 +276,8 @@ function stat(pstate)
 		set_mailmessage_size(pstate,i,size)
 		set_mailmessage_uidl(pstate,i,uidl)
 	end
+	
+	internal_state.stat_done = true
 
 	return POPSERVER_ERR_OK
 end

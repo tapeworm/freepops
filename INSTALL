@@ -8,7 +8,7 @@ type:
  
 Available systems:
   linux		- to compile on a linux host and install in /usr/local
-  linux_usr	- to compile on a linux host and install in /usr
+  linux-slack	- to compile on a linux host and install in /usr
   osx		- to compile on a darwin host
   obsd		- to compile on an OpenBSD host
   fbsd		- to compile on an FreeBSD host
@@ -34,8 +34,15 @@ buildfactory target, you may do 'cd buildfactory' and launch
  make <target>
  
 Valid targets in this case are:
-  dist-win	- Windows .exe
-  dist-deb	- Debian GNU/Linux .deb
+  dist-win	- Windows .exe setup
+  dist-deb	- Debian GNU/Linux .deb .changes .dsc .orig.tar.gz .diff.gz
+  dist-deb-woody
+  dist-deb-sarge
+  dist-deb-sid
+  debian-dsc	- Debian GNU/Linux .dsc .orig.tar.gz .diff.gz
+  debian-dsc-woody
+  debian-dsc-sarge
+  debian-dsc-sid
   dist-rpm	- Red Hat Linux .rpm
   dist-gen	- Gentoo Linux .ebuild
   dist-slack	- Slackware .tgz

@@ -1,3 +1,7 @@
+- libero.lua adopted to use common.lua top and retr_cb
+- tin.lua adopted to use common.lua top and retr_cb
+- common.lua now includes a common TOP implementarion and the classical
+retr_cb and top_cb factories.
 - finished FreeBSD porting
 26/07/2004 0.0.13 fix release
 - fixed manual (thanks er_capoccia)

@@ -16,10 +16,9 @@ for version 0.1.0:
 for version 0.0.14:
 ++++	aggiungi il parametro folder eventualmente ad altre webmail 
 		in cui sia facile supportarlo. (tin e libero sono OK).
-	factorize top and retr in common.lua since in the raw case they are 
-		always the same
++++	factorize top and retr in common.lua since in the raw case they are 
+		always the same (done in libero and tin)
 	add squirrel to manual
-	freebsd port
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
 	http://liberopops.diludovico.it/index.php?showtopic=859&st=0&#entry4412

@@ -301,9 +301,9 @@ freepops.set_sanity_checks = function()
 	setmetatable(_G,{
 		__index = function(t,k)
 			local d = debug.getinfo(2,"lSn")or debug.getinfo(1,"lS")
-			local s = "\tBUG found in '".. d.source ..
-				"' at line " .. d.currentline .. ".\n"..
-				"\tFunction '".. d.name .. 
+			local s = "\tBUG found in '".. (d.source or "nil") ..
+				"' at line "..(d.currentline or "nil")..".\n"..
+				"\tFunction '".. (d.name or "anonymous") .. 
 				"' uses an undefined global '" ..k.. "'\n"..[[
 
 	This is a sanity check added by freepops.set_sanity_checks() that
@@ -316,9 +316,9 @@ freepops.set_sanity_checks = function()
 		__newindex = function(t,k,v)
 			if k == "_" then rawset(_G,k,v) return end
 			local d = debug.getinfo(2,"lSn")or debug.getinfo(1,"lS")
-			local s = "\tBUG found in '".. d.source ..
-				"' at line " .. d.currentline..".\n"..
-				"\tFunction '".. d.name .. 
+			local s = "\tBUG found in '".. (d.source or "nil") ..
+				"' at line "..(d.currentline or "nil")..".\n"..
+				"\tFunction '".. (d.name or "anonymous") .. 
 				"' sets an undefined global '" .. k .. "'\n"..[[
 				
 	This is a sanity check added by freepops.set_sanity_checks() that

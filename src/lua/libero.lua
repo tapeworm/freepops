@@ -229,82 +229,6 @@ function libero_login()
 	return POPSERVER_ERR_OK
 end
 
---------------------------------------------------------------------------------
--- The callbach factory for retr
---
--- A callback factory is a function that generates other functions. both retr
--- and top need a callback. the callback is called when there is some data 
--- to send to the client. this is done with popserver_callback(s,data) 
--- where s is the data and data is the opaque data that is passed to 
--- the retr/top function and is used internally by the popserve callbak. 
--- no need to know what it is, but we have to pass it. 
---
--- The callback function must accept 2 args: the data to send and an optional 
--- error message. if the data is nil it means the err contains the 
--- relative error message. If s is "" it means that the trasmission 
--- ended sucesfully (read: the socket has benn closed correclty). 
--- 
--- Here a is an opaque data structure used by the
--- stringhack module. the stringhack module implements some useful string 
--- manipulation tasks. 
--- tophack keeps track of how many lines have been 
--- processed. If more than lines (we talk of lines of mail body) have 
--- been processed the returned string will be trucated to the 
--- correct line number. 
--- dothack simply does a 'sed s/^\.$/../' but is really hard if the data 
--- is not divided in lines as in our case (ip packets are not line oriented),
--- so it is implemented in C for you. check_stop checks if the lines 
--- amount of lines have already been processed.
---
-function retr_cb(data)
-	local a = stringhack.new()
-	
-	return function(s,len)
-		s = a:dothack(s).."\0"
-			
-		popserver_callback(s,data)
-			
-		return len,nil
-	end
-end
-
--- -------------------------------------------------------------------------- --
--- The callback for top is really similar to the retr, but checks for purging
--- unwanted data and sets globals.lines to -1 if no more lines are needed
---
-function top_cb(global,data)
-	local purge = false
-	
-	return function(s,len)
-		if purge == true then
-			--print("purging: "..string.len(s))
-			return len,nil
-		end
-			
-		s=global.a:tophack(s,global.lines_requested)
-		s =  global.a:dothack(s).."\0"
-			
-		popserver_callback(s,data)
-	
-		global.bytes = global.bytes + len
-
-		-- check if we need to stop (in top only)
-		if global.a:check_stop(global.lines_requested) then
-			--print("TOP more than needed")
-			purge = true
-			global.lines = -1
-			if(string.sub(s,-2,-1) ~= "\r\n") then
-				popserver_callback("\r\n",data)
-			end
-			return len,nil
-		else
-			global.lines = global.lines_requested - 
-				global.a:current_lines()
-			return len,nil
-		end
-	end
-end
-
 -- ************************************************************************** --
 --  Libero functions
 -- ************************************************************************** --
@@ -623,7 +547,7 @@ function retr(pstate,msg,data)
 	if st ~= POPSERVER_ERR_OK then return st end
 	
 	-- the callback
-	local cb = retr_cb(data)
+	local cb = common.retr_cb(data)
 	
 	-- some local stuff
 	local popserver = internal_state.popserver
@@ -641,6 +565,8 @@ function retr(pstate,msg,data)
 	if not f then
 		log.error_print("Asking for "..uri.."\n")
 		log.error_print(rc.."\n")
+		-- don't remember if this should be done
+		--session.remove(key())
 		return POPSERVER_ERR_NETWORK
 	end
 
@@ -659,68 +585,14 @@ function top(pstate,msg,lines,data)
 	local popserver = internal_state.popserver
 	local session_id = internal_state.session_id
 	local b = internal_state.b
+	local size = get_mailmessage_size(pstate,msg)
 
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	local uri = string.format(libero_string.save,popserver,session_id,uidl,
 		internal_state.folder)
 
-	-- build the callbacks --
-	
-	-- this data structure is shared between callbacks
-	local global = {
-		-- the current amount of lines to go!
-		lines = lines, 
-		-- the original amount of lines requested
-		lines_requested = lines, 
-		-- how many bytes we have received
-		bytes = 0,
-		total_bytes = get_mailmessage_size(pstate,msg),
-		-- the stringhack (must survive the callback, since the 
-		-- callback doesn't know when it must be destroyed)
-		a = stringhack.new(),
-		-- the first byte
-		from = 0,
-		-- the last byte
-		to = 0,
-		-- the minimum amount of bytes we receive 
-		-- (compensates the mail header usually)
-		base = 2048,
-	}
-	-- the callback for http stram
-	local cb = top_cb(global,data)
-	-- retrive must retrive from-to bytes, stores from and to in globals.
-	local retrive_f = function()
-		global.to = global.base + global.from + (global.lines + 1) * 100
-		global.base = 0
-		local extra_header = {
-			"Range: bytes="..global.from.."-"..global.to
-		}
-		local f,err = b:pipe_uri(uri,cb,extra_header)
-		global.from = global.to + 1
-		--if f == nil --and rc.error == "EOF" 
-		--	then
-		--	return "",nil
-		--end
-		return f,err
-	end
-	-- global.lines = -1 means we are done!
-	local check_f = function(_)
-		return global.lines < 0 or global.bytes >= global.total_bytes
-	end
-	-- nothing to do
-	local action_f = function(_)
-		return true
-	end
-
-	-- go!
-	if not support.do_until(retrive_f,check_f,action_f) then
-		log.error_print("Top failed\n")
-		session.remove(key())
-		return POPSERVER_ERR_UNKNOWN
-	end
-
-	return POPSERVER_ERR_OK
+	return common.top(b,uri,key(),size,lines,data,false)
 end
 
 -- -------------------------------------------------------------------------- --

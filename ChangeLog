@@ -1,3 +1,5 @@
+- lycos.it webmail support
+- fixed mlex.c bug
 - fixed a tin webmail reference to a libero function
 07/06/2004 0.0.4 fix/source-reorganization release
 - added pkg file for Mac OS X

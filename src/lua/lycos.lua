@@ -44,7 +44,7 @@ local lycos_string = {
 	-- The capture to understand if the session ended
 	timeoutC = '(FIXME)',
 	-- The uri to save a message (read download the message)
-	save = "/Europe/Bin/Mail/Features/MailContent/mailContent.jsp?MESSAGEID=260&PARENTID=5&MYSORT=-1';",
+	save = "http://mail.lycos.it/Europe/Bin/Mail/Features/MailContent/mailContent.jsp?MESSAGEID=%d&PARENTID=5&MYSORT=-1",
 	-- The uri to delete some messages
 	delete = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/actionFolderContent.jsp",
 	delete_post = "ACTION=3&",
@@ -533,26 +533,23 @@ function retr(pstate,msg,data)
 	local cb = retr_cb(data)
 	
 	-- some local stuff
-	local session_id = internal_state.session_id
 	local b = internal_state.b
-	local popserver = b:wherearewe()
-	local domain = internal_state.domain
-	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
 	
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(tin_string.save,popserver,
-				session_id,curl.escape(pop_login),uidl)
+	local uri = string.format(lycos_string.save,uidl)
 	
 	-- tell the browser to pipe the uri using cb
-	local f,rc = b:pipe_uri(uri,cb)
+	--local f,rc = b:pipe_uri(uri,cb)
 
-	if not f then
-		log.error_print("Asking for "..uri.."\n")
-		log.error_print(rc.."\n")
-		return POPSERVER_ERR_NETWORK
-	end
+	--if not f then
+	--	log.error_print("Asking for "..uri.."\n")
+	--	log.error_print(rc.."\n")
+	--	return POPSERVER_ERR_NETWORK
+	--end
+	--
+	local f,err = b:get_uri(uri)
+	popserver_callback(f.."\0" , data)
 
 	return POPSERVER_ERR_OK
 end

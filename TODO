@@ -10,3 +10,5 @@ next release 0.0.5
 		decente a fare un auto-apgrade sotto win)
 	provare SSL
 	add the header to each source file
+	fix proxy support
+	update win32 to libcurl7.12.0 that may fix proxy problem

@@ -1,3 +1,4 @@
+- some stuff that may fix win32 shutdown problems
 - fixed dothack bug
 - gmail \r\r\n and \r\n\n issue fixed
 - gmail has an auto learn \r-\n-issue procedure and fix

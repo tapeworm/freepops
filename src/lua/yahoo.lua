@@ -10,7 +10,7 @@
 --
 PLUGIN_VERSION = "0.0.7"
 PLUGIN_NAME = "yahoo.com"
-PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=yahoo.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
@@ -61,9 +61,14 @@ local globals = {
   -- Login strings
   -- TODO: Define the HTTPS version
   --
-  strLoginURL = "http://login.yahoo.com/config/login",   
+  strLoginPage = "http://login.yahoo.com",
+  strLoginHTTP = "http://login.yahoo.com/config/login",   
+  strLoginHTTPs = "https://login.yahoo.com/config/login",   
   strLoginPostData = ".tries=1&.src=ym&.intl=%s&login=%s&passwd=%s&.persistent=y",
+  strLoginPostDataMD5 = ".tries=1&.src=ym&.intl=%s&login=%s&passwd=%s&.hash=1"..
+                        "&.md5=1&.js=1&.challenge=%s&.persistent=y",
   strLoginFailed = "Login Failed - Invalid User name and password",
+  strLoginChallenge = 'name="%.challenge" value="([^"]-)"',
 
   -- Expressions to pull out of returned HTML from Yahoo corresponding to a problem
   --
@@ -223,6 +228,7 @@ function loginYahoo()
   -- Create a browser to do the dirty work
   --
   internalState.browser = browser.new()
+  local SSLEnabled = browser.ssl_enabled()
 
   -- Define some local variables
   --
@@ -230,17 +236,38 @@ function loginYahoo()
   local password = internalState.strPassword
   local domain = internalState.strDomain
   local intFlag = internalState.strIntFlag
-  local url = globals.strLoginURL
-  local post = string.format(globals.strLoginPostData, intFlag, username, password)
+  local url = globals.strLoginHTTP
   local browser = internalState.browser
+  local post
+  local challengeCode
 	
   -- DEBUG - Set the browser in verbose mode
   --
-  -- browser:verbose_mode()
+  browser:verbose_mode()
+
+  if SSLEnabled then
+    url = globals.strLoginHTTPs
+    browser:ssl_init_stuff()
+  end
 
   -- Login to Yahoo
   --
-  local body, err = browser:post_uri(url, post)
+  local body, err = browser:get_uri(globals.strLoginPage)
+  
+  if body ~= nil then
+    _,_,challengeCode = string.find(body, globals.strLoginChallenge)
+  end
+
+  if challengeCode ~= nil then
+    password = crypto.bin2hex(crypto.md5(password))
+    password = crypto.bin2hex(crypto.md5(password..challengeCode))
+    post = string.format(globals.strLoginPostDataMD5, intFlag, username,
+                         password, challengeCode)
+  else -- if we didn't get the challenge code, then login in cleartext
+    post = string.format(globals.strLoginPostData, intFlag, username, password)
+  end
+
+  body, err = browser:post_uri(url, post)
 
   -- Error checking
   --

@@ -29,6 +29,11 @@ else
 CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
 endif
 
+ifeq "$(OS)" "Cygwin"
+	CFLAGS+= -I/usr/include
+endif
+
+
 BINARY=freepopsd$(EXEEXTENSION)
 
 LIBS=		regularexp_lua	\
@@ -84,8 +89,21 @@ ifeq "$(OS)" "OpenBSD"
 	LIBSTOLINK+= getopt
 	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread -lcurl
 else
+ifeq "$(OS)" "Cygwin"
+	LDFLAGS= -L ../modules/lib \
+		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive \
+		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
+		-lwsock32 \
+		-lgdi32  
+	#LDFLAGS= -mno-cygwin -L ../modules/lib \
+		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive \
+		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
+		-L/usr/lib/mingw/ -lwsock32 -lmingw32 -lmsvcrt \
+		-lgdi32 -lc -mwindows 
+else	
 	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread -rdynamic -lcurl
-	
+
+endif	
 endif
 endif
 endif	

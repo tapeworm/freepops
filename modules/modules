@@ -43,7 +43,7 @@ MODULES-Darwin-post=
 MODULES-OpenBSD-pre=getopt
 MODULES-OpenBSD-post=
 
-MODULES-Cygwin-pre=regex
+MODULES-Cygwin-pre=regex pthread
 MODULES-Cygwin-post=winsystray
 
 MODULES-BeOS-pre=

@@ -32,7 +32,7 @@ OBJ=$(strip $(subst .c,.o,$(subst .pkg,.o,$(SRC))) $(RCDEPFILES:%.rc=%.o))
 
 
 #flags #######################################################
-CFLAGS+= -I. -I$(PREFIX)/include
+CFLAGS+= -I. -I$(PREFIX)/include 
 
 INTERFACE=$(shell if test -e interface ; then cat interface ; fi )
 ifeq "" "$(INTERFACE)"

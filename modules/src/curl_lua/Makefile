@@ -12,6 +12,9 @@ endif
 
 H=@
 CFLAGS+= -Wall -I. -I$(PREFIX)/include
+ifeq "$(OS)" "Cygwin"
+	CFLAGS+= -I/usr/include
+endif
 OBJ=curl_lua.o
 
 all: $(LIBRARY)

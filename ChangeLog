@@ -1,3 +1,4 @@
+- fixed tin.lua issue
 28/06/2004 0.0.10 fix release
 - added freepops.need_sll() that asserts SSL is present 
 (call it after loading browser in the init function of the plugin)

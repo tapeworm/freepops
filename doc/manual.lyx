@@ -580,7 +580,7 @@ Outlook Express tutorial
 
 Here's a tutorial for configuring Outlook Express in a Windows environment.
  Other mail clients should be configured similarly.
-\layout Enumerate
+\layout Itemize
 
 From the tools menu choose the 
 \series bold 
@@ -600,7 +600,7 @@ Account...
 \end_inset 
 
 
-\layout Enumerate
+\layout Itemize
 
 Select your account and click on 
 \series bold 
@@ -617,7 +617,7 @@ Properties
 \end_inset 
 
 
-\layout Enumerate
+\layout Itemize
 
 In the Server tab type in 
 \series bold 
@@ -650,7 +650,7 @@ username@domain.com
 \end_inset 
 
 
-\layout Enumerate
+\layout Itemize
 
 In the 
 \series bold 

@@ -614,7 +614,7 @@ Tutorial per Outlook Express
 Mostriamo qui come configurare Outlook Express in ambienti Windows per l'uso
  con FreePOPs.
  Altri client si configurano più o meno allo stesso modo.
-\layout Enumerate
+\layout Itemize
 
 Dal menu 
 \series bold 
@@ -635,7 +635,7 @@ Account...
 \end_inset 
 
 
-\layout Enumerate
+\layout Itemize
 
 Seleziona il tuo account e clicca su 
 \series bold 
@@ -652,7 +652,7 @@ Proprietà
 \end_inset 
 
 
-\layout Enumerate
+\layout Itemize
 
 Nella linguetta 
 \series bold 
@@ -689,7 +689,7 @@ nomeutente@dominio.it
 \end_inset 
 
 
-\layout Enumerate
+\layout Itemize
 
 Nella linguetta 
 \series bold 

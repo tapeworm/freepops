@@ -24,7 +24,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "Libero.IT"
 
 -- ************************************************************************** --
@@ -292,6 +292,9 @@ function top_cb(global,data)
 			--print("TOP more than needed")
 			purge = true
 			global.lines = -1
+			if(string.sub(s,-2,-1) ~= "\r\n") then
+				popserver_callback("\r\n",data)
+			end
 			return len,nil
 		else
 			global.lines = global.lines_requested - 

@@ -28,7 +28,7 @@ H=@
 all: $(PREFIX)/bin/luafull
 	
 $(PREFIX)/bin/luafull: luafull
-	$(H)cp luafull $(PREFIX)/bin
+	$(H)cp luafull $(PREFIX)/bin || true
 	
 luafull:
 	$(H)echo -n ' building luafull... '

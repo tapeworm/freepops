@@ -45,6 +45,6 @@ spell-it:
 clean:
 	rm -rf *.aux *.pdf *.dvi *.ps *.ps.gz *.log\
 		*.toc *.lof *.lot *.bbl *.blg \
-		html-manual html-manual-it manua.txt manual-it.txt
+		html-manual html-manual-it manual.txt manual-it.txt
 
 .PHONY: html pdf txt

@@ -1,6 +1,6 @@
 legeng: more + means more done! (from 1 to 7)
 
-next release 0.0.6
+next release 0.0.8
 	plugin (superva,freepass,hotmail,yahoo?)
 	give a more resistent binding for portablesocket_lua
 	servizio di autoupdate. da valutare la sicurezza di cio'.
@@ -10,8 +10,7 @@ next release 0.0.6
 		decente a fare un auto-apgrade sotto win)
 	provare SSL
 	add the header to each source file
-	fix cleaning header in lycos... some residuate of a multilyne mime 
-		header may remain
-	allegati sopra i 499K in tin
-	problemi in lycos
-	documentare kernel(manuale-inglese e sito)
+	allegati sopra i 499K in tin ??
+	problemi in lycos(magari sistemare il mimer decentemente
+	documentare kernel(sito)
+	fattorizzare le funzioni standard dei plugin.

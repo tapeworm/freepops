@@ -1,8 +1,8 @@
 freepops (0.0.4-1) unstable; urgency=low
 
-  * some minor fix
+  * some fix, tolua++ removed
 
- -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Tue,  1 Jun 2004 13:08:47 +0200
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Fri,  4 Jun 2004 16:51:42 +0200
 
 freepops (0.0.3-1) unstable; urgency=low
 

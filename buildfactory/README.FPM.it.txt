@@ -1,4 +1,4 @@
-FreePOPs & Mail Script FAQ (versione FAQ 1.6)
+FreePOPs & Mail Script FAQ (versione FAQ 1.7)
 
 Autore: Pegasus (p3g4sus(chiocciola)users.sourceforge.net)
 

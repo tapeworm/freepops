@@ -1,6 +1,6 @@
-FreePOPs & Mail Script FAQ (FAQ version 1.6)
+FreePOPs & Mail Script FAQ (FAQ version 1.7)
 
-Author: Pegasus (p3g4sus@users.sourceforge.net)
+Author: Pegasus (p3g4sus(at)users.sourceforge.net)
 
 
 What is it?

@@ -169,6 +169,10 @@ function retr_or_top(pstate,msg,data,lines)
 	local _,_,header=string.find(chunk,rss_string.linkC)
 	local _,_,body=string.find(chunk,rss_string.descC)
 
+	if (body == nil) then
+		body="Not available"
+	end
+
 	if header == nil or body == nil or title == nil then
 		log.error_print("Error parsing: title="..
 			(title or "nil").." header="..

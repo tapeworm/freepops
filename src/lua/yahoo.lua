@@ -508,7 +508,8 @@ function pass(pstate, password)
     --
   
     -- Check to see if it is locked
-    -- Why "\a"?
+    -- Why "\a"? 
+    -- "\a" is the bell!!
     --
     if sessID == "\a" then
       log.dbg("Error: Session locked - Account: " .. internalState.strUser .. 

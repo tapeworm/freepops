@@ -1715,6 +1715,8 @@ Programming in Lua
 
  by Roberto Ierusalimschy HTTP://www.inf.puc-rio.br/~roberto/book/).
  It is a really good book, believe me.
+ Today I've seen that the book is completely available online here.
+ HTTP://www.lua.org/pil/
 \layout Enumerate
 
 Since we have to implement a POP3 backend you should know what POP3 is.

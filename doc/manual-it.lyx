@@ -1791,6 +1791,7 @@ Programming in LUA
 
  di Roberto Ierusalimschy HTTP://www.inf.puc-rio.br/~roberto/book/).
  è davvero un buon libro, credetemi.
+ Oggi il libro è stato pubblicato on line http://www.lua.org/pil/
 \layout Enumerate
 
 Visto che dobbiamo implementare un backend POP3 dovreste sapere cos'è il

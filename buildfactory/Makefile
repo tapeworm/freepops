@@ -1,6 +1,5 @@
 include $(CONFIG)
 
-
 VERSION=$(shell grep "\#define VERSION" ../config.h | cut -d \" -f 2)
 
 H=@
@@ -121,16 +120,19 @@ dist-slack: freepops-$(VERSION).tar.gz
 		strip usr/bin/freepopsd; \
 		mkdir -p install; \
 		cp ../slackware/slack-desc install; \
+		cp ../slackware/slack-required install; \
 		mkdir -p etc/rc.d; \
 		cp ../slackware/freepops.conf etc/freepops; \
 		cp ../slackware/rc.freepops etc/rc.d; \
-		gzip usr/share/man/man1/freepopsd.1; \
-		rm usr/share/doc/freepops/MANUAL.txt; \
-		mv usr/share/doc/freepops usr/share/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/AUTHORS usr/share/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/COPYING usr/share/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/ChangeLog usr/share/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/README usr/share/doc/freepops-$(VERSION); \
+		mv usr/share/man usr/man; \
+		mv usr/share/doc usr/doc; \
+		gzip usr/man/man1/freepopsd.1; \
+		rm usr/doc/freepops/MANUAL.txt; \
+		mv usr/doc/freepops usr/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/AUTHORS usr/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/COPYING usr/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/ChangeLog usr/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/README usr/doc/freepops-$(VERSION); \
 		makepkg --chown n freepops-$(VERSION)-i686-1.tgz; \
 		rm -rf etc; \
 		rm -rf install; \

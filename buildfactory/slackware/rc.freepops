@@ -64,7 +64,6 @@ start(){
         return $ret
 }
 
-
 stop(){
         echo -n "Stopping FreePOPs daemon: "
         if [ -f $pid ]; then
@@ -77,7 +76,6 @@ stop(){
         rm -f $pid > /dev/null 2>&1
         echo
 }
-
 
 restart(){
     stop
@@ -103,5 +101,4 @@ case "$1" in
   *)
     echo $"Usage: $0 {start|stop|restart}"
     exit 1
-
 esac

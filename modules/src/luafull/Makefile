@@ -26,7 +26,7 @@ else
 endif
 
 ifeq "$(OS)" "Darwin"
-LDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
+LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluaexpat -lregularexp_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lbase64 \
@@ -34,14 +34,14 @@ LDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-L/sw/lib/ -lexpat -lcurl -lreadline -lhistory #-lcurses #-lncurses
 else
 ifeq "$(OS)" "Windows"
-LDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
+LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluaexpat -lregularexp_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
 	-lbase64 -lcurl -llog -llist -loscompatibility \
 	-lpthread -lregex -lwsock32
 else
-LDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
+LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluaexpat -lregularexp_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \

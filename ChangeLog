@@ -1,3 +1,4 @@
+- added crypto (md5 and bin2hex) bindings
 - error in liber.lua (comments) (thanks emaury)
 - fixed popforward
 - now the popserver disconnects after 60 seconds of client inactivity (this is

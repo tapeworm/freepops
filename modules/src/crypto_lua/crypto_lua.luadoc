@@ -1,0 +1,13 @@
+---
+-- crypto lib.
+
+---
+-- Returns the binary MD5 sum of data.
+-- @return string (binary).
+function crypto.md5(data) end
+
+---
+-- Returns the hexadecimal representation of data.
+-- @return string.
+function crypto.bin2hex(data) end
+

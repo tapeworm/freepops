@@ -48,7 +48,8 @@ EXPAT_LD_FLAGS= -lexpat
 
 BINARY=freepopsd$(EXEEXTENSION)
 
-LIBS=		regularexp_lua	\
+LIBS=		crypto_lua	\
+		regularexp_lua	\
 		stringhack_lua	\
                 browser_lua     \
                 getdate_lua     \

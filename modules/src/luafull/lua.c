@@ -74,6 +74,7 @@ static const char *progname = PROGNAME;
 #include "base64_lua.h"
 #include "regularexp_lua.h"
 #include "lxplib.h"
+#include "crypto_lua.h"
 
 static const luaL_reg lualibs[] = {
   {"base", luaopen_base},
@@ -398,6 +399,7 @@ static void openstdlibs (lua_State *l) {
   luaopen_base64(l);
   luaopen_getdate(l);
   luaopen_regularexp(l);
+  luaopen_crypto(l);
   luaopen_lxp(l);
 
 }

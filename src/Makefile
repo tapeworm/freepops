@@ -30,6 +30,7 @@ CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
 endif
 
 BINARY=freepopsd$(EXEEXTENSION)
+
 LIBS=		stringhack_lua	\
                 browser_lua     \
                 getdate_lua     \
@@ -42,7 +43,6 @@ LIBS=		stringhack_lua	\
                 session_lua     \
                 pop3server_lua  \
                 pop3server      \
-                $(shell echo http > /dev/null)		\
                 portablesocket  \
                 session         \
                 dictionary      \
@@ -58,9 +58,11 @@ LIBS=		stringhack_lua	\
                 tolua++         \
                 lua             \
                 lualib          
+		
 EXCLUDELIBS=	serialize_lua \
 		browser_lua \
 		support_lua
+		
 LIBSTOLINK=$(filter-out $(EXCLUDELIBS),$(LIBS))
 
 		
@@ -68,14 +70,14 @@ ifeq "$(OS)" "Windows"
 	#LIBS+= pthread winsystray regex 
 	LDFLAGS= -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
-		$(addprefix -l,$(LIBS)) \
+		$(addprefix -l,$(LIBSTOLINK)) \
 		-lregex -lm -lmingw32 -lwsock32 -lpthread -mwindows
 
 else
 ifeq "$(OS)" "Darwin"
 	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread
 else
-	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBS)) -ldl -lm -lpthread -rdynamic
+	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread -rdynamic
 	
 endif
 endif	

@@ -36,7 +36,7 @@ void set_popstate_password(struct popstate_t *p,const char* passwd);
 void set_popstate_username(struct popstate_t *p,const char* username);
 //! sets popstate nummessages, expanding/shrinking the data structure
 void set_popstate_nummesg(struct popstate_t *p,int n);
-//! sets popstate mailbox size
+//! sets popstate mailbox size (invalidates the DELE flagged hiding in the corresponding get_ function)
 void set_popstate_boxsize(struct popstate_t *p,int n);
 //! sets popstate flag
 //void set_popstate_flag(struct popstate_t *p,int flag);

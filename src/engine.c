@@ -95,6 +95,7 @@ MALLOC_CHECK(ans);
 *ans = '\0';
 n = get_popstate_nummesg(p);
 for (ind = 0; ind < n; ind++)
+	if (get_popstate_mailmessage(p,ind) != NULL)
 	{
 	nbytes = B(ind+1) + counter(get_popstate_mailmessage(p,ind)) + 3 + 1;
 	s_ans = (char*)malloc(nbytes+1);

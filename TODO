@@ -25,11 +25,7 @@ for next version or later:
 		discovery code from LiberoPOPs
 	link the rss feed in the homepage
 	fix in owa that Host and Cookie is repeated 3 times.
-	in the manual we reference lycos.lua that is no more here.
-		switch to squirrel/tre and backport comments :)
-	add a Txml table to each plugin describing it
-		and this for a translation.
-	create an exportation script with luafull and tahble2xml
++	add a description to each plugin describing 
 	create a xslt to generate the XHTML for the homepage,
 		would be nice to have many views:
 		- listed by domain

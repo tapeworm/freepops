@@ -29,9 +29,9 @@
 -- single string, all required
 PLUGIN_VERSION = "0.1.1"
 PLUGIN_NAME = "Libero.IT"
-PLUGIN_REQUIRE_VERSION = "0.0.0"
+PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.org/mirrors.php?package=plugins&file=libero.lua"
+PLUGIN_URL = "http://freepops.org/download.php?file=libero.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 
 -- list of strings, one required, one contact for each author

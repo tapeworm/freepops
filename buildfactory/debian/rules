@@ -35,6 +35,7 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	$(MAKE) all WHERE=/usr/
+	$(MAKE) doc WHERE=/usr/
 
 	touch build-stamp
 
@@ -56,6 +57,9 @@ install: build
 
 	# Add here commands to install the package into debian/freepops.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops WHERE=/usr/
+
+	mv $(CURDIR)/debian/freepops/usr/share/doc/freepops/*.pdf \
+		$(CURDIR)/debian/freepops-doc/usr/share/doc/freepops-doc/
 
 	#create the /etc/freepops/freepops.conf file
 	DESTDIR=$(CURDIR)/debian/freepops; 			\
@@ -95,7 +99,7 @@ binary-arch: build install
 	dh_installman
 	dh_link
 	dh_strip
-	dh_compress
+	dh_compress -X.pdf
 	dh_fixperms
 #	dh_perl
 #	dh_python

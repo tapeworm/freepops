@@ -102,7 +102,7 @@ fi
 
 
 if test -e config; then
-	echo "Found a config file. Do a 'make realclean or remove it manually'."
+	echo "Found a config file. Do a 'make realclean' or remove it manually."
 	exit 1
 fi
 

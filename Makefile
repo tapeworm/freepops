@@ -33,7 +33,7 @@ help:
 	$(H)$(MAKE) all
 	
 
-all : modules src doc/manual.pdf doc/manual-it.pdf
+all : modules src 
 
 clean: 
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
@@ -50,7 +50,7 @@ distclean: clean
 realclean: distclean
 	$(H)rm -f config
 	
-doc: all
+doc: doc/manual.pdf doc/manual-it.pdf
 	$(H)$(MAKE) -C modules doc CONFIG=$(PWD)/config
 
 install: all
@@ -64,7 +64,8 @@ install: all
 	$(H)cp src/lua/*.lua modules/include/*.lua config.lua \
 		$(PREFIX)share/freepops/lua/
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
-	$(H)cp doc/MANUAL  $(PREFIX)share/doc/freepops/
+	$(H)cp doc/manual*.pdf  $(PREFIX)share/doc/freepops/ ||\
+		cp doc/MANUAL  $(PREFIX)share/doc/freepops/
 	$(H)cp config.lua $(DESTDIR)/etc/freepops/
 
 uninstall:

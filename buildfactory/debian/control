@@ -8,8 +8,8 @@ Standards-Version: 3.6.1.0
 Package: freepops
 Architecture: any
 Depends: ${shlibs:Depends}, debconf
-Description: pop3 interface to webmails
- freepopsd is a daemon that acts as a local pop3 server, translating
+Description: POP3 interface to webmails
+ freepopsd is a daemon that acts as a local POP3 server, translating
  local pop3 command to remote http requests to the supported
  webmail sites.
 

@@ -1,3 +1,16 @@
+freepops (0.0.23-1) unstable; urgency=low
+
+  * new upstream release
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sat, 25 Dec 2004 23:35:28 +0100
+ 
+freepops (0.0.22-2) unstable; urgency=low
+
+  * fixed ./configure.sh issue (now properly called by debian/rules in the
+    configure-stamp target)
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Fri, 24 Dec 2004 18:45:14 +0100
+
 freepops (0.0.22-1) unstable; urgency=low
 
   * fix to the mimer/browser, more official plugins

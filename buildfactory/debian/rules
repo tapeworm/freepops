@@ -23,7 +23,8 @@ configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 
-	./configure.sh linux || true
+	rm config
+	./configure.sh linux
 
 	touch configure-stamp
 

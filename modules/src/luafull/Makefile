@@ -35,8 +35,18 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lbase64 \
 	-lregularexp -llog -llist \
-	-L/sw/lib/ -lexpat -lcurl -lcrypto -lreadline -lhistory \
-	#-lcurses #-lncurses
+	-L/sw/lib/ /sw/lib/libexpat.a /sw/lib/libreadline.a \
+	/sw/lib/libncurses.a -lcurl -lcrypto -lhistory
+else
+ifeq "$(OS)" "Darwin-static"
+LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
+	-lluaexpat -lregularexp_lua \
+	-lbase64_lua -lstringhack_lua -lcurl_lua \
+	-lluabind -lgetdate -lmlex -lportablesocket -lbase64 \
+	-lregularexp -llog -llist \
+	-L/sw/lib/ /sw/lib/libcrypto.a /sw/lib/libssl.a \
+	/sw/lib/libexpat.a /sw/lib/libcurl.a /sw/lib/libreadline.a \
+	/sw/lib/libncurses.a -L/usr/lib -lhistory -lz
 else
 ifeq "$(OS)" "Windows"
 LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
@@ -60,6 +70,7 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
 	-lbase64 -lcurl -lcrypto -llog -llist -lreadline -lhistory \
 	-lcurses -lncurses
+endif
 endif
 endif
 endif

@@ -53,17 +53,17 @@ set_default
 OS=Darwin
 CFLAGS="$CFLAGS -I/sw/include -DMACOSX"
 HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX"
-LDFLAGS="$LDFLAGS -L/usr/lib -L/sw/lib -bind_at_load -framework Carbon"
-HLDFLAGS="$HLDFLAGS -L/usr/lib -L/sw/lib -bind_at_load"
+LDFLAGS="$LDFLAGS -bind_at_load -framework Carbon"
+HLDFLAGS="$HLDFLAGS -bind_at_load"
 }
 
 set_osx_static() {
 set_default
 OS=Darwin-static
-CFLAGS="$CFLAGS -DMACOSX"
-HCFLAGS="$HCFLAGS -DMACOSX"
-LDFLAGS="$LDFLAGS -L/usr/lib -bind_at_load -framework Carbon"
-HLDFLAGS="$HLDFLAGS -L/usr/lib -bind_at_load"
+CFLAGS="$CFLAGS -I/sw/include -DMACOSX"
+HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX"
+LDFLAGS="$LDFLAGS -bind_at_load -framework Carbon"
+HLDFLAGS="$HLDFLAGS -bind_at_load"
 }
 
 set_fbsd() {

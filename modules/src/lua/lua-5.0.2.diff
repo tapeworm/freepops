@@ -1,7 +1,7 @@
 diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 --- lua-5.0.2-old/Makefile	Fri Mar 12 02:50:55 2004
 +++ lua-5.0.2-new/Makefile	Sat Jul 10 10:08:02 2004
-@@ -1,102 +1,114 @@
+@@ -1,102 +1,116 @@
 -# makefile for Lua hierarchy
 -# see INSTALL for installation instructions
 -# see config for customization instructions
@@ -109,11 +109,13 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +  endif
 +endif
 +ifneq "$(OS)" "Darwin"
-+ ifneq "$(OS)" "OpenBSD"
-+  ifneq "$(OS)" "FreeBSD"
++ ifneq "$(OS)" "Darwin-static"
++  ifneq "$(OS)" "OpenBSD"
++   ifneq "$(OS)" "FreeBSD"
 +	CPFLAGS+= -a
 +	LDFLAGS+= -Wl,-E
 +	HLDFLAGS+= -Wl,-E
++   endif
 +  endif
 + endif
 +endif

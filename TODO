@@ -10,23 +10,14 @@ for version 0.1.0:
 	utf8 - mimer - lstring lua utf8 support
 
 for next version or later:
-++++	add the folder parameter eventually to all webmail s
-+++	factorize top and retr in common.lua since in the raw case they are 
-		always the same (done in libero and tin and owa)
-	add a note in the manual that if you leve messages on server
-		there is alot of network traffic
-+++++	folder in yahoo.com /it
-	finish squirrel.lua (eddi is working on it?)
 	add proxy section in config.lua e integrate win-IE settings 
 		discovery code from LiberoPOPs
 	link the rss feed in the homepage
 	create the -dev ML
 	curl_info
 	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/taskbar.asp
-	http://www.muukka.net/programming/service.html
 	http://freepops.diludovico.it/index.php?showtopic=1190&st=0&#entry6678
 	fix gmail first block bug
-	http://freepops.diludovico.it/index.php?showtopic=1208&st=0&#entry6771
 	http://freepops.diludovico.it/index.php?showtopic=1208&st=0&#entry6916
 	http://www.openbeer.it/docs/bypassare_isaproxy.html
 - eof -

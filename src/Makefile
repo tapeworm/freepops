@@ -31,7 +31,12 @@ endif
 ifeq "$(OS)" "Windows"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"lua/\"
 else
+ifeq "$(OS)" "BeOS"
+	CFLAGS+= -DFREEPOPSLUA_PATH=\"$HOME/config/settings/freepops/lua/\"
+
+	else
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
+endif
 endif
 
 ifeq "$(OS)" "Cygwin"

@@ -1,4 +1,4 @@
-- fixed popforward.lua (thanks Rojous)
+- fixed popforward.lua (thanks Rojous and CWP)
 - added crypto HMAC routine to lua
 - added contributors to AUTHORS and the win32 popup
 - updated yahoo domains

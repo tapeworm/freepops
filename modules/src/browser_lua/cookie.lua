@@ -35,7 +35,7 @@ Private.cookie_av={
 
 -- some captures for the cookie fields
 Private.value = {}
-Private.value.token='=%s*("?[%w%.%_%-%%%/%+%-%*%|%=]*"?)'
+Private.value.token='=%s*("?[%w%.%_%-%%%/%+%-%*%|%=%&]*"?)'
 Private.value.name="^(%s*[%w%_]+)"
 Private.value.domain='=%s*("?%.[%w%.%_%-%%%/%+%-%*]+"?)'
 Private.value.expires="=%s*(%a+%s*,%s*[%w%:%s%-]+)"
@@ -368,7 +368,11 @@ function cookie.get(t,res,domain,host)
 	table.sort(r,function(a,b) return a.l > b.l end)
 	local s = ""
 	table.foreach(r,function(_,w)
-		s = s .. "; " .. w.c.name .. "=" .. w.c.value 
+		if w.c.name ~= nil then
+			s = s .. "; " .. w.c.name .. "=" .. w.c.value 	
+		else
+			print("ask russell why he added this check")
+		end
 	--	if w.c.domain then
 	--		s = s .. '; $Domain = "' .. w.c.domain .. '"'
 	--	end

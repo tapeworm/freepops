@@ -31,7 +31,7 @@ PLUGIN_URL = "http://freepops.org/download.php?file=aggregator.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
 PLUGIN_AUTHORS_CONTACTS = {"simone_vellei@users.sourceforge.net"}
-PLUGIN_DOMAINS = {"@aggrefator","..."}
+PLUGIN_DOMAINS = {"@aggregator","..."}
 PLUGIN_PARAMETERS = {}
 PLUGIN_DESCRIPTIONS = {
 	it= [[
@@ -104,13 +104,12 @@ local rss_string = {
 	link2C = "<guid.*>(.*)</guid>",
 	titleC = "<title.*>(.*)</title>",
 	title2C = "<title.*>[<]?[!]?[\[]([^\]]*).*[>]?</title>",
-	descC = "<desc.*>(.*)</desc.*>",
+	descC = "<desc[^>]*>(.*)</desc[^>]*>",
 	desc2C = "<desc.*>[<]?[!]?[\[]([^\]]*).*[>]?</desc.*>",
 	contentC = "<content:encoded>(.*)</content:encoded>",
 	dcdateC = "<dc:date>(.*)</dc:date>",
 	dateC = "<pubDate.*>(.*)</pubDate.*>"
 }
-
 
 -- ************************************************************************** --
 --  State

@@ -111,6 +111,22 @@ for ( i = 0 ; t[i].name != NULL ; i++){
 }
 
 }
+/******************************************************************************
+ * expects a table on top and adds all t fields to this table
+ * also the metatable typeshould exist
+ */ 
+void L_openTconst(lua_State* L,const struct L_Tuserdata* t,const char * type){
+int i;
+for ( i = 0 ; t[i].name != NULL ; i++){
+	lua_pushstring(L,t[i].name);
+	void * c = lua_newuserdata(L,sizeof(void*));
+	*(void**)c = t[i].data;
+	luaL_getmetatable(L,type);
+	lua_setmetatable(L,-2);
+	lua_settable(L,-3);
+}
+
+}
 /*******************************************************************************
  * since there is no luaL_checklightuserdata
  *

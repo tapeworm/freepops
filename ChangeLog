@@ -1,3 +1,5 @@
+- added hotmail.it support
+- added mailcom.lua to official plugins
 - fixed supereva X-Priority
 - new mimer attach_it implementation (no HEAD request required)
 - supereva to the manual

@@ -17,7 +17,7 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {"@hotmail.com","@hotmail.co.uk","@hotmail.co.jp",
 	"@hotmail.de","@msn.com","@webtv.com","@charter.com",
-	"@compaq.net","@passport.com"}
+	"@compaq.net","@passport.com", "@hotmail.it"}
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],

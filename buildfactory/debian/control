@@ -3,7 +3,7 @@ Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@users.sourceforge.net>
 Build-Depends: debhelper (>= 4.0.0) 
-Standards-Version: 3.6.0
+Standards-Version: 3.6.1.0
 
 Package: freepops
 Architecture: any

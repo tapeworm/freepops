@@ -1,7 +1,7 @@
-diff -ruN /home/tassi/_LUA_/src/lua-5.0/Makefile lua-5.0/Makefile
---- /home/tassi/_LUA_/src/lua-5.0/Makefile	2003-04-11 02:34:38.000000000 +0200
-+++ lua-5.0/Makefile	2004-01-22 17:47:57.000000000 +0100
-@@ -1,99 +1,80 @@
+diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
+--- lua-5.0.2-old/Makefile	2004-03-12 02:50:55.000000000 +0100
++++ lua-5.0.2-new/Makefile	2004-05-13 19:37:12.000000000 +0200
+@@ -1,102 +1,79 @@
 -# makefile for Lua hierarchy
 -# see INSTALL for installation instructions
 -# see config for customization instructions
@@ -100,7 +100,9 @@ diff -ruN /home/tassi/_LUA_/src/lua-5.0/Makefile lua-5.0/Makefile
 -	@make echo | grep = | sed -e 's/= /= "/' -e 's/$$/"/' #-e 's/""/nil/'
 -	@echo "-- EOF"
 +include $(CONFIG)
-+
+ 
+-newer:
+-	@find . -newer MANIFEST -type f
 +ifneq "$(OS)" "Windows"
 +	CFLAGS += -DUSE_DLOPEN=1
 +endif
@@ -175,14 +177,13 @@ diff -ruN /home/tassi/_LUA_/src/lua-5.0/Makefile lua-5.0/Makefile
 +	@cp include/*.h $(PREFIX)/include
 +	@cp bin/* $(PREFIX)/bin
 +	@cp $(CPFLAGS) lib/*.a $(PREFIX)/lib
-+
-+clean:
-+	@rm -f lib/* bin/*
  
 -# (end of Makefile)
-diff -ruN /home/tassi/_LUA_/src/lua-5.0/build lua-5.0/build
---- /home/tassi/_LUA_/src/lua-5.0/build	2003-03-28 21:06:41.000000000 +0100
-+++ lua-5.0/build	1970-01-01 01:00:00.000000000 +0100
++clean:
++	@rm -f lib/* bin/*
+diff -ruN lua-5.0.2-old/build lua-5.0.2-new/build
+--- lua-5.0.2-old/build	2003-03-28 21:06:41.000000000 +0100
++++ lua-5.0.2-new/build	1970-01-01 01:00:00.000000000 +0100
 @@ -1,33 +0,0 @@
 -# If you don't want to use make, run this script.
 -# But make sure you read config to see what can be customized.

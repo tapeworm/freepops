@@ -16,8 +16,9 @@ help:
 	$(H)echo "  clean        - clean the source tree"
 	$(H)echo "  distclean    - remove also the dist-* distributions"
 	$(H)echo "  realclean    - clean and be ready for building to another arch"
-	$(H)echo "  doc          - createdevelopers documentation"
-	$(H)echo "  install      - install it"
+	$(H)echo "  doc          - create developers documentation"
+	$(H)echo "  install      - install it (linux/unix distribution independent"
+	$(H)echo "  uninstall    - uninstall it (linux/unix distribution independent"
 	$(H)echo "  buildfactory - build all distributions"
 	$(H)echo
 	$(H)echo "Default is all"
@@ -54,7 +55,23 @@ install: all
 		$(PREFIX)share/freepops/lua/
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
 	$(H)cp doc/manual.ps  $(PREFIX)share/doc/freepops/
+	$(H)cp doc/manual-it.ps  $(PREFIX)share/doc/freepops/
 	$(H)cp config.lua $(DESTDIR)/etc/freepops/
+
+uninstall:
+	$(H)rm -f $(DESTDIR)/etc/freepops/config.lua
+	$(H)rm -f $(PREFIX)share/doc/freepops/manual.ps
+	$(H)rm -f $(PREFIX)share/doc/freepops/manual-it.ps
+	$(H)rm -f $(PREFIX)share/man/man1/freepopsd.1
+	$(H)rm -f $(PREFIX)share/freepops/lua/*
+	$(H)rm -f $(PREFIX)bin/freepopsd$(EXECSUFFIX)
+	$(H)rmdir $(DESTDIR)/etc/freepops
+	$(H)rmdir $(PREFIX)share/man/man1/
+	$(H)rmdir $(PREFIX)share/doc/freepops/
+	$(H)rmdir $(PREFIX)share/freepops/lua/
+	$(H)rmdir $(PREFIX)share/freepops/
+	$(H)-rmdir $(PREFIX)bin
+	$(H)-rmdir $(PREFIX)
 
 tgz-dist: 
 	$(H)cd ..;\

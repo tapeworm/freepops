@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -77,6 +77,10 @@ local globals = {
   --
   strRegExpCrumb = 'curmbox=F000000001&a=([^&]*)&f',
 
+  -- Image server pattern
+  --
+  strImgServerPattern = 'img src="(http://[^/]*)/spacer.gif"',
+
   -- Pattern to determine if we have no messages
   --
   strMsgListNoMsgPat = "(There are no messages in this folder)",
@@ -125,6 +129,7 @@ internalState = {
   strPassword = nil,
   browser = nil,
   strMailServer = nil,
+  strImgServer = nil,
   strDomain = nil,
   strCrumb = nil,
   strMBox = nil
@@ -271,6 +276,17 @@ function loginHotmail()
     log.dbg("Hotmail Crumb value: " .. str .. "\n")
   end
 
+  -- Find the image server
+  --
+  _, _, str = string.find(body, globals.strImgServerPattern)
+  if str ~= nil then
+    internalState.strImgServer = str
+    log.dbg("Hotmail image server: " .. str)
+  else
+    internalState.strImgServer = internalState.strMailServer
+    log.dbg("Couldn't figure out the image server.  Using the mail server as a default.")
+  end
+
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true
@@ -367,6 +383,7 @@ function downloadMsg_cb(cbInfo, data)
     body = string.gsub(body, "&lt;", "<")
     body = string.gsub(body, "&gt;", ">")
     body = string.gsub(body, "&quot;", '"')
+    body = string.gsub(body, "<!%-%-%$%$imageserver%-%->", internalState.strImgServer)
 
     -- Perform our "TOP" actions
     --

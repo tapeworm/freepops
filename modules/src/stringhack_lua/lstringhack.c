@@ -15,6 +15,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#if defined(BEOS)
+#  include <bsd_mem.h>
+#endif
+
 #include "lstringhack.h"
 #include "regularexp.h"
 

@@ -1,3 +1,4 @@
+- fixed potential bug in log.c
 - more work on BeOS, should build properly now.
 - fixed log.c bug in BeOS porting (thanks ...)
 - fixed win32 exit function

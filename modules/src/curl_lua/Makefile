@@ -29,7 +29,7 @@ all: $(LIBRARY)
 $(LIBRARY): $(CONSTANTS) $(OBJ)
 	$(H)$(CC) $(CFLAGS) -c curl_lua.c 
 	$(H)echo -n " linking "
-	$(H)$(AR) -r $(LIBRARY) $(OBJ) 1>/dev/null
+	$(H)$(AR) -r $(LIBRARY) $(OBJ) 2>/dev/null
 	$(H)$(RANLIB) $(LIBRARY)
 	$(H)echo "$(LIBRARY)"
 	$(H)cp curl_lua.h $(PREFIX)/include

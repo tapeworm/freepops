@@ -61,13 +61,24 @@ int file_exists(char *filename) {
 char *get_free_logfile(char *logfile){
 
 	int suffix=-1;
-	char *str=(char*)malloc(strlen(logfile)+3);
+	int len  = strlen(logfile)+4;
+	char *str = (char*) calloc(len,sizeof(char));
 	
+	if (str == NULL){
+		fprintf(stderr,"Out of memory allocating free log file name\n");
+		exit(1);
+	}
+		
 	do {	
 		suffix++;
-		memset(str,0,(strlen(logfile)+3));
-		sprintf(str,"%s.%d",logfile,suffix);
-	} while(file_exists(str));
+		memset(str,0,len);
+		snprintf(str,len,"%s.%d",logfile,suffix);
+	} while(file_exists(str) && suffix < 100);
+	
+	if (suffix == 100) {
+		fprintf(stderr,"Unable to find a free file name\n");
+		return NULL;
+	}
 	
 	return(str);
 }
@@ -115,6 +126,10 @@ int log_rotate(char *logfile)
 	
 	if (rc != -1 && filestats.st_size > MAX_LOG_SIZE) {
 		char *freefile=get_free_logfile(logfile);
+		if ( freefile == NULL) {
+			fprintf(stderr,"Unable to open free log file\n");
+			exit(1);
+		}
 		// creates backup file
 		copy_file(logfile, freefile);
 		free(freefile);

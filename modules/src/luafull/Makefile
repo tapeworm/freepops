@@ -46,12 +46,21 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lbase64 -lcurl -llog -llist -loscompatibility \
 	-lpthread -lregex -lwsock32 -lcrypto
 else
+ifeq "$(OS)" "BeOS"
+LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
+	-lluaexpat -lregularexp_lua \
+	-lbase64_lua -lstringhack_lua -lcurl_lua \
+	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
+	-lbase64 -lcurl -lcrypto -llog -llist -lreadline -lhistory \
+	-lbe -lsocket -lbind -lpthread -lncurses
+else
 LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluaexpat -lregularexp_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
 	-lbase64 -lcurl -lcrypto -llog -llist -lreadline -lhistory \
 	-lcurses -lncurses
+endif
 endif
 endif
 

@@ -21,6 +21,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#if defined(BEOS)
+#  include <bsd_mem.h>
+#endif
+
 #include "socketcommon.h"
 #include "popserver.h"
 #include "popstate.h"

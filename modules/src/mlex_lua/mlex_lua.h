@@ -1,6 +1,6 @@
 #ifndef MLEX_LUA_H
 #define MLEX_LUA_H
 
-extern int tolua_mlex_lua_open (lua_State* tolua_S);
+int luaopen_mlex (lua_State*L);
 
 #endif

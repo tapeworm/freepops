@@ -1,0 +1,34 @@
+---
+-- string hacks.
+
+---
+-- Returns a new stringhack objects.
+-- @return object: the stringhack that has the following methods.
+function stringhack.new() end
+
+---
+-- The lines containing only a dot must be mangled.
+-- Performs a sed s/^\.$/../.
+-- @param buff string the buffer to hack.
+-- @return string.
+function dothack(buff) end
+
+---
+-- Performs a line count/tructaing operation.
+-- @param buff string the buffer to hack.
+-- @return string.
+function tophack(char* tmp,int lines) end
+
+---
+-- line counted since now.
+-- @return number.
+function current_lines(void*a) end
+
+
+---
+-- Checks if we have already processed n lines of body.
+-- @param n number the number of lines.
+-- @return boolean.
+function check_stop(n) end
+
+

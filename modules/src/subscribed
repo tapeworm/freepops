@@ -21,7 +21,8 @@ MK_TEMPLATE=	base64 \
 		support_lua \
 		getdate_lua \
 		browser_lua \
-		stringhack_lua
+		stringhack_lua \
+		mlex_lua
 
 MK_TEMPL_CTRIB=	lua \
 		tolua++ \
@@ -31,4 +32,4 @@ MK_TEMPL_CTRIB=	lua \
 		pkg2luadoc \
 		getdate 
 
-MK_CUSTOM=	mlex_lua
+MK_CUSTOM=	

@@ -516,12 +516,12 @@ function stat(pstate)
 		-- calls match on the page s, with the mlexpressions
 		-- statE and statG
 		local x = mlex.match(s,libero_string.statE,libero_string.statG)
+		-- x:print()
 		
 		-- the number of results
-		local n = mlex.count(x)
+		local n = x:count()
 
 		if n == 0 then
-			mlex.free(x)
 			return true,nil
 		end
 
@@ -533,8 +533,8 @@ function stat(pstate)
 
 		-- gets all the results and puts them in the popstate structure
 		for i = 1,n do
-			local uidl = mlex.get (0,i-1,x,s) 
-			local size = mlex.get (1,i-1,x,s)
+			local uidl = x:get (0,i-1) 
+			local size = x:get (1,i-1)
 
 			-- arrange message size
 			local k = nil
@@ -547,7 +547,6 @@ function stat(pstate)
 			end
 
 			if not uidl or not size then
-				mlex.free(x)
 				return nil,"Unable to parse page"
 			end
 
@@ -556,8 +555,6 @@ function stat(pstate)
 			set_mailmessage_uidl(pstate,i+nmesg_old,uidl)
 		end
 		
-		mlex.free(x)
-
 		return true,nil
 	end
 

@@ -1,0 +1,24 @@
+---
+-- Html parsing engine
+
+---
+-- Finds patterns in a html page.
+-- See the C module documentation for more infos
+-- @param data string The html page.
+-- @param exp string See the C module documentation for this.
+-- @param ret string See the C module documentation for this.
+-- @return userdata The result structure.
+function mlex.match(data,exp,ret) end
+
+---
+-- Debug function.
+function print() end
+
+---
+-- gets the x,y result.
+function get (x,y) end
+		
+---
+-- Counts the number of results.
+-- @return number.
+function count() end

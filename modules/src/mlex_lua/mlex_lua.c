@@ -1,193 +1,127 @@
-/*
-** Lua binding: mlex_lua
-** Generated automatically by tolua++-1.0.2 on Sun Mar 14 14:38:36 2004.
+#include <string.h>
+#include <stdlib.h>
 
-HACKED BY HAND!!!!!
-
-
-*/
-
-#ifndef __cplusplus
-#include "stdlib.h"
-#endif
-#include "string.h"
-
-#include "tolua++.h"
-
-/* Exported function */
-TOLUA_API int tolua_mlex_lua_open (lua_State* tolua_S);
-
-#include "list.h"
+#include "lua.h"
+#include "lauxlib.h"
 #include "mlex.h"
+#include "list.h"
 
-/* function to register type */
-static void tolua_reg_types (lua_State* tolua_S)
+// returns and checks a stringhack from the stack
+static void** check_mlex(lua_State*L)
 {
+  void* tmp = luaL_checkudata(L,1,"mlex.type");
+  luaL_argcheck(L,tmp != NULL,1,"mlex expected");
+  return (void**)tmp;
 }
 
-/* function: mlmatch */
-static int tolua_mlex_lua_mlex_match00(lua_State* tolua_S)
+static int lua_mlex_match(lua_State* L)
 {
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
- !tolua_isstring(tolua_S,1,0,&tolua_err) ||
- !tolua_isstring(tolua_S,2,0,&tolua_err) ||
- !tolua_isstring(tolua_S,3,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,4,&tolua_err)
- )
- goto tolua_lerror;
- else
-#endif
- {
-  char* data = ((char*)  tolua_tostring(tolua_S,1,0));
-  char* exp = ((char*)  tolua_tostring(tolua_S,2,0));
-  char* ret = ((char*)  tolua_tostring(tolua_S,3,0));
- {
-  void* tolua_ret = (void*)  mlmatch(data,exp,ret);
- tolua_pushuserdata(tolua_S,(void*)tolua_ret);
- }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'match'.",&tolua_err);
- return 0;
-#endif
+char* data = ((char*)  luaL_checkstring(L,1));
+char* exp = ((char*)  luaL_checkstring(L,2));
+char* ret = ((char*)  luaL_checkstring(L,3));
+list_t* m = mlmatch(data,exp,ret);
+
+list_t** r=NULL;
+char**   c=NULL;
+
+/* hack: the userdata is 2 pointer long, so we will use a +1 to get the 
+ * string that is stored in the second position
+ */ 
+void** s = lua_newuserdata(L,sizeof(list_t*)+sizeof(char *));
+luaL_getmetatable(L,"mlex.type");
+lua_setmetatable(L,-2);
+
+r = (list_t**)s;
+c = (char**)s+1;
+
+*r = m;
+*c = strdup(data);
+
+//printf("userdata e' %p,r=%p c=%p,risultato=%p,*r=%p,*c=%s",s,r,c,m,*r,*c);
+
+return 1;
 }
 
 /* function: mlmatch_print_results */
-static int tolua_mlex_lua_mlex_print00(lua_State* tolua_S)
+static int lua_mlex_print(lua_State* L)
 {
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
- !tolua_isuserdata(tolua_S,1,0,&tolua_err) ||
- !tolua_isstring(tolua_S,2,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
- goto tolua_lerror;
- else
-#endif
- {
-  void* res = ((void*)  tolua_touserdata(tolua_S,1,0));
-  char* str = ((char*)  tolua_tostring(tolua_S,2,0));
- {
-  mlmatch_print_results(res,str);
- }
- }
- return 0;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'print'.",&tolua_err);
- return 0;
-#endif
+void** s = check_mlex(L);
+list_t* r=*((list_t**)s);
+char*   c=*((char**)s+1);
+
+//printf("userdata e' %p, r=%p c=%p, c=%s",s,r,c,c);
+mlmatch_print_results(r,c);
+return 0;
 }
 
 /* function: mlmatch_free_results */
-static int tolua_mlex_lua_mlex_free00(lua_State* tolua_S)
+static int lua_mlex_free(lua_State* L)
 {
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
- !tolua_isuserdata(tolua_S,1,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
- goto tolua_lerror;
- else
-#endif
- {
-  void* res = ((void*)  tolua_touserdata(tolua_S,1,0));
- {
-  mlmatch_free_results(res);
- }
- }
- return 0;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'free'.",&tolua_err);
- return 0;
-#endif
+void** s = check_mlex(L);
+list_t* r=*((list_t**)s);
+char*   c=*((char**)s+1);
+
+mlmatch_free_results(r);
+free(c);
+
+return 0;
 }
 
 /* function: mlmatch_get_result */
-static int tolua_mlex_lua_mlex_get00(lua_State* tolua_S)
+static int lua_mlex_get(lua_State* L)
 {
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
- !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
- !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
- !tolua_isuserdata(tolua_S,3,0,&tolua_err) ||
- !tolua_isstring(tolua_S,4,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,5,&tolua_err)
- )
- goto tolua_lerror;
- else
-#endif
- {
-  int x = ((int)  tolua_tonumber(tolua_S,1,0));
-  int y = ((int)  tolua_tonumber(tolua_S,2,0));
-  void* res = ((void*)  tolua_touserdata(tolua_S,3,0));
-  char* s = ((char*)  tolua_tostring(tolua_S,4,0));
- {
-  char* tolua_ret = (char*)  mlmatch_get_result(x,y,res,s);
- tolua_pushstring(tolua_S,(const char*)tolua_ret);
- //XXX HACKED HERE XXX
- free((char*)tolua_ret);
- //XXX HACKED HERE XXX
- }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'get'.",&tolua_err);
- return 0;
-#endif
+void** s = check_mlex(L);
+list_t* r=*((list_t**)s);
+char*   c=*((char**)s+1);
+int x = luaL_checkint(L,2);
+int y = luaL_checkint(L,3);
+
+char* ret = mlmatch_get_result(x,y,r,c);
+lua_pushstring(L,(const char*)ret);
+free((char*)ret);
+return 1;
 }
 
 /* function: list_len */
-static int tolua_mlex_lua_mlex_count00(lua_State* tolua_S)
+static int lua_mlex_count(lua_State* L)
 {
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
- !tolua_isuserdata(tolua_S,1,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
- goto tolua_lerror;
- else
-#endif
- {
-  void* res = ((void*)  tolua_touserdata(tolua_S,1,0));
- {
-  int tolua_ret = (int)  list_len(res);
- tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
- }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'count'.",&tolua_err);
- return 0;
-#endif
+void** s = check_mlex(L);
+list_t* r=*((list_t**)s);
+//char*   c=*((char**)s+1);
+int ret = (int)  list_len(r);
+lua_pushnumber(L,(lua_Number)ret);
+return 1;
 }
 
+static const struct luaL_reg mlex_f [] = {
+  {"match",lua_mlex_match},
+  {NULL,NULL}
+};
+
+static const struct luaL_reg mlex_m [] = {
+  {"print",lua_mlex_print},
+  {"get",lua_mlex_get},
+  {"count",lua_mlex_count},
+  {NULL,NULL}
+};
+
+
 /* Open function */
-TOLUA_API int tolua_mlex_lua_open (lua_State* tolua_S)
+int luaopen_mlex (lua_State*L)
 {
- tolua_open(tolua_S);
- tolua_reg_types(tolua_S);
- tolua_module(tolua_S,NULL,0);
- tolua_beginmodule(tolua_S,NULL);
- tolua_module(tolua_S,"mlex",0);
- tolua_beginmodule(tolua_S,"mlex");
- tolua_function(tolua_S,"match",tolua_mlex_lua_mlex_match00);
- tolua_function(tolua_S,"print",tolua_mlex_lua_mlex_print00);
- tolua_function(tolua_S,"free",tolua_mlex_lua_mlex_free00);
- tolua_function(tolua_S,"get",tolua_mlex_lua_mlex_get00);
- tolua_function(tolua_S,"count",tolua_mlex_lua_mlex_count00);
- tolua_endmodule(tolua_S);
- tolua_endmodule(tolua_S);
- return 1;
+luaL_newmetatable(L,"mlex.type");
+
+lua_pushstring(L,"__gc");
+lua_pushcfunction(L,lua_mlex_free);
+lua_settable(L,-3);
+
+luaL_getmetatable(L,"mlex.type");
+lua_pushstring(L,"__index");
+lua_pushvalue(L,-2);
+lua_settable(L,-3);
+
+luaL_openlib(L,NULL,mlex_m,0);
+luaL_openlib(L,"mlex",mlex_f,0);
+	
+return 1;
 }

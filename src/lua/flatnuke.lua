@@ -290,10 +290,9 @@ function stat(pstate)
 			flatnuke_string.itemG)
 		
 		-- the number of results
-		local n = mlex.count(x)
+		local n = x:count()
 
 		if n == 0 then
-			mlex.free(x)
 			return true,nil
 		end
 
@@ -303,14 +302,13 @@ function stat(pstate)
 
 		-- gets all the results and puts them in the popstate structure
 		for i = 1,n do
-			local uidl = mlex.get (0,i-1,x,s) 
+			local uidl = x:get (0,i-1) 
 
 			--fucking default size
 			size=1000
 			_,_,uidl = string.find(uidl,".*/(%d+)")
 
 			if not uidl or not size then
-				mlex.free(x)
 				return nil,"Unable to parse uidl"
 			end
 
@@ -319,8 +317,6 @@ function stat(pstate)
 			set_mailmessage_uidl(pstate,i,uidl)
 		end
 		
-		mlex.free(x)
-
 		return true,nil
 	end
 

@@ -207,7 +207,7 @@ luay_emptystack(tmp->l);
 
 //open freepops standard C library
 tolua_pop3server_lua_open(tmp->l);
-tolua_mlex_lua_open(tmp->l);
+luaopen_mlex(tmp->l);
 luaopen_stringhack(tmp->l);
 tolua_session_lua_open(tmp->l);
 luaopen_socket(tmp->l);

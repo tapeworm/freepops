@@ -39,9 +39,16 @@ doc: all
 		for X in $$FILES ; do \
 		mv $$X $$PWD/html_lua/`basename $$X | \
 			sed s/_lua\.pkg\.lua/_lua_pkg.lua/` ; done
+	$(H)find src -name \*_lua.luadoc -exec cp \{\} $$PWD/html_lua/ \;
+	$(H)cd $$PWD/html_lua/;\
+		for X in *.luadoc ; do\
+			mv $$X `basename $$X | \
+				sed s/_lua\.luadoc/_lua_luadoc.lua/`;\
+		done
 	$(H)bin/luadoc $$PWD/html_lua/*_lua_pkg.lua \
+		$$PWD/html_lua/*_lua_luadoc.lua \
 		$$PWD/include/*.lua -d $$PWD/html_lua/
-	$(H)rm $$PWD/html_lua/*_lua_pkg.lua
+	$(H)rm $$PWD/html_lua/*_lua_pkg.lua $$PWD/html_lua/*_lua_luadoc.lua
 	
 
 #########################################################################

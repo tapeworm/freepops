@@ -1,3 +1,4 @@
+- fixed curl_lua for truncating a connection in the callback
 - session_lua now are made by hand, no more tolua++
 - log_lua now are made by hand, no more tolua++
 - all webmail now share the same get_name and get_domain functions

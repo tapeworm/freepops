@@ -135,7 +135,9 @@ Section "Uninstall"
   RMDir $INSTDIR\LUA
   ; remove shortcuts, if any.
   Delete "$SMPROGRAMS\FreePOPs\*.*"
+  Delete "$SMPROGRAMS\FreePOPs\Debug\*.*"
   ; remove directories used.
+  RMDir "$SMPROGRAMS\FreePOPs\Debug"
   RMDir "$SMPROGRAMS\FreePOPs"
   RMDir "$INSTDIR"
 SectionEnd

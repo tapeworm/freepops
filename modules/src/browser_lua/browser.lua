@@ -104,7 +104,7 @@ function Hidden.find_in_header(t,s)
 	end)
 end
 
--- prepares the header with cookies and referer
+-- prepares the header with cookies and referer and host
 function Hidden.build_header(self,url,exhed)
 	local u = cookie.parse_url(url)
 
@@ -125,8 +125,11 @@ function Hidden.build_header(self,url,exhed)
 	if cook ~= nil then
 		table.insert(head,"Cookie: "..cook)
 	end
+	if u.host ~= nil then
+		table.insert(head,"Host: "..u.host)
+	end
 	self.curl:setopt(curl.OPT_HTTPHEADER,head)
-
+	
 	--the url
 	self.curl:setopt(curl.OPT_URL,url)
 	

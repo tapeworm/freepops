@@ -1,3 +1,6 @@
+- added mimer module
+- fixed bug in base64
+- fixed bug in browser
 - lycos.it webmail support
 - fixed mlex.c bug
 - fixed a tin webmail reference to a libero function

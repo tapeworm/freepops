@@ -10,7 +10,7 @@ static int lua_base64_encode(lua_State* L)
 {
 const char * s = luaL_checkstring(L,1);
 
-char * tmp = base64enc(s);
+char * tmp = base64enc_raw(s,lua_strlen(L,1));
 lua_pushstring(L,tmp);
 if (tmp != s)
 	free(tmp);

@@ -38,7 +38,7 @@ __inline__ int get6bitsfrom(unsigned int n,int from)
 return ((n & (0x3f << from)) >> from) ;
 }
 
-char *base64enc(const char *input)
+char *base64enc_raw(const char *input,size_t len)
 {
 int in_len;
 int out_len;
@@ -48,7 +48,7 @@ int i = 0, o = 0;
 if(input == NULL)
 	return NULL;
 
-in_len = strlen(input);
+in_len = /*strlen(input);*/ len ;
 
 if(in_len != 0)
 	{
@@ -73,16 +73,16 @@ while(i < in_len)
 	equal = 0;
 		
 	/*  */
-	if (input[i + 0] != '\0')
-		tmp += (unsigned) input[i + 0] << 16;
+	if (/*input[i + 0] != '\0'*/ i < in_len)
+		tmp += (0xff &  input[i + 0]) << 16;
 	else
 		break;
-	if (input[i + 1] != '\0')
-		tmp += ((unsigned) input[i + 1]) << 8;
+	if (/*input[i + 1] != '\0'*/ i + 1 < in_len)
+		tmp += (0xff &  input[i + 1]) << 8;
 	else
 		equal+=2;
-	if ((!equal) && input[i + 2] != '\0')
-		tmp += ((unsigned) input[i + 2]) ;
+	if ((!equal) && /*input[i + 2] != '\0'*/ i + 2 < in_len)
+		tmp += (0xff & input[i + 2]) ;
 	else
 		equal+=1;
 
@@ -106,5 +106,8 @@ while(i < in_len)
 output[out_len - 1] = '\0';
 
 return output;
+}
+char *base64enc(const char *input){
+return base64enc_raw(input,strlen(input));
 }
 

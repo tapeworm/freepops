@@ -529,9 +529,6 @@ function retr(pstate,msg,data)
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 	
-	-- the callback
-	local cb = retr_cb(data)
-	
 	-- some local stuff
 	local b = internal_state.b
 	
@@ -548,8 +545,14 @@ function retr(pstate,msg,data)
 	--	return POPSERVER_ERR_NETWORK
 	--end
 	--
-	local f,err = b:get_uri(uri)
-	popserver_callback(f.."\0" , data)
+	--local f,err = b:get_uri(uri)
+	--popserver_callback(f.."\0" , data)
+
+--	mimer.pipe_msg(
+--		"headers\r\n","body",
+--		{["attila.png"]="http://attila/images/attila.png"},
+--		b,
+--		function(s)popserver_callback(s,data)end)
 
 	return POPSERVER_ERR_OK
 end
@@ -659,7 +662,12 @@ function init(pstate)
 	if freepops.dofile("browser.lua") == nil then 
 		return POPSERVER_ERR_UNKNOWN 
 	end
-		
+	
+	-- the MIME mail generator module
+	if freepops.dofile("mimer.lua") == nil then 
+		return POPSERVER_ERR_UNKNOWN 
+	end	
+	
 	return POPSERVER_ERR_OK
 end
 

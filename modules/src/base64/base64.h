@@ -17,6 +17,8 @@
 #define _BASE64_H_
 
 //! base64 encoding
+char *base64enc_raw(const char *input,size_t len);
+//! base64 encoding
 char *base64enc(const char *input);
 
 #endif

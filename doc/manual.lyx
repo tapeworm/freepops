@@ -59,11 +59,10 @@ Introduction
 FreePOPs is a POP3 daemon plus a LUA interpreter and some extra libraries
  for HTTP and HTML parsing.
  Its main purpose is translating local POP3 requests to remote HTTP actions
- on the supported web-mails, but it is really more flexible.
- For example there is a plugin to read news from a website as if they were
- mails in a mailbox.
- You can easily extend FreePOPs on the fly, without even restarting it.
- You can add a plugin or modify an existing one simply changing the script
+ on the supported web-mails, but it is really more flexible: for example there
+ is a plugin to read news from a website as if they were mails in a mailbox.
+ You can easily extend FreePOPs on the fly, without even restarting it;
+ you can add a plugin or modify an existing one simply changing the script
  file since the plugins are written in LUA and are interpreted on the fly.
 \layout Subsection
 
@@ -85,12 +84,12 @@ Your mail provider does not allow you to access your mailbox with POP3 protocol,
 You prefer looking at your mailbox instead of browsing some websites news.
 \layout Itemize
 
-You have to develop a pop3 server in less than a week and you want it to
+You have to develop a POP3 server in less than a week and you want it to
  be reasonably fast and not so memory consuming.
 \layout Itemize
 
 You are not a C hacker, but you want to benefit from a fast POP3 server
- frontend written in C and you want not to loose a month in writing the
+ frontend written in C and you want not to waste a month in writing the
  backend in C.
  LUA is a really simple and tiny language, one week is enough to learn it
  in a way that allows you to use it productively.
@@ -157,16 +156,16 @@ popforward.lua This is a plugin mainly used for testing some FreePOPs modules.
  written.
  You may consider using it to masquerade a really buggy POP3 server that
  can be easily compromised trough malicious requests.
- Obviously We suggest you to examine properly this plugin, and hack on it
+ Obviously we suggest you to examine properly this plugin, and hack on it
  to prevent malicious requests to your server.
 \layout Description
 
-aggregator.lua Many sites provide an RSS backend for indexing theirs news.
- This plugin make this RSS behave as a mailbox in which you can find a mail
+aggregator.lua Many sites provide an RSS backend for indexing their news.
+ This plugin makes this RSS behave as a mailbox in which you can find a mail
  for each news.
 \layout Description
 
-flatnuke.lua This is a more powerful aggregator for the FlatNuke
+flatnuke.lua This is a more powerful aggregator for the FlatNuke CMS
 \begin_inset Foot
 collapsed false
 
@@ -197,8 +196,8 @@ plugins
 \end_inset 
 
  but in a more static and complex way.
- The POP3 server frontend could be attached to a backend written in C.
- This means you have to recompile and restart LiberoPOPs each time to change
+ The POP3 server frontend could be attached to a backend written in C,
+ this means you have to recompile and restart LiberoPOPs each time to change
  a line in a plugin.
  Another interesting point is that LiberPOPs was created from scratch in
  a really short time (you have to be Italian and use a 
@@ -210,11 +209,10 @@ plugins
  
 \layout Standard
 
-The LiberoPOPs project had a quick success, because everybody needed it.
- This means we had a lot of users.
+The LiberoPOPs project had a quick success, because everybody needed it, and
+ this means we had a lot of users.
  In the opensource (and also Linux) philosophy you have to release frequently
- and this was exactly what we did.
- We used to release every 2 days.
+ and this was exactly what we did: we used to release every two days.
  We were working not with Unix users, nor hackers, but mostly with Win32
  users.
  Suddenly we realized that they were lazy/bored of updating the software

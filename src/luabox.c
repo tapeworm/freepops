@@ -32,6 +32,7 @@
 #include "regularexp_lua.h"
 #include "lxplib.h"
 #include "crypto_lua.h"
+#include "lfs.h"
 
 #include "log.h"
 #define LOG_ZONE "LUABOX"
@@ -55,7 +56,8 @@ static int (*opening_functions[LUABOX_LAST])(lua_State*) = {
             luaopen_regularexp,
             luaopen_lxp,
             luaopen_log,
-            luaopen_crypto
+            luaopen_crypto,
+	    luaopen_lfs
         };
 
 lua_State* luabox_genbox(unsigned long intial_stuff){

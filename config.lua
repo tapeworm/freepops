@@ -38,7 +38,7 @@ freepops.MODULES_MAP["gmail.com"]	= {name="gmail.lua"}
 freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}
 
 -- popforward plugin
---freepops.MODULES_MAP["virgilio.it"] 	= {
+--freepops.MODULES_MAP["something.xx"] 	= {
 --	name="popforward.lua",
 --	args={port=110,host="in.virgilio.it"}
 --}

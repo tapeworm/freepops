@@ -1,3 +1,9 @@
+freepops (0.0.13-1) unstable; urgency=low
+
+  * fix all around + squirrelmail
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Thu, 15 Jul 2004 17:14:59 +0200
+
 freepops (0.0.12-1) unstable; urgency=low
 
   * fix gmail and aggregator

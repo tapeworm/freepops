@@ -28,14 +28,72 @@ setmetatable(freepops,fp_m)
 
 -- function to extract domain part of a mailaddress
 freepops.get_domain = function (mailaddress)
-	local _,_,ad = string.find(mailaddress,"[^@]+@([%-%_%.%a%d]+)")
+	local _,_,ad = string.find(mailaddress,"[^@]+@([^?]+).*")
 	return ad
 end
 
 -- function to extract the username part of a mailaddress
 freepops.get_name = function (mailaddress)
-	local _,_,ad = string.find(mailaddress,"([^@]+)@[%-%_%.%a%d]+")
+	local _,_,ad = string.find(mailaddress,"([^@]+)@[^?]+.*")
 	return ad
+end
+
+-- function to extract the parameters part of a mailaddress
+freepops.get_args = function (mailaddress)
+	local _,_,ad = string.find(mailaddress,"[^@]+@[^?]+(?.*)")
+	local args = {}
+	local function extract_arg(s)
+		local from,to = string.find(s,"=")
+		if from == nil then
+			return nil,nil
+		else
+			return string.sub(s,1,from-1),
+				string.sub(s,to+1,-1)
+		end
+	end
+	
+	local function unescape(s)
+		return string.gsub(s,"%%(%d%d%d)",function(n)
+				return string.char(n)
+			end)
+	end
+
+	if ad ~= nil then 
+		ad = string.sub(ad,2,-1)
+		ad = unescape(ad)
+	end
+
+	while string.len(ad or "") > 0 do
+		local from,to = string.find(ad,"&")
+		local param = nil
+		if from ~= nil then
+			param = string.sub(ad,1,to-1)
+		else
+			param = ad
+		end
+		
+		local name,val = extract_arg(param)
+		print(name,val)
+		if name ~= nil then
+			args[name] = val
+		end
+		
+		if to ~= nil then
+			ad = string.sub(ad,to+1,-1)
+		else
+			ad = ""
+		end
+	end
+
+	return args
+end
+
+-- to merge 2 tables (t1 wins over t)
+freepops.table_overwrite = function (t,t1)  
+	table.foreach(t1, function(k,v)
+		t[k] = v
+		end)
+	return t
 end
 
 -- function that maps domains to modules
@@ -187,7 +245,9 @@ freepops.load_module_for = function (mailaddress)
 		end
 		return nil --ERR
 	else
-		freepops.MODULE_ARGS = args
+		local marg = freepops.table_overwrite(args,
+			freepops.get_args(mailaddress))
+		freepops.MODULE_ARGS = marg
 		if freepops.dofile(module) ~= nil then 
 			return 0 -- OK
 		else
@@ -345,7 +405,7 @@ end
 -- -------------------------------------------------------------------------- --
 freepops.init = function (mailaddress)
 	load_config()
-
+table.foreach(freepops.get_args(mailaddress),print)
 	-- standard lua modules that must be loaded
 	if freepops.dofile("support.lua") == nil then return 1 end
 	

@@ -33,6 +33,10 @@ ifeq "$(OS)" "Cygwin"
 	CFLAGS+= -I/usr/include
 endif
 
+CURL_LD_FLAGS=$(shell curl-config --libs || true)
+ifeq "$(CURL_LD_FLAGS)" ""
+	CURL_LD_FLAGS= -lcurl
+endif
 
 BINARY=freepopsd$(EXEEXTENSION)
 
@@ -79,29 +83,27 @@ ifeq "$(OS)" "Windows"
 	LDFLAGS= -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
-		-lregex -lm -lcurl_nossl -lmingw32 -lwsock32 -lpthread -lgdi32 -mwindows
+		-lregex -lm -lcurl -lmingw32 -lwsock32 \
+			-lpthread -lgdi32 -mwindows
 
 else
 ifeq "$(OS)" "Darwin"
-	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread -lcurl
+	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm \
+		-lpthread $(CURL_LD_FLAGS)
 else
 ifeq "$(OS)" "OpenBSD"
 	LIBSTOLINK+= getopt
-	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread -lcurl
+	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
+		$(CURL_LD_FLAGS)
 else
 ifeq "$(OS)" "Cygwin"
 	LDFLAGS= -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
-		-lwsock32 \
-		-lgdi32   -lcygwin
-	#LDFLAGS= -mno-cygwin -L ../modules/lib \
-		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive \
-		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
-		-L/usr/lib/mingw/ -lwsock32 -lmingw32 -lmsvcrt \
-		-lgdi32 -lc -mwindows 
+		-lwsock32 -lgdi32   -lcygwin
 else	
-	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread -rdynamic -lcurl
+	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
+		-ldl -lm -lpthread -rdynamic $(CURL_LD_FLAGS)
 
 endif	
 endif

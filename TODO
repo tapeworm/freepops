@@ -11,3 +11,5 @@ next release 0.0.13
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
 	aggiungi che GMAIL vuole SSL nel manuale e nel sito
+	use cvs2cl or finis out script
+	fisici parser parametri

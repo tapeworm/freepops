@@ -3,12 +3,12 @@
 --<==========================================================================>--
 
 -- Here we have 3 sections:
---    1) mail-address -> module binding
+--    1) mail-domains -> module binding
 --    2) accept/reject policy
 --    3) paths for .lua/.so files
 
 -- -------------------------------------------------------------------------- --
--- Map for domains -> modules
+-- 1) Map for domains -> modules
 --
 -- Here you tell freepops what plugin should be used for you mailaddress domain
 -- Some plugins acceprs som args. see popforward as an example of arg 
@@ -135,7 +135,7 @@ freepops.MODULES_MAP["linux.kerneltrap.org"] 	= {
 }
 
 -- -------------------------------------------------------------------------- --
--- Policy
+-- 2) Policy
 --
 -- Here you tell freepops which email addresses are accepted and which rejected
 -- Consider that if the address fits the accepted list it is accepted even if  
@@ -164,7 +164,7 @@ freepops.REJECTED_ADDRESSES = {
 }
 
 -- -------------------------------------------------------------------------- --
--- Customize here the paths for .lua and .so files
+-- 3) Customize here the paths for .lua and .so files
 --
 -- Not really interesting for the user.
 -- 

@@ -231,8 +231,12 @@ function pass(pstate,password)
 
 	-- save the password
 	-- password is the RSS/RDF file URI 
-	internal_state.password = password
-
+	if freepops.MODULE_ARGS ~= nil then
+                internal_state.password = freepops.MODULE_ARGS.host
+	else
+		internal_state.password = password
+	end
+						
 	-- build the uri
 	local user = internal_state.name
 	

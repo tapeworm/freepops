@@ -23,14 +23,26 @@ freepops.MODULES_MAP["virgilio.it"] 	= {name="popforward.lua",
 					  }
 
 -- flatnuke news plugin
+freepops.MODULES_MAP["flatnuke"] 	= {name="flatnuke.lua"}
+-- flatnuke binded domains
 freepops.MODULES_MAP["freepops.it"] 	= {name="flatnuke.lua",
-						args={host="http://freepops.sf.net/it"}}
+						args={host="http://freepops.sourceforge.net/it"}}
 freepops.MODULES_MAP["freepops.en"] 	= {name="flatnuke.lua",
 						args={host="http://freepops.sourceforge.net/en"}}
 
-freepops.MODULES_MAP["flatnuke"] 	= {name="flatnuke.lua"}
 -- rss backended news plugin
 freepops.MODULES_MAP["aggregator"] 	= {name="aggregator.lua"}
+-- rss binded domains
+freepops.MODULES_MAP["freepops.rss.en"] 	= {name="aggregator.lua",
+						args={host="http://freepops.sf.net/en/misc/backend.rss"}}
+freepops.MODULES_MAP["freepops.rss.it"] 	= {name="aggregator.lua",
+						args={host="http://freepops.sf.net/it/misc/backend.rss"}}
+freepops.MODULES_MAP["flatnuke.sf.net"] 	= {name="aggregator.lua",
+						args={host="http://flatnuke.sf.net/misc/backend.rss"}}
+freepops.MODULES_MAP["ziobudda.net"] 	= {name="aggregator.lua",
+						args={host="http://www.ziobudda.net/headlines/head.rdf"}}
+freepops.MODULES_MAP["punto-informatico.it"] 	= {name="aggregator.lua",
+						args={host="http://punto-informatico.it/fader/pixml.txt"}}
 
 -- -------------------------------------------------------------------------- --
 -- Customize here the paths for .lua and .so files

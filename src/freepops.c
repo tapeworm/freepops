@@ -339,8 +339,9 @@ putenv(tmp);
 
 static int generate_xml(char* filename) {
 char username[] = "foo@plugins2xml.lua";
+lua_State* l;
 start_logging(strdup(LOGFILE),0);
-lua_State* l = luabox_genbox(LUABOX_FULL);
+l = luabox_genbox(LUABOX_FULL);
 bootstrap(NULL,l,username,1);
 luay_call(l,"s","plugins2xml.main",filename);
 lua_close(l);

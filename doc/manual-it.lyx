@@ -812,8 +812,12 @@ Norton AntiVirus, versione 2002 e successive
 \layout Standard
 
 È necessario mettere FreePOPs in ascolto sulla porta 110 per mezzo dell'opzione
- -p e successivamente impostare il proprio client email perché riceva la
- posta sulla porta 110.
+ 
+\family typewriter 
+-p
+\family default 
+ e successivamente impostare il proprio client email perché riceva la posta
+ sulla porta 110.
  Per cambiare le opzioni di FreePOPs, consultare le FAQ alla domanda "Come
  cambio i parametri della riga di comando di FreePOPs?" 
 \layout Subsubsection
@@ -823,9 +827,13 @@ Avast! Antivirus
 
 Nel proprio client email, modificare il nome utente in questo modo: 
 \newline 
-indirizzo@email#localhost:2000 Sempre all'interno delle opzioni del proprio
- client email, impostare il numero di porta del server POP3 a 110, invece
- che a 2000 come descritto nei precedenti tutorial.
+
+\family typewriter 
+indirizzo@email#localhost:2000
+\family default 
+ Sempre all'interno delle opzioni del proprio client email, impostare il
+ numero di porta del server POP3 a 110, invece che a 2000 come descritto
+ nei precedenti tutorial.
  
 \layout Subsubsection
 
@@ -833,7 +841,15 @@ AVG Pro 7 Antivirus
 \layout Standard
 
 Nel proprio client email, modificare il numero di porta POP3 a 5300, lasciare
- inalterati nome utente e server (?@libero.it e localhost).
+ inalterati nome utente e server (
+\family typewriter 
+email@address
+\family default 
+ e 
+\family typewriter 
+localhost
+\family default 
+).
  In AVG, entrare in "Proprietà > Servers > Creare un Server di posta POP3
  (server type)", in connection impostare Fixed host: 127.0.0.1:2000 e Local
  port: 5300 
@@ -845,6 +861,8 @@ SpamHilator
 Configurare il proprio client email con i seguenti parametri: Server POP3
  (posta in entrata): localhost Porta server POP3: 110 Nome Utente: 
 \newline 
+
+\family typewriter 
 localhost&indirizzo@email&2000 
 \layout Subsubsection
 
@@ -868,16 +886,26 @@ K9
 Configurare il proprio client email inserendo 9999 come porta del server
  POP3.
  Lasciare localhost come nome del server.
- Inserire poi come nome utente localhost/2000/indirizzo@email 
+ Inserire poi come nome utente 
+\family typewriter 
+localhost/2000/indirizzo@email 
 \layout Subsubsection
 
 SpamTerminator
 \layout Standard
 
 Configurare il proprio client email con i seguenti parametri: Server POP3
- (posta in entrata): localhost Porta server POP3: 8110 Nome Utente: 
+ (posta in entrata): 
+\family typewriter 
+localhost
+\family default 
+ Porta server POP3: 8110 Nome Utente: 
 \newline 
-indirizzo@email#localhost Avviare poi FreePOPs con l'opzione -p 110.
+
+\family typewriter 
+indirizzo@email#localhost
+\family default 
+ Avviare poi FreePOPs con l'opzione -p 110.
  
 \layout Subsubsection
 
@@ -885,13 +913,19 @@ SpamPal
 \layout Standard
 
 Configurare il proprio client email con i seguenti parametri: Server POP3
- (posta in entrata): localhost Porta server POP3: 110 Nome Utente: 
+ (posta in entrata): 
+\family typewriter 
+localhost
+\family default 
+ Porta server POP3: 110 Nome Utente: 
 \newline 
+
+\family typewriter 
 indirizzo@email@localhost:2000
 \layout Subsection
 
 LAN tutorial 
-\layout Standard
+\layout Subsubsection*
 
 Come utilizzare FreePOPs come server in una rete di calcolatori (tutorial
  orientato a Windows).

@@ -764,26 +764,40 @@ proxy
 Spam/AV tutorial
 \layout Standard
 
-Serverl windows users, in collaboration with the LiberoPOPs team have create
+Serveral Windows users, in collaboration with the LiberoPOPs team have created
  a tutorial for antispam and antivurus software.
- This tutoril is for FreePOPs too.
+ This tutorial is for FreePOPs too.
 \layout Subsubsection
 
 Norton AntiVirus, version 2002 and up
 \layout Standard
 
-It is necessary to have FreePOPs listen on port 110 by means of the -p option
- and then set your email client so that it receives mail on port 110.
- To change FreePOPs options, read the FAQ "How do I change FreePOPs command
- line parameters?" question.
+It is necessary to have FreePOPs listen on port 110 by means of the
+\family typewriter 
+ -p
+\family default 
+ option and then set your email client so that it receives mail on port
+ 110.
+ To change FreePOPs options, read the FAQ 
+\begin_inset Quotes eld
+\end_inset 
+
+How do I change FreePOPs's command line switches?
+\begin_inset Quotes erd
+\end_inset 
+
+ question.
  
 \layout Subsubsection
 
 Avast! Antivirus
 \layout Standard
 
-In your email client, change the username like this: email@address#localhost:200
-0 Inside the email client options, set the POP3 server port number to 110,
+In your email client, change the username like this: 
+\family typewriter 
+email@address#localhost:2000
+\family default 
+ Inside the email client options, set the POP3 server port number to 110,
  instead of what explained in the previous tutorials.
  
 \layout Subsubsection
@@ -792,7 +806,15 @@ AVG Pro 7 Antivirus
 \layout Standard
 
 In your email client, modify the POP3 port number to 5300, leave unmodified
- the username and server (email@address and localhost).
+ the username and server (
+\family typewriter 
+email@address
+\family default 
+ and 
+\family typewriter 
+localhost
+\family default 
+).
  In AVG, enter "Properties > Servers > Create a POP3 mail server (server
  type)", in connection set Fixed host: 127.0.0.1:2000 and Local port: 5300
  
@@ -802,7 +824,10 @@ SpamHilator
 \layout Standard
 
 Configure your email client with the following parameters: POP3 server (incoming
- mail): localhost POP3 server port: 110 Username: localhost&email@address&2000
+ mail): localhost POP3 server port: 110 Username: 
+\family typewriter 
+localhost&email@address&2000
+\family default 
  
 \layout Subsubsection
 
@@ -824,15 +849,27 @@ K9
 
 Set up your email client to use 9999 as POP3 server port.
  Leave localhost as server name.
- Then use localhost/2000/email@address as username 
+ Then use 
+\family typewriter 
+localhost/2000/email@address
+\family default 
+ as username.
+ 
 \layout Subsubsection
 
 SpamTerminator
 \layout Standard
 
 Configure your email client with the following parameters: POP3 server (incoming
- mail): localhost POP3 server port: 8110 Username: email@address#localhost
- Then start FreePOPs with the option -p 110.
+ mail): localhost POP3 server port: 8110 Username: 
+\family typewriter 
+email@address#localhos
+\family default 
+t Then start FreePOPs with the option 
+\family typewriter 
+-p
+\family default 
+ 110.
  
 \layout Subsubsection
 
@@ -840,13 +877,15 @@ SpamPal
 \layout Standard
 
 Configure your email client with the following parameters: POP3 server (incoming
- mail): localhost POP3 server port: 110 Username: email@address@localhost:2000
+ mail): localhost POP3 server port: 110 Username: 
+\family typewriter 
+email@address@localhost:2000
 \layout Subsection
 
 LAN tutorial 
-\layout Standard
+\layout Subsubsection*
 
-How to use FreePOPs as a server in a computer network (Windows oriented
+How to use FreePOPs as a server in a computer network (Windows-oriented
  tutorial).
 \layout Standard
 
@@ -878,8 +917,7 @@ freepopsd.exe -b 0.0.0.0 -p 110
 \family default 
 that means that FreePOPs will bind on 0.0.0.0 (all network interfaces, offering
  the service to all) at port 110, the default POP3 port.
- Now we configure the mail client con Cucco, setting the POP3 server to
- 
+ Now we configure the mail client on Cucco, setting the POP3 server to 
 \emph on 
 Sola
 \emph default 

@@ -17,4 +17,10 @@ second release 0.0.2
 		di teso si riesce anche in modo decente a fare un 
 		auto-apgrade sotto win)
 	tradurre faq
+	add to the manual 
+		freepops.MODULES_MAP["gaim.sf.net"] 	= {
+			name="aggregator.lua",
+			args={host="http://gaim.sourceforge.net/rss.php/news"}
+		}
+
 

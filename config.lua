@@ -79,6 +79,11 @@ freepops.MODULES_MAP["securityfocus.com"] 	= {
 	args={host="http://www.securityfocus.com/rss/vulnerabilities.xml"}
 }
 
+freepops.MODULES_MAP["gaim.sf.net"] 	= {
+	name="aggregator.lua",
+	args={host="http://gaim.sourceforge.net/rss.php/news"}
+}
+
 -- -------------------------------------------------------------------------- --
 -- Customize here the paths for .lua and .so files
 --

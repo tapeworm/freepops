@@ -139,8 +139,8 @@ Section "Uninstall"
 SectionEnd
 
 Function .onInstSuccess
-  MessageBox MB_YESNO|MB_ICONQUESTION "Installation complete.  Do you want to read the PDF manual now?" IDNO NoReadme
-    ExecShell "open" "$INSTDIR\manual.pdf" SW_SHOWNORMAL
+  MessageBox MB_YESNO|MB_ICONQUESTION "Installation complete. See the Start menu for a link to the PDF manual. Do you want to read the text manual now?" IDNO NoReadme
+    ExecShell "open" "$INSTDIR\manual.txt" SW_SHOWNORMAL
   NoReadme:
 FunctionEnd
 

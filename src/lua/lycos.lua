@@ -286,6 +286,10 @@ function lycos_parse_webmessage(pstate,msg)
 	
 	-- get the main mail page
 	local f,rc = b:get_uri(uri)
+	if f == nil then
+		log.error_print(rc)
+		return nil
+	end
 	
 	-- extract the body an the attach
 	local from,to = string.find(f,lycos_string.attach_begin)
@@ -608,6 +612,11 @@ end
 function retr(pstate,msg,data)
 	local head,body,body_html,attach = lycos_parse_webmessage(pstate,msg)
 	local b = internal_state.b
+
+	if head == nil then
+		return POPSERVER_ERR_UNKNOWN
+	end
+	
 	mimer.pipe_msg(
 		head,body,body_html,
 		"http://" .. b:wherearewe(),attach,b,
@@ -627,6 +636,10 @@ function top(pstate,msg,lines,data)
 	local purge = false
 	local b = internal_state.b
 
+	if head == nil then
+                return POPSERVER_ERR_UNKNOWN
+        end
+	
 	mimer.pipe_msg(
 		head,body,body_html,
 		"http://" .. b:wherearewe(),attach,b,

@@ -1,3 +1,4 @@
+- lycos parsing message workaround (should be fixed)
 - bug in lycos TOP fixed
 - libero.lua adopted to use common.lua top and retr_cb
 - tin.lua adopted to use common.lua top and retr_cb

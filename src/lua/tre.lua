@@ -8,9 +8,9 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "Tre"
-PLUGIN_REQUIRE_VERSION = "0.0.15"
+PLUGIN_REQUIRE_VERSION = "0.0.22"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=tre.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
@@ -21,23 +21,28 @@ PLUGIN_DOMAINS = {"@tre.it", "@three.com.au"}
 -- description must be in the stle of PLUGIN_DESCRIPTIONS,
 -- so something like {it="bla bla bla", en = "bla bla bla"}
 PLUGIN_PARAMETERS = {
---	{name = "purge", description = {
---		it = [[
---Elimina automaticamente la posta cancellata dal cestino.]],
---		}
---	},
+	{name = "purge", description = {
+		it = [[
+Elimina automaticamente la posta cancellata dal cestino. Valori permessi: yes/no
+Es: 393921234567@tre.it?purge=yes ]],
+		en = [[
+Remove automatically deleted mail from trashcan. Permitted flags: yes/no
+Ie: 443921234567@three.com.au?purge=yes ]],
+		}
+	},
         {name = "folder", description = {
                 it = [[
 Serve per selezionare la cartella (inbox &egrave; quella di default)
 su cui operare.
 Le cartelle standard disponibili sono INBOX, INBOX.Draft, INBOX.Sent, INBOX.trash.
 Se hai creato delle cartelle dalla webmail allora puoi accedervi usando il
-loro nome. Se la cartella non &egrave; al livello principale
-puoi accederci usando
-una / per separala dalla cartella padre. Questo &egrave; un esempio di uno
-user name per leggere la cartella son, che &egrave;
-una sotto cartella della cartella
-father: foo@tre.it?folder=father/son]],
+loro nome con il suffisso "INBOX.". es: 393921234567@tre.it?folder=INBOX.Esempio]],
+		en = [[
+Select a folder (inbox is the default folder).
+Standard folders are  INBOX, INBOX.Draft, INBOX.Sent, INBOX.trash.
+If you have creaded some your own folders you can select it using its name with 
+the "INBOX." suffix.
+ie: 443921234567@three.com.au?folder=INBOX.Example]],
         	}
 	},
 }
@@ -51,12 +56,25 @@ sigillata fornita da tre.]],
 	en=[[
 To use this plugin you have to configure your mail client using as username
 your phone number formatted as 393921234567@three.com.XX and as password the usim's
-original pin code provided by three.]]
+original pin code provided by three.
+PS: this plugin is tested only whith "three italy", please report me if it works
+with the three webmail of your country!.
+]]
 }
+
+-- This plugin should be finished, so I increased the version number.
+-- Perhaps there are some bugfix to do.
+
+-- The three webmail seems to be written in a very poor way!
+-- there are some wrongs with html like: <a href[...]>TEXT<a> that
+-- make parsing html more difficult!
+-- or nested comment tags...
 
 -- Todo:
 -- Clean lua source (Remove debug print and optimization)
--- Empty trash after delete
+-- Since I hope three with solve issue with html, I keep at the moment all
+-- print for a near future.
+-- End
 
 -- ************************************************************************** --
 --  strings
@@ -209,6 +227,7 @@ function key()
 	return (internal_state.name or "")..
 		(internal_state.domain or "")..
 		(internal_state.password or "")..
+		(internal_state.purge or "")..
                 (internal_state.folder or "")			
 end
 
@@ -492,10 +511,13 @@ function quit_update(pstate)
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 
+        local f = (freepops.MODULE_ARGS or {}).purge or "yes"
+
 	-- shorten names, not really important
 	local b = internal_state.b
 	local uri = string.format(tre_string.delete,internal_state.domain)
 	local post = string.format(tre_string.delete_post,internal_state.folder)
+	local post_trash = string.format(tre_string.delete_post,"INBOX.Trash")
 
 	-- here we need the stat, we build the uri and we check if we 
 	-- need to delete something
@@ -505,8 +527,10 @@ function quit_update(pstate)
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
 			post = post .. string.format(tre_string.delete_next,
 				get_mailmessage_uidl(pstate,i))
---			post_trash = post .. ".Trash" .. string.format(tre_string.delete_next,
---				get_mailmessage_uidl(pstate,i))
+			if ( purge == "yes") then
+				post_trash = post_trash .. string.format(tre_string.delete_next,
+	    			    get_mailmessage_uidl(pstate,i))
+			end
 			delete_something = true	
 		end
 	end

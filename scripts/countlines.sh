@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONTRIB="getdate getopt pthread regex lua luadoc ."
+CONTRIB="getdate getopt pthread regex lua luadoc luafilesystem ."
 
 i=0
 OLDDIR=`pwd`

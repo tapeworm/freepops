@@ -23,7 +23,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "RSS/RDF aggregator"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -93,9 +93,10 @@ and a casual password.]],
 -- expressions), mlex expressions, mlex get expressions.
 -- 
 
-local rss
+local rss,charset
 
 local rss_string = {
+	charsetC = "xml version=\"[^\"]*\" encoding=\"([^\?]*)\"",
 	item_bC = "<item",
 	item_eC = "</item>",
 	itemC = "(</item>)",
@@ -106,6 +107,7 @@ local rss_string = {
 	title2C = "<title.*>[<]?[!]?[\[]([^\]]*).*[>]?</title>",
 	descC = "<desc.*>(.*)</desc.*>",
 	desc2C = "<desc.*>[<]?[!]?[\[]([^\]]*).*[>]?</desc.*>",
+	contentC = "<content.*>[<]?[!]?[\[]([^\]]*).*[>]?</content.*>",
 --	desc2C = "<desc.*>[<]?[!]?[\[]?C?D?A?T?A?[\[]?([^\]]*).*[>]?</desc.*>",
 	dateC = "<pubDate.*>(.*)</pubDate.*>"
 }
@@ -195,7 +197,7 @@ function build_mail_header(title,uidl,mydate)
 		" plugin "..PLUGIN_VERSION.."\r\n"..
 	"MIME-Version: 1.0\r\n"..
 	"Content-Disposition: inline\r\n"..
-	"Content-Type: text/plain;   charset=\"iso-8859-1\"\r\n"..
+	"Content-Type: text/plain;   charset=\""..charset.."\"\r\n"..
 	-- This header cause some problems with link like [...]id=123[...]
 	-- "Content-Transfer-Encoding: quoted-printable\r\n"..
 	"\r\n"..
@@ -236,7 +238,7 @@ function retr_or_top(pstate,msg,data,lines)
 	if ((header == nil) or (header == "")) then
 		_,_,header=string.find(chunk,rss_string.link2C)
 	end
-		
+	
 	local _,_,body=string.find(chunk,rss_string.descC)
 	if ((body == nil) or (body == "")) then
 		_,_,body=string.find(chunk,rss_string.desc2C)
@@ -244,6 +246,16 @@ function retr_or_top(pstate,msg,data,lines)
  			body=string.gsub(body,"CDATA%[","")
 		end
 	end
+
+	--this is enabled in 
+	-- xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	local _,_,content=string.find(chunk,rss_string.contentC)
+	-- content contains description
+	if ((content ~= nil) and (body ~= nil)) then
+		body=content
+ 		body=string.gsub(body,"CDATA%[","")
+	end
+	
 	local _,_,mydate=string.find(chunk,rss_string.dateC)
 
 	if (body == nil) then
@@ -368,6 +380,7 @@ function stat(pstate)
 		--	
 		-- sets global var rss
 		rss=s
+		_,_,charset=string.find(rss,rss_string.charsetC)
 		local a=0
 		local start=0
 		local nmess=0

@@ -1,3 +1,5 @@
+- added support for charset encoding in aggregator.lua
+- added support for content tag in aggregator.lua
 - added suport for host=hostname:post to popforward.lua
 - added the pipe and pipe_limit options to popforward.lua
 - added the io.dpopen lua primitive unter unix

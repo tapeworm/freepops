@@ -49,8 +49,10 @@ Private.html_tags = {
 	["/p"] = "\n",
 	["a"] = function (s,base_uri) 
 		local _,_,x = string.find(s,'[Hh][Rr][Ee][Ff]%s*="?([^" ]*)"?') 
-		if string.sub(x,1,1) == '/' then
-			x = base_uri .. x
+		if x ~= nil then
+			if string.sub(x,1,1) == '/' then
+				x = base_uri .. x
+			end
 		end
 		return "[" .. (x or "link") .. "]"
 		end,

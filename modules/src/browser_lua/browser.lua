@@ -33,6 +33,10 @@
 -- <BR/>
 -- <B>wherearewe()</B> :  returns the host we have contacted
 -- (may differ from the requested if we got a redirect).<BR/>
+-- <BR/>
+-- <B>add_cookie(url,c)</B> :adds cookie c as if received browsing
+-- url<BR/>
+
 
 
 dofile("cookie.lua")

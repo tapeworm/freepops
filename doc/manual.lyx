@@ -165,6 +165,17 @@ communicator.virgilio.it
 .
 \layout Description
 
+lycos.lua This plugin supports the 
+\family typewriter 
+mail.lycos.it
+\family default 
+ webmail for mailboxes with 
+\family typewriter 
+@lycos.it
+\family default 
+ domains.
+\layout Description
+
 popforward.lua This is a plugin mainly used for testing some FreePOPs modules.
  It acts as a POP3 forward, it simply works as a man in the middle of you
  and a real POP3 server.
@@ -410,6 +421,18 @@ This is the webmail support for
 @tin.it 
 \family default 
 mailboxes.
+ To use this plugin you have to use your full email address as the username
+ and your real password as the password.
+\layout Subsection
+
+lycos.lua
+\layout Standard
+
+This is the webmail support for 
+\family typewriter 
+@lycos.it
+\family default 
+ mailboxes.
  To use this plugin you have to use your full email address as the username
  and your real password as the password.
 \layout Subsection

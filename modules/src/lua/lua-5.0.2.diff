@@ -218,3 +218,41 @@ diff -ruN lua-5.0.2-old/build lua-5.0.2-new/build
 -
 -cd ../..
 -bin/lua test/hello.lua
+--- lua-5.0.2-old/src/lib/lauxlib.c	2004-06-18 14:24:21.000000000 +0200
++++ lua-5.0.2-new/src/lib/lauxlib.c	2004-06-18 14:31:54.000000000 +0200
+@@ -475,9 +475,10 @@
+ }
+ 
+ 
+-static int errfile (lua_State *L, int fnameindex) {
++static int errfile (lua_State *L, int id,int fnameindex,int err) {
+   const char *filename = lua_tostring(L, fnameindex) + 1;
+-  lua_pushfstring(L, "cannot read %s: %s", filename, strerror(errno));
++  const char *error_string = strerror(err);
++  lua_pushfstring(L, "[%d]cannot read %s: (%d) %s",id, filename, err,error_string);
+   lua_remove(L, fnameindex);
+   return LUA_ERRFILE;
+ }
+@@ -496,19 +497,19 @@
+     lua_pushfstring(L, "@%s", filename);
+     lf.f = fopen(filename, "r");
+   }
+-  if (lf.f == NULL) return errfile(L, fnameindex);  /* unable to open file */
++  if (lf.f == NULL) return errfile(L,0, fnameindex,errno);  /* unable to open file */
+   c = ungetc(getc(lf.f), lf.f);
+   if (!(isspace(c) || isprint(c)) && lf.f != stdin) {  /* binary file? */
+     fclose(lf.f);
+     lf.f = fopen(filename, "rb");  /* reopen in binary mode */
+-    if (lf.f == NULL) return errfile(L, fnameindex); /* unable to reopen file */
++    if (lf.f == NULL) return errfile(L,1, fnameindex,errno); /* unable to reopen file */
+   }
+   status = lua_load(L, getF, &lf, lua_tostring(L, -1));
+   readstatus = ferror(lf.f);
+   if (lf.f != stdin) fclose(lf.f);  /* close file (even in case of errors) */
+   if (readstatus) {
+     lua_settop(L, fnameindex);  /* ignore results from `lua_load' */
+-    return errfile(L, fnameindex);
++    return errfile(L,2, fnameindex,errno);
+   }
+   lua_remove(L, fnameindex);
+   return status;

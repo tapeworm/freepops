@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.1-rc1"
+PLUGIN_VERSION = "0.0.1-rc4"
 PLUGIN_NAME = "Lycos.IT"
 
 -- ************************************************************************** --
@@ -26,29 +26,29 @@ PLUGIN_NAME = "Lycos.IT"
 local lycos_string = {
 	-- The uri the browser uses when you click the "login" button
 	login = "http://login.lycos.it/lsu/lsu_login.php",
-	login_post= "membername=%s&password=%s&product=email&"..
-		"service=lycos&redirect=http://mail.lycos.it/&"..
+	login_post= "membername=%s&passtxt=******&password=%s&product=email&"..
+		"service=MAIL&redirect=http://mail.lycos.it/&"..
 		"target_url=1&fail_url=&"..
 		"format=&redir_fail=http://www.lycos.it/",
 	login_failC="(Spiacente, ma questo Alias non esiste)",
-	session_errorC = "(http://mail.lycos.it/Europe/Bin/Utils/error.jsp)",
+	session_errorC = "(http://[^/]+/Europe/Bin/Utils/error.jsp)",
 	loginC = '<frame.*src="([^"]+)"',
 	-- mesage list mlex
 	statE = '.*<div class="whrnopadding">.*</div>.*<div>.*<div>[.*]{img}.*</div>.*<div>.*</div>.*<div>.*</div>.*<div>[.*]{img}.*</div>.*<div class="w15L">.*<input.*name.*CHECK_>.*</div>.*</div>',
 	statG = 'O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}X<O>O<O>O<X>O<O>O<O>',
 	-- The uri for the first page with the list of messages
-	first = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp?FOLDERID=5&",
+	first = "http://%s/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp?FOLDERID=5&",
 	-- The uri to get the next page of messages
 	nextC ='<a href="(?FOLDERID=5&MYNEXT=%d+&MYSORT=%-1)">Successivo</a>',
-	next = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp",
+	next = "http://%s/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp",
 
 	-- The capture to understand if the session ended
 	timeoutC = '(FIXME)',
 	-- The uri to save a message (read download the message)
-	save = "http://mail.lycos.it/Europe/Bin/Mail/Features/MailContent/mailContent.jsp?MESSAGEID=%d&PARENTID=5&MYSORT=-1",
-	save_header = "http://mail.lycos.it/Europe/Bin/Mail/Features/MailContent/headerContent.jsp?MESSAGEID=%d",
+	save = "http://%s/Europe/Bin/Mail/Features/MailContent/mailContent.jsp?MESSAGEID=%d&PARENTID=5&MYSORT=-1",
+	save_header = "http://%s/Europe/Bin/Mail/Features/MailContent/headerContent.jsp?MESSAGEID=%d",
 	-- The uri to delete some messages
-	delete = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/actionFolderContent.jsp",
+	delete = "http://%s/Europe/Bin/Mail/Features/FolderContent/actionFolderContent.jsp",
 	delete_post = "ACTION=3&",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
@@ -59,7 +59,6 @@ local lycos_string = {
 	attach_end = '\n</P>\n%s+</div>\n',
 	head_begin = '<div style="text%-align:left;" class="whitecontent">',
 	head_end = '</div>',
-	base_uri = "http://mail.lycos.it"
 }
 
 -- ************************************************************************** --
@@ -114,6 +113,23 @@ end
 --------------------------------------------------------------------------------
 -- Login to the libero website
 --
+function mk_cookie(name,val,expires,path,domain,secure)
+	local s = name .. "=" .. curl.escape(val)
+	if expires then
+		s = s .. ";expires=" .. os.date("%c",expires)
+	end
+	if path then
+		s = s .. ";path=" .. path
+	end
+	if domain then
+		s = s .. ";domain=" .. domain
+	end
+	if secure then
+		s = s .. ";secure"
+	end
+	return s
+end
+
 function lycos_login()
 	if internal_state.login_done then
 		return POPSERVER_ERR_OK
@@ -133,6 +149,11 @@ function lycos_login()
 
 --	b.curl:setopt(curl.OPT_VERBOSE,1)
 
+	local bisquit = mk_cookie("logged_in","true",os.time() + 60 * 60
+	,"/",".lycos.it")
+
+	b:add_cookie("lycos.it",bisquit)
+
 	local extract_f = support.do_extract(
 		internal_state,"login_url",lycos_string.loginC)
 	local check_f = support.check_fail
@@ -145,11 +166,29 @@ function lycos_login()
 	end
 
 	if internal_state.login_url == nil then
-		log.error_print("unable to get the loginC")
+		log.error_print("unable to get the first loginC")
 		return POPSERVER_ERR_AUTH
 	end
 
-	local uri = lycos_string.base_uri .. internal_state.login_url
+	local uri = "http://" .. b:wherearewe() .. internal_state.login_url
+
+	local extract_f = support.do_extract(
+		internal_state,"login_url",lycos_string.loginC)
+	local check_f = support.check_fail
+	local retrive_f = support.retry_n(
+		3,support.do_post(internal_state.b,uri,post))
+
+	if not support.do_until(retrive_f,check_f,extract_f) then
+		log.error_print("Login failed\n")
+		return POPSERVER_ERR_AUTH
+	end
+
+	if internal_state.login_url == nil then
+		log.error_print("unable to get the second loginC")
+		return POPSERVER_ERR_AUTH
+	end
+
+	local uri = "http://" .. b:wherearewe() .. internal_state.login_url
 
 	local body,err = b:get_uri(uri)
 
@@ -182,8 +221,8 @@ function lycos_parse_webmessage(pstate,msg)
 	
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(lycos_string.save,uidl)
-	local urih = string.format(lycos_string.save_header,uidl)
+	local uri = string.format(lycos_string.save,b:wherearewe(),uidl)
+	local urih = string.format(lycos_string.save_header,b:wherearewe(),uidl)
 	
 	local f,rc = b:get_uri(uri,cb)
 	
@@ -256,7 +295,7 @@ function lycos_parse_webmessage(pstate,msg)
 	for i = 1,n do
 		--print("addo fino a " .. n)
 		local _,_,url = string.find(x:get(0,n-1),'href="([^"]*)"')
-		attach[x:get(1,n-1)] = lycos_string.base_uri .. url
+		attach[x:get(1,n-1)] = "http://" .. b:wherearewe() .. url
 		table.setn(attach,table.getn(attach) + 1)
 	end
 
@@ -335,7 +374,7 @@ function quit_update(pstate)
 
 	-- shorten names, not really important
 	local b = internal_state.b
-	local uri = string.format(lycos_string.delete)
+	local uri = string.format(lycos_string.delete,b:wherearewe())
 	local post = string.format(lycos_string.delete_post)
 
 	-- here we need the stat, we build the uri and we check if we 
@@ -389,7 +428,7 @@ function stat(pstate)
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri = lycos_string.first
+	local uri = string.format(lycos_string.first,b:wherearewe())
 	
 	-- The action for do_until
 	--
@@ -398,6 +437,8 @@ function stat(pstate)
 		-- calls match on the page s, with the mlexpressions
 		-- statE and statG
 		local x = mlex.match(s,lycos_string.statE,lycos_string.statG)
+
+		--print(">>>"..s.."<<<<")
 
 		--x:print()
 
@@ -431,7 +472,7 @@ function stat(pstate)
 			end
 
 			-- arrange size
-			size = tonumber(size)
+			size = math.max(tonumber(size),2)
 			if k ~= nil then
 				size = size * 1024
 			elseif m ~= nil then
@@ -451,7 +492,8 @@ function stat(pstate)
 	local function check_f (s) 
 		local _,_,nex = string.find(s,lycos_string.nextC)
 		if nex ~= nil then
-			uri = lycos_string.next .. nex
+			uri = string.format(lycos_string.next,b:wherearewe())..
+				nex
 			-- continue the loop
 			return false
 		else
@@ -461,7 +503,7 @@ function stat(pstate)
 
 	-- this is simple and uri-dependent
 	local function retrive_f ()  
-		print("getting "..uri)
+		--print("getting "..uri)
 		local f,err = b:get_uri(uri)
 		if f == nil then
 			return f,err
@@ -480,8 +522,7 @@ function stat(pstate)
 			b = internal_state.b
 			-- popserver has not changed
 			
-			uri = lycos_string.first
-			
+			uri = string.format(lycos_string.first,b:wherearewe())		
 			return b:get_uri(uri)
 		end
 		
@@ -564,10 +605,11 @@ end
 -- popserver_callback to send the data
 function retr(pstate,msg,data)
 	local head,body,body_html,attach = lycos_parse_webmessage(pstate,msg)
+	local b = internal_state.b
 
 	mimer.pipe_msg(
 		head,body,body_html,
-		lycos_string.base_uri,attach,internal_state.b,
+		"http://" .. b:wherearewe(),attach,b,
 		function(s)
 			popserver_callback(s,data)
 		end)
@@ -582,10 +624,11 @@ function top(pstate,msg,lines,data)
 	local head,body,body_html,attach = lycos_parse_webmessage(pstate,msg)
 	local e = stringhack.new()
 	local purge = false
+	local b = internal_state.b
 
 	mimer.pipe_msg(
 		head,body,body_html,
-		lycos_string.base_uri,attach,internal_state.b,
+		"http://" .. b:wherearewe(),attach,b,
 		function(s)
 			if not purge then
 				s = e:tophack(s,lines)

@@ -21,79 +21,82 @@ PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
 Serve per selezionare la cartella (inbox &egrave; quella di default)
-su cui operare. 
+su cui operare.<br/>
 Le cartelle standard disponibili sono inbox, starred, sent, all, spam, trash.
-Questo &egrave; un esempio di uno user name per leggere la 
-cartella starred:
-foo@gmail.com?folder=starred
-
-Se hai creato delle label, puoi accedervi usando il parametro label=nome
-]],
+Questo &egrave; un esempio di uno user name per leggere la cartella starred:<br/>
+foo@gmail.com?folder=starred<br/>
+<br/>
+Se hai creato delle label, puoi accedervi usando il parametro ?label=nome]],
 		en = [[
-Used for selecting the folder to operate on (inbox is the default one).
-The standard folders are: inbox, starred, sent, all, spam, trash.
-Here is an example of a username to get the email from the starred folder:
-foo@gmail.com?folder=starred
-
+Used for selecting the folder to operate on (inbox is the default one).<br/>
+The standard folders are: inbox, starred, sent, all, spam, trash.<br/>
+Here is an example of a username to get the email from the starred folder:<br/>
+foo@gmail.com?folder=starred<br/>
+<br/>
 If you created personalized labels in gmail, you can access them using
 the label parameter label=name.]],
 		}	
 	},
 	{name = "label", description = {
 		it = [[
-Serve per selezionare la label su cui operare. 
+Serve per selezionare la label su cui operare.<br/>
 Questo &egrave; un esempio di uno user name per leggere la 
-cartella personalizzata Amici:
-foo@gmail.com?label=amici
-]],
+cartella personalizzata Amici:<br/>
+foo@gmail.com?label=amici]],
 		en = [[
-Used for selecting the labels to operate on.
-Here is an example of a username to get the email from the label Friends:
-foo@gmail.com?label=Friends
-
-If you created personalized labels in gmail, you can access them using
-the label parameter label=name.]],
+Used for selecting the labels to operate on.<br/>
+Here is an example of a username to get the email from the label Friends:<br/>
+foo@gmail.com?label=Friends]],
 		}	
 	},
 	{name = "act", description = {
 		it = [[
-Valori possibili:
-- export: esporta la rubrica di gmail in un
-file gmail_contacts_export.csv verrà generato nella tua home (Unix)
-o nella directory Documenti 
-(Windows), che pu&ograve; essere importato nel tuo mail client preferito
-]],
+Valori possibili:<br/>
+- export: esporta la rubrica di gmail in un file chiamato 
+gmail_contacts_export.csv che verrà generato nella tua home (Unix)
+o nella directory Documenti (Windows), 
+che pu&ograve; essere importato nel tuo mail client preferito.]],
 		en = [[
-Possible values:
+Possible values:<br/>
 - export: Exports your gmail contacts into a file called 
 gmail_contacts_export.csv that will be saved in you home (Unix)
 or in the My Documents directory (Windows), that can be imported 
-into your email client.
-]],
+into your email client.]],
 		}
 	},
 }
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Questo plugin vi per mette di leggere le mail che avete in una 
-mailbox @gmail.com.
+mailbox @gmail.com.<br/>
 Per usare questo plugin dovete usare il vostro indirizzo email completo come
-user name e la vostra password reale come password. E' anche possibile 
-esportare la rubrica usando come user name username@gmail.com?act=export. Un
-file gmail_contacts_export.csv che pu&ograve;
-essere importato nel tuo mail client
-preferito verrà generato nella tua home (Unix) o nella directory Documenti 
-(Windows).]],
+user name e la vostra password reale come password.<br/>
+Aggiungendo dei parametri all username si puo scaricare la posta dalle diverse
+cartelle o label, ed anche esportare la rubrica in formatto CSV.<br/>
+Controllare la sezione "Parametri supportati" per maggiore informazione sui
+parametri disponibili.<br/>
+<br/>
+Nota:<br/>
+Quando il cliente di posta cancella dei messagi (perche e' stato configurato per
+cancellare i messaggi dal server [dopo x giorni]), se sei nella cartella inbox
+i messaggi saranno spostati nell'archivio (cartella "all"), se sei nella cartella
+spam i messaggi saranno spostati nel cestiono (cartella trash), altrimenti i messaggi
+vengono segnati come letti.]],
 	en=[[
-This is the webmail support for @gmail.com mailboxes. To use this plugin
-you have to use your full email address as the user name and your real 
-password as the password. It is also possible to export your contacts
-in csv format that can be imported into your email client.
-To do this you should use something like username@gmail.com?act=export
-and a file called gmail_contacts_export.csv will
-be saved in you home (Unix) or in the My Documents directory (Windows).]]
+This is the webmail support for @gmail.com mailboxes.<br/>
+To use this plugin you have to use your full email address as the user name 
+and your real password as the password.<br/>
+Adding some parameters at the end of the username gives the ability to download
+email from different folder and/or labels, and export the contacts in CSV format.
+Check "Supported parameters" for more details about the available parameters.<br/>
+<br/>
+Note:<br/>
+When the email client issue the command to delete some messages (because in its
+options it is set to delete messages from server [after x days]), if you are in the
+inbox folder, email will be moved to the archive (folder "all"), if you are in the
+spam folder, email will be moved to the trash folder, else it will only be marked
+as read.]]
 }
-
 
 -- ************************************************************************** --
 --  strings

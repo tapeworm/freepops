@@ -31,7 +31,7 @@
 
 
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -65,8 +65,8 @@ vspace{5mm}
 normalsize{Written by Enrico Tassi, Nicola Cocchiaro}
 \layout Standard
 $Revision$ 
-\backslash 
-vspace{3mm} $Date$
+\layout Standard
+$Date$
 \layout Standard
 
 \backslash 

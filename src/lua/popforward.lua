@@ -245,7 +245,7 @@ function stat(pstate)
 
 	pf_state.stat_done = true
 	
-	return single_line("STAT\r\n",f)
+	return single_line("STAT",f)
 end
 
 -- Fill msg uidl field

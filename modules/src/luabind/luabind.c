@@ -118,8 +118,9 @@ for ( i = 0 ; t[i].name != NULL ; i++){
 void L_openTconst(lua_State* L,const struct L_Tuserdata* t,const char * type){
 int i;
 for ( i = 0 ; t[i].name != NULL ; i++){
+	void * c;
 	lua_pushstring(L,t[i].name);
-	void * c = lua_newuserdata(L,sizeof(void*));
+	c = lua_newuserdata(L,sizeof(void*));
 	*(void**)c = t[i].data;
 	luaL_getmetatable(L,type);
 	lua_setmetatable(L,-2);

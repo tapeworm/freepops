@@ -3,6 +3,7 @@ legeng: more + means more done! (from 1 to 7)
 third release 0.0.3
 +++++	fare documentazione per moduli lua e C decente
 	plugin (superva?)(freepass?)
+	give a more resistent binding for portablesocket_lua
 
 second release 0.0.2
 +++++++	update lua5.0 to lua5.0.2

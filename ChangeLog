@@ -1,3 +1,5 @@
+- moved popforward from luasocket to psock (poor but works)
+- added portablesocket_lua module
 - updated libero.lua to new browser.lua
 - updated serialize.lua to support "self serializing" objects
 - updates support.lua to support new browser.lua

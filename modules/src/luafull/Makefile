@@ -81,9 +81,14 @@ $(PREFIX)/bin/luafull: luafull
 	
 luafull:
 	$(H)echo -n ' building luafull... '
-	$(H)[ -f ../../lib/liblua-host.a ] && \
-		( $(RANLIB) ../../lib/liblua-host.a; \
-		  $(RANLIB) ../../lib/liblualib-host.a )
+#	$(H)[ -f ../../lib/liblua-host.a ] && \
+#		( $(RANLIB) ../../lib/liblua-host.a; \
+#		  $(RANLIB) ../../lib/liblualib-host.a )
+	$(H)($(RANLIB) ../../lib/liblua-host.a; \
+		$(RANLIB) ../../lib/liblualib-host.a; \
+		$(RANLIB) ../../lib/liblua.a; \
+		$(RANLIB) ../../lib/libluaexpat.a; \
+		$(RANLIB) ../../lib/libgetdate.a )
 	$(H)$(CC) $(CFLAGS) -o $(BINARY) lua.c $(LDFLAGS) || true
 	$(H)$(BINARIZE)
 	$(H)echo "done."

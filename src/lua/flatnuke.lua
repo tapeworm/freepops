@@ -159,7 +159,6 @@ function retr_or_top(pstate,msg,data,lines)
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	
 	--some locals
-	local a = stringhack.new_str_hack()
 	local b = internal_state.b
 	
 	-- build the uri
@@ -196,19 +195,18 @@ function retr_or_top(pstate,msg,data,lines)
 		body.. "\r\n"
 
 	--hack it
+	local a = stringhack.new_str_hack()
 	if lines ~= nil then
 		s = stringhack.tophack(s,lines,a)
 	end
 	s = stringhack.dothack(s,a)
+	stringhack.delete_str_hack(a)
 	
 	--end it
 	s = s .. "\0"
 		
 	--send it
 	popserver_callback(s,data)
-	
-	--clean it
-	stringhack.delete_str_hack(a)
 	
 	return POPSERVER_ERR_OK
 end

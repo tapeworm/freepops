@@ -33,6 +33,8 @@ $(LIBRARY): $(OBJ) $(INTERFACE)
 	@$(CC) $(CFLAGS) -c $<
 	@echo "$@"
 
+clean:
+	@rm *.o
 	
 -include $(CDEPFILES:%.c=.%.d)	
 

@@ -54,8 +54,6 @@
 -- <BR/>
 -- <B>ssl_init_stuff()</B> : some stuff for SSL<BR/>
 --<BR/>
--- <B>override_useragent(useragent)</B> : sets the useragent<BR/>
---<BR/>
 
 dofile("cookie.lua")
 
@@ -645,13 +643,6 @@ function Private.verbose_mode(self)
 	self.curl:setopt(curl.OPT_VERBOSE,1)
 end
 
-function Private.override_useragent(self,useragent)
-	if useragent == nil then
-		error("You can't override the useragent with a nil string")
-	end
-	self.useragent = useragent
-end
-
 browser = {}
 
 --<==========================================================================>--
@@ -659,14 +650,15 @@ browser = {}
 ---
 -- Creates a new object.
 -- @return object.
-function browser.new()
+function browser.new(override_useragent)
 	local b = {
 		cookies = {},
 		referrer = false, --nil will break the metatable check
 		curl = false,
 		proxy = os.getenv("LUA_HTTP_PROXY"),
 		proxyauth = os.getenv("LUA_HTTP_PROXYAUTH"),
-		useragent = os.getenv("LUA_HTTP_USERAGENT"),
+		useragent = override_useragent or 
+		  os.getenv("LUA_HTTP_USERAGENT"),
 		fpat = os.getenv("LUA_FORCE_PROXY_AUTH_TYPE"),
 		followRefreshHeader = false,
 	}

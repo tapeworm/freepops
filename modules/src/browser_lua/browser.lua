@@ -282,7 +282,7 @@ function Hidden.mangle_location(self,loc)
 		local part_path = nil
 		local u = cookie.parse_url(self.referrer)
 		if u ~= nil then
-	                local _,_,part_path = string.find(u.path or "/","(.*/)")
+	                _,_,part_path = string.find(u.path or "/","(.*/)")
 		end
                 loc = (part_path or "/") .. loc
 	end

@@ -124,10 +124,10 @@ Released under the GNU/GPL license (this means FreePOPs is Free Software).
 Plugins
 \layout Standard
 
-These are the plugin currently included in FreePOPs:
+These are the plugins currently included in FreePOPs:
 \layout Description
 
-libero.lua This plugins fully supports the 
+libero.lua This plugin fully supports the 
 \family typewriter 
 www.libero.it
 \family default 
@@ -150,7 +150,7 @@ www.libero.it
 .
 \layout Description
 
-tin.lua This plugins fully supports the 
+tin.lua This plugin fully supports the 
 \family typewriter 
 communicator.virgilio.it
 \family default 
@@ -192,9 +192,9 @@ aggregator.lua Many sites provide an RSS backend for indexing their news.
  mail for each news.
 \layout Description
 
-flatnuke.lua This is a more powerful aggregator for a FlatNuke-based
+flatnuke.lua This is a more powerful aggregator for FlatNuke-based
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
@@ -205,7 +205,7 @@ See HTTP://flatnuke.sourceforge.net for the project homepage
 \layout Description
 
 kernel.lua This is a plugin to monitor the news about the Linux kernel through
- ChangeLogs
+ ChangeLogs.
 \layout Section
 
 History
@@ -472,7 +472,7 @@ in.virgilio.it:110
 \family default 
 :
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -870,7 +870,7 @@ HTTP://flatnuke.sourceforge.net
  like the FreePOPs website.
  Since in a FlatNuke site the news are stored in plain xml files this plugin
  is able to fetch the whole news, and not only the headings as the aggregator
- plugin.
+ plugin does.
  This is really useful if you don't want to surf the website to read the
  news.
 \layout Standard
@@ -1059,7 +1059,7 @@ flatnuke.lua
  that is a web-news plugin.
 \layout Standard
 
-Two section follows, the first is a quick overview of what a plugin has
+Two sections follow, the first is a quick overview of what a plugin has
  to do, the latter is a more detailed tutorial.
 \layout Subsection
 
@@ -1581,7 +1581,7 @@ In this section we will write a plugin step by step examining each important
 (step 1) the skeleton
 \layout Standard
 
-The first thing we will do is to copy the 
+The first thing we will do is copy the 
 \emph on 
 skeleton.lua
 \emph default 
@@ -1607,7 +1607,7 @@ foo.lua
  and change the first few lines adding the plugin name, version, your name,
  your email and a short comment in the proper places.
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -1666,7 +1666,7 @@ config.lua
 ; other copies of this file may be included in the distributions, but they
  are backup copies) and add a line like this
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -1707,7 +1707,7 @@ user()
 \emph default 
 .
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -1817,7 +1817,7 @@ user
 pass
 \emph default 
 .
- First the client does a user, that it tells the server the password.
+ First the client does a user, then it tells the server the password.
  As we have already seen in the overview this means that first 
 \emph on 
 user()
@@ -2008,7 +2008,7 @@ foo_globals
 \emph default 
  table that will contain all the globals (values that should be available
  to successive function calls) we need.
- Since now we have the username and the password here.
+ So far we have the username and password there.
  The 
 \emph on 
 user()
@@ -2044,8 +2044,8 @@ init()
 browser.lua
 \emph default 
  module (the module we will use to login in the webmail).
- Here there is the webmail login page viewed with mozilla and the source
- of the page (with mozilla is Ctrl-U).
+ Here is the webmail login page viewed with Mozilla and the source of the
+ page (with Mozilla it is Ctrl-U).
 \layout Standard
 
 
@@ -2121,7 +2121,7 @@ POST
 \emph on 
 HTTP://localhost:3000/
 \emph default 
- the form contents (I used a local address because of commodity, but is
+ the form contents (I used a local address because of commodity, but it
  should be something like HTTP://webmail.foo.xx/login.php).
  This is what the browser sends:
 \begin_inset ERT
@@ -2182,7 +2182,7 @@ username=test%40foo.xx&password=hello
 \emph default 
 .
  Now we want to reproduce the same HTTP request with our plugin.
- This is the simple code that will do this.
+ This is the simple code that will do just that.
 \begin_inset ERT
 status Collapsed
 
@@ -2276,7 +2276,7 @@ post_data
 \emph on 
 string.format
 \emph default 
- (printf like function).
+ (printf-like function).
  And this is the resulting request
 \begin_inset ERT
 status Collapsed
@@ -2332,8 +2332,8 @@ curl.escape()
 
 Now that we have logged in, we want to check the resulting page, and maybe
  extract a session ID that will be used later.
- This is the code to extract the session id and the HTML page we havrounde
- received in response to the login request
+ This is the code to extract the session id and the HTML page we have received
+ in response to the login request
 \begin_inset ERT
 status Collapsed
 
@@ -2458,7 +2458,7 @@ session_id=(%w+)
 .
  This is a really important function in the lua library and, even if it
  is described in the lua tutorial at HTTP://lua-user.org, we will talk a
- bit on captures here.
+ bit about captures here.
  Look at the page source.
  We are interested in the line 
 \emph on 
@@ -2524,9 +2524,9 @@ Programming in Lua
 Now we have to implement the stat() function.
  The stat is probably the most important function.
  It must retrieve the list of messages in the webmail and their UIDL and
- size.In our example we will use the mlex module to grab the important info
- from the page, but you can use the string LUA module to do the same with
- captures.
+ size.
+ In our example we will use the mlex module to grab the important info from
+ the page, but you can use the string LUA module to do the same with captures.
  This is our inbox page
 \newline 
 
@@ -2664,9 +2664,9 @@ end{footnotesize}
 \end_inset 
 
 This expression is used to match the table row containing info about the
- massage.
+ message.
  Now cut and paste the line and replace every space and every tag with O
- (the letter, not he 0) or X.
+ (the letter, not the digit 0) or X.
  Put an X in the interesting fields (in our example the size and the input
  tag, that contains the message uidl).
 \begin_inset ERT
@@ -2700,7 +2700,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-While the first expression will be use to match the table row, this one
+While the first expression will be used to match the table row, this one
  will be used to extract the important fields.
  This is the code that starts mlex on the HTML and fills the popstate data
  structure with the captured data.
@@ -2875,7 +2875,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-We have not listed here we added the dummy return POPSERVER_ERR_OK line
+We have not listed here how we added the dummy return POPSERVER_ERR_OK line
  to the quit() function.
  The source code listed before uses mlex to extract the two interesting
  strings, then parses them searching for the size and the size multiplier
@@ -2886,7 +2886,7 @@ We have not listed here we added the dummy return POPSERVER_ERR_OK line
  <b> tag is optional (you can see that only the first message is in bold).
  so we change the expressions to
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -2918,7 +2918,7 @@ end{footnotesize}
 
 and
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -2948,9 +2948,9 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-Now the stat command respond with +OK 4 45056 and the debug print is 
+Now the stat command responds with +OK 4 45056 and the debug print is 
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -3036,10 +3036,10 @@ end{footnotesize}
 
 The most important function is done, but a lot of notes must be written
  here.
- First mlex is a really comfortable sometimes, but you may find more helpful
- using lua string library or the regularexp library (posix extended regular
- expressions) to reach the same point.
- Second this implementation stops at the first inbox page.
+ First, mlex is really comfortable sometimes, but you may find more helpful
+ using the lua string library or the regularexp library (posix extended
+ regular expressions) to reach the same point.
+ Second, this implementation stops at the first inbox page.
  You should visit all the inbox pages maybe using the do_until function
  in the support library (that will be briefly described at the end of this
  tutorial).
@@ -3051,10 +3051,9 @@ The most important function is done, but a lot of notes must be written
 (step 4) the common functions
 \layout Standard
 
-The common module give us some already cooked functions that depends only
- on a well implemented stat() (I mean a stat than can be called more than
- once).
- This is the our implementation of our functions 
+The common module gives us some pre-cooked functions that depend only on
+ a well implemented stat() (I mean a stat than can be called more than once).
+ This is our implementation of our functions 
 \begin_inset ERT
 status Collapsed
 
@@ -3288,7 +3287,7 @@ end{footnotesize}
 
 
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -3318,8 +3317,8 @@ end{footnotesize}
 Submitting a bug
 \layout Standard
 
-When you have problems or you think you found a bug, please follow strictly
- this 
+When you have problems or you think you have found a bug, please follow
+ strictly this 
 \emph on 
 iter
 \emph default 

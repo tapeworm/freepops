@@ -7,7 +7,10 @@ CONSTANTS=curlopt.h curl_netrcopt.h curl_form.h curl_authopt.h
 ifeq "$(OS)" "Windows"
 	HEADER=/usr/local/cross-tools/i386-mingw32msvc/include/curl/curl.h
 else
-	HEADER=/usr/include/curl/curl.h
+	HEADER=$(shell ./find_curl.sh)
+	# if this fails hack here #########################################
+	# HEADER=your path here
+	###################################################################
 endif
 
 H=@
@@ -15,6 +18,7 @@ CFLAGS+= -Wall -I. -I$(PREFIX)/include
 ifeq "$(OS)" "Cygwin"
 	CFLAGS+= -I/usr/include
 endif
+CFLAGS+= $(shell curl-config --cflags 2>/dev/null)
 OBJ=curl_lua.o
 
 all: $(LIBRARY)

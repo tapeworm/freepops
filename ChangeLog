@@ -1,3 +1,4 @@
+- workaround for the tin TOP. (not fixed, probable bug in stringhack.tophack)
 - fixed popserver rfc compliace issue (stat/list/uidl doesn't show messages
 marked for deletion) thanks ramik for bugreporting
 - fixed bug in browser.lua

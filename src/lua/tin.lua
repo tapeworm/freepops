@@ -308,6 +308,9 @@ function top_cb(global,data)
 		if global.a:check_stop(global.lines_requested) then
 			purge = true
 			global.lines = -1
+			if(string.sub(s,-2,-1) ~= "\r\n") then
+				popserver_callback("\r\n",data)
+			end
 			-- trucate it!
 			return 0,nil
 		else

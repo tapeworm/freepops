@@ -8,6 +8,7 @@
  * File description:
  *	The main function is here
  * Notes:
+ * 	Options --kill added by Stefano Falsetto <falsetto@gnu.org>
  *
  * Authors:
  * 	Alessio Caprari <alessio.caprari@tiscali.it>
@@ -92,6 +93,7 @@ HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "logmode", required_argument, NULL, 'l' },
 				 { "daemonize", no_argument, NULL, 'd' },
 				 { "suid", required_argument, NULL, 's' },
+				 { "kill", no_argument, NULL, 'k' },
 	                         { NULL, 0, NULL, 0 } };
 
 void usage(const char *progname) {
@@ -107,7 +109,10 @@ void usage(const char *progname) {
 "\t\t\t[-t|--threads num]\n"
 "\t\t\t[-d|--daemonize]\n"
 "\t\t\t[-l|--logmode (syslog|filename|stdout)]\n"
+#if !defined(WIN32) && !defined(BEOS)			
 "\t\t\t[-s|--suid user.group]\n"
+"\t\t\t[-k|--kill]\n"
+#endif
 "        %s\t[-V|--version]\n"
 "        %s\t[-h|--help]\n\n", progname, progname, progname);
 }
@@ -352,6 +357,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)	
 	uid = geteuid();
 	gid = getegid();
+        pid_t this_pid;
 #endif
 
 	address.s_addr = htonl(BINDADDRESS);
@@ -359,7 +365,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	
 /*** ARGUMENTS PARSING ***/
 	while (
-	(res=getopt_long(argc,argv,"b:p:P:A:c:u:t:l:s:dhVvw",opts,NULL))!= -1) {
+	(res=getopt_long(argc,argv,"b:p:P:A:c:u:t:l:s:dhVvwk",opts,NULL))!= -1){
 		if (res == 'p') {
 			/* --port */
 #if defined(MACOSX)
@@ -451,7 +457,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		} else if (res == 'w') {
 			/* --veryverbose */
 			verbose_output+=2;
-	#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)			
+	#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)
+		} else if (res == 'k') {
+			/* --kill */
+			/* Kill freepopsd with pid contained in .pid file */
+			this_pid = retrieve_pid_file(PIDFILE);
+			if (this_pid != PIDERROR) {
+				kill((pid_t)this_pid, SIGINT);
+                                exit(0);
+                        } else {
+				printf("Warning: can't find a pid file.\n");
+				exit(1);
+			}
 		} else if (res == 's') {
 			/* --suid */
 			parse_suid(optarg);

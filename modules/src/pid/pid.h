@@ -27,6 +27,8 @@
 int create_pid_file(char *filestr);
 //! removes the pid file
 int remove_pid_file(void);
+//! retrieve pid information
+int retrieve_pid_file(char*);
 #endif
 
 #endif

@@ -8,7 +8,8 @@
  * File description:
  * 	Implements pid file
  * Notes:
- *
+ * 	retrieve_pid_file() by Stefano Falsetto <falsetto@gnu.org>
+ * 	
  * Authors:
  * 	Simone Vellei <simone_vellei@users.sourceforge.net>
  ******************************************************************************/
@@ -76,6 +77,28 @@ int remove_pid_file(void)
 	
 		
 		SAY("Cannot delete pid file \"%s\"\n",pidfile);
+		
+		return PIDERROR;
+	}
+}
+
+int retrieve_pid_file(char* pidfile)
+{
+	FILE 	*tmpfd;
+	long	this_pid;
+
+	tmpfd=fopen(pidfile,"r");
+	
+	if (tmpfd!=NULL) {
+		SAY("Retriving info from pid file \"%s\"\n",pidfile);
+		fscanf(tmpfd, "%ld", &this_pid);
+		SAY("The retrived pid is: \"%d\"\n",this_pid);
+		fclose(tmpfd);
+		return this_pid;
+
+	} else {
+	
+		SAY("Cannot retrive pid file \"%s\"\n",pidfile);
 		
 		return PIDERROR;
 	}

@@ -114,6 +114,7 @@ dist-deb-real:
 	$(H)cp _deb_/*.tar.gz _deb_/*.deb _deb_/*.dsc _deb_/*.changes \
 		_deb_/*.diff.gz ../dist-deb/freepops
 	$(H)lintian -vi ../dist-deb/freepops/*.changes ||true
+	$(H)linda -vi ../dist-deb/freepops/*.changes ||true
 	$(H)cd ../dist-deb/freepops/; \
 		echo -e "freepops optional mail\nfreepops-doc optional mail" \
 			> overridefile

@@ -2,13 +2,13 @@ Source: freepops
 Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@users.sourceforge.net>
-Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl3-dev | libcurl2-dev | libcurl-ssl-dev | libcurl-dev , tetex-extra, flex, bison, libreadline-dev, gs-common, libssl-dev, po-debconf
+Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl3-dev, tetex-extra, flex, bison, libreadline-dev, gs-common, libssl-dev, po-debconf
 Standards-Version: 3.6.1.0
 
 Package: freepops
 Architecture: any
 Depends: ${shlibs:Depends}, debconf
-Description: POP3 interface to webmails
+Description: pop3 interface to webmails
  freepopsd is a daemon that acts as a local POP3 server, translating
  local pop3 command to remote http requests to the supported
  webmail sites.
@@ -16,6 +16,6 @@ Description: POP3 interface to webmails
 Package: freepops-doc
 Architecture: all
 Depends: 
-Description: FreePOPs user/developer manual
- This is the manual in pdf format for FreePOPs.
+Description: freepops user/developer manual
+ This is the manual in pdf format for freepops.
  

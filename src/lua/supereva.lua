@@ -18,7 +18,7 @@ PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net"
 PLUGIN_AUTHORS_NAMES = {"Andrea Dalle Molle","Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"Tund3r (at) fastwebnet (dot) it",
 	"gareuselesinge (at) users (dot) sourceforge (dot) net"}
-PLUGIN_DOMAINS = {"@supereva.it","@freemail.it","@freeweb.org","@mybox.it","@superdada.com","@cicciociccio.com","@mp4.it","@dadacasa.com"}
+PLUGIN_DOMAINS = {"@supereva.it","@freemail.it","@freeweb.org","@mybox.it","@superdada.com","@cicciociccio.com","@mp4.it","@dadacasa.com","@clarence.com","@concento.it"}
 PLUGIN_PARAMETERS = {
 	{name="onlynew", description={
 		en="Set this to 1 if you want to see only new messages. Should be useless since version 0.0.6",

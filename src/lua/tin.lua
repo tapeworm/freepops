@@ -35,56 +35,24 @@ local tin_string = {
 		"a3afep=http://communicator.virgilio.it/asp/login.asp&"..
 		"a3se=http://communicator.virgilio.it/asp/login.asp&"..
 		"a3dcep=http://communicator.virgilio.it/asp/homepage.asp?s=005",
+	homepage="http://communicator.virgilio.it",
+	webmail="http://communicator.virgilio.it/mail/webmail.asp",
 	-- This is the capture to get the session ID from the login-done webpage
-	sessionC = "/cgi%-bin/webmail%.cgi%?ID=([a-zA-Z0-9_]+)&",
-	-- This is the mlex expression to interpret the message list page.
-	-- Read the mlex C module documentation to understand the meaning
-	--
-	-- This is probabli one of the more boaring tasks of the story.
-	-- An easy and not so boaring way of writing a mlex expression is
-	-- to cut and paste the html source and work on it. For example
-	-- you could copy a message table row in a blank file, substitute
-	-- every useless field with '.*'.
--- <tr><td width=6 bgcolor=#FCF3E2><spacer type="block" height=1 width=6></td>
---             <td colspan=2 align=center width="41" ><a href="/mail/MessageRead?sid=6966E8704F792498961C294F5FDFE6D2C9844735&userid=gareuselesinge2%40virgilio.it&seq=+Q&auth=+A&srcfolder=INBOX&uid=1&srch=0&style=comm4_IT"><img
---                border=0 height=15 width=5  src=http://graphic.cp.virgilio.it/graphics/comm3_IT/priority_normal.gif ><img
---                border=0 height=15 width=15 src=http://graphic.cp.virgilio.it/graphics/comm3_IT/new.gif ><script>
---               doWriteImageLink("","0","attach_none.gif");
---			   </script></a></td>
---            <td align=center width="20"><input type=checkbox name=msguid value="1"></td>
---            <td width="175"><p class=spazio3 ><b>
---                <a href="/mail/MessageRead?sid=6966E8704F792498961C294F5FDFE6D2C9844735&userid=gareuselesinge2%40virgilio.it&seq=+Q&auth=+A&srcfolder=INBOX&uid=1&srch=0&style=comm4_IT" class="linkrossoscuro10">tinitfree@tin.it</a>
---                </b></p></td>
---
---            <td width="76" class=testomarronescuro10 align=center><p class=spazio3 ><b>Mag 18</b></p></td>
---            <td width="225"  class=testomarronescuro10><p class=spazio3 ><b><a href="/mail/MessageRead?sid=6966E8704F792498961C294F5FDFE6D2C9844735&userid=gareuselesinge2%40virgilio.it&seq=+Q&auth=+A&srcfolder=INBOX&uid=1&srch=0&style=comm4_IT" class="linkrossoscuro10">Benvenuto in tin.it Free</A></b></p></td>
---            <td  width="71" colspan=2 class=testomarronescuro10><p class=spazio3 ><b>2.9 KB</b></p></td>
---          </tr>
-	statE = ".*<tr>.*<td>.*<input.*value.*=.*[[:digit:]]+.*>.*</td>"..
-		".*<td>.*<img>.*</td>.*<td>.*<img>.*</td>.*<td>.*<img>"..
-		".*</td>.*<td>.*<img>.*</td>.*<td>.*<img>.*</td>.*<td>"..
-		".*<a>.*<img>.*</a>.*<a>[.*]{b}.*{/b}[.*]</a>.*</td>.*<td>"..
-		".*<img>.*</td>.*<td>.*<a>[.*]{b}.*{/b}[.*]</a>.*</td>.*<td>"..
-		".*<img>.*</td>.*<td>.*</td>.*<td>.*<img>.*</td>"..
-		".*<td>[.*]{b}.*{/b}[.*]</td>.*</tr>",
-	-- This is the mlex get expression to choose the important fields 
-	-- of the message list page. Used in combination with statE
-	statG = "O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>"..
-		"O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>"..
-		"O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>"..
-		"O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>O<O>",
+	sessionC = 'LoadFrames%(".*sid=(%w*)%&',
+--a.*href.*uid=[[:digit:]]+
+	statE = ".*<tr>.*<td>.*<spacer>.*</td>.*<td>.*<a>.*<img>.*<img>.*<script>.*</script>.*</a>.*</td>.*<td>.*<input>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</a>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</A>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*KB{/b}[.*]</p>.*</td>.*</tr>",
+	statG = "O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>O<O>O<O>",
+	
 	-- The uri for the first page with the list of messages
-	first = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs=1&"..
-		"C_Folder=aW5ib3g%%3D",
+	first = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
+		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT",
 	-- The capture to check if there is one more page of message list
 	next_checkC = "<a href=\"javascript:doit"..
 		"%('Act_Msgs_Page_Next',1,1%)\">.*</a>",
 	-- The uri to get the next page of messages
-	next = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs_Page_Next=1&"..
-		"HELP_ID=inbox&SEL_ALL=0&"..
-		"From_Vu=1&C_Folder=aW5ib3g%%3D&msgID=&Msg_Read=&"..
-		"R_Folder=&ZONEID=&Fld_P_List=aW5ib3g%%3D&"..
-		"dummy1_List=aW5ib3g%%3D&dummy2_List=aW5ib3g%%3D",
+	next = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
+		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT&"..
+		"start=%d&end=%d",
 	-- The capture to understand if the session ended
 	timeoutC = "(Sessione non valida. Riconnettersi)",
 	-- The uri to save a message (read download the message)
@@ -245,125 +213,63 @@ function tin_login()
 	local pop_login = user .. "@" .. domain
 	local uri = tin_string.login
 	local post = string.format(tin_string.login_post,pop_login,password)
-	local bisquit1 = mk_cookie("CPIULOGIN","",nil,"/",".virgilio.it",nil)
 	local txcpiu = aaa_encode(pop_login,password,curl.escape(
 		tin_string.tinsso_dxurl))
 	local txmail = aaa_encode(pop_login,password,tin_string.tinsso_wmail)
+	
+	-- we are really greedy :) gnam! gnam!
+	local bisquit1 = mk_cookie("CPIULOGIN","",nil,"/",".virgilio.it",nil)
 	local bisquit2 = mk_cookie("CPTX",txcpiu,nil,"/",".virgilio.it",nil)
 	local bisquit3 = mk_cookie("CPWM",txmail,nil,"/",".virgilio.it",nil)
+	local bisquit4 = mk_cookie("PHXID","",nil,"/",".virgilio.it",nil)
+	local bisquit5 = mk_cookie("PHXPAGE","",nil,"/",".virgilio.it",nil)
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()
 
 	local b = internal_state.b
 
-	b.curl:setopt(curl.OPT_VERBOSE,1)
+--	b.curl:setopt(curl.OPT_VERBOSE,1)
 
---	local head = b:get_head("http://communicator.virgilio.it")
---	b:show()
---	print(head)
-	b:add_cookie("http://communicator.virgilio.it",bisquit3)
-	b:add_cookie("http://communicator.virgilio.it",bisquit2)
-	b:add_cookie("http://communicator.virgilio.it",bisquit1)
---	b:show()
+	b:add_cookie(tin_string.homepage,bisquit3)
+	b:add_cookie(tin_string.homepage,bisquit2)
+	b:add_cookie(tin_string.homepage,bisquit1)
+	
 	local body,err = b:post_uri(uri,post)
---	print("Richiedo la uri: "..uri)
---	b:show()
---	print(body)
---
-	local body,err = b:get_uri("http://communicator.virgilio.it/mail/webmail.asp")
-local f = io.open("out.html","w")
-	f:write(body)
-	f:close()
 
-	local _,_,sid = string.find(body,'LoadFrames%(".*sid=(%w*)%&')
-
-	print("SID="..sid)
-
-	b:show()
+	b:add_cookie(tin_string.homepage,bisquit4)
+	b:add_cookie(tin_string.homepage,bisquit5)
 	
-	b.referrer = "http://phx3e.cp.virgilio.it/mail/Navigation?sid="..sid.."&userid=gareuselesinge2%40virgilio.it&seq=+Q&auth=+A&style=comm4_IT"
-	
-	local body,err = b:get_uri("http://"..b:wherearewe().."/mail/MessageList?sid="..sid.."1&userid="..curl.escape(pop_login).."&seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT")
-	
-	--body = b:get_uri("http://communicator.virgilio.it/mail/webmail.asp")
-	--print(body)
+	local extract_f = support.do_extract(
+		internal_state,"session_id",tin_string.sessionC)
+	local check_f = support.check_fail
+	local retrive_f = support.retry_n(
+		3,support.do_retrive(internal_state.b,tin_string.webmail))
 
-f = io.open("out2.html","w")
-	f:write(body)
-	f:close()
+	if not support.do_until(retrive_f,check_f,extract_f) then
+		log.error_print("Login failed\n")
+		return POPSERVER_ERR_AUTH
+	end
 
-	return POPSERVER_ERR_AUTH
+	-- check if do_extract has correctly extracted the session ID
+	if internal_state.session_id == nil then
+		log.error_print("Login failed, unable to get session ID\n")
+		return POPSERVER_ERR_AUTH
+	end
+		
+	-- save all the computed data
+	internal_state.login_done = true
 	
---	-- the functions for do_until
---	-- extract_f uses the support function to extract a capture specifyed 
---	--   in libero_string.sessionC, and pu ts the result in 
---	--   internal_state["session_id"]
---	-- check_f the is the failure funtion, that means that the do_until
---	--   will not repeat
---	-- retrive_f is the function that do_retrive the uri uri with the
---	--   browser b. The function will be retry_n 3 times if it fails
---	local extract_f = support.do_extract(
---		internal_state,"session_id",libero_string.sessionC)
---	local check_f = support.check_fail
---	local retrive_f = support.retry_n(
---		3,support.do_retrive(internal_state.b,uri))
---
---	-- maybe implement a do_once
---	if not support.do_until(retrive_f,check_f,extract_f) then
---		-- not sure that it is a password error, maybe a network error
---		-- the do_until will log more about the error before us...
---		-- maybe we coud add a sanity_check function to do until to
---		-- check if the received page is a server error page or a 
---		-- good page.
---		log.error_print("Login failed\n")
---		return POPSERVER_ERR_AUTH
---	end
---
---	-- check if do_extract has correctly extracted the session ID
---	if internal_state.session_id == nil then
---		log.error_print("Login failed, unable to get session ID\n")
---		return POPSERVER_ERR_AUTH
---	end
---		
---	-- save all the computed data
---	internal_state.popserver = "wpop" .. popnumber .. site
---	internal_state.login_done = true
---	
---	-- log the creation of a session
---	log.say("Session started for " .. internal_state.name .. "@" .. 
---		internal_state.domain .. 
---		"(" .. internal_state.session_id .. ")\n")
---
---	return POPSERVER_ERR_OK
+	-- log the creation of a session
+	log.say("Session started for " .. internal_state.name .. "@" .. 
+		internal_state.domain .. 
+		"(" .. internal_state.session_id .. ")\n")
+
+	return POPSERVER_ERR_OK
 end
 
 --------------------------------------------------------------------------------
 -- The callbach factory for retr
---
--- A callback factory is a function that generates other functions. both retr
--- and top need a callback. the callback is called when there is some data 
--- to send to the client. this is done with popserver_callback(s,data) 
--- where s is the data and data is the opaque data that is passed to to 
--- the retr/top function and is used internally by the popserve callbak. 
--- no need to know what it is, but we have to pass it. 
---
--- The callback function must accept 2 args: the data to send and an optional 
--- error message. it the data s is nil it means the err contains the 
--- relative error message. If s is "" it means that the trasmission 
--- ended sucesfully (read: the socket has benn closed correclty). 
--- 
--- Here a is an opaque data structure used by the
--- stringhack module. the stringhack module implements some usefull string 
--- manipulation tasks. 
--- tophack keeps track of how many lines have been 
--- processed. If more that lines (we talk of lines of mail body) have 
--- been processed the returned string will be trucated to the 
--- correct line number. 
--- dothack simply does a 'sed s/^\.$/../' but is really hard if the data 
--- is not divided in lines as in our case (ip packets are not line oriented),
--- so it is implemented in C for you. check_stop checks if the lines 
--- amount of lines have already been processed.
 --
 function retr_cb(data)
 	local a = stringhack.new()
@@ -445,7 +351,6 @@ function pass(pstate,password)
 		return POPSERVER_ERR_AUTH
 	end
 
-
 	-- eventually load session
 	local s = session.load_lock(key())
 
@@ -497,7 +402,10 @@ function quit_update(pstate)
 	local popserver = internal_state.popserver
 	local session_id = internal_state.session_id
 	local b = internal_state.b
-
+	local domain = internal_state.domain
+	local user = internal_state.name
+	local pop_login = user .. "@" .. domain
+	
 	local uri = string.format(libero_string.delete,popserver,session_id,
 		get_popstate_nummesg(pstate))
 
@@ -549,22 +457,26 @@ function stat(pstate)
 	end
 	
 	-- shorten names, not really important
-	local popserver = internal_state.popserver
 	local session_id = internal_state.session_id
 	local b = internal_state.b
+	local popserver = b:wherearewe()
+	local domain = internal_state.domain
+	local user = internal_state.name
+	local pop_login = user .. "@" .. domain
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri = string.format(libero_string.first,popserver,session_id)
-
+	local uri = string.format(tin_string.first,popserver,
+		session_id,curl.escape(pop_login))
+	
 	-- The action for do_until
 	--
 	-- uses mlex to extract all the messages uidl and size
 	local function action_f (s) 
 		-- calls match on the page s, with the mlexpressions
 		-- statE and statG
-		local x = mlex.match(s,libero_string.statE,libero_string.statG)
-		-- x:print()
+		local x = mlex.match(s,tin_string.statE,tin_string.statG)
+		x:print()
 		
 		-- the number of results
 		local n = x:count()
@@ -588,8 +500,8 @@ function stat(pstate)
 			local k = nil
 			_,_,k = string.find(size,"([Kk][Bb])")
 			_,_,size = string.find(size,"(%d+)")
-			_,_,uidl = string.find(uidl,"value=\"(%d+)\"")
-			size = tonumber(size) + 2
+			_,_,uidl = string.find(uidl,"uid=([%.%d]+)&")
+			size = tonumber(size)
 			if k ~= nil then
 				size = size * 1024
 			end
@@ -608,12 +520,29 @@ function stat(pstate)
 
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
-	local function check_f (s)  
-		local tmp1,tmp2 = string.find(s,libero_string.next_checkC)
-		if tmp1 ~= nil then
+	local function check_f (s) 
+		local _,_,_,to = string.find(s,
+			'\n%s*rng%s*=%s*"(%d+)%-(%d+)"%s*;')
+		local _,_,last = string.find(s,
+			'\n%s*var%s*totalpage%s*=%s*(%d+)%s*/%s*page%s*;')
+		if last == nil or to == nil then
+			error("unable to capture last or to")
+		end
+		--print("$$\n"..s.."$$\n")
+		--print(to,last)
+		if to < last then
 			-- change retrive behaviour
-			uri = string.format(libero_string.next,
-				popserver,session_id)
+			local _,_,step = string.find(s,
+				"\n%s*var%s*page%s*=%s*(%d+)%s*;")
+			if step == nil then
+				log.error_print("unable to capture step")
+				return true
+			end
+			local start = last - to
+			local end_ = math.max(0,start-step)
+			uri = string.format(tin_string.next,popserver,
+				session_id,curl.escape(pop_login),
+				start,end_)
 			-- continue the loop
 			return false
 		else
@@ -623,29 +552,28 @@ function stat(pstate)
 
 	-- this is simple and uri-dependent
 	local function retrive_f ()  
+		--print("getting "..uri)
 		local f,err = b:get_uri(uri)
 		if f == nil then
 			return f,err
 		end
 
-		local _,_,c = string.find(f,libero_string.timeoutC)
+		local _,_,c = string.find(f,tin_string.timeoutC)
 		if c ~= nil then
 			internal_state.login_done = nil
 			session.remove(key())
 
 			local rc = libero_login()
 			if rc ~= POPSERVER_ERR_OK then
-				return nil,{
-					error="Session ended,unable to recover"
-					}
+				return nil,"Session ended,unable to recover"
 			end
 			
-			popserver = internal_state.popserver
 			session_id = internal_state.session_id
 			b = internal_state.b
+			-- popserver has not changed
 			
-			uri = string.format(libero_string.first,
-				popserver,session_id)
+			uri = string.format(tin_string.first,popserver,
+				session_id,curl.escape(pop_login))
 			return b:get_uri(uri)
 		end
 		

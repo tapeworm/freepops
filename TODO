@@ -29,5 +29,6 @@ for next version or later:
 	TOP 1 9999 in gmail
 	fix gmail 695 tonumber(nil)
 	they say that win32 withoud -w can crash
+	gmail downloads again the whole thread if a new mail arives
 
 - eof -

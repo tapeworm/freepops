@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -130,6 +130,10 @@ local globals = {
   strViewUnread = "u",
   strViewFlagged = "f",
 
+  strViewAllPat = "([Aa]ll)",
+  strViewUnreadPat = "([Uu]nread)",
+  strViewFlaggedPat = "([Ff]lagged)",
+
   -- Internation Flags
   --
   strYahooUs = "us",  -- US
@@ -173,6 +177,7 @@ internalState = {
   strCrumb = nil,
   strMBox = nil,
   strIntFlag = nil,
+  strView = nil,
 }
 
 -- ************************************************************************** --
@@ -357,6 +362,10 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     -- An empty message.  Send the headers anyway
     --
     popserver_callback(headers, data)
+  else
+    -- Just send an extra carriage return
+    --
+    popserver_callback("\r\n\0", data)
   end
 
   return POPSERVER_ERR_OK
@@ -484,6 +493,22 @@ function user(pstate, username)
   end
   
   internalState.strMBox = mbox
+
+  -- Get the view to use in STAT (ALL, UNREAD or FLAG)
+  --
+  local strView = (freepops.MODULE_ARGS or {}).view or "All"
+  local _, _, str = string.find(strView, globals.strViewAllPat)
+  if str ~= nil then
+    internalState.strView = globals.strViewAll
+  else
+    _, _, str = string.find(strView, globals.strViewUnreadPat)
+    if str ~= nil then
+      internalState.strView = globals.strViewUnread
+    else
+      internalState.strView = globals.strViewFlagged
+    end
+  end
+
   return POPSERVER_ERR_OK
 end
 
@@ -630,7 +655,7 @@ function stat(pstate)
   local nPage = 0
   local nMsgs = 0
   local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-    internalState.strMBox, nPage, globals.strViewAll);
+    internalState.strMBox, nPage, internalState.strView);
 
   -- Keep a list of IDs that we've seen.  With yahoo, their message list can 
   -- show messages that we've already seen.  This, although a bit hacky, will

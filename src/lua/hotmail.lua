@@ -17,7 +17,12 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {"@hotmail.com","@msn.com","@webtv.com","@charter.com",
 	"@compaq.net","@passport.com"}
-PLUGIN_PARAMETERS = {}
+PLUGIN_PARAMETERS = {
+	{name="folder", description={
+		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
+		en=[[The folder you want to interact with. Default is Inbox, other values are: Junk, Trash, Draft, Sent.]]}
+	}
+}
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Per usare questo plugin dovrete usare il vostro indirizzo email completo come 

@@ -1,6 +1,28 @@
-'FreePOPS & Mail v. 1.1 12/10/2004
+'FreePOPS & Mail v. 1.3 16/10/2004
 
 Option Explicit
+
+Function WriteFile(oFS,mailClientPath,mailProcessName)
+  Dim oFSFile
+  Set oFSFile = oFS.OpenTextFile(FileName,2,True) 
+  oFSFile.Write(100 & VbCrLf & MailClientPath &  VbCrLf & MailProcessName) 
+  oFSFile.Close 
+End Function
+
+Function ReadFile(oFS,ByRef delay, ByRef mailClientPath,ByRef mailProcessName,ByRef mailClientCla) 
+  Dim oFile, oStream
+  Set oFile = oFS.GetFile(fileName) 
+  Set oStream = oFile.OpenAsTextStream(1,-2)
+  delay = CInt(oStream.ReadLine)
+  mailClientPath = oStream.ReadLine
+  mailProcessName = oStream.ReadLine
+  If Not oStream.AtEndOfStream Then
+    mailClientCla = oStream.ReadLine
+  Else
+    mailClientCla = VbCrLf
+  End If
+  oStream.Close
+End Function
 
 Function GetDefaultMailClientPath(sh)
   Dim key,temp,splitted
@@ -47,13 +69,22 @@ Function TerminateIstances (nome,objWMIService)
   Next
 End Function
 
-Dim sh, objWMIService,active,mailClientPath,mailProcessName,cla,arg,i
+Const fileName = "fpm.ini"
+Dim sh, objWMIService,active,delay,mailClientPath,mailProcessName,mailClientCla,cla,arg,i,oFs
 Set sh=wScript.CreateObject("wScript.Shell")
 Set objWMIService = GetObject("winmgmts:")
 Set cla = wScript.Arguments
+Set oFS = CreateObject("Scripting.FileSystemObject") 
 
-mailClientPath = GetDefaultMailClientPath(sh)
-mailProcessName = GetMailProcessName(mailClientPath)
+If oFS.FileExists(fileName) = True Then
+  ReadFile oFS,delay,mailClientPath,mailProcessName,mailClientCla
+Else
+  mailClientPath = GetDefaultMailClientPath(sh)
+  mailProcessName = GetMailProcessName(mailClientPath)
+  delay = 100
+  mailClientCla = VbCrLf
+  WriteFile oFS,mailClientPath,mailProcessName
+End If
 
 If IsActive(mailProcessName,objWMIService) = True Then
   wScript.Quit
@@ -65,9 +96,13 @@ If active = False Then
      arg = arg & " " & cla(i)
   Next
   sh.Run("freepopsd.exe" & arg)
+  wScript.sleep delay
 End If
-wScript.sleep 100
-sh.Run """" & mailClientPath & """",1,true
+If mailClientCla = VbCrLf Then
+  sh.Run """" & mailClientPath & """",1,true
+Else
+  sh.Run """" & mailClientPath & """ " & mailClientCla,1,true
+End If
 If active = False Then
   TerminateIstances "freepopsd.exe",objWMIService
 End If

@@ -1,4 +1,4 @@
-FreePOPs & Mail Script FAQ
+FreePOPs & Mail Script FAQ (versione FAQ 1.4)
 
 Autore: Pegasus (p3g4sus@users.sourceforge.net)
 
@@ -7,25 +7,46 @@ Che cos'è?
 -----------
 
 Si tratta di uno script scritto in VBS (Visual Basic Scripting) il cui scopo
-principale è di automatizzare l'avvio, insieme con FreePOPs, del client email
-di default (DMC) e la successiva chiusura di FreePOPs alla chiusura del DMC.
+principale è di automatizzare l'avvio, insieme con FreePOPs, di un client email 
+selezionato dall'utente (SMC) e la successiva chiusura di FreePOPs alla chiusura di SMC.
 
 
 Cosa fa esattamente?
 ---------------------
 
-- Se il DMC è già aperto, NIENTE.
-- Se è già aperto FreePOPs ma non il DMC, apre il DMC. All'uscita dal DMC
+- Se SMC è già aperto, NIENTE.
+- Se è già aperto FreePOPs ma non il SMC, apre il SMC. All'uscita dal SMC
   FreePOPs viene lasciato aperto.
-- Se FreePOPs e il DMC sono chiusi, apre Freepops e dopo 10 ms il DMC.
+- Se FreePOPs e il SMC sono chiusi, apre Freepops e dopo 10 ms il SMC.
   All'uscita da quest'ultimo, chiude FreePOPs.
+
+
+Come scelgo il mail client che lo script fa partire?
+----------------------------------------------------
+
+Questo script legge i dati sul client email da far partire in un file di configurazione ("fpm.ini").
+Qualora questo file non esista, lo script legge dal registro di windows le informazioni sul mail client di
+default e crea il file di configurazione inserendovi i dati su tale mail client. Se dunque volete far partire
+FreePOPs col mail client di default, non dovreste aver bisogno di nessuna configurazione. Viceversa, se volete far
+partire FreePOPs insieme a un client email diverso da quello di default dovete andare a modidicare (utilizzando
+ad esempio il Blocco Note di Windows) il file di configurazione il quale ha la seguente struttura:
+Prima riga -> Numero di millisecondi che si devono attendere tra l'avvio di FreePOPs e l'avvio di SMC.
+Seconda riga -> Percorso completo (comprensivo di nome del file) del file di avvio del SMC.
+Terza riga -> Nome del file di avvio del SMC.
+Quarta riga (opzionale) -> Argomenti da linea di comando con cui va avviato SMC.
+
+Esempio di file di configurazione:
+
+10
+%ProgramFiles%\Outlook Express\msimn.exe
+msimn.exe
 
 
 Come si installa?
 ------------------
 
 Non c'è bisogno di nessuna installazione. Per eseguire lo script, basta fare doppio click su "freepopsd.vbs". 
-Per facilitarne l'utilizzo consiglio di aggiornare i collegamenti con cui avviate DMC e farli puntare al file
+Per facilitarne l'utilizzo consiglio di aggiornare i collegamenti con cui avviate SMC e farli puntare al file
 "freepopsd.vbs".
 
 
@@ -71,7 +92,13 @@ prima possibile.
 Storia delle versioni
 ---------------------
 
-v. 1.1 Corretto un bug che non faceva funzionare lo script quando il client di default 
+v. 1.3 Ora lo script non legge più ogni volta il percorso del mail client da avviare dal
+       registro di Windows. Legge il registro (e crea il file di configurazione) solo quando 
+       non esiste il file "fpm.ini". Quando questo esiste, il mail client da avviare viene
+       letto al suo interno. 
+       Questo permette di personalizzare il mail client da avviare.
+
+v. 1.2 Corretto un bug che non faceva funzionare lo script quando il client di default 
        era indicato nel registro di windows senza le virgolette (").
 
 v. 1.0 Prima versione.

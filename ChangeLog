@@ -1,3 +1,4 @@
+- fixed last cygwin issue
 - fixed gmail TOP
 - fixed cygwin build target (partially)
 - porting freepops to OpenBSD

@@ -8,14 +8,15 @@ Usage: ./configure.sh <option>
 Available options: 
 	help		this screen
 	linux		to compile on a linux host and install in /usr/local
-	linux_usr	to compile on a linux host and install in /usr
+	linux-slack	to compile on a linux slack box (installs in /usr)
 	osx		to compile on a darwin host
 	osx-static	to compile on a darwin host with some static libs
 	obsd		to compile on a openbsd host
 	fbsd 		to compile on a freebsd host
 	beos		to compile on a beos host
 	cygwin		to compile on a cygwin environment
-	win		to cross-compile for win on a linux host with mingw32msvc
+	win		to cross-compile for win on a linux host with 
+			mingw32msvc (read BUILD for more info)
 
 EOT
 
@@ -50,8 +51,9 @@ set_default
 OS=Linux
 }
 
-set_linux_usr() {
+set_linux_slack() {
 set_default
+CFLAGS="-O2 -g3 -march=i486 -Wall -DHAVE_CONFIG_H -I$PWD"
 WHERE=/usr/
 OS=Linux
 }
@@ -149,7 +151,7 @@ case $1 in
 	linux)
 		set_linux
 	;;
-	linux_usr)
+	linux-slack)
 		set_linux_usr
 	;;
 	obsd)

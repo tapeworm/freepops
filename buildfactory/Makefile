@@ -113,7 +113,7 @@ dist-slack: freepops-$(VERSION).tar.gz
 	$(H)[ -d _slack_/freepops-$(VERSION) ] || \
 		tar -xzf freepops-$(VERSION).tar.gz -C _slack_
 	$(H)cd _slack_/freepops-$(VERSION); \
-		./configure.sh linux_usr; \
+		./configure.sh linux-slack; \
 		$(MAKE) all; \
 		$(MAKE) install DESTDIR="../../dist-slack/"
 	$(H)cd dist-slack; \

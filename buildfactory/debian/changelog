@@ -1,3 +1,9 @@
+freepops (0.0.14-1) unstable; urgency=low
+
+  * fix gmail. added yahoo.com 
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sun,  8 Aug 2004 13:39:49 +0200
+
 freepops (0.0.13-1) unstable; urgency=low
 
   * fix all around + squirrelmail

@@ -1,3 +1,7 @@
+08/08/2004 0.0.14 fix release
+- fixed gmail login procedure
+- fixed some stuff in cookie.lua
+- added yahoo.lua (thanks russell)
 - fixed bug in libero.lua (local b = internal_state.b missing before
 b:verbose_mode(), submitted by Negrore)
 - lycos parsing message workaround (should be fixed)

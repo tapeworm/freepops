@@ -87,7 +87,7 @@ function table2xml_aux(t,oc,indent)
 		local pt = {}
 		table.foreach(t,function(k,v) 
 			if k ~= "name" and type(k) ~= "number" then 
-				table.insert(pt,k..'="'..v..'" ') 
+				table.insert(pt,k..'="'..escape(v)..'" ') 
 			end 
 		end)
 		local noson = true

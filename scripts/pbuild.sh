@@ -8,7 +8,7 @@ PBUILD=/usr/sbin/pbuilder
 
 function curl_map(){
 if [ "$1" = "woody" ]; then
-	CURL=""
+	CURL="-ssl"
 elif [ "$1" = "sarge" ]; then
 	CURL=3
 elif [ "$1" = "sid" ]; then
@@ -38,7 +38,8 @@ sudo $PBUILD update \
 		debhelper \
 		libreadline4-dev \
 		libreadline4 \
-		gs-common
+		gs-common \
+		openssl
 } 
 
 function inform_cvs(){

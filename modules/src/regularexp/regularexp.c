@@ -39,10 +39,10 @@ if (errcode != 0) {
 	errbuf = (char *)malloc(errbuf_size);
 	if (errbuf != NULL) {
 		regerror(errcode, &r, errbuf, errbuf_size);
-		fprintf(stderr,"ERROR: Internal compiling regexp %s, %s\n", exp, errbuf);
+		fprintf(stderr,"ERROR: Internal compiling regexp '%s', %s\n", exp, errbuf);
 		free(errbuf);
 	} else {
-		fprintf(stderr,"ERROR: Internal compiling regexp %s\n", exp);
+		fprintf(stderr,"ERROR: Internal compiling regexp' %s'\n", exp);
 	}
 }	
 

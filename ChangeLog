@@ -1,3 +1,4 @@
+- fixed hotmail and yahoo (thanks russell)
 08/09/2004 0.0.16 major feature release
 - fixed the gmail plugin and added some parameters (thanks rami)
 - owa.lua moved to davmail.lua
@@ -6,7 +7,7 @@
 - httpmail now uses iso-8859-1 instead of utf8 since Windows-1252 is 8 bit
 - added support for charset encoding in aggregator.lua
 - added support for content tag in aggregator.lua
-- added suport for host=hostname:post to popforward.lua
+- added suport for host=hostname:port to popforward.lua
 - added the pipe and pipe_limit options to popforward.lua
 - added the io.dpopen lua primitive unter unix
 - some pretty stuff for make

@@ -56,7 +56,8 @@ local tin_string = {
 	-- The capture to understand if the session ended
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
-	save = "",
+	save = "http://%s/mail/MesageDownload?sid=%s&userid=%s&"..
+		"seq=+Q&auth=+A&srcfolder=INBOX&uid=%s&src=0&style=comm4_IT",
 	-- The uri to delete some messages
 	delete = "http://%s/mail/MessageErase",
 	-- The peace of uri you must append to delete to choose the messages 

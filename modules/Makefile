@@ -6,11 +6,11 @@ H=@
 
 MODULES=$(MODULES-$(OS)-pre) $(MODULES-Common) $(MODULES-$(OS)-post)
 
-PRESET=	make -C src/ all
+PRESET=	$(MAKE) -C src/ all
 	
 FORALL=	for X in $(MODULES); do						\
 		echo "$$NAME $$X";					\
-		make -C src/$$X $$ACTION 				\
+		$(MAKE) -C src/$$X $$ACTION 				\
 			TARGET=`echo $$X | cut -d "-" -f 1` 		\
 			PREFIX=$$PWD					\
 			CONFIG=$(CONFIG);				\
@@ -32,7 +32,7 @@ clean: src/config
 	$(H)rm -f lib/* bin/* include/* src/config config 2>/dev/null || true
 	$(H)rm -fr  bin/luafiles/ || true
 	$(H)rm -fr html html_lua
-	$(H)make -C src clean
+	$(H)$(MAKE) -C src clean
 
 doc: all
 	$(H)doxygen

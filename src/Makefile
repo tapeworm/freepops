@@ -80,8 +80,13 @@ else
 ifeq "$(OS)" "Darwin"
 	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread -lcurl
 else
+ifeq "$(OS)" "OpenBSD"
+	LIBSTOLINK+= getopt
+	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread -lcurl
+else
 	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread -rdynamic -lcurl
 	
+endif
 endif
 endif	
 

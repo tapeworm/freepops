@@ -9,6 +9,7 @@ Available options:
 	help	this screen
 	linux	to compile on a linux host
 	osx	to compile on a darwin host
+	obsd	to compile on a openbsd host
 	beos	to compile on a beos host
 	cygwin	to compile on a cygwin environment
 	win	to cross-compile for win on a linux host with mingw32msvc
@@ -47,6 +48,12 @@ OS=Linux
 set_osx() {
 set_default
 OS=Darwin
+CFLAGS="$CFLAGS -DMACOSX"
+}
+
+set_obsd() {
+set_default
+OS=OpenBSD
 CFLAGS="$CFLAGS -DMACOSX"
 }
 
@@ -104,6 +111,9 @@ case $1 in
 	;;
 	linux)
 		set_linux
+	;;
+	obsd)
+		set_obsd
 	;;
 	osx)
 		set_osx

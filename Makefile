@@ -5,6 +5,12 @@ PREFIX=$(DESTDIR)$(WHERE)
 VERSION=$(shell grep "\#define VERSION" config.h | cut -d \" -f 2)
 MAKEFLAGS+=--no-print-directory
 
+ifeq "OpenBSD" "$(shell uname)"
+	MAKE=gmake
+else
+	MAKE=make
+endif
+
 H=@
 
 #>----------------------------------------------------------------------------<#
@@ -23,7 +29,7 @@ help:
 	$(H)echo
 	$(H)echo "Default is all"
 	$(H)sleep 2
-	$(H)make all
+	$(H)$(MAKE) all
 	
 
 all : modules src doc/manual.pdf doc/manual-it.pdf
@@ -31,9 +37,9 @@ all : modules src doc/manual.pdf doc/manual-it.pdf
 clean: 
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)echo "cleaning freepopsd"
-	$(H)make -C src clean CONFIG=$$PWD/config || true
-	$(H)make -C modules clean CONFIG=$$PWD/config || true
-	$(H)make -C buildfactory clean CONFIG=$$PWD/config || true
+	$(H)$(MAKE) -C src clean CONFIG=$$PWD/config || true
+	$(H)$(MAKE) -C modules clean CONFIG=$$PWD/config || true
+	$(H)$(MAKE) -C buildfactory clean CONFIG=$$PWD/config || true
 	$(H)rm -f core* *-stamp dh_clean
 	$(H)rm -f doc/manual.ps doc/manual.pdf\
 		doc/manual-it.ps doc/manual-it.pdf
@@ -44,7 +50,7 @@ realclean: distclean
 	$(H)rm -f config
 	
 doc:
-	$(H)make -C modules doc CONFIG=$$PWD/config
+	$(H)$(MAKE) -C modules doc CONFIG=$$PWD/config
 
 install: all
 	$(H)mkdir -p $(PREFIX)
@@ -84,7 +90,7 @@ tgz-dist:
 	$(H)cd dist-tgz/;\
 		tar -xzf freepops.tgz;\
 		rm freepops.tgz;\
-		cd freepops; make realclean;cd ..;\
+		cd freepops; $(MAKE) realclean;cd ..;\
 		find freepops -name CVS -exec rm -fr \{\} \; 2>/dev/null;\
 		mv freepops freepops-$(VERSION);\
 		tar -cf freepops-$(VERSION).tar freepops-$(VERSION);\
@@ -93,17 +99,17 @@ tgz-dist:
 	
 buildfactory:
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
-	$(H)make -C buildfactory all CONFIG=$$PWD/config
+	$(H)$(MAKE) -C buildfactory all CONFIG=$$PWD/config
 	
 #>----------------------------------------------------------------------------<#
 
 modules: config
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
-	$(H)make -C modules all CONFIG=$$PWD/config
+	$(H)$(MAKE) -C modules all CONFIG=$$PWD/config
 	
 src: config
 	$(H)echo "building freepopsd"
-	$(H)make -C src all CONFIG=$$PWD/config PREFIX=$(PREFIX)
+	$(H)$(MAKE) -C src all CONFIG=$$PWD/config PREFIX=$(PREFIX)
 
 doc/manual.pdf: doc/manual.lyx
 	cd doc;	\
@@ -117,7 +123,7 @@ doc/manual-it.pdf: doc/manual-it.lyx
 
 config:
 	$(H)echo
-	$(H)echo "Before running make you have to configure the building system"
+	$(H)echo "Before running $(MAKE) you have to configure the building system"
 	$(H)echo "running './configure'. Type './configure help' for more infos"
 	$(H)echo
 	$(H)exit 1

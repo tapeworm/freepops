@@ -40,6 +40,9 @@ MODULES-Linux-post=
 MODULES-Darwin-pre=getopt
 MODULES-Darwin-post=
 
+MODULES-OpenBSD-pre=getopt
+MODULES-OpenBSD-post=
+
 MODULES-Cygwin-pre=regex pthread
 MODULES-Cygwin-post=winsystray
 

@@ -13,7 +13,7 @@ all: $(SUBDIR)
 $(SUBDIR):
 	$(H)tar -xzf $(TGZ)
 	$(H)if test ! "nodiff" = "$(DIFF)"; then cd $(SUBDIR); patch -p1 < ../$(DIFF) 1>/dev/null; if [ $$? != 0 ]; then echo "error pathing!"; fi;  fi
-	$(H)make -C $(SUBDIR) PREFIX=$(PREFIX) TARGET=$(TARGET) CONFIG=$(CONFIG)
+	$(H)$(MAKE) -C $(SUBDIR) PREFIX=$(PREFIX) TARGET=$(TARGET) CONFIG=$(CONFIG)
 
 clean:
 	$(H)rm -rf $(SUBDIR)

@@ -22,7 +22,7 @@ dist-win: freepops-$(VERSION).tar.gz
 		tar -xzf freepops-$(VERSION).tar.gz -C _win_
 	$(H)cd _win_/freepops-$(VERSION);\
 		./configure.sh win;\
-		make all;
+		$(MAKE) all;
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
@@ -50,7 +50,7 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)xpm2wico -f freepops-remove.xpm _win_/freepops/freepops-remove.ico
 
 	$(H)cd _win_/freepops/;\
-		wine /usr/local/NSIS/makensis.exe freepops.nsi
+		wine /usr/local/NSIS/$(MAKE)nsis.exe freepops.nsi
 	
 	$(H)mkdir ../dist-win || true
 	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe ../dist-win
@@ -60,7 +60,7 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)/usr/local/cross-tools/i386-mingw32msvc/bin/strip \
 		_win_/freepops/*.exe _win_/freepops/*.dll
 	$(H)cd _win_/freepops/;\
-		wine /usr/local/NSIS/makensis.exe freepops.nsi
+		wine /usr/local/NSIS/$(MAKE)nsis.exe freepops.nsi
 	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe \
 		../dist-win/FreePOPs-$(VERSION)-SSL.exe
 	
@@ -104,7 +104,7 @@ dist-deb: freepops-$(VERSION).tar.gz
 
 dist-osx:
 	$(H)cd ..;./configure.sh osx || true
-	$(H)cd ..;make all CONFIG=../config
+	$(H)cd ..;$(MAKE) all CONFIG=../config
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
@@ -120,7 +120,7 @@ dist-osx:
 
 freepops-$(VERSION).tar.gz: 
 	$(H)cd ..;./configure.sh linux || true
-	$(H)make -C .. tgz-dist
+	$(H)$(MAKE) -C .. tgz-dist
 	$(H)cp ../dist-tgz/freepops-$(VERSION).tar.gz .
 	
 	

@@ -1,3 +1,4 @@
+- porting freepops to OpenBSD
 - added cvs_acl to allow contributors commit
 - fixed bug in browser.lua (u could be nil but indexed)
 - added b:ssl_init_stuff() and b:verbose_mode()

@@ -1,7 +1,7 @@
 diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
---- lua-5.0.2-old/Makefile	2004-03-12 02:50:55.000000000 +0100
-+++ lua-5.0.2-new/Makefile	2004-05-13 19:37:12.000000000 +0200
-@@ -1,102 +1,79 @@
+--- lua-5.0.2-old/Makefile	Fri Mar 12 02:50:55 2004
++++ lua-5.0.2-new/Makefile	Sat Jul 10 10:08:02 2004
+@@ -1,102 +1,89 @@
 -# makefile for Lua hierarchy
 -# see INSTALL for installation instructions
 -# see config for customization instructions
@@ -107,15 +107,25 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +	CFLAGS += -DUSE_DLOPEN=1
 +endif
 +ifneq "$(OS)" "Darwin"
++ ifneq "$(OS)" "OpenBSD"
 +	CPFLAGS+= -a
 +	LDFLAGS+= -Wl,-E
 +	HLDFLAGS+= -Wl,-E
++ endif
 +endif
 +
 +CFLAGS += -I../../include -I../include -I. -I.. -DUSE_POPEN=1
-+LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++ifeq "$(OS)" "OpenBSD"
++	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++else
++	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++endif
 +HCFLAGS += -I../../include -I../include -I. -I.. -DUSE_POPEN=1
-+HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++ifeq "$(OS)" "OpenBSD"
++	HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm
++else
++	HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++endif
 +
 +all: bin/lua
 +
@@ -182,8 +192,8 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +clean:
 +	@rm -f lib/* bin/*
 diff -ruN lua-5.0.2-old/build lua-5.0.2-new/build
---- lua-5.0.2-old/build	2003-03-28 21:06:41.000000000 +0100
-+++ lua-5.0.2-new/build	1970-01-01 01:00:00.000000000 +0100
+--- lua-5.0.2-old/build	Fri Mar 28 21:06:41 2003
++++ lua-5.0.2-new/build	Thu Jan  1 01:00:00 1970
 @@ -1,33 +0,0 @@
 -# If you don't want to use make, run this script.
 -# But make sure you read config to see what can be customized.
@@ -218,8 +228,9 @@ diff -ruN lua-5.0.2-old/build lua-5.0.2-new/build
 -
 -cd ../..
 -bin/lua test/hello.lua
---- lua-5.0.2-old/src/lib/lauxlib.c	2004-06-18 14:24:21.000000000 +0200
-+++ lua-5.0.2-new/src/lib/lauxlib.c	2004-06-18 14:31:54.000000000 +0200
+diff -ruN lua-5.0.2-old/src/lib/lauxlib.c lua-5.0.2-new/src/lib/lauxlib.c
+--- lua-5.0.2-old/src/lib/lauxlib.c	Mon Apr  7 16:35:00 2003
++++ lua-5.0.2-new/src/lib/lauxlib.c	Sat Jul 10 09:50:58 2004
 @@ -475,9 +475,10 @@
  }
  
@@ -256,3 +267,18 @@ diff -ruN lua-5.0.2-old/build lua-5.0.2-new/build
    }
    lua_remove(L, fnameindex);
    return status;
+diff -ruN lua-5.0.2-old/src/lib/loadlib.c lua-5.0.2-new/src/lib/loadlib.c
+--- lua-5.0.2-old/src/lib/loadlib.c	Mon Apr  7 22:11:53 2003
++++ lua-5.0.2-new/src/lib/loadlib.c	Sat Jul 10 10:08:56 2004
+@@ -49,7 +49,11 @@
+ {
+  const char *path=luaL_checkstring(L,1);
+  const char *init=luaL_checkstring(L,2);
++#ifndef RTLD_NOW
++ void *lib=dlopen(path,RTLD_LAZY);
++#else
+  void *lib=dlopen(path,RTLD_NOW);
++#endif
+  if (lib!=NULL)
+  {
+   lua_CFunction f=(lua_CFunction) dlsym(lib,init);

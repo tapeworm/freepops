@@ -3,6 +3,10 @@
 -- Then the string can be executed with loadstring() obtainig a load of 
 -- the table
 
+--============================================================================--
+-- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
+--============================================================================--
+
 serial = {}
 
 ---

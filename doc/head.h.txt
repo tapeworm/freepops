@@ -7,14 +7,9 @@
 
 /******************************************************************************/
  /*!
-  * \file   stringhack_lua.h
-  * \brief  lua bindings for lstringhack
-  * 
-  * \author Name <gareuselesinge@users.sourceforge.net>
+  * \file   filename.h
+  * \brief  short description
+  * eventual long description
+  * \author Name <nickname@users.sourceforge.net>
   */
 /******************************************************************************/
-#ifndef LUA_STRHACK_H
-#define LUA_STRHACK_H
-int luaopen_stringhack (lua_State* );
-#endif
-

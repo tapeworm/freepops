@@ -2,6 +2,9 @@
 -- Do not use this directly. 
 -- browser uses this module for his internal purpose.
 
+--============================================================================--
+-- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
+--============================================================================--
 
 --<==========================================================================>--
 -- build data structures for parsing

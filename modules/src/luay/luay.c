@@ -1,3 +1,17 @@
+/******************************************************************************
+ * $Id$
+ * This file is part of FreePOPs (http://freepops.sf.net)                     *
+ * This file is distributed under the terms of GNU GPL license.               *
+ ******************************************************************************/
+
+/******************************************************************************
+ * File description:
+ *	lua_call wrapper
+ * Notes:
+ *	
+ * Authors:
+ * 	Name <gareuselesinge@users.sourceforge.net>
+ ******************************************************************************/
 #include <stdio.h>
 #include <math.h>
 #include <string.h>

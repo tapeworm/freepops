@@ -37,7 +37,9 @@
 -- <B>add_cookie(url,c)</B> :adds cookie c as if received browsing
 -- url<BR/>
 
-
+--============================================================================--
+-- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
+--============================================================================--
 
 dofile("cookie.lua")
 

@@ -1,3 +1,18 @@
+/******************************************************************************
+ * $Id$
+ * This file is part of FreePOPs (http://freepops.sf.net)                     *
+ * This file is distributed under the terms of GNU GPL license.               *
+ ******************************************************************************/
+
+
+/******************************************************************************/
+ /*!
+  * \file   luabind.h
+  * \brief functions to help in creating bindings
+  * 
+  * \author Name <gareuselesinge@users.sourceforge.net>
+  */
+/******************************************************************************/
 #ifndef LUABIND_H
 #define LUABIND_H
 

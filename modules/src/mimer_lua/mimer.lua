@@ -3,6 +3,10 @@
 -- Module to build on the fly a message from a header, a body (both in html or
 -- plain text format), a list of attachments urls
 
+--============================================================================--
+-- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
+--============================================================================--
+
 mimer = {}
 
 --<==========================================================================>--

@@ -1,3 +1,18 @@
+/******************************************************************************
+ * $Id$
+ * This file is part of FreePOPs (http://freepops.sf.net)                     *
+ * This file is distributed under the terms of GNU GPL license.               *
+ ******************************************************************************/
+
+
+/******************************************************************************/
+ /*!
+  * \file   lstringhack.h
+  * \brief  string hacking for lua
+  * 
+  * \author Name <gareuselesinge@users.sourceforge.net>
+  */
+/******************************************************************************/
 #ifndef LSTRINGHACK_H
 #define LSTRINGHACK_H
 

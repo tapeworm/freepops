@@ -1,3 +1,18 @@
+/******************************************************************************
+ * $Id$
+ * This file is part of FreePOPs (http://freepops.sf.net)                     *
+ * This file is distributed under the terms of GNU GPL license.               *
+ ******************************************************************************/
+
+
+/******************************************************************************/
+ /*!
+  * \file   luay.h
+  * \brief  more handy lua_call wrapper
+  * 
+  * \author Name <gareuselesinge@users.sourceforge.net>
+  */
+/******************************************************************************/
 #ifndef _LUALP_H_
 #define _LUALP_H_
 

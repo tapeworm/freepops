@@ -231,7 +231,7 @@ function libero_login()
 		-- check if the received page is a server error page or a 
 		-- good page.
 		log.error_print("Login failed\n")
-		return POPSERVER_ERR_UNKNOWN
+		return POPSERVER_ERR_AUTH
 	end
 
 	-- check if do_extract has correctly extracted the session ID

@@ -302,7 +302,7 @@ function gmail_login()
 	--	return POPSERVER_ERR_AUTH
 	--end
 	if f == nil then
-		log.error(e)
+		log.error_print(e)
 		return POPSERVER_ERR_UNKNOWN
 	end
 	-- get the cookie value

@@ -123,7 +123,7 @@ else
 ifeq "$(OS)" "Cygwin"
 	LDFLAGS= -L ../modules/lib \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
-		-lwsock32 -lexpat -lgdi32   -lcygwin
+		-lwsock32 -lexpat -lgdi32 -lz -lssl -lcrypto -lcygwin
 else
 ifeq "$(OS)" "BeOS"
 	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\

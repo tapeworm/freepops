@@ -35,7 +35,8 @@ clean:
 	$(H)make -C modules clean CONFIG=$$PWD/config || true
 	$(H)make -C buildfactory clean CONFIG=$$PWD/config || true
 	$(H)rm -f core* *-stamp dh_clean
-
+	$(H)rm -f doc/manual.ps doc/manual.pdf\
+		doc/manual-it.ps doc/manual-it.pdf
 distclean: clean
 	$(H)rm -fr dist-*
 

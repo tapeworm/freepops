@@ -124,12 +124,12 @@ Released under the GNU/GPL license (this means FreePOPs is Free Software).
 History
 \layout Standard
 
-FreePOPs is not born from scratch.
- A similar (only in the main usage situation) project is LiberoPOPs.
+FreePOPs was not born from scratch.
+ A similar project (only in the main usage situation) is LiberoPOPs.
  
 \layout Standard
 
-The ancestor of FreePOPs is completely written in C for some non interesting
+The ancestor of FreePOPs is completely written in C for some uninteresting
  reasons.
  LiberoPOPs supports 
 \begin_inset Quotes eld
@@ -144,7 +144,7 @@ plugins
  This means you have to recompile and restart LiberoPOPs each time to change
  a line in a plugin.
  Another interesting point is that LiberPOPs was created from scratch in
- a really short amount of time (you have to be Italian and use a 
+ a really short time (you have to be Italian and use a 
 \family typewriter 
 @libero.it
 \family default 
@@ -153,16 +153,17 @@ plugins
  
 \layout Standard
 
-The LiberoPOPs project had a quick success, since everybody needed it.
+The LiberoPOPs project had a quick success, because everybody needed it.
  This means we had a lot of users.
  In the opensource (and also Linux) philosophy you have to release frequently
  and this was exactly what we did.
  We used to release every 2 days.
- But we were working not with Unix users, nor hackers, mostly Win32 users.
- Suddenly we realized that they are lazy/bored of updating the software
+ We were working not with Unix users, nor hackers, but mostly with Win32
+ users.
+ Suddenly we realized that they were lazy/bored of updating the software
  every 2 days.
  The ugly Win-world has taught them that software auto-updates, auto-install
- and even auto-codes itself probably.
+ and even auto-codes probably.
  
 \layout Standard
 
@@ -174,7 +175,7 @@ We tried to solve this pulling out of the C engine most of the change-prone
 
 A scripting/interpreted embedded language seemed to me a nice choice and
  after a long search on the net and on the newsgroup of my university I
- found LUA.
+ found LUA..
  This is not the place for telling the world how good this small language
  is and I won't talk more about it here.
  Integrating the LUA interpreter in LiberoPOPs was not so hard and FreePOPs

@@ -114,7 +114,7 @@ Extremely extensible on the fly using a simple and powerful language.
 Pretty documented.
 \layout Itemize
 
-Released under the GNU/GPL license (this means FreePOPs is Free Software)
+Released under the GNU/GPL license (this means FreePOPs is Free Software).
 \layout Section
 
 History
@@ -283,6 +283,255 @@ config.lua
 flatnuke.lua
 \family default 
  that is a web-news plugin.
+\layout Subsection
+
+The interface between the C core and a plugin
+\layout Standard
+
+As we explained before the C POP3 frontend has to be attached to a LUA backend.
+ The interface is really simple if you know the POP3 protocol.
+ Here We only resume the meaning, but the RFC 1939 (included in the 
+\family typewriter 
+doc/
+\family default 
+ directory of the source distribution) is really short and easy to read.
+ As your intution shuld suggest the POP3 client may ask the pop3 server
+ to know something about the mail that is in the mailbox and eventually
+ retrive/delete a message.
+ And this is exactly what it does.
+\layout Standard
+
+The backend must implement all the POP3 commands (like USER, PASS, RETR,
+ DELE, QUIT, LIST, ...) and must give back to the frontend the result.
+ Let us give a simple example of a POP3 section taken from the RFC:
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{small}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+     1  S: <wait for connection on TCP port 110>
+\layout Standard
+     2  C: <open connection>
+\layout Standard
+     3  S:    +OK POP3 server 
+\layout Standard
+     4  C:    USER linux@kernel.org
+\layout Standard
+     5  S:    +OK now insert the pasword
+\layout Standard
+     6  C:    PASS gpl
+\layout Standard
+     7  S:    +OK linux's maildrop has 2 messages (320 octets)
+\layout Standard
+     8  C:    STAT
+\layout Standard
+     9  S:    +OK 1 320
+\layout Standard
+    10  C:    LIST
+\layout Standard
+    11  S:    +OK 2 messages (320 octets)
+\layout Standard
+    12  S:    1 320
+\layout Standard
+    13  S:    .
+\layout Standard
+    14  C:    RETR 1
+\layout Standard
+    15  S:    +OK 120 octets
+\layout Standard
+    16  S:    <the POP3 server sends message 1>
+\layout Standard
+    17  S:    .
+\layout Standard
+    18  C:    DELE 1
+\layout Standard
+    19  S:    +OK message 1 deleted
+\layout Standard
+    20  C:    QUIT
+\layout Standard
+    21  S:    +OK dewey POP3 server signing off (maildrop empty)
+\layout Standard
+    22  C:  <close connection>
+\layout Standard
+    23  S:  <wait for next connection>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{small}
+\end_inset 
+
+
+\layout Standard
+
+In this session the backend will be called for lines 4, 6, 8, 10, 14, 18,
+ 20 (all the 
+\family typewriter 
+C:
+\family default 
+ lines) and respectively the functions implementing the POP3 commands will
+ be called in this way
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{small}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+    user(p,"linux@kernel.org")
+\layout Standard
+    pass(p,"gpl")
+\layout Standard
+    stat(p)
+\layout Standard
+    list_all(p)
+\layout Standard
+    retr(p,1)
+\layout Standard
+    dele(p,1)
+\layout Standard
+    quit_update(p)
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{small}
+\end_inset 
+
+
+\layout Standard
+
+Later will clear what is p.
+ I hope we'll remove it makinng it implicit for complete transparency.
+ It is easy to understand that there is a 1-1 mapping between POP3 commands
+ and plugin function calls.
+ You can view a plugin as the implementation of the POP3 interface.
+\layout Subsection
+
+The interface betwee a plugin and the C core
+\layout Standard
+
+Let us take in exam the call to 
+\family typewriter 
+pass(p,
+\begin_inset Quotes erd
+\end_inset 
+
+linux@kernel.org
+\begin_inset Quotes erd
+\end_inset 
+
+)
+\family default 
+.
+ Here the plugin should autenticate the user (if there is a sort of authenticati
+on) and inform the C core of the result.
+ To achieve this each plugin function must return an error flag, to be more
+ accurate one of these errors:
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{small}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+    POPSERVER_ERR_OK        
+\layout Standard
+    POPSERVER_ERR_SYNTAX    
+\layout Standard
+    POPSERVER_ERR_NETWORK   
+\layout Standard
+    POPSERVER_ERR_AUTH      
+\layout Standard
+    POPSERVER_ERR_INTERNAL  
+\layout Standard
+    POPSERVER_ERR_NOMSG     
+\layout Standard
+    POPSERVER_ERR_LOCKED    
+\layout Standard
+    POPSERVER_ERR_EOF       
+\layout Standard
+    POPSERVER_ERR_TOOFAST   
+\layout Standard
+    POPSERVER_ERR_UNKNOWN   
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{small}
+\end_inset 
+
+
+\layout Standard
+
+In our case the most appropriate error codes are 
+\family typewriter 
+POPSERVER_ERR_AUTH
+\family default 
+ and 
+\family typewriter 
+POPSERVER_ERR_OK
+\family default 
+.
+ This is a simple case, in wich an error code is enough.
+ Now we analize the more complex case of the call to 
+\family typewriter 
+list_all(p)
+\family default 
+.
+ Here we have to return an error code as before, but we have also to inform
+ the C core of the size of all messages in the mailbox.FIX set_mailbox_nummest
+ + set_mailmessage_size...
+\layout Standard
+
+FIX caso della retr e fine.
 \layout Section
 
 Submitting a bug

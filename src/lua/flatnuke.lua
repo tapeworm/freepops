@@ -107,6 +107,8 @@ local flatnuke_string = {
 	headerC = "<fn:header>(.*)</fn:header>",
 	-- This is the ews body
 	bodyC = "<fn:body>(.*)</fn:body>",
+	-- Freepops patch
+	patchC = "(<fn:patch>.*</fn:patch>)",
 	-- This identify an RSS item
 	itemE = "<item rdf:about=\".*\">",
 	-- This is the mlex expression to choos the item field
@@ -215,7 +217,20 @@ function retr_or_top(pstate,msg,data,lines)
 	local _,_,title=string.find(s,flatnuke_string.titleC)
 	local _,_,header=string.find(s,flatnuke_string.headerC)
 	local _,_,body=string.find(s,flatnuke_string.bodyC)
+	local _,_,patch=string.find(s,flatnuke_string.patchC)
 
+	-- FreePOPs patches
+	if(patch ~= nil) then
+		patch=string.gsub(patch,"\t", "");
+		patch=string.gsub(patch,"\n", "");
+		patch=string.gsub(patch," ", "");
+		patch=string.gsub(patch,"<fn:patch>", "Updated ");
+		patch=string.gsub(patch,"</fn:patch>", " plugin\n");
+		patch="FreePOPs plugins update:\n"..patch.."\n"
+	else
+		patch = ""	
+	end
+	
 	if header == nil or body == nil or title == nil then
 		log.error_print("Error parsing: title="..
 			(title or "nil").." header="..
@@ -229,6 +244,7 @@ function retr_or_top(pstate,msg,data,lines)
 
 	--build it
 	local s = build_mail_header(title,uidl) .. 
+		patch..
 		header .. "\r\n\r\n" .. 
 		body.. "\r\n"
 

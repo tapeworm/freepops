@@ -1,0 +1,26 @@
+@name freepops-0.0.12
+@cwd /usr/local
+bin/freepopsd
+share/freepops/lua/aggregator.lua
+share/freepops/lua/skeleton.lua
+share/freepops/lua/popforward.lua
+share/freepops/lua/lycos.lua
+share/freepops/lua/libero.lua
+share/freepops/lua/kernel.lua
+share/freepops/lua/hotmail.lua
+share/freepops/lua/gmail.lua
+share/freepops/lua/freepops.lua
+share/freepops/lua/foo.lua
+share/freepops/lua/flatnuke.lua
+share/freepops/lua/tin.lua
+share/freepops/lua/support.lua
+share/freepops/lua/serialize.lua
+share/freepops/lua/mimer.lua
+share/freepops/lua/cookie.lua
+share/freepops/lua/common.lua
+share/freepops/lua/browser.lua
+share/freepops/lua/config.lua
+share/doc/freepops/MANUAL
+share/man/man1/freepopsd.1
+@cwd /
+etc/freepops/config.lua

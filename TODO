@@ -28,5 +28,6 @@ for next version or later:
 	add a collaborative web page to publish plugins
 	popserver timeouts to avoid stupid DOS leaving inactive connections open
 	curl_info
+	http://msdn.microsoft.com/library/default.asp?Url=/library/en-us/sysinfo/base/logging_off.asp
 
 - eof -

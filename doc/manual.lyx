@@ -64,7 +64,9 @@ vspace{5mm}
 \backslash 
 normalsize{Written by Enrico Tassi, Nicola Cocchiaro}
 \layout Standard
-$Revision$ $Date$
+$Revision$ 
+\backslash 
+vspace{3mm} $Date$
 \layout Standard
 
 \backslash 

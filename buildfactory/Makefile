@@ -146,13 +146,11 @@ osx-app: freepops-$(VERSION).tar.gz Info.plist
 	$(H)cp osx/Info.plist osx/FreePOPs.app/Contents/
 	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd;\
 		cp freepopsd ../../../osx/FreePOPs.app/Contents/MacOS/
-#	$(H)cp _osx_/freepops-$(VERSION)/src/lua/*.lua osx/FreePOPs.app/Contents/Resources/
-	$(H)cp _osx_/freepops-$(VERSION)/src/lua/*.lua osx/FreePOPs.app/Contents/MacOS/
-#	$(H)cp _osx_/freepops-$(VERSION)/modules/include/*.lua osx/FreePOPs.app/Contents/Resources/
-	$(H)cp _osx_/freepops-$(VERSION)/modules/include/*.lua osx/FreePOPs.app/Contents/MacOS/
-#	$(H)cp _osx_/freepops-$(VERSION)/*.lua osx/FreePOPs.app/Contents/Resources/
-	$(H)cp _osx_/freepops-$(VERSION)/*.lua osx/FreePOPs.app/Contents/MacOS/
+	$(H)cp _osx_/freepops-$(VERSION)/src/lua/*.lua osx/FreePOPs.app/Contents/Resources/
+	$(H)cp _osx_/freepops-$(VERSION)/modules/include/*.lua osx/FreePOPs.app/Contents/Resources/
+	$(H)cp _osx_/freepops-$(VERSION)/*.lua osx/FreePOPs.app/Contents/Resources/
 	$(H)echo "APPL????" > osx/FreePOPs.app/Contents/PkgInfo
+	$(H)cp osx/freepops.icns osx/FreePOPs.app/Contents/Resources
 	$(H)rm -f osx/Info.plist
 	$(H)rm -rf _osx_
 
@@ -169,8 +167,8 @@ Info.plist:
 	$(H)echo "	<string>freepopsd</string>" >> osx/Info.plist
 	$(H)echo "	<key>CFBundleGetInfoString</key>" >> osx/Info.plist
 	$(H)echo "	<string>$(VERSION), Copyright 2004 Alessio Caprari, Nicola Cocchiaro, Enrico Tassi, Simone Vellei</string>" >> osx/Info.plist
-#	$(H)echo "	<key>CFBundleIconFile</key>" >> osx/Info.plist
-#	$(H)echo "	<string>freepops.icns</string>" >> osx/Info.plist
+	$(H)echo "	<key>CFBundleIconFile</key>" >> osx/Info.plist
+	$(H)echo "	<string>freepops.icns</string>" >> osx/Info.plist
 	$(H)echo "	<key>CFBundleIdentifier</key>" >> osx/Info.plist
 	$(H)echo "	<string>net.sf.freepops</string>" >> osx/Info.plist
 	$(H)echo "	<key>CFBundleInfoDictionaryVersion</key>" >> osx/Info.plist

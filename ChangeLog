@@ -1,4 +1,5 @@
-- added support for space represented as + in URL escaping
+- fixed URL decoding for plugin parameters and added support for space
+represented as + character
 - added standard folders support for yahoo.it
 - added yahoo.it support to yahoo.lua
 - added linuxgazette.net aggregator domains

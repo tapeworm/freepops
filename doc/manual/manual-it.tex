@@ -456,9 +456,15 @@ Lo username seguente è per il plugin \texttt{popforward.lua}:\\
 \texttt{gareuselesinge@mydomain.xx?host=pop.mydomain.xx\&port=110}\\
 Dato che potreste usare qualche proxy antispam o altri programmi che
 possono maneggiare il vostro username e potrebbero non gradire il
-carattere \texttt{?} potete usare uno spazio al suo posto. Ogni altro
-carattere che segue \texttt{?} può essere preceduto per convenienza
-da \texttt{\%XXX} dove \texttt{XXX} sono i numeri riportati nell'Appendice.
+carattere \texttt{?} potete usare uno spazio al suo posto.
+Tutti i caratteri seguenti che non siano lettere o numeri devono essere
+scritti come \texttt{\%xx} dove \texttt{xx} \`e il codice esadecimale del
+carattere corrispondente (esattamente come accade per le URL). Per semplicit\`a,
+ogni carattere di spazio pu\`o essere sostituito con i carattere \texttt{+}
+invece che con il corrispondente \texttt{\%20}. Ad esempio, se si vuole
+assegnare il valore \texttt{"In Arrivo"} al parametro \texttt{folder} \`e
+necessario scrivere \texttt{folder=In+Arrivo}.
+Si veda l'Appendice per informazioni sui codici esadecimali dei vari caratteri.
 
 Un altro modo di fare hacking dello username è con i binding dominio-plugin
 fatti al volo. Potreste trovare utile dire: {}``Voglio usare il plugin
@@ -2778,6 +2784,5 @@ affidabile e libero come il sistema Debian GNU/Linux.
 \section*{Appendice}
 
 Poiché la tabella ASCII è molto comune, non l'abbiamo inclusa qui.
-Potete chiedere a google. L'unica cosa che può suonare strana è che
-usiamo sempre tre cifre, anche per numeri minori di 100.
+Potete chiedere a google.
 \end{document}

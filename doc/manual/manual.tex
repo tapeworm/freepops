@@ -428,14 +428,18 @@ The following username is for the \texttt{popforward.lua} plugin:\\
 \texttt{gareuselesinge@mydomain.xx?host=pop.mydomain.xx\&port=110}\\
 Since you may use some antispam proxy or other program that may handle
 your username and may dislike the \texttt{?} character you may use
-a space instead of it. Any other character, following \texttt{?},
-may be escaped for convenience with \texttt{\%XXX} where \texttt{XXX}
-are the numbers reported in the Appendix.
+a space instead of it.
+Every following character that is not a letter or a number needs to be escaped.
+So they have to be written as \texttt{\%xx}, where \texttt{xx} is the
+hexadecimal code of the corresponding character (exacly as it happens in URL).
+The space character could also be substituted simply by a plus characted
+\texttt{+}. For example, if you have to assign the value \texttt{"My Messages"}
+to the \texttt{folder} parameter, you need to write \texttt{folder=My+Messages}.Take a look to the Appendix, to find more informations about hexadecimal codes.
 
 Another way of hacking with the username is the on-the-fly domain-plugin
 binding. You may find useful to say: {}``I want to use plugin X for
 domain Y without changing the config.lua file''. In this case you
-have to use the plugin name (for example \texttt{popforward.lua)}
+have to use the plugin name (for example \texttt{popforward.lua})
 as the domain name an probably you will have to pass some arguments
 to the plugin using the procedure previously described. This is an
 example:\\
@@ -2716,6 +2720,5 @@ as the Debian GNU/Linux system.
 \section*{Appendix}
 
 Since the ASCII table is really common, we have not included one here.
-You may ask google. The only thing that may sound strange is that
-we use always 3 digits, even for numbers smaller than 100.
+You may ask google.
 \end{document}

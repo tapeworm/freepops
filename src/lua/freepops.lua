@@ -54,8 +54,8 @@ freepops.get_args = function (mailaddress)
 	
 	local function unescape(s)
 		s = string.gsub(s, "+", " ")
-		return string.gsub(s,"%%(%d%d%d)",function(n)
-				return string.char(n)
+		return string.gsub(s,"%%(%x%x)",function(n)
+				return string.char(tonumber(n, 16))
 			end)
 	end
 

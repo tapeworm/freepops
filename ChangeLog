@@ -1,4 +1,6 @@
-27/06/2004 fix release
+27/06/2004 0.0.9 fix release
+- now win32 dist can include SSL enabled curl
+- added browser:get_cookie(name) 
 - added sanity checks functions to plugins
 - common.lua now implements the commonly used uidl* list* dele rset noop
 - fixed tin.lua for messages bigger than 1MB

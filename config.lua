@@ -36,14 +36,14 @@ freepops.MODULES_MAP["tin.it"]		= {
 }
 
 -- lycos
-freepops.MODULES_MAP["lycos.co.uk"]	= {name="owa.lua"}
-freepops.MODULES_MAP["lycos.ch"]	= {name="owa.lua"}
-freepops.MODULES_MAP["lycos.de"]	= {name="owa.lua"}
-freepops.MODULES_MAP["lycos.es"]	= {name="owa.lua"}
-freepops.MODULES_MAP["lycos.it"]	= {name="owa.lua"}
-freepops.MODULES_MAP["lycos.at"]	= {name="owa.lua"}
-freepops.MODULES_MAP["lycos.nl"]	= {name="owa.lua"}
-freepops.MODULES_MAP["spray.se"]	= {name="owa.lua"}
+freepops.MODULES_MAP["lycos.co.uk"]	= {name="davmail.lua"}
+freepops.MODULES_MAP["lycos.ch"]	= {name="davmail.lua"}
+freepops.MODULES_MAP["lycos.de"]	= {name="davmail.lua"}
+freepops.MODULES_MAP["lycos.es"]	= {name="davmail.lua"}
+freepops.MODULES_MAP["lycos.it"]	= {name="davmail.lua"}
+freepops.MODULES_MAP["lycos.at"]	= {name="davmail.lua"}
+freepops.MODULES_MAP["lycos.nl"]	= {name="davmail.lua"}
+freepops.MODULES_MAP["spray.se"]	= {name="davmail.lua"}
 
 -- gmail
 freepops.MODULES_MAP["gmail.com"]	= {name="gmail.lua"}

@@ -17,11 +17,20 @@ else
  endif
 endif
 
+ifeq "$(OS)" "Darwin"
 HLDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluaexpat -lregularexp_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
-	-lluabind -lgetdate -l mlex -lportablesocket -lexpat -lregularexp \
-	-l base64 -lcurl -llog -llist -lreadline -lhistory -lcurses -lncurses
+	-lluabind -lgetdate -lmlex -lportablesocket -lbase64 \
+	-lregularexp -llog -llist \
+	-L/sw/lib/ -lexpat -lcurl -lreadline -lhistory #-lcurses #-lncurses
+else
+HLDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
+	-lluaexpat -lregularexp_lua \
+	-lbase64_lua -lstringhack_lua -lcurl_lua \
+	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
+	-lbase64 -lcurl -llog -llist -lreadline -lhistory -lcurses -lncurses
+endif
 
 H=@
 
@@ -33,7 +42,9 @@ $(PREFIX)/bin/luafull: luafull
 	
 luafull:
 	$(H)echo -n ' building luafull... '
-	$(H)[ -f ../../lib/liblua-host.a ] && $(RANLIB) ../../lib/liblua-host.a
+	$(H)[ -f ../../lib/liblua-host.a ] && \
+		( $(RANLIB) ../../lib/liblua-host.a; \
+		  $(RANLIB) ../../lib/liblualib-host.a )
 	$(H)$(HCC) $(HCFLAGS) -o luafull lua.c $(HLDFLAGS) || true
 	$(H)echo "done."
 

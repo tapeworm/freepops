@@ -1,4 +1,5 @@
 05/03/2005 0.0.26
+- Mac OS X startup dir bug fixed (ncocchiaro)
 - : fixed inline (gareuselesinge)
 - es: *** empty log message *** (lisar314)
 - yahoo.lua: fix multi-page stat and too long uidl's (russell822)

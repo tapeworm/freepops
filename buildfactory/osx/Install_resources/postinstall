@@ -11,6 +11,6 @@ if [ ! -d /Library/StartupItems/FreePOPs ] ; then
 fi
 cp "$1/Contents/Resources/StartupParameters.plist" /Library/StartupItems/FreePOPs/
 # add installation directory to startup script and copy it
-cat "$1/Contents/Resources/FreePOPs" | sed s:DIR=:DIR="$2"/FreePOPs: > /Library/StartupItems/FreePOPs/FreePOPs
+cat "$1/Contents/Resources/FreePOPs" | sed s:DIR=:DIR=\""$2"/FreePOPs\": > /Library/StartupItems/FreePOPs/FreePOPs
 chmod 755 /Library/StartupItems/FreePOPs/FreePOPs
 exit 0

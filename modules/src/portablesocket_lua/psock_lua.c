@@ -18,7 +18,7 @@ static struct sock_state_t* check_sockstate(lua_State*L)
 
 static void L_checknarg(lua_State* L,int n,char* msg){
 if( lua_gettop(L) != n )
-	L_error(L,"Stack has %d values: '%s'",lua_gettop(L),msg);
+	luaL_error(L,"Stack has %d values: '%s'",lua_gettop(L),msg);
 }
 
 static void fake_print(char*s) { }

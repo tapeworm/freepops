@@ -336,7 +336,7 @@ if(sock_error_occurred(s))
 return suc_next;
 }
 
-int popserver_callback(char* buffer, void* popserver_data)
+int popserver_callback(const char* buffer, void* popserver_data)
 {
 struct sock_state_t *s = (struct sock_state_t *) popserver_data;
 

@@ -27,7 +27,6 @@
 #include "lualib.h"
 #include "lauxlib.h"
 #include "luay.h"
-#include "tolua++.h"
 #include "pop3server_lua.h"
 #include "log_lua.h"
 #include "mlex_lua.h"
@@ -208,14 +207,14 @@ if ( rc != 0)
 luay_emptystack(tmp->l);
 
 //open freepops standard C library
-tolua_pop3server_lua_open(tmp->l);
+luaopen_pop3server(tmp->l);
 luaopen_mlex(tmp->l);
 luaopen_stringhack(tmp->l);
 luaopen_session(tmp->l);
 luacurl_open(tmp->l);
 luaopen_psock(tmp->l);
 luaopen_base64(tmp->l);
-tolua_getdate_lua_open(tmp->l);
+luaopen_getdate(tmp->l);
 luay_emptystack(tmp->l);
 
 //init lua module

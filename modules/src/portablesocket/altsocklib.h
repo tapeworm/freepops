@@ -42,7 +42,7 @@ int sockopen(char *host, struct in_addr bind_add, unsigned short port);
 int sockinfo(int sock, char *info);
 int sockclose(int sock);
 int senddata(int socket, char *buffer, int length);
-int senddata_raw(int socket, char *buffer, int length);
+int senddata_raw(int socket,const char *buffer, int length);
 int recvdata(int socket, char *buffer, int maxsize);
 void sockerror(char *msg);
 
@@ -59,7 +59,7 @@ void recvBufferDestroy(recvbuffer_t *rb);
 int recvstring(int socket, char *buffer, int maxsize, recvbuffer_t *r);
 int recvstring_with_timeout(int socket, char *buffer, int maxsize, recvbuffer_t *r, int timeout);
 int sendstring(int socket, char *string);
-int sendstring_raw(int socket, char *string);
+int sendstring_raw(int socket,const char *string);
 #ifdef WIN32
 void sockinit();
 #endif

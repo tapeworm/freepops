@@ -54,7 +54,8 @@ struct sock_state_t
 
 
 /************************** output functions ****************************/
-static void sock_print(char *prebuffer,char *buffer,struct sock_state_t *s)
+static void sock_print(const char *prebuffer,const char *buffer,
+		struct sock_state_t *s)
 {
 char tmp[s->maxlinelen];
 
@@ -83,7 +84,7 @@ static void sock_received(char *buffer,struct sock_state_t *s)
 sock_print(SOCK_RECEIVED,buffer,s);
 }
 
-static void sock_sent(char *buffer,struct sock_state_t *s)
+static void sock_sent(const char *buffer,struct sock_state_t *s)
 {
 sock_print(SOCK_SENT,buffer,s);
 }
@@ -122,7 +123,7 @@ if ( s != NULL && ! s->error_occurred )
 SKIP(s,"sock_send(\"%s\")",buffer);
 }
 
-int sock_sendraw(struct sock_state_t *s,char* buffer)
+int sock_sendraw(struct sock_state_t *s,const char* buffer)
 {
 int rc;
 	

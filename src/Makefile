@@ -57,7 +57,6 @@ LIBS=		stringhack_lua	\
                 regularexp      \
                 oscompatibility \
                 luay            \
-                tolua++         \
                 lua             \
                 lualib          
 		

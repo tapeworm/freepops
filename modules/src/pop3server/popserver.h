@@ -114,7 +114,7 @@ void popserver_start(struct popserver_functions_t* f,
  * \param buffer is the data to send, \0 terminated
  * \param an opaque data pased by the popserver to retr/top
  */ 
-int popserver_callback(char* buffer, void* popserver_data);
+int popserver_callback(const char* buffer, void* popserver_data);
 
 #endif
 

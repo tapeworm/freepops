@@ -401,7 +401,7 @@ int senddata(int socket, char *buffer, int length)
  * bugs:
  *    - WIN32 implementation should be rewritten using WSASend
  */
-int senddata_raw(int socket, char *buffer, int length)
+int senddata_raw(int socket,const char *buffer, int length)
 {
 #ifndef WIN32
     int rc;
@@ -692,6 +692,6 @@ int sendstring(int socket, char *string) {
 	return senddata(socket, string, strlen(string));
 }
 
-int sendstring_raw(int socket, char *string) {
+int sendstring_raw(int socket, const char *string) {
 	return senddata_raw(socket, string, strlen(string));
 }

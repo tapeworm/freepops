@@ -22,8 +22,8 @@
 #define MAILMESSAGE_DELETE	0x1
 
 //! the falg used for popstate state
-#define POPSTATE_LOGIN		0x1
-#define POPSTATE_STAT		0x2
+//#define POPSTATE_LOGIN		0x1
+//#define POPSTATE_STAT		0x2
 
 //! returns a new and empty structure
 struct popstate_t *new_popstate_t();

@@ -51,7 +51,7 @@ extern int sock_error_occurred(struct sock_state_t *s);
 //! send buffer on s, remember that "\r\n" will be appended to buffer
 extern int sock_send(struct sock_state_t *s,char* buffer);
 //! send buffer on s, with no "\r\n" at the end
-extern int sock_sendraw(struct sock_state_t *s,char* buffer);
+extern int sock_sendraw(struct sock_state_t *s,const char* buffer);
 //! send a non \0 terminated buffer of len l on s, with no "\r\n" at the end 
 extern int  sock_receive(struct sock_state_t *s,char* buffer,int maxlen);
 //! receive with timeout in seconds

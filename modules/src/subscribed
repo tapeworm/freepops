@@ -27,7 +27,6 @@ MK_TEMPLATE=	base64 \
 		base64_lua
 
 MK_TEMPL_CTRIB=	lua \
-		tolua++ \
 		pthread \
 		luadoc \
 		pkg2luadoc \

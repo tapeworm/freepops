@@ -1,5 +1,4 @@
 MODULES-Common= lua		\
-		tolua++		\
 		luay		\
 		oscompatibility	\
 		regularexp	\

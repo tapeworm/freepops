@@ -25,14 +25,21 @@
 
 #define ABOUT_TITLE	"FreePOPs/" VERSION
 #define ABOUT_STRING	"\
-A software developed by:\n\
+FreePOPs core and some plugins are developed by:\n\
 	Enrico Tassi\n\
 	Alessio Caprari\n\
 	Nicola Cocchiaro\n\
 	Simone Vellei\n\
 \n\
+Really important contributions like code, plugins, translations from:\n\
+	Russell Schwager\n\
+	Rami Kattan\n\
+	Pegasus\n\
+	Eddi De Pieri\n\
+	Lisardo Bello\n\
+\n\
 For more infos look at the web site:\n\
-	http://freepops.sourceforge.net"
+	http://freepops.org"
 
 #define DOWNLOAD_STRING "\
 Autoupdate completed."

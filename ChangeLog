@@ -1,3 +1,4 @@
+- added contributors to AUTHORS and the win32 popup
 - updated yahoo domains
 - added some verbosity to psock.lua
 23/10/2004 0.0.20

@@ -23,7 +23,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.1"
+PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "RSS/RDF aggregator"
 
 -- Configuration:
@@ -318,6 +318,7 @@ function stat(pstate)
 
 			-- set it
 			set_mailmessage_size(pstate,i,size)
+			uidl=base64.encode(uidl)
 			set_mailmessage_uidl(pstate,i,uidl)
 		end
 		

@@ -1,3 +1,4 @@
+- aggregator.lua now encodes uidl strings
 - added mimer module
 - fixed bug in base64
 - fixed bug in browser

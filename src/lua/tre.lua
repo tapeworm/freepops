@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.1"
+PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "Tre"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -16,16 +16,42 @@ PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=tre.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Eddi De Pieri"}
 PLUGIN_AUTHORS_CONTACTS = {"dpeddi (at) users (.) sourceforge (.) net"}
-PLUGIN_DOMAINS = {"@tre.it"} 
-PLUGIN_PARAMETERS = {}
+PLUGIN_DOMAINS = {"@tre.it", "@three.com.au"} 
+-- list of tables with fields name and description.
+-- description must be in the stle of PLUGIN_DESCRIPTIONS,
+-- so something like {it="bla bla bla", en = "bla bla bla"}
+PLUGIN_PARAMETERS = {
+--	{name = "purge", description = {
+--		it = [[
+--Elimina automaticamente la posta cancellata dal cestino.]],
+--		}
+--	},
+        {name = "folder", description = {
+                it = [[
+Serve per selezionare la cartella (inbox &egrave; quella di default)
+su cui operare.
+Le cartelle standard disponibili sono INBOX, INBOX.Draft, INBOX.Sent, INBOX.trash.
+Se hai creato delle cartelle dalla webmail allora puoi accedervi usando il
+loro nome. Se la cartella non &egrave; al livello principale
+puoi accederci usando
+una / per separala dalla cartella padre. Questo &egrave; un esempio di uno
+user name per leggere la cartella son, che &egrave;
+una sotto cartella della cartella
+father: foo@tre.it?folder=father/son]],
+        	}
+	},
+}
+						
 PLUGIN_DESCRIPTIONS = {
 	it=[[
-Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
-nome utente e la vostra vera password come password.]],
+Per usare questo plugin dovrete impostare nel vostro client di posta come
+nome utente il vostro numero di telefono nel formato 393921234567@tre.it 
+e come password il pin originale della vostra usim, indicato nella busta
+sigillata fornita da tre.]],
 	en=[[
-To use
-this plugin you have to use your full email address as the username
-and your real password as the password.]]
+To use this plugin you have to configure your mail client using as username
+your phone number formatted as 393921234567@three.com.XX and as password the usim's
+original pin code provided by three.]]
 }
 
 
@@ -50,7 +76,7 @@ and your real password as the password.]]
 -- 
 local tre_string = {
 	-- The uri the browser uses when you click the "login" button
-	login = "http://%s:%s@webmail.tre.it/cgi-bin/messagecenter.cgi",
+	login = "http://webmail.%s/cgi-bin/messagecenter.cgi",
 	session_errorC = "(http://[^/]+/tre/src/redirect.php)",
 	loginC = '.*<a.*href="([^"]+)".*>E.*mail.*',
 
@@ -59,15 +85,15 @@ local tre_string = {
 	statG = 'O<O>O<O>O<O>O<O><O>[O]{O}<O><O>O<O><O>O<O>O<O>O<O>O<O>O<O>O<O><O>O<O><O>O<O>O<O>O<O><X>O<O><O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>O<O>O<O><O><O><O><O>O<O>O',
 
 	-- The uri for the first page with the list of messages
-	first = "http://%s:%s@webmail.tre.it/cgi-bin/listfolders.cgi?count=5&do=viewfolder&folder=INBOX",
+	first = "http://webmail.%s/cgi-bin/listfolders.cgi?count=5&do=viewfolder&folder=%s",
 	-- The uri to get the next page of messages
 	nextC = "message%s(%d+)-(%d+),%stotal:%s(%d+)",
-	next = "http://%s:%s@webmail.tre.it/cgi-bin/listfolders.cgi?count=5&skip=%d&do=viewfolder&folder=INBOX",
+	next = "http://webmail.%s/cgi-bin/listfolders.cgi?count=5&skip=%d&do=viewfolder&folder=%s",
 
 	-- The capture to understand if the session ended
 	timeoutC = '(FIXME)',
 	-- The uri to save a message (read download the message)
-	save = 'http://%s:%s@webmail.tre.it/cgi-bin/inbox.cgi?do=viewmessage%d&folder=INBOX',
+	save = 'http://webmail.%s/cgi-bin/inbox.cgi?do=viewmessage%d&folder=%s',
 
 	body_begin= '<td%swidth="542"%salign="left"%sclass="bodyText">',
 	body_end= '<br/></td>',
@@ -76,13 +102,13 @@ local tre_string = {
 	headerG = 'O<O>O<O><O><O>O<O>X<O>[O]{O}O<O>[O]{O}X{O}[O]<O>O',
 
 	-- The uri to delete some messages
-	delete = "http://%s:%s@webmail.tre.it/cgi-bin/viewmsg.cgi",
-	delete_post = "count=14&do=delete&folder=INBOX&",
+	delete = "http://webmail.%s/cgi-bin/viewmsg.cgi",
+	delete_post = "count=14&do=delete&folder=%s&",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
 	delete_next = "msgid=%s&",
 	
-	attach = 'http://%s:%s@webmail.tre.it/cgi-bin/viewmsg.cgi?do=viewattach&folder=INBOX&msgid=%s',
+	attach = 'http://webmail.%s/cgi-bin/viewmsg.cgi?do=viewattach&folder=%s&msgid=%s',
 	attachE = '<tr>.*<td></td>.*<td>.*</td>.*<td>.*</td>.*<td>.*</td>.*<td><a>.*</a></td>.*<td></td>.*</tr>.*',
 	attachG = '<O>O<O><O>O<O>O<O>O<O>X<O>O<O>O<O>O<O><X>O<O><O>O<O><O>O<O>O',
    
@@ -169,7 +195,8 @@ end
 function key()
 	return (internal_state.name or "")..
 		(internal_state.domain or "")..
-		(internal_state.password or "")
+		(internal_state.password or "")..
+                (internal_state.folder or "")			
 end
 
 --------------------------------------------------------------------------------
@@ -199,7 +226,7 @@ function tre_login()
 
 	-- build the uri
 	local domain = internal_state.domain
-	local uri = string.format(tre_string.login,internal_state.name,internal_state.password)
+	local uri = string.format(tre_string.login,internal_state.domain)
 	--print ( "DEBUG: " .. uri )
 
 	-- the browser must be preserved
@@ -208,6 +235,7 @@ function tre_login()
 	local b = internal_state.b
 
 	--b.curl:setopt(curl.OPT_VERBOSE,1)
+	b.curl:setopt(curl.OPT_USERPWD,internal_state.name..":"..internal_state.password)
 
 	local extract_f = support.do_extract(
 		internal_state,"login_url",tre_string.loginC)
@@ -276,7 +304,7 @@ function tre_parse_webmessage(pstate,msg)
 	
 	-- body handling: build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(tre_string.save,internal_state.name,internal_state.password,uidl)
+	local uri = string.format(tre_string.save,internal_state.domain,uidl,internal_state.folder)
 
 	-- get the main mail page
 	local f,rc = b:get_uri(uri)
@@ -324,7 +352,7 @@ function tre_parse_webmessage(pstate,msg)
 
 
 	-- attach handling: build the uri
-	local uri = string.format(tre_string.attach,internal_state.name,internal_state.password,uidl)
+	local uri = string.format(tre_string.attach,internal_state.domain,uidl,internal_state.folder)
 	-- get the main attach page
 	local f,rc = b:get_uri(uri)
 
@@ -340,7 +368,7 @@ function tre_parse_webmessage(pstate,msg)
 		local _,_,url = string.find(x:get(1,i-1),'href="([^"]*)"')
 		url = string.gsub(url,"&amp;", "&")
 		local _,_,fname = string.find(x:get(0,i-1),'^[%s%t]*(.*)')
-		attach[mimer.html2txtplain(fname)] = "http://"..internal_state.name..":"..internal_state.password.."@" .. b:wherearewe() .. "/cgi-bin/" .. url
+		attach[mimer.html2txtplain(fname)] = "http://".. b:wherearewe() .. "/cgi-bin/" .. url
 		table.setn(attach,table.getn(attach) + 1)
 	end
 	
@@ -364,6 +392,13 @@ function user(pstate,username)
 	-- save domain and name
 	internal_state.domain = domain
 	internal_state.name = name
+
+        local f = (freepops.MODULE_ARGS or {}).folder or "INBOX"
+--        local f64 = base64.encode(f)
+--        local f64u = base64.encode(string.upper(f))
+--        internal_state.folder = f64
+        internal_state.folder = f
+--        internal_state.folder_uppercase = f64u		
 	
 	return POPSERVER_ERR_OK
 end
@@ -422,8 +457,8 @@ function quit_update(pstate)
 
 	-- shorten names, not really important
 	local b = internal_state.b
-	local uri = string.format(tre_string.delete,internal_state.name,internal_state.password)
-	local post = string.format(tre_string.delete_post)
+	local uri = string.format(tre_string.delete,internal_state.domain)
+	local post = string.format(tre_string.delete_post,internal_state.folder)
 
 	-- here we need the stat, we build the uri and we check if we 
 	-- need to delete something
@@ -433,8 +468,8 @@ function quit_update(pstate)
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
 			post = post .. string.format(tre_string.delete_next,
 				get_mailmessage_uidl(pstate,i))
-			post_trash = post .. ".Trash" .. string.format(tre_string.delete_next,
-				get_mailmessage_uidl(pstate,i))
+--			post_trash = post .. ".Trash" .. string.format(tre_string.delete_next,
+--				get_mailmessage_uidl(pstate,i))
 			delete_something = true	
 		end
 	end
@@ -476,9 +511,12 @@ function stat(pstate)
 	-- shorten names, not really important
 	local b = internal_state.b
 
+	b.curl:setopt(curl.OPT_USERPWD,internal_state.name..":"..internal_state.password)
+
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri = string.format(tre_string.first,internal_state.name,internal_state.password)
+
+	local uri = string.format(tre_string.first,internal_state.domain,internal_state.folder)
 	
 	-- The action for do_until
 	--
@@ -544,7 +582,7 @@ function stat(pstate)
 		print ( "DEBUG: " .. from .. " " .. to .. " " .. last )
 
 		if tonumber(to) < tonumber(last) then
-			uri = string.format(tre_string.next,internal_state.name,internal_state.password,to)
+			uri = string.format(tre_string.next,internal_state.domain,to,internal_state.folder)
 			-- continue the loop
 			return false
 		else
@@ -573,7 +611,7 @@ function stat(pstate)
 			b = internal_state.b
 			-- popserver has not changed
 			
-			uri = string.format(tre_string.first,internal_state.name,internal_state.password)
+			uri = string.format(tre_string.first,internal_state.domain)
 
 			return b:get_uri(uri)
 		end

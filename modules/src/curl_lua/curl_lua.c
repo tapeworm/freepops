@@ -4,9 +4,11 @@
    
    Released under the GNU GPL license, no warranties
   
-   Author: Enrico Tassi <gareuselesinge@users.sourceforge.net>
+   Author: 
+   	- Enrico Tassi <gareuselesinge@users.sourceforge.net>
   
-   status: binds from 7.9.5 to 7.11.2
+   status: 
+   	- binds from 7.9.5 to 7.11.2
    
    changelog:
    	- first public release
@@ -40,10 +42,6 @@
 #define CURL_NEWER(M,m,p) ((p + (m << 8) + (M << 16)) <= LIBCURL_VERSION_NUM)
 #define CURL_OLDER(M,m,p) ((p + (m << 8) + (M << 16)) > LIBCURL_VERSION_NUM)
 
-/* this work only in 7.11.x
- * #define CURL_NEWER(M,m,p) ( ( LIBCURL_VERSION_MAJOR > (M) ) || ( ( LIBCURL_VERSION_MAJOR == (M) ) && ( ( LIBCURL_VERSION_MINOR > (m) ) || ( ( LIBCURL_VERSION_MINOR == (m) ) && ( LIBCURL_VERSION_PATCH >= (p) ) ) ) ) )
- */
-
 /* some compatibility for name aliases */
 #ifndef CURLOPT_WRITEDATA
 	#define CURLOPT_WRITEDATA CURLOPT_FILE
@@ -56,45 +54,56 @@
 #endif
 
 /* strings putted in the bag, vectorialized for faster/shorter access */
-	#define STR_SSLCERT 0
-	#define STR_SSLCERTTYPE 1
-	#define STR_SSLCERTPASSWD 2
-	#define STR_SSLKEY 3
-	#define STR_SSLKEYTYPE 4
-	#define STR_SSLENGINE 5
-	#define STR_CAINFO 6
-#if CURL_NEWER(7,9,8)
-	#define STR_CAPATH 7
-#endif
-	#define STR_RANDOM_FILE 8
-	#define STR_EGDSOCKET 9
-	#define STR_SSL_CIPHER_LIST 10
-	#define STR_KRB4LEVEL 11
-#if CURL_NEWER(7,10,3)
-	#define STR_PRIVATE 12
-#endif
-	#define STR_RANGE 13
-	#define STR_CUSTOMREQUEST 14
-	#define STR_FTPPORT 15
-	#define STR_PROXY 16
-	#define STR_INTERFACE 17
-#if CURL_NEWER(7,11,0)
-	#define STR_NETRC_FILE 18
-#endif
-	#define STR_USERPWD 19
-	#define STR_PROXYUSERPWD 20
-#if CURL_NEWER(7,10,0)
-	#define STR_ENCODING 21
-#endif
-	#define STR_POSTFIELDS 22
-	#define STR_REFERER 23
-	#define STR_USERAGENT 24
-	#define STR_COOKIE 25
-	#define STR_COOKIEFILE 26
-	#define STR_COOKIEJAR 27
-	#define STR_URL 28
-	#define STR_LAST STR_URL
 	
+        #define STR_CAINFO 		0
+        #define STR_COOKIE 		1
+        #define STR_COOKIEFILE 		2
+        #define STR_COOKIEJAR 		3
+        #define STR_CUSTOMREQUEST 	4
+        #define STR_EGDSOCKET 		5
+        #define STR_FTPPORT 		6
+        #define STR_INTERFACE 		7
+        #define STR_KRB4LEVEL 		8
+        #define STR_POSTFIELDS 		9
+        #define STR_PROXY 		10
+        #define STR_PROXYUSERPWD 	11
+        #define STR_RANDOM_FILE 	12
+        #define STR_RANGE 		13
+        #define STR_REFERER 		14
+        #define STR_SSLCERT 		15
+        #define STR_SSLCERTPASSWD 	16
+        #define STR_SSLCERTTYPE 	17
+        #define STR_SSLENGINE 		18	
+        #define STR_SSLKEY 		19
+        #define STR_SSLKEYTYPE 		20
+        #define STR_SSL_CIPHER_LIST 	21
+        #define STR_URL 		22
+        #define STR_USERAGENT 		23
+        #define STR_USERPWD 		24
+
+	#define STR_LAST STR_USERPWD
+
+#if CURL_NEWER(7,9,8)
+	#define STR_CAPATH 		25
+	#undef STR_LAST
+	#define STR_LAST STR_CAPATH
+#endif
+#if CURL_NEWER(7,10,0)
+	#define STR_ENCODING 		26
+	#undef STR_LAST
+	#define STR_LAST STR_ENCODING
+#endif
+#if CURL_NEWER(7,10,3)
+	#define STR_PRIVATE 		27
+	#undef STR_LAST
+	#define STR_LAST STR_PRIVATE
+#endif
+#if CURL_NEWER(7,11,0)
+	#define STR_NETRC_FILE 		28
+	#undef STR_LAST
+	#define STR_LAST STR_NETRC_FILE
+#endif
+
 	#define STR_SIZE (STR_LAST + 1)
 
 
@@ -311,43 +320,43 @@ static struct L_curl_bag* L_checkcurluserdata(lua_State*L)
 static unsigned int L_CURLoption2vect(lua_State*L,CURLoption opt){
 
 switch (opt) {
-	case CURLOPT_SSLCERT: return STR_SSLCERT;
-	case CURLOPT_SSLCERTTYPE: return STR_SSLCERTTYPE;
-	case CURLOPT_SSLCERTPASSWD: return STR_SSLCERTPASSWD;
-	case CURLOPT_SSLKEY: return STR_SSLKEY;
-	case CURLOPT_SSLKEYTYPE: return STR_SSLKEYTYPE;
-	case CURLOPT_SSLENGINE: return STR_SSLENGINE;
-	case CURLOPT_CAINFO: return STR_CAINFO;
+        case CURLOPT_CAINFO: return STR_CAINFO;
+        case CURLOPT_COOKIE: return STR_COOKIE;
+        case CURLOPT_COOKIEFILE: return STR_COOKIEFILE;
+        case CURLOPT_COOKIEJAR: return STR_COOKIEJAR;
+        case CURLOPT_CUSTOMREQUEST: return STR_CUSTOMREQUEST;
+        case CURLOPT_EGDSOCKET: return STR_EGDSOCKET;
+        case CURLOPT_FTPPORT: return STR_FTPPORT;
+        case CURLOPT_INTERFACE: return STR_INTERFACE;
+        case CURLOPT_KRB4LEVEL: return STR_KRB4LEVEL;
+        case CURLOPT_POSTFIELDS: return STR_POSTFIELDS;
+        case CURLOPT_PROXY: return STR_PROXY;
+        case CURLOPT_PROXYUSERPWD: return STR_PROXYUSERPWD;
+        case CURLOPT_RANDOM_FILE: return STR_RANDOM_FILE;
+        case CURLOPT_RANGE: return STR_RANGE;
+        case CURLOPT_REFERER: return STR_REFERER;
+        case CURLOPT_SSLCERT: return STR_SSLCERT;
+        case CURLOPT_SSLCERTPASSWD: return STR_SSLCERTPASSWD;
+        case CURLOPT_SSLCERTTYPE: return STR_SSLCERTTYPE;
+        case CURLOPT_SSLENGINE: return STR_SSLENGINE;
+        case CURLOPT_SSLKEY: return STR_SSLKEY;
+        case CURLOPT_SSLKEYTYPE: return STR_SSLKEYTYPE;
+        case CURLOPT_SSL_CIPHER_LIST: return STR_SSL_CIPHER_LIST;
+        case CURLOPT_URL: return STR_URL;
+        case CURLOPT_USERAGENT: return STR_USERAGENT;
+        case CURLOPT_USERPWD: return STR_USERPWD;
 #if CURL_NEWER(7,9,8)
 	case CURLOPT_CAPATH: return STR_CAPATH;
 #endif
-	case CURLOPT_RANDOM_FILE: return STR_RANDOM_FILE;
-	case CURLOPT_EGDSOCKET: return STR_EGDSOCKET;
-	case CURLOPT_SSL_CIPHER_LIST: return STR_SSL_CIPHER_LIST;
-	case CURLOPT_KRB4LEVEL: return STR_KRB4LEVEL;
-#if CURL_NEWER(7,10,3)
-	case CURLOPT_PRIVATE: return STR_PRIVATE;
-#endif
-	case CURLOPT_RANGE: return STR_RANGE;
-	case CURLOPT_CUSTOMREQUEST: return STR_CUSTOMREQUEST;
-	case CURLOPT_FTPPORT: return STR_FTPPORT;
-	case CURLOPT_PROXY: return STR_PROXY;
-	case CURLOPT_INTERFACE: return STR_INTERFACE;
-#if CURL_NEWER(7,11,0)
-	case CURLOPT_NETRC_FILE: return STR_NETRC_FILE;
-#endif
-	case CURLOPT_USERPWD: return STR_USERPWD;
-	case CURLOPT_PROXYUSERPWD: return STR_PROXYUSERPWD;
 #if CURL_NEWER(7,10,0)
 	case CURLOPT_ENCODING: return STR_ENCODING;
 #endif
-	case CURLOPT_POSTFIELDS: return STR_POSTFIELDS;
-	case CURLOPT_REFERER: return STR_REFERER;
-	case CURLOPT_USERAGENT: return STR_USERAGENT;
-	case CURLOPT_COOKIE: return STR_COOKIE;
-	case CURLOPT_COOKIEFILE: return STR_COOKIEFILE;
-	case CURLOPT_COOKIEJAR: return STR_COOKIEJAR;
-	case CURLOPT_URL: return STR_URL;
+#if CURL_NEWER(7,10,3)
+	case CURLOPT_PRIVATE: return STR_PRIVATE;
+#endif
+#if CURL_NEWER(7,11,0)
+	case CURLOPT_NETRC_FILE: return STR_NETRC_FILE;
+#endif
  	default: L_error(L,"Unsupported string in bag");
 }
 

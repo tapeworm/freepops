@@ -11,7 +11,7 @@
 -- WARNING        the bindings for psock in lua are really poor       WARNING --
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "POPforward"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"

@@ -203,7 +203,8 @@ function browser.new()
 
 	b:init_curl()
 	
-	b:show()
+	-- see what we have done
+	--b:show()
 	
 	return b
 end

@@ -30,6 +30,7 @@ Maybe fake reports (bugs do not appear true)
 For next version or later (in random order, lucky first)
 ========================================================
 
+ * implement REQUIRE_VERSION
  * libero TOP bug reloaded: 
    http://freepops.diludovico.it/index.php?showtopic=1542&st=0&#entry8974
  * they say that win32 without -w can crash

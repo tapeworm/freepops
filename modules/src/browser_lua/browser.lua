@@ -154,11 +154,11 @@ function Private.init_curl(self)
 		"cURL/browser.lua (;;;;) FreePOPs")
 	if self.proxy ~= nil then
 		self.curl:setopt(curl.OPT_PROXY,self.proxy)
-		self.curl:setopt(curl.OPT_PROXYTYPE,curl.PROXY_HTTP)
+		--self.curl:setopt(curl.OPT_PROXYTYPE,curl.PROXY_HTTP)
 	end
 	if self.proxyauth ~= nil then
 		self.curl:setopt(curl.OPT_PROXYUSERPWD,self.proxyauth)
-		self.curl:setopt(curl.OPT_PROXYAUTH,curl.AUTH_ANY)
+		--self.curl:setopt(curl.OPT_PROXYAUTH,curl.AUTH_ANY)
 	end
 	-- tells the library to follow any Location:
         -- header that the server sends as part of an HTTP header

@@ -13,3 +13,5 @@ next release 0.0.13
 	aggiungi che GMAIL vuole SSL nel manuale e nel sito
 	use cvs2cl or finis out script
 	aggiungere nel manuale dominio mozillaitalia.org per aggregator
+	aggiungi il parametro folder anche a libero e eventualmente altre
+		webmail in cui sia facile supportarlo.

@@ -204,7 +204,7 @@ See HTTP://flatnuke.sourceforge.net for the project homepage
  websites, and allows the download of the whole news body.
 \layout Description
 
-kernel.lua This is a plugin to monitor the news about the Linux kernel trough
+kernel.lua This is a plugin to monitor the news about the Linux kernel through
  ChangeLogs
 \layout Section
 
@@ -1011,12 +1011,12 @@ http://flatnuke.sourceforge.net/
 kernel.lua
 \layout Standard
 
-This plugin helps in stayng up to date with the Linux kernel releases.
+This plugin helps in staying up to date with the Linux kernel releases.
  
 \family typewriter 
 http://kernel.org
 \family default 
- is the oficial page with the Linux kernel releases, each with her ChangeLog.
+ is the official page with the Linux kernel releases, each with its ChangeLog.
  You should use 
 \family typewriter 
 something@kernel.org

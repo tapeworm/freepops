@@ -144,6 +144,7 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)cd _osx_/freepops-$(VERSION); ./configure.sh osx; $(MAKE) all
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
+	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
 	$(H)mkdir -p ../dist-osx/FreePOPs/script
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
@@ -157,6 +158,8 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua
+	$(H)cd _osx_/freepops-$(VERSION)/src/lua_unofficial;\
+		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua_unofficial
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
@@ -172,6 +175,7 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)cd _osx_/freepops-$(VERSION); ./configure.sh osx-static; $(MAKE) all
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
+	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
 	$(H)cd _osx_/freepops-$(VERSION);\
@@ -183,6 +187,8 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua
+	$(H)cd _osx_/freepops-$(VERSION)/src/lua_unofficial;\
+		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua_unofficial
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
@@ -191,6 +197,10 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/Italian.lproj/ReadMe.txt
 	$(H)rm -rf _osx_
 
+# osx-app
+# This is currently broken, DO NOT USE
+# 
+# 
 osx-app: freepops-$(VERSION).tar.gz Info.plist
 	$(H)mkdir -p _osx_
 	$(H)[ -d _osx_/freepops-$(VERSION) ] || \

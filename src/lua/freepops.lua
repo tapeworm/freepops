@@ -6,7 +6,21 @@ freepops = {}
 freepops.MODULES_MAP = {}
 freepops.SO = {}
 freepops.MODULE_ARGS = nil
-fp_m = { __index = function(table,k) error(string.format("Unable to access to 'freepops.%s'\n",k)) end }
+
+--<==========================================================================>--
+-- This metatable/metamethod avoid accessing wrong fields of the tabe
+fp_m = { 
+	__index = function(table,k)
+		if k == "MODULE_ARGS" then
+			return nil
+		else
+			local err = string.format(
+				"Unable to access to 'freepops.%s'\n",k)
+			error(err) 
+		end 
+	end
+}
+
 setmetatable(freepops,fp_m)
 
 --<==========================================================================>--

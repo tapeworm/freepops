@@ -276,8 +276,6 @@ function stat(pstate)
 	end
 	
 	-- shorten names, not really important
-	--local popserver = internal_state.popserver
-	--ocal session_id = internal_state.session_id
 	local b = internal_state.b
 
 	-- this string will contain the uri to get. it may be updated by 

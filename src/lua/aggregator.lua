@@ -51,9 +51,7 @@ PLUGIN_NAME = "RSS/RDF aggregator"
 local rss
 
 local rss_string = {
-	-- This is the news title
 	item_bC = "<item",
-	-- This is the mlex expression to choos the item field
 	item_eC = "</item>",
 	itemC = "(</item>)",
 	linkC = "<link.*>(.*)</link>",
@@ -178,7 +176,6 @@ function retr_or_top(pstate,msg,data,lines)
 	end
 
 	--clean it
-	--header=html2txt(header) 
 	header=string.gsub(header,"&amp;","&");
 	title=html2txt(title)
 	body=html2txt(body)
@@ -270,15 +267,13 @@ function stat(pstate)
 	end
 	
 	-- shorten names, not really important
-	--local popserver = internal_state.popserver
-	--ocal session_id = internal_state.session_id
 	local b = internal_state.b
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
 	local uri = internal_state.password
 	
-	-- uses mlex to extract all the messages uidl and size
+	-- extract all the messages uidl
 	local function action_f (s) 
 		--	
 		-- sets global var rss
@@ -294,13 +289,6 @@ function stat(pstate)
 			
 		end
 		n=nmess	
-		-- the number of results
-		--local n = mlex.count(x)
-
-		--if n == 0 then
-		--	mlex.free(x)
-		--	return true,nil
-		--end
 		
 		-- this is not really needed since the structure 
 		-- grows automatically... maybe... don't remember now
@@ -311,19 +299,16 @@ function stat(pstate)
 		local starts2
 		local ends2
 		for i = 1,n do
-			--local uidl = mlex.get (0,i-1,x,s) 
 			starts2,_,_=string.find(s2,rss_string.item_bC);
 			ends2,_,_=string.find(s2,rss_string.item_eC);
 			local chunk=string.sub(s2,starts2,ends2)
 			s2=string.sub(s2,ends2+3)
 			
 			local _,_,uidl = string.find(chunk,rss_string.linkC)
-			--uidl=string.gsub(uidl,"/","-")
 			--fucking default size
-			size=100
+			size=2048
 
 			if not uidl or not size then
-				--mlex.free(x)
 				return nil,"Unable to parse uidl"
 			end
 
@@ -332,8 +317,6 @@ function stat(pstate)
 			set_mailmessage_uidl(pstate,i,uidl)
 		end
 		
-		mlex.free(x)
-
 		return true,nil
 	end
 

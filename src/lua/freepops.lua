@@ -209,7 +209,7 @@ freepops.load_module_for = function (mailaddress,loadonly)
 	*************************************************************
 	*                      README                               *
 	*                                                           *
-	* FreePOPs needs a username wit ha domain part. You         *
+	* FreePOPs needs a username with the domain part. You       *
 	* must use a username in the form foo@something to use      *
 	* FreePOPs. Please read the manual available at             *
 	*                                                           *

@@ -18,6 +18,7 @@
 #include "lauxlib.h"
 
 #include <stdlib.h>
+#include <openssl/opensslconf.h>
 #include <openssl/md5.h>
 #include <openssl/hmac.h>
 #include <openssl/evp.h>

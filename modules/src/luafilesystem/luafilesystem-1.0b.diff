@@ -187,8 +187,82 @@ diff -ruN luafilesystem-1.0b/lfs.c luafilesystem-1.0b-new/lfs.c
  #include <sys/stat.h>
  
 -#ifdef WIN32
-+#ifdef (defined(WIN32) && !defined(CYGWIN))
++#if (defined(WIN32) && !defined(CYGWIN))
  #include <direct.h>
  #include <io.h>
  #include <sys/locking.h>
-Binary files luafilesystem-1.0b/libluafilesystem.a and luafilesystem-1.0b-new/libluafilesystem.a differ
+diff -ruN luafilesystem-1.0b/lfs.c luafilesystem-1.0b-new/lfs.c
+--- luafilesystem-1.0b/lfs.c	2005-01-08 19:13:34.000000000 +0100
++++ luafilesystem-1.0b-new/lfs.c	2005-01-08 19:12:05.000000000 +0100
+@@ -114,7 +114,7 @@
+ */
+ static int _file_lock (lua_State *L, FILE *fh, const char *mode, const long start, long len, const char *funcname) {
+ 	int code;
+-#ifdef WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	/* lkmode valid values are:
+ 	   _LK_LOCK    Locks the specified bytes. If the bytes cannot be locked, the program immediately tries again after 1 second. If, after 10 attempts, the bytes cannot be locked, the constant returns an error.
+ 	   _LK_NBLCK   Locks the specified bytes. If the bytes cannot be locked, the constant returns an error.
+@@ -205,7 +205,7 @@
+ {
+   unsigned int usec = (unsigned int)luaL_check_number( L, 1 );
+ 
+-#ifndef WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+   sleep( (unsigned int)ceil( usec/1000.0 ));
+ #else
+   Sleep( (DWORD)usec );
+@@ -230,7 +230,7 @@
+ static int make_dir (lua_State *L) {
+ 	const char *path = luaL_checkstring (L, 1);
+ 	int fail;
+-#ifdef WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	int oldmask = umask (0);
+ 	fail = _mkdir (path);
+ #else
+@@ -252,7 +252,7 @@
+ ** Directory iterator
+ */
+ static int dir_iter (lua_State *L) {
+-#ifdef _WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	dir_data *d = (dir_data *)lua_touserdata (L, lua_upvalueindex (1));
+ 	struct _finddata_t c_file;
+ 	if (d->hFile == 0L) { /* first entry */
+@@ -289,7 +289,7 @@
+ ** Closes directory iterators
+ */
+ static int dir_close (lua_State *L) {
+-#ifdef _WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	dir_data *d = (dir_data *)lua_touserdata (L, 1);
+ 	if (d->hFile) {
+ 		_findclose (d->hFile);
+@@ -308,7 +308,7 @@
+ */
+ static int dir_iter_factory (lua_State *L) {
+ 	const char *path = luaL_checkstring (L, 1);
+-#ifdef _WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	dir_data *dir = (dir_data *) lua_newuserdata (L, sizeof(dir_data));
+ 	dir->hFile = 0L;
+ 	if (strlen(path) > MAX_DIR_LENGTH)
+@@ -344,7 +344,7 @@
+ }
+ 
+ 
+-#ifdef _WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+  #define S_ISDIR(mode)  (mode&_S_IFDIR)
+  #define S_ISREG(mode)  (mode&_S_IFREG)
+  #define S_ISLNK(mode)  (0)
+@@ -364,7 +364,7 @@
+ /*
+ ** Convert the inode protection mode to a string.
+ */
+-#ifdef WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ static const char *mode2string (unsigned short mode) {
+ #else
+ static const char *mode2string (mode_t mode) {

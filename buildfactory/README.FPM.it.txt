@@ -1,6 +1,6 @@
-FreePOPs & Mail Script FAQ (versione FAQ 1.4)
+FreePOPs & Mail Script FAQ (versione FAQ 1.6)
 
-Autore: Pegasus (p3g4sus@users.sourceforge.net)
+Autore: Pegasus (p3g4sus(chiocciola)users.sourceforge.net)
 
 
 Che cos'è?
@@ -9,6 +9,22 @@ Che cos'è?
 Si tratta di uno script scritto in VBS (Visual Basic Scripting) il cui scopo
 principale è di automatizzare l'avvio, insieme con FreePOPs, di un client email 
 selezionato dall'utente (SMC) e la successiva chiusura di FreePOPs alla chiusura di SMC.
+
+Quali sono i requisiti software per poterlo usare?
+--------------------------------------------------
+
+Se il sistema operativo è Microsoft Windows ME o 2000 o XP o 2003 basta aver installato FreePOPs.
+Se il sistema operativo è Microsoft Windows 95 o 98 o NT 4.0 oltre ad avere installato FreePOPs, si deve aver 
+installati il WMI (Windows Management Instrumentation) e il WSH (Windows Scripting Host).
+Link (gratuiti) per il download:
+- WMI per Windows 95 o 98: 
+  http://download.microsoft.com/download/platformsdk/wmi9x/1.5/W9X/EN-US/wmi9x.exe
+- WMI per Windows NT 4.0:
+  http://download.microsoft.com/download/platformsdk/wmint4/1.5/NT4/EN-US/wmint4.EXE
+- WSH: usare il motore di ricerca che trovate su http://www.microsoft.com/downloads cercando "WSH".
+Vi consiglio comunque di provare prima ad eseguire lo script SENZA aver installato i suddetti aggiornamenti. 
+Se riscontrate l'errore di runtime con codice 800A01B0, allora vi serve il WMI. Se invece Windows non 
+sa con che programma aprire il file .vbs allora avete bisogno del WSH.
 
 
 Cosa fa esattamente?
@@ -70,6 +86,12 @@ Come mai il mio antivirus mi sconsiglia di eseguire lo script?
 Ci sono molti virus che sfruttano la potenza del VBS per fare seri danni al PC.
 Ovviamente non è il caso di questo script. State tranquilli e fate star
 tranquillo, se possibile, anche il vostro antivirus. 
+
+Quando eseguo lo script ottengo l'errore di runtime con codice 800A01B0. Come mai?
+----------------------------------------------------------------------------------
+
+Probabilmente stai usando Windows 95 o 98 o NT 4.0 e non hai il WMI installato. Leggi la sezione requisiti per 
+maggiori informazioni.
 
 
 Come faccio per segnalare un bug?

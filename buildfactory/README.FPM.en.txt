@@ -1,4 +1,4 @@
-FreePOPs & Mail Script FAQ (FAQ version 1.4)
+FreePOPs & Mail Script FAQ (FAQ version 1.6)
 
 Author: Pegasus (p3g4sus@users.sourceforge.net)
 
@@ -8,6 +8,23 @@ What is it?
 
 It is a VBS Script. Its aim is to automatically start, togheter with FreePOPs,
 an email client selected by the user (SMC) and to close FreePOPs when you close the SMC.
+
+
+What are the software requirements to run this script?
+------------------------------------------------------
+
+If you are using Microsoft Windows ME o 2000 o XP o 2003 it's enough that you have FreePOPs correctly installed.
+If you are using Microsoft Windows 95 o 98 o NT 4.0 you need to install WMI (Windows Management Instrumentation) 
+and WSH (Windows Scripting Host).
+Free Links for download:
+- WMI for Windows 95 o 98: 
+  http://download.microsoft.com/download/platformsdk/wmi9x/1.5/W9X/EN-US/wmi9x.exe
+- WMI for Windows NT 4.0:
+  http://download.microsoft.com/download/platformsdk/wmint4/1.5/NT4/EN-US/wmint4.EXE
+- WSH: please use Microsoft search engine (http://www.microsoft.com/downloads) searching for "WSH".
+However my advice is to try to execute the script WITHOuT installing the above updates. If the execution fails
+because of runtime error 800A01B0, then you need to install WMI. If Windows asks to you what program to use to
+open the .vbs file, then you need to install WSH.
 
 
 What does it exactly do?
@@ -71,6 +88,12 @@ This is because the power of VBS language has several times been used for
 malicious proposes. Obviously this script is not a virus. Don't worry and, if
 possible, tell your antivirus not to warn you again for this file.
 
+
+When I try to execute the script, the execution fails because of the runtime error 800A01B0. Why?
+--------------------------------------------------------------------------------------------------
+
+You are probably using Windows 95 or 98 or NT 4.0 and you don't have WMI installed on your computer.
+Please read the requirements section of this FAQ for more informations.
 
 
 What can I do if I find a bug?

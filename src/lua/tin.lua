@@ -319,7 +319,7 @@ function top_cb(global,data)
 end
 
 -- ************************************************************************** --
---  Libero functions
+--  Tin functions
 -- ************************************************************************** --
 
 -- Must save the mailbox name
@@ -738,7 +738,7 @@ function top(pstate,msg,lines,data)
 		to = 0,
 		-- the minimum amount of bytes we receive 
 		-- (compensates the mail header usually)
-		base = 2,--2048,
+		base = 2048,
 	}
 	-- the callback for http stram
 	local cb = top_cb(global,data)

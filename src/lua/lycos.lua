@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.1"
+PLUGIN_VERSION = "0.0.1-rc1"
 PLUGIN_NAME = "Lycos.IT"
 
 -- ************************************************************************** --
@@ -31,6 +31,7 @@ local lycos_string = {
 		"target_url=1&fail_url=&"..
 		"format=&redir_fail=http://www.lycos.it/",
 	login_failC="(Spiacente, ma questo Alias non esiste)",
+	session_errorC = "(http://mail.lycos.it/Europe/Bin/Utils/error.jsp)",
 	loginC = '<frame.*src="([^"]+)"',
 	-- mesage list mlex
 	statE = '.*<div class="whrnopadding">.*</div>.*<div>.*<div>[.*]{img}.*</div>.*<div>.*</div>.*<div>.*</div>.*<div>[.*]{img}.*</div>.*<div class="w15L">.*<input.*name.*CHECK_>.*</div>.*</div>',
@@ -51,7 +52,14 @@ local lycos_string = {
 	delete_post = "ACTION=3&",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
-	delete_next = "CHECK_%d=1&"
+	delete_next = "CHECK_%d=1&",
+	attachE = '.*<div class="listNA">.*<script>.*</script>.*<div class="w250L">.*<a title="Download">.*<script>.*</script>.*</a>.*</div>.*<div class="w150L">.*<a>.*</a>.*</div>.*<div class="breaker">.*</div>',
+	attachG = "O<O>O<O>O<O>O<O>O<X>O<O>O<O>X<O>O<O>O<O>O<O>O<O><O>O<O>O<O>",
+	attach_begin = '</div>%s+</div>%s+<div style="overflow%-x:auto;padding%-bottom:25px;" class="whitecontent"><P>',
+	attach_end = '\n</P>\n%s+</div>\n',
+	head_begin = '<div style="text%-align:left;" class="whitecontent">',
+	head_end = '</div>',
+	base_uri = "http://mail.lycos.it"
 }
 
 -- ************************************************************************** --
@@ -60,16 +68,7 @@ local lycos_string = {
 
 -- this is the internal state of the plugin. This structure will be serialized 
 -- and saved to remember the state.
-internal_state = {
-	stat_done = false,
-	login_done = false,
-	popserver = nil,
-	login_url = nil,
-	domain = nil,
-	name = nil,
-	password = nil,
-	b = nil
-}
+internal_state = {}
 
 -- ************************************************************************** --
 --  Helpers functions
@@ -150,7 +149,7 @@ function lycos_login()
 		return POPSERVER_ERR_AUTH
 	end
 
-	local uri = "http://mail.lycos.it" .. internal_state.login_url
+	local uri = lycos_string.base_uri .. internal_state.login_url
 
 	local body,err = b:get_uri(uri)
 
@@ -169,58 +168,103 @@ function lycos_login()
 	return POPSERVER_ERR_OK
 end
 
---------------------------------------------------------------------------------
--- The callbach factory for retr
---
-function retr_cb(data)
-	local a = stringhack.new()
-	
-	return function(s,len)
-		s = a:dothack(s).."\0"
-			
-		popserver_callback(s,data)
-			
-		return len,nil
-	end
-end
-
 -- -------------------------------------------------------------------------- --
--- The callback for top is really similar to the retr, but checks for purging
--- unwanted data and sets globals.lines to -1 if no more lines are needed
+-- Parse the message an returns head + body + attachments list
 --
-function top_cb(global,data)
-	local purge = false
+--
+function lycos_parse_webmessage(pstate,msg)
+	-- we need the stat
+	local st = stat(pstate)
+	if st ~= POPSERVER_ERR_OK then return st end
 	
-	return function(s,len)
-		print("GOT:",len)
-		if purge == true then
-			--print("purging: "..string.len(s))
-			return len,nil
-		end
-			
-		s=global.a:tophack(s,global.lines_requested)
-		s =  global.a:dothack(s).."\0"
-			
-		popserver_callback(s,data)
+	-- some local stuff
+	local b = internal_state.b
+	
+	-- build the uri
+	local uidl = get_mailmessage_uidl(pstate,msg)
+	local uri = string.format(lycos_string.save,uidl)
+	local urih = string.format(lycos_string.save_header,uidl)
+	
+	local f,rc = b:get_uri(uri,cb)
+	
+	local from,to = string.find(f,lycos_string.attach_begin)
 
-		global.bytes = global.bytes + len
+	--print(from,to)
 
-		-- check if we need to stop (in top only)
-		if global.a:check_stop(global.lines_requested) then
-			purge = true
-			global.lines = -1
-			-- trucate it!
-			return 0,nil
+	local f1 = string.sub(f,to+1,-1)
+
+	local from1,to1 = string.find(f1,lycos_string.attach_end)
+
+	--print(from1,to1)
+
+	local body = string.sub(f1,1,from1-1)
+
+	local attach = string.sub(f1,from1,-1)
+
+	local function mangle_body(s)
+		local _,_,x = string.find(s,"^%s*(<[Pp][Rr][Ee]>)")
+		if x ~= nil then
+			s = mimer.html2txtmail(s)
+			return s,nil
 		else
-			global.lines = global.lines_requested - 
-				global.a:current_lines()
-			return len,nil
+			-- the webmail damages these tags
+			s = string.gsub(s,"<%s*/?[Hh][Tt][Mm][Ll][^>]*>","")
+			s = string.gsub(s,"<%s*/?[Bb][Oo][Dd][Yy][^>]*>","")
+			s = string.gsub(s,"<%s*/?[Hh][Ee][Aa][Dd][^>]*>","")
+			s = "<html><head></head><body>"..s.."</body></html>"
+			return nil,s
 		end
 	end
+
+	local body,body_html = mangle_body(body)
+	
+	local f,rc = b:get_uri(urih,cb)
+	
+	local from,to = string.find(f,lycos_string.head_begin)
+	local f1 = string.sub(f,to+1,-1)
+	
+	local from1,to1 = string.find(f1,lycos_string.head_end)
+
+	local head = string.sub(f1,1,from1-1)
+
+	--print(from,to,from1,to1)
+
+	local function mangle_head(s)
+		s = mimer.html2txtplain(s)
+		-- FIXME: remove headers multiple lines
+		s = string.gsub(s,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*[^\n]*\n","")
+		s = string.gsub(s,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Dd][Ii][Ss][Pp][Oo][Ss][Ii][Tt][Ii][Oo][Nn]%s*:%s*[^\n]*\n","")
+		s = string.gsub(s,"[Mm][Ii][Mm][Ee]%-[Vv][Ee][Rr][Ss][Ii][Oo][Nn]%s*:%s*[^\n]*\n","")
+
+		local subst = 1
+		while subst > 0 do
+			s,subst = string.gsub(s,"\n\n","\n")
+		end
+		s = mimer.txt2mail(s)
+		return s
+	end
+
+	head = mangle_head(head)
+	
+	local x = mlex.match(attach,lycos_string.attachE,lycos_string.attachG)
+	--x:print()
+	--print(head)
+	
+	local n = x:count()
+	local attach = {}
+
+	for i = 1,n do
+		--print("addo fino a " .. n)
+		local _,_,url = string.find(x:get(0,n-1),'href="([^"]*)"')
+		attach[x:get(1,n-1)] = lycos_string.base_uri .. url
+		table.setn(attach,table.getn(attach) + 1)
+	end
+
+	return head,body,body_html,attach
 end
 
 -- ************************************************************************** --
---  Libero functions
+--  Lycos functions
 -- ************************************************************************** --
 
 -- Must save the mailbox name
@@ -423,31 +467,24 @@ function stat(pstate)
 			return f,err
 		end
 
-		--print("received:",f)
-		local g = io.open("out.html","w")
-		g:write(f)
-		g:close()
-		
-	--	
-	--	local _,_,c = string.find(f,tin_string.timeoutC)
-	--	if c ~= nil then
-	--		internal_state.login_done = nil
-	--		session.remove(key())
+		local _,_,c = string.find(f,lycos_string.session_errorC)
+		if c ~= nil then
+			internal_state.login_done = nil
+			session.remove(key())
 
-	--		local rc = lycos_login()
-	--		if rc ~= POPSERVER_ERR_OK then
-	--			return nil,"Session ended,unable to recover"
-	--		end
-	--		
-	--		session_id = internal_state.session_id
-	--		b = internal_state.b
-	--		-- popserver has not changed
-	--		
-	--		uri = string.format(tin_string.first,popserver,
-	--			session_id,curl.escape(pop_login))
-	--		return b:get_uri(uri)
-	--	end
-	--	
+			local rc = lycos_login()
+			if rc ~= POPSERVER_ERR_OK then
+				return nil,"Session ended,unable to recover"
+			end
+			
+			b = internal_state.b
+			-- popserver has not changed
+			
+			uri = lycos_string.first
+			
+			return b:get_uri(uri)
+		end
+		
 		return f,err
 	end
 
@@ -526,79 +563,14 @@ end
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
 function retr(pstate,msg,data)
-	-- we need the stat
-	local st = stat(pstate)
-	if st ~= POPSERVER_ERR_OK then return st end
-	
-	-- some local stuff
-	local b = internal_state.b
-	
-	-- build the uri
-	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(lycos_string.save,uidl)
-	local urih = string.format(lycos_string.save_header,uidl)
-	
-	local f,rc = b:get_uri(uri,cb)
-	
-	local from,to = string.find(f,'</div>%s+</div>%s+<div style="overflow%-x:auto;padding%-bottom:25px;" class="whitecontent"><P>')
-
-	print(from,to)
-
-	local f1 = string.sub(f,to+1,-1)
-
-	local from1,to1 = string.find(f1,'\n</P>\n%s+</div>\n')
-
-	print(from1,to1)
-
-	local body = string.sub(f1,1,from1-1)
-
-	local attach = string.sub(f1,from1,-1)
-
-	print(body)
-
-	local f,rc = b:get_uri(urih,cb)
-	
-	local from,to = string.find(f,'<div style="text%-align:left;" class="whitecontent">')
-	local f1 = string.sub(f,to+1,-1)
-	
-	local from1,to1 = string.find(f1,'</div>')
-
-	local head = string.sub(f1,1,from1-1)
-
-	print(from,to,from1,to1)
-
-	local function html2txt(s)
-		s = string.gsub(s,"&nbsp;"," ")
-		s = string.gsub(s,"&quot;",'"')
-		s = string.gsub(s,"</?[Bb][Rr]>",'\n')
-		s = string.gsub(s,"</?[Bb]>",'')
-		s = string.gsub(s,"&gt;",'>')
-		s = string.gsub(s,"&lt;",'<')
-		s = string.gsub(s,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*[^\n]*\n","")
-		s = string.gsub(s,"[Mm][Ii][Mm][Ee]%-[Vv][Ee][Rr][Ss][Ii][Oo][Nn]%s*:%s*[^\n]*\n","")
-		s = string.gsub(s,"\n\n","\n")
-		s = string.gsub(s,"\n\n","\n")
-		s = string.gsub(s,"\n","\r\n")
-		return s
-	end
-
-	head = html2txt(head)
-	
-local x = mlex.match(attach,'.*<div class="listNA">.*<script>.*</script>.*<div class="w250L">.*<a title="Download">.*<script>.*</script>.*</a>.*</div>.*<div class="w150L">.*<a>.*</a>.*</div>.*<div class="breaker">.*</div>',
-"O<O>O<O>O<O>O<O>O<X>O<O>O<O>X<O>O<O>O<O>O<O>O<O><O>O<O>O<O>")
-	x:print()
-	print(head)
-	
-	local n = x:count()
-	local attach = {}
-
-	for i = 1,n do
-		local _,_,url = string.find(x:get(0,n-1),'href="([^"]*)"')
-		attach[x:get(1,n-1)] = "http://mail.lycos.it" .. url
-	end
+	local head,body,body_html,attach = lycos_parse_webmessage(pstate,msg)
 
 	mimer.pipe_msg(
-		head,body,attach,b,function(s)popserver_callback(s,data)end)
+		head,body,body_html,
+		lycos_string.base_uri,attach,internal_state.b,
+		function(s)
+			popserver_callback(s,data)
+		end)
 
 	return POPSERVER_ERR_OK
 end
@@ -607,80 +579,24 @@ end
 -- Get message msg, must call 
 -- popserver_callback to send the data
 function top(pstate,msg,lines,data)
-	-- we need the stat
-	local st = stat(pstate)
-	if st ~= POPSERVER_ERR_OK then return st end
+	local head,body,body_html,attach = lycos_parse_webmessage(pstate,msg)
+	local e = stringhack.new()
+	local purge = false
 
-	-- some local stuff
-	local session_id = internal_state.session_id
-	local b = internal_state.b
-	local popserver = b:wherearewe()
-	local domain = internal_state.domain
-	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
-
-	-- build the uri
-	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(tin_string.save,popserver,
-				session_id,curl.escape(pop_login),uidl)
-
-	-- build the callbacks --
-	
-	-- this data structure is shared between callbacks
-	local global = {
-		-- the current amount of lines to go!
-		lines = lines, 
-		-- the original amount of lines requested
-		lines_requested = lines, 
-		-- how many bytes we have received
-		bytes = 0,
-		total_bytes = get_mailmessage_size(pstate,msg),
-		-- the stringhack (must survive the callback, since the 
-		-- callback doesn't know when it must be destroyed)
-		a = stringhack.new(),
-		-- the first byte
-		from = 0,
-		-- the last byte
-		to = 0,
-		-- the minimum amount of bytes we receive 
-		-- (compensates the mail header usually)
-		base = 2,--2048,
-	}
-	-- the callback for http stram
-	local cb = top_cb(global,data)
-	-- retrive must retrive from-to bytes, stores from and to in globals.
-	local retrive_f = function()
-		global.to = global.base + global.from + (global.lines + 1) * 100
-		global.base = 0
-		local extra_header = {
-			"Range: bytes="..global.from.."-"..global.to
-		}
-		local f,err = b:pipe_uri(uri,cb,extra_header)
-		global.from = global.to + 1
-		--if f == nil --and rc.error == "EOF" 
-		--	then
-		--	return "",nil
-		--end
-		return f,err
-	end
-	-- global.lines = -1 means we are done!
-	local check_f = function(_)
-		return global.lines < 0 or global.bytes >= global.total_bytes
-	end
-	-- nothing to do
-	local action_f = function(_)
-		return true
-	end
-
-	-- go!
-	support.do_until(retrive_f,check_f,action_f)
-	if not support.do_until(retrive_f,check_f,action_f) then
-		if global.lines ~= -1 then
-			log.error_print("Top failed\n")
-			session.remove(key())
-			return POPSERVER_ERR_UNKNOWN
-		end
-	end
+	mimer.pipe_msg(
+		head,body,body_html,
+		lycos_string.base_uri,attach,internal_state.b,
+		function(s)
+			if not purge then
+				s = e:tophack(s,lines)
+				
+				popserver_callback(s,data)
+				if e:check_stop(lines) then 
+					purge = true
+					return true 
+				end
+			end
+		end)
 
 	return POPSERVER_ERR_OK
 end

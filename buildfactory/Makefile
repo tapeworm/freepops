@@ -26,8 +26,8 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
-	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl_nossl-2.dll \
-		_win_/freepops/libcurl-2.dll
+	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl_nossl-3.dll \
+		_win_/freepops/libcurl-3.dll
 	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/modules/include/*.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/

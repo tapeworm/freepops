@@ -41,6 +41,7 @@ end
 -- function that maps domains to modules
 freepops.choose_module = function (d)
 	if d == nil then return nil,nil end
+	if freepops.MODULES_MAP[d] == nil then return nil,nil end
 	return 	freepops.MODULES_MAP[d].name,freepops.MODULES_MAP[d].args
 end
 

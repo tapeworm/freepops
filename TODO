@@ -1,6 +1,6 @@
 legeng: more + means more done! (from 1 to 7)
 
-next release 0.0.5
+next release 0.0.6
 	plugin (superva,freepass,hotmail,yahoo?)
 	give a more resistent binding for portablesocket_lua
 	servizio di autoupdate. da valutare la sicurezza di cio'.
@@ -10,5 +10,4 @@ next release 0.0.5
 		decente a fare un auto-apgrade sotto win)
 	provare SSL
 	add the header to each source file
-	fix proxy support
-	update win32 to libcurl7.12.0 that may fix proxy problem
+	document KERNEL.LUA, LYCOS.LUA

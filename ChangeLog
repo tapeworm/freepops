@@ -1,3 +1,5 @@
+15/06/2004 0.0.5 feature release
+- proxy fixed
 - added kernel.org plugin (kernel.lua)
 - aggregator.lua now encodes uidl strings
 - added mimer module

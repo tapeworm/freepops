@@ -107,6 +107,7 @@ local rss_string = {
 	descC = "<desc.*>(.*)</desc.*>",
 	desc2C = "<desc.*>[<]?[!]?[\[]([^\]]*).*[>]?</desc.*>",
 	contentC = "<content:encoded>(.*)</content:encoded>",
+	dcdateC = "<dc:date>(.*)</dc:date>",
 	dateC = "<pubDate.*>(.*)</pubDate.*>"
 }
 
@@ -202,6 +203,19 @@ function build_mail_header(title,uidl,mydate)
 	"News link:\r\n"
 end
 
+function hackw3cdate(mydate)
+	--Wed, 01 Sep 2004 15:50:29
+	--1997-07-16T19:20:30.45+01:00
+	local _,_,year=string.find(mydate,"(%d*)%-")
+	local _,_,month=string.find(mydate,year.."%-(%d*)%-")
+	local _,_,day=string.find(mydate,year.."%-"..month.."%-(%d*)")
+	local _,_,hour=string.find(mydate,"T(%d*):")
+	local _,_,mins=string.find(mydate,hour..":(%d*)")
+	mydate=getdate.toint(month.."/"..day.."/"..year.." "..hour..":"
+	..mins..":00")
+	return(os.date("%a, %d %b %Y %H:%M:%S",mydate))
+
+end
 --------------------------------------------------------------------------------
 -- retr and top aree too similar. discrimitaes only if lines ~= nil
 --
@@ -256,6 +270,17 @@ function retr_or_top(pstate,msg,data,lines)
 	end
 	
 	local _,_,mydate=string.find(chunk,rss_string.dateC)
+	
+	-- is it W3C date?
+	if (mydate == nil) then
+		 _,_,mydate=string.find(chunk,rss_string.dcdateC)
+		 if (mydate ~= nil) then
+		 	--Wed, 01 Sep 2004 15:50:29
+			--1997-07-16T19:20:30.45+01:00
+			mydate=hackw3cdate(mydate)
+
+		 end
+	end
 
 	if (body == nil) then
 		body="Not available"

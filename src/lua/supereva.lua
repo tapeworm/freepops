@@ -64,7 +64,7 @@ local strings = {
   body_end = '</td></tr>\n<tr><td height=10 colspan=3></td></tr>',
   
   head_begin = '</td></tr>\n<tr valign=top bgcolor="#FFFFFF">\n'..
-  	'<td colspan=2>&nbsp;</td>\n</tr>\n\n\n<tr class=g valign=top>\n',
+  	'<td colspan=2>&nbsp;</td>\n</tr>\n\n',
   
   head_end = '</tr>\n\n*</table>\n</td></tr>\n<tr class=px11>',
   
@@ -75,7 +75,7 @@ local strings = {
   	"proaction=readmailbox&check_mail=&mlt_msgs=%d",
   
   e = ".*<tr>.*"..
-      "<td>.*</td>.*"..
+      "<td>[.*]{b}.*{/b}[.*]</td>.*"..
       "<td>[.*]{img}.*</td>.*"..
       "<td>[.*]{img}.*</td>.*"..
       "<td>[.*]{img}.*</td>.*"..
@@ -93,7 +93,7 @@ local strings = {
       "</tr>",
 
    g ="O<O>O"..
-      "<O>O<O>O"..
+      "<O>[O]{O}O{O}[O]<O>O"..
       "<O>[O]{O}O<O>O"..
       "<O>[O]{O}O<O>O"..
       "<O>[O]{O}O<O>O"..

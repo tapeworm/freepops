@@ -1,3 +1,4 @@
+- fixed supereva X-Priority
 - new mimer attach_it implementation (no HEAD request required)
 - supereva to the manual
 - fixed gmail login in case of failure

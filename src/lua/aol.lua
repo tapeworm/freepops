@@ -18,7 +18,7 @@ PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {
 "@aol.com","@aol.com.ar","@aol.fr","@aol.com.mx","@aol.com.au","@aol.de",
 "@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com", 
-"netscape.net"} 
+"@netscape.net"} 
 PLUGIN_PARAMETERS = 
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],

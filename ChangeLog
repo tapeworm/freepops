@@ -1,3 +1,4 @@
+- fixed aggregator plugin to respect RSS 2.0 specifications
 - added ags parser
 - added freepops-doc debian package
 - fixed last cygwin issue

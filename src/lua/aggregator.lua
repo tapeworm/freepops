@@ -55,8 +55,13 @@ local rss_string = {
 	item_eC = "</item>",
 	itemC = "(</item>)",
 	linkC = "<link.*>(.*)</link>",
+	link2C = "<guid.*>(.*)</guid>",
 	titleC = "<title.*>(.*)</title>",
+--	title2C = "<title.*>[<]?[!]?[\[]?C?D?A?T?A?[\[]?([^\]]*).*[>]?</title.*>",
+	title2C = "<title.*>[<]?[!]?[\[]([^\]]*).*[>]?</title>",
 	descC = "<desc.*>(.*)</desc.*>",
+	desc2C = "<desc.*>[<]?[!]?[\[]([^\]]*).*[>]?</desc.*>",
+--	desc2C = "<desc.*>[<]?[!]?[\[]?C?D?A?T?A?[\[]?([^\]]*).*[>]?</desc.*>",
 	dateC = "<pubDate.*>(.*)</pubDate.*>"
 }
 
@@ -178,8 +183,20 @@ function retr_or_top(pstate,msg,data,lines)
 	end
 									
 	local _,_,title=string.find(chunk,rss_string.titleC)
+	if ((title == nil) or (title == "")) then
+		 _,_,title=string.find(chunk,rss_string.title2C)
+		title=string.gsub(title,"CDATA%[","");
+	end
 	local _,_,header=string.find(chunk,rss_string.linkC)
+	if ((header == nil) or (header == "")) then
+		_,_,header=string.find(chunk,rss_string.link2C)
+	end
+		
 	local _,_,body=string.find(chunk,rss_string.descC)
+	if ((body == nil) or (body == "")) then
+		_,_,body=string.find(chunk,rss_string.desc2C)
+		body=string.gsub(body,"CDATA%[","");
+	end
 	local _,_,mydate=string.find(chunk,rss_string.dateC)
 
 	if (body == nil) then
@@ -328,6 +345,9 @@ function stat(pstate)
 			s2=string.sub(s2,ends2+3)
 			
 			local _,_,uidl = string.find(chunk,rss_string.linkC)
+			if ((uidl == nil) or (uidl=="")) then
+				 _,_,uidl = string.find(chunk,rss_string.link2C)
+			end
 			--fucking default size
 			local size=2048
 

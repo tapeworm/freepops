@@ -24,7 +24,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.5"
+PLUGIN_VERSION = "0.1.0"
 PLUGIN_NAME = "Libero.IT"
 
 -- ************************************************************************** --
@@ -59,27 +59,27 @@ local libero_string = {
 	statG = "O<O><O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}X{O}[O]<O>O<O>",
 	-- The uri for the first page with the list of messages
 	first = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs=1&"..
-		"C_Folder=aW5ib3g%%3D",
+		"C_Folder=%s",
 	-- The capture to check if there is one more page of message list
 	next_checkC = "<a href=\"javascript:doit"..
 		"%('Act_Msgs_Page_Next',1,1%)\">.*</a>",
 	-- The uri to get the next page of messages
 	next = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs_Page_Next=1&"..
 		"HELP_ID=inbox&SEL_ALL=0&"..
-		"From_Vu=1&C_Folder=aW5ib3g%%3D&msgID=&Msg_Read=&"..
-		"R_Folder=&ZONEID=&Fld_P_List=aW5ib3g%%3D&"..
-		"dummy1_List=aW5ib3g%%3D&dummy2_List=aW5ib3g%%3D",
+		"From_Vu=1&C_Folder=%s&msgID=&Msg_Read=&"..
+		"R_Folder=&ZONEID=&Fld_P_List=%s&"..
+		"dummy1_List=%s&dummy2_List=%s",
 	-- The capture to understand if the session ended
 	timeoutC = "(Sessione non valida. Riconnettersi)",
 	-- The uri to save a message (read download the message)
 	save = "http://%s/cgi-bin/webmail.cgi/message.txt?ID=%s&"..
 		"msgID=%s&Act_V_Save=1&"..
-		"R_Folder=aW5ib3g=&Body=0&filename=message.txt",
+		"R_Folder=%s&Body=0&filename=message.txt",
 	-- The uri to delete some messages
 	delete = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs_Del_CF_Ok=1&"..
-		"HELP_ID=inbox&SEL_ALL=0&From_Vu=1&C_Folder=SU5CT1g%%3D&"..
-		"msgID=&Msg_Read=&R_Folder=&ZONEID=&Fld_P_List=aW5ib3g%%3D&"..
-		"dummy1_List=aW5ib3g%%3D&dummy2_List=aW5ib3g%%3D&Msg_Nb=%d",
+		"HELP_ID=inbox&SEL_ALL=0&From_Vu=1&C_Folder=%s&"..
+		"msgID=&Msg_Read=&R_Folder=&ZONEID=&Fld_P_List=%s&"..
+		"dummy1_List=%s&dummy2_List=%s&Msg_Nb=%d",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
 	delete_next = "&Msg_Sel_%d=%s"
@@ -156,7 +156,8 @@ end
 function key()
 	return (internal_state.name or "")..
 		(internal_state.domain or "")..
-		(internal_state.password or "")
+		(internal_state.password or "")..
+		(internal_state.folder or "")
 end
 
 --------------------------------------------------------------------------------
@@ -330,6 +331,11 @@ function user(pstate,username)
 	-- save domain and name
 	internal_state.domain = domain
 	internal_state.name = name
+	local f = (freepops.MODULE_ARGS or {}).folder or "inbox"
+	local f64 = base64.encode(f)
+	local f64u = base64.encode(string.upper(f))
+	internal_state.folder = f64 
+	internal_state.folder_uppercase = f64u
 	
 	return POPSERVER_ERR_OK
 end
@@ -393,6 +399,10 @@ function quit_update(pstate)
 	local b = internal_state.b
 
 	local uri = string.format(libero_string.delete,popserver,session_id,
+		internal_state.folder_uppercase,
+		internal_state.folder,
+		internal_state.folder,
+		internal_state.folder,
 		get_popstate_nummesg(pstate))
 
 	-- here we need the stat, we build the uri and we check if we 
@@ -449,7 +459,8 @@ function stat(pstate)
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri = string.format(libero_string.first,popserver,session_id)
+	local uri = string.format(libero_string.first,popserver,session_id,
+		internal_state.folder)
 
 	-- The action for do_until
 	--
@@ -507,7 +518,11 @@ function stat(pstate)
 		if tmp1 ~= nil then
 			-- change retrive behaviour
 			uri = string.format(libero_string.next,
-				popserver,session_id)
+				popserver,session_id,
+				internal_state.folder,
+				internal_state.folder,
+				internal_state.folder,
+				internal_state.folder)
 			-- continue the loop
 			return false
 		else
@@ -540,7 +555,7 @@ function stat(pstate)
 			b = internal_state.b
 			
 			uri = string.format(libero_string.first,
-				popserver,session_id)
+				popserver,session_id,internal_state.folder)
 			return b:get_uri(uri)
 		end
 		
@@ -617,7 +632,8 @@ function retr(pstate,msg,data)
 	
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(libero_string.save,popserver,session_id,uidl)
+	local uri = string.format(libero_string.save,popserver,session_id,uidl,
+		internal_state.folder)
 	
 	-- tell the browser to pipe the uri using cb
 	local f,rc = b:pipe_uri(uri,cb)
@@ -646,7 +662,8 @@ function top(pstate,msg,lines,data)
 
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(libero_string.save,popserver,session_id,uidl)
+	local uri = string.format(libero_string.save,popserver,session_id,uidl,
+		internal_state.folder)
 
 	-- build the callbacks --
 	

@@ -1065,6 +1065,50 @@ http://liberopops.sourceforge.net
 
 To use this plugin you have to use your full email address as the username
  and your real password as the password.
+ This plugin accepts the following parameters:
+\layout Description
+
+folder is used to select the folder (
+\family typewriter 
+inbox
+\family default 
+ is the default) you want to interact with.
+ The folders that are available are called 
+\family typewriter 
+draft
+\family default 
+, 
+\family typewriter 
+inbox
+\family default 
+, 
+\family typewriter 
+outbox
+\family default 
+, 
+\family typewriter 
+trash
+\family default 
+.
+ If you created some folders you can use them using theyr names.
+ If your folder is not at toplevel you have to use the 
+\family typewriter 
+/
+\family default 
+ to separate it from the parent.
+ This is an example of a username for reading the 
+\family typewriter 
+son
+\family default 
+ folder, a subfolder of the 
+\family typewriter 
+father
+\family default 
+ one:
+\newline 
+
+\family typewriter 
+foo@libero.it?folder=father/son
 \layout Subsection
 
 tin.lua

@@ -89,6 +89,8 @@ end
 
 -- to merge 2 tables (t1 wins over t)
 freepops.table_overwrite = function (t,t1)  
+	t = t or {}
+	t1 = t1 or {}
 	table.foreach(t1, function(k,v)
 		t[k] = v
 		end)
@@ -410,7 +412,7 @@ end
 -- -------------------------------------------------------------------------- --
 freepops.init = function (mailaddress)
 	load_config()
-table.foreach(freepops.get_args(mailaddress),print)
+	
 	-- standard lua modules that must be loaded
 	if freepops.dofile("support.lua") == nil then return 1 end
 	

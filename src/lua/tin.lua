@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "Tin.IT"
 
 -- ************************************************************************** --
@@ -196,7 +196,8 @@ end
 function key()
 	return (internal_state.name or "")..
 		(internal_state.domain or "")..
-		(internal_state.password or "")
+		(internal_state.password or "")..
+		(internal_state.folder or "")
 end
 
 --------------------------------------------------------------------------------

@@ -328,13 +328,13 @@ Per configurare il client email dovete cambiare le impostazioni del server POP3.
  Solitamente dovrete usare localhost come nome del server POP3 e 2000 come
  porta.
  Nel caso in cui installiate FreePOPs in un altro computer della vostra LAN,
- dovreste usare il nome di quell'host invece di localhost.
- Nel caso in cui abbiate cambiato la porta di default con lo switch 
+ dovreste usare il nome di quell'host invece di localhost, mentre
+ nel caso in cui abbiate cambiato la porta di default con lo switch 
 \family typewriter 
 -p
 \family default 
- dovreste sapere cosa fare.
- Dovete usare un nome utente completo, per esempio 
+ dovrete immettere la stessa porta anche nel client email..
+ Dovete sempre usare come nome utente l'indirizzo di posta completo, per esempio 
 \family typewriter 
 qualcosa@libero.it
 \family default 
@@ -344,7 +344,7 @@ qualcosa
 \family default 
 .
  Questo e' perche' FreePOPs sceglie il plugin da caricare guardando al nome
- utente.
+ utente che deve quindi contenere tutte le informazioni.
  Piu' sotto presentiamo tutti i plugin e i loro domini associati.
 \layout Section
 

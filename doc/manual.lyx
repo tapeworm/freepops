@@ -322,13 +322,13 @@ To configure your email client you must change the pop3 server settings.
  Usually you must use localhost as the pop3 host name, and 2000 as the pop3
  port.
  In case you install FreePOPs in another computer of your LAN, you should
- use the host's name instead of localhost.
- In case you changed the default port with the 
+ use the host's name instead of localhost, while
+ in case you changed the default port with the 
 \family typewriter 
 -p
 \family default 
- switch you should know what you are doing.
- You have to use a full username, for example 
+ switch you will have to use that same port in your email client.
+ You always have to use a full email address as username, for example 
 \family typewriter 
 something@libero.it
 \family default 
@@ -337,7 +337,7 @@ something@libero.it
 something
 \family default 
 .
- This is because FreePOPs chooses the plugin to load looking at your username.
+ This is because FreePOPs chooses the plugin to load by looking at your username.
  Later we will present all the plugins and their associated domains.
 \layout Section
 

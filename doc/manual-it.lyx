@@ -796,6 +796,173 @@ proxy
 \family default 
 .
  
+\layout Subsection
+
+Spam/AV tutorial
+\layout Standard
+
+Molti utenti, soprattutto della versione per Windows, utilizzano svariati
+ antivirus e software antispam che necessitano un minimo di configurazione.
+ Grazie alla collaborazione sul forum di LiberoPOPs tra gli sviluppatori
+ e gli utenti è stato realizzato questo tutorial che è valido anche per
+ FreePOPs.
+\layout Subsubsection
+
+Norton AntiVirus, versione 2002 e successive
+\layout Standard
+
+È necessario mettere FreePOPs in ascolto sulla porta 110 per mezzo dell'opzione
+ -p e successivamente impostare il proprio client email perché riceva la
+ posta sulla porta 110.
+ Per cambiare le opzioni di FreePOPs, consultare le FAQ alla domanda "Come
+ cambio i parametri della riga di comando di FreePOPs?" 
+\layout Subsubsection
+
+Avast! Antivirus
+\layout Standard
+
+Nel proprio client email, modificare il nome utente in questo modo: 
+\newline 
+indirizzo@email#localhost:2000 Sempre all'interno delle opzioni del proprio
+ client email, impostare il numero di porta del server POP3 a 110, invece
+ che a 2000 come descritto nei precedenti tutorial.
+ 
+\layout Subsubsection
+
+AVG Pro 7 Antivirus
+\layout Standard
+
+Nel proprio client email, modificare il numero di porta POP3 a 5300, lasciare
+ inalterati nome utente e server (?@libero.it e localhost).
+ In AVG, entrare in "Proprietà > Servers > Creare un Server di posta POP3
+ (server type)", in connection impostare Fixed host: 127.0.0.1:2000 e Local
+ port: 5300 
+\layout Subsubsection
+
+SpamHilator
+\layout Standard
+
+Configurare il proprio client email con i seguenti parametri: Server POP3
+ (posta in entrata): localhost Porta server POP3: 110 Nome Utente: 
+\newline 
+localhost&indirizzo@email&2000 
+\layout Subsubsection
+
+Mailshield Desktop
+\layout Standard
+
+In Mailshield Desktop, scegliere "Edit mail account", relativamente alla
+ propria casella.
+ In "Account name" ed in "Email address" inserire il proprio indirizzo email
+ completo.
+ Scegliere poi "Access", in "type of Email server" utilizzare "POP3 mail
+ account", mentre in "incoming mail server" immettere 127.0.0.1.
+ Può inoltre essere utile selezionare l'opzione "Use relaxed timeouts whit
+ this email server".
+ 
+\layout Subsubsection
+
+K9
+\layout Standard
+
+Configurare il proprio client email inserendo 9999 come porta del server
+ POP3.
+ Lasciare localhost come nome del server.
+ Inserire poi come nome utente localhost/2000/indirizzo@email 
+\layout Subsubsection
+
+SpamTerminator
+\layout Standard
+
+Configurare il proprio client email con i seguenti parametri: Server POP3
+ (posta in entrata): localhost Porta server POP3: 8110 Nome Utente: 
+\newline 
+indirizzo@email#localhost Avviare poi FreePOPs con l'opzione -p 110.
+ 
+\layout Subsubsection
+
+SpamPal
+\layout Standard
+
+Configurare il proprio client email con i seguenti parametri: Server POP3
+ (posta in entrata): localhost Porta server POP3: 110 Nome Utente: 
+\newline 
+indirizzo@email@localhost:2000
+\layout Subsection
+
+LAN tutorial 
+\layout Standard
+
+Come utilizzare FreePOPs come server in una rete di calcolatori (tutorial
+ orientato a Windows).
+\layout Standard
+
+La LAN è composta da due macchine (o più, ma da 2 a 100 è uguale).
+ Le macchine le chiameremo 
+\emph on 
+Sola
+\emph default 
+ (il server) e 
+\emph on 
+Cucco
+\emph default 
+ (il client).
+ FreePOPs parte su 
+\emph on 
+Sola
+\emph default 
+ e lo lancio così: 
+\newline 
+
+\family typewriter 
+freepopsd.exe -b 0.0.0.0 -p 110
+\family default 
+ 
+\family typewriter 
+
+\newline 
+
+\family default 
+che significa che il servizio offerto da FreePOPs sarà offerto a tutti,
+ cioè FreePOPs si mette in ascolto su tutte le interfacce di rete.
+ E lo metto in ascolto alla porta standard per il POP3 (la 110).
+ Non è necessario, 2000 va bene, ma visto che è un server lo facciamo partire
+ sulla porta standard.
+ Ora configuro il client di posta su Cucco.
+ Come server POP3 di posta scelgo 
+\emph on 
+Sola
+\emph default 
+ e la porta nel caso la metto a 
+\emph on 
+110
+\emph default 
+.
+ Mettiamo che anche 
+\emph on 
+Sola
+\emph default 
+ (anche se è un server) abbia un monitor e che ci voglia leggere la posta.
+ Qui il client di posta lo configuro a 
+\emph on 
+localhost
+\emph default 
+ e 
+\emph on 
+110
+\emph default 
+.
+\layout Standard
+
+Fondamentale per la lan è il 
+\family typewriter 
+-b 0.0.0.0
+\family default 
+ in quanto di default su Windows FreePOPs parte con 
+\family typewriter 
+-b 127.0.0.1
+\family default 
+ in modo che non offra un servizio alla eventuale rete ma solo al pc stesso.
 \layout Section
 
 Plugin
@@ -1553,6 +1720,17 @@ Questo plugin vi permette di leggere le mail che avete in una mailbox
 .
  Per usare questo plugin dovete usare il vostro indirizzo email completo
  come username e la vostra password reale come password.
+ E' anche possibile esportare la rubrica usando come username 
+\family typewriter 
+username#export@gmail.com
+\family default 
+.
+ Un file 
+\family typewriter 
+gmail_contacts_export.csv
+\family default 
+ che può essere importato nel tuo mail client preferito verrà generato nella
+ tua home (Unix) o nella directory di FreePOPs (Windows).
 \layout Section
 
 Creare un plugin

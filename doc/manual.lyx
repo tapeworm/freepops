@@ -759,6 +759,160 @@ proxy
 \family default 
 .
  
+\layout Subsection
+
+Spam/AV tutorial
+\layout Standard
+
+Serverl windows users, in collaboration with the LiberoPOPs team have create
+ a tutorial for antispam and antivurus software.
+ This tutoril is for FreePOPs too.
+\layout Subsubsection
+
+Norton AntiVirus, version 2002 and up
+\layout Standard
+
+It is necessary to have FreePOPs listen on port 110 by means of the -p option
+ and then set your email client so that it receives mail on port 110.
+ To change FreePOPs options, read the FAQ "How do I change FreePOPs command
+ line parameters?" question.
+ 
+\layout Subsubsection
+
+Avast! Antivirus
+\layout Standard
+
+In your email client, change the username like this: email@address#localhost:200
+0 Inside the email client options, set the POP3 server port number to 110,
+ instead of what explained in the previous tutorials.
+ 
+\layout Subsubsection
+
+AVG Pro 7 Antivirus
+\layout Standard
+
+In your email client, modify the POP3 port number to 5300, leave unmodified
+ the username and server (email@address and localhost).
+ In AVG, enter "Properties > Servers > Create a POP3 mail server (server
+ type)", in connection set Fixed host: 127.0.0.1:2000 and Local port: 5300
+ 
+\layout Subsubsection
+
+SpamHilator
+\layout Standard
+
+Configure your email client with the following parameters: POP3 server (incoming
+ mail): localhost POP3 server port: 110 Username: localhost&email@address&2000
+ 
+\layout Subsubsection
+
+Mailshield Desktop
+\layout Standard
+
+In Mailshield Desktop, choose "Edit mail account", choosing the account
+ you want to modify.
+ In "Account name" and "Email address" type your complete email address.
+ Then choose "Access", in "type of Email server" use "POP3 mail account",
+ while in "incoming mail server" type 127.0.0.1.
+ It may be useful to select the option "Use relaxed timeouts with this email
+ server".
+ 
+\layout Subsubsection
+
+K9
+\layout Standard
+
+Set up your email client to use 9999 as POP3 server port.
+ Leave localhost as server name.
+ Then use localhost/2000/email@address as username 
+\layout Subsubsection
+
+SpamTerminator
+\layout Standard
+
+Configure your email client with the following parameters: POP3 server (incoming
+ mail): localhost POP3 server port: 8110 Username: email@address#localhost
+ Then start FreePOPs with the option -p 110.
+ 
+\layout Subsubsection
+
+SpamPal
+\layout Standard
+
+Configure your email client with the following parameters: POP3 server (incoming
+ mail): localhost POP3 server port: 110 Username: email@address@localhost:2000
+\layout Subsection
+
+LAN tutorial 
+\layout Standard
+
+How to use FreePOPs as a server in a computer network (Windows oriented
+ tutorial).
+\layout Standard
+
+A LAN is composed of 2 computers (or more, but from 2 to 100 it is the same).
+ We'll call 
+\emph on 
+Sola
+\emph default 
+ the server and 
+\emph on 
+Cucco
+\emph default 
+ the client.
+ FreePOPs will start on 
+\emph on 
+Sola
+\emph default 
+ with these options: 
+\newline 
+
+\family typewriter 
+freepopsd.exe -b 0.0.0.0 -p 110
+\family default 
+ 
+\family typewriter 
+
+\newline 
+
+\family default 
+that means that FreePOPs will bind on 0.0.0.0 (all network interfaces, offering
+ the service to all) at port 110, the default POP3 port.
+ Now we configure the mail client con Cucco, setting the POP3 server to
+ 
+\emph on 
+Sola
+\emph default 
+ and the server port to 
+\emph on 
+110
+\emph default 
+.
+ Now, consider 
+\emph on 
+Sola
+\emph default 
+ has a monitor too and we want to read some mail from here.
+ We have to set the server to 
+\emph on 
+localhost
+\emph default 
+ and the port to 
+\emph on 
+110
+\emph default 
+.
+\layout Standard
+
+By default under Windows FreePOPs binds on
+\family typewriter 
+ 127.0.0.1
+\family default 
+ offering the service only to the local computer, so the 
+\family typewriter 
+-b
+\family default 
+ switch is really important here.
 \layout Section
 
 Plugins
@@ -1483,6 +1637,20 @@ This is the webmail support for
  mailboxes.
  To use this plugin you have to use your full email address as the username
  and your real password as the password.
+ An extensions is the 
+\family typewriter 
+#export
+\family default 
+ that allows you to export in csv format you address book.
+ To do this you should use something like 
+\family typewriter 
+username#export@gmail.com
+\family default 
+ and a 
+\family typewriter 
+gmail_contacts_export.csv
+\family default 
+ will be saved in you home (Unix) or in the program directory (Windows)
 \layout Section
 
 Creating a plugin

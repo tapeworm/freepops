@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.35"
 PLUGIN_NAME = "GMail.com"
 
 -- ************************************************************************** --
@@ -21,16 +21,21 @@ PLUGIN_NAME = "GMail.com"
 -- (read sprintf) arguments, so theyr %s and %d are filled properly
 -- 
 local gmail_string = {
+	-- set browser user agent to one supported by Gmail service
+	browser_useragent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7) Gecko/20040616",
 	-- The uri the browser uses when you click the "login" button
 	login = "https://www.google.com/accounts/ServiceLoginBoxAuth",
-	login_post= "continue=https://gmail.google.com/gmail&service=mail&Email=%s&Passwd=%s&null=Sign in",
-	login_checkcookie="https://www.google.com/accounts/CheckCookie?continue=http%3A%2F%2Fgmail.google.com%2Fgmail&service=mail&chtml=LoginDoneHtml",
+	login_post= "continue=https://gmail.google.com/gmail&service=mail&Email="..
+			"%s&Passwd=%s&null=Sign in",
+	login_checkcookie="https://www.google.com/accounts/CheckCookie?continue="..
+		"http%3A%2F%2Fgmail.google.com%2Fgmail&service=mail&chtml=LoginDoneHtml",
 	login_fail="Username and password do not match.",
 	homepage="http://gmail.google.com/gmail",
 	view_email="http://gmail.google.com/gmail?view=om&th=%s&zx=%s",
 	-- message list (regexp)
 	email_stat = ',%["(%w-)",(%d),(%d),".-","([^"]-)",.-%d%]\n',
-	-- next 2 lines: link to view a message in html format, and regexp to extract sub messages.
+	-- next 2 lines: link to view a message in html format,
+	-- and regexp to extract sub messages.
 	view_email_thread="http://gmail.google.com/gmail?view=cv&search=inbox&th=%s&zx=%s",
 	email_stat_sub = '\nD%(%["mi",%d+,%d+,"(%w-)",(%d+),.-,".-","(.-)".-%]\n%);',
 	-- This is the capture to get the session ID from the login-done webpage
@@ -40,11 +45,11 @@ local gmail_string = {
 	next_checkC = '\nD%(%["ts",(%d+),(%d+),(%d+),%d.-%]\n%);',
 	next = "http://gmail.google.com/gmail?search=%s&view=tl&start=%s&init=1&zx=%s",
 	-- view labels/folders = .../gmail?search=cat&cat=%s&view=tl&start=0&zx=%s
-	delete = "http://gmail.google.com/gmail?search=inbox&view=tl&start=0",
+	msg_mark = "http://gmail.google.com/gmail?search=inbox&view=tl&start=0",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
-	delete_post = "act=%s&at=%s",
-	delete_next = "&t=%s"
+	msg_mark_post = "act=%s&at=%s",
+	msg_mark_next = "&t=%s"
 }
 
 -- ************************************************************************** --
@@ -75,6 +80,13 @@ internal_state = {
 function check_range(pstate,msg)
 	local n = get_popstate_nummesg(pstate)
 	return msg >= 1 and msg <= n
+end
+
+--------------------------------------------------------------------------------
+-- Generates a random number to be added to URLs to avoid caching
+--
+function RandNum()
+	return math.random(0, 1000000000)
 end
 
 --------------------------------------------------------------------------------
@@ -174,7 +186,7 @@ function gmail_login()
 
 --	b.curl:setopt(curl.OPT_VERBOSE,1)
 	b.curl:setopt(curl.OPT_SSL_VERIFYHOST,  2)
-	b.curl:setopt(curl.OPT_USERAGENT,"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)")
+--	b.curl:setopt(curl.OPT_USERAGENT, gmail_string.browser_useragent)
 	b.curl:setopt(curl.OPT_SSL_VERIFYPEER, 0)
 
 	local extract_f = support.do_extract(
@@ -194,36 +206,28 @@ function gmail_login()
 			end
 		end)
 
-	internal_state.b = browser.new()
 
-	local AuthCookie1 = mk_cookie("SID",internal_state.cookie_sid,nil,"/",".google.com",nil)
-	local AuthCookie2 = mk_cookie("GV",internal_state.cookie_val,nil,"/",".google.com",nil)
+	local AuthCookie1 = mk_cookie(
+			"SID",internal_state.cookie_sid,nil,"/",".google.com",nil)
+	local AuthCookie2 = mk_cookie(
+			"GV",internal_state.cookie_val,nil,"/",".google.com",nil)
 
 -- TODO: Qui, se non creo un nuovo oggetto browser, non funziona,
 -- commenta le prossime 5 riga e prova
 
-	local b = internal_state.b
+--	internal_state.b = browser.new()
+--	local b = internal_state.b
 
 --	b.curl:setopt(curl.OPT_VERBOSE,1)
-	b.curl:setopt(curl.OPT_SSL_VERIFYHOST,  2)
-	b.curl:setopt(curl.OPT_USERAGENT,"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)")
-	b.curl:setopt(curl.OPT_SSL_VERIFYPEER, 0)
+--	b.curl:setopt(curl.OPT_SSL_VERIFYHOST,  2)
+--	b.curl:setopt(curl.OPT_USERAGENT, gmail_string.browser_useragent)
+--	b.curl:setopt(curl.OPT_SSL_VERIFYPEER, 0)
 
 	b:add_cookie(gmail_string.homepage,AuthCookie1)
 	b:add_cookie(gmail_string.homepage,AuthCookie2)
 
-	uri = gmail_string.login_checkcookie
+--	uri = gmail_string.login_checkcookie
 
-	local body,err = b:get_uri(uri)
-
-	local allOk = nil
-	allOk = string.find(body,"Redirecting",1)
-
-	-- check if do_extract has correctly extracted the session ID
-	if allOk == nil then
-		log.error_print("Login failed, unable to get cookie ID\n")
-		return POPSERVER_ERR_AUTH
-	end
 	-- save all the computed data
 	internal_state.login_done = true
 	
@@ -253,6 +257,7 @@ function retr_cb(data)
 		if FirstBlock then
 			s = string.gsub(s,"^%s*","")
 			s = string.gsub(s,"\r\r\n","\r\n")
+--			s = string.gsub(s,"\r\n\r\n","\r\n")
 			FirstBlock = false
 		end
 
@@ -270,7 +275,7 @@ function top_cb(global,data)
 	local purge = false
 	
 	return function(s,len)
-		print("GOT:",len)
+--		print("GOT:",len)
 		if purge == true then
 			--print("purging: "..string.len(s))
 			return len,nil
@@ -311,6 +316,7 @@ function user(pstate,username)
 	-- If user puts username as account#[box_name]@gmail.com
 	-- FreePOPs will download messages from that box, default is inbox
 	-- tested with "inbox" (normal inbox) and "all" (archive emails)
+	-- still bugs using other boxes, to be fixed and made better later.
 	internal_state.name = name
 	if cmds == nil or cmds == "" then
 		cmds = "inbox"
@@ -354,7 +360,8 @@ function pass(pstate,password)
 		-- exec the code loaded from the session tring
 		c()
 
-		log.say("Session loaded for " .. internal_state.name .. "@gmail.com " .. 
+		log.say("Session loaded for " .. internal_state.name ..
+			"@gmail.com " .. 
 			"(" .. internal_state.cookie_val .. ")\n")
 		
 		return POPSERVER_ERR_OK
@@ -380,19 +387,21 @@ function quit_update(pstate)
 
 	local b = internal_state.b
 
-	local GMail_at_cookie = internal_state.gmail_at
-	--mk_cookie("GMAIL_AT",internal_state.gmail_at,nil,"/",".google.com",nil)
-	
+	local box = internal_state.cmds
+--	if box == "import" then
+--		log.say("Importing address book now\n")
+--		ImportContacts()
+--	end
 
---	b:add_cookie(gmail_string.homepage,GMail_at_cookie)
+	local Gmail_at = internal_state.gmail_at
 
-	local uri = gmail_string.delete
+	local uri = gmail_string.msg_mark
 	-- act = [rd|ur|rc_^i]
 	--        rd = mark as read
 	--        ur = mark as unread
 	--     rc_^i = move to archive
 	--
-	local post = string.format(gmail_string.delete_post, "rc_^i", GMail_at_cookie)
+	local post=string.format(gmail_string.msg_mark_post,"rc_^i",Gmail_at)
 
 	-- here we need the stat, we build the uri and we check if we 
 	-- need to delete something
@@ -400,7 +409,7 @@ function quit_update(pstate)
 	
 	for i=1,get_popstate_nummesg(pstate) do
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
-			post = post .. string.format(gmail_string.delete_next,
+			post = post .. string.format(gmail_string.msg_mark_next,
 				get_mailmessage_uidl(pstate,i))
 			delete_something = true	
 		end
@@ -440,17 +449,21 @@ function stat(pstate)
 	-- shorten names, not really important
 	local b = internal_state.b
 	local box = internal_state.cmds
+	if box == "export" then
+		ExportContacts()
+		box = "inbox"
+	end
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri = string.format(gmail_string.first, box, math.random(0, 1000000000))
+	local uri=string.format(gmail_string.first,box,RandNum())
 
 	-- The action for do_until
 	--
-	-- uses mlex to extract all the messages uidl and size
 	local function action_f (s)
 		-- variables to hold temp parsing data
-		-- variables en, en2 hold the last position of the previous search, to start next loop where we ended the first one
+		-- variables en, en2 hold the last position of the previous search,
+		-- to start next loop where we ended the first one
 		local en, sUIDL, iNew, iStarred, sFrom
 		local en2, parentUIDL, sSender
 		local myemail = internal_state.name .. "@gmail.com"
@@ -460,27 +473,33 @@ function stat(pstate)
 
 		local MessageList = {}
 		local email_stat = gmail_string.email_stat
-
 		_, en, sUIDL, iNew, iStarred, sFrom = string.find(s, email_stat)
+
 		while sUIDL ~= nil do
 			_,_,sub_threads = string.find(sFrom, "%((%d+)%)$")
-			table.insert(MessageList,{["sUIDL"]=sUIDL, ["iSize"]=1, ["iNew"]=iNew, ["iStarred"]=iStarred})
+			table.insert(MessageList,{["sUIDL"]=sUIDL, ["iSize"]=1,
+						["iNew"]=iNew, ["iStarred"]=iStarred})
 			if sub_threads ~= nil then
 				-- get sub messages for this conversation
 				parentUIDL = sUIDL
-				uri = string.format(gmail_string.view_email_thread, parentUIDL, math.random(0, 1000000000))
-				body,err = b:get_uri(uri)
+				uri = string.format(gmail_string.view_email_thread,
+							parentUIDL, RandNum())
+				body,err=b:get_uri(uri)
 				en2=0
-				_, en2, sUIDL, iStarred, sSender = string.find(body, gmail_string.email_stat_sub)
+				_,en2,sUIDL,iStarred,sSender=string.find(body,
+						gmail_string.email_stat_sub)
 				while sUIDL ~= nil do
 					if sUIDL ~= parentUIDL and sSender ~= myemail then
-						table.insert(MessageList,{["sUIDL"]=sUIDL, ["iSize"]=1, ["iNew"]=0, ["iStarred"]=iStarred})
+						table.insert(MessageList,{["sUIDL"]=sUIDL,
+						["iSize"]=1, ["iNew"]=0, ["iStarred"]=iStarred})
 					end
-					_, en2, sUIDL, iStarred, sSender = string.find(body, gmail_string.email_stat_sub, en2)
+					_,en2,sUIDL,iStarred,sSender=string.find(body,
+						gmail_string.email_stat_sub,en2)
 				end
 			end
-			_, en, sUIDL, iNew, iStarred, sFrom = string.find(s, email_stat, en)
+			_,en,sUIDL,iNew,iStarred,sFrom=string.find(s,email_stat,en)
 		end
+
 		local n = table.getn(MessageList)
 
 		if n == 0 then
@@ -493,15 +512,16 @@ function stat(pstate)
 		local nmesg = nmesg_old + n
 		set_popstate_nummesg(pstate,nmesg)
 
-		local val = nil
+		local val
 		-- gets all the results and puts them in the popstate structure
 		for i = 1,n do
-			val = MessageList[n+1-i] -- n+1-i to get messages in reverse order oldest to newest
+			-- n+1-i to get messages in reverse order, oldest to newest
+			val = MessageList[n+1-i]
 			sUIDL = val["sUIDL"]
 			if not sUIDL then
 				return nil,"Unable to parse page"
 			end
-			-- set it
+			-- set it, size in gmail is unavailable, so set to 1 always
 			set_mailmessage_size(pstate,i+nmesg_old,1)
 			set_mailmessage_uidl(pstate,i+nmesg_old,sUIDL)
 		end
@@ -512,12 +532,11 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s)  
-		-- Currently only first page is parsed... later will implement multipage parsing
-		local _,_, iStart, iShow, iTotal = string.find(s,gmail_string.next_checkC)
+		local _,_,iStart,iShow,iTotal=string.find(s,gmail_string.next_checkC)
 		if tonumber(iStart)+tonumber(iShow) < tonumber(iTotal) then
 		-- TODO: furthur tests with more than 2 pages of emails
 			-- change retrive behaviour
-			uri = string.format(gmail_string.next, box, iStart+iShow, math.random(0, 1000000000))
+			uri=string.format(gmail_string.next,box,iStart+iShow,RandNum())
 			-- continue the loop
 			return false
 		else
@@ -604,7 +623,8 @@ function retr(pstate,msg,data)
 -- TODO: range checks doesn't work... need fixing... btw, in dele it works....
 	if not common.check_range(pstate,msg) then
 		log.say("Message index out of range.\n")
-		-- log will say the above message, but no error message (-ERR) will be sent to the client.
+		-- log will say the above message, but no error message (-ERR)
+		-- will be sent to the client.
 		return POPSERVER_ERR_NOMSG
 	end
 	
@@ -618,7 +638,7 @@ function retr(pstate,msg,data)
 		-- build the uri
 		local uidl = get_mailmessage_uidl(pstate,msg)
 
-		local uri = string.format(gmail_string.view_email,uidl,math.random(0, 1000000000))
+		local uri=string.format(gmail_string.view_email,uidl,RandNum())
 
 		-- tell the browser to pipe the uri using cb
 		local f,rc = b:pipe_uri(uri,cb)
@@ -627,9 +647,15 @@ function retr(pstate,msg,data)
 			log.error_print("Asking for "..uri.."\n")
 			log.error_print(rc.."\n")
 			return POPSERVER_ERR_NETWORK
-		end
+		else
 -- TODO: after sending the message to the client, we need to set it as read
---       by b:post_uri(delete link and post data which contains act=rd&t=UIDL)
+--       already done, but check if all is ok....
+			uri = gmail_string.msg_mark
+			local Gmail_at=internal_state.gmail_at
+			local post=string.format(gmail_string.msg_mark_post,"rd",Gmail_at)
+			post=post..string.format(gmail_string.msg_mark_next,uidl)
+			b:post_uri(uri,post)
+		end
 	end
 
 	return POPSERVER_ERR_OK
@@ -639,7 +665,8 @@ end
 -- Get message msg, must call 
 -- popserver_callback to send the data
 --
---  TODO: Still TOP in not functioning, will cause complete message to be delivered to the client.
+--  TODO: Still TOP in not functioning, will cause complete message to be 
+--        delivered to the client.
 --
 function top(pstate,msg,lines,data)
 	-- we need the stat
@@ -647,13 +674,11 @@ function top(pstate,msg,lines,data)
 	if st ~= POPSERVER_ERR_OK then return st end
 
 	-- some local stuff
-
-
 	local b = internal_state.b
 
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(gmail_string.view_email,uidl,math.random(0, 1000000000))
+	local uri = string.format(gmail_string.view_email,uidl,RandNum())
 
 	-- build the callbacks --
 	
@@ -714,6 +739,73 @@ function top(pstate,msg,lines,data)
 	end
 
 	return POPSERVER_ERR_OK
+end
+
+
+-- -------------------------------------------------------------------------- --
+-- Export the address book from your gmail account to a file
+-- on the local machine, in csv format (name,email,notes)
+function ExportContacts()
+	local b = internal_state.b
+
+	local uri = string.format("http://gmail.google.com/gmail?view=page"..
+					"&name=address&ver=%s",RandNum())
+
+	local body,err = b:get_uri(uri)
+
+	local single_contact = '%["abco","([^"]*)","([^"]*)","([^"]*)".-%]'
+	local exportfile
+
+	-- Check user home path in linux
+	local UserHome = os.getenv("HOME")
+	if UserHome == nil then
+		-- If nil, then try the home path variable of a windows system
+		UserHome = os.getenv("HOMEPATH")
+		if UserHome ~= nil then
+			UserHome = os.getenv("HOMEDRIVE")..UserHome..
+					"\\My Documents\\"
+		else
+			-- If still nil, then save in freepops path
+			UserHome = ""
+		end
+	else
+		UserHome = UserHome .. "/"
+	end
+	exportfile = UserHome .. "gmail_contacts_export.csv"
+
+	io.output(io.open(exportfile ,"w"))
+	io.write("Name,E-mail Address,Notes\n")
+	if body ~= nil then
+		local _,en,email,name,note = string.find(body,single_contact)
+		while email~=nil do
+			io.write(name..","..email..","..note.."\n")
+			_,en,email,name,note=string.find(body,single_contact,en)
+		end
+	end
+	io.close()
+end
+
+-- -------------------------------------------------------------------------- --
+-- Import from file contacts_import.csv to your gmail account.
+-- Not needed now, as google added this function to the web.
+-- Still experimental...
+function ImportContacts()
+	local b = internal_state.b
+
+	local name,email,notes
+	local body,err,post
+	local uri = "http://gmail.google.com/gmail?view=address&act=a"
+	local single_contact = '([^,]*),([^,]*),(.*)'
+
+	local myFile = io.open("contacts_import.csv","r")
+	for line in myFile:lines() do
+		_,_,name,email,note = string.find(line,single_contact)
+		post = string.format("at=%s&name=%s&email=%s&notes=%s&ac=Add+"..
+				"Contact&operation=Edit",
+				internal_state.gmail_at, name, email, notes)
+		body,err = b:post_uri(uri,post)
+	end
+	myFile:close()
 end
 
 -- -------------------------------------------------------------------------- --

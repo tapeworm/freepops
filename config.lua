@@ -66,7 +66,7 @@ freepops.MODULES_MAP["ziobudda.net"] 	= {
 
 freepops.MODULES_MAP["punto-informatico.it"] 	= {
 	name="aggregator.lua",
-	args={host="http://punto-informatico.it/fader/pixml.txt"}
+	args={host="http://punto-informatico.it/fader/pixml.xml"}
 }
 
 freepops.MODULES_MAP["linuxdevices.com"] 	= {

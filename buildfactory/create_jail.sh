@@ -63,6 +63,7 @@ cp -a /lib/libc.* lib/
 cp -a /lib/libc-* lib/
 cp -a /usr/lib/libcurl.so* usr/lib/
 cp -a /usr/lib/libcrypto.so* usr/lib/
+cp -a /usr/lib/libssl*.so* usr/lib/
 cp -a /lib/libdl.so* lib/
 cp -a /usr/lib/libz.so* usr/lib/
 cp -a /lib/libm.* lib/

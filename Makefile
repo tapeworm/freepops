@@ -28,6 +28,7 @@ help:
 all : modules src doc/manual.pdf doc/manual-it.pdf
 
 clean: 
+	$(H)ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)make -C src clean CONFIG=$$PWD/config || true
 	$(H)make -C modules clean CONFIG=$$PWD/config || true
 	$(H)make -C buildfactory clean CONFIG=$$PWD/config || true
@@ -73,6 +74,7 @@ uninstall:
 	$(H)-rmdir $(PREFIX)
 
 tgz-dist: 
+	$(H)ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)cd ..;\
 		tar -czf freepops.tgz freepops
 	$(H)[ -d dist-tgz ] || mkdir dist-tgz;\
@@ -88,11 +90,13 @@ tgz-dist:
 		rm -r freepops-$(VERSION)
 	
 buildfactory:
+	$(H)ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)make -C buildfactory all CONFIG=$$PWD/config
 	
 #>----------------------------------------------------------------------------<#
 
 modules: config
+	$(H)ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)make -C modules all CONFIG=$$PWD/config
 	
 src: config

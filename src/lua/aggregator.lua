@@ -250,8 +250,10 @@ function retr_or_top(pstate,msg,data,lines)
 	end
 	
 	local _,_,body=string.find(chunk,rss_string.descC)
-	body=string.gsub(body,"<!%[CDATA%[","")
-	body=string.gsub(body,"%]%]>","")
+	if (body ~= nil) then
+		body=string.gsub(body,"<!%[CDATA%[","")
+		body=string.gsub(body,"%]%]>","")
+	end
 	
 	--this is enabled in 
 	-- xmlns:content="http://purl.org/rss/1.0/modules/content/"

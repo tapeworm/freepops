@@ -31,11 +31,15 @@ endif
 ifeq "$(OS)" "Windows"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"lua/\"
 else
+ifeq "$(OS)" "Darwin"
+	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
+else
 ifeq "$(OS)" "BeOS"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"$HOME/config/settings/freepops/lua/\"
 
-	else
+else
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
+endif
 endif
 endif
 

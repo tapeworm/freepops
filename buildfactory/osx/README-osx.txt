@@ -1,4 +1,4 @@
-File Readme di FreePOPs
+File Readme di FreePOPs (Italiano)
 
 Questo pacchetto contiene la distribuzione pre-compilata di FreePOPs per 
 sistemi Mac OS X. Per usarla, lanciate un Terminale, spostatevi nella 
@@ -16,7 +16,7 @@ Guardate http://freepops.sf.net per maggiori informazioni.
 
 ------------------------------------------------------------
 
-FreePOPs Readme file
+FreePOPs Readme file (English)
 
 This package contains the pre-compiled distribution of FreePOPs for Mac OS X 
 systems. In order to use it, run a Terminal, move to the directory you've 

@@ -1,0 +1,19 @@
+//
+// FreePOPs startup parameters
+// http://www.freepops.org
+// Author: ChrisR
+// Maintainer: Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+//
+
+{
+ Description     = "FreePOPs Daemon";
+ Provides        = ("FreePOPs");
+ Requires        = ("Network",
+      "Resolver");
+ OrderPreference = "Late";
+ Messages =
+ {
+   start = "Starting FreePOPs Daemon";
+   stop  = "Stopping FreePOPs Daemon";
+ };
+}

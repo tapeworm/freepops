@@ -1,0 +1,18 @@
+#!/bin/bash
+# FreePOPs installation check script for Mac OS X
+# http://www.freepops.org
+# Author: Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+
+# if running on Jaguar
+if [ `uname -r` = "6.8" ] ; then
+	# and not using the static package
+	if [ -z "`grep static "$1/Contents/Info.plist"`" ] ; then
+		let retval=112
+	fi
+else
+	# if using the static package
+	if [ -n "`grep static "$1/Contents/Info.plist"`" ] ; then
+		let retval=49
+	fi
+fi
+exit $retval

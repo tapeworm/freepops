@@ -1,0 +1,69 @@
+#!/bin/sh
+#
+# FreePOPs start/stop script
+# http://www.freepops.org
+# Author: ChrisR
+# Maintainer: Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+#
+
+. /etc/rc.common
+
+##
+# Start/Stop FreePOPs
+#
+#
+
+DIR=
+EXEFILE=./freepopsd
+EXEOPTS="-d -b 127.0.0.1"
+PIDFILE=/var/run/freepops.pid
+
+PID=0
+if [ -f $PIDFILE ]; then
+PID=`cat $PIDFILE`
+kill -0 $PID 2>/dev/null
+
+if [ $? != 0 ]; then
+ rm -rf $PIDFILE
+ PID=0
+fi
+else
+PID=`ps -axwo pid,command | grep $EXEFILE | grep -v grep | awk '{ print $1 }'`
+if [ x$PID = x ]; then
+ PID=0
+fi
+fi
+
+StartService ()
+{
+if [ "${FREEPOPS:=-YES-}" = "-YES-" ]; then
+ if [ $PID = 0 ]; then
+  ConsoleMessage "Starting FreePOPs Daemon"
+  cd $DIR
+  $EXEFILE $EXEOPTS
+ fi
+fi
+}
+
+StopService ()
+{
+if [ "${FREEPOPS:=-YES-}" = "-YES-" ]; then
+ if [ $PID != 0 ]; then
+  ConsoleMessage "Stopping FreePOPs Daemon"
+  kill -9 $PID 2>/dev/null
+  rm -rf $PIDFILE
+ fi
+fi
+}
+
+RestartService ()
+{
+if [ "${FREEPOPS:=-YES-}" = "-YES-" ]; then
+ if [ -f $PIDFILE ]; then
+  ConsoleMessage "Restarting FreePOPs Daemon"
+  kill -HUP `cat $PIDFILE`
+ fi
+fi
+}
+
+RunService "$1"

@@ -1,3 +1,6 @@
+- added startup script to mac os x
+- improved installer on mac os x
+- fixed path issue in mac os x
 - fixed gmail description
 - hack for "secure" cookie
 - fixed problem in cookie (thanks russell)

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.1"
+PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -36,7 +36,6 @@ and your real password as the password.]]
 -- TODO
 -- 
 -- - Support user defined mailboxes.  For now, we support: Inbox, Junk, Sent, Drafts, Trash
--- - When messages are pulled, the module doesn't mark the message as read
 
 -- ************************************************************************** --
 --  Global Strings
@@ -106,7 +105,8 @@ local globals = {
   strCmdMsgListNextPage = "&page=%d&wo=",
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
-  strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=&s&a=&s&raw=0",
+  strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=&s&a=&s",
+  strCmdMsgViewRaw = "&raw=0",
 }
 
 -- ************************************************************************** --
@@ -297,6 +297,8 @@ function downloadMsg(pstate, msg, nLines, data)
   
   local url = string.format(globals.strCmdMsgView, internalState.strMailServer,
     uidl, internalState.strMBox, internalState.strCrumb);
+  local markReadUrl = url
+  url = url .. globals.strCmdMsgViewRaw
 
   -- Debug Message
   --
@@ -329,6 +331,10 @@ function downloadMsg(pstate, msg, nLines, data)
   -- Start the download on the body
   -- 
   local f, _ = browser:pipe_uri(url, cb)
+
+  -- Mark the message as read
+  --
+  browser:get_head(markReadUrl)
 
   return POPSERVER_ERR_OK
 end

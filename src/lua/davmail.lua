@@ -17,7 +17,13 @@ PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@lycos.co.uk","@lycos.ch","@lycos.de","@lycos.es",
 	"@lycos.it","@lycos.at","@lycos.nl","@spray.se"}
-PLUGIN_PARAMETERS = {}
+PLUGIN_PARAMETERS = {
+	{name = "folder", description = {
+		it = [[
+La cartella che vuoi utilizzare. Il default &egrave; inbox.
+		]], en = [[
+The folder you want to read. Default is inbox.
+		]]}}}
 PLUGIN_DESCRIPTIONS = {
 	it="Questo plugin &egrave; per gli account che usano il "..
 	   "protocollo HTTPMAIL.",

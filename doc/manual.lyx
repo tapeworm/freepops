@@ -4764,13 +4764,13 @@ stdout.txt
 
 The\SpecialChar ~
 brute\SpecialChar ~
-force is called ethereal.
+force is called Ethereal.
  Sometimes things don't work in the right way and the only way to debug
  them is to activate curl debugging to see what FreePOPs does (
 \family typewriter 
 b.curl:setopt(curl.OPT_VERBOSE,1)
 \family default 
-) and sniff what a real browser does.
+) and sniff what a real browser does with a tool like Ethereal.
 \layout Description
 
 The\SpecialChar ~

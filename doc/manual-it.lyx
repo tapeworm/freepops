@@ -727,7 +727,7 @@ Il server necessita di una connessione protetta (SSL)
 
 \layout Subsection
 
-Tutorial per usare un server Proxy
+Tutorial per Proxy
 \layout Standard
 
 FreePOPs è in grado di utilizzare proxy HTTP.
@@ -2081,7 +2081,7 @@ set_mailmessage_size(p,num,size)
  dove num è il numero del messaggio e size è la grandezza in byte.
  Solitamente è molto comune mettere insieme più funzioni.
  Per esempio quando guardate la pagina di una webmail con la lista di messaggi
- conoscete il numero dei messaggi, la loro grandezza e lo UIDL cosi' che
+ conoscete il numero dei messaggi, la loro grandezza e lo UIDL così che
  potete riempire la struttura dati p con tutte le informazioni per LIST,
  STAT, UIDL.
  
@@ -2093,7 +2093,7 @@ retr(p,num,data)
 \family default 
 .
  poiché un messaggio di posta può essere molto grande, non è un modo elegante
- di scaricare l'intero messaggio senza far si' che il client di posta si
+ di scaricare l'intero messaggio senza far sì che il client di posta si
  lamenti per la morte del server.
  La soluzione è usare un callback.
  Ogni volta che un plugin ha dei dati da mandare al client dovrebbe chiamare
@@ -2107,7 +2107,7 @@ popserver_callback(buffer,data)
 data
 \family default 
  è una struttura opaca che il popserver necessita per compiere il suo lavoro
- (notate che questo parametro potra' venire rimosso per semplicita').
+ (notate che questo parametro potrà venire rimosso per semplicità).
  In alcuni casi, per esempio se sapete che il messaggio è piccolo o state
  lavorando su una rete veloce, potete prelevare l'intero messaggio e mandarlo,
  ma ricordate che questo consuma più memoria.
@@ -2118,7 +2118,7 @@ L'arte di scrivere plugin (tutorial sui plugin)
 
 In questa sezione scriveremo un plugin passo passo, esaminando ogni dettaglio
  importante.
- Non scriveremo un vero e completo plugin poiché può diventare un po' difficile
+ Non scriveremo un vero e completo plugin poiché può diventare un pò difficile
  da seguire, ma creeremo una webmail ad-hoc per i nostri scopi.
 \layout Subsubsection
 
@@ -2287,7 +2287,7 @@ end{footnotesize}
 \end_inset 
 
  Ora la funzione user fallisce sempre, restituendo un errore di autenticazione.
- Dovrete ora lanciare FreePOPs (se è gia' in esecuzione non è necessario
+ Dovrete ora lanciare FreePOPs (se è già in esecuzione non è necessario
  farlo ripartire) e lanciare telnet (sotto win32 dovreste aprire un prompt
  DOS, sotto Unix avrete una shell) e digitate 
 \family typewriter 
@@ -2367,8 +2367,12 @@ pass
 \emph default 
 .
  Prima il client esegue uno user, poi dice al server la password.
- Come abbiamo gia' visto nella panoramica questo significa che prima verrà
- eseguito user() e poi
+ Come abbiamo già visto nella panoramica questo significa che prima verrà
+ eseguito 
+\family typewriter 
+user()
+\family default 
+ e poi
 \family typewriter 
 \emph on 
  
@@ -2478,7 +2482,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-il plugin è stato modificato un po' per memorizzare i dati dell'utente e
+il plugin è stato modificato un pò per memorizzare i dati dell'utente e
  stampare delle informazioni di debug.
  Questo è il plugin che ha dato questo output:
 \begin_inset ERT
@@ -2552,7 +2556,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-Qui vediamo delle importanti novita'.
+Qui vediamo delle importanti novità.
  Per prima cosa, la tabella 
 \family typewriter 
 foo_globals
@@ -2585,9 +2589,9 @@ POPSERVER_ERR_OK
  per far felice FreePOPs.
 \layout Standard
 
-Ora che sappiamo come FreePOPs si comportera' durante il login dobbiamo
- implementare il login nella webmail, ma prima decommentiamo alcune righe
- nella funzione 
+Ora che sappiamo come FreePOPs si comporterà durante il login dobbiamo implement
+are il login nella webmail, ma prima decommentiamo alcune righe nella funzione
+ 
 \family typewriter 
 init()
 \family default 
@@ -2726,7 +2730,7 @@ end{footnotesize}
 \end_inset 
 
  Non ci interessa la prima parte (l'header HTTP, visto che il modulo browser
- se ne occupera'), bensi' l'ultima, i dati inviati.
+ se ne occuperà), bensì l'ultima, i dati inviati.
  poiché i campi del form erano username e password, i dati inviati sono
 \family typewriter 
 
@@ -3049,7 +3053,7 @@ session_id=
 \family default 
  tra parentesi tonde, intendiamo catturare il contenuto delle parentesi
  (la parte alfanumerica).
- Cosi' string.find restituira' tre valori, i primi due sono ignorati (assegnati
+ Così string.find restituirà tre valori, i primi due sono ignorati (assegnati
  alla variabile dummy 
 \family typewriter 
 _
@@ -3181,7 +3185,7 @@ end{footnotesize}
 
 Abbiamo prelevato l'HTML usando il browser e il metodo
 \family typewriter 
-get_uri()
+ get_uri()
 \family default 
  (ricordate che la URI per l'inbox era nella pagina di login).
  Come vedete i messaggi sono in una tabella, e tale tabella ha la stessa
@@ -3658,7 +3662,7 @@ support.lua
 (step 4) Le funzioni comuni
 \layout Standard
 
-Il modulo comune ci da' alcune funzioni precotte che dipendono solo da una
+Il modulo comune ci dà alcune funzioni precotte che dipendono solo da una
  
 \family typewriter 
 stat()
@@ -3921,7 +3925,7 @@ e avere la posta è probabilmente ciò che volete da un plugin.
 retr()
 \family default 
  è di solito facile.
- Dipende in realta' dalla webmail, ma qui parleremo del caso semplice, mentre
+ Dipende in realtà dalla webmail, ma qui parleremo del caso semplice, mentre
  alla fine del tutorial vedrete come gestire webmail complesse.
  Il caso base è quello in cui la webmail ha un pulsante per salvare i messaggi,
  e il messaggio salvato è un file di testo semplice che contiene sia l'header
@@ -3931,7 +3935,7 @@ retr()
 \layout Standard
 
 I messaggi grandi causano timeout.
- Si', il modo più semplice di scaricare un messaggio è chiamare 
+ Sì, il modo più semplice di scaricare un messaggio è chiamare 
 \family typewriter 
 b:get_uri()
 \family default 
@@ -3942,9 +3946,9 @@ popserver_callback()
 \family default 
 .
  Ma pensate che una mail da 5MB, scaricata con una connessione DSL da 640Kbps,
- alla piena velocita' di 80KBps, impiega 64 secondi di download.
- Questo significa che il vostro plugin non mandera' dati al client di posta
- per oltre un minuto, facendo si' che il client si disconnetta da FreePOPS
+ alla piena velocità di 80KBps, impiega 64 secondi di download.
+ Questo significa che il vostro plugin non manderà dati al client di posta
+ per oltre un minuto, facendo sì che il client si disconnetta da FreePOPS
  pensando che il server POP3 sia morto.
  Per cui, dobbiamo mandare dati al client di posta appena possibile.
  Per questo abbiamo la funzione 
@@ -4096,14 +4100,14 @@ n
 \family typewriter 
 string.gsub()
 \family default 
- fallira'.
+ fallirà.
  Per questo il modulo stringhack ci viene incontro.
  L'oggetto 
 \family typewriter 
 a
 \family default 
- vive fintantochè la funzione di callback viene chiamata (vedi il tutorial
- LUA) e terra' a mente che il pattern cercato può essere troncato.
+ vive fintantoché la funzione di callback viene chiamata (vedi il tutorial
+ LUA) e terrà a mente che il pattern cercato può essere troncato.
 \layout Standard
 
 Infine, il codice della 
@@ -4207,7 +4211,7 @@ vico.it) e chiedere agli autori del software di includerlo nella distribuzione
 
 
 \emph on 
-Non usero' mai un server webmail->pop3 per leggere la mia posta
+Non userò mai un server webmail->pop3 per leggere la mia posta
 \emph default 
 
 \begin_inset Quotes erd
@@ -4232,8 +4236,8 @@ stat()
  Abbiamo detto sopra che la nostra implementazione elenca solo i messaggi
  nella prima pagina.
  Il codice per il parsing e l'estrazione di informazioni interessanti da
- una pagina è gia' scritto, ci serve solo una funzione che controlli se
- siamo all'ultima pagina e se no cambi il valore di una variabile 
+ una pagina è già scritto, ci serve solo una funzione che controlli se siamo
+ all'ultima pagina e se no cambi il valore di una variabile 
 \family typewriter 
 uri
 \family default 
@@ -4465,7 +4469,7 @@ Salvare\SpecialChar ~
 la\SpecialChar ~
 sessione è il modo per rendere FreePOPs davvero simile ad un browser.
  ciò significa che la prossima volta che controllate la posta FreePOPs ricariche
-ra' semplicemente la pagina inbox senza rifare il login.
+rà semplicemente la pagina inbox senza rifare il login.
  Per fare questo avete bisogno di una funzione 
 \family typewriter 
 key()
@@ -4797,7 +4801,7 @@ javascript è l'inferno delle webmail.
  I Javascript possono fare qualsiasi cosa e dovrete leggerli per emulare
  ciò che fanno.
  Per esempio potrebbero aggiungere alcuni cookie (e dovrete fare lo stesso
- a mano con 
+ a mano con
 \family typewriter 
  b:add_cookie()
 \family default 
@@ -4834,19 +4838,19 @@ stdout.txt
 
 La\SpecialChar ~
 forza\SpecialChar ~
-bruta si chiama ethereal.
+bruta si chiama Ethereal.
  A volte le cose non funzionano nel modo giusto e l'unico modo per fare
  debug è attivare curl debugging per vedere cosa fa FreePOPs (
 \family typewriter 
 b.curl:setopt(curl.OPT_VERBOSE,1)
 \family default 
-) e sniffare ciò che fa un vero browser.
+) e sniffare ciò che fa un vero browser con un tool come, appunto, Ethereal.
 \layout Description
 
 Il\SpecialChar ~
 modo\SpecialChar ~
 open\SpecialChar ~
-source è il modo migliore di avere software di buona qualita'
+source è il modo migliore di avere software di buona qualità.
  Questo significa che dovrete rilasciare molto spesso il vostro plugin nella
  fase di sviluppo e interagire molto con i vostri tester.
  Fidatevi, funziona, o leggete 

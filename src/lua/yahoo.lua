@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5c"
+PLUGIN_VERSION = "0.1.5d"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -139,7 +139,7 @@ local globals = {
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
-  strMsgListPrevPagePattern = '<a href="/(ym[^"]*next=1[^"]*)">',
+  strMsgListPrevPagePattern = '<a href="/(ym[^"]*previous=1[^"]*)">',
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
@@ -159,7 +159,7 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date&reset=1",
+  strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date&reset=1&Norder=up",
   strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&Nhead=f&toc=1&MsgId=%s&bodyPart=%s",
   strCmdMsgWebView = "%sym/ShowLetter?box=%s&MsgId=%s",
   strCmdDelete = "%sym/ShowFolder?box=%s&DEL=Delete", -- &Mid=%s&.crumb=%s
@@ -993,7 +993,7 @@ function stat(pstate)
       local msgid = items:get(0, i - 1)
       local size = items:get(1, i - 1)
 
-      if not uidl or not size then
+      if not msgid or not size then
         log.say("Yahoo Module needs to fix it's individual message list pattern matching.\n")
         return nil, "Unable to parse the size and uidl from the html"
       end

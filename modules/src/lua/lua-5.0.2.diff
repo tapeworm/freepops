@@ -1,7 +1,7 @@
 diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 --- lua-5.0.2-old/Makefile	Fri Mar 12 02:50:55 2004
 +++ lua-5.0.2-new/Makefile	Sat Jul 10 10:08:02 2004
-@@ -1,102 +1,89 @@
+@@ -1,102 +1,101 @@
 -# makefile for Lua hierarchy
 -# see INSTALL for installation instructions
 -# see config for customization instructions
@@ -104,7 +104,9 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 -newer:
 -	@find . -newer MANIFEST -type f
 +ifneq "$(OS)" "Windows"
++  ifneq "$(OS)" "Cygwin"
 +	CFLAGS += -DUSE_DLOPEN=1
++  endif
 +endif
 +ifneq "$(OS)" "Darwin"
 + ifneq "$(OS)" "OpenBSD"
@@ -116,37 +118,47 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +
 +CFLAGS += -I../../include -I../include -I. -I.. -DUSE_POPEN=1
 +ifeq "$(OS)" "OpenBSD"
-+	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm
 +else
++  ifeq "$(OS)" "Cygwin"
++	LDFLAGS+= -L /usr/lib/mingw -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -lmingw32 -lmsvcrt 
++  else
 +	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++  endif
 +endif
 +HCFLAGS += -I../../include -I../include -I. -I.. -DUSE_POPEN=1
 +ifeq "$(OS)" "OpenBSD"
 +	HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm
 +else
++  ifeq "$(OS)" "Cygwin"
++	HLDFLAGS+= -L /usr/lib/mingw -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -lmingw32 -lmsvcrt
++  else
 +	HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++  endif
 +endif
++
++H=@
 +
 +all: bin/lua
 +
 +bin/lua:
-+	@echo -n ' building core library... '
-+	@cd src ; 					\
++	$(H)echo -n ' building core library... '
++	$(H)cd src ; 					\
 +		$(CC) $(CFLAGS) -c  *.c ; 		\
 +		$(AR) rc ../lib/liblua.a *.o ; 		\
 +		$(RANLIB) ../lib/liblua.a ;		\
 +		rm -f *.o
-+	@echo "done."
++	$(H)echo "done."
 +
-+	@echo -n ' building standard library... '
-+	@cd src/lib;					\
++	$(H)echo -n ' building standard library... '
++	$(H)cd src/lib;					\
 +		$(CC) $(CFLAGS) -c  *.c ;		\
 +		$(AR) rc ../../lib/liblualib.a *.o ;	\
 +		$(RANLIB) ../../lib/liblualib.a ;	\
 +		rm -f *.o 
-+	@echo "done."
++	$(H)echo "done."
 +
-+	@if test "$(HCC)" = "$(CC)" ; then				\
++	$(H)if test "$(HCC)" = "$(CC)" ; then				\
 +		cd lib/ ; 						\
 +			ln -s liblua.a liblua-host.a ;			\
 +			ln -s liblualib.a liblualib-host.a ;		\
@@ -167,30 +179,30 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +		echo "done.";						\
 +	fi
 +
-+	@echo -n ' building lua... '
-+	@cd src/lua;					\
++	$(H)echo -n ' building lua... '
++	$(H)cd src/lua;					\
 +		$(HCC) $(HCFLAGS) -o ../../bin/lua *.c $(HLDFLAGS)
-+	@echo "done."
++	$(H)echo "done."
 +
-+	@echo -n ' building luac... '
-+	@cd src/luac ;					\
++	$(H)echo -n ' building luac... '
++	$(H)cd src/luac ;					\
 +		$(HCC) $(HCFLAGS) -o ../../bin/luac *.c 	\
 +			-DLUA_OPNAMES ../lopcodes.c $(HLDFLAGS)
-+	@echo "done."
++	$(H)echo "done."
 +
-+	@echo -n ' building bin2c... '
-+	@cd etc ;					\
++	$(H)echo -n ' building bin2c... '
++	$(H)cd etc ;					\
 +		$(HCC) $(HCFLAGS) -o ../bin/bin2c bin2c.c 	\
 +			$(HLDFLAGS)
-+	@echo "done."
++	$(H)echo "done."
 +
-+	@cp include/*.h $(PREFIX)/include
-+	@cp bin/* $(PREFIX)/bin
-+	@cp $(CPFLAGS) lib/*.a $(PREFIX)/lib
- 
++	$(H)cp include/*.h $(PREFIX)/include
++	$(H)cp bin/* $(PREFIX)/bin
++	$(H)cp $(CPFLAGS) lib/*.a $(PREFIX)/lib
+
 -# (end of Makefile)
 +clean:
-+	@rm -f lib/* bin/*
++	$(H)rm -f lib/* bin/*
 diff -ruN lua-5.0.2-old/build lua-5.0.2-new/build
 --- lua-5.0.2-old/build	Fri Mar 28 21:06:41 2003
 +++ lua-5.0.2-new/build	Thu Jan  1 01:00:00 1970

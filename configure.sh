@@ -67,8 +67,10 @@ set_cygwin() {
 set_default
 EXEEXTENSION=.exe
 SHAREDEXTENSION=.dll
-CFLAGS="$CFLAGS -DWIN32 -mwindows -mno-cygwin " # " -mms-bitfields"
+CFLAGS="$CFLAGS -DWIN32 -D_WIN32 -mwindows -mno-cygwin " # " -mms-bitfields"
+HCFLAGS="$CFLAGS -DWIN32 -D_WIN32 -mwindows -mno-cygwin " # " -mms-bitfields"
 LDFLAGS="$LDFLAGS -mwindows -mno-cygwin " # "-mms-bitfields"
+HLDFLAGS="$LDFLAGS -mwindows -mno-cygwin " # "-mms-bitfields"
 OS=Cygwin
 }
 

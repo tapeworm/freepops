@@ -1,3 +1,5 @@
+- added scripts/cvs2changelog.lua to generate changelog for the contibuted
+plugins
 - added folder parameter to tin.lua plugin
 - fixed aggregator plugin to respect RSS 2.0 specifications
 - added args parser

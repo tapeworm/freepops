@@ -11,7 +11,6 @@ next release 0.0.13
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
 	aggiungi che GMAIL vuole SSL nel manuale e nel sito
-	use cvs2cl or finis out script
 	aggiungere nel manuale dominio mozillaitalia.org per aggregator
 	aggiungi il parametro folder anche a libero e eventualmente altre
 		webmail in cui sia facile supportarlo.

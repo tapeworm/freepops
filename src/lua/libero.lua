@@ -39,7 +39,7 @@ PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
 
 -- list of strings, one required
-PLUGIN_DOMAINS = {"@libero.it","@inwind.it","@aol.it","@blu.it"}
+PLUGIN_DOMAINS = {"@libero.it","@inwind.it","@iol.it","@blu.it"}
 
 -- list of tables with fields name and description. 
 -- description must be in the stle of PLUGIN_DESCRIPTIONS,

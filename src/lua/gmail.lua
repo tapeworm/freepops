@@ -128,7 +128,7 @@ function check_sanity(name,pass)
 		log.error_print("username must be from 6 to 30 chars")
 		return false
 	end
-	local _,_,x = string.find(name,"([^0-9a-z%.%_%-])")
+	local _,_,x = string.find(name,"([^0-9A-Za-z%.%_%-])")
 	if x ~= nil then
 		log.error_print("username contains invalid character "..x.."\n")
 		return false

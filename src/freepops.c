@@ -369,6 +369,11 @@ bootstrap(NULL,l,username,1);
 
 luay_call(l,"s","plugins2xml.main",filename);
 lua_close(l);
+
+#ifdef WIN32
+fclose(stdout);
+#endif
+
 return 0;
 }
 

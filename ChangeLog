@@ -1,3 +1,4 @@
+- fixed bug in mimer
 - regularexp lua bindings added
 - workaround for the tin TOP. (not fixed, probable bug in stringhack.tophack)
 - fixed popserver rfc compliace issue (stat/list/uidl doesn't show messages

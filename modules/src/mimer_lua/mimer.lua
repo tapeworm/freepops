@@ -65,6 +65,9 @@ Private.html_tags = {
 	["/p"] = "\n",
 	["a"] = function (s,base_uri) 
 		local start,stop = string.find(s,'[Hh][Rr][Ee][Ff]%s*=%s*')
+		if start == nil or stop == nil then
+			return "[" .. s .. "]"
+		end
 		local _,x = nil,nil
 		if string.byte(s,stop+1) == string.byte('"') then
 			_,_,x = string.find(string.sub(s,stop+2,-1),'^([^"]*)')

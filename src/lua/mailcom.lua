@@ -7,11 +7,11 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8c"
+PLUGIN_VERSION = "0.0.8f"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=mailcom.lua"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=mailcom.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = 
@@ -69,38 +69,36 @@ PLUGIN_DOMAINS = {"@mail.com","@email.com","@iname.com","@cheerful.com","@consul
 "@teddy.cc","@tennis-mail.com","@tottenham-mail.com","@utsukushii.net","@uymail.com","@villa-mail.com",
 "@webcity.ca","@webmail.lu","@welcomm.ac","@wenxuecity.net","@westham-mail.com","@wimbledon-mail.com",
 "@windrivers.net","@wolves-mail.com","@wongfaye.com","@worldmail.ac","@worldweb.ac","@isleuthmail.com",
-"@x-lab.cc","@xy.com.tw","@yankeeman.com","@yyhmail.com", "@verizonmail.com", "@lycos.com","@unforgettable.com" }
+"@x-lab.cc","@xy.com.tw","@yankeeman.com","@yyhmail.com", "@verizonmail.com", "@lycos.com", "@cyberdude.com" }
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		en = [[
 Parameter is used to select the folder (Inbox is the default)
 that you wish to access. The folders that are available are the standard folders, called 
 INBOX, Drafts, SENT, and 
-Trash. For user defined folders, use their name as the value.]],
-		it=[[
-Per scegliere la mailbox con cui interagire. Valori accettati: INBOX, Drafts, SENT e Trash. Per le folder create da te usa il loro nome.]]
+Trash. For user defined folders, use their name as the value.]]
 		}	
 	},
 	{name = "emptytrash", description = {
 		en = [[
 Parameter is used to force the plugin to empty the trash when it is done
-pulling messages.]],
-		it = [[
-Metti il parametro a 1 se vuoi che il plugin svuoti il cestino automaticamente]]
+pulling messages.]]
 		}	
 	},
+	{name = "setoptionoverride", description = {
+		en = [[ Parameter is used to tell the plugin not to change the mail options
+on the mail.com website.  If you use this option, you must have full headers enabled in your
+options.  If the value is 1, the behavior is turned on.]]
+		}
+	},
+
 }
 
 PLUGIN_DESCRIPTIONS = {
 	en=[[
 This is the webmail support for @mail.com and all its other domain mailboxes. 
 To use this plugin you have to use your full email address as the user 
-name and your real password as the password.]],
-	it=[[]
-Questo plugin permette di leggere la posta del portale @mail.com e tutti gli
-altri domini dello stesso gestore. PEr usare il plugin devi usare il tuo
-indirizzo di posta completo come username e la tua normale password 
-come password.]]
+name and your real password as the password.]]
 }
 
 -- ************************************************************************** --
@@ -119,10 +117,10 @@ local globals = {
 
   strLoginFailed = "Login Failed - Invalid User name and password",
 
-  -- Expressions to pull out of returned HTML from Yahoo corresponding to a problem
+  -- Expressions to pull out of returned HTML from mail.com corresponding to a problem
   --
   strRetLoginBadPassword = "(Invalid username/password.)",
-  strRetLoginSessionExpired = "(Something here!)",
+  strRetLoginSessionExpired = "( Message%(s%))",
 
   -- Regular expression to extract the mail server
   --
@@ -176,6 +174,7 @@ internalState = {
   strCrumb = nil,
   strMBox = nil,
   bEmptyTrash = false,
+  bOptionOverride = false,
 }
 
 -- ************************************************************************** --
@@ -204,6 +203,43 @@ function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
          (internalState.strMBox or "")
+end
+
+function postToLoginPage(browser, url, post, attempt)
+  -- Login
+  --
+  local body, err = browser:post_uri(url, post)
+
+  -- No connection
+  --
+  if body == nil then
+    log.error_print("Login Failed: Unable to make connection")
+    return POPSERVER_ERR_NETWORK
+  end
+
+  -- Check for invalid login/password
+  -- 
+  local _, _, str = string.find(body, globals.strRetLoginBadPassword)
+  if str ~= nil then
+    log.error_print("Login Failed: Invalid username/Password")
+    return POPSERVER_ERR_AUTH
+  end
+
+  -- Extract the mail server
+  --
+  _, _, str = string.find(body, globals.strRegExpMailServer)
+  if str == nil then
+    log.error_print("Login Failed: Unable to detect mail server - Attempt: " .. attempt)
+    return POPSERVER_ERR_UNKNOWN
+  else
+    internalState.strMailServer = str
+
+    -- DEBUG Message
+    --
+    log.dbg("Mail.com Mail Server: " .. str .. "\n")
+  end
+
+  return POPSERVER_ERR_OK
 end
 
 -- Issue the command to login
@@ -247,42 +283,18 @@ function login()
 
   -- Login
   --
-  local body, err = browser:post_uri(url, post)
+  local retval = postToLoginPage(browser, url, post, 1)
 
   -- Error checking
   --
-
-  -- No connection
-  --
-  if body == nil then
+  if (retval == POPSERVER_ERR_UNKNOWN or retval == POPSERVER_ERR_NETWORK) then
     url = string.format(globals.strLoginPage, "www", "mail.com")
-    body, err = browser:post_uri(url, post)
-    if body == nil then
-      log.error_print("Login Failed: Unable to make connection")
-      return POPSERVER_ERR_NETWORK
+    retval = postToLoginPage(browser, url, post, 2)  
+    if (retval ~= POPSERVER_ERR_OK) then
+      return retval
     end
-  end
-
-  -- Check for invalid login/password
-  -- 
-  local _, _, str = string.find(body, globals.strRetLoginBadPassword)
-  if str ~= nil then
-    log.error_print("Login Failed: Invalid username/Password")
-    return POPSERVER_ERR_AUTH
-  end
-
-  -- Extract the mail server
-  --
-  _, _, str = string.find(body, globals.strRegExpMailServer)
-  if str == nil then
-    log.error_print("Login Failed: Unable to detect mail server")
-    return POPSERVER_ERR_UNKNOWN
-  else
-    internalState.strMailServer = str
-
-    -- DEBUG Message
-    --
-    log.dbg("Mail.com Mail Server: " .. str .. "\n")
+  elseif (retval ~= POPSERVER_ERR_OK) then
+    return retval
   end
   
   -- Note that we have logged in successfully
@@ -291,9 +303,12 @@ function login()
 
   -- We need to turn on the option for full headers
   -- 
-  url = string.format(globals.strCmdOptions, internalState.strMailServer)
-  post = string.format(globals.strCmdOptionsPost, username, domain)
-  body, err = browser:post_uri(url, post) -- Ignore the results
+  if internalState.bOptionOverride == false then
+    log.dbg("Setting the option for full headers on the web server.")
+    url = string.format(globals.strCmdOptions, internalState.strMailServer)
+    post = string.format(globals.strCmdOptionsPost, username, domain)
+    local body, err = browser:post_uri(url, post) -- Ignore the results
+  end
 	
   -- Debug info
   --
@@ -510,6 +525,14 @@ function user(pstate, username)
   if val == "1" then
     log.dbg("Mail.com: The trash will be emptied on quit.")
     internalState.bEmptyTrash = true
+  end
+
+  -- Should the trash be emptied at the end of the session?
+  --
+  local val = (freepops.MODULE_ARGS or {}).setoptionoverride or 0
+  if val == "1" then
+    log.dbg("Mail.com: Mail preferences will not be changed on website.")
+    internalState.bOptionOverride = true
   end
 
   return POPSERVER_ERR_OK
@@ -748,7 +771,7 @@ function stat(pstate)
     -- Is the session expired
     --
     local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
-    if strSessExpr ~= nil then
+    if strSessExpr == nil then
       -- Invalidate the session
       --
       internalState.bLoginDone = nil

@@ -52,3 +52,4 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/sysconfig/freepops
 %{_sysconfdir}/freepops/config.lua
 %{_datadir}/freepops/*
+#/usr/share/doc/freepops-%{version}

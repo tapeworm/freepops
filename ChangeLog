@@ -1,3 +1,4 @@
+- fixed jail in sid
 - fixed popforward.lua (thanks Rojous and CWP)
 - added crypto HMAC routine to lua
 - added contributors to AUTHORS and the win32 popup

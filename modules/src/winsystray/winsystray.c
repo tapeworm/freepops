@@ -61,18 +61,9 @@ HIDDEN struct
 
 HIDDEN pthread_t dispatcher;
 HIDDEN pthread_attr_t att;
-HIDDEN int can_download_cfg;
 
 /*** callback *****************************************************************/
 
-/**************************
- * the real callback
- *
- */
-HIDDEN int download_cfg()
-{
-return 0;
-}
 
 // helper function for get_news()
 HIDDEN long str_to_num(char* v)
@@ -80,15 +71,6 @@ HIDDEN long str_to_num(char* v)
 int a,b,c;
 sscanf(v,"%d.%d.%d",&a,&b,&c);
 return c + b*100 + a*10000;
-}
-
-/**************************
- * the real callback
- *
- */
-HIDDEN int get_news(char **news_msg)
-{
-return 0;
 }
 
 /**********************
@@ -116,8 +98,8 @@ switch (message)
 		nid.uID = AP_ID;
 		nid.uFlags = NIF_TIP; 
 		Shell_NotifyIcon(NIM_DELETE, &nid);
-		//PostQuitMessage(0); //?
-		return TRUE;//should we die here?
+		exit(0);
+		return TRUE;
 
 	case UWM_SYSTRAY:
       		
@@ -131,74 +113,31 @@ switch (message)
 			hpopup = GetSubMenu(hmenu, 0);
 
           		SetForegroundWindow(hwnd);
-
-			if(!can_download_cfg)
-				{
-				EnableMenuItem(hpopup,
-					RES_MENU_DOWNLOAD,MF_GRAYED);
-				//DBG("disabled\n");
-				}
-			else
-				{
-				EnableMenuItem(hpopup,
-					RES_MENU_DOWNLOAD,MF_ENABLED);
-				
-				//DBG("enabled\n");
-				}
-	  
 		        switch (TrackPopupMenu(hpopup, 
 				TPM_RETURNCMD | TPM_RIGHTBUTTON|TPM_LEFTBUTTON,
 				pt.x, pt.y, 0, hwnd, NULL)) 
 	  			{
-				case RES_MENU_EXIT: 
+				case RES_MENU_EXIT:
 					DestroyWindow(hwnd);
 					SAY("FreePOPs killed by the "
 						"context menu.");
-					exit(0);
+					PostQuitMessage(0);
+					//exit(0);
 				break;
 				
 				case RES_MENU_ABOUT:
 					MessageBox(NULL, ABOUT_STRING,
 					ABOUT_TITLE, MB_OK | MB_ICONINFORMATION);
 				break;
-
-				case RES_MENU_DOWNLOAD:
-					if (MessageBox(NULL, DOWNLOAD_ASK,
-					  DOWNLOAD_TITLE, MB_YESNO|MB_ICONQUESTION) == IDYES)
-					{
-					if (download_cfg() == 0)
-					  MessageBox(NULL,DOWNLOAD_STRING ,
-					  DOWNLOAD_TITLE, MB_OK|MB_ICONINFORMATION);
-					else
-					  MessageBox(NULL,DOWNLOAD_STRING_ERR ,
-					  DOWNLOAD_TITLE, MB_OK|MB_ICONERROR);
-					}
-				break;
-				
-				case RES_MENU_NEWS:
-					news_out = get_news(&news_msg);
-					if (news_out==0)
-					{
-					  MessageBox(NULL, news_msg,
-					  NEWS_TITLE, MB_OK|MB_ICONINFORMATION);
-					  free(news_msg);
-					  news_msg = NULL;
-					}
-					else if (news_out == 1)
-					  MessageBox(NULL, NO_NEWS_STRING,
-					  NEWS_TITLE, MB_OK|MB_ICONWARNING);
-					else
-					  MessageBox(NULL, GET_NEWS_ERROR,
-					  NEWS_TITLE, MB_OK|MB_ICONERROR);
-				break;
 	  			}
           
 	  		PostMessage(hwnd, 0, 0, 0);
 			DestroyMenu(hmenu); // Delete loaded menu 
           		break;
+			
 	
-		default:
-	  	return TRUE;
+			default:
+	  		return TRUE;
 
 		}
 	case WM_ENDSESSION:

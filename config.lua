@@ -137,6 +137,11 @@ freepops.MODULES_MAP["linux.kerneltrap.org"] 	= {
 	args={host="http://kerneltrap.org/taxonomy/feed/or/2,37,13,19"}
 }
 
+freepops.MODULES_MAP["mozillaitalia.org"] 	= {
+	name="aggregator.lua",
+	args={host="http://www.mozillaitalia.org/feed/"}
+}
+
 -- -------------------------------------------------------------------------- --
 -- 2) Policy
 --

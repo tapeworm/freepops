@@ -44,6 +44,10 @@ freepops.MODULES_MAP["gmail.com"]	= {name="gmail.lua"}
 -- squirrelmail
 freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}
 
+-- yahoo
+freepops.MODULES_MAP["yahoo.com"]	= {name="yahoo.lua"}
+
+
 -- popforward plugin
 --freepops.MODULES_MAP["something.xx"] 	= {
 --	name="popforward.lua",

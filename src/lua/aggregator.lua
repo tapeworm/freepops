@@ -93,6 +93,7 @@ end
 --
 function html2txt(str)
 	str=string.gsub(str,"\n","") 
+	str=string.gsub(str,"\r","") 
 	str=string.gsub(str,"\t","") 
 	str=string.gsub(str,"<[Tt][Rr]>","\n") 
 	str=string.gsub(str,"</[Tt][Hh]>","\t") 
@@ -108,7 +109,10 @@ function html2txt(str)
 	str=string.gsub(str,"&ograve;","ò") 
 	str=string.gsub(str,"&quot;","\"") 
 	str=string.gsub(str,"&gt;",">") 
-	str=string.gsub(str,"&lt;","<") 
+	str=string.gsub(str,"&lt;","<")
+	str=string.gsub(str,"<a href=\"([^\"]*)\"[^>]*>([^<]*)</a>","%2 (%1)")
+	str=string.gsub(str,"</p>","\n")
+	
 
 	str=string.gsub(str,"<.->","") 
 	

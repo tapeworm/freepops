@@ -16,7 +16,7 @@ To ask for help, AFTER you've read the included documentation, you may look at:
 
 ChangeLog:
 
-04/06/2004 0.0.4 fix/source-reorganization release
+07/06/2004 0.0.4 fix/source-reorganization release
 - added pkg file for Mac OS X
 - documentation for new modules
 - badguy feature added to tin.lua

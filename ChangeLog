@@ -1,3 +1,4 @@
+- added luaexpat bindings
 - added aol.lua
 - adedd the arrow winsystray stuff (thanks russells)
 - added option -k to kill the running freepopsd

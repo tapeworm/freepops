@@ -1,3 +1,4 @@
+- implemented PLUGIN_REQUIRE_VERSION
 - slack patch applied
 18/11/2004 0.0.21
 - fixed S_ISSOCK for BeOS in luafilesystem

@@ -349,6 +349,32 @@ freepops.load_module_for = function (mailaddress,loadonly)
 	
 end
 
+-- checks if this FreePOPs version is enough for the plugin
+freepops.enough_new = function(plugin_version_string)
+	local fp_version_string = os.getenv("FREEPOPS_VERSION")
+	local match = "(%d+)%.(%d+)%.(%d+)"
+	local _,_,fp_x,fp_y,fp_z = string.find(fp_version_string,match)
+	local _,_,p_x,p_y,p_z = string.find(plugin_version_string,match)
+	if fp_x == nil or fp_y == nil or fp_z == nil then
+		log.error_print("Wrong FreePOPs version string format")
+		return false
+	end
+	if p_x == nil or p_y == nil or p_z == nil then
+		log.error_print("Wrong plugin REQIORE_VERSION string format.")
+		log.error_print("It must be X.Y.Z (numbers only).")
+		return false
+	end
+
+	if tonumber(fp_x) > tonumber(p_x) then return true end
+	if tonumber(fp_x) == tonumber(p_x) and
+	   tonumber(fp_y) > tonumber(p_y) then return true end
+	if tonumber(fp_x) == tonumber(p_x) and
+	   tonumber(fp_y) == tonumber(p_y) and	
+	   tonumber(fp_z) >= tonumber(p_z) then return true end
+
+	return false
+end
+
 -- makes tab members globals
 freepops.export = function(tab)
 	local _export = function(name,value) 
@@ -502,11 +528,19 @@ freepops.init = function (mailaddress,loadonly)
 	if freepops.dofile("support.lua") == nil then return 1 end
 	
 	if freepops.load_module_for(mailaddress) == nil then return 1 end
-
-	if not loadonly then
+	
+	if loadonly == 0 then
+		-- check if the required version is older
+		if not freepops.enough_new(PLUGIN_REQUIRE_VERSION) then
+			log.error_print(
+				"This plugin requires a newer version "..
+				"of FreePOPs. Please update!")
+			return 1
+		end
+		-- some sanity checks
 		if freepops.check_global_symbols() == nil then return 1 end
 	end
-
+	
 	return 0 -- OK
 end
 

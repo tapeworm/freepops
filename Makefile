@@ -17,8 +17,8 @@ help:
 	$(H)echo "  distclean    - remove also the dist-* distributions"
 	$(H)echo "  realclean    - clean and be ready for building to another arch"
 	$(H)echo "  doc          - create developers documentation"
-	$(H)echo "  install      - install it (linux/unix distribution independent"
-	$(H)echo "  uninstall    - uninstall it (linux/unix distribution independent"
+	$(H)echo "  install      - install it (linux/unix distribution independent)"
+	$(H)echo "  uninstall    - uninstall it (linux/unix distribution independent)"
 	$(H)echo "  buildfactory - build all distributions"
 	$(H)echo
 	$(H)echo "Default is all"

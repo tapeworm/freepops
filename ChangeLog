@@ -1,4 +1,4 @@
-08/09/2004 0.0.14 major feature release
+08/09/2004 0.0.16 major feature release
 - fixed the gmail plugin and added some parameters (thanks rami)
 - owa.lua moved to davmail.lua
 - fixed ebuild (thanks er_capoccia)

@@ -97,8 +97,8 @@ ifeq "$(OS)" "Windows"
 
 else
 ifeq "$(OS)" "Darwin"
-	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lgetopt \
-	 	-lm \
+	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
+		-lgetopt -lm \
 	 	-lpthread -L/sw/lib -lexpat \
 	 	-lcurl -lz -lssl \
 		-lcrypto -ldl -lssl -lcrypto -lz 

@@ -37,41 +37,41 @@
 #define LOG_ZONE "LUABOX"
 
 static int (*opening_functions[LUABOX_LAST])(lua_State*) = {
-	luaopen_base,
-	luaopen_table,
-	luaopen_io,
-	luaopen_string,
-	luaopen_math,
-	luaopen_debug,
-	luaopen_loadlib,
-	luaopen_pop3server,
-	luaopen_mlex,
-	luaopen_stringhack,
-	luaopen_session,
-	luacurl_open,
-	luaopen_psock,
-	luaopen_base64,
-	luaopen_getdate,
-	luaopen_regularexp,
-	luaopen_lxp,
-	luaopen_log,
-	luaopen_crypto
-};
+            luaopen_base,
+            luaopen_table,
+            luaopen_io,
+            luaopen_string,
+            luaopen_math,
+            luaopen_debug,
+            luaopen_loadlib,
+            luaopen_pop3server,
+            luaopen_mlex,
+            luaopen_stringhack,
+            luaopen_session,
+            luacurl_open,
+            luaopen_psock,
+            luaopen_base64,
+            luaopen_getdate,
+            luaopen_regularexp,
+            luaopen_lxp,
+            luaopen_log,
+            luaopen_crypto
+        };
 
 lua_State* luabox_genbox(unsigned long intial_stuff){
-	lua_State* tmp = lua_open();
-	MALLOC_CHECK(tmp);
-	luabox_addtobox(tmp,intial_stuff);
-	return tmp;
+    lua_State* tmp = lua_open();
+    MALLOC_CHECK(tmp);
+    luabox_addtobox(tmp,intial_stuff);
+    return tmp;
 }
 
 void luabox_addtobox(lua_State* box,unsigned long stuff){
-	long int i;
-	for ( i = 0 ; i < LUABOX_LAST ; i++) {
-		int j = 1<<i;
-		if (j & stuff) 
-			opening_functions[i](box);
-	}
-	luay_emptystack(box);
+    long int i;
+    for ( i = 0 ; i < LUABOX_LAST ; i++) {
+        int j = 1<<i;
+        if (j & stuff)
+            opening_functions[i](box);
+    }
+    luay_emptystack(box);
 }
 

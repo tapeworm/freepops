@@ -50,8 +50,11 @@ freepops.MODULES_MAP["gmail.com"]	= {name="gmail.lua"}
 
 -- yahoo
 freepops.MODULES_MAP["yahoo.com"]	= {name="yahoo.lua"}
-freepops.MODULES_MAP["yahoo.it"]       = {name="yahoo.lua"}
-freepops.MODULES_MAP["yahoo.ca"] = {name="yahoo.lua"}
+freepops.MODULES_MAP["yahoo.com.ar"]	= {name="yahoo.lua"}
+freepops.MODULES_MAP["yahoo.it"]       	= {name="yahoo.lua"}
+freepops.MODULES_MAP["yahoo.ca"] 	= {name="yahoo.lua"}
+freepops.MODULES_MAP["yahoo.co.in"] 	= {name="yahoo.lua"}
+freepops.MODULES_MAP["yahoo.com.tw"] 	= {name="yahoo.lua"}
 
 -- hotmail
 freepops.MODULES_MAP["hotmail.com"]	= {name="hotmail.lua"}

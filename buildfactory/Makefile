@@ -22,8 +22,8 @@ dist-win: freepops-$(VERSION).tar.gz
 		tar -xzf freepops-$(VERSION).tar.gz -C _win_
 	$(H)cd _win_/freepops-$(VERSION);\
 		./configure.sh win;\
-		make all;\
-		make manual;
+		$(MAKE) all;\
+		$(MAKE) manual;
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
@@ -105,7 +105,7 @@ dist-deb: freepops-$(VERSION).tar.gz
 
 dist-osx:
 	$(H)cd ..;./configure.sh osx || true
-	$(H)cd ..;make all CONFIG=../config
+	$(H)cd ..;$(MAKE) all CONFIG=../config
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
@@ -121,7 +121,7 @@ dist-osx:
 
 dist-obsd:
 	$(H)cd ..;./configure.sh obsd || true
-	$(H)cd ..;gmake install
+	$(H)cd ..;$(MAKE) install
 	$(H)cd openbsd;pkg_create -f CONTENTS -c COMMENT -d DESC \
 	-D DISPLAY freepops-$(VERSION)
 	$(H)gzip openbsd/freepops-$(VERSION)
@@ -129,7 +129,7 @@ dist-obsd:
 	
 freepops-$(VERSION).tar.gz: 
 	$(H)cd ..;./configure.sh linux || true
-	$(H)make -C .. tgz-dist
+	$(H)$(MAKE) -C .. tgz-dist
 	$(H)cp ../dist-tgz/freepops-$(VERSION).tar.gz .
 	
 	

@@ -10,6 +10,7 @@ Available options:
 	linux	to compile on a linux host
 	osx	to compile on a darwin host
 	obsd	to compile on a openbsd host
+	fbsd 	to compile on a freebsd host
 	beos	to compile on a beos host
 	cygwin	to compile on a cygwin environment
 	win	to cross-compile for win on a linux host with mingw32msvc
@@ -38,6 +39,7 @@ LDFLAGS=""
 HLDFLAGS=$LDFLAGS
 WINDRES=windres
 DLLTOOL=dlltool
+MAKE=make
 }
 
 set_linux() {
@@ -53,8 +55,16 @@ CFLAGS="$CFLAGS -DMACOSX"
 
 set_obsd() {
 set_default
+OS=FreeBSD
+CFLAGS="$CFLAGS -DMACOSX"
+MAKE=gmake
+}
+
+set_fbsd() {
+set_default
 OS=OpenBSD
 CFLAGS="$CFLAGS -DMACOSX"
+MAKE=gmake
 }
 
 set_beos() {
@@ -117,6 +127,10 @@ case $1 in
 	obsd)
 		set_obsd
 	;;
+	fbsd)
+		set_fbsd
+	;;
+
 	osx)
 		set_osx
 	;;
@@ -156,5 +170,6 @@ SHAREDEXTENSION=$SHAREDEXTENSION
 WINDRES=$WINDRES
 DLLTOOL=$DLLTOOL
 OS=$OS
+MAKE=$MAKE
 EOT
 

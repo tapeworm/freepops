@@ -6,12 +6,6 @@ VERSION=$(shell grep "\#define VERSION" config.h | cut -d \" -f 2)
 MAKEFLAGS+=--no-print-directory
 PWD=$(shell pwd)
 
-ifeq "OpenBSD" "$(shell uname)"
-	MAKE=gmake
-else
-	MAKE=make
-endif
-
 H=@
 
 #>----------------------------------------------------------------------------<#

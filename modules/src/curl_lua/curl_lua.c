@@ -1266,7 +1266,11 @@ tmp = curl_escape(data,len);
 
 lua_pushstring(L,tmp);
 
+#if CURL_NEWER(7,10,0)
 curl_free(tmp);
+#else
+free(tmp);
+#endif
 	
 return 1;
 }
@@ -1287,6 +1291,7 @@ return 1;
  * curl_version_info
  *
  */ 
+#if CURL_NEWER(7,10,0)
 static int luacurl_version_info(lua_State* L) {
 curl_version_info_data *d = curl_version_info(CURLVERSION_NOW);	
 int i;
@@ -1338,7 +1343,7 @@ lua_settable(L,-3);
 
 return 1;
 }
-
+#endif
 
 /******************************************************************************
  * curl.* functions
@@ -1348,7 +1353,9 @@ static const struct luaL_reg curl_f [] = {
   {"easy_init",luacurl_easy_init},
   {"escape",luacurl_escape},
   {"version",luacurl_version},
+#if CURL_NEWER(7,10,0)
   {"version_info",luacurl_version_info},
+#endif
   {NULL,NULL}
 };
 

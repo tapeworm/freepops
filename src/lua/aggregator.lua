@@ -237,7 +237,12 @@ function pass(pstate,password)
 	else
 		internal_state.password = password
 	end
-						
+	
+	if(string.find(internal_state.password,"http://") == nil) then
+		 log.error_print("Not a valid URI: "..internal_state.password.."\n")
+		 return POPSERVER_ERR_NETWORK
+	end
+						 
 	-- build the uri
 	local user = internal_state.name
 	

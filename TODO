@@ -1,7 +1,7 @@
 legeng: more + means more done! (from 1 to 7)
 
-next release 0.0.3
-	plugin (superva?)(freepass?)
+next release 0.0.4
+	plugin (superva,freepass,hotmail,yahoo?)
 	give a more resistent binding for portablesocket_lua
 	servizio di autoupdate. da valutare la sicurezza di cio'.
 		valutare se far scaricare uno script e farlo eseguire.

@@ -150,6 +150,21 @@ www.libero.it
 .
 \layout Description
 
+tin.lua This plugins fully supports the 
+\family typewriter 
+communicator.virgilio.it
+\family default 
+ webmail for mailboxes with domains like 
+\family typewriter 
+@tin.it
+\family default 
+, 
+\family typewriter 
+@virgilio.it
+\family default 
+.
+\layout Description
+
 popforward.lua This is a plugin mainly used for testing some FreePOPs modules.
  It acts as a POP3 forward, it simply works as a man in the middle of you
  and a real POP3 server.
@@ -380,6 +395,22 @@ http://liberopops.sourceforge.net
 \layout Standard
 
 To use this plugin you have to use your full email address as the username
+ and your real password as the password.
+\layout Subsection
+
+tin.lua
+\layout Standard
+
+This is the webmail support for 
+\family typewriter 
+@virgilio.it
+\family default 
+ and 
+\family typewriter 
+@tin.it 
+\family default 
+mailboxes.
+ To use this plugin you have to use your full email address as the username
  and your real password as the password.
 \layout Subsection
 

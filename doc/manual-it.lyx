@@ -153,6 +153,21 @@ www.libero.it
 .
 \layout Description
 
+tin.lua Questo plugin supporta in pieno la webmail di 
+\family typewriter 
+communicator.virgilio.it
+\family default 
+ per mailbox con domini come 
+\family typewriter 
+@tin.it
+\family default 
+, 
+\family typewriter 
+@virgilio.it
+\family default 
+.
+\layout Description
+
 popforward.lua Questo e' un plugin usato principalmente per testare moduli
  di FreePOPs.
  Esso agisce come un forward POP3, semplicemente si comporta come mediatore
@@ -379,7 +394,7 @@ Questo plugin vi permette di leggere le mail che avete in una mailbox
 \family default 
  e 
 \family typewriter 
-@blu.it 
+@blu.it
 \family default 
 .
  Cio' significa che potete ancora usare il vostro mail reader preferito
@@ -393,6 +408,22 @@ http://liberopops.sourceforge.net
 \layout Standard
 
 Per usare questo plugin dovete usare il vostro indirizzo email completo
+ come username e la vostra password reale come password.
+\layout Subsection
+
+tin.lua 
+\layout Standard
+
+Questo plugin vi permette di leggere le mail che avete in una mailbox 
+\family typewriter 
+@virgilio.it
+\family default 
+, 
+\family typewriter 
+@tin.it
+\family default 
+.
+ Per usare questo plugin dovete usare il vostro indirizzo email completo
  come username e la vostra password reale come password.
 \layout Subsection
 

@@ -1,4 +1,13 @@
-19/05/2004 0.0.2 feature release
+28/05/2004 0.0.3 bomb! feature release
+- updated the doc
+- fixed libero webmail to new mlex and new libero webmail (nobody
+noticed it has changed so much? probably because the old mlex continued
+to work properly, but it was a lucky case!)
+- added tin webmail
+- improved mlex.c with <script> correct handling
+- fixed http redirection 
+- fixed browser cookie generation
+19/05/2004 0.0.2 feature release [never released]
 - added browser:get_head(url,extraheader) method
 - fixed Makefile verbosity
 - fixed chroot jail for curl

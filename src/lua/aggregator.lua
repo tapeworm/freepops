@@ -23,7 +23,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "RSS/RDF aggregator"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"

@@ -4877,9 +4877,9 @@ localhost
 2000
 \emph default 
  (or whatever you chose if you ran FreePOPs with the 
-\emph on 
+\family typewriter 
 -p
-\emph default 
+\family default 
  option) and to set the username to your full email address (in the form
  
 \family typewriter 
@@ -4896,11 +4896,23 @@ If you continue having problems after reading the manual and the tutorial
 How much does it cost?
 \layout Standard
 
-FreePOPs is Free Software, Free as in Freedom and Free as in Free Beer.
+FreePOPs is Free Software, Free as in Freedom 
+\emph on 
+and
+\emph default 
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+Free as in Free Beer
+\begin_inset Quotes erd
+\end_inset 
+
+.
  You can download it, use it, and modify it freely but if you care about
  the four friends who made it you may send them a beer asking for their
- address via mail, or a small donation (through the project website on SourceFor
-ge).
+ address via email, or a small donation (through the project website on
+ SourceForge).
 \layout Subsection*
 
 I've installed FreePOPs and properly configured my mail client, but I'm
@@ -4920,7 +4932,7 @@ This software is in beta stage..
 Nobody guarantees the software they write, even if you pay it a lot.
  It looks safe enough to us, but we can't guarantee anything (no software
  is really safe and secure).
- Besides no one guarantess your mail client works well, so if you're using
+ Besides no one guarantees your mail client works well, so if you're using
  that...
 \layout Subsection*
 
@@ -4939,7 +4951,7 @@ When you want to report a bug, check that you are using the latest version
  don't forget to include:
 \layout Itemize
 
-The version number of FreePOPs you're using
+The version number of your copy of FreePOPs
 \layout Itemize
 
 The operating system you are running
@@ -4956,7 +4968,7 @@ Most importantly the log of FreePOPs, generated with the
  Make sure that the log doesn't contain any sensitive info you wouldn't
  like to disclose (to the authors).
  But don't worry, your password is never recorded in the log, it's substituted
- by a sequence of nine (9) asterisks, no matter its real length.
+ by a sequence of nine (9) asterisks, no matter what is its real length.
 \layout Subsection*
 
 Where is the log?
@@ -4968,15 +4980,15 @@ It depends on the system you are using.
 /var/log/freepops
 \emph default 
  or wherever you specified with the 
-\emph on 
+\family typewriter 
 -l
-\emph default 
+\family default 
  option.
  On a Windows system the file log.txt is in the same folder of the FreePOPs
  executable or wherever you specified with the 
-\emph on 
+\family typewriter 
 -l
-\emph default 
+\family default 
  option.
 \layout Standard
 
@@ -5033,27 +5045,31 @@ Destination
 \backslash 
 Something
 \backslash 
-freepopsd.exe).
+freepopsd.exe); or, run FreePOPs manually from a DOS window with the options
+ you like (again, after the name of the executable).
 \layout Standard
 
 The command line parameters you need depend on your specific needs.
  Read the appropriate section of the manual to know what all available parameter
 s are, or run 
-\emph on 
+\family typewriter 
 freepopsd -h
-\emph default 
+\family default 
  (also 
-\emph on 
+\family typewriter 
 man freepopsd
-\emph default 
+\family default 
  on Unix).
 \layout Itemize
 
-Unix example: /usr/bin/freepopsd -P proxyhost:porta -A proxyusername:proxypasswo
-rd -w -l logfile.txt
+Unix example: 
+\family typewriter 
+/usr/bin/freepopsd -P proxy:port -A user:pass -w -l logfile.txt
 \layout Itemize
 
-Windows example: C:
+Windows example: 
+\family typewriter 
+C:
 \backslash 
 Programs
 \backslash 
@@ -5062,7 +5078,15 @@ FreePOPs
 freepopsd.exe -w
 \layout Subsection*
 
-My "Antivirus" says FreePOPs is a virus!
+My 
+\begin_inset Quotes eld
+\end_inset 
+
+Antivirus
+\begin_inset Quotes erd
+\end_inset 
+
+ says FreePOPs is a virus!
 \layout Standard
 
 Stop using that crazy antivirus :-) Seriously, FreePOPs does not contain
@@ -5079,9 +5103,16 @@ It sure is true that downloading a pre-compiled binary from an unknown source
  is like asking for trouble.
  Pre-compiled binary packages you find on the official website (HTTP://freepops.s
 f.net) come from the source code that everyone can get.
- What you find on free (as in free beer) software websites or you download
- through peer-to-peer file sharing systems can't obviously guarantee any
- kind of safety.
+ What you find on free (as in 
+\begin_inset Quotes eld
+\end_inset 
+
+free beer
+\begin_inset Quotes erd
+\end_inset 
+
+) software websites or you download through peer-to-peer file sharing systems
+ can't obviously guarantee any kind of safety.
  So use some common sense.
 \layout Section
 

@@ -4988,9 +4988,13 @@ Ho installato e configurato correttamente FreePOPs, ma non riesco comunque
  ad inviare messaggi, come posso fare?
 \layout Standard
 
-FreePOPs serve solo per ricevere la posta elettronica.
+FreePOPs serve 
+\series bold 
+solo
+\series default 
+ per ricevere la posta elettronica.
  Per inviare messaggi dovete continuare ad utilizzare il server SMTP del
- provider con il quale vi collegate.
+ provider con il quale vi collegate ad Internet.
  In questo modo non avrete nessun problema nell'invio di email.
  Per sapere a quale server SMTP fare riferimento guardate il sito web del
  vostro provider o chiamate il loro supporto tecnico.
@@ -5061,16 +5065,16 @@ La posizione del log di FreePOPs dipende dal sistema operativo in cui il
 /var/log/freepops
 \emph default 
  per default, o dove avete specificato con l'opzione 
-\emph on 
+\family typewriter 
 -l
-\emph default 
+\family default 
 .
  Su Windows, il log (file log.txt) si trova nella cartella dove avete installato
  FreePOPs o nel percorso da voi specificato se avete eseguito FreePOPs con
  il parametro
-\emph on 
+\family typewriter 
  -l
-\emph default 
+\family default 
 .
 \layout Standard
 
@@ -5145,21 +5149,24 @@ freepopsd.exe); oppure lanciare FreePOPs manualmente da una finestra DOS
 I parametri che vi servono dipendono dalle vostre esigenze.
  Leggete l'apposita sezione del manuale per conoscerli tutti o lanciate
  
-\emph on 
+\family typewriter 
 freepopsd -h
-\emph default 
+\family default 
  (anche 
-\emph on 
+\family typewriter 
 man freepopsd
-\emph default 
+\family default 
  su Unix).
 \layout Itemize
 
-Esempio Unix: /usr/bin/freepopsd -P proxyhost:porta -A username:password
- -w -l logfile.txt
+Esempio Unix: 
+\family typewriter 
+/usr/bin/freepopsd -P proxy:porta -A user:pass -w -l logfile.txt
 \layout Itemize
 
-Esempio Windows: C:
+Esempio Windows: 
+\family typewriter 
+C:
 \backslash 
 Programmi
 \backslash 
@@ -5168,8 +5175,15 @@ FreePOPs
 freepopsd.exe -w
 \layout Subsection*
 
-Il mio "Antivirus" di fiducia dice che in FreePOPs c'è un virus, che devo
- fare?
+Il mio 
+\begin_inset Quotes eld
+\end_inset 
+
+Antivirus
+\begin_inset Quotes erd
+\end_inset 
+
+ di fiducia dice che in FreePOPs c'è un virus, che devo fare?
 \layout Standard
 
 Smettere di usare quell'antivirus :-) A parte gli scherzi, FreePOPs NON
@@ -5187,8 +5201,11 @@ a è come andare in cerca di guai.
  I pacchetti pre-compilati che trovate sulle pagine ufficiali del progetto
  (HTTP://freepops.sf.net) provengono dai sorgenti che tutti possono vedere.
  Ciò che trovate su siti vari di software gratuito o che scaricate tramite
- sistemi di file sharing peer-to-peer, non possono chiaramente offrire alcuna
- garanzia di sicurezza.
+ sistemi di file sharing peer-to-peer, non può 
+\emph on 
+chiaramente
+\emph default 
+ offrire alcuna garanzia di sicurezza.
  Per cui usate un po' di buon senso.
  
 \layout Section

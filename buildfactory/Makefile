@@ -91,17 +91,20 @@ dist-deb: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _deb_
 	$(H)[ -d _deb_/freepops-$(VERSION) ] || \
 		tar -xzf freepops-$(VERSION).tar.gz -C _deb_
+	$(H)cp freepops-$(VERSION).tar.gz \
+		_deb_/freepops_$(VERSION).orig.tar.gz
 	$(H)cd _deb_/freepops-$(VERSION);\
 		cp -r buildfactory/debian .;\
 		./configure.sh linux;\
 		dpkg-buildpackage -rfakeroot -us -uc
 	$(H)mkdir -p ../dist-deb/freepops || true
 	$(H)cp _deb_/*.tar.gz _deb_/*.deb _deb_/*.dsc _deb_/*.changes \
-		../dist-deb/freepops
-	$(H)lintian -vi ../dist-deb/freepops/*.deb \
+		_deb_/*.diff.gz ../dist-deb/freepops
+	$(H)lintian -i ../dist-deb/freepops/*.deb \
 		../dist-deb/freepops/*.dsc ||true
-	$(H)cd ../dist-deb/freepops/;echo "freepops optional mail" \
-		> overridefile
+	$(H)cd ../dist-deb/freepops/; \
+		echo -e "freepops optional mail\nfreepops-doc optional mail" \
+			> overridefile
 	$(H)cd ../dist-deb/freepops/;dpkg-scanpackages . overridefile > Packages
 	$(H)cd ../dist-deb/freepops/;dpkg-scansources . overridefile > Sources
 	$(H)cd ../dist-deb/freepops/;gzip -f Packages Sources

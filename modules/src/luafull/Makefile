@@ -25,14 +25,15 @@ HLDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 
 H=@
 
-all: luafull
-
+all: $(PREFIX)/bin/luafull
+	
+$(PREFIX)/bin/luafull: luafull
+	$(H)cp luafull $(PREFIX)/bin
+	
 luafull:
 	$(H)echo -n ' building luafull... '
 	$(H)$(HCC) $(HCFLAGS) -o luafull lua.c $(HLDFLAGS) || true
 	$(H)echo "done."
 
-	$(H)cp luafull $(PREFIX)/bin || true
-
 clean:
-	$(H)rm -f lib/* bin/*
+	$(H)rm -f lib/* bin/* luafull

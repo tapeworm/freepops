@@ -28,7 +28,8 @@ MK_TEMPLATE=	luabind \
 		base64_lua	\
 		mimer_lua	\
 		commonimpl_lua	\
-		regularexp_lua
+		regularexp_lua	\
+		xmltables_lua	
 
 MK_TEMPL_CTRIB=	lua \
 		pthread \

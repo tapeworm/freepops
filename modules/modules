@@ -30,6 +30,7 @@ MODULES-Common= lua		\
 		commonimpl_lua	\
 		regularexp_lua 	\
 		luaexpat	\
+		xmltables_lua	\
 		luadoc		\
 		luafull
 	

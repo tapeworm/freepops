@@ -318,6 +318,7 @@ function Private.get_uri(self,url,exhed)
 	local gl_b,gl_h = {},{}
 	
 	self.curl:setopt(curl.OPT_HTTPGET,1)
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
 	
 	Hidden.build_header(self,url,exhed)
 	
@@ -327,11 +328,41 @@ function Private.get_uri(self,url,exhed)
 		Private.get_uri,self,Hidden.mangle_location(self,err),exhed)
 end
 
+function Private.custom_get_uri(self,url,custom,exhed)
+	local gl_b,gl_h = {},{}
+	
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,custom)
+	
+	Hidden.build_header(self,url,exhed)
+	
+	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
+
+	return Hidden.continue_or_return(rc,err,gl_b,
+		Private.get_uri,self,Hidden.mangle_location(self,err),exhed)
+end
+
+function Private.custom_post_uri(self,url,custom,post,exhed)
+	local gl_b,gl_h = {},{}
+	
+	self.curl:setopt(curl.OPT_POST,1)
+	self.curl:setopt(curl.OPT_POSTFIELDS,post)
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,custom)
+	
+	Hidden.build_header(self,url,exhed)
+	
+	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
+	
+	return Hidden.continue_or_return(rc,err,gl_b,
+		--Private.post_uri,self,Hidden.mangle_location(self,err),post,exhed)
+		Private.get_uri,self,Hidden.mangle_location(self,err),exhed)
+end
+
 function Private.post_uri(self,url,post,exhed)
 	local gl_b,gl_h = {},{}
 	
 	self.curl:setopt(curl.OPT_POST,1)
 	self.curl:setopt(curl.OPT_POSTFIELDS,post)
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"POST")
 	
 	Hidden.build_header(self,url,exhed)
 	
@@ -360,6 +391,7 @@ function Private.get_head(self,url,exhed)
 	local gl_b,gl_h = {},{}
 	
 	self.curl:setopt(curl.OPT_HTTPGET,1)
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
 	self.curl:setopt(curl.OPT_NOBODY,1)
 	
 	Hidden.build_header(self,url,exhed)
@@ -376,6 +408,7 @@ function Private.pipe_uri(self,url,cb,exhed)
 	local gl_b,gl_h = {},{}
 	
 	self.curl:setopt(curl.OPT_HTTPGET,1)
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
 	
 	Hidden.build_header(self,url,exhed)
 	

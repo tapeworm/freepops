@@ -527,15 +527,19 @@ function quit_update(pstate)
 	local Gmail_at = internal_state.gmail_at
 
 	local uri = string.format(gmail_string.msg_mark, folder)
-	-- act = [rd|ur|rc_^i]
+	-- act = [rd|ur|rc_^i|tr]
 	--        rd = mark as read
 	--        ur = mark as unread
 	--     rc_^i = move to archive
 	--	     tr = move to trash
 
-	local MarkAction = "rc_^i"
-	if folder=="spam" then
+	local MarkAction = "rd"
+	if folder == "spam" then
 		MarkAction = "tr"
+	else
+		if folder == "inbox" then
+			MarkAction = "rc_^i"
+		end
 	end
 
 	local post=string.format(gmail_string.msg_mark_post,MarkAction,Gmail_at)

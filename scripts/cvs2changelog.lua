@@ -33,7 +33,7 @@ end
 file =  "/tmp/cvs2changelog-"..string.gsub(arg[2],"/","-")..arg[1]
 
 
-os.execute("cvs log -d \">"..arg[1].." day ago\" "..arg[2].." > ".. file)
+os.execute("cvs log -d \">"..arg[1].." day ago\" "..arg[2].." 2</dev/null > ".. file)
 
 f = io.open(file,"r")
 

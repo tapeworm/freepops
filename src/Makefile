@@ -130,7 +130,7 @@ ifeq "$(OS)" "BeOS"
 		-ldl -lpthread $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 else
 	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
-		-ldl -lm -lpthread -lcrypto -rdynamic \
+		-ldl -lm -lpthread -rdynamic \
 		$(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 
 endif

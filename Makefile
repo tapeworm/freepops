@@ -50,7 +50,7 @@ distclean: clean
 realclean: distclean
 	$(H)rm -f config
 	
-doc:
+doc: all
 	$(H)$(MAKE) -C modules doc CONFIG=$(PWD)/config
 
 install: all

@@ -98,7 +98,7 @@ Section "FreePOPs (required)"
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\NSIS_FreePOPs "Install_Dir" "$INSTDIR"
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FreePOPs" "DisplayName" "NSIS LiberoPOPs (remove only)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FreePOPs" "DisplayName" "NSIS FreePOPs (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FreePOPs" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteUninstaller "uninstall.exe"
 SectionEnd

@@ -122,7 +122,10 @@ History
 
 FreePOPs is not born from scratch.
  A similar (only in the main usage situation) project is LiberoPOPs.
- The ancestor of FreePOPs is completely written in C for some non interesting
+ 
+\layout Standard
+
+The ancestor of FreePOPs is completely written in C for some non interesting
  reasons.
  LiberoPOPs supports 
 \begin_inset Quotes eld
@@ -132,35 +135,51 @@ plugins
 \begin_inset Quotes erd
 \end_inset 
 
- but in more static and complex way.
- The POP3 server frontend can be attached to a backend written in C.
+ but in a more static and complex way.
+ The POP3 server frontend could be attached to a backend written in C.
  This means you have to recompile and restart LiberoPOPs each time to change
  a line in a plugin.
  Another interesting point is that LiberPOPs was created from scratch in
- really short amount of time (you have to be Italian and use a @libero.it
+ really short amount of time (you have to be Italian and use a 
+\family typewriter 
+@libero.it
+\family default 
  mail address to understand why), this means it was born with a lot of bugs
  and FIX-ME in the code.
- The project had a quick success, since everybody need it.
+ 
+\layout Standard
+
+The LiberoPOPs project had a quick success, since everybody needed it.
  This means we had a lot of users.
  In the opensource (and also Linux) philosophy you have to release frequently
- and this was exactly what we had to do.
+ and this was exactly what we did.
  We used to release every 2 days.
  But we were working not with Unix users, nor hackers, mostly Win32 users.
- I've not really understood why the considered a boring task to read a 3
- pages tutorial and a 1 page F.A.Q.
- but I've realized that the are lazy-bored of updating the software every
+ I've not really understood why they considered a boring task to read a
+ 3 pages tutorial and a 1 page F.A.Q.
+ but I've realized that the are lazy/bored of updating the software every
  2 days.
  The ugly Win-world has taught them that software auto-updates, auto-install
  and even auto-code-itself probably.
- We tried to solve this putting out of the C engine the most of the change-prone
+ 
+\layout Standard
+
+We tried to solve this pulling out of the C engine the most of the change-prone
  code, but this was really hard since C is not thought to do this.
  After LiberoPOPs had stabilized we started to think how to solve this.
- A scripting/interpreted embedded language seemed me a nice choice and after
- a long search on the net an on the newsgroup of my university I found LUA.
+ 
+\layout Standard
+
+A scripting/interpreted embedded language seemed me a nice choice and after
+ a long search on the net and on the newsgroup of my university I found
+ LUA.
  This is not the place for telling the world how good is this small language
- and I'll not talk about it.
+ and I'll not talk more about it here.
  Integrating the LUA interpreter in LiberoPOPs was not so hard and FreePOPs
  is the result.
+ Now it is really easyer to write/test a plugin and (even if it is not implement
+ed yet) an auto-update facility is really easy to code since there is no
+ need to recompile the C core in most cases.
 \layout Section
 
 FreePOPs configuration file

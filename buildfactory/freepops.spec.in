@@ -47,6 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING
 %doc AUTHORS
 %{_bindir}/freepopsd
+#%{_mandir}/man1/freepopsd.1.bz2
 %{_mandir}/man1/freepopsd.1.gz
 %{_sysconfdir}/init.d/freepops
 %{_sysconfdir}/sysconfig/freepops

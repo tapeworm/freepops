@@ -21,5 +21,4 @@ win32:
 
 osx:
 	freepops.pspm
-	README-osx.txt
-	Install_resources/*
+	osx/*

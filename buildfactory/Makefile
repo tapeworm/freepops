@@ -105,19 +105,21 @@ dist-deb: freepops-$(VERSION).tar.gz
 
 dist-osx:
 	$(H)cd ..;./configure.sh osx || true
-	$(H)cd ..;$(MAKE) all CONFIG=../config
+	$(H)cd ..;$(MAKE) all CONFIG=./config
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
-	$(H)cp README-osx.txt ../dist-osx/FreePOPs/
+	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
 	$(H)cd ..;cp COPYING AUTHORS ChangeLog config.lua dist-osx/FreePOPs/
 	$(H)cd ../doc;cp LP-FP-HOWTO.txt MANUAL ../dist-osx/FreePOPs/doc/
 	$(H)cd ../src;strip freepopsd;cp freepopsd ../dist-osx/FreePOPs/src/
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd ../src/lua;cp *.lua ../../dist-osx/FreePOPs/src/lua
 	$(H)cd ../modules/include;cp *.lua ../../dist-osx/FreePOPs/modules/include
-	$(H)cat ../CHANGELOG >> Install_resources/English.lproj/ReadMe.txt
-	$(H)cat ../CHANGELOG >> Install_resources/Italian.lproj/ReadMe.txt
+	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
+	$(H)cat ../CHANGELOG >> osx/Install_resources/English.lproj/ReadMe.txt
+	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt
+	$(H)cat ../CHANGELOG >> osx/Install_resources/Italian.lproj/ReadMe.txt
 
 dist-obsd:
 	$(H)cd ..;./configure.sh obsd || true

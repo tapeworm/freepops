@@ -3,37 +3,39 @@ legend: more + means more done! (from 1 to 7, if your tab is 8)
 for future versions:
 	regression tests maybe with netcat or other to make it possible to run
 		some tests at least over some plugin
-	plugin (supereva,freepass,excite)
-	problemi in lycos utf8 (magari sistemare il mimer decentemente)
-	problemi login tin(aspetta ethereal)
 	porting pocketpc
+	ipv6
 
 for version 0.1.0:
-	on the fly generation of ps in /doc from jpg
 	win32 service interface (evaluate if it is easy and not so intrusive)
-	utf8 - mimer - lycos
+	utf8 - mimer - lstring lua utf8 support
 
-for version 0.0.15:
-++++	aggiungi il parametro folder eventualmente ad altre webmail 
-		in cui sia facile supportarlo. (tin e libero sono OK).
+for next version or later:
+++++	add the folder parameter eventually to all webmail s
 +++	factorize top and retr in common.lua since in the raw case they are 
-		always the same (done in libero and tin)
+		always the same (done in libero and tin and owa)
 	add squirrel to manual
 	add linuxgazette.net aggregator domain to manual
-	aggiungi nel manuale che se uno lascia i messaggi usl server si 
-		genera molto traffico, con una stima decente.
+	add a note in the manual that if you leve messages on server
+		there is alot of network traffic
 	http://liberopops.diludovico.it/index.php?showtopic=859&st=0&#entry4412
 	http://liberopops.diludovico.it/index.php?showtopic=858
-	add help GLOBAL variable to plugins so that one can read the 
-		instructions readin the file (used by MacFP)
 	http://liberopops.diludovico.it/index.php?showtopic=877&st=0&#entry4499
 	http://liberopops.diludovico.it/index.php?showtopic=890&st=0&#entry4594
-+++++	folder in yahoo.com /it
-	finire squirrel
 	http://freepops.diludovico.it/index.php?showtopic=920&st=0&#entry4834
++++++	folder in yahoo.com /it
+	finish squirrel.lua (eddi is working on it?)
 	opzioni proxy in config.lua e integra lettura impostazioni di IE
-	link a rss feed nella home
-	manuale lycos -> owa
-	fissare 3 volte in header http sia coochie e host
+	link the rss feed in the homepage
+	fix in owa that Host and Cookie is repeated 3 times.
 	in the manual we reference lycos.lua that is no more here.
 		switch to squirrel/tre and backport comments :)
+	add a Txml table to each plugin describing it
+		and this for a translation.
+	create an exportation script with luafull and tahble2xml
+	create a xslt to generate the XHTML for the homepage,
+		would be nice to have many views:
+		- listed by domain
+		- listed by plugin name
+
+- eof -

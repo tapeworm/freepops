@@ -431,7 +431,8 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 		
 		local mime = "MIME-Version: 1.0 "..
 				"(produced by FreePOPS/MIMER)\r\n"..
-			"Content-Type: Multipart/Related; "..
+			--"Content-Type: Multipart/Related; "..
+			"Content-Type: Multipart/Mixed; "..
 				"boundary=\""..boundary.."\"\r\n"
 		
 		-- send headers

@@ -7,7 +7,6 @@ for future versions:
 	ipv6
 
 for version 0.1.0:
-	win32 service interface (evaluate if it is easy and not so intrusive)
 	utf8 - mimer - lstring lua utf8 support
 
 for next version or later:
@@ -25,4 +24,6 @@ for next version or later:
 	create the -dev ML
 	curl_info
 	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/taskbar.asp
+	http://www.muukka.net/programming/service.html
+	
 - eof -

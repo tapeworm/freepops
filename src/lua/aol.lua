@@ -7,11 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.5"
+PLUGIN_VERSION = "0.0.6"
 PLUGIN_NAME = "aol.com"
--- This will need to be 0.0.21 when cookie.lua is updated!
---
-PLUGIN_REQUIRE_VERSION = "0.0.20"
+PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=aol.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
@@ -78,6 +76,10 @@ local globals = {
   -- Pattern to pull out the url's we need to go to set some cookies.
   --
   strLoginRetUrlPattern1='LANGUAGE="JavaScript" SRC="(http[^"]*)"',
+  
+  -- Pattern to find the next page of messages
+  --
+  strMsgListPrevPagePattern = '<A HREF="([^"]+)" CLASS="msglistbottomnav">Next</A>',
 
   -- Extract the server to post the login data to
   --
@@ -112,7 +114,7 @@ local globals = {
   -- Command URLS
   --
   strCmdMsgList = "http://%s/msglist.adp?folder=%s&start=1",
-  strCmdDelete = "http://%s/msglist.adp?folder=%s&start=1&cmd=deletemsgs&cmdnum=%s", --&msguid=X",
+  strCmdDelete = "http://%s/msglist.adp?folder=%s&start=1&cmd=deletemsgs", --&msguid=X",
   strCmdMsgView = "http://%s/attachment/%s/%s/",
 
   -- Site IDs
@@ -181,7 +183,7 @@ function loginAOL()
   -- Define some local variables
   --
   local username = internalState.strUser
-  local password = internalState.strPassword
+  local password = curl.escape(internalState.strPassword)
   local domain = internalState.strDomain
   local url = string.format(globals.strLoginUrl, internalState.strSiteId)
   local xml = globals.strFolderQry
@@ -268,6 +270,11 @@ function loginAOL()
       postdata = name .. "=" .. value 
     end
   end
+  if url == nil then
+    log.error_print(globals.strLoginFailed)
+    return POPSERVER_ERR_AUTH  
+  end  
+
   body, err = browser:post_uri(url, postdata)
 
   -- Shouldn't happen but you never know
@@ -577,12 +584,10 @@ function quit_update(pstate)
   local browser = internalState.browser
   local cnt = get_popstate_nummesg(pstate)
   local dcnt = 0
-  local cmdCookie = browser:get_cookie('COMMAND')
 
   local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer, 
-    internalState.strMBox, cmdCookie.value)
+    internalState.strMBox)
   local baseUrl = cmdUrl
-  
 
   -- Cycle through the messages and see if we need to delete any of them
   -- 
@@ -594,6 +599,8 @@ function quit_update(pstate)
       -- Send out in a batch of 5
       --
       if math.mod(dcnt, 5) == 0 then
+        local cmdCookie = browser:get_cookie('COMMAND')
+        cmdUrl = cmdUrl .. "&cmdnum=" .. (cmdCookie.value or "")
         log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
         local body, err = browser:get_uri(cmdUrl)
         if not body or err then
@@ -611,6 +618,8 @@ function quit_update(pstate)
   -- Send whatever is left over
   --
   if dcnt > 0 and dcnt < 5 then
+    local cmdCookie = browser:get_cookie('COMMAND')
+    cmdUrl = cmdUrl .. "&cmdnum=" .. (cmdCookie.value or "")
     log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
     local body, err = browser:get_uri(cmdUrl)
     if not body or err then
@@ -682,10 +691,19 @@ function stat(pstate)
   end 
 
   -- Local Function to check for more pages of messages.  AOL lists all
-  -- its messages on one page.
+  -- its messages on one page (but Netscape does in pages of 25)
   --
   local function funcCheckForMorePages(body) 
-    return true
+    -- Look in the body and see if there is a link for a previous page
+    -- If so, change the URL
+    --
+    local _, _, nextURL = string.find(body, globals.strMsgListPrevPagePattern)
+    if nextURL ~= nil then
+      cmdUrl = "http://" .. internalState.strMailServer .. "/" .. nextURL
+      return false
+    else
+      return true
+    end
   end
 
   -- Local Function to get the list of messages

@@ -1,6 +1,12 @@
 all: manual.pdf manual-it.pdf
 	cp manual.pdf manual-it.pdf ../
 
+spell:
+	aspell -t -c manual.tex
+
+spell-it:
+	aspell -t --lang=it -c manual-it.tex
+
 %.pdf:%.ps
 	ps2pdf $< $@
 

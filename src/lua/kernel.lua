@@ -69,33 +69,33 @@ local string_type
 
 local kernel_string = {
 	linkE24 =
-		"</b>.*<td>.*"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]<a.*2.4.[[:digit:]]+\">Changelog</a>",
+		"</b>.*</td>.*<td>.*</td>.*"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]<a.*2.4.[[:digit:]]+\">Changelog</a></td>",
 	linkE26 =
-		"</b>.*<td>.*"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]<a.*2.6.[[:digit:]]+\">Changelog</a>",
+		"</b>.*</td>.*<td>.*</td>.*"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]<a.*2.6.[[:digit:]]+\">Changelog</a></td>",
 	linkE =
-		"</b>.*<td>.*"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]{a.*}.*{/a}[.*]"..
-		"<td>[.*]<a.*>Changelog</a>",
+		"</b>.*</td>.*<td>.*</td>.*"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]{a.*}.*{/a}[.*]</td>"..
+		"<td>[.*]<a.*>Changelog</a></td>",
 	linkG = 
-		"<O>O<O>X"..
-		"<O>[O]{O}O{O}[O]"..
-		"<O>[O]{O}O{O}[O]"..
-		"<O>[O]{O}O{O}[O]"..
-		"<O>[O]{O}O{O}[O]"..
-		"<O>[O]<X>O<O>",
+		"<O>O<O>O<O>X<O>O"..
+		"<O>[O]{O}O{O}[O]<O>"..
+		"<O>[O]{O}O{O}[O]<O>"..
+		"<O>[O]{O}O{O}[O]<O>"..
+		"<O>[O]{O}O{O}[O]<O>"..
+		"<O>[O]<X>O<O><O>",
 }
 
 
@@ -297,25 +297,28 @@ function stat(pstate)
 	-- the check_f function, see later
 	local uri = internal_state.password
 	
+	
 	-- extract all the messages uidl
 	local function action_f (s) 
 		--	
 		-- sets global var rss
 		kernel_html=s
+
 		s=string.gsub(kernel_html,
 		"<td>&nbsp;","<td><a href=\"#\">void</a>")
-		--print(kernel_html)
 		local a=0
 		local start=0
 		local nmess=0
 		local x = mlex.match(s,string_type,kernel_string.linkG)
-		
+			
 		local n=x:count()
+
 		nmess=n
-		
+		--nmess=1	
 		-- this is not really needed since the structure 
 		-- grows automatically... maybe... don't remember now
 		set_popstate_nummesg(pstate,nmess)
+		
 
 		-- gets all the results and puts them in the popstate structure
 		local s2=s

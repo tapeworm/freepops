@@ -103,6 +103,7 @@ HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 					 required_argument, NULL, 1000 },
 				 { "fpat", 
 					 required_argument, NULL, 1000 },
+				 { "no-icon",no_argument, NULL, 1001}
 	                         { NULL, 0, NULL, 0 } };
 
 void usage(const char *progname) {
@@ -120,6 +121,9 @@ void usage(const char *progname) {
 "\t\t\t[-l|--logmode (syslog|filename|stdout)]\n"
 "\t\t\t[-x|--toxml pluginfile]\n"
 "\t\t\t[--fpat|--force-proxy-auth-type (basic|digest|ntlm|gss)]\n"
+#if defined(WIN32)
+"\t\t\t[--no-icon]\n"
+#endif
 #if !defined(WIN32) && !defined(BEOS)			
 "\t\t\t[-s|--suid user.group]\n"
 "\t\t\t[-k|--kill]\n"
@@ -366,6 +370,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	unsigned short port = POP3PORT;
 	struct in_addr address;
 	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL, *fpat = NULL;
+	int tray_icon = 1;
 
 #if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)	
         pid_t this_pid;
@@ -485,6 +490,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		} else if (res == 'w') {
 			/* --veryverbose */
 			verbose_output+=2;
+	#if defined(WIN32)
+		} else if (res == 1001) {
+			tray_icon = 0;		
+	#endif
 		} else if (res == 1000) {
 			/* --fpat */
 			free(fpat);
@@ -551,7 +560,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 /*** INITIALIZATION WIN32 ***/
 #if defined(WIN32) && !defined(CYGWIN)
-	create_tray_icon(hInstance,hPrevInstance,lpszCmdLine,nCmdShow);
+	if(tray_icon)
+		create_tray_icon(hInstance,hPrevInstance,lpszCmdLine,nCmdShow);
 #endif
 
 /*** GO! ***/

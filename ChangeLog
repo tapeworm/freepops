@@ -1,3 +1,4 @@
+- added --no-icon win32 flag
 - fissato uninstall win32
 27/09/2004 0.0.18 fix release
 - updated plugins by russell

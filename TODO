@@ -28,5 +28,6 @@ for next version or later:
 	bindings for psock : http://freepops.diludovico.it/index.php?showtopic=1386&st=0&#entry7968
 	TOP 1 9999 in gmail
 	fix gmail 695 tonumber(nil)
+	they say that win32 withoud -w can crash
 
 - eof -

@@ -275,9 +275,11 @@ function pass(pstate,password)
 	-- password is the flatnuke URI basename
 
 	if freepops.MODULE_ARGS ~= nil then
+	if (freepops.MODULE_ARGS.host ~= nil) then
 		internal_state.password = freepops.MODULE_ARGS.host
 	else
 		internal_state.password = password
+	end
 	end
 
 	-- build the uri

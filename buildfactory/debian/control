@@ -14,7 +14,7 @@ Description: pop3 interface to webmails
  webmail sites.
 
 Package: freepops-doc
-Architecture: any
+Architecture: all
 Depends: 
 Description: FreePOPs user/developer manual
  This is the manual in pdf format for FreePOPs.

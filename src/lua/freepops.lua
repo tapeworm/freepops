@@ -28,7 +28,7 @@ setmetatable(freepops,fp_m)
 
 -- function to extract domain part of a mailaddress
 freepops.get_domain = function (mailaddress)
-	local _,_,ad = string.find(mailaddress,"[%-_\.%a%d]+@([%-_\.%a%d]+)")
+	local _,_,ad = string.find(mailaddress,"[^@]+@([%-_%.%w%d]+)")
 	return ad
 end
 

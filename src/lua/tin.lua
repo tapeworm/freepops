@@ -105,7 +105,7 @@ end
 -- Extracts the domain name of a mailaddress
 --
 function get_domain(s)
-	local _,_,d = string.find(s,"[_%.%a%d]+@([_%.%a%d]+)")
+	local _,_,d = string.find(s,"[^@]+@([_%.%w%d]+)")
 	return d
 end
 
@@ -113,7 +113,7 @@ end
 -- Extracts the account name of a mailaddress
 --
 function get_name(s)
-	local _,_,d = string.find(s,"([_%.%a%d]+)@[_%.%a%d]+")
+	local _,_,d = string.find(s,"([^@]+)@[_%.%w%d]+")
 	return d
 end
 
@@ -128,12 +128,30 @@ end
 -- we don't want to break the webmail
 --
 function check_sanity(name,domain,pass)
-	print("FIXME: do as the js")
+	-- FIXME no domain check for subdomains of tin.it
+	if string.len(name) < 3 or string.len(name) > 30 then
+		log.error_print("username must be from 3 to 30 chars")
+		return false
+	end
+	local _,_,x = string.find(name,"([^0-9a-z%.%_%-])")
+	if x ~= nil then
+		log.error_print("username contains invalid character "..x.."\n")
+		return false
+	end	
+	if string.len(pass) < 4 or string.len(pass) > 24 then
+		log.error_print("password must be from 4 to 24 chars")
+		return false
+	end
+	local _,_,x = string.find(pass,"[^0-9A-Za-z%.%_%-אטילעש]")
+	if x ~= nil then
+		log.error_print("password contains invalid character "..x.."\n")
+		return false
+	end
 	return true
 end
 
 function toGMT(d)
-	print("FIXME: GMT time conversion")
+	log.say("FIXME: GMT time conversion")
 	return os.date("%c",d)
 end
 
@@ -156,7 +174,7 @@ end
 
 function asc2hex(d)
 	local t = {}
-	-- FIX may be faster :)
+	-- FIXME may be faster :)
 	for i=1,string.len(d) do
 		table.insert(t,string.format("%X",string.byte(d,i)))
 	end

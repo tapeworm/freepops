@@ -1,3 +1,7 @@
+- fix per yahoo (ramik)
+- fix for gmail: modified dele actions for default folders, fix for message
+marking, fix for passwords with special characters, modified action for spam
+folder. (thanks ramik)
 - added Mac OS X Jaguar support
 - added fn:patch tag support to flatnuke plugin
 - added crypto (md5 and bin2hex) bindings

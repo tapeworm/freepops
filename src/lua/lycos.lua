@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.1-rc4"
+PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "Lycos.IT"
 
 -- ************************************************************************** --
@@ -243,8 +243,6 @@ function mangle_body(s)
 	
 		s = lycos_string.html_preamble .. s .. 
 			lycos_string.html_conclusion
-
-		s = mimer.mshtm_shitify(s)
 
 		return nil,s
 	end

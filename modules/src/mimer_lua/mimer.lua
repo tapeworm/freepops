@@ -27,6 +27,10 @@ Private.html_tags = {
 	["/br"] = '\n',
 	["li"] = '\t-',
 	["/li"] = '\n',
+	["ul"] = "",
+	["/ul"] = "",
+	["ol"] = "",
+	["/ol"] = "",
 	["img"] = '[image]',
 	["/tr"] = '\n',
 	["tr"] = "",
@@ -82,6 +86,10 @@ Private.html_tags_plain = {
 	["/br"] = '\n',
 	["li"] = '',
 	["/li"] = '',
+	["ul"] = "",
+	["/ul"] = "",
+	["ol"] = "",
+	["/ol"] = "",
 	["img"] = '',
 	["/tr"] = '',
 	["pre"] = "",
@@ -186,6 +194,100 @@ function Private.base64_io_slave(cb)
 	end
 end
 
+Private.qpewrap=73
+Private.eq = string.byte("=",1)
+Private.lf = string.byte("\n",1)
+Private.cr = string.byte("\r",1)
+
+---
+-- Encodes the message for mail transfer.
+-- must be
+function mimer.quoted_printable_encode(s)
+	local out = {}
+	local eq = Private.eq
+	
+	for i=1,string.len(s) do
+		local b = string.byte(s,i)
+		if b > 127 or b == eq then
+			--FIXME: slow!
+			table.insert(out,string.format("=%2X",b))
+		else
+			table.insert(out,string.char(b))
+		end
+	end
+	return table.concat(out)
+end
+
+function Private.qpr_eval_expansion(s)
+	local count = 0
+	local to = 0
+	local eq = Private.eq
+	local lf = Private.lf
+	local cr = Private.cr
+	
+	for i=0,string.len(s) do
+		local b = string.byte(s,i)
+
+		--FIXME not perfect if "...\r" trunk "\n..."
+		if b == cr then
+			if i+1 <= string.len(s) and 
+				string.byte(s,i+1) == lf then
+				return true,true,i+1
+			else
+				return true,true,i
+			end
+		end
+
+		if b == lf then
+			return true,true,i
+		end
+		
+		if b > 127 or b == eq then
+			count = count + 3
+		else
+			count = count + 1
+		end
+		if count > Private.qpewrap then	
+			return true,false,i
+		end
+	end
+
+	return false,false,string.len(s)
+end
+
+function Private.quoted_printable_io_slave(cb)
+	local buffer = ""
+	return function(s,len)
+		buffer = buffer .. s
+		
+		local todo_table = {}
+		local wrap,forced,len = Private.qpr_eval_expansion(buffer)
+		while forced or wrap do
+			local chunk = string.sub(buffer,1,len)
+			if forced then
+				chunk = string.gsub(chunk,"[\r\n]","")
+				table.insert(todo_table,
+				mimer.quoted_printable_encode(chunk).."\r\n")
+			else
+				table.insert(todo_table,
+				mimer.quoted_printable_encode(chunk).."=\r\n")
+			end
+			
+			buffer = string.sub(buffer,len + 1,-1)
+			wrap,forced,len = Private.qpr_eval_expansion(buffer)
+		end
+		if table.getn(todo_table) > 0 then
+			cb(table.concat(todo_table))
+		end
+		if len == 0 then
+			cb(Private.qpr_eval_expansion(buffer))
+			buffer = ""
+		end
+		return len
+	end
+
+end
+
 function Private.attach_it(browser,boundary,send_cb)
 	return function(k,uri)
 		local h,err = browser:get_head(uri)
@@ -208,11 +310,7 @@ function Private.attach_it(browser,boundary,send_cb)
 		if Private.needs_encoding(x) then
 			cb = Private.base64_io_slave(send_cb)
 		else
-			cb = function(s,len)
-				if len == 0 then return 0 end
-				send_cb(s.."\0")
-				return len
-			end
+			cb = quoted_printable_io_slave(cb)
 		end
 	
 		-- do the work
@@ -333,8 +431,11 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 				"Content-Type: text/plain; "..
 					"charset=us-ascii\r\n"..
 				"Content-Disposition: inline\r\n" ..
+				"Content-Transfer-Encoding: "..
+					"quoted-printable\r\n"..
 				"\r\n"..
-				mimer.txt2mail(body)..
+				mimer.txt2mail(
+					mimer.quoted_printable_encode(body))..
 				"\r\n")
 			if rc ~= nil then return end	
 		else
@@ -342,8 +443,11 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 			if rc ~= nil then return end
 
 			rc = Private.send_alternative(
-				mimer.txt2mail(body),
-				mimer.txt2mail(body_html),
+				mimer.txt2mail(
+					mimer.quoted_printable_encode(body)),
+				mimer.txt2mail(
+					mimer.quoted_printable_encode(
+						body_html)),
 				send_cb)
 			if rc ~= nil then return end	
 		end
@@ -367,8 +471,11 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 			if rc ~= nil then return end
 			
 			rc = Private.send_alternative(
-				mimer.txt2mail(body),
-				mimer.txt2mail(body_html),
+				mimer.txt2mail(
+					mimer.quoted_printable_encode(body)),
+				mimer.txt2mail(
+					mimer.quoted_printable_encode(
+						body_html)),
 				send_cb)
 			if rc ~= nil then return end	
 		end
@@ -501,11 +608,4 @@ function mimer.remove_lines_in_proper_mail_header(s,p)
 	return table.concat(result)
 end
 
----
--- Reproduces some bugs of the MSHTML.
--- @return string the altered html.
-function mimer.mshtm_shitify(s)
-	return string.gsub(s,"<([^>]*)>",function(c)
-		return "<"..string.gsub(c,"=","=3D")..">" end)
-end
 

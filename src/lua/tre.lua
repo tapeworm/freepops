@@ -171,7 +171,7 @@ function build_date(str)
 	    local temp
 	    str=string.gsub(str,"[0-9]+/[0-9]+/[0-9]+ [0-9]+:[0-9]+","%2/%1/%3 %4:%5:00")
 	    temp = getdate.toint( str )
-	    print("seconds from 0:0 1/1/1970 della data " .. str .. " : " .. temp )
+	    log.dbg("Date: " .. str .. " Date in UNIX format: " .. temp )
             return(os.date("%a, %d %b %Y %H:%M:%S",temp))
 	end
 end
@@ -259,7 +259,7 @@ function tre_login()
 	-- build the uri
 	local domain = internal_state.domain
 	local uri = string.format(tre_string.login,internal_state.domain)
-	--print ( "DEBUG: " .. uri )
+	log.dbg("DEBUG: login uri " .. uri )
 
 	-- the browser must be preserved
 	internal_state.b = browser.new()
@@ -338,36 +338,28 @@ function tre_parse_webmessage(pstate,msg)
 	-- body handling: build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	local uri = string.format(tre_string.save,internal_state.domain,uidl,internal_state.folder)
-	-- print ( "DEBUG uri: " .. uri )
+	log.dbg("DEBUG: web message " .. uri )
 	
 	-- get the main mail page
 	local f,rc = b:get_uri(uri)
 
 	-- extract the body
---	local from,to = string.find(f,tre_string.bodyC)
 	local _,_,body = string.find(f,tre_string.bodyC)
---	local from1,to1 = string.find(f,tre_string.bodyC)
 
---	print ( from .. " " .. to .. " " .. from1 .. " " .. to1)
-
---	local body = string.sub(f,to+1,from-1)
---print ("BODY" .. body)
---print ("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+	log.dbg("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+	log.dbg("DEBUG: Parsing message")
+	log.dbg("BODY" .. body)
+	log.dbg("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
 
 	local subst = 1
 
         while subst > 0 do
---print ( "DEBUG: " .. subst )
+	    log.dbg("DEBUG: number of substitution " .. subst )
 	    f,subst = string.gsub(f,"<[aA] href=\"[^\"]+\" [a-z]+='[^']+' [a-z]+='[^']+' [a-z]+='[^']+'>([^<]*)<[/]*a>","%1")
 	end	
 
 	-- generate the headers
 	local x = mlex.match(f,tre_string.headerE,tre_string.headerG)
---print ("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
---print ("F" .. f)
---print ( "STAMPO IL RISULTATO DELL'MLEX" )
---	x:print()
---print ("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
 
 	local hfrom
 	local hto
@@ -377,14 +369,14 @@ function tre_parse_webmessage(pstate,msg)
 	local n = x:count()
 
 	for i = 1,n do
---		print("addo " .. i .. " fino a " .. n)
+		log.dbg("addo " .. i .. " fino a " .. n)
 		local _,_,k = string.find(x:get(0,i-1),'([A-Za-z]+):.*')
 
---print ("DEBUG:" .. k)
+		log.dbg("DEBUG:" .. k)
 
 		local _,_,v = string.find(mimer.html2txtplain(x:get(1,i-1)),'^[%s%t]*(.*)')
 
---print ("DEBUG:" .. x:get(1,i-1))
+		log.dbg("DEBUG:" .. x:get(1,i-1))
 		if k == "Da" then
 		    hfrom = v
 		end
@@ -410,21 +402,21 @@ function tre_parse_webmessage(pstate,msg)
 
 	-- extracts the attach list
 	local x = mlex.match(f,tre_string.attachE,tre_string.attachG)
---print ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
---print ("DEBUG: extracts the attach list from " .. uri )
---	x:print()
---print ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+
+	log.dbg("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+	log.dbg("DEBUG: extracts the attach list from " .. uri )
+	log.dbg("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 	
 	local n = x:count()
 	local attach = {}
 	
 	for i = 1,n do
-		--print("addo fino a " .. n)
+		log.dbg("addo fino a " .. n)
 		local _,_,url = string.find(x:get(1,i-1),'href="([^"]*)"')
 		url = string.gsub(url,"&amp;", "&")
 		local _,_,fname = string.find(x:get(0,i-1),'^[%s%t]*(.*)')
 		attach[mimer.html2txtplain(fname)] = "http://".. b:wherearewe() .. "/cgi-bin/" .. url
---print ("DEBUG: attacchment url " .. attach[mimer.html2txtplain(fname)] )
+		log.dbg("DEBUG: attacchment url " .. attach[mimer.html2txtplain(fname)] )
 		table.setn(attach,table.getn(attach) + 1)
 	end
 	
@@ -653,7 +645,7 @@ function stat(pstate)
 
 	-- this is simple and uri-dependent
 	local function retrive_f ()  
-		--print("getting "..uri)
+		log.dbg("getting "..uri)
 		local f,err = b:get_uri(uri)
 		if f == nil then
 			return f,err

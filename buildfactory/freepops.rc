@@ -43,7 +43,7 @@ start(){
         echo -n "Starting FreePOPs Service :"
         if [ -f $pid ]; then
                 SAVED_PID=`cat $pid`
-                EXE_PID=`ps -elf | grep -m 1 /usr/bin/freepopsd |awk {print $4}'`
+                EXE_PID=`ps -elf | grep -m 1 /usr/bin/freepopsd |awk '{print $4}'`
                 if [ x$SAVED_PID = x$EXE_PID ]; then
                         failure
                         echo

@@ -1,7 +1,7 @@
 #include "lua.h"
 #include "luabind.h"
 #include "lauxlib.h"
-/*
+
 #include <stdlib.h>
 #include <openssl/md5.h>
 
@@ -60,12 +60,11 @@ static const struct luaL_reg crypto_t [] = {
   {NULL,NULL}
 };
 
-*/
+
 
 int luaopen_crypto(lua_State* L){
 	
-	//luaL_openlib(L,"crypto",crypto_t,0);
-	//return 1;
-	
-	return 0;
+	luaL_openlib(L,"crypto",crypto_t,0);
+
+	return 1;
 }

@@ -1,0 +1,8 @@
+---
+-- date parsing facility.
+
+---
+-- Trasforms a date in a smart integer representation.
+-- @param s string the date.
+-- @return number representing the date.
+function getdate.toint(s)

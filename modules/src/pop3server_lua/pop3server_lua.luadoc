@@ -1,0 +1,110 @@
+---
+-- This file is the interface of pop3server.
+-- These are the error codes you may want to pass back to the popserver:
+-- POPSERVER_ERR_OK, POPSERVER_ERR_SYNTAX, POPSERVER_ERR_NETWORK,
+-- POPSERVER_ERR_AUTH, POPSERVER_ERR_INTERNAL, POPSERVER_ERR_NOMSG,
+-- POPSERVER_ERR_LOCKED, POPSERVER_ERR_EOF, POPSERVER_ERR_TOOFAST,
+-- POPSERVER_ERR_UNKNOWN. This is the only supported flag for messages:
+-- MAILMESSAGE_DELETE
+
+---
+-- Sets the mailbox message number.
+-- Used in stat
+-- @param p userdata The pstate.
+-- @param num number The number of messages.
+function pop3server.set_popstate_nummesg(p,num);
+
+---
+-- Sets password.
+-- Can be used to remember it for furter elaboration
+-- @param p userdata The pstate.
+-- @param passwd string The password.
+function pop3server.set_popstate_password(p,passwd);
+
+---
+-- Sets the username.
+-- Can be used to remember it for furter elaboration
+-- @param p userdata The pstate.
+-- @param username string The username.
+function pop3server.set_popstate_username(p,username)
+
+---
+-- Gets the stored password.
+-- @param p userdata The pstate.
+-- @return string.
+function pop3server.get_popstate_password(p)
+
+---
+-- Gets the stored username.
+-- @param p userdata The pstate.
+-- @return string.
+function pop3server.get_popstate_username(p)
+
+---
+-- Get number of messages in the box.
+-- @param p userdata The pstate.
+function pop3server.get_popstate_nummesg(p)
+
+---
+-- Gets the box size.
+-- @param p userdata The pstate.
+function pop3server.get_popstate_boxsize(p)
+
+---
+-- Sets the box size.
+-- @param p userdata The pstate.
+function pop3server.set_popstate_boxsize( p, size)
+
+---
+-- The callback to send data.
+-- @param buffer string the data.."\r\n".
+-- @param popserver_data userdata the pdata passed by the caller.
+function pop3server.popserver_callback(buffer, popserver_data)
+
+---
+-- Sets the message uidl.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+function pop3server.pop3server.set_mailmessage_uidl(p,num,uidl)
+
+---
+-- Sets the message size.
+-- @param numum number the message number, from 1 to n.
+-- @param p userdata The pstate.
+-- @param size number the message size.
+function pop3server.set_mailmessage_size(p,num,size)
+
+---
+-- Sets a message flag.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+-- @param flag number the MAILMESSAGE_* flag.
+function pop3server.set_mailmessage_flag(p,num,flag)
+
+---
+-- Removes a mailmessage flag.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+-- @param flag number the MAILMESSAGE_* flag.
+function pop3server.unset_mailmessage_flag(p,num,flag)
+
+---
+-- Gets message size.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+function pop3server.get_mailmessage_size(p,num)
+
+---
+-- Gets message uidl.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+function pop3server.get_mailmessage_uidl(p,num)
+
+---
+-- Get mailmessage flag.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+-- @param flag number the MAILMESSAGE_* flag.
+-- @return boolean true if is set.
+function pop3server.get_mailmessage_flag(p,num,flag)
+

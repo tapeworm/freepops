@@ -1,0 +1,18 @@
+---
+-- Logging module
+
+---
+-- Prints a as an error.
+function log.error_print(a)
+
+---
+-- Prints a as an error and aborts.
+function log.error_abort(a)
+
+---
+-- Prints a as a message.
+function log.say(a)
+
+---
+-- Prints a as a debug message.
+function log.dbg(a)

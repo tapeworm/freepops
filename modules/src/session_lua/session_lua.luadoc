@@ -1,0 +1,23 @@
+---
+-- Persistent table saving module
+
+---
+-- stores the couple key,data in a permanent data structure.
+-- Permanent means not deleted after the end of the current session.
+-- @param overwrite number one of session.OVERWRITE and session.FAILIFPRESENT
+function session.save(key,data,overwrite)
+
+---
+-- return the string associated with key.
+-- can be loaded with a loadstring(), remeber that returns "\a" if the 
+-- requested session is locked
+function session.load_lock(key)
+
+---
+-- removes saved info for key.
+function session.remove(key)
+
+---
+-- removes lock for key.
+function session.unlock(key)
+

@@ -1,3 +1,10 @@
+04/06/2004 0.0.4 fix/source-reorganization release
+- documentation for new modules
+- badguy feature added to tin.lua
+- added luabind module (factorization of useful functions in bindings)
+- completely removed tolua++
+- bindings for getdate made by hand
+- bindings for popserver made bt hand
 - fixed curl_lua for truncating a connection in the callback
 - session_lua now are made by hand, no more tolua++
 - log_lua now are made by hand, no more tolua++

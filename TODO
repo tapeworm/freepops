@@ -1,14 +1,15 @@
 legeng: more + means more done! (from 1 to 7)
 
 second release 0.0.2
+	update lua5.0 to lua5.0.2
+	curl.dll in the win installer
 	servizio di autoupdate. da valutare la sicurezza di cio'.
 		valutare se far scaricare uno script e farlo eseguire.
 +++++	fare documentazione per moduli lua e C decente
 	plugin (superva?)(freepass?)
 	aggiustare winsystray, download di news, aggiornamento (magari essendo
-		i files dei plugin dei files 
-		di teso si riesce anche in modo decente a fare un 
-		auto-apgrade sotto win)
+		i files dei plugin dei files di teso si riesce anche in modo 
+		decente a fare un auto-apgrade sotto win)
 	tradurre faq
 	add to the manual 
 		freepops.MODULES_MAP["gaim.sf.net"] 	= {

@@ -246,6 +246,25 @@ freepops.set_sanity_checks = function()
 	})
 end
 
+-- checks if this version of FP is SSL enabled
+-- !! must be called after loading the browser module !!
+function freepops.need_ssl()
+	local c = browser.ssl_enabled()
+	if not c then
+		local s = [[
+
+	This plugin needs a SSL-enabled version of FreePOPs. If you are a 
+	windows user, please download and install the -SSL version of FreePOPs.
+	If you are a unix user, this means you have to install an SSL library,
+	like OpenSSL, and make libcURL aware of this (maybe you need to 
+	recompile them).
+	]]
+	
+		log.say(s.."\n")
+		error(s)
+	end
+end
+
 --<==========================================================================>--
 -- Local functions
 

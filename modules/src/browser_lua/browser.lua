@@ -444,4 +444,11 @@ function browser.new()
 	return b
 end
 
-
+---
+-- Returns true if the browser is SSL enabled.
+-- @return boolean.
+function browser.ssl_enabled()
+	local s = curl.version()
+	local _,_,x = string.find(s,"([Ss][Ss][Ll])")
+	return x ~= nil
+end

@@ -1,5 +1,9 @@
+28/06/2004 0.0.10 fix release
+- added freepops.need_sll() that asserts SSL is present 
+(call it after loading browser in the init function of the plugin)
+- added browser.ssl_enabled() to check is SSL is available
 - fixed bug in engine.c (thanks to ramik)
-- added fflush to luay
+- added fflush to luay.c (thanks to ramik)
 - fixed bug in lycos (thanks to Francesco)
 27/06/2004 0.0.9 fix release
 - now win32 dist can include SSL enabled curl

@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "Tin.IT"
 
 -- ************************************************************************** --
@@ -40,7 +40,7 @@ local tin_string = {
 	-- This is the capture to get the session ID from the login-done webpage
 	sessionC = 'LoadFrames%(".*sid=(%w*)%&',
 	-- mesage list mlex
-	statE = ".*<tr>.*<td>.*<spacer>.*</td>.*<td>.*<a>.*<img>.*<img>.*<script>.*</script>.*</a>.*</td>.*<td>.*<input>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</a>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</A>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*KB{/b}[.*]</p>.*</td>.*</tr>",
+	statE = ".*<tr>.*<td>.*<spacer>.*</td>.*<td>.*<a>.*<img>.*<img>.*<script>.*</script>.*</a>.*</td>.*<td>.*<input>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</a>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</A>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*[KkMm]?[Bb]?{/b}[.*]</p>.*</td>.*</tr>",
 	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>O<O>O<O>",
 	-- The uri for the first page with the list of messages
 	first = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
@@ -480,7 +480,7 @@ function stat(pstate)
 		-- statE and statG
 		local x = mlex.match(s,tin_string.statE,tin_string.statG)
 	
-		--x:print()
+		x:print()
 		
 		-- the number of results
 		local n = x:count()

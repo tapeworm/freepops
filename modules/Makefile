@@ -2,8 +2,7 @@ include $(CONFIG)
 include modules
 
 
-#H=@
-H=
+H=@
 
 MODULES=$(MODULES-$(OS)-pre) $(MODULES-Common) $(MODULES-$(OS)-post)
 

@@ -4,7 +4,6 @@ WHERE=/usr/local/
 PREFIX=$(DESTDIR)$(WHERE)
 VERSION=$(shell grep "\#define VERSION" config.h | cut -d \" -f 2)
 
-#H=
 H=@
 
 #>----------------------------------------------------------------------------<#

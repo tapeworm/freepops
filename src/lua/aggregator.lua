@@ -248,7 +248,6 @@ function retr_or_top(pstate,msg,data,lines)
 	end
 	
 	local _,_,body=string.find(chunk,rss_string.descC)
-	print ("CAZZO #"..body.."#\n")
 	body=string.gsub(body,"<!%[CDATA%[","")
 	body=string.gsub(body,"%]%]>","")
 	

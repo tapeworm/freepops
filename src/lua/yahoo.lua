@@ -349,6 +349,16 @@ function user(pstate, username)
   internalState.strDomain = domain
   internalState.strUser = user
 
+  -- Change globals according to domain
+  if domain == "yahoo.it" then
+    globals.strLoginPostData = ".tries=1&.src=ym&.intl=it&login=%s&passwd=%s&.persistent=y"
+    globals.strRetLoginBadPassword = "(Password non valida)"
+    globals.strMsgListNoMsgPat = "(Non ci sono messaggi nella cartella)"
+    globals.strMsgListPrevPagePattern = '<a href="/(ym[^"]*)">Precedente</a>'
+    globals.strCmdMsgList = "%sym/ShowFolder?box=%s&pos=%s&view=%s&order=up&sort=date"
+    globals.strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&head=f&toc=1&MsgId=%s&bodyPart=%s"
+  end
+  
   -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder or globals.strInbox

@@ -1,3 +1,4 @@
+- added fn:patch tag support to flatnuke plugin
 - added crypto (md5 and bin2hex) bindings
 - error in liber.lua (comments) (thanks emaury)
 - fixed popforward

@@ -23,7 +23,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "flatnuke"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"

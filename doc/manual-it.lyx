@@ -197,6 +197,13 @@ aggregator.lua Molti siti forniscono un backend RSS per indicizzare le loro
 
 flatnuke.lua Questo e' un aggregator piu' potente per siti basati sul CMS
  FlatNuke
+\layout Description
+
+kernel.lua Questo e' un plugin per tenersi aggiornati sulle ultime versioni
+ del kernel Linux.
+\layout Description
+
+
 \begin_inset Foot
 collapsed false
 
@@ -1016,6 +1023,61 @@ http://flatnuke.sourceforge.net/
 \end_inset 
 
 
+\layout Subsection
+
+kernel.lua
+\layout Standard
+
+Questo e' un plugin specializzato per tenersi aggiornati sulle ultime versioni
+ del kernel Linux.
+ La pagina ufficiale che pubblica la lista delle versioni correnti del kernel
+ Linux e' 
+\family typewriter 
+http://kernel.org
+\family default 
+.
+ Esiste un metodo comune, per i progetti sviluppati in sistemi GNU, per
+ aggiornare l'utente sulle modifiche effettuate nelle nuove versioni di
+ un programma.
+ In ogni pacchetto e' infatti presente il file 
+\family typewriter 
+ChangeLog
+\family default 
+ che descrive le novita' apportate dagli autori.
+ Anche il kernel Linux ha un 
+\family typewriter 
+ChangeLog
+\family default 
+ per ogni versione nuova.
+ Se desideri essere aggiornato sulle novita' apportate nelle versioni del
+ kernel e, quindi, visionare il 
+\family typewriter 
+ChangeLog
+\family default 
+, puoi utilizzare questo plugin.
+ Sara' sufficiente inserire come nome utente 
+\family typewriter 
+qualcosa@kernel.org
+\family default 
+ per essere aggiornato, tramite 
+\family typewriter 
+ChangeLog
+\family default 
+, su ogni nuova versione, oppure 
+\family typewriter 
+qualcosa@kernel.org.24
+\family default 
+ o 
+\family typewriter 
+qualcosa@kernel.org.26
+\family default 
+ per visualizzare nella propria mailbox, rispettivamente, i 
+\family typewriter 
+ChangeLog
+\family default 
+ dell'ultima versione del ramo 2.4 e del 2.6.
+ Come password e' possibile inserire una qualsiasi stringa casuale.
+ 
 \layout Section
 
 Creare un plugin

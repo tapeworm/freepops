@@ -176,7 +176,7 @@ void sockerror(char *msg) {
  * probably endian dependent (win runs on big endians?)
  *
  */ 
-#if !(defined(WIN32) && !defined(CYGWIN))
+#if !(defined(WIN32) || defined(CYGWIN))
 static unsigned int gethostbyname_thsafe (char *host)
 {
   int res;

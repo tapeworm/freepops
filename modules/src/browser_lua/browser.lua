@@ -171,6 +171,51 @@ function Hidden.cookie_and_referer(self,url,gl_h)
 
 end
 
+-- adds dirname(u.path) .. / .. location if needed
+function Hidden.adjust_path(l,u,location)
+	local function clean_2_slash(s)
+		return (string.gsub(s,"//","/"))
+	end
+	local function dirname(path)
+		local base = ""
+		if string.sub(path, -1, -1) == "/" then
+			-- is a dir, so the dirname is the whole path
+			if (string.sub(path, 1, 1) ~= "/") then
+				base = "/" .. path
+			else 
+				base = path
+			end
+		else
+			local rc = {}
+			string.gsub(path,"([^/]+)",
+				function(s)table.insert(rc,s)
+			end)
+			-- delete last element
+			table.remove(rc,table.getn(rc))
+			base = "/" .. table.concat(rc,"/") .. "/"
+		end
+		return clean_2_slash(base)
+	end
+
+	local u_dir = dirname(u.path)
+	local l_dir = dirname(l.path)
+
+	if (l_dir == "/") then 
+		return clean_2_slash(u_dir .. location)
+	else
+		local x,y = string.find(u_dir,l_dir)
+		if ( x == nil or y ~= string.len(u_dir)) then
+			-- the l_dir path is not included in the u_dir, so
+			-- we keep it untouched
+			return clean_2_slash("/" .. location)
+		else
+			return clean_2_slash(
+				string.sub(u_dir,1,x) .. "/" .. location)
+		end
+	end
+	
+end
+
 -- gets the field Location: in a header table
 function Hidden.get_location(gl_h,url)
 	return table.foreach(gl_h,function(_,l)
@@ -187,8 +232,9 @@ function Hidden.get_location(gl_h,url)
 					error("get_location must be called "..
 						"with an absolute uri")
 				end
+				location = Hidden.adjust_path(l,u,location)
 				if (l.host == nil) then
-					location = u.host .. "/" .. location
+					location = u.host .. location
 				end
 				if (l.scheme == nil) then
 					location = u.scheme .. "://"..location

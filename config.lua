@@ -124,6 +124,16 @@ freepops.MODULES_MAP["news.gamespot.com"] 	= {
 	args={host="http://www.gamespot.com/misc/rss/gamespot_updates_news.xml"}
 }
 
+freepops.MODULES_MAP["kerneltrap.org"] 	= {
+	name="aggregator.lua",
+	args={host="http://kerneltrap.org/node/feed"}
+}
+
+freepops.MODULES_MAP["linux.kerneltrap.org"] 	= {
+	name="aggregator.lua",
+	args={host="http://kerneltrap.org/taxonomy/feed/or/2,37,13,19"}
+}
+
 -- -------------------------------------------------------------------------- --
 -- Policy
 --

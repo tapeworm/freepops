@@ -1,3 +1,5 @@
+- added kerneltrap.org and linux.kerneltrap.org aggregator domains
+- fixed aggregator.lua and flatnuke.lua 
 - added reject/accept policy section in config.lua
 - added # chkconfig to rpm rc file (thanks domfe)
 - fixed bug introduced in fixing popserver rfc compliace

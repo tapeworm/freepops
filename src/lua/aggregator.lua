@@ -103,12 +103,10 @@ local rss_string = {
 	linkC = "<link.*>(.*)</link>",
 	link2C = "<guid.*>(.*)</guid>",
 	titleC = "<title.*>(.*)</title>",
---	title2C = "<title.*>[<]?[!]?[\[]?C?D?A?T?A?[\[]?([^\]]*).*[>]?</title.*>",
 	title2C = "<title.*>[<]?[!]?[\[]([^\]]*).*[>]?</title>",
 	descC = "<desc.*>(.*)</desc.*>",
 	desc2C = "<desc.*>[<]?[!]?[\[]([^\]]*).*[>]?</desc.*>",
-	contentC = "<content.*>[<]?[!]?[\[]([^\]]*).*[>]?</content.*>",
---	desc2C = "<desc.*>[<]?[!]?[\[]?C?D?A?T?A?[\[]?([^\]]*).*[>]?</desc.*>",
+	contentC = "<content:encoded>(.*)</content:encoded>",
 	dateC = "<pubDate.*>(.*)</pubDate.*>"
 }
 
@@ -246,14 +244,15 @@ function retr_or_top(pstate,msg,data,lines)
  			body=string.gsub(body,"CDATA%[","")
 		end
 	end
-
+	
 	--this is enabled in 
 	-- xmlns:content="http://purl.org/rss/1.0/modules/content/"
 	local _,_,content=string.find(chunk,rss_string.contentC)
 	-- content contains description
 	if ((content ~= nil) and (body ~= nil)) then
 		body=content
- 		body=string.gsub(body,"CDATA%[","")
+ 		body=string.gsub(body,"<!%[CDATA%[","")
+ 		body=string.gsub(body,"%]%]>","")
 	end
 	
 	local _,_,mydate=string.find(chunk,rss_string.dateC)

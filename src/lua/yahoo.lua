@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5a"
+PLUGIN_VERSION = "0.1.5b"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -139,7 +139,7 @@ local globals = {
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
-  strMsgListPrevPagePattern = '<a href="/(ym[^"]*previous=1[^"]*)">',
+  strMsgListPrevPagePattern = '<a href="/(ym[^"]*next=1[^"]*)">',
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
@@ -484,11 +484,12 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   --
   local browser = internalState.browser
   local uidl = get_mailmessage_uidl(pstate, msg)
+  local msgid = internalState.msgids[uidl]
   
   local hdrUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
-    internalState.strMBox, uidl, "HEADER");
+    internalState.strMBox, msgid, "HEADER");
   local bodyUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
-    internalState.strMBox, uidl, "TEXT");
+    internalState.strMBox, msgid, "TEXT");
 
   log.raw("hdrUrl = " .. hdrUrl)
   log.raw("bodyUrl = " .. bodyUrl)
@@ -554,14 +555,14 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   --
   if internalState.bMarkMsgAsUnread == true then
     local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
-      internalState.strMBox, uidl);
+      internalState.strMBox, msgid);
     local str, _ = browser:get_uri(cmdUrl) 
     _, _, str = string.find(str, globals.strRegExpCrumb2)
     if str == nil then
       log.warn("Unable to get the crumb view for marking message as unread.")
     else
       cmdUrl = string.format(globals.strCmdUnread, internalState.strMailServer,
-        internalState.strMBox, uidl, str);
+        internalState.strMBox, msgid, str);
       browser:get_uri(cmdUrl) -- We don't care about the results.
     end
   end
@@ -999,6 +1000,7 @@ function stat(pstate)
       --
       _, _, msgid = string.find(msgid, globals.strMsgIDPattern) --'value="([%d-_]+)"')
       local uidl = string.gsub(msgid, "_[^_]-_[^_]-_", "_000_000_", 1);
+      uidl = string.sub(uidl, 1, 60)
 
       local bUnique = true
       for j = 0, nMsgs do

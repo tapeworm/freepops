@@ -6,14 +6,15 @@ cat << EOT
 Usage: ./configure.sh <option>
 
 Available options: 
-	help	this screen
-	linux	to compile on a linux host
-	osx	to compile on a darwin host
-	obsd	to compile on a openbsd host
-	fbsd 	to compile on a freebsd host
-	beos	to compile on a beos host
-	cygwin	to compile on a cygwin environment
-	win	to cross-compile for win on a linux host with mingw32msvc
+	help		this screen
+	linux		to compile on a linux host
+	osx		to compile on a darwin host
+	osx-static	to compile on a darwin host with some static libs
+	obsd		to compile on a openbsd host
+	fbsd 		to compile on a freebsd host
+	beos		to compile on a beos host
+	cygwin		to compile on a cygwin environment
+	win		to cross-compile for win on a linux host with mingw32msvc
 
 EOT
 
@@ -50,6 +51,15 @@ OS=Linux
 set_osx() {
 set_default
 OS=Darwin
+CFLAGS="$CFLAGS -I/sw/include -DMACOSX"
+HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX"
+LDFLAGS="$LDFLAGS -L/usr/lib -L/sw/lib -bind_at_load -framework Carbon"
+HLDFLAGS="$HLDFLAGS -L/usr/lib -L/sw/lib -bind_at_load"
+}
+
+set_osx_static() {
+set_default
+OS=Darwin-static
 CFLAGS="$CFLAGS -DMACOSX"
 HCFLAGS="$HCFLAGS -DMACOSX"
 LDFLAGS="$LDFLAGS -L/usr/lib -bind_at_load -framework Carbon"
@@ -140,6 +150,9 @@ case $1 in
 
 	osx)
 		set_osx
+	;;
+	osx-static)
+		set_osx_static
 	;;
 	beos)
 		set_beos

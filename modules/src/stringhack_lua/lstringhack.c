@@ -139,7 +139,7 @@ if(p != -1)
 	
 	}
 
-n = regfind_count(buff,"\r\n\\.\r");
+n = regfind_count(buff,"\r\n\\.\r",1);
 //printf("!!%d!!\n",n);
 if(n>0)
 	{
@@ -152,7 +152,7 @@ if(n>0)
 			{
 			memcpy(&rc[o],"\r\n..\r",5);
 			o+=5-1;
-			i+=4-1;
+			i+=4-2;
 			n--;
 			//printf("!!GOT!!\n");
 			}
@@ -217,7 +217,7 @@ if(!a->header_done)
 			{
 			a->header_done = 1;
 			a->current_lines = 
-			regfind_count(&tmp[pm.end],"\r\n");
+			regfind_count(&tmp[pm.end],"\r\n",0);
 			}
 		}
 	else
@@ -225,7 +225,7 @@ if(!a->header_done)
 		//DBG("!! FRAGMENTED !!\n");	
 		// the end of the header tag is fragmented
 		a->header_done = 1;
-		a->current_lines = regfind_count(tmp,"\r\n");
+		a->current_lines = regfind_count(tmp,"\r\n",0);
 				
 		// if ..R|NRN or .RN|RN. current_lines--
 		pm = regfind(defrag,"..\r\n\r\n");
@@ -243,7 +243,7 @@ if(!a->header_done)
 	}
 else
 	{
-	a->current_lines += regfind_count(tmp,"\r\n");
+	a->current_lines += regfind_count(tmp,"\r\n",0);
 	}
 
 /* have we received more than needed? */

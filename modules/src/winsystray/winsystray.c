@@ -116,8 +116,8 @@ switch (message)
 		nid.uID = AP_ID;
 		nid.uFlags = NIF_TIP; 
 		Shell_NotifyIcon(NIM_DELETE, &nid);
-		PostQuitMessage(0); //?
-	return TRUE;
+		//PostQuitMessage(0); //?
+		return TRUE;//should we die here?
 
 	case UWM_SYSTRAY:
       		
@@ -201,8 +201,14 @@ switch (message)
 	  	return TRUE;
 
 		}
+	case WM_ENDSESSION:
+		return 0; //should we die here?
+		
+	case WM_QUERYENDSESSION:
+		return TRUE;
+		
     	default:
-	return TRUE; // I don't think that it matters what you return.
+		return TRUE; // I don't think that it matters what you return.
 	}
 return DefWindowProc(hwnd, message, wParam, lParam);
 }

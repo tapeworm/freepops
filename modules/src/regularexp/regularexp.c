@@ -74,18 +74,21 @@ return pm.end;
 }
 
 /* slow! */
-int regfind_count(const char* from, const char* exp)
+int regfind_count(const char* from, const char* exp, int offset)
 {
 regmatch_t pm;
-int n = -1;
+int n = 0;
 
 pm.begin = 0;
 pm.end = 0;
 
+pm = regfind(from,exp);
 while(pm.begin != -1)
 	{
 	n++;
-	from += pm.end;
+	//printf("trovato a partire da %d e fino a %d, riparto da %ld\n",
+	//	pm.begin,pm.end,pm.end - offset);
+	from += pm.end - offset;
 	pm = regfind(from,exp);
 	}
 

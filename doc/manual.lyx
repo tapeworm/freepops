@@ -4664,22 +4664,44 @@ FAQ
 How do I configure FreePOPs?
 \layout Standard
 
-You don't need to configure FreePOPs, you just have to change your mail
- client settings as described in the tutorial.
- Remember to set the POP3 server address to localhost, the server port to
- 2000 and to set the username to your full email address.
+In normal use conditions you don't need to configure FreePOPs, you just
+ have to change your mail client settings as described in the tutorial.
+ For other use cases we provided specific tutorials.
+ Remember to set the POP3 server address to 
+\emph on 
+localhost
+\emph default 
+ (if you've installed FreePOPs on the same computer where you read your
+ mail, otherwise use the IP address of the computer where FreePOPs is installed)
+, the server port to 
+\emph on 
+2000
+\emph default 
+ (or whatever you chose if you ran FreePOPs with the 
+\emph on 
+-p
+\emph default 
+ option) and to set the username to your full email address (in the form
+ 
+\family typewriter 
+username@webmail.domain
+\family default 
+).
 \layout Standard
 
 If you continue having problems after reading the manual and the tutorial
- you can post to the forum (usually in italian, but feel free to post in
- english).
+ you can post on the forum at HTTP://freepops.diludovico.it (usually in Italian,
+ but feel free to post in English).
 \layout Subsection*
 
 How much does it cost?
 \layout Standard
 
-FreePOPs is free software.
- You can download and use it for free.
+FreePOPs is Free Software, Free as in Freedom and Free as in Free Beer.
+ You can download it, use it, and modify it freely but if you care about
+ the four friends who made it you may send them a beer asking for their
+ address via mail, or a small donation (through the project website on SourceFor
+ge).
 \layout Subsection*
 
 I've installed FreePOPs and properly configured my mail client, but I'm
@@ -4696,7 +4718,11 @@ This software is in beta stage..
  will I lose my mail?
 \layout Standard
 
-Nobody guarantees the software they write, even if you pay it a lot...
+Nobody guarantees the software they write, even if you pay it a lot.
+ It looks safe enough to us, but we can't guarantee anything (no software
+ is really safe and secure).
+ Besides no one guarantess your mail client works well, so if you're using
+ that...
 \layout Subsection*
 
 How can I help the project?
@@ -4709,11 +4735,12 @@ Use the source Luke...
 If you want, you can donate to the project via Sourceforge and Paypal.
 \layout Standard
 
-When you want to bugreport, check that you are using the latest version
- and don't forget to include:
+When you want to report a bug, check that you are using the latest version
+ (we advise you uninstall an old version before installing a new one) and
+ don't forget to include:
 \layout Itemize
 
-FreePOPs's version number
+The version number of FreePOPs you're using
 \layout Itemize
 
 The operating system you are running
@@ -4722,25 +4749,60 @@ The operating system you are running
 Your mail client name and its version number
 \layout Itemize
 
-Most importantly THE LOG, generated with the -w option.
- Make sure that it doesn't contain any sensitive info you wouldn't like
- to disclose.
+Most importantly the log of FreePOPs, generated with the 
+\series bold 
+-w
+\series default 
+ option (read further if you don't know how to add command line parameters).
+ Make sure that the log doesn't contain any sensitive info you wouldn't
+ like to disclose (to the authors).
+ But don't worry, your password is never recorded in the log, it's substituted
+ by a sequence of nine (9) asterisks, no matter its real length.
 \layout Subsection*
 
 Where is the log?
 \layout Standard
 
 It depends on the system you are using.
- On a GNU/Linux system it is probably in /var/log/freepops.
+ On a GNU/Linux system it is probably in 
+\emph on 
+/var/log/freepops
+\emph default 
+ or wherever you specified with the 
+\emph on 
+-l
+\emph default 
+ option.
  On a Windows system the file log.txt is in the same folder of the FreePOPs
- executable
+ executable or wherever you specified with the 
+\emph on 
+-l
+\emph default 
+ option.
 \layout Standard
 
-Before sending the log make sure that it doesn't contain sensitive info
- you wouldn't like to disclose.
- Check that you have created the log by starting FreePOPs with the -w switch.
+Before sending the log make sure that it was generated with the 
+\series bold 
+-vv
+\series default 
+ or 
+\series bold 
+-w
+\series default 
+ option (see below).
+ These parameters generate a 
+\begin_inset Quotes eld
+\end_inset 
+
+verbose log
+\begin_inset Quotes erd
+\end_inset 
+
+ that makes it much easier for us to discover problems.
  We suggest you erase the log file, start FreePOPs with the switch and recreate
  the problem.
+ Also make sure that it doesn't contain sensitive info you wouldn't like
+ to disclose.
 \layout Subsection*
 
 How do I change FreePOPs's command line switches?
@@ -4750,22 +4812,78 @@ On a Unix system you should know how to do this, just add the switches to
  the command you use to run FreePOPs (maybe from a script).
 \layout Standard
 
-On a Windows system you have to open with a right click the properties of
- the FreePOPs link in the Start menu and add the switches in the command
- line there.
+On a Windows system you have two options: you may open the properties of
+ the FreePOPs link in the Start -> Programs -> FreePOPs menu (right click
+ on the link then select 
+\begin_inset Quotes eld
+\end_inset 
+
+Properties...
+\begin_inset Quotes erd
+\end_inset 
+
+) and add the switches in the command line in the 
+\begin_inset Quotes eld
+\end_inset 
+
+Destination
+\begin_inset Quotes erd
+\end_inset 
+
+ box there (after X:
+\backslash 
+Something
+\backslash 
+freepopsd.exe).
+\layout Standard
+
+The command line parameters you need depend on your specific needs.
+ Read the appropriate section of the manual to know what all available parameter
+s are, or run 
+\emph on 
+freepopsd -h
+\emph default 
+ (also 
+\emph on 
+man freepopsd
+\emph default 
+ on Unix).
+\layout Itemize
+
+Unix example: /usr/bin/freepopsd -P proxyhost:porta -A proxyusername:proxypasswo
+rd -w -l logfile.txt
+\layout Itemize
+
+Windows example: C:
+\backslash 
+Programs
+\backslash 
+FreePOPs
+\backslash 
+freepopsd.exe -w
 \layout Subsection*
 
 My "Antivirus" says FreePOPs is a virus!
 \layout Standard
 
-Stop using that mad antivirus :-) FreePOPs is Free Software, the source
- code is available on the website...
- this means we have nothing to hide.
+Stop using that crazy antivirus :-) Seriously, FreePOPs does not contain
+ viruses, trojan horses, worms, arcane formulae for deamonic rites, secret
+ plans for taking over the world or anything like all that.
+ If you don't believe us, the source code is available to everyone (the
+ program is released under the GNU GPL license) and thinking you could hide
+ malicious code in plain sunlight would be crazy.
+ Therefore any antivirus software that detects this kind of problems has
+ accuracy problems of its own, to say the least.
 \layout Standard
 
-We suggest you download FreePOPs from the official site.
- The binaries distributed on the official website come from the freely available
- source code, downloading FreePOPs from any other source may mean trouble.
+It sure is true that downloading a pre-compiled binary from an unknown source
+ is like asking for trouble.
+ Pre-compiled binary packages you find on the official website (HTTP://freepops.s
+f.net) come from the source code that everyone can get.
+ What you find on free (as in free beer) software websites or you download
+ through peer-to-peer file sharing systems can't obviously guarantee any
+ kind of safety.
+ So use some common sense.
 \layout Section
 
 Authors

@@ -17,7 +17,7 @@
 #ifndef POPSERVER_H
 #define POPSERVER_H
 
-#ifndef WIN32
+#if !(defined(WIN32) && !defined(CYGWIN))
 	#include <sys/types.h>
 	#include <netinet/in.h>
 #else

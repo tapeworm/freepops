@@ -138,7 +138,7 @@ int log_rotate(char *logfile)
 
 int log_init(char* logfile, int sysmode)
 {
-#if (!defined(WIN32)) && (!defined(BEOS))
+#if (!(defined(WIN32) && !defined(CYGWIN))) && (!defined(BEOS))
 	char *filestr = NULL;
 
 	if(logfile == NULL)
@@ -151,23 +151,26 @@ int log_init(char* logfile, int sysmode)
 		//log to stdout		
 		filestr = NULL;
 		}
+#ifndef WIN32
 	else if (!strcmp(logfile,"syslog"))
 		{
 		//syslog
 		filestr = NULL;
 		do_syslog = 1;
 		}
+#endif
 	else 
 		{
 		//filename
 		filestr = strdup(logfile);
 		}
-
+#ifndef WIN32
 	if(do_syslog)
 		{
 		openlog(OPENLOG_NAME,LOG_CONS,LOG_USER);
 		}
 	else
+#endif
 		{
 		if(filestr == NULL)
 			{
@@ -189,7 +192,7 @@ int log_init(char* logfile, int sysmode)
 	free(filestr);
 #endif
 
-#if defined(WIN32) || defined(BEOS)
+#if (defined(WIN32) && !defined(CYGWIN)) || defined(BEOS)
 	if(logfile == NULL)
 		logfile == strdup("log.txt");
 	

@@ -24,7 +24,7 @@
  *
  ******************************************************************************/
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
  #include <winsock.h>
  #include <process.h>
  #include <io.h>
@@ -97,7 +97,7 @@
 #include "log.h"
 #define LOG_ZONE "ALTSOCKLIB"
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 static struct {
 	int errorNumber;
 	char *errorString;
@@ -150,7 +150,7 @@ static struct {
 #endif
 
 void sockerror(char *msg) {
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 	int err = WSAGetLastError();
 	int i;
 	for (i = 0; sockerrlist[i].errorNumber; i++)
@@ -176,7 +176,7 @@ void sockerror(char *msg) {
  * probably endian dependent (win runs on big endians?)
  *
  */ 
-#ifndef WIN32
+#if (defined(WIN32) && !defined(CYGWIN))
 static unsigned int gethostbyname_thsafe (char *host)
 {
   int res;
@@ -223,7 +223,7 @@ return h;
  * calling gethostbyname(), so we call this
  *
  */ 
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 void sockinit()
 {
 static int started = 0;
@@ -259,7 +259,7 @@ int sd;
 struct sockaddr_in sin;
 unsigned int add;
     
-#ifdef WIN32
+#if defined( WIN32) && !defined(CYGWIN)
 sockinit();
 #endif
 
@@ -334,7 +334,7 @@ int sockinfo(int sd, char *info)
  */ 
 int sockclose(int sock)
 {
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 	shutdown(sock, SD_BOTH);
 	return closesocket(sock);
 #else
@@ -354,7 +354,7 @@ int sockclose(int sock)
 
 int senddata(int socket, char *buffer, int length)
 {
-#ifndef WIN32
+#if !(defined(WIN32) && !defined(CYGWIN))
     static char crlf[] = "\r\n";
     int rc;
     
@@ -375,7 +375,7 @@ int senddata(int socket, char *buffer, int length)
 
     return length;
 #endif
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 	char *buffer2 = (char *)malloc(length+2);
 	int rc;
 	
@@ -403,7 +403,7 @@ int senddata(int socket, char *buffer, int length)
  */
 int senddata_raw(int socket,const char *buffer, int length)
 {
-#ifndef WIN32
+#if !(defined(WIN32) && !defined(CYGWIN))
     int rc;
     
     for(rc=0;rc < length;)
@@ -416,7 +416,7 @@ int senddata_raw(int socket,const char *buffer, int length)
     
     return length;
 #endif
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 	int rc;
 	
 	for(rc=0;rc < length;)

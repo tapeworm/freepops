@@ -14,7 +14,7 @@
  * 	Enrico Tassi <gareuselesinge@users.sourceforge.net> 
  ******************************************************************************/
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 
 #include <stdio.h>
 #include <stdarg.h> 

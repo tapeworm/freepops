@@ -94,7 +94,7 @@ ifeq "$(OS)" "Cygwin"
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
 		-lwsock32 \
-		-lgdi32  
+		-lgdi32   -lcygwin
 	#LDFLAGS= -mno-cygwin -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \

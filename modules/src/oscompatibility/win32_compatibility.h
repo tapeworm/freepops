@@ -19,7 +19,7 @@
 #ifndef WIN32_COMPATIBILITY_H
 #define WIN32_COMPATIBILITY_H
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 
 #include <stdio.h>
 #include <windows.h>

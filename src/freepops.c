@@ -23,7 +23,7 @@
 
 #include <curl/curl.h>
 
-#if !defined(WIN32) && !defined(BEOS)
+#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)
 	#include <sys/types.h>
 	#include <sys/stat.h>
 	#include <netinet/in.h>
@@ -35,7 +35,7 @@
 	#include <errno.h>
 #endif
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 	#include <winsock.h>
 	#include "winsystray.h"
 #endif
@@ -71,7 +71,7 @@ int verbose_output=0;
 int daemonize = 0;
 char *configfile = NULL;
 char *logfile = NULL;
-#if !defined(WIN32) && !defined(BEOS)
+#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)
 uid_t uid;
 gid_t gid; 
 #endif
@@ -113,7 +113,7 @@ void usage(const char *progname) {
 }
 
 /*** WIN32 only functions *****************************************************/
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 
 void win32_init(int *argc,char ***argv,LPSTR lpszCmdLine)
 {
@@ -134,7 +134,7 @@ fclose(stderr);
 #endif
 
 /*** unix only functions ******************************************************/
-#if !defined(WIN32) && !defined(BEOS)
+#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)
 int *sighandler(int sig)
 {
 	if (sig == SIGINT || sig == SIGTERM) {
@@ -328,7 +328,7 @@ putenv(tmp);
 
 /*** THE MAIN HAS YOU *********************************************************/
 
-#ifndef WIN32
+#if !(defined(WIN32) && !defined(CYGWIN))
 int main(int argc, char *argv[]) {
 #else
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -339,7 +339,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	unsigned short port = POP3PORT;
 	struct in_addr address;
 	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL;
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 	int argc;
 	char **argv;
 
@@ -348,7 +348,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	curl_global_init(CURL_GLOBAL_ALL);
 	
-#if !defined(WIN32) && !defined(BEOS)	
+#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)	
 	uid = geteuid();
 	gid = getegid();
 #endif
@@ -442,7 +442,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		} else if (res == 'w') {
 			/* --veryverbose */
 			verbose_output+=2;
-	#if !defined(WIN32) && !defined(BEOS)			
+	#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)			
 		} else if (res == 's') {
 			/* --suid */
 			parse_suid(optarg);
@@ -467,7 +467,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	my_putenv("LUA_HTTP_PROXYAUTH",proxyauth);
 	
 /*** INITIALIZATION UNIX ***/
-#if ! defined(WIN32) && ! defined(BEOS)
+#if !(defined(WIN32) && !defined(CYGWIN)) && ! defined(BEOS)
 	if(daemonize)
 		daemonize_process();
 	
@@ -477,12 +477,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 /*** INITIALIZATION WIN32 ***/
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 	create_tray_icon(hInstance,hPrevInstance,lpszCmdLine,nCmdShow);
 #endif
 
 /*** GO! ***/
-#if ! defined(WIN32) && ! defined(BEOS)
+#if !(defined(WIN32) && !defined(CYGWIN)) && ! defined(BEOS)
 	popserver_start(&freepops_functions, address, port, threads_num,
 		loose_rights,uid,gid);
 #else
@@ -491,7 +491,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 	
 /*** EXIT ***/
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 	win32_exit();
 #endif
 

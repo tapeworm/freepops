@@ -17,7 +17,7 @@
 #define SOCKET_COMMON_H
 
 #include <pthread.h>
-#ifndef WIN32
+#if !(defined(WIN32) && !defined(CYGWIN))
 	#include <netinet/in.h>
 #else
 	#include <winsock.h>

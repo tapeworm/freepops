@@ -21,7 +21,7 @@
 #define LOG_ZONE "PID"
 #define NOBODY 65534
 
-#ifndef WIN32
+#if !(defined(WIN32) && !defined(CYGWIN))
 
 
 

@@ -21,12 +21,13 @@
 #define _ALTSOCKLIB_H_
 
 #include <stdlib.h>
-#ifndef WIN32
+
+#if defined(WIN32) && !defined(CYGWIN)
+    #include <winsock.h>
+#else
 	#include <sys/socket.h>
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
-#else
-	#include <winsock.h>
 #endif
 
 /** @name Documentation can be foud here
@@ -60,7 +61,7 @@ int recvstring(int socket, char *buffer, int maxsize, recvbuffer_t *r);
 int recvstring_with_timeout(int socket, char *buffer, int maxsize, recvbuffer_t *r, int timeout);
 int sendstring(int socket, char *string);
 int sendstring_raw(int socket,const char *string);
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 void sockinit();
 #endif
 //@}

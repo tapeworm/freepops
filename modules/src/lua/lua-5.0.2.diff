@@ -121,7 +121,7 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm
 +else
 +  ifeq "$(OS)" "Cygwin"
-+	LDFLAGS+= -L /usr/lib/mingw -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -lmingw32 -lmsvcrt 
++	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm
 +  else
 +	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
 +  endif
@@ -131,7 +131,7 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +	HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm
 +else
 +  ifeq "$(OS)" "Cygwin"
-+	HLDFLAGS+= -L /usr/lib/mingw -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -lmingw32 -lmsvcrt
++	HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm
 +  else
 +	HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
 +  endif

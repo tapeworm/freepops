@@ -13,7 +13,7 @@
  * 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
  ******************************************************************************/
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
   #include <winsock.h>
 #else
   #include <sys/types.h>
@@ -190,7 +190,7 @@ struct sock_state_t * sock_connect(char *hostname,
 	unsigned long port,int maxlinelen,void (*print)(char *))
 {
 struct sock_state_t *tmp;
-#ifndef WIN32
+#if !(defined(WIN32) && !defined(CYGWIN))
 struct in_addr anyaddress = { INADDR_ANY };
 #else
 struct in_addr anyaddress = {{{ INADDR_ANY }}};

@@ -146,7 +146,7 @@ unsigned int pid;
 if(c == NULL)
 	return;
 
-#ifndef WIN32
+#if !(defined(WIN32) && !defined(CYGWIN))
 	pid=getpid();
 #else
 	pid=GetCurrentThreadId();

@@ -21,11 +21,11 @@
 #define MAXTHREADS 	5
 
 // win32
-#ifdef WIN32
+#if defined(WIN32) && !defined(CYGWIN)
 	#define LOGFILE		"log.txt"
 	#define BINDADDRESS  	INADDR_LOOPBACK
 	#define DEFAULT_USERAGENT \
-		"Mozilla/5.0 (X11; U; Win32; en-US; rv:1.6)"\
+		"Mozilla/5.0 (; U; Win32; en-US; rv:1.6)"\
 		" Gecko/20040322 Firefox/0.8"
 #endif
 
@@ -47,7 +47,7 @@
 #endif
 		
 // unix
-#if (!defined(WIN32)) && (!defined(BEOS)) && (!defined(MACOSX))
+#if (!(defined(WIN32) && !defined(CYGWIN))) && (!defined(BEOS)) && (!defined(MACOSX))
 	#define LOGFILE		"stdout"
 	#define BINDADDRESS  	INADDR_ANY
 	#define DEFAULT_USERAGENT \

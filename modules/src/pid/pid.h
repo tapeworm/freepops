@@ -22,7 +22,7 @@
 
 #define IMROOT          0
 
-#ifndef WIN32
+#if !(defined(WIN32) && !defined(CYGWIN))
 //! creates filestr and write getpid() in it
 int create_pid_file(char *filestr);
 //! removes the pid file

@@ -2,7 +2,7 @@
 \lyxformat 221
 \textclass article
 \begin_preamble
-\usepackage{graphicx}
+
 \end_preamble
 \language english
 \inputencoding auto
@@ -1057,7 +1057,30 @@ config.lua
 flatnuke.lua
 \family default 
  that is a web-news plugin.
+\layout Standard
+
+Two section follows, the first is a quick overview of what a plugin has
+ to do, the latter is a more detailed tutorial.
 \layout Subsection
+
+Plugins overview
+\layout Standard
+
+A plugin is essentially a backend for a POP3 server.
+ The plugins are written in LUA
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+The language website is http://www.lua.org
+\newline 
+See http://www.lua-user.org for a tutorial.
+\end_inset 
+
+ while the POP3 server is written in C.
+ Here we examine the interfaces between The C core and the LUA plugins.
+\layout Subsubsection
 
 The interface between the C core and a plugin
 \layout Standard
@@ -1212,7 +1235,7 @@ Later I will make clear what p is.
  It is easy to understand that there is a 1-1 mapping between POP3 commands
  and plugin function calls.
  You can view a plugin as the implementation of the POP3 interface.
-\layout Subsection
+\layout Subsubsection
 
 The interface between a plugin and the C core
 \layout Standard
@@ -1544,6 +1567,786 @@ data
  In some cases, for example if you know the message is small or you are
  working on a fast network, you can fetch the whole message and send it,
  but remember that this is more memory consuming.
+\layout Subsection
+
+The art of writing a plugin (plugins tutorial)
+\layout Standard
+
+In this section we will write a plugin step by step examining each important
+ detail.
+ We will not write a real and complete plugin since it may be a bit hard
+ to follow but we will create an ad-hoc webmail for our purposes.
+\layout Subsubsection
+
+(step 1) the skeleton
+\layout Standard
+
+The first thing we will do is to copy the skeleton.lua file to foo.lua (since
+ we will write the plugin for the foo.xx webmail, xx stands for a real domain,
+ bu I don't want to mention any websites here...).
+ Now with your best editor (I suggest vim under unix and scintilla for win32,
+ since they support syntax hilights for LUA, but any other text editor is
+ ok) open foo.lua and change the first few lines adding the plugin name,
+ version, your name, your email and a short comment in the proper places.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- ************************************************************************** -- 
+\layout Standard
+--  FreePOPs @--put here domain-- webmail interface 
+\layout Standard
+--  
+\layout Standard
+--  $Id$ 
+\layout Standard
+--  
+\layout Standard
+--  Released under the GNU/GPL license 
+\layout Standard
+--  Written by --put Name here-- <--put email here--> 
+\layout Standard
+-- ************************************************************************** --
+\layout Standard
+
+\layout Standard
+PLUGIN_VERSION = "--put version here--" 
+\layout Standard
+PLUGIN_NAME = "--put name here--" 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ Now we have an empty plugin, but it is not enough to start hacking on it.
+ We need to open the config.lua file (in the win32 distribution it is placed
+ in the main directory, while in the unix distribution it is in /etc/freepops/;
+ other copies of this file may be included in the distributions, but they
+ are backup copies) and add a line like this
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- foo plugin 
+\layout Standard
+freepops.MODULES_MAP["foo.xx"]      = {name="foo.lua"} 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ at the beginning of the file.
+ Before ending the first step you should try if the plugin is correctly
+ activated by frepops when needed.
+ To do this we have to add few lines to foo.lua, in partcular we have to
+ add an error return value to user().
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Must save the mailbox name 
+\layout Standard
+function user(pstate,username)   
+\layout Standard
+        return POPSERVER_ERR_AUTH 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ Now the user function always fails, returning an authentication error.
+ Now you have to start FreePOPs (if it is already running you don't have
+ to reastart it) and start telnet (under win32 you should open a DOS prompt,
+ under unix you have the shell) and type telnet localhost 2000 and then
+ type user test@foo.xx.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+tassi@garfield:~$ telnet localhost 2000 
+\layout Standard
+Trying 127.0.0.1... 
+\layout Standard
+Connected to garfield. 
+\layout Standard
+Escape character is '^]'. 
+\layout Standard
++OK FreePOPs/0.0.10 pop3 server ready 
+\layout Standard
+user test@foo.xx 
+\layout Standard
+-ERR AUTH FAILED 
+\layout Standard
+Connection closed by foreign host. 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ The server respond closing the connection and printing an authorization
+ failed message (thats ok, sice the user() function of our plugin returns
+ this error).
+ In the standard error file (the console under unix, the file stderr.txt)
+ are printd error mesage, don't care about them now.
+\layout Subsubsection
+
+(step 2) the login
+\layout Standard
+
+The login procedure is the first thing we have to do.
+ The POP3 protol has 2 commands for login, user and pass.
+ First the client does a user, that it tells the server the password.
+ As we have already seen in the overview this means that first user() and
+ the pass() will be called.
+ This is a sample login:
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+tassi@garfield:~$ telnet localhost 2000 
+\layout Standard
+Trying 127.0.0.1... 
+\layout Standard
+Connected to garfield. 
+\layout Standard
+Escape character is '^]'. 
+\layout Standard
++OK FreePOPs/0.0.10 pop3 server ready 
+\layout Standard
+user test@foo.xx 
+\layout Standard
++OK PLEASE ENTER PASSWORD 
+\layout Standard
+pass hello 
+\layout Standard
+-ERR AUTH FAILED 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ If you start FreePOPs with the -w switch you sould read this on standard
+ error/standard output
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+freepops started with loglevel 2 on a little endian machine. 
+\layout Standard
+Cannot create pid file "/var/run/freepopsd.pid" 
+\layout Standard
+DBG(popserver.c, 162): [5118] ?? Ip address 0.0.0.0 real port 2000
+\layout Standard
+DBG(popserver.c, 162): [5118] ?? Ip address 127.0.0.1 real port 2000
+\layout Standard
+DBG(popserver.c, 162): [5118] -> +OK FreePOPs/0.0.10 pop3 server ready
+\layout Standard
+DBG(popserver.c, 162): [5118] <- user test@foo.xx
+\layout Standard
+DBG(log_lua.c,  83): (@src/lua/foo.lua, 37) : FreePOPs plugin 'Foo web mail' version '0.0.1' started!
+\layout Standard
+*** the user wants to login as 'test@foo.xx' 
+\layout Standard
+DBG(popserver.c, 162): [5118] -> +OK PLEASE ENTER PASSWORD
+\layout Standard
+DBG(popserver.c, 157): [5118] <- PASS ********* 
+\layout Standard
+*** the user inserted 'hello' as the password for 'test@foo.xx' 
+\layout Standard
+DBG(popserver.c, 162): [5118] -> -ERR AUTH FAILED
+\layout Standard
+AUTH FAILED 
+\layout Standard
+DBG(threads.c,  81): thread 0 will die 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+and the plugin has been changed a bit to store the user login and print
+ some debug infos.
+ This is the plugin that gave this output:
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+foo_globals= {  
+\layout Standard
+       username="nothing",
+\layout Standard
+       password="nothing" 
+\layout Standard
+} 
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Must save the mailbox name 
+\layout Standard
+function user(pstate,username)   
+\layout Standard
+        foo_globals.username = username
+\layout Standard
+        print("*** the user wants to login as '"..username.."'")
+\layout Standard
+        return POPSERVER_ERR_OK
+\layout Standard
+end 
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Must login 
+\layout Standard
+function pass(pstate,password)
+\layout Standard
+        foo_globals.password = password
+\layout Standard
+        print("*** the user inserted '"..password..
+\layout Standard
+            "' as the password for '"..foo_globals.username.."'")
+\layout Standard
+        return POPSERVER_ERR_AUTH end 
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Must quit without updating 
+\layout Standard
+function quit(pstate)      
+\layout Standard
+        return POPSERVER_ERR_OK 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+.
+ Here we have some important news.
+ First the foo_globals table that will contain all the globals (values that
+ shoud be available to successive function calls) we need.
+ Since now we have the username and the password here.
+ The user() function now stores the passed username in the foo_globals table
+ and prints something on standard output.
+ The pass() function now stores the password in the global table and prints
+ some stuff.
+ The quit() simply returns POPSERVER_ERR_OK to make FreePOPs happy.
+\layout Standard
+
+Now that we know how FreePOPs will act during the login we have to implemt
+ the login in the webmail, but first decomment the few lines in the init()
+ function (that is called when the plugin is started) that loads the browser
+ module (the module we will use to login in the webmail).
+ Here there is the webmail login page viewed with mozilla and the source
+ of the fage (with mozilla is Ctrl-U).
+\layout Standard
+
+
+\begin_inset Graphics
+	filename login.eps
+	display none
+	scale 80
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+<html> 
+\layout Standard
+<head> 
+\layout Standard
+<title>foo.xx webmail login</title> 
+\layout Standard
+</head> 
+\layout Standard
+<body style="background-color : grey; color : white"> 
+\layout Standard
+<h1>Webmail login</h1>
+\layout Standard
+<form name="webmail" method="post" action="http://localhost:3000/"> 
+\layout Standard
+login: <input type="text" size="10" name="username"> <br> 
+\layout Standard
+password: <input type="password" size="10" name="password"> <br> 
+\layout Standard
+<input type="submit" value="login"> 
+\layout Standard
+</form> 
+\layout Standard
+</body> 
+\layout Standard
+</html>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Here we have 2 input fields, one called username and one called password.
+ When the user clicks login the web browser will POST to http://localhost:3000/
+ the form contents (I used a local address because of comodity, but is should
+ be something like http://webmail.foo.xx/login.php).
+ This is what the browser sends:
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+POST / HTTP/1.1 
+\layout Standard
+Host: localhost:3000 
+\layout Standard
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6) Gecko/20040614 Firefox/0.8 Accept: */*
+\layout Standard
+Accept-Language: en-us,en;q=0.5 
+\layout Standard
+Accept-Encoding: gzip,deflate 
+\layout Standard
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7 
+\layout Standard
+Keep-Alive: 300 
+\layout Standard
+Connection: keep-alive 
+\layout Standard
+Content-Type: application/x-www-form-urlencoded 
+\layout Standard
+Content-Length: 37
+\layout Standard
+
+\layout Standard
+username=test%40foo.xx&password=hello 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ We are not interested in the first part (the HTTP header, since the broser
+ module will take care of this) but in the last part, the posted data.
+ Since the fields of the form were username and password, the posted data
+ is username=test%40foo.xx&password=hello.
+ Now we want to reproduce the same HTTP request with our plugin.
+ This is the simple code that will do this.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Must login 
+\layout Standard
+function pass(pstate,password)
+\layout Standard
+       foo_globals.password = password
+\layout Standard
+        
+\layout Standard
+       print("*** the user inserted '"..password..
+\layout Standard
+            "' as the password for '"..foo_globals.username.."'") 
+\layout Standard
+
+\layout Standard
+       -- create a new browser
+\layout Standard
+       local b = browser.new()
+\layout Standard
+
+\layout Standard
+       -- store the browser object in globals  
+\layout Standard
+       foo_globals.browser = b
+\layout Standard
+
+\layout Standard
+       -- create the data to post      
+\layout Standard
+       local post_data = string.format("username=%s&password=%s",
+\layout Standard
+               foo_globals.username,foo_globals.password)
+\layout Standard
+       -- the uri to post to   
+\layout Standard
+       local post_uri = "http://localhost:3000/"
+\layout Standard
+
+\layout Standard
+       -- post it      
+\layout Standard
+       local file,err = nil, nil       
+\layout Standard
+  
+\layout Standard
+       file,err = b:post_uri(post_uri,post_data)
+\layout Standard
+       
+\layout Standard
+       print("we received this webpage: ".. file)      
+\layout Standard
+       return POPSERVER_ERR_AUTH 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ First we create a browser object, than we build the post_uri and post_data
+ using a simple string.format (printf like function).
+ And this is the resulting request
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+POST / HTTP/1.1 
+\layout Standard
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6) Gecko/20040322 Firefox/0.8
+\layout Standard
+Pragma: no-cache 
+\layout Standard
+Accept: */* 
+\layout Standard
+Host: localhost 
+\layout Standard
+Content-Length: 35 
+\layout Standard
+Content-Type: application/x-www-form-urlencoded
+\layout Standard
+
+\layout Standard
+username=test@foo.xx&password=hello 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+that is essentially the same (we should url-encode the post data with curl.escape
+()) we wanted to do.
+ We saved the browser object to the global table, since we want to use thesame
+ browser all the time.
+\layout Standard
+
+Now that we have logged in, we want to check the resulting page, and maybe
+ extract a session ID that will be used later.
+ This is the code to extract the session id and the html page we have received
+ in response to the login request.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}        
+\layout Standard
+        print("we received this webpage: ".. file)
+\layout Standard
+        
+\layout Standard
+        -- search the session ID        
+\layout Standard
+        local _,_,id = string.find(file,"session_id=(%w+)")
+\layout Standard
+
+\layout Standard
+        if id == nil then               
+\layout Standard
+               return POPSERVER_ERR_AUTH
+\layout Standard
+
+\layout Standard
+        foo_globals.session_id = id
+\layout Standard
+        return POPSERVER_ERR_OK
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+<html> 
+\layout Standard
+<head> 
+\layout Standard
+<title>foo.xx webmail</title> 
+\layout Standard
+</head> 
+\layout Standard
+<body style="background-color : grey; color : white"> 
+\layout Standard
+<h1>Webmail - test@foo.xx</h1> 
+\layout Standard
+Login done! click here to view the inbox folder. 
+\layout Standard
+<a href="htp://localhost:3000/inbox.php?session_id=ABCD1234">inbox</a> 
+\layout Standard
+</body> 
+\layout Standard
+</html>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
 \layout Section
 
 Submitting a bug

@@ -1,9 +1,9 @@
 -- --------------------------- READ THIS PLEASE ----------------------------- --
--- This file is not only the libero webmail plugin. Is is also a well 
+-- This file is not only the libero webmail plugin. It is also a well 
 -- documented example of webmail plugin. 
 --
 -- Before reading this you should learn something about lua. The lua 
--- language is an excellen (at least in my opinion), small and easy 
+-- language is an excellent (at least in my opinion), small and easy 
 -- language. You can learn something at http://www.lua.org (the main website)
 -- or at http://lua-users.org/wiki/TutorialDirectory (a good and short tutorial)
 --
@@ -31,7 +31,7 @@ PLUGIN_NAME = "Libero.IT"
 --  strings
 -- ************************************************************************** --
 
--- this are the webmail-dependent strings
+-- these are the webmail-dependent strings
 --
 -- Some of them are incomplete, in the sense that are used as string.format()
 -- (read sprintf) arguments, so their %s and %d are filled properly
@@ -48,8 +48,8 @@ local libero_string = {
 	-- This is the mlex expression to interpret the message list page.
 	-- Read the mlex C module documentation to understand the meaning
 	--
-	-- This is probabli one of the more boaring tasks of the story.
-	-- An easy and not so boaring way of writing a mlex expression is
+	-- This is probably one of the more boaring tasks of the story.
+	-- An easy and not so boring way of writing a mlex expression is
 	-- to cut and paste the html source and work on it. For example
 	-- you could copy a message table row in a blank file, substitute
 	-- every useless field with '.*'.
@@ -133,9 +133,9 @@ end
 --------------------------------------------------------------------------------
 -- Serialize the internal_state
 --
--- serial. serialize is not enough powerfull to correcly serialize the 
--- internal state. the problem is the field b. b is an object. this means
--- that is a table (and no problem for this) that has some field that are
+-- serial. serialize is not enough powerful to correcly serialize the 
+-- internal state. The field b is the problem. b is an object. This means
+-- that it is a table (and no problem for this) that has some field that are
 -- pointers to functions. this is the problem. there is no easy way for the 
 -- serial module to know how to serialize this. so we call b:serialize 
 -- method by hand hacking a bit on names
@@ -150,7 +150,7 @@ end
 --------------------------------------------------------------------------------
 -- The key used to store session info
 --
--- Ths key must be unique for all webmails, since the session pool is one 
+-- This key must be unique for all webmails, since the session pool is one 
 -- for all the webmails
 --
 function key()
@@ -233,20 +233,20 @@ end
 -- A callback factory is a function that generates other functions. both retr
 -- and top need a callback. the callback is called when there is some data 
 -- to send to the client. this is done with popserver_callback(s,data) 
--- where s is the data and data is the opaque data that is passed to to 
+-- where s is the data and data is the opaque data that is passed to 
 -- the retr/top function and is used internally by the popserve callbak. 
 -- no need to know what it is, but we have to pass it. 
 --
 -- The callback function must accept 2 args: the data to send and an optional 
--- error message. it the data s is nil it means the err contains the 
+-- error message. if the data is nil it means the err contains the 
 -- relative error message. If s is "" it means that the trasmission 
 -- ended sucesfully (read: the socket has benn closed correclty). 
 -- 
 -- Here a is an opaque data structure used by the
--- stringhack module. the stringhack module implements some usefull string 
+-- stringhack module. the stringhack module implements some useful string 
 -- manipulation tasks. 
 -- tophack keeps track of how many lines have been 
--- processed. If more that lines (we talk of lines of mail body) have 
+-- processed. If more than lines (we talk of lines of mail body) have 
 -- been processed the returned string will be trucated to the 
 -- correct line number. 
 -- dothack simply does a 'sed s/^\.$/../' but is really hard if the data 
@@ -355,7 +355,7 @@ function pass(pstate,password)
 			return libero_login()
 		end
 		
-		-- exec the code loaded from the session tring
+		-- exec the code loaded from the session string
 		c()
 
 		log.say("Session loaded for " .. internal_state.name .. "@" .. 
@@ -419,7 +419,7 @@ function quit_update(pstate)
 	session.save(key(),serialize_state(),session.OVERWRITE)
 	-- unlock is useless if it have just been saved, but if we save 
 	-- without overwriting the session must be unlocked manually 
-	-- since it wuold fail instead overwriting
+	-- since it would fail instead overwriting
 	session.unlock(key())
 
 	log.say("Session saved for " .. internal_state.name .. "@" .. 
@@ -543,7 +543,7 @@ function stat(pstate)
 		return f,err
 	end
 
-	-- this to initialize the data structure
+	-- initialize the data structure
 	set_popstate_nummesg(pstate,0)
 
 	-- do it
@@ -580,7 +580,7 @@ function list_all(pstate)
 	return common.list_all(pstate)
 end
 -- -------------------------------------------------------------------------- --
--- Unflag each message merked for deletion
+-- Unflag each message marked for deletion
 function rset(pstate)
 	return common.rset(pstate)
 end
@@ -707,7 +707,7 @@ end
 --  Since we need to use the browser and save sessions we have to use
 --  some modules with the dofile function
 --
---  We also exports the pop3server.* names to global environment so we can
+--  We also export the pop3server.* names to global environment so we can
 --  write POPSERVER_ERR_OK instead of pop3server.POPSERVER_ERR_OK.
 --  
 function init(pstate)

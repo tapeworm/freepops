@@ -10,6 +10,8 @@
 -- passing plugin.
 -- 
 
+freepops.MODULES_MAP["foo.xx"] 	= {name="foo.lua"}
+
 -- libero plugin
 freepops.MODULES_MAP["libero.it"] 	= {name="libero.lua"}
 freepops.MODULES_MAP["iol.it"] 		= {name="libero.lua"}

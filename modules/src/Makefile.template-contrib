@@ -1,4 +1,4 @@
-#H=@
+H=@
 
 TGZ=$(shell ls *.tar.gz)
 DIFF=$(shell ls *.diff 2>/dev/null)

@@ -1,7 +1,7 @@
 diff -ruN tolua++-1.0.2/Makefile /home/tassi/Projects/liberopops/freepops/modules/src/tolua++-1.0.2/Makefile
 --- tolua++-1.0.2/Makefile	2003-10-23 10:56:24.000000000 +0200
 +++ /home/tassi/Projects/liberopops/freepops/modules/src/tolua++-1.0.2/Makefile	2004-01-22 17:47:46.000000000 +0100
-@@ -1,5 +1,52 @@
+@@ -1,5 +1,53 @@
 -# makefile for tolua hierarchy
 +include $(CONFIG)
 +
@@ -45,6 +45,7 @@ diff -ruN tolua++-1.0.2/Makefile /home/tassi/Projects/liberopops/freepops/module
 +	@echo -n " building tolua..."
 +	@cd src/bin/;\
 +		$(HCC) $(HCFLAGS) -c $(SRC1)
++	@$(RANLIB) $(PREFIX)/lib/liblua-host.a
 +	@$(HCC) -o bin/tolua++ src/bin/*.o $(HLDFLAGS)
 +	@echo "done."
 +

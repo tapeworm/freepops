@@ -28,7 +28,7 @@ ifneq "$(RCDEPFILES)" ""
 	
 endif
 
-OBJ=$(subst .c,.o,$(subst .pkg,.o,$(SRC))) $(RCDEPFILES:%.rc=%.o)
+OBJ=$(strip $(subst .c,.o,$(subst .pkg,.o,$(SRC))) $(RCDEPFILES:%.rc=%.o))
 
 
 #flags #######################################################

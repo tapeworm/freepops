@@ -73,7 +73,6 @@ end
 
 function Private.attach_it(browser,boundary,send_cb)
 	return function(k,uri)
-		print("GETTING HEAD "..uri)
 		local h,err = browser:get_head(uri)
 
 		--print(h)

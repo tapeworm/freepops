@@ -1,3 +1,9 @@
+freepops (0.0.17-1) unstable; urgency=low
+
+  * some sparse fixes
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Tue, 14 Sep 2004 14:35:32 +0200
+
 freepops (0.0.16-1) unstable; urgency=low
 
   * burden of fixes plus xml

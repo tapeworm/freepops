@@ -290,5 +290,6 @@ function cookie.clean_expired(t)
 	if Private.is_expired(c) then
 		t[x] = nil
 	end
+	end)
 end
 

@@ -119,6 +119,61 @@ Pretty documented.
 \layout Itemize
 
 Released under the GNU/GPL license (this means FreePOPs is Free Software).
+\layout Subsection
+
+Plugins
+\layout Standard
+
+These are the plugin currently included in FreePOPs:
+\layout Description
+
+libero.lua This plugins fully supports the 
+\family typewriter 
+www.libero.it
+\family default 
+ webmail for mailboxes with domains like 
+\family typewriter 
+@libero.it
+\family default 
+, 
+\family typewriter 
+@iol.it
+\family default 
+, 
+\family typewriter 
+@inwind.it
+\family default 
+, 
+\family typewriter 
+@blu.it
+\layout Description
+
+popforward.lua This is a plugin mainly used for testing some FreePOPs modules.
+ It acts as a POP3 forward, it simply works as a man in the middle of you
+ and a real POP3 server.
+ This allowed us to test FreePOPs without having any real plugin already
+ written.
+ You may consider using it to masquerade a really buggy POP3 server that
+ can be easily compromised trought malicious requests.
+ Obviously We suggest you to examine properly this plugin, and hack on it
+ to prevent malicious requests to your server.
+\layout Description
+
+aggregator.lua Many sites provide an RSS backend for indexing theys news.
+ This plugin make this RSS behave as a mailbox in wich you can find a mail
+ for each news
+\layout Description
+
+flatnuke.lua This is a more powerful aggregator for the flatnuke
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+See HTTP://flatnuke.sourceforge.net for the project homepage
+\end_inset 
+
+ based sites, and allows the download of all the news body.
 \layout Section
 
 History
@@ -265,6 +320,35 @@ To configure your email client you must change the pop3 server settings.
 -p
 \family default 
  switch you should now what you are doing.
+ You have to use a full username, for examlple 
+\family typewriter 
+something@libero.it
+\family default 
+ instead of only 
+\family typewriter 
+something
+\family default 
+.
+ This is beacause FreePOPs chooses the plugin to load looking at you username.
+ Later we will present all the plugins and theyr associated domains.
+\layout Section
+
+Plugins
+\layout Standard
+
+Here we give a detailed description of each plugin.
+\layout Subsection
+
+libero.lua
+\layout Subsection
+
+popforward.lua
+\layout Subsection
+
+aggregator.lua
+\layout Subsection
+
+flatnuke.lua
 \layout Section
 
 Creating a plugin

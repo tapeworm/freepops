@@ -89,4 +89,8 @@ function setopt(opt,data) end
 -- @return number,errorstring number not zero means an error.
 function perform() end
 		
+---
+-- URLencodes the string.
+-- @return string The escaped string.
+function curl.escape(s) end
 

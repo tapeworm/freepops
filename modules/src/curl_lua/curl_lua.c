@@ -167,6 +167,7 @@ struct L_curl_bag {
 	CURL* handler;
 	char* strings[STR_SIZE];
 	char err[CURL_ERROR_SIZE];
+	struct curl_slist  * headlist;
 #if CURL_NEWER(7,9,6)
 	struct curl_httppost *post;
 #endif
@@ -375,6 +376,18 @@ static char** L_checkcurlstring(lua_State*L,CURLoption opt)
 
   return &(tmp->strings[L_CURLoption2vect(L,opt)]);
 }
+/******************************************************************************
+ * checks and returns the header slist
+ * 
+ */ 
+static struct curl_slist ** L_checkcurlheadlist(lua_State*L)
+{
+  struct L_curl_bag* tmp = (struct L_curl_bag*)
+	  luaL_checkudata(L,1,CURL_EASY_META_NAME);
+  luaL_argcheck(L,tmp != NULL,1,"curleasy expected");
+
+  return &(tmp->headlist);
+}
 
 /******************************************************************************
  * checks and returns the err field from the first position in the stack
@@ -498,7 +511,7 @@ while( lua_next(L,tab_index) != 0 ){
 	lua_pop(L,1);
 	
 	/* store it in the list */
-	curl_slist_append(sl,val);
+	sl = curl_slist_append(sl,val);
 }
 
 return sl;
@@ -1128,9 +1141,14 @@ switch(opt) {
 	case CURLOPT_HTTP200ALIASES:
 #endif
 	case CURLOPT_HTTPHEADER:{
+		struct curl_slist ** old=NULL;
 		struct curl_slist * sl = L_checkslist(L,3);
 		rc = curl_easy_setopt(c,opt,sl);
-		curl_slist_free_all(sl);
+		
+		old = L_checkcurlheadlist(L);
+		
+		curl_slist_free_all(*old);
+		*old = sl;
 	}break;
 
 	/* share handle */
@@ -1188,6 +1206,7 @@ lua_setmetatable(L,-2);
 c->handler = tmp;
 for(i = 0 ; i < STR_SIZE ; i++)
 	c->strings[i] = NULL;
+c->headlist = NULL;	
 #if CURL_NEWER(7,9,6)
 c->post=NULL;
 #endif
@@ -1212,6 +1231,7 @@ int i;
 curl_easy_cleanup(c->handler);
 for(i = 0 ; i < STR_SIZE ; i++)
 	free(c->strings[i]);
+curl_slist_free_all(c->headlist);
 #if CURL_NEWER(7,9,6)
 if(c->post != NULL)
 	curl_formfree(c->post);	

@@ -24,10 +24,17 @@ PLUGIN_NAME = "Tin.IT"
 -- expressions), mlex expressions, mlex get expressions.
 -- 
 local tin_string = {
+	tinsso_dxurl="",
+	tinsso_wmail="webmail_IT",
 	-- The uri the browser uses when you click the "login" button
-	login = "http://communicator.virgilio.it/asp/login.asp?"..
-		"pop_login=%s&password=%s&status=DA_HOMEPAGE&"..
-		"js=1&style=promail_IT",
+	login = "http://aaacsc.virgilio.it/piattaformaAAA/controller/"..
+		"AuthenticationServlet",
+	login_post= "a3l=%s&a3p=%s&a3st=VCOMM&"..
+		"a3aid=communicator&a3flag=0&"..
+		"a3ep=http://communicator.virgilio.it/asp/login.asp&"..
+		"a3afep=http://communicator.virgilio.it/asp/login.asp&"..
+		"a3se=http://communicator.virgilio.it/asp/login.asp&"..
+		"a3dcep=http://communicator.virgilio.it/asp/homepage.asp?s=005",
 	-- This is the capture to get the session ID from the login-done webpage
 	sessionC = "/cgi%-bin/webmail%.cgi%?ID=([a-zA-Z0-9_]+)&",
 	-- This is the mlex expression to interpret the message list page.
@@ -159,6 +166,41 @@ function check_sanity(name,domain,pass)
 	return true
 end
 
+function toGMT(d)
+	print("FIXME: GMT time conversion")
+	return os.date("%c",d)
+end
+
+function mk_cookie(name,val,expires,path,domain,secure)
+	local s = name .. "=" .. curl.escape(val)
+	if expires then
+		s = s .. ";expires=" .. toGMT(expires)
+	end
+	if path then
+		s = s .. ";path=" .. path
+	end
+	if domain then
+		s = s .. ";domain=" .. domain
+	end
+	if secure then
+		s = s .. ";secure"
+	end
+	return s
+end
+
+function asc2hex(d)
+	local t = {}
+	-- FIX may be faster :)
+	for i=1,string.len(d) do
+		table.insert(t,string.format("%X",string.byte(d,i)))
+	end
+	return table.concat(t)
+end
+
+function aaa_encode(u,p,s)
+	return asc2hex(curl.escape(base64.encode(u.."|"..p.."|"..s.."|")))
+end
+
 --------------------------------------------------------------------------------
 -- Serialize the internal_state
 --
@@ -201,17 +243,44 @@ function tin_login()
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
-	local uri = string.format(tin_string.login,pop_login,password)
+	local uri = tin_string.login
+	local post = string.format(tin_string.login_post,pop_login,password)
+	local bisquit1 = mk_cookie("CPIULOGIN",pop_login,nil,"/",".virgilio.it",nil)
+	local txcpiu = aaa_encode(pop_login,password,curl.escape(
+		tin_string.tinsso_dxurl))
+	local txmail = aaa_encode(pop_login,password,tin_string.tinsso_wmail)
+	local bisquit2 = mk_cookie("CPTX",txcpiu,nil,"/",".virgilio.it",nil)
+	local bisquit3 = mk_cookie("CPWM",txmail,nil,"/",".virgilio.it",nil)
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()
 
-	local _ = internal_state.b:get_head("http://communicator.virgilio.it")
-	local body = internal_state.b:get_uri(uri)
-	internal_state.b:show()
-	print(body)
-	body = internal_state.b:get_uri("http://communicator.virgilio.it/mail/webmail.asp")
-	print(body)
+	local b = internal_state.b
+
+--	b.curl:setopt(curl.OPT_VERBOSE,1)
+
+--	local head = b:get_head("http://communicator.virgilio.it")
+--	b:show()
+--	print(head)
+	b:add_cookie("http://communicator.virgilio.it",bisquit3)
+	b:add_cookie("http://communicator.virgilio.it",bisquit2)
+	b:add_cookie("http://communicator.virgilio.it",bisquit1)
+--	b:show()
+	local body,err = b:post_uri(uri,post)
+--	print("Richiedo la uri: "..uri)
+--	b:show()
+--	print(body)
+--
+	local body,err = b:get_uri("http://communicator.virgilio.it/mail/webmail.asp")
+	local f = io.open("out.html","w")
+	
+	f:write(body)
+	f:close()
+
+
+	
+	--body = b:get_uri("http://communicator.virgilio.it/mail/webmail.asp")
+	--print(body)
 
 	return POPSERVER_ERR_AUTH
 	

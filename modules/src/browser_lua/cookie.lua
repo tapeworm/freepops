@@ -32,7 +32,7 @@ Private.cookie_av={
 
 -- some captures for the cookie fields
 Private.value = {}
-Private.value.token='=%s*("?[%w%.%_%-%%%/%+%-%*%|%=]+"?)'
+Private.value.token='=%s*("?[%w%.%_%-%%%/%+%-%*%|%=]*"?)'
 Private.value.name="^(%s*[%w%_]+)"
 Private.value.domain='=%s*("?%.[%w%.%_%-%%%/%+%-%*]+"?)'
 Private.value.expires="=%s*(%a+%s*,%s*[%w%:%s%-]+)"
@@ -118,40 +118,43 @@ end
 
 -- If we receive more cookies they are separated by 2 comma, but 
 -- the paring function works only on strings containing one cookie
-function Private.split_cookies(s)
-	local t = {}
-	while true do
-	local l1 = string.find(s,",")
-	local l3,l3b = string.find(s,Private.left_table["expires"]..
-		"%s*=%s*%w+%s*")
-	if not l1 then
-		table.insert(t,s)
-		return t
-	end
-	if l1 and l3 and l1<l3 then
-		table.insert(t,string.sub(s,1,l1))
-		s = string.sub(s,l1+1,-1)
-	end
-	if l1 and l3 and l1>l3 then
-		if l3b then
-			if l1 == l3b+1 then
-				local l2  = string.find(s,",",l1+1)
-				if l2 then
-					table.insert(t,string.sub(s,1,l2))
-					s = string.sub(s,l2+1,-1)
-				else
-					table.insert(t,s)
-					return t
-				end
-			end
-		else
-			table.insert(t,s)
-			return t
-		end
-		
-	end
-	end
-end
+--
+-- !!! only in luasocket, not in a pure header !!!
+-- 
+--function Private.split_cookies(s)
+--	local t = {}
+--	while true do
+--	local l1 = string.find(s,",")
+--	local l3,l3b = string.find(s,Private.left_table["expires"]..
+--		"%s*=%s*%w+%s*")
+--	if not l1 then
+--		table.insert(t,s)
+--		return t
+--	end
+--	if l1 and l3 and l1<l3 then
+--		table.insert(t,string.sub(s,1,l1))
+--		s = string.sub(s,l1+1,-1)
+--	end
+--	if l1 and l3 and l1>l3 then
+--		if l3b then
+--			if l1 == l3b+1 then
+--				local l2  = string.find(s,",",l1+1)
+--				if l2 then
+--					table.insert(t,string.sub(s,1,l2))
+--					s = string.sub(s,l2+1,-1)
+--				else
+--					table.insert(t,s)
+--					return t
+--				end
+--			end
+--		else
+--			table.insert(t,s)
+--			return t
+--		end
+--		
+--	end
+--	end
+--end
 
 -- return a teble of cookies, h is the host
 function Private.parse_cookie_table(t,h)
@@ -221,7 +224,8 @@ cookie = {}
 -- parse
 function cookie.parse_cookies(s,h)
 	if s then
-		return Private.parse_cookie_table(Private.split_cookies(s),h)
+		--return Private.parse_cookie_table(Private.split_cookies(s),h)
+		return Private.parse_cookie_table({s},h)
 	else
 		return nil
 	end
@@ -328,14 +332,20 @@ end
 -- returns the needed cookie for the domain...
 -- returns the string
 function cookie.get(t,res,domain,host)
+	--print("cookie.get("..(res or"nil")..(domain or"nil")..(host or"nil"))
+	local function domain_match(a,b)
+		local x,_ = string.find(a,b)
+		--print("Find: '"..a.."' '"..b.."' = "..tostring(x ~= nil))
+		return x ~= nil
+	end
 	local r = {}
 	--print(res,domain,host)
 	table.foreach(t,function(_,c)
 		local l = Private.subpath_len(res,c["path"])
 		--print(Private.is_expired(c),l,c["domain"],c.host)
 		if not Private.is_expired(c) and
-		   l ~= 0 and
-		   ("."..domain == c["domain"] or c.host == host)
+		   l >= 0 and
+		   (domain_match("."..domain,c["domain"]) or c.host == host)
 			then
 			table.insert(r,{c=c,l=l})
 		end
@@ -343,16 +353,17 @@ function cookie.get(t,res,domain,host)
 	table.sort(r,function(a,b) return a.l > b.l end)
 	local s = ""
 	table.foreach(r,function(_,w)
-		s = "; \r\n        ".. s .. w.c.name .. "=" .. w.c.value 
-		if w.c.domain then
-			s = s .. '; $Domain = "' .. w.c.domain .. '"'
-		end
-		if w.c.path then
-			s = s .. '; $Path = "' .. w.c.path .. '"'
-		end
+		s = s .. "; " .. w.c.name .. "=" .. w.c.value 
+	--	if w.c.domain then
+	--		s = s .. '; $Domain = "' .. w.c.domain .. '"'
+	--	end
+	--	if w.c.path then
+	--		s = s .. '; $Path = "' .. w.c.path .. '"'
+	--	end
 	end)
 	if s ~= "" then
-		return '$Version = "1" ' .. s
+		--return '$Version = "1" ' .. s
+		return string.sub(s,2)
 	else
 		return nil
 	end

@@ -166,8 +166,7 @@ function lycos_login()
 	internal_state.b = browser.new()
 
 	local b = internal_state.b
-
---	b.curl:setopt(curl.OPT_VERBOSE,1)
+--	b:verbose_mode()
 
 	local bisquit = mk_cookie("logged_in","true",os.time() + 60 * 60
 	,"/",".lycos.it")

@@ -1,3 +1,4 @@
+- added b:ssl_init_stuff() and b:verbose_mode()
 - complete fix to browser.lua that now supports rotten cookies (thanks Eddi)
 09/07/2004 0.0.12 fix release
 - added link tag support to aggregator plugin

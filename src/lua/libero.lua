@@ -183,6 +183,7 @@ function libero_login()
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()
+--	b:verbose_mode()
 	
 	-- the functions for do_until
 	-- extract_f uses the support function to extract a capture specifyed 

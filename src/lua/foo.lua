@@ -76,6 +76,8 @@ function pass(pstate,password)
 	local b = browser.new()
 	-- store the browser object in globals
 	foo_globals.browser = b
+-- 	b:verbose_mode()
+
 
 	-- create the data to post
 	local post_data = string.format("username=%s&password=%s",

@@ -42,7 +42,11 @@
 -- (ie, passed by references) be careful. If you modify its values the
 -- browser eill be affected too.
 -- url<BR/>
-
+-- <BR/>
+-- <B>verbose_mode()</B> : activates the verbose logging of CURL<BR/>
+-- <BR/>
+-- <B>ssl_init_stuff()</B> : some stuff for SSL<BR/>
+--<BR/>
 --============================================================================--
 -- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
 --============================================================================--
@@ -422,6 +426,16 @@ function Private.wherearewe(self)
 		return u.host
 	end
 end
+
+function Private.ssl_init_stuff()
+	self.curl:setopt(curl.OPT_SSL_VERIFYHOST,  2)
+	self.curl:setopt(curl.OPT_SSL_VERIFYPEER, 0)
+end
+
+function Private.verbose_mode()
+	self.curl:setopt(curl.OPT_VERBOSE,1)
+end
+
 
 browser = {}
 

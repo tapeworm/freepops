@@ -184,10 +184,8 @@ function gmail_login()
 
 	local b = internal_state.b
 
---	b.curl:setopt(curl.OPT_VERBOSE,1)
-	b.curl:setopt(curl.OPT_SSL_VERIFYHOST,  2)
---	b.curl:setopt(curl.OPT_USERAGENT, gmail_string.browser_useragent)
-	b.curl:setopt(curl.OPT_SSL_VERIFYPEER, 0)
+--	b:verbose_mode()
+	b:ssl_init_stuff()
 
 	local extract_f = support.do_extract(
 				internal_state,"cookie_val",gmail_string.cookieVal)

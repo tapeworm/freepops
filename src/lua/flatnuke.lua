@@ -248,7 +248,8 @@ function pass(pstate,password)
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()
-	
+-- 	b:verbose_mode()
+
 	internal_state.login_done = true
 	
 	return POPSERVER_ERR_OK

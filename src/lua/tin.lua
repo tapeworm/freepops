@@ -228,8 +228,7 @@ function tin_login()
 	internal_state.b = browser.new()
 
 	local b = internal_state.b
-
---	b.curl:setopt(curl.OPT_VERBOSE,1)
+-- 	b:verbose_mode()
 
 	b:add_cookie(tin_string.homepage,bisquit3)
 	b:add_cookie(tin_string.homepage,bisquit2)

@@ -1,3 +1,4 @@
+- added folder support to libero.lua
 - fixed libero.lua TOP function
 - added scripts/cvs2changelog.lua to generate changelog for the contibuted
 plugins

@@ -106,6 +106,8 @@ dist-osx:
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd ../src/lua;cp *.lua ../../dist-osx/FreePOPs/src/lua
 	$(H)cd ../modules/include;cp *.lua ../../dist-osx/FreePOPs/modules/include
+	$(H)cat ../CHANGELOG >> Install_resources/English.lproj/ReadMe.txt
+	$(H)cat ../CHANGELOG >> Install_resources/Italian.lproj/ReadMe.txt
 
 freepops-$(VERSION).tar.gz: 
 	$(H)cd ..;./configure.sh linux || true

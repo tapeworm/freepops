@@ -89,7 +89,7 @@ ifeq "$(OS)" "Windows"
 else
 ifeq "$(OS)" "Darwin"
 	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm \
-		-lpthread $(CURL_LD_FLAGS)
+		-lpthread -L/usr/lib -lcurl -arch ppc -lz -lssl -lcrypto
 else
 ifeq "$(OS)" "OpenBSD"
 	LIBSTOLINK+= getopt

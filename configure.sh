@@ -49,8 +49,6 @@ OS=Linux
 
 set_osx() {
 set_default
-LD=gcc
-HLD=gcc
 OS=Darwin
 CFLAGS="$CFLAGS -DMACOSX"
 }

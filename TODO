@@ -14,3 +14,4 @@ next release 0.0.9
 	problemi login (aspetta ethereal)
 	proxy e tin
 	theyr -> their in tutti i commenti dei plugin.
+	log.say(nil) ??

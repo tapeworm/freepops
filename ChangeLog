@@ -1,3 +1,4 @@
+- added fflush to luay
 - fixed bug in lycos (thanks to Francesco)
 27/06/2004 0.0.9 fix release
 - now win32 dist can include SSL enabled curl

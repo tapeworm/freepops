@@ -42,6 +42,7 @@ for (i = 1 ; lua_getstack(s,i,&d) == 1 ; i++)
 
 	}
 fprintf(stderr,"\n");
+fflush(stderr);
 
 return LUA_ERRRUN;
 }
@@ -75,6 +76,7 @@ for(i=lua_gettop(s) ; i > 0 ; i-- )
 	}
 	}
 fprintf(stderr,"%sstack( 0) : --bottom--\n\n",LINE_PREFIX);
+fflush(stderr);
 }
 
 /*! \brief used in lualp_call
@@ -260,6 +262,7 @@ error:
 	fprintf(stderr,
 		"%s: %d: ERROR: args='%s' funcname='%s' i='%d' args[i]='%c'\n",
 		__FILE__,__LINE__,args,funcname,i,args[i]);
+	fflush(stderr);
 	luay_printstack(s);
 	return 1;
 }

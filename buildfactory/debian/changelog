@@ -1,3 +1,9 @@
+freepops (0.0.9-2) unstable; urgency=low
+
+  * fixed lycos, luay fflush
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sun, 27 Jun 2004 18:52:29 +0200
+
 freepops (0.0.9-1) unstable; urgency=low
 
   * fixed proxy, FILE* leak, tin.lua for >=1MB messages, common.lua

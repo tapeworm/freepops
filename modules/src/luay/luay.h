@@ -40,4 +40,9 @@ int luay_call(lua_State* s,const char *args,const char *funcname,...);
  */ 
 void luay_printstack(lua_State* s);
 
+/*! \brief prints the calling trace of the luaVM
+ * Internally used as the error function for lua_pcall
+ */ 
+int luay_printtrace(lua_State* s);
+
 #endif

@@ -5,11 +5,37 @@
 #include "lua.h"
 #include "luay.h"
 
-#define LINE_PREFIX "LUA: "
+#define LINE_PREFIX "LUAY: "
+
+int luay_printtrace(lua_State* s)
+{
+lua_Debug d;
+int i;
+
+memset(&d,0,sizeof(lua_Debug));
+
+fprintf(stderr,"\n%slua error message:\n",LINE_PREFIX);
+if(lua_isstring(s,lua_gettop(s)))
+	fprintf(stderr,"%s   %s\n\n",LINE_PREFIX,lua_tostring(s,lua_gettop(s)));
+fprintf(stderr,"%slua stack traceback:\n",LINE_PREFIX);
+for (i = 1 ; lua_getstack(s,i,&d) == 1 ; i++)
+	{
+	if(lua_getinfo(s,"Snl",&d) == 0)
+		fprintf(stderr,"%sUnable to get infos for %d\n",LINE_PREFIX,i);
+	
+	fprintf(stderr,"%s   %s: %s: %d (%s %s)\n",LINE_PREFIX,
+		d.short_src,d.name,d.currentline,d.what,d.namewhat);
+
+	}
+fprintf(stderr,"\n");
+
+return LUA_ERRRUN;
+}
 
 void luay_printstack(lua_State* s)	
 {
 int i;
+
 fprintf(stderr,"%slua stack image:\n",LINE_PREFIX);
 for(i=lua_gettop(s) ; i > 0 ; i-- )
 	{
@@ -79,49 +105,49 @@ switch(x)\
 		{\
 		int* d = va_arg(vargs,int*);\
 		lua_Number n;\
-		if(!lua_isnumber(s,1))\
+		if(!lua_isnumber(s,base+1))\
 			goto error;\
-		n = lua_tonumber(s,1);\
+		n = lua_tonumber(s,base+1);\
 		*d = (int)floor(n);\
 		}\
 	break;\
 	case 'f':\
 		{\
 		double* d = va_arg(vargs,double*);\
-		if(!lua_isnumber(s,1))\
+		if(!lua_isnumber(s,base+1))\
 			goto error;\
-		*d =  lua_tonumber(s,1);\
+		*d =  lua_tonumber(s,base+1);\
 		}\
 	break;\
 	case 's':\
 		{\
 		char** st = va_arg(vargs,char **);\
-		if(!lua_isstring(s,1))\
+		if(!lua_isstring(s,base+1))\
 			goto error;\
-		*st =  strdup(lua_tostring(s,1));\
+		*st =  strdup(lua_tostring(s,base+1));\
 		}\
 	break;\
 	case 'S':\
 		{\
 		char** st = va_arg(vargs,char **);\
-		if(!lua_isstring(s,1))\
+		if(!lua_isstring(s,base+1))\
 			goto error;\
-		*st =  (char*)lua_tostring(s,1);\
+		*st =  (char*)lua_tostring(s,base+1);\
 		}\
 	break;\
 	case 'p':\
 		{\
 		void **p = va_arg(vargs,void **);\
-		if(!lua_islightuserdata(s,1))\
+		if(!lua_islightuserdata(s,base+1))\
 			goto error;\
-		*p = lua_touserdata(s,1);\
+		*p = lua_touserdata(s,base+1);\
 		}\
 	break;\
 	default:\
 		goto error;\
 	break;\
 	}\
-lua_remove(s,1);\
+lua_remove(s,base+1);\
 }\
 
 static char * find_next_member(char* s)
@@ -150,9 +176,12 @@ return i;
 
 int luay_call(lua_State* s,const char *args,const char *funcname,...)
 {
-int i,nret,rc;
+int i,nret,rc,base;
 char* c;
 va_list vargs;
+
+lua_pushcfunction(s,luay_printtrace);
+base = lua_gettop(s);
 
 // put the function on the stack
 lua_pushstring(s,"_G");
@@ -165,9 +194,9 @@ while(c != NULL)
 		{
 		lua_pushlstring(s,c,i);
 		
-		lua_rawget(s,1);
+		lua_rawget(s,base+1);
 		
-		lua_remove(s,1);
+		lua_remove(s,base+1);
 		
 		c = find_next_member(c);
 		}
@@ -187,10 +216,9 @@ else
 	nret = 0;
 
 //call the function
-rc = lua_pcall(s,i,nret,0);
+rc = lua_pcall(s,i,nret,base);
 if(rc != 0)
 	{
-	luay_printstack(s);
 	return 1;
 	}
 
@@ -201,15 +229,15 @@ if(nret > 0)
 		luay_poparg(s,args[i],vargs);
 		}
 
-// empty the stack (needed?)
-luay_emptystack(s);
+// empty the stack (needed for the c function)
+lua_remove(s,base);
 
 va_end(vargs);
 return 0;
 
 error:
 	fprintf(stderr,
-		"%s: %d: ERROR{args='%s' funcname='%s' i=%d args[i]=%c}\n",
+		"%s: %d: ERROR: args='%s' funcname='%s' i='%d' args[i]='%c'\n",
 		__FILE__,__LINE__,args,funcname,i,args[i]);
 	luay_printstack(s);
 	return 1;

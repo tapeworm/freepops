@@ -44,7 +44,7 @@ function support.do_until(retrive,check_retrive,action)
 					" is nil"
 			end
 			log.error_print(err.."\n")
-			--print(err)
+			break
 		end
 		rc,err = action(file)
 		if not rc then 
@@ -55,7 +55,6 @@ function support.do_until(retrive,check_retrive,action)
 					" is nil"
 			end
 			log.error_print(err.."\n")
-			--print(err)
 			break
 		end
 	until check_retrive(file)

@@ -3,9 +3,9 @@
 \textclass article
 \language english
 \inputencoding auto
-\fontscheme times
+\fontscheme bookman
 \graphics default
-\paperfontsize 10
+\paperfontsize 12
 \spacing single 
 \papersize a4paper
 \paperpackage widemarginsa4
@@ -26,30 +26,51 @@
 
 \layout Title
 
-FreePOPs user manual
+FreePOPs manual
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset 
+
+
 \layout Section
 
 Introduction
 \layout Standard
 
-FreePOPs is a webmail2pop3 daemon.
- It is able to convert local pop3 requests to remote http actions on the
- supported webmails.
- FreePOPs is useful in two situations:
+FreePOPs is a POP3 daemon plus a LUA interpreter and some extra libraries
+ for HTTP and HTML parsing.
+ It's main purpose is of translating local POP3 requests to remote HTTP
+ actions on the supported web-mails, but is really more flexible.
+ For example there is a plugin to read news from a website as if they were
+ mails in mailbox.
+ 
+\newline 
+FreePOPs is useful in some situations:
 \layout Enumerate
 
-You are behind a firewall that closes the 110 port
+You are behind a firewall that closes the 110 port but you need to read
+ your mail and the web-mail of you mail provider sucks.
 \layout Enumerate
 
-Your mail provider does not allow you to access your mailbox with pop3 protocol,
- but only by the webmail service.
+Your mail provider does not allow you to access your mailbox with POP3 protocol,
+ but only by the web-mail service.
+\layout Enumerate
+
+You prefer looking at your mailbox instead of a browsing some websites news.
+\layout Enumerate
+
+You have to develop a pop3 server in less than a week and you want it to
+ be reasonably fast and not so memory consuming.
 \layout Section
 
 FreePOPs configuration file
 \layout Standard
 
 FreePOPs doesn't really need a configuration.
- All the users shouldn't chage the configuration file.
+ All the users shouldn't change the configuration file.
  In case you are a developer or a really curious user the configuration
  file is 
 \family typewriter 
@@ -59,14 +80,14 @@ config.lua
 \family typewriter 
 /etc/freepops/
 \family default 
- in a posix environmnt.
+ in a posix environment.
 \layout Section
 
 FreePOPs command line parameters
 \layout Standard
 
 The real FreePOPs configuration is made trough command line arguments.
- They are described in deep in the man page in unix environments, here we
+ They are described in deep in the man page in Unix environments, here we
  present only the more useful:
 \layout Description
 
@@ -80,7 +101,7 @@ The real FreePOPs configuration is made trough command line arguments.
 -P\SpecialChar ~
 <host>:<port>,\SpecialChar ~
 --proxy\SpecialChar ~
-<host>:<port> To tell FreePOPs which is you http
+<host>:<port> To tell FreePOPs which is you HTTP
  proxy.
 \layout Description
 
@@ -118,18 +139,18 @@ Email client configuration
 To configure your email client you must change the pop3 server settings.
  Usually you must use localhost as the pop3 host name, and 2000 as the pop3
  port.
- In case you install FreePOPs in another computer of you lan, you should
+ In case you install FreePOPs in another computer of you LAN, you should
  use the host's name instead of localhost.
 \layout Section
 
-Creating a webmail plugin
+Creating a plugin
 \layout Standard
 
 The best way of doing this is to read carefully the 
 \family typewriter 
 libero.lua
 \family default 
- file, that is a quite simple but really commented example of webmail plugin.
+ file, that is a quite simple but really commented example of web-mail plugin.
  Then you should copy the 
 \family typewriter 
 skeleton.lua
@@ -139,14 +160,19 @@ skeleton.lua
 \family typewriter 
 config.lua
 \family default 
- to make FreePOPs associate the rights mailaddresses domains to your new
+ to make FreePOPs associate the rights mail-addresses domains to your new
  plugin.
+ A simpler example is 
+\family typewriter 
+flatnuke.lua
+\family default 
+ that is a web-news plugin.
 \layout Section
 
 Submitting a bug
 \layout Standard
 
-When you have problems, you think you found a bug, please follew strictly
+When you have problems, you think you found a bug, please follow strictly
  this 
 \emph on 
 iter
@@ -154,12 +180,12 @@ iter
 :
 \layout Enumerate
 
-Update to the most recent versione of FreePOPs.
+Update to the most recent version of FreePOPs.
 \layout Enumerate
 
 Try to reproduce the bug, if the bug is not easily reproducible we are out
  of luck.
- Some can still be tryed: if the software crashed you could compile it from
+ Some can still be tried: if the software crashed you could compile it from
  the sources, install valgrind, run freepopsd with valgrind and hope the
  error messages are interesting.
 \layout Enumerate

@@ -1,6 +1,6 @@
 Come faccio a passare da LiberoPOPs a FreePOPs?
 
-  Prima di tuttoe' giusto che tu sappia che mentre LiberoPOPs e' un software
+  Prima di tutto e' giusto che tu sappia che mentre LiberoPOPs e' un software
   sostanzialmente maturo, FreePOPs e' particolrmenta acerbo. Il che significa 
   che potebbe avere parecchi bachi. 
   
@@ -23,7 +23,8 @@ Come faccio a passare da LiberoPOPs a FreePOPs?
   sbizzarrirti leggendo e magari modificando il file libero.lua che contiene
   il "plugin" per la webmail di libero. E' scritto in un linguaggio semplice,
   e puoi velocemente impararlo con un tutorial a http://www.lua-users.org
-  Il file viene "interpretato al volo da FreePOPs e quindi non hai bisogno
+  Il file viene "interpretato al volo" da FreePOPs e quindi non hai bisogno
   di compilatori e sorgenti per modificare il comportamento di FreePOPs.
 
   enjoy
+

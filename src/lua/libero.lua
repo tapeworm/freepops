@@ -276,7 +276,7 @@ end
 -- The callback function must accept 2 args: the data to send and an optional 
 -- error message. it the data s is nil it means the err contains the 
 -- relative error message. If s is "" it means that the trasmission 
--- ended sucesfully (read the socket has benn closed correclty). 
+-- ended sucesfully (read: the socket has benn closed correclty). 
 -- 
 -- Here a is an opaque data structure used by the
 -- stringhack module. the stringhack module implements some usefull string 

@@ -32,7 +32,7 @@ function Private.get_uri(self,uri)
 	--table.foreach(u,print)
 	local r = {url=uri,headers={referrer = self.referrer,
 		cookie = cookie.get(self.cookies,u.path,u.host,u.host),
-		["user-agent"] = self.USERAGENT}}
+		["user-agent"] = self.USERAGENT},method="GET",stay=nil}
 	--table.foreach(r,print)	
 	--table.foreach(r.headers,print)
 	

@@ -329,6 +329,10 @@ function downloadMsg(pstate, msg, nLines, data)
   -- 
   local f, _ = browser:pipe_uri(url, cb)
 
+  -- To be safe, add a blank line
+  --
+  popserver_callback("\r\n\0", data)
+
   return POPSERVER_ERR_OK
 end
 

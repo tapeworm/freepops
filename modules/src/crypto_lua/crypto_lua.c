@@ -49,6 +49,8 @@ static int lbin2hex(lua_State* L){
 
 	lua_pushstring(L,enc);
 
+	free(enc);
+	
 	return 1;
 }
 

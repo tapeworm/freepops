@@ -266,7 +266,7 @@ function libero_login()
 end
 
 --------------------------------------------------------------------------------
--- The callbach factory for top and retr
+-- The callbach factory for retr
 --
 -- A callback factory is a function that generates other functions. both retr
 -- and top need a callback. the callback is called when there is some data 
@@ -292,21 +292,14 @@ end
 -- so it is implemented in C for you. check_stop checks if the lines 
 -- amount of lines have already been processed.
 --
-function factory_cb(lines,data)
+function retr_cb(data)
 	local a = stringhack.new_str_hack()
-
+	
 	return function(s,err)
 		if s then
 			if s ~= "" then
-				-- fix add a new callback that has 
-				-- size instead of \0
-				-- that wil be faster in lua XXX
-				if lines ~= nil then
-					s = stringhack.tophack(s,lines,a)
-				end
-				
 				s = stringhack.dothack(s,a).."\0"
-				
+			
 				popserver_callback(s,data)
 			else
 				-- trasmission ended successfully!
@@ -314,20 +307,62 @@ function factory_cb(lines,data)
 				return nil,"EOF"
 			end
 		else
-			log.error_print(err)
+			log.error_print(err.."\n")
 			stringhack.delete_str_hack(a)
 			return nil,"network error: "..err
 		end
 
 		-- check if we need to stop (in top only)
-		if lines ~= nil and stringhack.check_stop(lines,a) then
-			stringhack.delete_str_hack(a)
-			return nil,"EOF"
-		else
-			return true,nil
-		end
+		return true,nil
 	end
-end	
+end
+
+-- -------------------------------------------------------------------------- --
+-- The callback for top is really similar to the retr, but checks for purging
+-- unwanted data and sets globals.lines to -1 if no more lines are needed
+--
+function top_cb(global,data)
+	local purge = false
+	
+	return function(s,err)
+
+	if s then
+		if s ~= "" then
+			if purge == true then
+				--print("purging: "..string.len(s))
+				return true,nil
+			end
+			
+			s=stringhack.tophack(s,global.lines_requested,global.a)
+			s = stringhack.dothack(s,global.a).."\0"
+			
+			popserver_callback(s,data)
+		else
+			-- trasmission ended successfully!
+			if stringhack.check_stop(
+			   global.lines_requested,global.a) then
+				global.lines = -1
+				return nil,"EOF"
+			end
+			global.lines = global.lines_requested - 
+				stringhack.current_lines(global.a)
+			return nil,"EOF"
+		end
+	else
+		log.error_print(err.."\n")
+		return nil,"network error: "..err
+	end
+
+	-- check if we need to stop (in top only)
+	if stringhack.check_stop(global.lines_requested,global.a) then
+		--print("TOP more than needed")
+		purge = true
+		return true,nil
+	else
+		return true,nil
+	end
+	end
+end
 
 -- ************************************************************************** --
 --  Libero functions
@@ -654,7 +689,7 @@ function retr(pstate,msg,data)
 	if st ~= POPSERVER_ERR_OK then return st end
 	
 	-- the callback
-	local cb = factory_cb(nil,data)
+	local cb = retr_cb(data)
 	
 	-- some local stuff
 	local popserver = internal_state.popserver
@@ -685,8 +720,6 @@ function top(pstate,msg,lines,data)
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 
-	--XXX FIXME try to avoid the webmail bug FIXME XXX
-
 	-- some local stuff
 	local popserver = internal_state.popserver
 	local session_id = internal_state.session_id
@@ -696,17 +729,61 @@ function top(pstate,msg,lines,data)
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	local uri = string.format(libero_string.save,popserver,session_id,uidl)
 
-	-- the callback
-	local cb = factory_cb(lines,data)
+	-- build the callbacks --
 	
-	-- tell the browser to pipe the uri using cb
-	local f,rc = b:pipe_uri(uri,cb)
-	
-	if not f then
-		log.error_print("Asking for "..uri.."\n")
-		log.error_print(rc.error.."\n")
-		return POPSERVER_ERR_NETWORK
+	-- this data structure is shared between callbacks
+	local global = {
+		-- the current amount of lines to go!
+		lines = lines, 
+		-- the original amount of lines requested
+		lines_requested = lines, 
+		-- the stringhack (must survive the callback, since the 
+		-- callback doesn't know when it must be destroyed)
+		-- FIXME implementing the stinghack as a good lua binding
+		-- with __gc metamethod
+		a = stringhack.new_str_hack(),
+		-- the first byte
+		from = 0,
+		-- the last byte
+		to = 0,
+		-- the minimum amount of bytes we receive 
+		-- (compensates the mail header usually)
+		base = 2048,
+	}
+	-- the callback for http stram
+	local cb = top_cb(global,data)
+	-- retrive must retrive from-to bytes, stores from and to in globals.
+	local retrive_f = function()
+		global.to = global.base + global.from + (global.lines + 1) * 100
+		global.base = 0
+		local extra_header = {
+			["Range"] = "bytes="..global.from.."-"..global.to
+		}
+		local f,rc = b:pipe_uri(uri,cb,extra_header)
+		global.from = global.to + 1
+		if f == nil and rc.error == "EOF" then
+			return "",nil
+		end
+		return f,rc.error
 	end
+	-- global.lines = -1 means we are done!
+	local check_f = function(_)
+		return global.lines < 0
+	end
+	-- nothing to do
+	local action_f = function(_)
+		return true
+	end
+
+	-- go!
+	if not support.do_until(retrive_f,check_f,action_f) then
+		log.error_print("Top failed\n")
+		session.remove(key())
+		return POPSERVER_ERR_UNKNOWN
+	end
+
+	-- delete the stringhack FIXME __gc
+	stringhack.delete_str_hack(global.a)
 
 	return POPSERVER_ERR_OK
 end

@@ -2,11 +2,14 @@
 -- The browser object is the plugins interface to the web.
 -- The object has the following methods:<BR/>
 -- <BR/>
--- <B>get_uri(uri)</B> : returns string,err and takes the uri in 
--- "http://" form<BR/>
+-- <B>get_uri(uri,exhed)</B> : returns string,err and takes the uri in 
+-- "http://" form,exhed are extra header lines you want to add
+-- , for example {["range"] = "0-100",["user-agent"] = "fake" }<BR/>
 -- <BR/>
--- <B>pipe_uri(uri,callback)</B> : Gets the uri and uses callback on the data
--- received. <BR> The callback takes a string (the data) and an optional error 
+-- <B>pipe_uri(uri,callback,exhed)</B> : 
+-- Gets the uri and uses callback on the data
+-- received,exhed  are extra header lines you want to add. <BR> 
+-- The callback takes a string (the data) and an optional error 
 -- message as arguments and returns a couple. 
 -- The first argument is true if it is ok to continue, nil if not. 
 -- The second an error message. <BR/>
@@ -25,7 +28,7 @@ dofile("cookie.lua")
 
 local Private = {}
 
-function Private.get_uri(self,uri) 
+function Private.get_uri(self,uri,exhed) 
 	local rc
 	local u = socket.url.parse(uri)
 	if not u.path then u.path = "/" end
@@ -33,6 +36,11 @@ function Private.get_uri(self,uri)
 	local r = {url=uri,headers={referrer = self.referrer,
 		cookie = cookie.get(self.cookies,u.path,u.host,u.host),
 		["user-agent"] = self.USERAGENT},method="GET",stay=nil}
+	if exhed ~= nil then
+		for k,v in pairs(exhed) do
+			r.headers[k] = v
+		end
+	end
 	--table.foreach(r,print)	
 	--table.foreach(r.headers,print)
 	
@@ -47,7 +55,7 @@ function Private.get_uri(self,uri)
 	end
 end
 
-function Private.pipe_uri(self,uri,cb) 
+function Private.pipe_uri(self,uri,cb,exhed) 
 	local rc
 	local u = socket.url.parse(uri)
 	if not u.path then u.path = "/" end
@@ -57,6 +65,11 @@ function Private.pipe_uri(self,uri,cb)
 		["user-agent"] = self.USERAGENT}}
 	--table.foreach(r,print)	
 	--table.foreach(r.headers,print)
+	if exhed ~= nil then
+		for k,v in pairs(exhed) do
+			r.headers[k] = v
+		end
+	end
 	rc = socket.http.request_cb(r,{body_cb=cb})
 	if rc.code == 200 then
 		cookie.merge(self.cookies,cookie.parse_cookies(

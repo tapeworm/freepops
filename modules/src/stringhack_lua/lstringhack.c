@@ -230,7 +230,7 @@ else
 	}
 
 /* have we received more than needed? */
-if (a->current_lines > lines)
+if (a->current_lines > lines || (lines == 0 && a->header_done))
 	{
 	int i;
 	int l,l_old;
@@ -287,8 +287,14 @@ return tmp;
 
 int check_stop(int lines,struct strhack_t *a)
 {
-if (a->current_lines > lines)
+if (a->current_lines > lines || (lines == 0 && a->header_done))
 	return 1;
 else
 	return 0;
 }
+
+int current_lines(struct strhack_t *a)
+{
+return a->current_lines;
+}
+

@@ -27,6 +27,12 @@ char * dothack(char *buff,void *a);
 //-- @return string.
 char *tophack(char* tmp,int lines,void *a);
 
+//---
+//-- line counted since now.
+//-- @param a userdata the hack handler.
+//-- @return number.
+int current_lines(void*a);
+
 int check_stop @ __check_stop(int lines,void *a);
 
 $[

@@ -1,3 +1,4 @@
+- adedd the arrow winsystray stuff (thanks russells)
 - added option -k to kill the running freepopsd
 - fixed URL decoding for plugin parameters and added support for space
 represented as + character

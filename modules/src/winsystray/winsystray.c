@@ -124,7 +124,8 @@ switch (message)
 		switch (lParam) {
         		case WM_RBUTTONDOWN: 
         		case WM_LBUTTONDOWN: 
-				
+			
+			SetCursor(LoadCursor(NULL,IDC_ARROW));
           		GetCursorPos(&pt);
 			hmenu = LoadMenu(ghInst, MAKEINTRESOURCE(RES_MENU));
 			hpopup = GetSubMenu(hmenu, 0);

@@ -122,6 +122,9 @@ function Private.parse_cookie(s,h)
 		end
 	end
 	if t.domain == nil then
+		if h == nil then
+			error("parse_cookies cant be called with h = nil")
+		end
 		t.domain = h
 	end
 	t.timestamp = os.time()
@@ -129,54 +132,6 @@ function Private.parse_cookie(s,h)
 	return t
 end
 
--- If we receive more cookies they are separated by 2 comma, but 
--- the paring function works only on strings containing one cookie
---
--- !!! only in luasocket, not in a pure header !!!
--- 
---function Private.split_cookies(s)
---	local t = {}
---	while true do
---	local l1 = string.find(s,",")
---	local l3,l3b = string.find(s,Private.left_table["expires"]..
---		"%s*=%s*%w+%s*")
---	if not l1 then
---		table.insert(t,s)
---		return t
---	end
---	if l1 and l3 and l1<l3 then
---		table.insert(t,string.sub(s,1,l1))
---		s = string.sub(s,l1+1,-1)
---	end
---	if l1 and l3 and l1>l3 then
---		if l3b then
---			if l1 == l3b+1 then
---				local l2  = string.find(s,",",l1+1)
---				if l2 then
---					table.insert(t,string.sub(s,1,l2))
---					s = string.sub(s,l2+1,-1)
---				else
---					table.insert(t,s)
---					return t
---				end
---			end
---		else
---			table.insert(t,s)
---			return t
---		end
---		
---	end
---	end
---end
-
--- return a teble of cookies, h is the host
-function Private.parse_cookie_table(t,h)
-	local r = {}
-	table.foreach(t,function(_,s) 
-		table.insert(r,Private.parse_cookie(s,h)) 
-	end)
-	return r
-end
 
 -- checks if the cookie has to be purged
 function Private.is_expired(c)
@@ -237,8 +192,9 @@ cookie = {}
 -- parse
 function cookie.parse_cookies(s,h)
 	if s then
-		--return Private.parse_cookie_table(Private.split_cookies(s),h)
-		return Private.parse_cookie_table({s},h)
+		local r = {}
+		table.insert(r,Private.parse_cookie(s,h)) 
+		return r
 	else
 		return nil
 	end
@@ -345,6 +301,9 @@ end
 -- returns the needed cookie for the domain...
 -- returns the string
 function cookie.get(t,res,domain,host)
+	if domain == nil then
+		error("cookie.get can't be called with an empty domain")
+	end
       --print("cookie.get("..(res or"nil")..(domain or"nil")..(host or"nil"))
 	local function domain_match(a,b)
 		local x,_ = string.find(a,b)

@@ -172,10 +172,33 @@ function Hidden.cookie_and_referer(self,url,gl_h)
 end
 
 -- gets the field Location: in a header table
-function Hidden.get_location(gl_h)
+function Hidden.get_location(gl_h,url)
 	return table.foreach(gl_h,function(_,l)
 		local _,_,location = string.find(l,
 			"[Ll][Oo][Cc][Aa][Tt][Ii][Oo][Nn]%s*:%s*([^\r\n]*)")
+		if location ~= nil then
+			-- ah ah ah, what do you think? the RFC says that
+			-- Location wants an absolute uri, but the 
+			-- wounderful IIS sends a relative uri
+			local l = cookie.parse_url(location)
+			if ( l.host == nil or l.scheme == nil) then
+				local u = cookie.parse_url(url)
+				if ( u.host == nil or u.scheme == nil) then
+					error("get_location must be called "..
+						"with an absolute uri")
+				end
+				if (l.host == nil) then
+					location = u.host .. "/" .. location
+				end
+				if (l.scheme == nil) then
+					location = u.scheme .. "://"..location
+				end
+				l = cookie.parse_url(location)
+				if ( l.host == nil or l.scheme == nil) then
+					error("unable to recover bad Location")
+				end
+			end
+		end
 		return location
 	end)
 end
@@ -204,7 +227,7 @@ end
 -- nil,error if an error
 -- DONE,nil if ok
 -- REDO,url if 3xx code
-function Hidden.parse_header(self,gl_h)
+function Hidden.parse_header(self,gl_h,url)
 	if gl_h[1] == nil then
 		return Hidden.error("malformed HTTP header line: nil")
 	end
@@ -227,7 +250,7 @@ function Hidden.parse_header(self,gl_h)
 				end_of_1xx = true
 			end
 		end
-		return Hidden.parse_header(self,gl_h1)
+		return Hidden.parse_header(self,gl_h1,url)
 	-- HTTP 2xx
 	elseif string.byte(ret,1) == string.byte("2",1) then
 		if self.followRefreshHeader == true then
@@ -243,7 +266,7 @@ function Hidden.parse_header(self,gl_h)
 			return Hidden.error("Unsupported HTTP "..ret.." code")
 		end
 		if ret=="301" or ret=="302" or ret=="303" or ret=="307"  then
-			local l = Hidden.get_location(gl_h)
+			local l = Hidden.get_location(gl_h,url)
 			if l ~= nil then
 				return Hidden.REDO,l
 			else
@@ -292,7 +315,7 @@ function Hidden.perform(self,url,gl_h,gl_b)
 			return rc,err
 		else
 			Hidden.cookie_and_referer(self,url,gl_h)
-			return Hidden.parse_header(self,gl_h)
+			return Hidden.parse_header(self,gl_h,url)
 		end
 	else
 		return nil,err

@@ -362,6 +362,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	struct in_addr address;
 	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL;
 
+#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)	
+        pid_t this_pid;
+#endif
+
 #if defined(WIN32) && !defined(CYGWIN)
 	int argc;
 	char **argv;
@@ -374,7 +378,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)	
 	uid = geteuid();
 	gid = getegid();
-        pid_t this_pid;
 #endif
 
 	address.s_addr = htonl(BINDADDRESS);

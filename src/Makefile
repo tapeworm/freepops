@@ -26,7 +26,11 @@ CFLAGS+= -I. -I../modules/include
 ifeq "$(OS)" "Windows"
 CFLAGS+= -DFREEPOPSLUA_PATH=\"lua/\"
 else
-CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
+	ifeq "$(OS)" "Darwin"
+	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)Resources/\"
+	else
+	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
+	endif
 endif
 
 ifeq "$(OS)" "Cygwin"

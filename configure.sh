@@ -51,6 +51,7 @@ set_osx() {
 set_default
 OS=Darwin
 CFLAGS="$CFLAGS -DMACOSX"
+LDFLAGS="$LDFLAGS -framework Carbon"
 }
 
 set_obsd() {

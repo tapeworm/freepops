@@ -339,6 +339,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	unsigned short port = POP3PORT;
 	struct in_addr address;
 	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL;
+
 #if defined(WIN32) && !defined(CYGWIN)
 	int argc;
 	char **argv;
@@ -356,16 +357,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	address.s_addr = htonl(BINDADDRESS);
 	logfile = strdup(LOGFILE); //means stdout
 
+	system("echo $PWD");
+	
 /*** ARGUMENTS PARSING ***/
 	while (
 	(res=getopt_long(argc,argv,"b:p:P:A:c:u:t:l:s:dhVvw",opts,NULL))!= -1) {
 		if (res == 'p') {
 			/* --port */
+#if defined(MACOSX)
+			/* ignore .app parameter */
+			if (strncmp(optarg, "sn_", 3))
+			{
+#endif
 			if ((port = atoi(optarg)) == 0) {
 				fprintf(stderr, "Invalid port number\n");
 				usage(argv[0]);
 				exit(1);
 			}
+#if defined(MACOSX)
+			}
+#endif
 		} else if (res == 'b') {
 			/* --bind */
 			struct hostent *host;

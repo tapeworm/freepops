@@ -1,3 +1,4 @@
+- log used to write liberopopsd :)
 - fixed "-" in the username
 - proxy AUTH issue workaround (not able to make CURLAUTH_ANY work)
 28/05/2004 0.0.3 bomb! feature release

@@ -483,7 +483,7 @@ function stat(pstate)
 			local size = x:get (0,i-1)
 
 			-- arrange message size
-			local k = nil
+			local k,m = nil,nil
 			_,_,k = string.find(size,"([Kk][Bb])")
 			_,_,m = string.find(size,"([Mm][Bb])")
 			_,_,size = string.find(size,"([%.%d]+)")

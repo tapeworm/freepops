@@ -30,5 +30,6 @@ for next version or later:
 	fix gmail 695 tonumber(nil)
 	they say that win32 withoud -w can crash
 	gmail downloads again the whole thread if a new mail arives
+	gmail patch: http://freepops.diludovico.it/index.php?showtopic=1406
 
 - eof -

@@ -1,5 +1,6 @@
-08/07/2004 0.0.11 feature/fix release
+09/07/2004 0.0.12 fix release
 - added link tag support to aggregator plugin
+08/07/2004 0.0.11 feature/fix release (never released officially)
 - added base tutorials to manual
 - added pubDate tag support to aggregator plugin
 - added gmail.lua to manual + various fixes

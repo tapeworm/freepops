@@ -421,7 +421,6 @@ freepops.init = function (mailaddress,loadonly)
 
 	if not loadonly then
 		if freepops.check_global_symbols() == nil then return 1 end
-		if plugins2xml.sanity_check() == nil then return 1 end
 	end
 
 	return 0 -- OK

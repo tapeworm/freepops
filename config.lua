@@ -25,8 +25,15 @@ freepops.MODULES_MAP["inwind.it"] 	= {name="libero.lua"}
 freepops.MODULES_MAP["blu.it"] 		= {name="libero.lua"}
 
 -- tin
-freepops.MODULES_MAP["virgilio.it"]	= {name="tin.lua"}
-freepops.MODULES_MAP["tin.it"]		= {name="tin.lua"}
+freepops.MODULES_MAP["virgilio.it"]	= {
+	name="tin.lua",
+	args={folder="INBOX"}
+}
+
+freepops.MODULES_MAP["tin.it"]		= {
+	name="tin.lua",
+	args={folder="INBOX"}
+}
 
 -- lycos
 freepops.MODULES_MAP["lycos.it"]	= {name="lycos.lua"}

@@ -1081,6 +1081,29 @@ This is the webmail support for
 mailboxes.
  To use this plugin you have to use your full email address as the username
  and your real password as the password.
+ Since you may need to inspect other folders than 
+\family typewriter 
+INBOX
+\family default 
+, you can pass the folder parameter to the plugin.
+ The only tested folder is 
+\family typewriter 
+Spam
+\family default 
+, but other forlder may work.
+ This is an example of a username for the 
+\family typewriter 
+Spam
+\family default 
+ folder (the default folder is the 
+\family typewriter 
+INBOX
+\family default 
+ one):
+\newline 
+
+\family typewriter 
+foo@virgilio.it?folder=Spam 
 \layout Subsection
 
 lycos.lua
@@ -1535,7 +1558,7 @@ kerneltrap.org
 \size footnotesize 
 http://kerneltrap.org 
 \family default 
-news (Inglese)
+news (English)
 \end_inset 
 </cell>
 </row>
@@ -1561,7 +1584,7 @@ linux.kerneltrap.org
 \size footnotesize 
 http://linux.kerneltrap.org 
 \family default 
-news (Inglese)
+news (English)
 \end_inset 
 </cell>
 </row>

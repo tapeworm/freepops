@@ -1,16 +1,15 @@
 legeng: more + means more done! (from 1 to 7)
 
 next release 0.0.13
+	servizio per win32
 	plugin (superva,freepass,hotmail,yahoo,excite,gmail)
 	problemi in lycos utf8 (magari sistemare il mimer decentemente)
 	problemi login tin(aspetta ethereal)
 	fai generare i ps in /doc al volo dai jpg
 	edit categorization in SF (add openbsd)
 	gmail saves exported addressbook to My Documents (fix manual)
-	spam tin	
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
 	aggiungi che GMAIL vuole SSL nel manuale e nel sito
 	use cvs2cl or finis out script
-	fisici parser parametri
 	aggiungere nel manuale dominio mozillaitalia.org per aggregator

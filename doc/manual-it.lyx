@@ -31,7 +31,7 @@
 
 
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -1131,6 +1131,29 @@ Questo plugin vi permette di leggere le mail che avete in una mailbox
 .
  Per usare questo plugin dovete usare il vostro indirizzo email completo
  come username e la vostra password reale come password.
+ Visto che potresti aver bisogno di scaricare altre cartelle oltre alle
+ 
+\family typewriter 
+INBOX
+\family default 
+ (che è quella di default) il plugin accetta il parametro 
+\family typewriter 
+folder
+\family default 
+ e l'unico valore attualmente testato è 
+\family typewriter 
+Spam
+\family default 
+, ma anche altre cartelle dovrebbero funzionare.
+ Ecco un esempio di username per controllare la cartella 
+\family typewriter 
+Spam
+\family default 
+:
+\newline 
+
+\family typewriter 
+foo@virgilio.it?folder=Spam 
 \layout Subsection
 
 lycos.lua

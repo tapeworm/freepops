@@ -1,5 +1,6 @@
+- added folder parameter to tin.lua plugin
 - fixed aggregator plugin to respect RSS 2.0 specifications
-- added ags parser
+- added args parser
 - added freepops-doc debian package
 - fixed last cygwin issue
 - fixed gmail TOP

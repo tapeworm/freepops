@@ -44,10 +44,10 @@ local tin_string = {
 	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>O<O>O<O>",
 	-- The uri for the first page with the list of messages
 	first = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT",
+		"seq=+Q&auth=+A&srcfolder=%s&chk=1&style=comm4_IT",
 	-- The uri to get the next page of messages
 	next = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT&"..
+		"seq=+Q&auth=+A&srcfolder=%s&chk=1&style=comm4_IT&"..
 		"start=%d&end=%d",
 	-- some stuff for the mail list browsing
 	rangeC='\n%s*rng%s*=%s*"(%d+)%-(%d+)"%s*;',
@@ -57,13 +57,13 @@ local tin_string = {
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
 	save = "http://%s/mail/MessageDownload?sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=INBOX&uid=%s&srch=0&style=comm4_IT",	
+		"seq=+Q&auth=+A&srcfolder=%s&uid=%s&srch=0&style=comm4_IT",	
 	-- The uri to delete some messages
 	delete = "http://%s/mail/MessageErase",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
 	delete_post = "sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT&",
+		"seq=+Q&auth=+A&srcfolder=%s&chk=1&style=comm4_IT&",
 	delete_next = "msguid=%s&"
 }
 
@@ -86,7 +86,8 @@ internal_state = {
 	domain = nil,
 	name = nil,
 	password = nil,
-	b = nil
+	b = nil,
+	folder="INBOX"
 }
 
 -- ************************************************************************** --
@@ -339,6 +340,8 @@ function user(pstate,username)
 	-- save domain and name
 	internal_state.domain = domain
 	internal_state.name = name
+	internal_state.folder = freepops.MODULE_ARGS.folder or
+		"INBOX"
 	
 	return POPSERVER_ERR_OK
 end
@@ -412,7 +415,8 @@ function quit_update(pstate)
 	local pop_login = user .. "@" .. domain
 	
 	local uri = string.format(tin_string.delete,popserver)
-	local post = string.format(tin_string.delete_post,session_id,pop_login)
+	local post = string.format(tin_string.delete_post,
+		session_id,pop_login,internal_state.folder)
 
 	-- here we need the stat, we build the uri and we check if we 
 	-- need to delete something
@@ -472,7 +476,7 @@ function stat(pstate)
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
 	local uri = string.format(tin_string.first,popserver,
-		session_id,curl.escape(pop_login))
+		session_id,curl.escape(pop_login),internal_state.folder)
 	
 	-- The action for do_until
 	--
@@ -554,6 +558,7 @@ function stat(pstate)
 			local end_ = math.max(0,start-step)
 			uri = string.format(tin_string.next,popserver,
 				session_id,curl.escape(pop_login),
+				internal_state.folder,
 				start,end_)
 			-- continue the loop
 			return false
@@ -585,7 +590,8 @@ function stat(pstate)
 			-- popserver has not changed
 			
 			uri = string.format(tin_string.first,popserver,
-				session_id,curl.escape(pop_login))
+				session_id,curl.escape(pop_login)
+				,internal_state.folder)
 			return b:get_uri(uri)
 		end
 		
@@ -666,7 +672,7 @@ function retr(pstate,msg,data)
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	local uri = string.format(tin_string.save,popserver,
-				session_id,curl.escape(pop_login),uidl)
+		session_id,curl.escape(pop_login),internal_state.folder,uidl)
 	
 	-- tell the browser to pipe the uri using cb
 	local f,rc = b:pipe_uri(uri,cb)
@@ -699,7 +705,7 @@ function top(pstate,msg,lines,data)
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	local uri = string.format(tin_string.save,popserver,
-				session_id,curl.escape(pop_login),uidl)
+		session_id,curl.escape(pop_login),internal_state.folder,uidl)
 
 	-- build the callbacks --
 	

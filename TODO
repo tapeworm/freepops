@@ -25,7 +25,8 @@ for next version or later:
 	http://freepops.diludovico.it/index.php?showtopic=920&st=0&#entry4834
 +++++	folder in yahoo.com /it
 	finish squirrel.lua (eddi is working on it?)
-	opzioni proxy in config.lua e integra lettura impostazioni di IE
+	add proxy section in config.lua e integrate win-IE settings 
+		discovery code from LiberoPOPs
 	link the rss feed in the homepage
 	fix in owa that Host and Cookie is repeated 3 times.
 	in the manual we reference lycos.lua that is no more here.
@@ -37,5 +38,7 @@ for next version or later:
 		would be nice to have many views:
 		- listed by domain
 		- listed by plugin name
+	create the -dev ML
+	add a collaborative web page to publish plugins
 
 - eof -

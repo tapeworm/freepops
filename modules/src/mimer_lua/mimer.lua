@@ -244,7 +244,7 @@ function Private.qpr_eval_expansion(s)
 	local lf = Private.lf
 	local cr = Private.cr
 	
-	for i=0,string.len(s) do
+	for i=1,string.len(s) do
 		local b = string.byte(s,i)
 
 		--FIXME not perfect if "...\r" trunk "\n..."
@@ -311,10 +311,10 @@ end
 
 -- ------------------------------------------------------------------------- --
 -- wrapper for the NEW and OLD implementation
-function Private.attach_it(browser,boundary,send_cb)
+function Private.attach_it(browser,boundary,send_cb,inlineids)
 	-- switch here between the old and tested implementation and
 	-- the new and more efficient hack
-	return Private.attach_it_new(browser,boundary,send_cb)
+	return Private.attach_it_new(browser,boundary,send_cb,inlineids)
 	--return Private.attach_it_old(browser,boundary,send_cb)
 end
 
@@ -330,7 +330,7 @@ end
 --         404 HTML page attached in your mail if the URL is wrong
 --       - more cpu intense, one check and a function call more than before
 --       
-function Private.attach_it_new(browser,boundary,send_cb)	
+function Private.attach_it_new(browser,boundary,send_cb,inlineids)	
 	return function(k,uri)
 		
 		-- the 2 callbacks and the shared variable content_type
@@ -367,13 +367,25 @@ function Private.attach_it_new(browser,boundary,send_cb)
 					  quoted_printable_io_slave(send_cb)
 				end
 				-- we send the mime header
-				send_cb("--"..boundary.."\r\n"..
-					"Content-Type: "..content_type.."\r\n"..
-					"Content-Disposition: attachment; "..
-					"filename=\""..k.."\"\r\n"..
-					Private.content_transfer_encoding_of(
-						content_type)..
-					"\r\n")
+				local inlineid = inlineids[k]
+				if (inlineid == nil) then
+					send_cb("--"..boundary.."\r\n"..
+						"Content-Type: "..content_type.."\r\n"..
+						"Content-Disposition: attachment; "..
+						"filename=\""..k.."\"\r\n"..
+						Private.content_transfer_encoding_of(
+							content_type)..
+						"\r\n")
+				else
+					send_cb("--"..boundary.."\r\n"..
+						"Content-Type: "..content_type.."\r\n"..
+						"Content-ID: <"..inlineid..">\r\n"..
+						"Content-Disposition: inline; "..
+						"filename=\""..k.."\"\r\n"..
+						Private.content_transfer_encoding_of(
+							content_type)..
+						"\r\n")
+				end
 			end
 			-- we simply use the real io slave
 			return real_cb(s,len)
@@ -511,8 +523,11 @@ end
 -- @param send_cb function the callback to send the message, 
 --        may be called more then once and may return not nil to stop 
 --        the ending process.
-function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb)
+-- @param inlineids table a table { ["filename"] = "content-Ids" } which contains the
+--        ids for inline attachments.
+function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,inlineids)
 	attachments = attachments or {}
+        inlineids = inlineids or {}
 	local rc = nil
 
 	if body == nil and body_html == nil then
@@ -524,11 +539,15 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 
 	if table.getn(attachments) > 0 then
 		local boundary = Private.randomize_boundary()
+
+		local cType = "Multipart/Mixed"
+		if table.getn(inlineids) > 0 then
+			cType = "Multipart/Related"
+		end
 		
 		local mime = "MIME-Version: 1.0 "..
 				"(produced by FreePOPS/MIMER)\r\n"..
-			--"Content-Type: Multipart/Related; "..
-			"Content-Type: Multipart/Mixed; "..
+				"Content-Type: " .. cType .. "; "..
 				"boundary=\""..boundary.."\"\r\n"
 		
 		-- send headers
@@ -563,7 +582,7 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 		end
 	
 		rc = table.foreach(attachments,
-			Private.attach_it(browser,boundary,send_cb))
+			Private.attach_it(browser,boundary,send_cb,inlineids))
 		if rc ~= nil then return end
 		
 		-- close message

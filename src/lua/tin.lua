@@ -56,8 +56,8 @@ local tin_string = {
 	-- The capture to understand if the session ended
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
-	save = "http://%s/mail/MesageDownload?sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=INBOX&uid=%s&src=0&style=comm4_IT",
+	save = "http://%s/mail/MessageDownload?sid=%s&userid=%s&"..
+		"seq=+Q&auth=+A&srcfolder=INBOX&uid=%s&srch=0&style=comm4_IT",	
 	-- The uri to delete some messages
 	delete = "http://%s/mail/MessageErase",
 	-- The peace of uri you must append to delete to choose the messages 
@@ -668,20 +668,24 @@ function retr(pstate,msg,data)
 	local cb = retr_cb(data)
 	
 	-- some local stuff
-	local popserver = internal_state.popserver
 	local session_id = internal_state.session_id
 	local b = internal_state.b
+	local popserver = b:wherearewe()
+	local domain = internal_state.domain
+	local user = internal_state.name
+	local pop_login = user .. "@" .. domain
 	
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(libero_string.save,popserver,session_id,uidl)
+	local uri = string.format(tin_string.save,popserver,
+				session_id,curl.escape(pop_login),uidl)
 	
 	-- tell the browser to pipe the uri using cb
 	local f,rc = b:pipe_uri(uri,cb)
 
 	if not f then
 		log.error_print("Asking for "..uri.."\n")
-		log.error_print(rc.error.."\n")
+		log.error_print(rc.."\n")
 		return POPSERVER_ERR_NETWORK
 	end
 
@@ -697,13 +701,17 @@ function top(pstate,msg,lines,data)
 	if st ~= POPSERVER_ERR_OK then return st end
 
 	-- some local stuff
-	local popserver = internal_state.popserver
 	local session_id = internal_state.session_id
 	local b = internal_state.b
+	local popserver = b:wherearewe()
+	local domain = internal_state.domain
+	local user = internal_state.name
+	local pop_login = user .. "@" .. domain
 
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(libero_string.save,popserver,session_id,uidl)
+	local uri = string.format(tin_string.save,popserver,
+				session_id,curl.escape(pop_login),uidl)
 
 	-- build the callbacks --
 	

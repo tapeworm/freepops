@@ -24,6 +24,8 @@
 #include "log.h"
 #define LOG_ZONE "MLEX"
 
+//#define DEBUG_MLEX 1
+
 #define HIDDEN static
 
 /***  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  */
@@ -118,7 +120,9 @@ HIDDEN void print_token(struct token_t *c, char *s);
 HIDDEN void print_toklist(list_t*l, char *s, int i);
 HIDDEN void print_toklistn(list_t*l, char *s,int n);
 HIDDEN void print_chunk(struct chunk_t*c, char* str);
-//HIDDEN void print_int(void*x);
+#ifdef DEBUG_MLEX
+HIDDEN void print_int(void*x);
+#endif
 HIDDEN void print_anslist(list_t *a,char* str);
 
 /***  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  */
@@ -136,33 +140,53 @@ HIDDEN void print_anslist(list_t *a,char* str);
  */ 
 #define MODE_SCRIPT 1
 #define MODE_PLAIN 0
-HIDDEN int scriptmatch(char* s){
-regmatch_t p;
+HIDDEN __inline__ int scriptmatch(char* s){
+int pos = 0;
 
-p = regfind(s,"^[ /]*[Ss][Cc][Rr][Ii][Pp][Tt]");
+while (s[pos] == ' ') pos++;
+if (s[pos] == '/') pos++;
 
-return p.begin != -1 ? MODE_SCRIPT : MODE_PLAIN ;
+if (s[pos] == '\0' || (s[pos] != 's' && s[pos] != 'S')) return MODE_PLAIN;
+pos++;
+if (s[pos] == '\0' || (s[pos] != 'c' && s[pos] != 'C')) return MODE_PLAIN;
+pos++;
+if (s[pos] == '\0' || (s[pos] != 'r' && s[pos] != 'R')) return MODE_PLAIN;
+pos++;
+if (s[pos] == '\0' || (s[pos] != 'i' && s[pos] != 'I')) return MODE_PLAIN;
+pos++;
+if (s[pos] == '\0' || (s[pos] != 'p' && s[pos] != 'P')) return MODE_PLAIN;
+pos++;
+if (s[pos] == '\0' || (s[pos] != 't' && s[pos] != 'T')) return MODE_PLAIN;
+
+return MODE_SCRIPT;
 }
 
 HIDDEN void regexec_my(char* s,regmatch_t *p, int* mode)
 {
 int pos;
-//int c;
 int dust;
 int sm = MODE_PLAIN;
 
 p->begin = -1;
 p->end = -1;
 	
-for(pos = 0 ; (s[pos] != '<' && (*mode == MODE_PLAIN  || (sm=scriptmatch(&s[pos+1])) )) && s[pos] != '\0' ; pos++);
-
+for(pos = 0 ; !(
+	s[pos] == '\0' || 
+	(s[pos] == '<' && (((sm=scriptmatch(&s[pos+1])) == MODE_SCRIPT) || 
+	 *mode == MODE_PLAIN ))) ; pos++);
+	
 if(s[pos] == '\0')
 	return;
-	
+
+#ifdef DEBUG_MLEX
+printf("STOP: s[pos] == %c, *mode = %d, next are %c%c%c%c%c%c sm = %d\n",
+	s[pos],*mode,s[pos+1],s[pos+2],s[pos+3],s[pos+4],s[pos+5],s[pos+6],sm);
+#endif
+
 p->begin  = pos;
 
 dust=0;
-if(!strncmp(&s[pos],"<!--",4))
+if(*mode != MODE_SCRIPT && !strncmp(&s[pos],"<!--",4))
 	dust=1;
 
 pos++;
@@ -171,18 +195,23 @@ while(1)
 	{
 	if(s[pos] == '\0')
 		break;
-	else if(dust == 1 && s[pos] == '>')
+	else if (s[pos] == '>')
 		{
-		if(s[pos-1] == '-' && s[pos-2] == '-')
-			break;
-		}
-	else if(s[pos] == '>')
-		{
-		if (*mode == MODE_SCRIPT){
-			if (scriptmatch(&s[pos-6]))
+		if(dust == 1)
+			{
+			if(s[pos-1] == '-' && s[pos-2] == '-')
 				break;
-		} else
-			break;
+			}
+		else 
+			{
+			if (*mode == MODE_SCRIPT)
+				{
+				if (scriptmatch(&s[pos-6]))
+					break;
+				} 
+			else
+				break;
+			}
 		}
 	pos++;
 	}
@@ -195,7 +224,7 @@ if(s[pos] == '\0')
 
 if ( *mode == MODE_SCRIPT)
 	*mode = MODE_PLAIN;
-if ( *mode == MODE_PLAIN)
+else if ( *mode == MODE_PLAIN)
 	*mode = sm;
 
 p->end = pos+1;
@@ -328,13 +357,11 @@ HIDDEN int is_a_keep(void* x,char* str)
 {
 struct token_t* t = (struct token_t*)x;
 
-/* uncomment for debug *
-
+#ifdef DEBUG_MLEX
 printf("ACTING ");
 print_token(x,str);
 printf("\n");
-
-**/
+#endif
 
 if( t->start == t->stop)
 	return 0;
@@ -387,16 +414,14 @@ s1[t1->stop]='\0';
 p1=token_match(t,s,&s1[t1->start]);
 s1[t1->stop]=tmp;
 
-/* uncomment for debug *
-
+#ifdef DEBUG_MLEX
 printf("# %d : ",(t1->tag & (TOK_OPT_TAG|TOK_OPT_STR)));
 printf("Comparing ");
 print_token(t,s);
 printf(" with ");
 print_token(t1,s1);
 printf(" -- %s\n",p1.begin != -1 ? "OK!" : "FAILED");
-
-**/
+#endif
 
 if(p1.begin != -1)
 	return MATCHES;
@@ -533,13 +558,11 @@ else
 		}
 	else
 		{
-		/* uncomment for debug *
-		  
+#ifdef DEBUG_MLEX
 		printf("(%d)droppping ",len);
 		print_token(((struct token_t*)(data->data)),txt);
 		printf("\n");
-		
-		*/
+#endif		
 
 		return epurate(data->next,len-1,dl,txt,get->next,str);
 		}
@@ -561,11 +584,10 @@ else
 	tmp = malloc(sizeof(list_t));
 	MALLOC_CHECK(tmp);
 
-	/* uncomment for debug *
-	
+#ifdef DEBUG_MLEX
+	printf("epuration: ");	
 	list_visit(((struct answer_t *)ans->data)->dust_lengths,print_int);
-
-	**/
+#endif
 	
 	tmp->data=epurate(((struct answer_t *)ans->data)->start,
 			((struct answer_t *)ans->data)->len,
@@ -906,13 +928,11 @@ tmp->start=start;
 tmp->len=len;
 tmp->dust_lengths = new_dust_lengths(exp);
 
-/* uncomment for debug *
-
+#ifdef DEBUG_MLEX
 printf("-- a new answer of len %d\n",len);
 list_visit(tmp->dust_lengths,print_int);
 printf("\n");
-
-*/
+#endif
 
 return tmp;
 }
@@ -925,12 +945,12 @@ return tmp;
  * prints an int 
  *
  */
-/* uncomment for debug *
+#ifdef DEBUG_MLEX
 HIDDEN void print_int(void*x)
 {
 printf("%d,",*(int*)x);
 }
-**/
+#endif 
 
 /***  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  **
  * prints a token c on s
@@ -1063,7 +1083,7 @@ l=tokenize_html(str);
 r=tokenize_exp(exp);
 g=tokenize_exp(get);
 
-/* uncomment for debug *
+#ifdef DEBUG_MLEX
 printf("print STRING\n");
 print_toklist(l,str,0);
 printf("print EXPRESSION\n");
@@ -1073,7 +1093,7 @@ print_toklist(g,get,0);
 printf("print FILE\n");
 printf("%s",str);
 printf("\n");
-**/
+#endif
 
 len_g = list_len(g);
 len_r = list_len(r);
@@ -1104,11 +1124,11 @@ if ( len_g > 2 * min_len_g )
 
 a = mlmatch_aux(l,r,str,exp,min_len_r);
 
-/* uncomment for debug *
+#ifdef DEBUG_MLEX
 printf("print ANSWERS\n");
 print_anslist(a,str);
 printf("\n");
-**/
+#endif
 
 x = mlmatch_epurate(a,str,g,get);
 

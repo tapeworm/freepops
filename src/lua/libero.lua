@@ -53,19 +53,10 @@ local libero_string = {
 	-- to cut and paste the html source and work on it. For example
 	-- you could copy a message table row in a blank file, substitute
 	-- every useless field with '.*'.
-	statE = ".*<tr>.*<td>.*<input.*value.*=.*[[:digit:]]+.*>.*</td>"..
-		".*<td>.*<img>.*</td>.*<td>.*<img>.*</td>.*<td>.*<img>"..
-		".*</td>.*<td>.*<img>.*</td>.*<td>.*<img>.*</td>.*<td>"..
-		".*<a>.*<img>.*</a>.*<a>[.*]{b}.*{/b}[.*]</a>.*</td>.*<td>"..
-		".*<img>.*</td>.*<td>.*<a>[.*]{b}.*{/b}[.*]</a>.*</td>.*<td>"..
-		".*<img>.*</td>.*<td>.*</td>.*<td>.*<img>.*</td>"..
-		".*<td>[.*]{b}.*{/b}[.*]</td>.*</tr>",
+	statE = ".*<script>TREvidenceMsg</script>.*<TD>.*<input.*value.*=.*[[:digit:]]+.*>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<img>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<a>.*<script>IMGEvidenceMsg</script>.*</a>.*<script>AEvidenceMsg</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<script>AEvidenceMsg</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<IMG>.*</TD>.*<script>TDEvidenceMsg</script>.*</TD>.*<TD>.*<IMG>.*</TD>.*<script>TDEvidenceMsg</script>[.*]{b}.*[[:digit:]]+.*{/b}[.*]</TD>.*</TR>",
 	-- This is the mlex get expression to choose the important fields 
 	-- of the message list page. Used in combination with statE
-	statG = "O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>"..
-		"O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>"..
-		"O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>"..
-		"O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>O<O>",
+	statG = "O<O><O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}X{O}[O]<O>O<O>",
 	-- The uri for the first page with the list of messages
 	first = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs=1&"..
 		"C_Folder=aW5ib3g%%3D",
@@ -662,7 +653,7 @@ function retr(pstate,msg,data)
 
 	if not f then
 		log.error_print("Asking for "..uri.."\n")
-		log.error_print(rc.error.."\n")
+		log.error_print(rc.."\n")
 		return POPSERVER_ERR_NETWORK
 	end
 
@@ -703,7 +694,7 @@ function top(pstate,msg,lines,data)
 		to = 0,
 		-- the minimum amount of bytes we receive 
 		-- (compensates the mail header usually)
-		base = 2--2048,
+		base = 2048,
 	}
 	-- the callback for http stram
 	local cb = top_cb(global,data)

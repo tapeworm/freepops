@@ -29,7 +29,7 @@ struct dictionary_t
  * \param key the key
  * \return the data associated with key or NULL
  */ 
-void* dictionary_find(struct dictionary_t *d,char* key);
+void* dictionary_find(struct dictionary_t *d,const char* key);
 
 /**
  * \brief remove the element associated with key
@@ -39,7 +39,7 @@ void* dictionary_find(struct dictionary_t *d,char* key);
  * \return 0 on success
  *
  */ 
-int dictionary_remove(struct dictionary_t *d,char* key);
+int dictionary_remove(struct dictionary_t *d,const char* key);
 
 /**
  * \brief adds the element and associats it with the key
@@ -49,5 +49,5 @@ int dictionary_remove(struct dictionary_t *d,char* key);
  * \param data the element
  * \return 0 on success
  *
- */int dictionary_add(struct dictionary_t *d,char* key,void *data);
+ */int dictionary_add(struct dictionary_t *d,const char* key,void *data);
 

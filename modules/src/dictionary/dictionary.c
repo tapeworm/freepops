@@ -32,7 +32,7 @@ struct couple_t
 HIDDEN pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 /******************************************************************************/
-HIDDEN struct couple_t *new_couple(char* k,void *d)
+HIDDEN struct couple_t *new_couple(const char* k,void *d)
 {
 struct couple_t *tmp = malloc(sizeof(struct couple_t));
 MALLOC_CHECK(tmp);
@@ -59,11 +59,11 @@ return !strcmp(k,c->key);
 }
 
 /******************************************************************************/
-void* dictionary_find(struct dictionary_t *d,char* key)
+void* dictionary_find(struct dictionary_t *d,const char* key)
 {
 list_t *l;
 pthread_mutex_lock(&lock);
-l = list_find(d->head,key,equal);
+l = list_find(d->head,(void*)key,equal);
 pthread_mutex_unlock(&lock);
 if(l != NULL)
 	return ((struct couple_t*)(l->data))->data;
@@ -71,11 +71,11 @@ if(l != NULL)
 return NULL;
 }
 
-int dictionary_remove(struct dictionary_t *d,char* key)
+int dictionary_remove(struct dictionary_t *d,const char* key)
 {
 list_t *l;
 pthread_mutex_lock(&lock);
-l = list_find(d->head,key,equal);
+l = list_find(d->head,(void*)key,equal);
 if(l != NULL)
 	{
 	delete_couple((struct couple_t*)l->data);
@@ -90,11 +90,11 @@ else
 	}
 }
 
-int dictionary_add(struct dictionary_t *d,char* key,void *data)
+int dictionary_add(struct dictionary_t *d,const char* key,void *data)
 {
 list_t *l;
 pthread_mutex_lock(&lock);	
-l = list_find(d->head,key,equal);
+l = list_find(d->head,(void*)key,equal);
 if(l == NULL)
 	{
 	d->head = list_add(d->head,new_couple(key,data));

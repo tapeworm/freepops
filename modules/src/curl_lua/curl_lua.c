@@ -146,7 +146,7 @@ fprintf(stderr,"%sstack( 0) : --bottom--\n\n",LINE_PREFIX);
  * The error function
  * 
  */ 
-void L_error(lua_State* L, char* msg, ...){
+static void L_error(lua_State* L, char* msg, ...){
 char buffer[1024];
 va_list ap;
 	

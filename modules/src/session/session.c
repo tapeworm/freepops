@@ -10,7 +10,7 @@ struct data_t {
 	int used;
 };
 
-void  session_save(char* key, char* data, int overwrite)
+void  session_save(const char* key,const char* data, int overwrite)
 {
 struct data_t* tmp;
 
@@ -35,7 +35,7 @@ if(dictionary_add(&sessions,key,tmp) != 0)
 	ERROR_ABORT("Unable to save session\n");
 }
 
-char* session_load_and_lock(char* key)
+const char* session_load_and_lock(const char* key)
 {
 struct data_t* tmp = (struct data_t*)dictionary_find(&sessions,key);
 
@@ -54,7 +54,7 @@ if(tmp != NULL)
 return NULL;
 }
 
-void  session_remove(char* key)
+void  session_remove(const char* key)
 {
 struct data_t* tmp = (struct data_t*)dictionary_find(&sessions,key);
 
@@ -67,7 +67,7 @@ if(tmp != NULL)
 	}
 }
 
-void  session_unlock(char* key)
+void  session_unlock(const char* key)
 {
 struct data_t* tmp = (struct data_t*)dictionary_find(&sessions,key);
 

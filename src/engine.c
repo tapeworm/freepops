@@ -211,7 +211,7 @@ luay_emptystack(tmp->l);
 tolua_pop3server_lua_open(tmp->l);
 luaopen_mlex(tmp->l);
 luaopen_stringhack(tmp->l);
-tolua_session_lua_open(tmp->l);
+luaopen_session(tmp->l);
 luacurl_open(tmp->l);
 luaopen_psock(tmp->l);
 luaopen_base64(tmp->l);

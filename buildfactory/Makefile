@@ -8,7 +8,7 @@ help:
 	$(H)echo
 	$(H)echo "here we build all the distributed packages"
 	$(H)echo
-	$(H)echo "Targets are: all dist-{win,deb,rpm,gen,tgz}"
+	$(H)echo "Targets are: all dist-{osx,win,deb,rpm,gen,tgz}"
 	$(H)echo
 
 all: dist-deb dist-rpm dist-win dist-gen
@@ -92,6 +92,20 @@ dist-deb: freepops-$(VERSION).tar.gz
 	$(H)cd ../dist-deb/freepops/;gzip -f Packages Sources
 
 	$(H)rm -rf _deb_
+
+dist-osx:
+	$(H)cd ..;./configure.sh osx || true
+	$(H)cd ..;make all CONFIG=../config
+	$(H)mkdir -p ../dist-osx/FreePOPs/doc
+	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
+	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
+	$(H)cp README-osx.txt ../dist-osx/FreePOPs/
+	$(H)cd ..;cp COPYING AUTHORS ChangeLog config.lua dist-osx/FreePOPs/
+	$(H)cd ../doc;cp LP-FP-HOWTO.txt manual-it.pdf manual.pdf ../dist-osx/FreePOPs/doc/
+	$(H)cd ../src;strip freepopsd;cp freepopsd ../dist-osx/FreePOPs/src/
+	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
+	$(H)cd ../src/lua;cp *.lua ../../dist-osx/FreePOPs/src/lua
+	$(H)cd ../modules/include;cp *.lua ../../dist-osx/FreePOPs/modules/include
 
 freepops-$(VERSION).tar.gz: 
 	$(H)cd ..;./configure.sh linux || true

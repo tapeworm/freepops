@@ -1,0 +1,7 @@
+Benvenuto a FreePOPs!
+
+ FreePOPs è un demone POP3 più un interprete LUA e librerie extra per il parsing di HTTP e HTML. Il suo scopo principale è tradurre richieste POP3 locali in azioni HTTP remote per le webmail supportate, ma in realtà è più flessibile di così: per esempio esiste un plugin per leggere news da un sito web come se fossero messaggi in una mailbox. Si può facilmente estendere FreePOPs al volo, senza farlo ripartire; si può aggiungere un plugin o modificarne uno esistente semplicemente cambiando uno script, dato che i plugin sono scritti in LUA e sono interpretati al volo.
+
+Funzioni
+
+- Server POP3 compliant con RFC (non con tutte le feature, ma compliant).- Portabile (scritto in C e LUA il quale è scritto in C, quindi tutto è scritto nel linguaggio più portabile del mondo).- Piccolo (in termini di risorse utilizzate) e ragionevolmente veloce.- Estremamente estendibile al volo con un linguaggio semplice e potente.- Piuttosto documentato.- Rilasciato sotto la licenza GNU/GPL (questo significa che FreePOPs è Software Libero).

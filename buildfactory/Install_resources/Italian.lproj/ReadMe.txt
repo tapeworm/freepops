@@ -1,3 +1,21 @@
+FreePOPs 0.0.4 Readme file
+
+
+Questo pacchetto contiene la distribuzione pre-compilata di FreePOPs per sistemi Mac OS X. Per usarla, lanciare <percorso>/freepopsd da un Terminale, con i parametri preferiti, dove <percorso> è il percorso dove è stato installato FreePOPs. Vedi freepopsd -h o i manuali inclusi nella directory doc/ per una lista completa di opzioni a riga di comando.
+In caso di problemi nell'aggiornamento da versioni precedenti consigliamo di cancellare a mano la directory con la versione precedente e anche il file /Library/Receipts/FreePOPs-x.y.z.pkg (x.y.z e' la versione precedente di FreePOPs installata).
+
+Gli utenti di LiberoPOPs troveranno utile l'howto per la migrazione da LP a FP allegato.
+
+Per favore ricordatevi di generare un log verboso con le opzioni '-w -l log.txt' se avete bisogno di chiedere aiuto agli sviluppatori o di segnalare un bug.
+Per chiedere assistenza, DOPO aver letto la documentazione inclusa, potete guardare:
+
+- Sito ufficiale su http://freepops.sourceforge.net
+- Un tutorial per principianti su http://freepops.sourceforge.net/it/tutorial/index.shtml
+- Forum degli utenti su http://liberopops.diludovico.it/
+
+
+ChangeLog:
+
 04/06/2004 0.0.4 fix/source-reorganization release
 - added pkg file for Mac OS X
 - documentation for new modules

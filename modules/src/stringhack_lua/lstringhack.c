@@ -15,8 +15,8 @@ struct strhack_t
 	long int current_lines;
 	char last3[4];
 	char last4[4];
-	char* to_free_top;
-	char* to_free_dot;
+//	char* to_free_top;
+//	char* to_free_dot;
 	};
 
 struct strhack_t* new_str_hack()
@@ -31,16 +31,16 @@ tmp->header_done = 0;
 tmp->current_lines = 0;
 memset(tmp->last3,'\0',4);		
 memset(tmp->last4,'\0',4);		
-tmp->to_free_top = NULL;
-tmp->to_free_dot = NULL;
+//tmp->to_free_top = NULL;
+//tmp->to_free_dot = NULL;
 
 return tmp ;
 }
 
 void delete_str_hack(struct strhack_t* x)
 {
-free(x->to_free_top);
-free(x->to_free_dot);
+//free(x->to_free_top);
+//free(x->to_free_dot);
 free(x);
 }
 
@@ -51,7 +51,7 @@ free(x);
  *  by the client, while buff is eventually freed by this function.
  *
  */ 
-char * dothack(char *buff,struct strhack_t*a)
+char * dothack(struct strhack_t*a,const char *buff)
 {
 char defrag[7];
 int p;
@@ -107,12 +107,13 @@ if(p != -1)
 			strcat(&rc[d-1],&buff[d-2]);
 			
 			//free(buff);
-			buff = rc;
+			buff = (const char*)rc;
 
+			/*
 			if (a->to_free_dot != NULL)
 				free(a->to_free_dot);
 			a->to_free_dot = buff;
-
+			*/
 			
 			}
 			break;
@@ -155,14 +156,15 @@ if(n>0)
 	//free(buff);
 	
 	// this if should be always true
+	/*
 	if (a->to_free_dot != NULL)
 		free(a->to_free_dot);
 	a->to_free_dot = rc;
-	
+	*/
 	}
 else	
 	{
-	rc = buff;
+	rc = (char *)buff;
 	}
 
 memcpy(last,&rc[strlen(rc) - 3],4);
@@ -171,8 +173,9 @@ return rc;
 }
 
 // returned value is tmp
-char *tophack(char* tmp,int lines,struct strhack_t *a)
+char *tophack(struct strhack_t *a,const char* tmp,int lines)
 {
+char* buff = NULL;
 if(!a->header_done)
 	{
 	regmatch_t pm;
@@ -235,16 +238,18 @@ if (a->current_lines > lines || (lines == 0 && a->header_done))
 	int i;
 	int l,l_old;
 
+	/*
 	if (a->to_free_top != NULL)
 		free(a->to_free_top);
+	*/
 
-	tmp = strdup(tmp);
-	a->to_free_top = tmp;
+	buff = strdup(tmp);
+	/*a->to_free_top = tmp;*/
 
 
 	//DBG("cutting %ld\n",a->current_lines - lines);
 		
-	l = l_old = strlen(tmp) - 2;
+	l = l_old = strlen(buff) - 2;
 
 	if(lines == 0)
 		i = -1; // we have t oremove the blank line!
@@ -254,11 +259,11 @@ if (a->current_lines > lines || (lines == 0 && a->header_done))
 	//return back from the end of
 	while( i <= a->current_lines - lines && l >= 0)
 		{
-		if(!strncmp(&tmp[l],"\r\n",2))
+		if(!strncmp(&buff[l],"\r\n",2))
 			{
 			i++;
 			l--; //skip 2 == strlen("\r\n")
-			//DBG("CUT %d\n$\n%s\n$\n",i,&tmp[l]);
+			//DBG("CUT %d\n$\n%s\n$\n",i,&buff[l]);
 			}
 		l--;
 		}
@@ -271,21 +276,23 @@ if (a->current_lines > lines || (lines == 0 && a->header_done))
 		//DBG("(%d)cutting from here:\n$\n%s\n$\n",l,&tmp[l]);
 		if(l_old - l >= 3)
 			{
-			tmp[l+2]='\0';
-			tmp[l+1]='\n';
-			tmp[l+0]='\r';
+			buff[l+2]='\0';
+			buff[l+1]='\n';
+			buff[l+0]='\r';
 			}
 		else if(l_old - l >= 1)
 			{
-			tmp[l]='\0';
+			buff[l]='\0';
 			}
 		}
 	}
+else
+	buff= (char *)tmp;
 
-return tmp;
+return buff;
 }
 
-int check_stop(int lines,struct strhack_t *a)
+int check_stop(struct strhack_t *a,int lines)
 {
 if (a->current_lines > lines || (lines == 0 && a->header_done))
 	return 1;

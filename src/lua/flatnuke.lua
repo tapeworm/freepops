@@ -195,12 +195,11 @@ function retr_or_top(pstate,msg,data,lines)
 		body.. "\r\n"
 
 	--hack it
-	local a = stringhack.new_str_hack()
+	local a = stringhack.new()
 	if lines ~= nil then
-		s = stringhack.tophack(s,lines,a)
+		s = a:tophack(s,lines)
 	end
-	s = stringhack.dothack(s,a)
-	stringhack.delete_str_hack(a)
+	s = a:dothack(s)
 	
 	--end it
 	s = s .. "\0"

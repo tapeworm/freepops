@@ -3,9 +3,9 @@
 
 struct strhack_t* new_str_hack();
 void delete_str_hack(struct strhack_t* x);
-char * dothack(char *buff,struct strhack_t*a);
-char *tophack(char* tmp,int lines,struct strhack_t *a);
-int check_stop(int lines,struct strhack_t *a);
+char * dothack(struct strhack_t*a,const char *buff);
+char *tophack(struct strhack_t *a,const char* tmp,int lines);
+int check_stop(struct strhack_t *a,int lines);
 int current_lines(struct strhack_t *a);
 
 #endif

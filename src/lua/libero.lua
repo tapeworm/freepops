@@ -293,22 +293,20 @@ end
 -- amount of lines have already been processed.
 --
 function retr_cb(data)
-	local a = stringhack.new_str_hack()
+	local a = stringhack.new()
 	
 	return function(s,err)
 		if s then
 			if s ~= "" then
-				s = stringhack.dothack(s,a).."\0"
+				s = a:dothack(s).."\0"
 			
 				popserver_callback(s,data)
 			else
 				-- trasmission ended successfully!
-				stringhack.delete_str_hack(a)
 				return nil,"EOF"
 			end
 		else
 			log.error_print(err.."\n")
-			stringhack.delete_str_hack(a)
 			return nil,"network error: "..err
 		end
 
@@ -333,19 +331,19 @@ function top_cb(global,data)
 				return true,nil
 			end
 			
-			s=stringhack.tophack(s,global.lines_requested,global.a)
-			s = stringhack.dothack(s,global.a).."\0"
+			s=global.a:tophack(s,global.lines_requested)
+			s =  global.a:dothack(s).."\0"
 			
 			popserver_callback(s,data)
 		else
 			-- trasmission ended successfully!
-			if stringhack.check_stop(
-			   global.lines_requested,global.a) then
+			if global.a:check_stop(
+			   global.lines_requested) then
 				global.lines = -1
 				return nil,"EOF"
 			end
 			global.lines = global.lines_requested - 
-				stringhack.current_lines(global.a)
+				global.a:current_lines()
 			return nil,"EOF"
 		end
 	else
@@ -354,7 +352,7 @@ function top_cb(global,data)
 	end
 
 	-- check if we need to stop (in top only)
-	if stringhack.check_stop(global.lines_requested,global.a) then
+	if global.a:check_stop(global.lines_requested) then
 		--print("TOP more than needed")
 		purge = true
 		return true,nil
@@ -739,9 +737,7 @@ function top(pstate,msg,lines,data)
 		lines_requested = lines, 
 		-- the stringhack (must survive the callback, since the 
 		-- callback doesn't know when it must be destroyed)
-		-- FIXME implementing the stinghack as a good lua binding
-		-- with __gc metamethod
-		a = stringhack.new_str_hack(),
+		a = stringhack.new(),
 		-- the first byte
 		from = 0,
 		-- the last byte
@@ -781,9 +777,6 @@ function top(pstate,msg,lines,data)
 		session.remove(key())
 		return POPSERVER_ERR_UNKNOWN
 	end
-
-	-- delete the stringhack FIXME __gc
-	stringhack.delete_str_hack(global.a)
 
 	return POPSERVER_ERR_OK
 end

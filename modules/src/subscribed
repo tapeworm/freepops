@@ -30,7 +30,8 @@ MK_TEMPLATE=	luabind \
 		commonimpl_lua	\
 		regularexp_lua	\
 		xmltables_lua	\
-		httpmail_lua
+		httpmail_lua	\
+		plugins2xml_lua
 
 MK_TEMPL_CTRIB=	lua \
 		pthread \

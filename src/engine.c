@@ -23,21 +23,13 @@
 
 #include "popserver.h"
 #include "popstate.h"
+
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
 #include "luay.h"
-#include "pop3server_lua.h"
-#include "log_lua.h"
-#include "mlex_lua.h"
-#include "stringhack_lua.h"
-#include "session_lua.h"
-#include "curl_lua.h"
-#include "getdate_lua.h"
-#include "psock_lua.h"
-#include "base64_lua.h"
-#include "regularexp_lua.h"
-#include "lxplib.h"
+
+#include "luabox.h"
 
 #include "log.h"
 #define LOG_ZONE "ENGINE"
@@ -119,62 +111,38 @@ if(strlen(ans)>1) // what if the string is empty
 free(ans);
 }
 
-
-/******************************************************************************/
-
-int freepops_user(struct popstate_t*p,char* username)
-{
+//------------------------------------------------------------------------
+// starts the VM with the freepops stuff, 
+// and loads the plugin implied by username
+int bootstrap(struct popstate_t*p,lua_State* l,char* username,int loadonly){
 int rc = POPSERVER_ERR_UNKNOWN;
-
-/* LUA INIT PART ************************/
-struct popstate_other_t * tmp = malloc(sizeof(struct popstate_other_t));	
-
-//create data structures
-MALLOC_CHECK(tmp);
-tmp->l=lua_open();
-MALLOC_CHECK(tmp->l);
-new_popstate_other(p,assign,tmp);
-
-//open standard library
-luaopen_base(tmp->l);
-luaopen_table(tmp->l);
-luaopen_io(tmp->l);
-luaopen_string(tmp->l);
-luaopen_math(tmp->l);
-luaopen_debug(tmp->l);
-luaopen_loadlib(tmp->l);
-luay_emptystack(tmp->l);
-
-//open debug libs
-luaopen_log(tmp->l);
-luay_emptystack(tmp->l);
 
 #define FREEPOPSLUA_FILE "freepops.lua"
 
 //open freepops module
-rc = luaL_loadfile(tmp->l,FREEPOPSLUA_PATH FREEPOPSLUA_FILE);
+rc = luaL_loadfile(l,FREEPOPSLUA_PATH FREEPOPSLUA_FILE);
 if (rc != 0)
 	{
-	ERROR_PRINT("Unable to load " FREEPOPSLUA_PATH FREEPOPSLUA_FILE "\n");
-	luay_printstack(tmp->l);
+	DBG("Unable to load " FREEPOPSLUA_PATH FREEPOPSLUA_FILE "\n");
+	luay_printstack(l);
 	
 	//for developing purposes
-	luay_emptystack(tmp->l);
-	rc = luaL_loadfile(tmp->l,"src/lua/" FREEPOPSLUA_FILE);
+	luay_emptystack(l);
+	rc = luaL_loadfile(l,"src/lua/" FREEPOPSLUA_FILE);
 	if (rc != 0)
 		{
-		ERROR_PRINT("Unable to load src/lua/" FREEPOPSLUA_FILE "\n");
-		luay_printstack(tmp->l);
+		DBG("Unable to load src/lua/" FREEPOPSLUA_FILE "\n");
+		luay_printstack(l);
 		
 		//for developing purposes
-		luay_emptystack(tmp->l);
-		rc = luaL_loadfile(tmp->l,FREEPOPSLUA_FILE);
+		luay_emptystack(l);
+		rc = luaL_loadfile(l,FREEPOPSLUA_FILE);
 		if (rc != 0)
 			{
 			ERROR_PRINT("Unable to load " FREEPOPSLUA_FILE "\n");
-			luay_printstack(tmp->l);
+			luay_printstack(l);
 
-			//luay_printstack(tmp->l);
+			//luay_printstack(l);
 			ERROR_PRINT("Unable to load " FREEPOPSLUA_FILE 
 				". Path was '" 
 				FREEPOPSLUA_PATH ":src/lua/:./'\n");
@@ -191,43 +159,50 @@ if (rc != 0)
 else
 	putenv("FREEPOPSLUA_PATH="FREEPOPSLUA_PATH);
 
-rc = lua_pcall(tmp->l, 0, LUA_MULTRET, 0);
+rc = lua_pcall(l, 0, LUA_MULTRET, 0);
 if (rc != 0)
 	{
-	luay_printstack(tmp->l);
+	luay_printstack(l);
 	ERROR_ABORT("Unable to load freepops.lua\n");
 	}
 
-luay_emptystack(tmp->l);
+luay_emptystack(l);
 
 //open freepops standard LUA library and modules for username's domain
-luay_call(tmp->l,"s|d","freepops.init",username,&rc);
+luay_call(l,"sd|d","freepops.init",username,loadonly,&rc);
 if ( rc != 0)
 	{
 	ERROR_PRINT("Error calling freepops.init().\n");
-	luay_printstack(tmp->l);
+	luay_printstack(l);
 
-	lua_close(tmp->l);
-	tmp->l = NULL;
 	return POPSERVER_ERR_UNKNOWN;
 	}
-luay_emptystack(tmp->l);
+luay_emptystack(l);
 
-//open freepops standard C library
-luaopen_pop3server(tmp->l);
-luaopen_mlex(tmp->l);
-luaopen_stringhack(tmp->l);
-luaopen_session(tmp->l);
-luacurl_open(tmp->l);
-luaopen_psock(tmp->l);
-luaopen_base64(tmp->l);
-luaopen_getdate(tmp->l);
-luaopen_regularexp(tmp->l);
-luaopen_lxp(tmp->l);
-luay_emptystack(tmp->l);
+luabox_addtobox(l,LUABOX_FREEPOPS ^ LUABOX_LOG);
 
 //init lua module
-luay_call(tmp->l,"p|d","init",p,&rc);
+luay_call(l,"p|d","init",p,&rc);
+
+return rc;
+}
+
+/******************************************************************************/
+
+
+
+int freepops_user(struct popstate_t*p,char* username)
+{
+int rc = POPSERVER_ERR_UNKNOWN;
+
+struct popstate_other_t * tmp = malloc(sizeof(struct popstate_other_t));	
+
+MALLOC_CHECK(tmp);
+tmp->l=luabox_genbox(LUABOX_STANDARD|LUABOX_LOG);
+new_popstate_other(p,assign,tmp);
+
+rc = bootstrap(p,tmp->l,username,0);
+
 if ( rc != POPSERVER_ERR_OK)
 	{
 	ERROR_PRINT("Error calling init function  of lua module\n");
@@ -235,7 +210,6 @@ if ( rc != POPSERVER_ERR_OK)
 	tmp->l = NULL;
 	return POPSERVER_ERR_UNKNOWN;
 	}
-/* END LUA INIT PART *********************/
 
 luay_call(tmp->l,"ps|d","user",p,username,&rc);
 return rc;

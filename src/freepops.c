@@ -56,6 +56,10 @@
 #include "altsocklib.h"
 #include "regularexp.h"
 
+#include "lua.h"
+#include "luay.h"
+#include "luabox.h"
+
 #include "log.h"
 #define LOG_ZONE "INTERNAL"
 
@@ -78,7 +82,7 @@ gid_t gid;
 #endif
 
 /*** usage ********************************************************************/
-
+#define GETOPT_STRING "b:p:P:A:c:u:t:l:s:dhVvwkx:"
 HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "port", required_argument, NULL, 'p' },
 				 { "proxy", required_argument, NULL, 'P' },
@@ -94,6 +98,7 @@ HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "daemonize", no_argument, NULL, 'd' },
 				 { "suid", required_argument, NULL, 's' },
 				 { "kill", no_argument, NULL, 'k' },
+				 { "toxml", required_argument, NULL, 'x' },
 	                         { NULL, 0, NULL, 0 } };
 
 void usage(const char *progname) {
@@ -109,6 +114,7 @@ void usage(const char *progname) {
 "\t\t\t[-t|--threads num]\n"
 "\t\t\t[-d|--daemonize]\n"
 "\t\t\t[-l|--logmode (syslog|filename|stdout)]\n"
+"\t\t\t[-x|--toxml pluginfile]\n"
 #if !defined(WIN32) && !defined(BEOS)			
 "\t\t\t[-s|--suid user.group]\n"
 "\t\t\t[-k|--kill]\n"
@@ -331,6 +337,17 @@ snprintf(tmp,1024,"%s=%s",a,b);
 putenv(tmp);
 }
 
+static int generate_xml(char* filename) {
+char username[1024];
+start_logging(strdup(LOGFILE),0);
+snprintf(username,1024,"foo@plugins2xml.lua?file=%s",filename);
+lua_State* l = luabox_genbox(LUABOX_FULL);
+bootstrap(NULL,l,username,1);
+luay_call(l,"s","main",filename);
+lua_close(l);
+return 0;
+}
+
 /*** THE MAIN HAS YOU *********************************************************/
 
 #if !(defined(WIN32) && !defined(CYGWIN))
@@ -365,7 +382,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	
 /*** ARGUMENTS PARSING ***/
 	while (
-	(res=getopt_long(argc,argv,"b:p:P:A:c:u:t:l:s:dhVvwk",opts,NULL))!= -1){
+	(res=getopt_long(argc,argv,GETOPT_STRING,opts,NULL))!= -1){
 		if (res == 'p') {
 			/* --port */
 #if defined(MACOSX)
@@ -453,7 +470,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			/* --daemonize */
 			daemonize = 1;
 			free(logfile);
-			logfile = NULL;
+			logfile = NULL; 
+		} else if (res == 'x') {
+			/* toxml */
+			exit(generate_xml(optarg));
 		} else if (res == 'w') {
 			/* --veryverbose */
 			verbose_output+=2;

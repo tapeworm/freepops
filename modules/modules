@@ -33,6 +33,7 @@ MODULES-Common= lua		\
 		xmltables_lua	\
 		httpmail_lua	\
 		luadoc		\
+		plugins2xml_lua	\
 		luafull
 	
 MODULES-Windows-pre=regex pthread 

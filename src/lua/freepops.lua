@@ -102,11 +102,11 @@ end
 freepops.choose_module = function (d)
 	if d == nil then return nil,nil end
 	if freepops.MODULES_MAP[d] == nil then 
-		local _,_,x = string.find(d,"^(%w*%.lua)$")
+		local _,_,x = string.find(d,"^(%w+%.lua)$")
 		if x == nil then
 			return nil,nil
 		end
-		return d,{}
+		return x,{}
 	end	
 	return 	freepops.MODULES_MAP[d].name,freepops.MODULES_MAP[d].args
 end
@@ -180,7 +180,7 @@ freepops.__loadlib = loadlib
 loadlib = freepops.loadlib
 
 -- load needed module for handling domain
-freepops.load_module_for = function (mailaddress)
+freepops.load_module_for = function (mailaddress,loadonly)
 	-- helpers
 	local function err_format(dom,mail) 
 		return string.format(
@@ -411,7 +411,7 @@ end
 --  This is the only function called from the C code. This loads the module
 --  that handles mailaddress's domain and load standard LUA modules
 -- -------------------------------------------------------------------------- --
-freepops.init = function (mailaddress)
+freepops.init = function (mailaddress,loadonly)
 	load_config()
 	
 	-- standard lua modules that must be loaded
@@ -419,7 +419,9 @@ freepops.init = function (mailaddress)
 	
 	if freepops.load_module_for(mailaddress) == nil then return 1 end
 
-	if freepops.check_global_symbols() == nil then return 1 end
+	if not loadonly then
+		if freepops.check_global_symbols() == nil then return 1 end
+	end
 
 	return 0 -- OK
 end

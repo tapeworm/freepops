@@ -44,7 +44,7 @@ PLUGIN_DOMAINS = {"libero.it","inwind.it","aol.it","blu.it"}
 -- list of tables with fields name and description. 
 -- description must be in the stle of PLUGIN_DESCRIPTIONS,
 -- so something like {it="bla bla bla", en = "bla bla bla"}
-PLUGINS_PARAMETERS = {
+PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
 Serve per selezionare la cartella (inbox è quella di default) su cui operare. 

@@ -1,0 +1,50 @@
+$#include "lstringhack.h"
+
+module stringhack {
+
+//---
+//-- Returns a new stringhack opaque data structure.
+//-- @return userdata.
+void* new_str_hack();
+
+//---
+//-- Frees the userdata.
+//-- @param p userdata the userdata.
+void delete_str_hack(void* x);
+
+//---
+//-- The lines containing only a dot must be mangled.
+//-- Performs a sed s/^\.$/../.
+//-- @param buff string the buffer to hack.
+//-- @param a userdata the hack handler.
+//-- @return string.
+char * dothack(char *buff,void *a);
+
+//---
+//-- Performs a line count/tructaing operation.
+//-- @param buff string the buffer to hack.
+//-- @param a userdata the hack handler.
+//-- @return string.
+char *tophack(char* tmp,int lines,void *a);
+
+int check_stop @ __check_stop(int lines,void *a);
+
+$[
+
+---
+-- Checks if we have already processed n lines of body.
+-- @param n number the number of lines.
+-- @param a userdata The hack handler.
+-- @return boolean.
+function stringhack.check_stop(n,a)
+	local tmp = stringhack.__check_stop(n,a)
+	if tmp == 0 then
+		return nil
+	else
+		return true
+	end
+end
+
+$]
+
+}

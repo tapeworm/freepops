@@ -1,0 +1,19 @@
+H=@
+
+TGZ=$(shell ls *.tar.gz)
+DIFF=$(shell ls *.diff 2>/dev/null)
+ifeq "$(DIFF)" ""
+	DIFF="nodiff"
+endif
+
+SUBDIR=$(subst .tar.gz,,$(TGZ))
+
+all: $(SUBDIR)
+
+$(SUBDIR):
+	$(H)tar -xzf $(TGZ)
+	$(H)if test ! "nodiff" = "$(DIFF)"; then cd $(SUBDIR); patch -p1 < ../$(DIFF); fi
+	$(H)make -C $(SUBDIR) PREFIX=$(PREFIX) TARGET=$(TARGET) CONFIG=$(CONFIG)
+
+clean:
+	$(H)rm -rf $(SUBDIR)

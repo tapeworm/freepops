@@ -1,0 +1,48 @@
+#!/sbin/runscript
+
+depend() {
+        need net
+}
+
+start() {
+        ebegin "Starting FreePOPs"
+
+        # Set configuration
+	if [ ${PORT_NUMBER} ]; then
+		ARGS=" -p ${PORT_NUMBER}"
+	fi
+	if [ ${BIND_ADDR} ]; then
+		ARGS="${ARGS} -b ${BIND_ADDR}"
+	fi
+	if [ ${ALLOWS_MAX} ]; then
+		ARGS="${ARGS} -t ${ALLOWS_MAX}"
+	fi
+	if [ ${LOG_FILE} ]; then
+		ARGS="${ARGS} -l ${LOG_FILE}"
+	fi
+	if [ "${VERBOSE}" = "1" ]; then
+		ARGS="${ARGS} -v"
+	fi	
+	if [ "${VERBOSE}" = "2" ]; then
+	        ARGS="${ARGS} -vv"
+	fi
+	if [ ${USER_AGENT} ]; then
+		ARGS="${ARGS} -u ${USER_AGENT}"
+	fi
+	if  [ ${PROXY_ADDRESS} ] && [ ${PROXY_PORT} ]; then	 
+		ARGS="${ARGS} -P ${PROXY_ADDRESS}:${PROXY_PORT}"
+	fi	
+	if  [ ${USER_NAME} ] && [ ${USER_PASSWD} ]; then	 
+		ARGS="${ARGS} -A ${USER_NAME}:${USER_PASSWD}"
+	fi	
+	start-stop-daemon --start  --exec /usr/bin/freepopsd \
+		-- -d ${ARGS} 
+	eend ${?}
+}
+
+stop () {
+        ebegin "Stopping FreePOPs"
+	start-stop-daemon --stop --pidfile /var/run/freepopsd.pid
+        eend ${?}
+}
+

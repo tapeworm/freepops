@@ -1,0 +1,26 @@
+# Starts the server on that port.
+#PORT_NUMBER="2000"
+
+# Bind address.
+# BIND_ADDR="0.0.0.0"
+
+# Allows max simultneous connections.
+# ALLOWS_MAX="5"
+
+# Logfacility can be "stdout" (the default), "syslog" or a valid filename.
+LOG_FILE="/var/log/freepopsd"
+
+# Verbose level 0=None 1=Default 2=Very verbose
+VERBOSE="1"
+
+# User Agent string
+# USER_AGENT="FreePOPs/version"
+
+# You can specify the proxy address and port
+# PROXY_ADDRESS=""
+# PROXY_PORT=""
+
+# You can specify the proxy autentication username and password
+# USER_NAME=""
+# USER_PASSWD=""
+

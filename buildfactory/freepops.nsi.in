@@ -1,0 +1,140 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; only nsis 2
+SetCompressor bzip2
+SetOverwrite on
+SetCompress auto
+SetDatablockOptimize on
+SetDateSave on
+;AutoCloseWindow true
+CRCCheck on
+
+;; dettagli ;;
+DetailsButtonText " Show details "
+; ShowInstDetails show
+
+CompletedText " Completed "
+InstallButtonText " Install "
+MiscButtonText " Back " " Cancel " " Close "
+;SetFont "comic sans ms" 12
+SpaceTexts "  Required space:  " "  Available space:  "
+UninstallButtonText " Uninstall "
+UninstallText "FreePOPs uninstall." "Uninstalling: "
+XPStyle on
+
+Caption "FreePOPs"
+SubCaption 0 ": this is free software!"
+SubCaption 2 ": Install directory"
+SubCaption 3 ": Files install"
+SubCaption 4 ": Installation complete"
+
+UninstallCaption "FreePOPs uninstall"
+UninstallSubCaption 0 ": Confirm uninstall"
+UninstallSubCaption 1 ": Files uninstall"
+UninstallSubCaption 2 ": Uninstallation complete"
+
+VIAddVersionKey ProductName "FreePOPs"
+VIAddVersionKey LegalCopyright "GNU/GPL"
+VIAddVersionKey ProductVersion "%FREEPOPSVERSION"
+VIAddVersionKey FileDescription "FreePOPs installer for Windows"
+VIAddVersionKey FileVersion "%FREEPOPSVERSION"
+VIProductVersion %FREEPOPSVERSION.0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; The name of the installer
+Name "FreePOPs %FREEPOPSVERSION"
+
+;head
+BrandingText /TRIMCENTER "Installer by nsis.sf.net"
+
+
+; The file to write
+OutFile "FreePOPs-%FREEPOPSVERSION.exe"
+
+;Icon
+Icon "freepops-setup.ico"
+UninstallIcon "freepops-remove.ico"
+;WindowIcon on
+
+;theme
+BGGradient off
+;InstallColors a0a0ff 0000ff
+InstallColors C0C0C0 404040
+;InstallColors /WINDOWS
+InstProgressFlags smooth colored
+
+
+; The default installation directory
+InstallDir $PROGRAMFILES\FreePOPs
+; Registry key to check for directory (so if you install again, it will 
+; overwrite the old one automatically)
+InstallDirRegKey HKLM SOFTWARE\NSIS_FreePOPs "Install_Dir"
+
+;License
+LicenseText "This is free software, distributed under the GNU/GPL license" "Continue"
+LicenseBkColor /windows
+LicenseData "COPYING.txt"
+LicenseForceSelection radiobuttons "I like free software." "I only use proprietary software, I'll never install this crap."
+
+; The text to prompt the user to enter a directory
+DirText "Choose a directory to install FreePOPs:"
+DirShow show
+
+
+; The stuff to install
+Section "FreePOPs (required)"
+  ; Set output path to the installation directory.
+  SetOutPath $INSTDIR
+  ; Put file there
+  File "freepopsd.exe"
+  File "*.dll"
+  File "*.txt"
+  File "config.lua"
+  SetOutPath $INSTDIR\LUA
+  File "*.lua"
+  ; Write the installation path into the registry
+  WriteRegStr HKLM SOFTWARE\NSIS_FreePOPs "Install_Dir" "$INSTDIR"
+  ; Write the uninstall keys for Windows
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FreePOPs" "DisplayName" "NSIS LiberoPOPs (remove only)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FreePOPs" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteUninstaller "uninstall.exe"
+SectionEnd
+
+; optional section
+Section "Start Menu Shortcuts"
+  CreateDirectory "$SMPROGRAMS\FreePOPs"
+  CreateShortCut "$SMPROGRAMS\FreePOPs\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\LiberoPOPs -v.lnk" "$INSTDIR\freepopsd.exe" "-v" "$INSTDIR\liberopopsd.exe" 0
+;  CreateShortCut "$SMPROGRAMS\FreePOPs\Manuale.lnk" "$INSTDIR\manuale.pdf" "" "$INSTDIR\manuale.pdf" 0
+;  CreateShortCut "$SMPROGRAMS\FreePOPs\ManualeTxt.lnk" "$INSTDIR\manuale.txt" "" "$INSTDIR\manuale.txt" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\Website.lnk" "http://freepops.sourceforge.net/index.html" "" "http://freepops.sourceforge.net/index.html" 0
+;  CreateShortCut "$SMPROGRAMS\FreePOPs\FAQ.lnk" "http://freepops.sourceforge.net/faq.html" "" "http://liberopops.sourceforge.net/faq.html" 0
+SectionEnd
+
+; uninstall stuff
+
+; special uninstall section.
+Section "Uninstall"
+  ; remove registry keys
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\FreePOPs"
+  DeleteRegKey HKLM SOFTWARE\NSIS_FreePOPs
+  ; remove files
+  Delete $INSTDIR\*.exe
+  Delete $INSTDIR\*.dll
+  Delete $INSTDIR\*.txt
+  Delete $INSTDIR\*.cfg
+  Delete $INSTDIR\manuale.pdf
+  ; remove shortcuts, if any.
+  Delete "$SMPROGRAMS\FreePOPs\*.*"
+  ; remove directories used.
+  RMDir "$SMPROGRAMS\FreePOPs"
+  RMDir "$INSTDIR"
+SectionEnd
+
+Function .onInstSuccess
+;  MessageBox MB_YESNO "Installation complete. In the directory chosen for the installation you'll find a manual, both in PDF and normal text format with useful information and answers to frequently asked questions, together with the files log.txt, stderr.txt and stdout.txt. Remember to include the log.txt file when you ask for technical support. Do you want to read the PDF manual now?" IDNO NoReadme
+;    ExecShell "open" "$INSTDIR\manuale.pdf" SW_SHOWNORMAL
+;  NoReadme:
+FunctionEnd
+
+; eof

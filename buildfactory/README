@@ -1,0 +1,20 @@
+Files for distros.
+
+debian:
+	create_jail.sh
+
+gentoo:
+	freepopsd.ebuild.gz
+	freePOPsd.confd
+	freePOPsd.initd
+rpm:
+	rpmrc
+	rpmmacros
+	freepops.spec.in
+	freepops.rc
+	freepops.sysconfig
+
+win32:
+	freepops.nsi.in
+	freepops-setup.xpm
+	freepops-remove.xpm

@@ -1,0 +1,37 @@
+$#include "list.h"
+$#include "mlex.h"
+
+module mlex {
+
+//---
+//-- Html parsing engine
+
+//---
+//-- Finds patterns in a html page.
+//-- See the C module documentation for more infos
+//-- @param data string The html page.
+//-- @param exp string See the C module documentation for this.
+//-- @param ret string See the C module documentation for this.
+//-- @return userdata The result structure.
+void* mlmatch @ match(char* data, char* exp, char*ret);
+
+//---
+//-- Debug function.
+//-- @param res userdata the returned one from mlmatch.
+//-- @param str string the data passed to mlmatch.
+void mlmatch_print_results @ print(void*res,char* str);
+
+//---
+//-- Used to erase results.
+void mlmatch_free_results @ free(void*res);
+
+//---
+//-- gets the x,y result.
+//-- @param s string the data passed to mlmatch.
+char* mlmatch_get_result @ get(int x,int y,void* res,char* s);
+		
+//---
+//-- Counts the number of results.
+int list_len @ count(void* res);
+
+}

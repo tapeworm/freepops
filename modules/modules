@@ -1,0 +1,43 @@
+MODULES-Common= lua		\
+		tolua++		\
+		luay		\
+		oscompatibility	\
+		regularexp	\
+		log		\
+		base64 		\
+		list		\
+		mlex		\
+		pid		\
+		lock		\
+		dictionary	\
+		session		\
+		portablesocket	\
+		pop3server	\
+		pop3server_lua	\
+		session_lua	\
+		serialize_lua	\
+		log_lua		\
+		mlex_lua	\
+		support_lua	\
+		luasocket	\
+		pkg2luadoc	\
+		getdate		\
+		getdate_lua	\
+		browser_lua	\
+		stringhack_lua	\
+		luadoc
+	
+MODULES-Windows-pre=regex pthread 
+MODULES-Windows-post=winsystray
+
+MODULES-Linux-pre=
+MODULES-Linux-post=
+
+MODULES-Darwin-pre=getopt
+MODULES-Darwin-post=
+
+MODULES-Cygwin-pre=regex pthread
+MODULES-Cygwin-post=winsystray
+
+MODULES-BeOS-pre=
+MODULES-BeOS-post=

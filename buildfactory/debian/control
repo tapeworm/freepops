@@ -1,0 +1,14 @@
+Source: freepops
+Section: mail
+Priority: optional
+Maintainer: Enrico Tassi <gareuselesinge@users.sourceforge.net.it>
+Build-Depends: debhelper (>= 4.0.0) 
+Standards-Version: 3.6.0
+
+Package: freepops
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, wget
+Description: pop3 interface to webmails
+ freepopsd is a daemon that acts as a local pop3 server, translating
+ local pop3 command to remote http requests to the supported
+ webmail sites.

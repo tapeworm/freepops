@@ -1,0 +1,415 @@
+diff -ruN luadoc/Makefile luadoc-new/Makefile
+--- luadoc/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ luadoc-new/Makefile	2004-01-30 17:43:12.000000000 +0100
+@@ -0,0 +1,11 @@
++include $(CONFIG)
++
++all:
++	@mkdir $(PREFIX)/bin/luafiles || true
++	@cp *.lua $(PREFIX)/bin/luafiles
++	@echo -e "#!/bin/sh\ncd $(PREFIX)/bin/luafiles/;$(PREFIX)/bin/lua $(PREFIX)/bin/luafiles/luadoc.lua \$$@" \
++		> $(PREFIX)/bin/luadoc
++	@chmod a+rx $(PREFIX)/bin/luadoc
++	
++clean:
++
+diff -ruN luadoc/analyze.lua luadoc-new/analyze.lua
+--- luadoc/analyze.lua	2001-11-19 11:55:34.000000000 +0100
++++ luadoc-new/analyze.lua	2004-01-30 17:43:12.000000000 +0100
+@@ -20,10 +20,10 @@
+ 
+ function Gappend (field)
+    return function (value)
+-	local t = global_table[%field]
++	local t = global_table[field]
+ 	if type(t) ~= "table" then
+ 	   t = { n = 0 }
+-	   global_table[%field] = t
++	   global_table[field] = t
+ 	end
+ 	tinsert (t, filter (value))
+    end
+@@ -41,10 +41,10 @@
+ 
+ function Gappend_pair (field)
+    return function (index, value)
+-	local t = global_table[%field]
++	local t = global_table[field]
+ 	if type(t) ~= "table" then
+ 	   t = { n = 0 }
+-	   global_table[%field] = t
++	   global_table[field] = t
+ 	end
+ 	tinsert (t, { index, filter (value) })
+    end
+@@ -63,10 +63,10 @@
+ 
+ function Ginsert (field)
+    return function (index, value)
+-	local t = global_table[%field]
++	local t = global_table[field]
+ 	if type (t) ~= "table" then
+ 	   t = { n = 0 }
+-	   global_table[%field] = t
++	   global_table[field] = t
+         end
+ 	t[index] = filter (value)
+    end
+@@ -94,7 +94,7 @@
+ -- @see Tappend.
+ 
+ function Tcreate (field)
+-   return function (value) current_table[%field] = filter (value) end
++   return function (value) current_table[field] = filter (value) end
+ end
+ 
+ -----------------------------------------------------------------
+@@ -109,10 +109,10 @@
+ 
+ function Tappend (field)
+    return function (value)
+-	local t = current_table[%field]
++	local t = current_table[field]
+ 	if type(t) ~= "table" then
+ 	   t = { n = 0 }
+-	   current_table[%field] = t
++	   current_table[field] = t
+ 	end
+ 	tinsert (t, filter (value))
+    end
+@@ -131,10 +131,10 @@
+ 
+ function Tinsert (field)
+    return function (index, value)
+-	local t = current_table[%field]
++	local t = current_table[field]
+ 	if type (t) ~= "table" then
+ 	   t = { n = 0 }
+-	   current_table[%field] = t
++	   current_table[field] = t
+         end
+ 	t[index] = filter (value)
+    end
+@@ -151,7 +151,7 @@
+ 
+ function Treturn (field)
+    return function ()
+-	current_table.parent[%field] = current_table
++	current_table.parent[field] = current_table
+    end
+ end
+ 
+@@ -167,7 +167,7 @@
+ -- @see Tappend.
+ 
+ function Ucreate (field)
+-   return function (value) current_table.parent[%field] = filter (value) end
++   return function (value) current_table.parent[field] = filter (value) end
+ end
+ 
+ -----------------------------------------------------------------
+@@ -183,10 +183,10 @@
+ 
+ function Uappend (field)
+    return function (value)
+-	local t = current_table.parent[%field]
++	local t = current_table.parent[field]
+ 	if type(t) ~= "table" then
+ 	   t = { n = 0 }
+-	   current_table.parent[%field] = t
++	   current_table.parent[field] = t
+ 	end
+ 	tinsert (t, filter (value))
+    end
+@@ -231,7 +231,7 @@
+          local tr = type (rep)
+          if tr == "table" then
+             source = gsub (source, find, function (new_source)
+-		return apply (new_source, %rep, Tson (current_table))
++		return apply (new_source, rep, Tson (current_table))
+             end)
+          else
+             source = gsub (source, find, rep)
+@@ -271,7 +271,7 @@
+ 
+ function analyze (in_file, desc_file, out_file)
+    -- load substitutions file.
+-   assert (dofile (desc_file))
++   dofile (desc_file)
+    -- load source string.
+    readfrom (in_file)
+    local source = read ("*a")
+diff -ruN luadoc/cmp.lua luadoc-new/cmp.lua
+--- luadoc/cmp.lua	2002-08-14 15:14:32.000000000 +0200
++++ luadoc-new/cmp.lua	2004-01-30 18:57:56.000000000 +0100
+@@ -11,6 +11,9 @@
+ 	table = 1,
+ 	["function"] = 1,
+ 	["nil"] = 1,
++	boolean = 1,userdata = 1,
++	NULL = 1,
++
+ 
+ 	tabela = 1,
+ 	numero = 1,
+@@ -27,13 +30,13 @@
+ --	string.
+ 
+ function first_rest (str)
+-	local t = %types
++	local t = types
+ 	t.first = nil
+ 	t.rest = nil
+ 	local _ = gsub (str, "^(%S+)(.*)$", function (f,r)
+-		if %t[strlower (f)] then
+-			%t.first = f
+-			%t.rest = r
++		if t[strlower (f)] then
++			t.first = f
++			t.rest = r
+ 		end
+ 	end)
+ 	if _ then
+@@ -72,20 +75,20 @@
+ 
+ function anchor (f)
+ 	return function (field_value)
+-		return '<a name="'..field_value..'">'..%f (field_value)..'</a>'
++		return '<a name="'..field_value..'">'..f (field_value)..'</a>'
+ 	end
+ end
+ 
+ function link_rel (f)
+    return function (field_value)
+-	return '<a href="#'..field_value..'">'..%f (field_value)..'</a>'
++	return '<a href="#'..field_value..'">'..f (field_value)..'</a>'
+    end
+ end
+ 
+ function link_abs (f)
+ 	return function (field_value)
+ 		field_value = gsub (field_value, "^.*/([^/]+)$", "%1")
+-		return '<a href="'..field_value..'">'..%f (field_value)..'</a>'
++		return '<a href="'..field_value..'">'..f (field_value)..'</a>'
+ 	end
+ end
+ 
+@@ -97,7 +100,7 @@
+ function link_abs_2 (f)
+ 	return function (field_value)
+ 		field_value = gsub (field_value, "^.*/([^/]+)$", "%1")
+-		return %f (field_value)..'</a>'
++		return f (field_value)..'</a>'
+ 	end
+ end
+ 
+@@ -115,8 +118,8 @@
+ -- @param source Table with source data.
+ 
+ function MakeTitle (source)
+-   if source.class and CMP.section_name ~= %section_names[source.class] then
+-      CMP.section_name = %section_names[source.class]
++   if source.class and CMP.section_name ~= section_names[source.class] then
++      CMP.section_name = section_names[source.class]
+       CMP.write ("<h3>\n"..CMP.section_name.."\n</h3>")
+    end
+ end
+@@ -157,7 +160,7 @@
+ 	      end
+ 	   end
+ 	end
+-	return "<dt><i>"..%label.."</i>\n"..s
++	return "<dt><i>"..label.."</i>\n"..s
+    end
+ end
+ 
+@@ -179,7 +182,7 @@
+ 	      end
+ 	   end
+ 	end
+-	return "<dt><i>"..%label.."</i><table>\n"..s.."</table>\n"
++	return "<dt><i>"..label.."</i><table>\n"..s.."</table>\n"
+    end
+ end
+ 
+@@ -191,14 +194,14 @@
+ 	      local t = { f = "", n = v, }
+ 	      if strfind (v, "#", 1, 1) then
+ 	         gsub (v, "^([^#]+)#([^#]+)$", function (file, name)
+-	         	%t.f = file..".html"
+-	         	%t.n = name
++	         	t.f = file..".html"
++	         	t.n = name
+ 	         end)
+ 	      end
+ 	      s = s..'<dd><a href="'..t.f..'#'..t.n..'">'..t.n..'</a>\n'
+ 	   end
+ 	end
+-	return "<dt><i>"..%label.."</i>\n"..s
++	return "<dt><i>"..label.."</i>\n"..s
+    end
+ end
+ 
+@@ -211,13 +214,13 @@
+       e = e.."</"..tag..">"
+    end
+    return function (field_value)
+-	return %b..field_value..%e.."\n"
++	return b..field_value..e.."\n"
+    end
+ end
+ 
+ function Citemize (label, linebreak)
+    return function (field_value)
+-	return "<i>"..%label.."</i>: "..field_value..%linebreak.."\n"
++	return "<i>"..label.."</i>: "..field_value..linebreak.."\n"
+    end
+ end
+ 
+@@ -225,10 +228,10 @@
+    return function (field_value)
+ 	local first, rest = first_rest (field_value)
+ 	if first then
+-	   return "<i>"..%label.."</i> <b>"..first.."</b>"..rest..
+-		%linebreak.."\n"
++	   return "<i>"..label.."</i> <b>"..first.."</b>"..rest..
++		linebreak.."\n"
+ 	else
+-	   return "<i>"..%label.."</i> "..field_value..%linebreak.."\n"
++	   return "<i>"..label.."</i> "..field_value..linebreak.."\n"
+ 	end
+    end
+ end
+@@ -249,7 +252,7 @@
+ 		{ "param_list", Ctags ("code") },
+ 		{ "value", Citemize_first ("=", "<br>") },
+ 		"<ul>\n",
+-		{ "resume", Ctags ("b") },
++		{ "resume", Ctags ("b") },"<br>",
+ 		{ "description", Write },
+ 		{ "param", List_table ("Parameters") },
+ 		"<br>\n",
+@@ -262,13 +265,13 @@
+ 		anchor_field = { "name" },
+ 	},
+ 	internal_index = {
+-		MakeTitle,
++		MakeTitle,"<p style=\"margin:0 0 0 0;border-style:none\">\n",
+ 		{ "name", link_rel (Ctags ("code", "b")) },
+ 		{ "param_list", Ctags ("code") },
+ 		{ "value", Citemize_first ("=", "") },
+-		"<dd>\n",
++		"</p><p style=\"margin:0 0 0 20;border-style:none\">\n",
+ 		{ "resume", Write },
+-		"</dd>\n",
++		"</p>\n",
+ 		;
+ 		order_field = { "section", "name" },
+ 		link_field = { "name" },
+diff -ruN luadoc/compose.lua luadoc-new/compose.lua
+--- luadoc/compose.lua	2001-11-19 11:55:45.000000000 +0100
++++ luadoc-new/compose.lua	2004-01-30 17:43:12.000000000 +0100
+@@ -38,7 +38,7 @@
+       	elseif not r1 then
+       	   return 1
+       	end
+-      	local order = %description.order_field
++      	local order = description.order_field
+       	for i = 1, getn(order) do
+       	   local field = order[i]
+       	   local f1 = r1[field]
+@@ -109,7 +109,7 @@
+ -- @param out_file String with the name of the output file.
+ 
+ function compose (in_tab, desc_file, out_file)
+-   assert (dofile (desc_file))
++   dofile (desc_file)
+    CMP.out_format = html		-- !!!!!
+    --CMP.out_table = {}
+    --CMP.resolve_anchoring (in_tab, CMP.out_format)
+diff -ruN luadoc/luadoc-compatibility.lua luadoc-new/luadoc-compatibility.lua
+--- luadoc/luadoc-compatibility.lua	1970-01-01 01:00:00.000000000 +0100
++++ luadoc-new/luadoc-compatibility.lua	2004-01-30 17:43:12.000000000 +0100
+@@ -0,0 +1,50 @@
++function tinsert(t,i)
++	return table.insert(t,i)
++end
++
++function strsub(...)
++	return string.sub(unpack(arg))
++end
++
++function gsub(...)
++	return string.gsub(unpack(arg))
++end
++
++function writeto(s)
++	if(s ~= nil) then
++		io.output(s)
++	end
++end
++
++function write(s)
++	if s then
++		io.write(s)
++	end
++end
++
++function readfrom(s)
++	if(s ~= nil) then
++		io.input(s)
++	end
++end
++
++function read(s)
++	local h = io.read(s)
++	return h
++end
++
++function getn(t)
++	return table.getn(t)
++end
++
++function date(d)
++	return os.date(d)
++end
++
++function sort(a,b)
++	return table.sort(a,b)
++end
++
++function strlower(s)
++	return string.lower(s)
++end
+diff -ruN luadoc/luadoc.lua luadoc-new/luadoc.lua
+--- luadoc/luadoc.lua	2001-11-19 11:54:59.000000000 +0100
++++ luadoc-new/luadoc.lua	2004-01-30 17:43:12.000000000 +0100
+@@ -1,12 +1,14 @@
+ #!/usr/local/bin/lua -f
+ 
++dofile("luadoc-compatibility.lua")
++
+ -- Load modules.
+ --LUADOC_HOME = "/usr/local/luadoc"
+ LUADOC_HOME = "."
+ LUADOC_SUB = LUADOC_HOME.."/sub.lua"
+ LUADOC_CMP = LUADOC_HOME.."/cmp.lua"
+-assert (dofile (LUADOC_HOME.."/analyze.lua"))
+-assert (dofile (LUADOC_HOME.."/compose.lua"))
++dofile (LUADOC_HOME.."/analyze.lua")
++dofile (LUADOC_HOME.."/compose.lua")
+ 
+ -- Print version number.
+ function print_version ()
+diff -ruN luadoc/sub.lua luadoc-new/sub.lua
+--- luadoc/sub.lua	2001-11-19 12:15:00.000000000 +0100
++++ luadoc-new/sub.lua	2004-01-30 17:43:12.000000000 +0100
+@@ -117,7 +117,7 @@
+ 		function (tab)
+ 		   if tab.param_list and tab.param then
+ 		      gsub (tab.param_list, "([%w_]+)", function (arg)
+-		      	tinsert (%tab.param, arg)
++		      	tinsert (tab.param, arg)
+ 		      end)
+ 		   end
+ 		end,

@@ -1,0 +1,3 @@
+edit by hand config.h for tune the build and the type:
+ ./configure.sh <system>
+ make

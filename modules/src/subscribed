@@ -1,0 +1,34 @@
+MK_TEMPLATE=	base64 \
+		dictionary \
+		list \
+		log \
+		log_lua \
+		lock \
+		luay \
+		mlex \
+		oscompatibility \
+		pid \
+		pop3server \
+		pop3server_lua \
+		portablesocket \
+		regularexp \
+		serialize_lua \
+		session \
+		session_lua \
+		winsystray \
+		regex \
+		getopt \
+		support_lua \
+		getdate_lua \
+		browser_lua \
+		stringhack_lua
+
+MK_TEMPL_CTRIB=	lua \
+		tolua++ \
+		pthread \
+		luadoc \
+		luasocket \
+		pkg2luadoc \
+		getdate 
+
+MK_CUSTOM=	mlex_lua

@@ -1,0 +1,47 @@
+$#include "logl.h"
+
+module log {
+
+//---
+//-- Logging module
+
+void error_abort @ __error_abort(char*);
+void error_print @ __error_print (char*); 
+void say @ __say(char *);
+void dbg @ __dbg(char *);
+
+$[
+
+function log.__get_formatted_info(s)
+	local info = debug.getinfo(3)
+	
+	return "(" .. info.source .. ", " .. info.currentline .. ") : " .. s
+end
+
+---
+-- Prints a as an error.
+function log.error_print(a)
+	log.__error_print(log.__get_formatted_info(a))
+end
+
+---
+-- Prints a as an error and aborts.
+function log.error_abort(a)
+	log.__error_abort(log.__get_formatted_info(a))
+end
+
+---
+-- Prints a as a message.
+function log.say(a)
+	log.__say(a)
+end
+
+---
+-- Prints a as a debug message.
+function log.dbg(a)
+	log.__dbg(log.__get_formatted_info(a))
+end
+
+$]
+
+}

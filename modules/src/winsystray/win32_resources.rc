@@ -1,0 +1,18 @@
+#include <windows.h>
+#include "win32_resources.h"
+
+RES_ICON_32 ICON "freepops-32.ico"
+RES_MENU MENU 
+BEGIN
+	POPUP "bla"
+	BEGIN
+		MENUITEM "About", RES_MENU_ABOUT
+//		MENUITEM SEPARATOR
+//		MENUITEM "Update CFG", RES_MENU_DOWNLOAD
+//		MENUITEM "Get news", RES_MENU_NEWS
+		MENUITEM SEPARATOR
+		MENUITEM "Exit", RES_MENU_EXIT
+	END
+END
+RES_ICON_16 ICON "freepops-16.ico"
+

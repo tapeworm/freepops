@@ -1,0 +1,94 @@
+		README for the modules building system
+
+** Files in the module directory:
+ 
+ bin/ 		binary produced by modules
+ lib/ 		libraryes produced by modules
+ include/ 	interfaces produced by modules
+ Makefile	targets: all clean doc
+ modules	list of modules needed by each target
+ Doxyfile	doxygen configuration file
+ src/ 		the modules sources
+
+** Modules policy:
+
+ ** building policy
+
+ Each module must include in the makefile $(CONFIG) that defines:
+
+ CC, LD, AR, STRIP, RANLIB, HCC, HLD, HAR, HSTRIP, HRANLIB,
+ CFLAGS, HCFLAGS, LDFLAGS, HLDFLAGS, EXEEXTENSION, STATICEXTENSION, 
+ SHAREDEXTENSION, OS.
+
+ These variable must be used as the compiler,linker,..
+ The module makefile is alco called definig PREFIX, CONFIG and TARGET.
+
+ A module file may contain something like:
+ 
+ #ifdef HAVE_CONFIG_H
+ #	include "config.h"
+ #endif
+ 
+ to integrate the globals #define for the projects, like 
+ VERSION and PROGRAMNAME and other options for compilation not concerning 
+ platform but only the software itself.
+
+ Each module's Makefile must have this targets:
+
+ all, clean.
+
+ The first must compile and link lib$(TARGET)$(STATICEXTENSION) and
+ copy it to $(PREFIX)/lib ; the copy all the .h needed to $(PREFIX)/include.
+ The other targets are trivial.
+
+ Each module must be subscribed in mosules/src/subscribed, and the 
+ right Makefile.template* will be used to build it. As a special case a module
+ may have a ad-hoc Makefile, but you are suggested to use default Makefiles.
+ 
+ Makefile.template is generic makefile that can be personalyzed by 
+ adding these files to the module directory:  source, interface, shared.
+ The first contains the .c files that must be compiled, while the second 
+ defines the .h file that should be copyed to $(PREFIX)/include. The third
+ contains -l flags to link the shared library. The shared library is built only
+ if this file is present.
+
+ Contrib modules shoud be in the vanilla module-version.tar.gz format and 
+ may be patched with a patch module-version.diff present in the same directory.
+ Makefile.template-contrib must be used as a Makefile to do this. See the lua 
+ module for a working example.
+
+ Special packages can use theyr own Makefile. This is usefull in some special
+ modules, but weakens the build system, so be careful.
+
+ ** name policy
+
+ Lua bindings packages must be called packagename_lua and lua only pachage
+ (containig .lua modules) must be called packagename_lua.
+
+ ** documentation
+ 
+ C modules must be documented with doxygen.
+ 
+ A .pkg file must be documented in the luadoc way. The embedded lua code
+ must be commented on the fly, while C code must be commented using
+ //--- instead of --- and //-- for --.
+
+ Example of a commented lua file. Note that . at the end of line are important.
+ Here we prepend // as in .pkg files. In pure lua files no //.
+
+ //---
+ //-- description of the file, required in pkg files
+
+ //---
+ //-- function brief.
+ //-- function long
+ //-- @param name type description,remember name can't be n.
+ //-- @return type description
+ function prototype or defined value
+
+** COPYING
+
+ All modules in the module directory are copyrighted under the GNU/GPL license,
+ except the one containig a different license specification.
+ 
+** eof

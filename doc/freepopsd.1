@@ -1,0 +1,110 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH FREEPOPSD 1 "November  3, 2003"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+freepopsd \- FreePOPs daemon
+.SH SYNOPSIS
+.B freepopsd
+.RI [ options ]
+.br
+.SH DESCRIPTION
+This manual page documents briefly the
+.B freepopsd
+daemon.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
+.\" respectively.
+\fBfreepopsd\fP is a program that converts your local requests to its
+pop3 daemon to remote http requests to supported web mails.
+.SH OPTIONS
+.TP
+\fB \-p \fRport, \fB\-\-port \fRport
+Starts freepopsd on that port. Default is 2000.
+.TP
+\fB \-t \fRmax, \fB\-\-threads \fRmax
+Allows max simultneous connections. Default is 5.
+.TP
+\fB \-b \fRaddr, \fB\-\-bind \fRaddr
+Binds over addr instead INADDR_ANY (0.0.0.0). addr must be a character string 
+containing an IPv4 network address in the dotted-quad format, 
+"ddd.ddd.ddd.ddd". Since version 0.0.8 addr can be a name and will be resolved
+by the gethostbyname function.
+.TP
+.\"\fB \-c \fRconfigfile, \fB\-\-config \fRconfigfile
+.\"Use configfile as configuration file for the libero webmail. This option overrides configurations specified in default files.
+.\".TP
+\fB \-l \fIlogfacility, \fB\-\-logmode \fIlogfacility
+Can be used to specify the logging facility. \fIlogfacility\fR can be "stdout" 
+to stdout (the default), "syslog" to use the logging daemon or 
+a valid filename to log to this file.
+.TP
+\fB \-d\fR, \fB\-\-daemonize
+Moves the process to backgroud releasing the tty
+.TP
+\fB \-P \fRproxyaddress:proxyport, \fB\-\-proxy \fRproxyaddress:proxyport
+You can specify the http proxy name and port separated by :. 
+If no port is specifyed 8080 is used by default. 
+You may also export some environment
+variables instead of using the \fB\-P\fR switch, in priority order: HTTP_PROXY,
+http_proxy, PROXY and proxy. If the proxy needs authentication
+you have to use the \fB\-A\fR switch.
+If you specify \fB\-P \-\fR, you will force direct connections to the web,
+without using any proxy server, despite enviromental variable settings.
+.\".TP
+.\"\fB \-A \fRusername:password, \fB\-\-auth \fRusername:password
+.\"This switches on the basic authentication method. Must be used with the 
+.\"\fB\-P\fR switch or one of its alternative forms.
+.TP
+\fB \-u \fRname, \fB\-\-useragent \fRname
+Use this useragent in http connections. The default is "LiberoPOPs/VERSION".
+A valid example is mozilla's "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.5) Gecko/20031024 Debian/1.5-2".
+.TP
+\fB \-s \fRuser.group, \fB\-\-suid \fRuser.group
+This option is used to make freepopsd drop root privileges after binding.
+If you run it as a normal user there is no need to use this option.
+.TP
+\fB \-h\fR, \fB\-\-help
+Prints the usage message.
+.TP
+\fB \-v\fR, \fB\-\-verbose
+Prints debug statements. Can be repeated to give more verbosity (see -vv).
+.TP
+\fB \-vv\fR, \fB\-v \-v\fR, \fB\-w\fR, \fB\-\-veryverbose
+Prints even more debug statements, detailing most operations performed.
+This is the maximum verbosity level available. Combining more parameters of this kind won't give you more.
+.TP
+\fB \-V\fR, \fB\-\-version
+Prints the program version.
+.br
+.\".SH LIMIT TOO FREQUENT WEBMAIL ACCESS
+.\"You can put a minimum interval between two webmail request for the same account 
+.\"by changing the MININTERVAL key in libero.cfg. Time is in seconds. This makes 
+.\"sense only in a lan-wide installation.
+.SH FILES
+.TP
+.I /usr/share/frepops/lua/*
+Webmails access implementation
+.\".TP
+.\".I ~/.liberopops/libero.cfg
+.\"Configuration file for the libero webmail user defined (read before than the system wide one) - for normal users
+.\".TP
+.\".I ./libero.cfg
+.\"Configuration file for the libero webmail (read after than the system wide one)
+.SH AUTHOR
+This manual page was written by Enrico Tassi <gareuselesinge@users.sourceforge.net>,
+for the Debian project (but may be used by others).

@@ -1,0 +1,816 @@
+diff -ruN luasocket-2.0-alpha/Makefile luasocket-2.0-alpha-new/Makefile
+--- luasocket-2.0-alpha/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ luasocket-2.0-alpha-new/Makefile	2004-02-01 11:32:18.000000000 +0100
+@@ -0,0 +1,96 @@
++include $(CONFIG)
++
++V=2.0
++
++INSTALL_LUASOCKET_LIB=$(PREFIX)/lib/
++INSTALL_LUASOCKET_H=$(PREFIX)/include/
++
++LUAC=$(PREFIX)/bin/luac
++BIN2C=$(PREFIX)/bin/bin2c
++
++OBJS= \
++	luasocket.o \
++	timeout.o \
++	buffer.o \
++	io.o \
++	auxiliar.o \
++	select.o \
++	inet.o \
++	tcp.o \
++	udp.o 
++
++ifeq "$(OS)" "Windows"
++	OBJS+=wsocket.o
++else
++	OBJS+=usocket.o
++endif
++
++LUAS= \
++	select.lua \
++	auxiliar.lua \
++	concat.lua \
++	code.lua \
++	url.lua \
++	http.lua \
++	smtp.lua \
++	ftp.lua 
++
++LCHS= $(addsuffix .lch, $(basename $(LUAS)))
++LCS= $(addsuffix .lc, $(basename $(LUAS)))
++
++# Linux
++CFLAGS+= -Wall -DLUASOCKET_COMPILED -DLUASOCKET_DEBUG -I $(PREFIX)/include -D_DEBUG
++
++DYN=libluasocket.so
++STA=libluasocket.a
++
++all: $(STA) # $(DYN)
++	@echo Installing $(DYN)
++	@cp $(DYN) $(INSTALL_LUASOCKET_LIB) || true
++	@echo Installing $(STA)
++	@cp $(STA) $(INSTALL_LUASOCKET_LIB) || true
++	@echo Installing luasocket.h
++	@cp luasocket.h $(INSTALL_LUASOCKET_H)
++
++$(STA): $(OBJS) 
++	@$(AR) rcu $(STA) $(OBJS)
++	@$(RANLIB) $(STA)
++
++$(DYN): $(OBJS) 
++	@$(CC) -shared -o $(DYN) $(OBJS) $(LDFLAGS) -rdynamic -L $(PREFIX)/lib #-llua -llualib
++
++# dependencies
++auxiliar.o: auxiliar.c auxiliar.h
++buffer.o: buffer.c auxiliar.h buffer.h io.h timeout.h
++inet.o: inet.c luasocket.h inet.h socket.h usocket.h
++io.o: io.c io.h
++luasocket.o: luasocket.c luasocket.h timeout.h buffer.h io.h socket.h \
++  usocket.h inet.h tcp.h udp.h
++usocket.o: usocket.c socket.h usocket.h
++tcp.o: tcp.c luasocket.h auxiliar.h inet.h socket.h usocket.h \
++  tcp.h buffer.h io.h timeout.h
++timeout.o: timeout.c luasocket.h auxiliar.h timeout.h
++udp.o: udp.c luasocket.h auxiliar.h inet.h socket.h usocket.h \
++  udp.h timeout.h
++%.o:%.c
++	@echo " Compiling $<"
++	@$(CC) $(CFLAGS) -c $<
++luasocket.o: $(LCHS)
++select.o: $(LCHS)
++
++.SUFFIXES: .lua .lch .lc
++
++.lua.lc:
++	@echo " Compiling $<"
++	@$(LUAC) -o $@ $<
++
++.lc.lch:
++	@echo " Embedding $<"
++	@$(BIN2C) $< > $@
++
++clean:
++	@rm -f $(OBJS)
++	@rm -f $(DYN)
++	@rm -f $(STA)
++	@rm -f luasocket
++	@rm -f $(LCS)
++	@rm -f $(LCHS)
+diff -ruN luasocket-2.0-alpha/inet.c luasocket-2.0-alpha-new/inet.c
+--- luasocket-2.0-alpha/inet.c	2003-08-16 02:14:15.000000000 +0200
++++ luasocket-2.0-alpha-new/inet.c	2004-02-01 11:26:10.000000000 +0100
+@@ -69,7 +69,7 @@
+         hp = gethostbyname(address);
+     if (!hp) {
+         lua_pushnil(L);
+-        lua_pushstring(L, sock_hoststrerror());
++        lua_pushstring(L, p_sock_hoststrerror());
+         return 2;
+     }
+     addr = *((struct in_addr *) hp->h_addr);
+@@ -93,7 +93,7 @@
+         hp = gethostbyname(address);
+     if (!hp) {
+         lua_pushnil(L);
+-        lua_pushstring(L, sock_hoststrerror());
++        lua_pushstring(L, p_sock_hoststrerror());
+         return 2;
+     }
+     lua_pushstring(L, hp->h_name);
+@@ -192,19 +192,19 @@
+         if (!strlen(address) || !inet_aton(address, &remote.sin_addr)) {
+             struct hostent *hp = gethostbyname(address);
+             struct in_addr **addr;
+-            if (!hp) return sock_hoststrerror();
++            if (!hp) return p_sock_hoststrerror();
+             addr = (struct in_addr **) hp->h_addr_list;
+             memcpy(&remote.sin_addr, *addr, sizeof(struct in_addr));
+         }
+     } else remote.sin_family = AF_UNSPEC;
+-    sock_setblocking(ps);
+-    err = sock_connect(ps, (SA *) &remote, sizeof(remote));
++    p_sock_setblocking(ps);
++    err = p_sock_connect(ps, (SA *) &remote, sizeof(remote));
+     if (err) {
+-        sock_destroy(ps);
++        p_sock_destroy(ps);
+         *ps = SOCK_INVALID;
+         return err;
+     } else {
+-        sock_setnonblocking(ps);
++        p_sock_setnonblocking(ps);
+         return NULL;
+     }
+ }
+@@ -226,19 +226,19 @@
+             (!strlen(address) || !inet_aton(address, &local.sin_addr))) {
+         struct hostent *hp = gethostbyname(address);
+         struct in_addr **addr;
+-        if (!hp) return sock_hoststrerror();
++        if (!hp) return p_sock_hoststrerror();
+         addr = (struct in_addr **) hp->h_addr_list;
+         memcpy(&local.sin_addr, *addr, sizeof(struct in_addr));
+     }
+-    sock_setblocking(ps);
+-    err = sock_bind(ps, (SA *) &local, sizeof(local));
++    p_sock_setblocking(ps);
++    err = p_sock_bind(ps, (SA *) &local, sizeof(local));
+     if (err) {
+-        sock_destroy(ps);
++        p_sock_destroy(ps);
+         *ps = SOCK_INVALID;
+         return err;
+     } else {
+-        sock_setnonblocking(ps);
+-        if (backlog > 0) sock_listen(ps, backlog);
++        p_sock_setnonblocking(ps);
++        if (backlog > 0) p_sock_listen(ps, backlog);
+         return NULL;
+     }
+ }
+@@ -248,7 +248,7 @@
+ \*-------------------------------------------------------------------------*/
+ const char *inet_trycreate(p_sock ps, int type)
+ {
+-    return sock_create(ps, AF_INET, type, 0);
++    return p_sock_create(ps, AF_INET, type, 0);
+ }
+ 
+ /*-------------------------------------------------------------------------*\
+diff -ruN luasocket-2.0-alpha/luasocket.c luasocket-2.0-alpha-new/luasocket.c
+--- luasocket-2.0-alpha/luasocket.c	2003-08-16 02:14:15.000000000 +0200
++++ luasocket-2.0-alpha-new/luasocket.c	2004-02-01 11:26:10.000000000 +0100
+@@ -42,7 +42,7 @@
+ \*-------------------------------------------------------------------------*/
+ LUASOCKET_API int luaopen_socket(lua_State *L)
+ {
+-    if (!sock_open()) return 0;
++    if (!p_sock_open()) return 0;
+     /* initialize all modules */
+     aux_open(L);
+     tm_open(L);
+diff -ruN luasocket-2.0-alpha/makefile luasocket-2.0-alpha-new/makefile
+--- luasocket-2.0-alpha/makefile	2003-08-16 02:14:15.000000000 +0200
++++ luasocket-2.0-alpha-new/makefile	1970-01-01 01:00:00.000000000 +0100
+@@ -1,91 +0,0 @@
+-V=2.0
+-
+-INSTALL_LUA=/usr/local/lua
+-INSTALL_LUASOCKET=$(INSTALL_LUA)/luasocket
+-
+-LUAC=luac
+-BIN2C=bin2c
+-CC=gcc
+-OPT=-O2
+-
+-OBJS= \
+-	luasocket.o \
+-	timeout.o \
+-	buffer.o \
+-	io.o \
+-	auxiliar.o \
+-	select.o \
+-	inet.o \
+-	tcp.o \
+-	udp.o \
+-	usocket.o 
+-
+-LUAS= \
+-	select.lua \
+-	auxiliar.lua \
+-	concat.lua \
+-	code.lua \
+-	url.lua \
+-	http.lua \
+-	smtp.lua \
+-	ftp.lua 
+-
+-LCHS= $(addsuffix .lch, $(basename $(LUAS)))
+-LCS= $(addsuffix .lc, $(basename $(LUAS)))
+-
+-# Linux
+-CFLAGS=-O2 -Wall -DLUASOCKET_COMPILED -DLUASOCKET_DEBUG
+-
+-DYN=libluasocket.so.$(V)
+-STA=libluasocket.a
+-
+-$(STA): $(OBJS) makefile
+-	ar rcu $(STA) $(OBJS)
+-	ranlib $(STA)
+-
+-dyn: $(DYN)
+-
+-$(DYN): $(OBJS) makefile
+-	gcc -shared -o $(DYN) $(OBJS)
+-
+-# dependencies
+-auxiliar.o: auxiliar.c auxiliar.h
+-buffer.o: buffer.c auxiliar.h buffer.h io.h timeout.h
+-inet.o: inet.c luasocket.h inet.h socket.h usocket.h
+-io.o: io.c io.h
+-luasocket.o: luasocket.c luasocket.h timeout.h buffer.h io.h socket.h \
+-  usocket.h inet.h tcp.h udp.h
+-usocket.o: usocket.c socket.h usocket.h
+-tcp.o: tcp.c luasocket.h auxiliar.h inet.h socket.h usocket.h \
+-  tcp.h buffer.h io.h timeout.h
+-timeout.o: timeout.c luasocket.h auxiliar.h timeout.h
+-udp.o: udp.c luasocket.h auxiliar.h inet.h socket.h usocket.h \
+-  udp.h timeout.h
+-
+-luasocket.o: $(LCHS)
+-select.o: $(LCHS)
+-
+-.SUFFIXES: .lua .lch .lc
+-
+-.lua.lc:
+-	$(LUAC) -o $@ $<
+-
+-.lc.lch:
+-	$(BIN2C) $< > $@
+-
+-install:
+-	mkdir -p $(INSTALL_LUA)
+-	mkdir -p $(INSTALL_LUASOCKET)
+-	cp $(DYN) $(INSTALL_LUASOCKET)
+-	ln -f -s $(INSTALL_LUASOCKET)/$(DYN) $(INSTALL_LUASOCKET)/libluasocket.so
+-	cp luasocket.lua $(INSTALL_LUASOCKET)
+-	cp luasocket.h $(INSTALL_LUASOCKET)
+-	cp lua.lua $(INSTALL_LUA)
+-
+-clean:
+-	rm -f $(OBJS)
+-	rm -f $(DYN)
+-	rm -f $(STA)
+-	rm -f luasocket
+-	rm -f $(LCS)
+-	rm -f $(LCHS)
+diff -ruN luasocket-2.0-alpha/socket.h luasocket-2.0-alpha-new/socket.h
+--- luasocket-2.0-alpha/socket.h	2003-08-16 02:14:15.000000000 +0200
++++ luasocket-2.0-alpha-new/socket.h	2004-02-01 11:26:10.000000000 +0100
+@@ -29,27 +29,27 @@
+ * Functions bellow implement a comfortable platform independent 
+ * interface to sockets
+ \*=========================================================================*/
+-int sock_open(void);
+-const char *sock_create(p_sock ps, int domain, int type, int protocol);
+-void sock_destroy(p_sock ps);
+-int sock_accept(p_sock ps, p_sock pa, SA *addr, socklen_t *addr_len, 
++int p_sock_open(void);
++const char *p_sock_create(p_sock ps, int domain, int type, int protocol);
++void p_sock_destroy(p_sock ps);
++int p_sock_accept(p_sock ps, p_sock pa, SA *addr, socklen_t *addr_len, 
+         int timeout);
+-const char *sock_connect(p_sock ps, SA *addr, socklen_t addr_len); 
+-const char *sock_bind(p_sock ps, SA *addr, socklen_t addr_len); 
+-void sock_listen(p_sock ps, int backlog);
+-int sock_send(p_sock ps, const char *data, size_t count, 
++const char *p_sock_connect(p_sock ps, SA *addr, socklen_t addr_len); 
++const char *p_sock_bind(p_sock ps, SA *addr, socklen_t addr_len); 
++void p_sock_listen(p_sock ps, int backlog);
++int p_sock_send(p_sock ps, const char *data, size_t count, 
+         size_t *sent, int timeout);
+-int sock_recv(p_sock ps, char *data, size_t count, 
++int p_sock_recv(p_sock ps, char *data, size_t count, 
+         size_t *got, int timeout);
+-int sock_sendto(p_sock ps, const char *data, size_t count, 
++int p_sock_sendto(p_sock ps, const char *data, size_t count, 
+         size_t *sent, SA *addr, socklen_t addr_len, int timeout);
+-int sock_recvfrom(p_sock ps, char *data, size_t count, 
++int p_sock_recvfrom(p_sock ps, char *data, size_t count, 
+         size_t *got, SA *addr, socklen_t *addr_len, int timeout);
+-void sock_setnonblocking(p_sock ps);
+-void sock_setblocking(p_sock ps);
+-const char *sock_hoststrerror(void);
+-const char *sock_createstrerror(void);
+-const char *sock_bindstrerror(void);
+-const char *sock_connectstrerror(void);
++void p_sock_setnonblocking(p_sock ps);
++void p_sock_setblocking(p_sock ps);
++const char *p_sock_hoststrerror(void);
++const char *p_sock_createstrerror(void);
++const char *p_sock_bindstrerror(void);
++const char *p_sock_connectstrerror(void);
+ 
+ #endif /* SOCK_H */
+diff -ruN luasocket-2.0-alpha/tcp.c luasocket-2.0-alpha-new/tcp.c
+--- luasocket-2.0-alpha/tcp.c	2003-08-16 02:14:15.000000000 +0200
++++ luasocket-2.0-alpha-new/tcp.c	2004-02-01 11:26:10.000000000 +0100
+@@ -204,7 +204,7 @@
+     tm_markstart(tm);
+     aux_setclass(L, "tcp{client}", -1);
+     for ( ;; ) {
+-        sock_accept(&server->sock, &client->sock, 
++        p_sock_accept(&server->sock, &client->sock, 
+             (SA *) &addr, &addr_len, tm_get(tm));
+         if (client->sock == SOCK_INVALID) {
+            if (tm_get(tm) == 0) {
+@@ -215,7 +215,7 @@
+         } else break;
+     }
+     /* initialize remaining structure fields */
+-    io_init(&client->io, (p_send) sock_send, (p_recv) sock_recv, &client->sock);
++    io_init(&client->io, (p_send) p_sock_send, (p_recv) p_sock_recv, &client->sock);
+     tm_init(&client->tm, -1, -1);
+     buf_init(&client->buf, &client->io, &client->tm);
+     return 1;
+@@ -268,7 +268,7 @@
+ static int meth_close(lua_State *L)
+ {
+     p_tcp tcp = (p_tcp) aux_checkgroup(L, "tcp{any}", 1);
+-    sock_destroy(&tcp->sock);
++    p_sock_destroy(&tcp->sock);
+     return 0;
+ }
+ 
+@@ -318,7 +318,7 @@
+         return 2;
+     }
+     /* initialize remaining structure fields */
+-    io_init(&tcp->io, (p_send) sock_send, (p_recv) sock_recv, &tcp->sock);
++    io_init(&tcp->io, (p_send) p_sock_send, (p_recv) p_sock_recv, &tcp->sock);
+     tm_init(&tcp->tm, -1, -1);
+     buf_init(&tcp->buf, &tcp->io, &tcp->tm);
+     return 1;
+diff -ruN luasocket-2.0-alpha/udp.c luasocket-2.0-alpha-new/udp.c
+--- luasocket-2.0-alpha/udp.c	2003-08-16 02:14:15.000000000 +0200
++++ luasocket-2.0-alpha-new/udp.c	2004-02-01 11:26:10.000000000 +0100
+@@ -100,7 +100,7 @@
+     int err;
+     const char *data = luaL_checklstring(L, 2, &count);
+     tm_markstart(tm);
+-    err = sock_send(&udp->sock, data, count, &sent, tm_get(tm));
++    err = p_sock_send(&udp->sock, data, count, &sent, tm_get(tm));
+     if (err == IO_DONE) lua_pushnumber(L, sent);
+     else lua_pushnil(L);
+     /* a 'closed' error on an unconnected means the target address was not
+@@ -128,7 +128,7 @@
+     addr.sin_family = AF_INET;
+     addr.sin_port = htons(port);
+     tm_markstart(tm);
+-    err = sock_sendto(&udp->sock, data, count, &sent, 
++    err = p_sock_sendto(&udp->sock, data, count, &sent, 
+             (SA *) &addr, sizeof(addr), tm_get(tm));
+     if (err == IO_DONE) lua_pushnumber(L, sent);
+     else lua_pushnil(L);
+@@ -150,7 +150,7 @@
+     p_tm tm = &udp->tm;
+     count = MIN(count, sizeof(buffer));
+     tm_markstart(tm);
+-    err = sock_recv(&udp->sock, buffer, count, &got, tm_get(tm));
++    err = p_sock_recv(&udp->sock, buffer, count, &got, tm_get(tm));
+     if (err == IO_DONE) lua_pushlstring(L, buffer, got);
+     else lua_pushnil(L);
+     io_pusherror(L, err);
+@@ -171,7 +171,7 @@
+     p_tm tm = &udp->tm;
+     tm_markstart(tm);
+     count = MIN(count, sizeof(buffer));
+-    err = sock_recvfrom(&udp->sock, buffer, count, &got, 
++    err = p_sock_recvfrom(&udp->sock, buffer, count, &got, 
+             (SA *) &addr, &addr_len, tm_get(tm));
+     if (err == IO_DONE) {
+         lua_pushlstring(L, buffer, got);
+@@ -288,7 +288,7 @@
+ static int meth_close(lua_State *L)
+ {
+     p_udp udp = (p_udp) aux_checkgroup(L, "udp{any}", 1);
+-    sock_destroy(&udp->sock);
++    p_sock_destroy(&udp->sock);
+     return 0;
+ }
+ 
+diff -ruN luasocket-2.0-alpha/usocket.c luasocket-2.0-alpha-new/usocket.c
+--- luasocket-2.0-alpha/usocket.c	2003-08-16 02:14:15.000000000 +0200
++++ luasocket-2.0-alpha-new/usocket.c	2004-02-01 11:26:10.000000000 +0100
+@@ -11,7 +11,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Initializes module 
+ \*-------------------------------------------------------------------------*/
+-int sock_open(void)
++int p_sock_open(void)
+ {
+     /* instals a handler to ignore sigpipe or it will crash us */
+     struct sigaction ignore;
+@@ -24,7 +24,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Close and inutilize socket
+ \*-------------------------------------------------------------------------*/
+-void sock_destroy(p_sock ps)
++void p_sock_destroy(p_sock ps)
+ {
+     if (*ps != SOCK_INVALID) {
+         close(*ps);
+@@ -35,13 +35,13 @@
+ /*-------------------------------------------------------------------------*\
+ * Creates and sets up a socket
+ \*-------------------------------------------------------------------------*/
+-const char *sock_create(p_sock ps, int domain, int type, int protocol)
++const char *p_sock_create(p_sock ps, int domain, int type, int protocol)
+ {
+     int val = 1;
+     t_sock sock = socket(domain, type, protocol);
+-    if (sock == SOCK_INVALID) return sock_createstrerror(); 
++    if (sock == SOCK_INVALID) return p_sock_createstrerror(); 
+     *ps = sock;
+-    sock_setnonblocking(ps);
++    p_sock_setnonblocking(ps);
+     setsockopt(*ps, SOL_SOCKET, SO_REUSEADDR, (char *) &val, sizeof(val));
+     return NULL;
+ }
+@@ -49,25 +49,25 @@
+ /*-------------------------------------------------------------------------*\
+ * Connects or returns error message
+ \*-------------------------------------------------------------------------*/
+-const char *sock_connect(p_sock ps, SA *addr, socklen_t addr_len)
++const char *p_sock_connect(p_sock ps, SA *addr, socklen_t addr_len)
+ {
+-    if (connect(*ps, addr, addr_len) < 0) return sock_connectstrerror();
++    if (connect(*ps, addr, addr_len) < 0) return p_sock_connectstrerror();
+     else return NULL;
+ }
+ 
+ /*-------------------------------------------------------------------------*\
+ * Binds or returns error message
+ \*-------------------------------------------------------------------------*/
+-const char *sock_bind(p_sock ps, SA *addr, socklen_t addr_len)
++const char *p_sock_bind(p_sock ps, SA *addr, socklen_t addr_len)
+ {
+-    if (bind(*ps, addr, addr_len) < 0) return sock_bindstrerror();
++    if (bind(*ps, addr, addr_len) < 0) return p_sock_bindstrerror();
+     else return NULL;
+ }
+ 
+ /*-------------------------------------------------------------------------*\
+ * 
+ \*-------------------------------------------------------------------------*/
+-void sock_listen(p_sock ps, int backlog)
++void p_sock_listen(p_sock ps, int backlog)
+ {
+     listen(*ps, backlog);
+ }
+@@ -75,7 +75,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Accept with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_accept(p_sock ps, p_sock pa, SA *addr, socklen_t *addr_len, 
++int p_sock_accept(p_sock ps, p_sock pa, SA *addr, socklen_t *addr_len, 
+         int timeout)
+ {
+     t_sock sock = *ps;
+@@ -99,7 +99,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Send with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_send(p_sock ps, const char *data, size_t count, size_t *sent, 
++int p_sock_send(p_sock ps, const char *data, size_t count, size_t *sent, 
+         int timeout)
+ {
+     t_sock sock = *ps;
+@@ -136,7 +136,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Sendto with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_sendto(p_sock ps, const char *data, size_t count, size_t *sent, 
++int p_sock_sendto(p_sock ps, const char *data, size_t count, size_t *sent, 
+         SA *addr, socklen_t addr_len, int timeout)
+ {
+     t_sock sock = *ps;
+@@ -173,7 +173,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Receive with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_recv(p_sock ps, char *data, size_t count, size_t *got, int timeout)
++int p_sock_recv(p_sock ps, char *data, size_t count, size_t *got, int timeout)
+ {
+     t_sock sock = *ps;
+     struct timeval tv;
+@@ -203,7 +203,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Recvfrom with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_recvfrom(p_sock ps, char *data, size_t count, size_t *got, 
++int p_sock_recvfrom(p_sock ps, char *data, size_t count, size_t *got, 
+         SA *addr, socklen_t *addr_len, int timeout)
+ {
+     t_sock sock = *ps;
+@@ -234,7 +234,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Put socket into blocking mode
+ \*-------------------------------------------------------------------------*/
+-void sock_setblocking(p_sock ps)
++void p_sock_setblocking(p_sock ps)
+ {
+     int flags = fcntl(*ps, F_GETFL, 0);
+     flags &= (~(O_NONBLOCK));
+@@ -244,7 +244,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Put socket into non-blocking mode
+ \*-------------------------------------------------------------------------*/
+-void sock_setnonblocking(p_sock ps)
++void p_sock_setnonblocking(p_sock ps)
+ {
+     int flags = fcntl(*ps, F_GETFL, 0);
+     flags |= O_NONBLOCK;
+@@ -254,7 +254,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Error translation functions
+ \*-------------------------------------------------------------------------*/
+-const char *sock_hoststrerror(void)
++const char *p_sock_hoststrerror(void)
+ {
+     switch (h_errno) {
+         case HOST_NOT_FOUND: return "host not found";
+@@ -265,7 +265,7 @@
+     }
+ }
+ 
+-const char *sock_createstrerror(void)
++const char *p_sock_createstrerror(void)
+ {
+     switch (errno) {
+         case EACCES: return "access denied";
+@@ -276,7 +276,7 @@
+     }
+ }
+ 
+-const char *sock_bindstrerror(void)
++const char *p_sock_bindstrerror(void)
+ {
+     switch (errno) {
+         case EBADF: return "invalid descriptor";
+@@ -290,7 +290,7 @@
+     }
+ }
+ 
+-const char *sock_connectstrerror(void)
++const char *p_sock_connectstrerror(void)
+ {
+     switch (errno) {
+         case EBADF: return "invalid descriptor";
+diff -ruN luasocket-2.0-alpha/wsocket.c luasocket-2.0-alpha-new/wsocket.c
+--- luasocket-2.0-alpha/wsocket.c	2003-08-16 02:14:15.000000000 +0200
++++ luasocket-2.0-alpha-new/wsocket.c	2004-02-01 11:26:10.000000000 +0100
+@@ -11,7 +11,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Initializes module 
+ \*-------------------------------------------------------------------------*/
+-int sock_open(void)
++int p_sock_open(void)
+ {
+     WSADATA wsaData;
+     WORD wVersionRequested = MAKEWORD(2, 0); 
+@@ -27,7 +27,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Close and inutilize socket
+ \*-------------------------------------------------------------------------*/
+-void sock_destroy(p_sock ps)
++void p_sock_destroy(p_sock ps)
+ {
+     if (*ps != SOCK_INVALID) {
+         closesocket(*ps);
+@@ -38,13 +38,13 @@
+ /*-------------------------------------------------------------------------*\
+ * Creates and sets up a socket
+ \*-------------------------------------------------------------------------*/
+-const char *sock_create(p_sock ps, int domain, int type, int protocol)
++const char *p_sock_create(p_sock ps, int domain, int type, int protocol)
+ {
+     int val = 1;
+     t_sock sock = socket(domain, type, protocol);
+-    if (sock == SOCK_INVALID) return sock_createstrerror(); 
++    if (sock == SOCK_INVALID) return p_sock_createstrerror(); 
+     *ps = sock;
+-    sock_setnonblocking(ps);
++    p_sock_setnonblocking(ps);
+     setsockopt(*ps, SOL_SOCKET, SO_REUSEADDR, (char *) &val, sizeof(val));
+     return NULL;
+ }
+@@ -52,25 +52,25 @@
+ /*-------------------------------------------------------------------------*\
+ * Connects or returns error message
+ \*-------------------------------------------------------------------------*/
+-const char *sock_connect(p_sock ps, SA *addr, socklen_t addr_len)
++const char *p_sock_connect(p_sock ps, SA *addr, socklen_t addr_len)
+ {
+-    if (connect(*ps, addr, addr_len) < 0) return sock_connectstrerror();
++    if (connect(*ps, addr, addr_len) < 0) return p_sock_connectstrerror();
+     else return NULL;
+ }
+ 
+ /*-------------------------------------------------------------------------*\
+ * Binds or returns error message
+ \*-------------------------------------------------------------------------*/
+-const char *sock_bind(p_sock ps, SA *addr, socklen_t addr_len)
++const char *p_sock_bind(p_sock ps, SA *addr, socklen_t addr_len)
+ {
+-    if (bind(*ps, addr, addr_len) < 0) return sock_bindstrerror();
++    if (bind(*ps, addr, addr_len) < 0) return p_sock_bindstrerror();
+     else return NULL;
+ }
+ 
+ /*-------------------------------------------------------------------------*\
+ * 
+ \*-------------------------------------------------------------------------*/
+-void sock_listen(p_sock ps, int backlog)
++void p_sock_listen(p_sock ps, int backlog)
+ {
+     listen(*ps, backlog);
+ }
+@@ -78,7 +78,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Accept with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_accept(p_sock ps, p_sock pa, SA *addr, socklen_t *addr_len, 
++int p_sock_accept(p_sock ps, p_sock pa, SA *addr, socklen_t *addr_len, 
+         int timeout)
+ {
+     t_sock sock = *ps;
+@@ -102,7 +102,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Send with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_send(p_sock ps, const char *data, size_t count, size_t *sent, 
++int p_sock_send(p_sock ps, const char *data, size_t count, size_t *sent, 
+         int timeout)
+ {
+     t_sock sock = *ps;
+@@ -139,7 +139,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Sendto with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_sendto(p_sock ps, const char *data, size_t count, size_t *sent, 
++int p_sock_sendto(p_sock ps, const char *data, size_t count, size_t *sent, 
+         SA *addr, socklen_t addr_len, int timeout)
+ {
+     t_sock sock = *ps;
+@@ -176,7 +176,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Receive with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_recv(p_sock ps, char *data, size_t count, size_t *got, int timeout)
++int p_sock_recv(p_sock ps, char *data, size_t count, size_t *got, int timeout)
+ {
+     t_sock sock = *ps;
+     struct timeval tv;
+@@ -206,7 +206,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Recvfrom with timeout
+ \*-------------------------------------------------------------------------*/
+-int sock_recvfrom(p_sock ps, char *data, size_t count, size_t *got, 
++int p_sock_recvfrom(p_sock ps, char *data, size_t count, size_t *got, 
+         SA *addr, socklen_t *addr_len, int timeout)
+ {
+     t_sock sock = *ps;
+@@ -237,7 +237,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Put socket into blocking mode
+ \*-------------------------------------------------------------------------*/
+-void sock_setblocking(p_sock ps)
++void p_sock_setblocking(p_sock ps)
+ {
+     u_long argp = 0;
+     ioctlsocket(*ps, FIONBIO, &argp);
+@@ -246,7 +246,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Put socket into non-blocking mode
+ \*-------------------------------------------------------------------------*/
+-void sock_setnonblocking(p_sock ps)
++void p_sock_setnonblocking(p_sock ps)
+ {
+     u_long argp = 1;
+     ioctlsocket(*ps, FIONBIO, &argp);
+@@ -255,7 +255,7 @@
+ /*-------------------------------------------------------------------------*\
+ * Error translation functions
+ \*-------------------------------------------------------------------------*/
+-const char *sock_hoststrerror(void)
++const char *p_sock_hoststrerror(void)
+ {
+     switch (WSAGetLastError()) {
+         case HOST_NOT_FOUND: return "host not found";
+@@ -266,7 +266,7 @@
+     }
+ }
+ 
+-const char *sock_createstrerror(void)
++const char *p_sock_createstrerror(void)
+ {
+     switch (WSAGetLastError()) {
+         case WSANOTINITIALISED: return "not initialized";
+@@ -277,7 +277,7 @@
+     }
+ }
+ 
+-const char *sock_bindstrerror(void)
++const char *p_sock_bindstrerror(void)
+ {
+     switch (WSAGetLastError()) {
+         case WSANOTINITIALISED: return "not initialized";
+@@ -291,7 +291,7 @@
+     }
+ }
+ 
+-const char *sock_connectstrerror(void)
++const char *p_sock_connectstrerror(void)
+ {
+     switch (WSAGetLastError()) {
+         case WSANOTINITIALISED: return "not initialized";
+diff -ruN luasocket-2.0-alpha/http.lua luasocket-2.0-alpha-new/http.lua
+--- luasocket-2.0-alpha/http.lua	2003-08-16 02:14:15.000000000 +0200
++++ luasocket-2.0-alpha-new/http.lua	2004-03-26 16:48:24.000000000 +0100
+@@ -535,10 +535,16 @@
+         host = "",
+         port = Public.PORT, 
+         path ="/",
+-		scheme = "http"
+-    })
++	scheme = "http"})
++	
+ 	if parsed.scheme ~= "http" then
+-		response.error = string.format("unknown scheme '%s'", parsed.scheme)
++		if parsed.scheme == "https" then
++			response.error = string.format(
++				"https not supported even if luaSSL is ready")
++		else
++			response.error = string.format("unknown scheme '%s'", 
++				parsed.scheme)
++		end
+ 		return response
+ 	end
+     -- explicit authentication info overrides that given by the URL
+@@ -546,15 +552,30 @@
+     parsed.password = request.password or parsed.password
+     -- default method
+     request.method = request.method or "GET"
++    -- manage proxy
++    local sock, host, port
++    if Public.PROXY_HOST ~= nil then
++    	host = 	Public.PROXY_HOST
++	parsed.path = "HTTP://" .. parsed.host .. parsed.path
++    else
++	host = parsed.host
++    end
++    if Public.PROXY_PORT ~= nil then
++    	port = 	Public.PROXY_PORT
++    else
++	port = parsed.port
++    end
+     -- fill default headers
+     request.headers = Private.fill_headers(request.headers, parsed)
+     -- try to connect to server
+-    local sock
+-    sock, response.error = socket.connect(parsed.host, parsed.port)
++--print("S: connecting to : " .. host .. ":" .. port)
++    sock, response.error = socket.connect(host, port)
+     if not sock then return response end
+     -- set connection timeout so that we do not hang forever
+     sock:settimeout(Public.TIMEOUT)
+     -- send request message
++--table.foreach(request.headers,print);
++--print("G: " .. Private.request_uri(parsed))
+     response.error = Private.send_request(sock, request.method, 
+         Private.request_uri(parsed), request.headers, request.body_cb)
+     if response.error then return response end

@@ -1,0 +1,7 @@
+freepops for Debian
+---------------------
+
+/etc/default/freepops is the configuration file.
+Here you can specify the bind port for the daemon with the -p option.
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>, Mon,  3 Nov 2003 19:46:38 +0100

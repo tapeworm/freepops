@@ -1,0 +1,178 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme times
+\graphics default
+\paperfontsize 10
+\spacing single 
+\papersize a4paper
+\paperpackage widemarginsa4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+FreePOPs user manual
+\layout Section
+
+Introduction
+\layout Standard
+
+FreePOPs is a webmail2pop3 daemon.
+ It is able to convert local pop3 requests to remote http actions on the
+ supported webmails.
+ FreePOPs is useful in two situations:
+\layout Enumerate
+
+You are behind a firewall that closes the 110 port
+\layout Enumerate
+
+Your mail provider does not allow you to access your mailbox with pop3 protocol,
+ but only by the webmail service.
+\layout Section
+
+FreePOPs configuration file
+\layout Standard
+
+FreePOPs doesn't really need a configuration.
+ All the users shouldn't chage the configuration file.
+ In case you are a developer or a really curious user the configuration
+ file is 
+\family typewriter 
+config.lua
+\family default 
+, placed in the program directory under win32 or in 
+\family typewriter 
+/etc/freepops/
+\family default 
+ in a posix environmnt.
+\layout Section
+
+FreePOPs command line parameters
+\layout Standard
+
+The real FreePOPs configuration is made trough command line arguments.
+ They are described in deep in the man page in unix environments, here we
+ present only the more useful:
+\layout Description
+
+-p\SpecialChar ~
+<port>,\SpecialChar ~
+--port\SpecialChar ~
+<port> By default FreePOPs binds on port 2000.
+ To alter this behaviour just use this switch.
+\layout Description
+
+-P\SpecialChar ~
+<host>:<port>,\SpecialChar ~
+--proxy\SpecialChar ~
+<host>:<port> To tell FreePOPs which is you http
+ proxy.
+\layout Description
+
+-v,\SpecialChar ~
+--verbose,\SpecialChar ~
+-w,\SpecialChar ~
+--veryverbose This tells FreePOPs to log some interesting
+ info for bug reporting.
+\layout Description
+
+-t\SpecialChar ~
+<num>,\SpecialChar ~
+--threads\SpecialChar ~
+<num> FreePOPs is able to manage multiple connections,
+ up to num.
+ Default is 5.
+\layout Standard
+
+In posix environment like Debian GNU/Linux you can start FreePOPs at boot
+ time as a standard service.
+ In this case the command line switches are stored in 
+\family typewriter 
+/etc/default/freepops
+\family default 
+, in some rpm based systems you should find the same file as 
+\family typewriter 
+/etc/sysconfig/freepops
+\family default 
+.
+\layout Section
+
+Email client configuration
+\layout Standard
+
+To configure your email client you must change the pop3 server settings.
+ Usually you must use localhost as the pop3 host name, and 2000 as the pop3
+ port.
+ In case you install FreePOPs in another computer of you lan, you should
+ use the host's name instead of localhost.
+\layout Section
+
+Creating a webmail plugin
+\layout Standard
+
+The best way of doing this is to read carefully the 
+\family typewriter 
+libero.lua
+\family default 
+ file, that is a quite simple but really commented example of webmail plugin.
+ Then you should copy the 
+\family typewriter 
+skeleton.lua
+\family default 
+ file and start hacking on it.
+ Remember to edit 
+\family typewriter 
+config.lua
+\family default 
+ to make FreePOPs associate the rights mailaddresses domains to your new
+ plugin.
+\layout Section
+
+Submitting a bug
+\layout Standard
+
+When you have problems, you think you found a bug, please follew strictly
+ this 
+\emph on 
+iter
+\emph default 
+:
+\layout Enumerate
+
+Update to the most recent versione of FreePOPs.
+\layout Enumerate
+
+Try to reproduce the bug, if the bug is not easily reproducible we are out
+ of luck.
+ Some can still be tryed: if the software crashed you could compile it from
+ the sources, install valgrind, run freepopsd with valgrind and hope the
+ error messages are interesting.
+\layout Enumerate
+
+Clean the log files
+\layout Enumerate
+
+Start FreePOPs with the -w switch
+\layout Enumerate
+
+Reproduce the bug
+\layout Enumerate
+
+Send to the developers the log, plus any other info like your system type
+ and how to reproduce this bug.
+\the_end

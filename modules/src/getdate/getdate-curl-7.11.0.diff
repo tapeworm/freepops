@@ -1,0 +1,185 @@
+diff -ruN getdate-curl-7.11.0/Makefile getdate-curl-7.11.0-new/Makefile
+--- getdate-curl-7.11.0/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ getdate-curl-7.11.0-new/Makefile	2004-02-03 18:26:37.000000000 +0100
+@@ -0,0 +1,14 @@
++include $(CONFIG)
++
++LIBRARY=lib$(TARGET)$(STATICEXTENSION)
++
++all:
++	bison -o getdate.c -p gd_ getdate.y
++	$(CC) $(CFLAGS) -c getdate.c
++	$(AR) r $(LIBRARY) getdate.o
++	cp $(LIBRARY) $(PREFIX)/lib
++	cp getdate.h $(PREFIX)/include
++	rm getdate.c
++
++clean:
++	rm -f *.o
+diff -ruN getdate-curl-7.11.0/getdate.h getdate-curl-7.11.0-new/getdate.h
+--- getdate-curl-7.11.0/getdate.h	2004-02-03 18:23:54.000000000 +0100
++++ getdate-curl-7.11.0-new/getdate.h	2004-02-03 18:19:13.000000000 +0100
+@@ -7,7 +7,9 @@
+ **  This code is in the public domain and has no copyright.
+ */
+ 
+-# include "setup.h"
++#ifdef HAVE_CONFIG_H
++# include "config.h"
++#endif
+ 
+ #ifndef PARAMS
+ # if defined PROTOTYPES || (defined __STDC__ && __STDC__)
+@@ -34,4 +36,4 @@
+ # endif
+ #endif /* defined (vms) */
+ 
+-time_t curl_getdate PARAMS ((const char *p, const time_t *now));
++time_t gd_getdate PARAMS ((const char *p, const time_t *now));
+diff -ruN getdate-curl-7.11.0/getdate.y getdate-curl-7.11.0-new/getdate.y
+--- getdate-curl-7.11.0/getdate.y	2004-02-03 18:23:54.000000000 +0100
++++ getdate-curl-7.11.0-new/getdate.y	2004-02-03 18:21:42.000000000 +0100
+@@ -11,7 +11,9 @@
+ **  This code is in the public domain and has no copyright.
+ */
+ 
+-#include "setup.h"
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
+ 
+ # ifdef HAVE_ALLOCA_H
+ #  include <alloca.h>
+@@ -113,44 +115,44 @@
+    then those parser generators need to be fixed instead of adding those
+    names to this list. */
+ 
+-#define yymaxdepth Curl_gd_maxdepth
+-#define yyparse Curl_gd_parse
+-#define yylex   Curl_gd_lex
+-#define yyerror Curl_gd_error
+-#define yylval  Curl_gd_lval
+-#define yychar  Curl_gd_char
+-#define yydebug Curl_gd_debug
+-#define yypact  Curl_gd_pact
+-#define yyr1    Curl_gd_r1
+-#define yyr2    Curl_gd_r2
+-#define yydef   Curl_gd_def
+-#define yychk   Curl_gd_chk
+-#define yypgo   Curl_gd_pgo
+-#define yyact   Curl_gd_act
+-#define yyexca  Curl_gd_exca
+-#define yyerrflag Curl_gd_errflag
+-#define yynerrs Curl_gd_nerrs
+-#define yyps    Curl_gd_ps
+-#define yypv    Curl_gd_pv
+-#define yys     Curl_gd_s
+-#define yy_yys  Curl_gd_yys
+-#define yystate Curl_gd_state
+-#define yytmp   Curl_gd_tmp
+-#define yyv     Curl_gd_v
+-#define yy_yyv  Curl_gd_yyv
+-#define yyval   Curl_gd_val
+-#define yylloc  Curl_gd_lloc
+-#define yyreds  Curl_gd_reds          /* With YYDEBUG defined */
+-#define yytoks  Curl_gd_toks          /* With YYDEBUG defined */
+-#define yylhs   Curl_gd_yylhs
+-#define yylen   Curl_gd_yylen
+-#define yydefred Curl_gd_yydefred
+-#define yydgoto Curl_gd_yydgoto
+-#define yysindex Curl_gd_yysindex
+-#define yyrindex Curl_gd_yyrindex
+-#define yygindex Curl_gd_yygindex
+-#define yytable  Curl_gd_yytable
+-#define yycheck  Curl_gd_yycheck
++#define yymaxdepth gd_maxdepth
++#define yyparse gd_parse
++#define yylex   gd_lex
++#define yyerror gd_error
++#define yylval  gd_lval
++#define yychar  gd_char
++#define yydebug gd_debug
++#define yypact  gd_pact
++#define yyr1    gd_r1
++#define yyr2    gd_r2
++#define yydef   gd_def
++#define yychk   gd_chk
++#define yypgo   gd_pgo
++#define yyact   gd_act
++#define yyexca  gd_exca
++#define yyerrflag gd_errflag
++#define yynerrs gd_nerrs
++#define yyps    gd_ps
++#define yypv    gd_pv
++#define yys     gd_s
++#define yy_yys  gd_yys
++#define yystate gd_state
++#define yytmp   gd_tmp
++#define yyv     gd_v
++#define yy_yyv  gd_yyv
++#define yyval   gd_val
++#define yylloc  gd_lloc
++#define yyreds  gd_reds          /* With YYDEBUG defined */
++#define yytoks  gd_toks          /* With YYDEBUG defined */
++#define yylhs   gd_yylhs
++#define yylen   gd_yylen
++#define yydefred gd_yydefred
++#define yydgoto gd_yydgoto
++#define yysindex gd_yysindex
++#define yyrindex gd_yyrindex
++#define yygindex gd_yygindex
++#define yytable  gd_yytable
++#define yycheck  gd_yycheck
+ 
+ static int yylex ();
+ static int yyerror ();
+@@ -178,7 +180,7 @@
+ } MERIDIAN;
+ 
+ /* parse results and input string */
+-typedef struct _CURL_CONTEXT {
++typedef struct _GD_CONTEXT {
+     const char	*yyInput;
+     int		yyDayOrdinal;
+     int		yyDayNumber;
+@@ -201,14 +203,14 @@
+     int		yyRelMonth;
+     int		yyRelSeconds;
+     int		yyRelYear;
+-} CURL_CONTEXT;
++} GD_CONTEXT;
+ 
+ /* enable use of extra argument to yyparse and yylex which can be used to pass
+-**  in a user defined value (CURL_CONTEXT struct in our case)
++**  in a user defined value (GD_CONTEXT struct in our case)
+ */
+ #define YYPARSE_PARAM cookie
+ #define YYLEX_PARAM cookie
+-#define context ((CURL_CONTEXT *) cookie)
++#define context ((GD_CONTEXT *) cookie)
+ %}
+ 
+ /* This grammar has 13 shift/reduce conflicts. */
+@@ -947,11 +949,11 @@
+ }
+ 
+ time_t
+-curl_getdate (const char *p, const time_t *now)
++gd_getdate (const char *p, const time_t *now)
+ {
+   struct tm tm, tm0, *tmp;
+   time_t Start;
+-  CURL_CONTEXT cookie;
++  GD_CONTEXT cookie;
+ #ifdef HAVE_LOCALTIME_R
+   struct tm keeptime;
+ #endif
+@@ -1098,7 +1100,7 @@
+   buff[MAX_BUFF_LEN] = 0;
+   while (fgets (buff, MAX_BUFF_LEN, stdin) && buff[0])
+     {
+-      d = curl_getdate (buff, (time_t *) NULL);
++      d = gd_getdate (buff, (time_t *) NULL);
+       if (d == -1)
+ 	(void) printf ("Bad format - couldn't convert.\n");
+       else

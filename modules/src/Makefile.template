@@ -1,0 +1,108 @@
+include $(CONFIG)
+
+# TARGET and PREFIX are passed
+
+H=@
+
+#get the files ################################################
+HDR=$(shell ls *.h  2> /dev/null)
+
+SRC=$(shell if test -e source ; then cat source ; fi )
+ifeq "" "$(SRC)"
+	SRC=$(shell ls *.c *.pkg 2> /dev/null)
+endif
+
+CDEPFILES=$(shell ls *.c 2> /dev/null)
+ifneq "$(CDEPFILES)" "" 
+	-include $(CDEPFILES:%.c=.%.d)
+endif
+
+LDEPFILES=$(shell ls *.pkg 2> /dev/null)
+ifneq "$(LDEPFILES)" "" 
+	-include $(LDEPFILES:%.pkg=.%.d)
+endif
+
+RCDEPFILES=$(shell ls *.rc 2> /dev/null)
+ifneq "$(RCDEPFILES)" "" 
+	-include $(RCDEPFILES:%.rc=.%.d)
+	
+endif
+
+OBJ=$(subst .c,.o,$(subst .pkg,.o,$(SRC))) $(RCDEPFILES:%.rc=%.o)
+
+
+#flags #######################################################
+CFLAGS+= -I. -I$(PREFIX)/include
+
+INTERFACE=$(shell if test -e interface ; then cat interface ; fi )
+ifeq "" "$(INTERFACE)"
+	INTERFACE=$(HDR)
+endif
+
+LIBRARY=lib$(TARGET)$(STATICEXTENSION)
+SHARED=lib$(TARGET)$(SHAREDEXTENSION)
+
+SHAREDFLAG=$(shell cat shared 2> /dev/null)
+ifneq "" "$(SHAREDFLAG)"
+SHARED_TGT=$(SHARED)
+else
+SHARED_TGT=
+endif
+
+#rules ####################################################
+all: $(CDEPFILES:%.c=.%.d) $(LDEPFILES:%.pkg=.%.d) $(RCDEPFILES:%.rc=.%.d) $(LIBRARY) $(SHARED_TGT)
+
+clean:
+	$(H)rm -f  $(CDEPFILES:%.c=.%.d) $(OBJ) \
+		$(LDEPFILES:%.pkg=.%.d) $(LDEPFILES:%.pkg=%.c) \
+		$(LDEPFILES:%.pkg=%.h) $(RCDEPFILES:%.rc=.%.d) *.a *.c~ *.so
+
+	
+#############################################
+
+$(LIBRARY): $(OBJ) $(INTERFACE)
+	$(H)[  -z "$(OBJ)" ] || echo -n " linking "
+	$(H)[  -z "$(OBJ)" ] || $(AR) -r $(LIBRARY) $(OBJ)
+	$(H)[  -z "$(OBJ)" ] || $(RANLIB) $(LIBRARY)
+	$(H)[  -z "$(OBJ)" ] || echo "$(LIBRARY)"
+	$(H)cp $(INTERFACE) $(PREFIX)/include || true
+	$(H)[ ! -z "$(OBJ)" ] || touch $(LIBRARY)
+	$(H)[ -z "$(OBJ)" ] || cp $(LIBRARY) $(PREFIX)/lib || true
+	
+$(SHARED): $(OBJ)
+	$(CC) -shared -o $(SHARED) $(OBJ) -L $(PREFIX)/lib $(SHAREDFLAG)
+	cp $(SHARED) $(PREFIX)/lib
+	
+.%.d:%.c
+	$(H)echo " building dep for $<"
+	$(H)$(CC) -I. -I$(PREFIX)/include -MM $< > $@;
+
+.%.d:%.pkg
+	$(H)echo " building dep for $<"
+	$(H)echo "$(subst .pkg,.o,$<) : $< " > $@ 
+	
+.%.d:%.rc
+	$(H)echo " building dep for $<"
+	$(H)echo "$(subst .rc,.o,$<) : $< " > $@ 
+
+%.o:%.pkg
+	$(H)echo -n " processing $< -> "
+	$(H)$(PREFIX)/bin/tolua++ -S -H $(subst .pkg,.h,$<) -o $(subst .pkg,.c,$<) $<
+	$(H)echo "$(subst .pkg,.c,$<)"
+	$(H)echo -n " compiling $(subst .pkg,.c,$<) -> "
+	$(H)$(CC) $(CFLAGS) -c $(subst .pkg,.c,$<) || \
+		(mv -f $(subst .pkg,.c,$<) $(subst .pkg,.c,$<)~;exit 1)
+	$(H)mv -f $(subst .pkg,.c,$<) $(subst .pkg,.c,$<)~ 
+	$(H)echo "$@"
+
+%.o:%.c
+	$(H)echo -n " compiling $< -> "
+	$(H)$(CC) $(CFLAGS) -c $<
+	$(H)echo "$@"
+
+%.o:%.rc	
+	$(H)echo -n " compiling $< -> "
+	$(H)$(WINDRES) -i $< -o $@
+	$(H)echo "$@"
+	
+

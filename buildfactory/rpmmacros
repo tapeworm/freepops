@@ -1,0 +1,11 @@
+%_topdir	%(pwd)/_rpm_
+%_sourcedir     %(pwd)
+%_specdir       %(pwd)
+%_tmppath	%{_topdir}/tmp
+%_builddir	%{_topdir}/build
+%_buildroot	%{_topdir}/%{name}-%{version}-root
+%_rpmdir	%(pwd)/_rpm_
+%_srcrpmdir	%(pwd)/_rpm_
+%_rpmfilename	%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
+
+

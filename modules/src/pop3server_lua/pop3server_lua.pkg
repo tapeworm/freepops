@@ -1,0 +1,181 @@
+/*****************************************************************************
+ *  This files exports pop3server interface to LUA
+ *
+ */
+
+//---
+//-- This file is the interface of pop3server.
+
+$#include "popstate.h"
+$#include "popserver.h"
+
+module pop3server {
+
+#define POPSERVER_ERR_OK 	0
+#define POPSERVER_ERR_SYNTAX 	1
+#define POPSERVER_ERR_NETWORK 	2
+#define POPSERVER_ERR_AUTH 	3
+#define POPSERVER_ERR_INTERNAL 	4
+#define POPSERVER_ERR_NOMSG 	5
+#define POPSERVER_ERR_LOCKED 	6
+#define POPSERVER_ERR_EOF 	7
+#define POPSERVER_ERR_TOOFAST	8
+#define POPSERVER_ERR_UNKNOWN 	9
+
+#define MAILMESSAGE_DELETE	0x1
+
+//---
+//-- Sets the mailbox message number.
+//-- Used in stat
+//-- @param p userdata The pstate.
+//-- @param num number The number of messages.
+void set_popstate_nummesg(void *p,int num);
+//---
+//-- Sets password.
+//-- Can be used to remember it for furter elaboration
+//-- @param p userdata The pstate.
+//-- @param passwd string The password.
+void set_popstate_password(void *p,const char* passwd);
+//---
+//-- Sets the username.
+//-- Can be used to remember it for furter elaboration
+//-- @param p userdata The pstate.
+//-- @param username string The username.
+void set_popstate_username(void *p,const char* username);
+//---
+//-- Gets the stored password.
+//-- @param p userdata The pstate.
+//-- @return string.
+const char* get_popstate_password(void *p);
+//---
+//-- Gets the stored username.
+//-- @param p userdata The pstate.
+//-- @return string.
+const char* get_popstate_username(void *p);
+void* get_popstate_mailmessage @ __get_popstate_mailmessage(void *p,int n);
+//---
+//-- Get number of messages in the box.
+//-- @param p userdata The pstate.
+int get_popstate_nummesg(void *p);
+//---
+//-- Gets the box size.
+//-- @param p userdata The pstate.
+int get_popstate_boxsize(void* p);
+//---
+//-- Sets the box size.
+//-- @param p userdata The pstate.
+void set_popstate_boxsize(void* p,int size);
+
+void set_mailmessage_size @ __set_mailmessage_size(void* m,int size);
+void set_mailmessage_uidl @ __set_mailmessage_uidl(void* m, const char* uidl);
+void set_mailmessage_flag @ __set_mailmessage_flag(void* m,int flag);
+void unset_mailmessage_flag @ __unset_mailmessage_flag(void* m,int flag);
+int get_mailmessage_size @ __get_mailmessage_size(void* m);
+int get_mailmessage_flag @ __get_mailmessage_flag(void* m,int flag);
+const char* get_mailmessage_uidl @ __get_mailmessage_uidl(void* m);
+
+//---
+//-- The callback to send data.
+//-- @param buffer string the data.."\r\n".
+//-- @param popserver_data userdata the pdata passed by the caller.
+int popserver_callback(char* buffer, void* popserver_data);
+
+$[
+
+---
+-- Sets the message uidl.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+function pop3server.set_mailmessage_uidl(p,num,uidl)
+	if p == nil or num == nil or uidl == nil then
+		error("nil args in set_mailmessage_uidl")
+	end
+	local m = pop3server.__get_popstate_mailmessage(p,num-1)
+	pop3server.__set_mailmessage_uidl(m,uidl)
+end
+
+---
+-- Sets the message size.
+-- @param numum number the message number, from 1 to n.
+-- @param p userdata The pstate.
+-- @param size number the message size.
+function pop3server.set_mailmessage_size(p,num,size)
+	if p == nil or num == nil or size == nil then
+		error("nil args in set_mailmessage_size")
+	end
+	local m = pop3server.__get_popstate_mailmessage(p,num-1)
+	pop3server.__set_mailmessage_size(m,size)
+end
+
+---
+-- Sets a message flag.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+-- @param flag number the MAILMESSAGE_* flag.
+function pop3server.set_mailmessage_flag(p,num,flag)
+	if p == nil or num == nil or flag == nil then
+		error("nil args in set_mailmessage_flag")
+	end
+
+	local m = pop3server.__get_popstate_mailmessage(p,num-1)
+	pop3server.__set_mailmessage_flag(m,flag)
+end
+
+---
+-- Removes a mailmessage flag.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+-- @param flag number the MAILMESSAGE_* flag.
+function pop3server.unset_mailmessage_flag(p,num,flag)
+	if p == nil or num == nil or flag == nil then
+		error("nil args in unset_mailmessage_flag")
+	end
+
+	local m = pop3server.__get_popstate_mailmessage(p,num-1)
+	pop3server.__unset_mailmessage_flag(m,flag)
+end
+
+---
+-- Gets message size.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+function pop3server.get_mailmessage_size(p,num)
+	if p == nil or num == nil then
+		error("nil args in get_mailmessage_size")
+	end
+
+	local m = pop3server.__get_popstate_mailmessage(p,num-1)
+	return pop3server.__get_mailmessage_size(m)
+end
+
+---
+-- Gets message uidl.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+function pop3server.get_mailmessage_uidl(p,num)
+	if p == nil or num == nil then
+		error("nil args in get_mailmessage_uidl")
+	end
+
+	local m = pop3server.__get_popstate_mailmessage(p,num-1)
+	return pop3server.__get_mailmessage_uidl(m)
+end
+
+---
+-- Get mailmessage flag.
+-- @param p userdata The pstate.
+-- @param num number the message number, from 1 to n.
+-- @param flag number the MAILMESSAGE_* flag.
+-- @return boolean true if is set.
+function pop3server.get_mailmessage_flag(p,num,flag)
+	if p == nil or num == nil or flag == nil then
+		error("nil args in get_mailmessage_flag")
+	end
+
+	local m = pop3server.__get_popstate_mailmessage(p,num-1)
+	return (pop3server.__get_mailmessage_flag(m,flag) == 1)
+end
+
+$]
+
+}

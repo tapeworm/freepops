@@ -1,0 +1,53 @@
+legeng: more + means more done! (from 1 to 7)
+
+second release 0.0.2
+	aggiungere a luasocket il supporto proxy.auth con una var d'ambiente
+		LUA_HTTP_PROXY_AUTH e patchare BROWSER di CONSEUENZA e fare la
+		stessa operazione di trasporto nel main delle funzioni http
+		come per il proxy semplice. magari curl... ma da vederne 
+		la fattibilita'. se si rimane a luasocket muovere i lua
+		embedded in C in lua semplici in modo che si possa fare 
+		autoupdate anche di quelli
+	servizio di autoupdate. da valutare la sicurezza di cio'.
+		valutare se far scaricare uno script e farlo eseguire.
+	fare documentazione per moduli lua e C decente
+	plugin (superva?)(freepass?)
+
+first public release 0.0.1:
+	sistemare se la sessione caricata e' scaduta in libero.lua
++++++	sistemare l'installe win (icona, messagi di manuali in italiano) 
++++++++	da vedere se e' il caso di farlo anche in ~/.config.lua(no)
+	testare gli installer
++	provare il macosx
+	sito (flatnuke?) in inglese magari con la pagina in it
+	icone, logo, skin flatnuke?
+++	aprire un progetto nuovo su sf(fatto) e fare il CVS
+	testare il tutto per un paio di giorni
+++	scrivere/tradurre un manuale in inglese possibilmente
+	tradurre faq
++++++++	fare un liberopops -> freepops howto in it
++++++++	fare in modo che http e browser.lua sia sincronizzati nel proxy.
+		ora http usa set_proxy in http_init nel main mentre
+		browser cerca un var d'ambiente LUA_HTTP_PROXY=host:port
+		nel main spostare il codice di http che lavora col proxy
+		poi fare un putenv che esporti LUA_HTTP_PROXY in modo che 
+		il proxy si decida una vlta per tutte nel main, 
+		sia per i socket lua che per http (rimosso http)
++++	aggiustare il main e http e winsystray in modo che siano per 
+ 		freepops e non liberopops, compreso il download di news,
+		aggiornamento (magari essendo i files dei plugin dei files 
+		di teso si riesce anche in modo decente a fare un 
+		auto-apgrade sotto win)
++++++++	studiare se separare i plugin  in altri deb o fare auto-upgrade 
+		anche sotto linux (seconda piu' facile, prima solo deb.. 
+		difficile in rpm e altro).
+		(tutti in uno)
++++++++	fix the manpage
++++++	useragent(now only one default for win and one for linux... 
+		need other platforms defaults. add them to config.h
+		not tested!)
++++++++	mettere in doc una copia dei contratti provider
+	commentare la factory_cb meglio
+	2 righe su flatnuke
+	news_howto basato sul flatnuke plugin
+

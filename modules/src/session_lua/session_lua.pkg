@@ -1,0 +1,30 @@
+$#include "session.h"
+
+$#define OVERWRITE 1
+$#define FAILIFPRESENT 0
+
+module session {
+
+//---
+//-- Persistent table saving module
+
+#define OVERWRITE 1
+#define FAILIFPRESENT 0
+
+//---
+//-- stores the couple key,data in a permanent data structure.
+//-- Permanent means not deleted after the end of the current session
+void  session_save @ save(char* key, char* data,int overwrite);
+//---
+//-- return the string associated with key.
+//-- can be loaded with a loadstring()
+char* session_load_and_lock @ load_lock(char* key);
+//---
+//-- removes saved info for key.
+void  session_remove @ remove(char* key);
+//---
+//-- removes lock for key.
+void  session_unlock @ unlock(char* key);
+
+
+}

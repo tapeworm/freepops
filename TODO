@@ -12,6 +12,12 @@ second release 0.0.2
 		valutare se far scaricare uno script e farlo eseguire.
 	fare documentazione per moduli lua e C decente
 	plugin (superva?)(freepass?)
+	aggiustare winsystray, download di news, aggiornamento (magari essendo
+		i files dei plugin dei files 
+		di teso si riesce anche in modo decente a fare un 
+		auto-apgrade sotto win)
+	implementare il rotlog in log.c in modo che operi semre, non solo
+	in fase di avvio (win32).
 
 first public release 0.0.1:
 	sistemare se la sessione caricata e' scaduta in libero.lua
@@ -23,7 +29,7 @@ first public release 0.0.1:
 	icone, logo, skin flatnuke?
 +++++++	aprire un progetto nuovo su sf(fatto) e fare il CVS
 	testare il tutto per un paio di giorni
-++	scrivere/tradurre un manuale in inglese possibilmente
++++++++	scrivere/tradurre un manuale in inglese possibilmente
 	tradurre faq
 +++++++	fare un liberopops -> freepops howto in it
 +++++++	fare in modo che http e browser.lua sia sincronizzati nel proxy.
@@ -33,11 +39,6 @@ first public release 0.0.1:
 		poi fare un putenv che esporti LUA_HTTP_PROXY in modo che 
 		il proxy si decida una vlta per tutte nel main, 
 		sia per i socket lua che per http (rimosso http)
-+++	aggiustare il main e http e winsystray in modo che siano per 
- 		freepops e non liberopops, compreso il download di news,
-		aggiornamento (magari essendo i files dei plugin dei files 
-		di teso si riesce anche in modo decente a fare un 
-		auto-apgrade sotto win)
 +++++++	studiare se separare i plugin  in altri deb o fare auto-upgrade 
 		anche sotto linux (seconda piu' facile, prima solo deb.. 
 		difficile in rpm e altro).
@@ -47,6 +48,4 @@ first public release 0.0.1:
 		need other platforms defaults. add them to config.h)
 +++++++	mettere in doc una copia dei contratti provider
 +++++++	commentare la factory_cb meglio
-	2 righe su flatnuke
-	news_howto basato sul flatnuke plugin
 

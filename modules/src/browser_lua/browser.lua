@@ -54,6 +54,8 @@
 -- <BR/>
 -- <B>ssl_init_stuff()</B> : some stuff for SSL<BR/>
 --<BR/>
+-- <B>override_useragent(useragent)</B> : sets the useragent<BR/>
+--<BR/>
 
 dofile("cookie.lua")
 
@@ -643,6 +645,12 @@ function Private.verbose_mode(self)
 	self.curl:setopt(curl.OPT_VERBOSE,1)
 end
 
+function Private.override_useragent(self,useragent)
+	if useragent == nil then
+		error("You can't override the useragent with a nil string")
+	end
+	self.useragent = useragent
+end
 
 browser = {}
 

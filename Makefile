@@ -64,8 +64,9 @@ install: all
 	$(H)cp src/lua/*.lua modules/include/*.lua config.lua \
 		$(PREFIX)share/freepops/lua/
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
-	$(H)cp doc/manual*.pdf  $(PREFIX)share/doc/freepops/ ||\
-		cp doc/MANUAL.txt  $(PREFIX)share/doc/freepops/
+	$(H)cp doc/manual*.pdf  $(PREFIX)share/doc/freepops/ 2>/dev/null ||\
+		cp doc/MANUAL.txt  $(PREFIX)share/doc/freepops/ 2>/dev/null || \
+		true
 	$(H)cp config.lua $(DESTDIR)/etc/freepops/
 
 uninstall:

@@ -1,3 +1,5 @@
+- hack for "secure" cookie
+- fixed problem in cookie (thanks russell)
 - added slackware patch by Lorenzo Buzzi
 - linux_usr configure.sh target (to have a good make install)
 - fixed jail in sid

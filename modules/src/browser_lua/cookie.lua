@@ -29,7 +29,12 @@ Private.cookie_av={
 	"domain",
 	"path",
 	"comment",
-	"secure",
+	
+--	"secure", 
+--	commented since the parser is too greedy and eats with 
+--	this rules also something like "aaa_secure" (plugin name).
+--	not only a "secure" attribute.
+
 	"version",
 	"max-age",
 	"expires"

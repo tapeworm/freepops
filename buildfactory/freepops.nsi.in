@@ -94,6 +94,7 @@ Section "FreePOPs (required)"
   File "config.lua"
   SetOutPath $INSTDIR\LUA
   File "*.lua"
+  SetOutPath $INSTDIR
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\NSIS_FreePOPs "Install_Dir" "$INSTDIR"
   ; Write the uninstall keys for Windows
@@ -108,7 +109,7 @@ Section "Start Menu Shortcuts"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs -v.lnk" "$INSTDIR\freepopsd.exe" "-v" "$INSTDIR\freepopsd.exe" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Manual.lnk" "$INSTDIR\manual.pdf" "" "$INSTDIR\manual.pdf" 0
-;  CreateShortCut "$SMPROGRAMS\FreePOPs\ManualeTxt.lnk" "$INSTDIR\manuale.txt" "" "$INSTDIR\manuale.txt" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\Manuale (italiano).lnk" "$INSTDIR\manual-it.pdf" "" "$INSTDIR\manual-it.pdf" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Website.lnk" "http://freepops.sourceforge.net/index.html" "" "http://freepops.sourceforge.net/" 0
 ;  CreateShortCut "$SMPROGRAMS\FreePOPs\FAQ.lnk" "http://freepops.sourceforge.net/faq.html" "" "http://liberopops.sourceforge.net/faq.html" 0
 SectionEnd
@@ -125,6 +126,9 @@ Section "Uninstall"
   Delete $INSTDIR\*.dll
   Delete $INSTDIR\*.txt
   Delete $INSTDIR\*.pdf
+  Delete $INSTDIR\*.lua
+  Delete $INSTDIR\LUA\*.lua
+  RMDir $INSTDIR\LUA
   ; remove shortcuts, if any.
   Delete "$SMPROGRAMS\FreePOPs\*.*"
   ; remove directories used.
@@ -133,9 +137,9 @@ Section "Uninstall"
 SectionEnd
 
 Function .onInstSuccess
-;  MessageBox MB_YESNO "Installation complete. In the directory chosen for the installation you'll find a manual, both in PDF and normal text format with useful information and answers to frequently asked questions, together with the files log.txt, stderr.txt and stdout.txt. Remember to include the log.txt file when you ask for technical support. Do you want to read the PDF manual now?" IDNO NoReadme
-;    ExecShell "open" "$INSTDIR\manuale.pdf" SW_SHOWNORMAL
-;  NoReadme:
+  MessageBox MB_YESNO|MB_ICONQUESTION "Installation complete.  Do you want to read the PDF manual now?" IDNO NoReadme
+    ExecShell "open" "$INSTDIR\manual.pdf" SW_SHOWNORMAL
+  NoReadme:
 FunctionEnd
 
 ; eof

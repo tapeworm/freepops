@@ -31,6 +31,7 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)cp _win_/freepops-$(VERSION)/modules/include/*.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/
+	$(H)cp _win_/freepops-$(VERSION)/doc/manual-it.pdf _win_/freepops/
 
 	$(H)cp _win_/freepops-$(VERSION)/COPYING _win_/freepops/COPYING.txt
 	$(H)cp _win_/freepops-$(VERSION)/ChangeLog _win_/freepops/ChangeLog.txt
@@ -76,7 +77,7 @@ dist-deb: freepops-$(VERSION).tar.gz
 		tar -xzf freepops-$(VERSION).tar.gz -C _deb_
 	$(H)cd _deb_/freepops-$(VERSION);\
 		./configure.sh linux;\
-		dpkg-buildpackage -rfakeroot;
+		dpkg-buildpackage -rfakeroot -us -uc
 	$(H)mkdir -p ../dist-deb/freepops || true
 	$(H)cp _deb_/*.tar.gz _deb_/*.deb _deb_/*.dsc _deb_/*.changes \
 		../dist-deb/freepops

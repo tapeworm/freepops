@@ -4,14 +4,14 @@
 # Made by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 # Distributed under the GPL license
 #
-# This script should create a jail for liberopopsd.
+# This script should create a jail for freepopsd.
 # 
 
 #configure this################################################################
 
-LPBIN="/usr/bin/liberopopsd"
-LPFILES="/usr/share/liberopops/libero.cfg /usr/share/liberopops/browsers.txt"
-CHROOTDIR="/var/lib/liberopops/chroot-jail/"
+LPBIN="/usr/bin/freepopsd"
+LPFILES="/usr/share/freepops/lua"
+CHROOTDIR="/var/lib/freepops/chroot-jail/"
 USER="nobody"
 GROUP="nogroup"
 
@@ -19,7 +19,7 @@ GROUP="nogroup"
 
 case "$1" in
 	create)
-		echo -n "Creating chroot-jail for liberopops in $CHROOTDIR ..."
+		echo -n "Creating chroot-jail for freepops in $CHROOTDIR ..."
 	;;
 	
 	get-dir)
@@ -50,7 +50,7 @@ mkdir -p var/run/
 chown $USER.$GROUP var/run/
 chmod g+w var/run/
 mkdir -p etc/
-mkdir -p usr/share/liberopops/
+mkdir -p usr/share/freepops/
 mkdir -p usr/bin/
 mkdir -p usr/lib/
 mkdir -p lib/
@@ -59,8 +59,12 @@ mkdir -p home/nobody
 
 #copy libs
 cp -a /lib/ld-* lib/
-cp -a /lib/libc* lib/
-cp -a /lib/libm* lib/
+cp -a /lib/libc.* lib/
+cp -a /lib/libc-* lib/
+cp -a /lib/libm.* lib/
+cp -a /lib/libm-* lib/
+cp -a /lib/libdl-* lib/
+cp -a /lib/libdl.* lib/
 cp -a /lib/libnss_db* lib/
 cp -a /lib/libnss_dns* lib/
 cp -a /lib/libnss_files* lib/
@@ -82,7 +86,7 @@ mknod -m 0666 dev/null c 1 3
 
 #copy liberopos files
 cp $LPBIN usr/bin/
-cp $LPFILES usr/share/liberopops/
+cp -r $LPFILES usr/share/freepops/
 
 #create the script#############################################################
 cat > $CHROOTDIR/start.sh << EOT
@@ -91,7 +95,7 @@ cat > $CHROOTDIR/start.sh << EOT
 export HOME=/home/$USER/
 export USER=$USER
 cd $CHROOTDIR
-chroot . usr/bin/liberopopsd \$@ -s $USER.$GROUP
+chroot . usr/bin/freepopsd \$@ -s $USER.$GROUP
 EOT
 
 chmod a+rx $CHROOTDIR/start.sh

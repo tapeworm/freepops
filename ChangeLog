@@ -1,4 +1,1 @@
-- porting to OSX
-- popserver bindings
-- popserver now has a callback based retr/top implementation
-- fork from liberopops
+01/05/2004 0.0.1 first public release

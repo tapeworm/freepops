@@ -27,12 +27,8 @@
 #define ABOUT_STRING	"\
 A software developed by:\n\
 	Enrico Tassi\n\
-\n\
-This software is the evolution of LiberoPOPs, developed by:\n\	
 	Alessio Caprari\n\
 	Nicola Cocchiaro\n\
-	Enrico Tassi\n\
-	Giacomo Tenaglia\n\
 	Simone Vellei\n\
 \n\
 For more infos look at the web site:\n\

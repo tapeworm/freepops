@@ -28,9 +28,10 @@
 #include "log.h"
 #define LOG_ZONE "WIN"
 
+#include "config.h"
+
 #define HIDDEN static
-#define VERSION "0.0.1"
-#define LIBERO_MAGIC_NUMBER "#LIBERO.CFG"
+
 //! min of two
 #ifndef MIN
 #define MIN(a,b) (((a)<(b))?(a):(b))
@@ -70,33 +71,6 @@ HIDDEN int can_download_cfg;
  */
 HIDDEN int download_cfg()
 {
-char* body=NULL;
-FILE* f;
-regmatch_t p;
-
-/* download settings */
-body = NULL;
-
-if (body == NULL)
-	return 1;
-
-p = regfind(body,"404 NOT FOUND");
-if(p.begin != -1)
-	return 1;
-
-f = fopen("libero.cfg","w");
-if(f == NULL)
-	{
-	free(body);
-	return 1;
-	}
-
-fprintf(f,"%s",body);
-fclose(f);
-
-//end of this
-can_download_cfg=0;
-
 return 0;
 }
 
@@ -114,54 +88,6 @@ return c + b*100 + a*10000;
  */
 HIDDEN int get_news(char **news_msg)
 {
-char* body=NULL, *from;
-long version, fileversion;
-regmatch_t p;
-
-/* download settings */
-body = NULL;
-//SAY("Getted some news:%s\n",body);
-if (body == NULL)
-	return 2;
-
-p = regfind(body,"404 NOT FOUND");
-if(p.begin != -1)
-	return 2;
-
-// if invalid file
-if (strncmp(body,LIBERO_MAGIC_NUMBER,
-    MIN(strlen(body), strlen(LIBERO_MAGIC_NUMBER))))
-	return 1;
-// check the version
-version = str_to_num(VERSION);
-fileversion = str_to_num(&body[strlen(LIBERO_MAGIC_NUMBER)]);
-if (fileversion < version)
-	return 1;
-
-from = body;
-while ((*from != '\n') && (*from != '\0'))
-	from++;
-if (*from == '\n')
-	from++;
-*news_msg = strdup(from);
-MALLOC_CHECK(news_msg);
-
-free(body);
-
-//check for the CAN_DOWNLOAD_CFG token
-//DBG("searching...\n");
-p = regfind(*news_msg,"NEW_CFG_VERSION");
-if(p.begin != -1)
-	{
-	//DBG("found!\n");
-	can_download_cfg=1;
-	}
-else
-	{
-	//DBG("Not found\n");
-	can_download_cfg=0;
-	}
-
 return 0;
 }
 
@@ -225,7 +151,7 @@ switch (message)
 	  			{
 				case RES_MENU_EXIT: 
 					DestroyWindow(hwnd);
-					SAY("liberopops killed by the "
+					SAY("FreePOPs killed by the "
 						"context menu.");
 					exit(0);
 				break;
@@ -289,7 +215,7 @@ HWND hwnd;
 MSG msg;
 WNDCLASSEX wc;
 NOTIFYICONDATA nid;
-char *classname = "LiberoPOPs.NOTIFYICONDATA.hWnd";
+char *classname = "FreePOPs.NOTIFYICONDATA.hWnd";
 
 ghInst = hInstance;
   
@@ -328,7 +254,7 @@ nid.hIcon = LoadImage(hInstance, MAKEINTRESOURCE(RES_ICON_16), IMAGE_ICON,
                         GetSystemMetrics(SM_CXSMICON),
                         GetSystemMetrics(SM_CYSMICON), 0); 
 // ToolTip (64 byte)
-strcpy(nid.szTip,"LiberoPOPs v " VERSION);
+strcpy(nid.szTip,"FreePOPs v " VERSION);
 
 // This adds the ico
 Shell_NotifyIcon(NIM_ADD, &nid); 
@@ -414,7 +340,7 @@ MALLOC_CHECK(argv_win32);
 
 position = 0;
 n=0;
-argv_win32[0]=strdup("liberopops.exe");
+argv_win32[0]=strdup("freepopsd.exe");
 n++;
 
 do	

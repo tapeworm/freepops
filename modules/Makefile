@@ -20,6 +20,7 @@ FORALL=	for X in $(MODULES); do						\
 ########################################################################
 
 all: src/config
+	$(H)cd include/;ln -s ../../config.h . || true
 	$(H)ACTION="all";\
 	$(FORALL)
 

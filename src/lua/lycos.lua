@@ -33,35 +33,24 @@ local lycos_string = {
 	login_failC="(Spiacente, ma questo Alias non esiste)",
 	loginC = '<frame.*src="([^"]+)"',
 	-- mesage list mlex
-	--
-	--
-	--
-	--
-
-statE = '.*<div class="whrnopadding">.*</div>.*<div>.*<div>[.*]{img}.*</div>.*<div>.*</div>.*<div>.*</div>.*<div>[.*]{img}.*</div>.*<div class="w15L">.*<input.*name.*CHECK_>.*</div>.*</div>',
-
-statG = 'O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}X<O>O<O>O<X>O<O>O<O>',
-
---save = "/Europe/Bin/Mail/Features/MailContent/mailContent.jsp?MESSAGEID=260&PARENTID=5&MYSORT=-1';" 
-
-
+	statE = '.*<div class="whrnopadding">.*</div>.*<div>.*<div>[.*]{img}.*</div>.*<div>.*</div>.*<div>.*</div>.*<div>[.*]{img}.*</div>.*<div class="w15L">.*<input.*name.*CHECK_>.*</div>.*</div>',
+	statG = 'O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}X<O>O<O>O<X>O<O>O<O>',
 	-- The uri for the first page with the list of messages
 	first = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp?FOLDERID=5&",
 	-- The uri to get the next page of messages
 	nextC ='<a href="(?FOLDERID=5&MYNEXT=%d+&MYSORT=%-1)">Successivo</a>',
+	next = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp",
 
 	-- The capture to understand if the session ended
-	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
+	timeoutC = '(FIXME)',
 	-- The uri to save a message (read download the message)
-	save = "http://%s/mail/MessageDownload?sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=INBOX&uid=%s&srch=0&style=comm4_IT",	
+	save = "/Europe/Bin/Mail/Features/MailContent/mailContent.jsp?MESSAGEID=260&PARENTID=5&MYSORT=-1';",
 	-- The uri to delete some messages
-	delete = "http://%s/mail/MessageErase",
+	delete = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/actionFolderContent.jsp",
+	delete_post = "ACTION=3&",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
-	delete_post = "sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT&",
-	delete_next = "msguid=%s&"
+	delete_next = "CHECK_%d=1&"
 }
 
 -- ************************************************************************** --
@@ -296,60 +285,49 @@ end
 -- Update the mailbox status and quit
 function quit_update(pstate)
 	-- we need the stat
-	--
-	--
-	return POPSERVER_ERR_OK
+	local st = stat(pstate)
+	if st ~= POPSERVER_ERR_OK then return st end
+
+	-- shorten names, not really important
+	local b = internal_state.b
+	local uri = string.format(lycos_string.delete)
+	local post = string.format(lycos_string.delete_post)
+
+	-- here we need the stat, we build the uri and we check if we 
+	-- need to delete something
+	local delete_something = false;
 	
---	local st = stat(pstate)
---	if st ~= POPSERVER_ERR_OK then return st end
---
---	-- shorten names, not really important
---	local b = internal_state.b
---	local popserver = b:wherearewe()
---	local session_id = internal_state.session_id
---	local domain = internal_state.domain
---	local user = internal_state.name
---	local pop_login = user .. "@" .. domain
---	
---	local uri = string.format(tin_string.delete,popserver)
---	local post = string.format(tin_string.delete_post,session_id,pop_login)
---
---	-- here we need the stat, we build the uri and we check if we 
---	-- need to delete something
---	local delete_something = false;
---	
---	for i=1,get_popstate_nummesg(pstate) do
---		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
---			post = post .. string.format(tin_string.delete_next,
---				get_mailmessage_uidl(pstate,i))
---			delete_something = true	
---		end
---	end
---
---	if delete_something then
---		-- Build the functions for do_until
---		local extract_f = function(s) return true,nil end
---		local check_f = support.check_fail
---		local retrive_f = support.retry_n(3,support.do_post(b,uri,post))
---
---		if not support.do_until(retrive_f,check_f,extract_f) then
---			log.error_print("Unable to delete messages\n")
---			return POPSERVER_ERR_UNKNOWN
---		end
---	end
---
---	-- save fails if it is already saved
---	session.save(key(),serialize_state(),session.OVERWRITE)
---	-- unlock is useless if it have just been saved, but if we save 
---	-- without overwriting the session must be unlocked manually 
---	-- since it wuold fail instead overwriting
---	session.unlock(key())
---
---	log.say("Session saved for " .. internal_state.name .. "@" .. 
---		internal_state.domain .. "(" .. 
---		internal_state.session_id .. ")\n")
---
---	return POPSERVER_ERR_OK
+	for i=1,get_popstate_nummesg(pstate) do
+		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
+			post = post .. string.format(lycos_string.delete_next,
+				get_mailmessage_uidl(pstate,i))
+			delete_something = true	
+		end
+	end
+
+	if delete_something then
+		-- Build the functions for do_until
+		local extract_f = function(s) return true,nil end
+		local check_f = support.check_fail
+		local retrive_f = support.retry_n(3,support.do_post(b,uri,post))
+
+		if not support.do_until(retrive_f,check_f,extract_f) then
+			log.error_print("Unable to delete messages\n")
+			return POPSERVER_ERR_UNKNOWN
+		end
+	end
+
+	-- save fails if it is already saved
+	session.save(key(),serialize_state(),session.OVERWRITE)
+	-- unlock is useless if it have just been saved, but if we save 
+	-- without overwriting the session must be unlocked manually 
+	-- since it wuold fail instead overwriting
+	session.unlock(key())
+
+	log.say("Session saved for " .. internal_state.name .. "@" .. 
+		internal_state.domain .. "\n")
+
+	return POPSERVER_ERR_OK
 end
 
 -- -------------------------------------------------------------------------- --
@@ -376,61 +354,59 @@ function stat(pstate)
 		-- statE and statG
 		local x = mlex.match(s,lycos_string.statE,lycos_string.statG)
 
-		x:print()
+		--x:print()
 
+		-- the number of results
+		local n = x:count()
+
+		if n == 0 then
+			return true,nil
+		end 
+		
+		-- this is not really needed since the structure 
+		-- grows automatically... maybe... don't remember now
+		local nmesg_old = get_popstate_nummesg(pstate)
+		local nmesg = nmesg_old + n
+		set_popstate_nummesg(pstate,nmesg)
+
+		-- gets all the results and puts them in the popstate structure
+		for i = 1,n do
+			local uidl = x:get (1,i-1) 
+			local size = x:get (0,i-1)
+
+			-- arrange message size
+			local k = nil
+			_,_,k = string.find(size,"([Kk][Bb])")
+			_,_,m = string.find(size,"([Mm][Bb])")
+			_,_,size = string.find(size,"([%.%d]+)")
+			_,_,uidl = string.find(uidl,'CHECK_([%d]+)')
+
+			if not uidl or not size then
+				return nil,"Unable to parse page"
+			end
+
+			-- arrange size
+			size = tonumber(size)
+			if k ~= nil then
+				size = size * 1024
+			elseif m ~= nil then
+				size = size * 1024 * 1024
+			end
+
+			-- set it
+			set_mailmessage_size(pstate,i+nmesg_old,size)
+			set_mailmessage_uidl(pstate,i+nmesg_old,uidl)
+		end
+		
 		return true,nil
-	end
---		-- the number of results
---		local n = x:count()
---
---		if n == 0 then
---			return true,nil
---		end 
---		
---		-- this is not really needed since the structure 
---		-- grows automatically... maybe... don't remember now
---		local nmesg_old = get_popstate_nummesg(pstate)
---		local nmesg = nmesg_old + n
---		set_popstate_nummesg(pstate,nmesg)
---
---		-- gets all the results and puts them in the popstate structure
---		for i = 1,n do
---			local uidl = x:get (0,i-1) 
---			local size = x:get (1,i-1)
---
---			-- arrange message size
---			local k = nil
---			_,_,k = string.find(size,"([Kk][Bb])")
---			_,_,m = string.find(size,"([Mm][Bb])")
---			_,_,size = string.find(size,"([%.%d]+)")
---			_,_,uidl = string.find(uidl,'value="([%d]+)"')
---
---			if not uidl or not size then
---				return nil,"Unable to parse page"
---			end
---
---			-- arrange size
---			size = tonumber(size)
---			if k ~= nil then
---				size = size * 1024
---			elseif m ~= nil then
---				size = size * 1024 * 1024
---			end
---
---			-- set it
---			set_mailmessage_size(pstate,i+nmesg_old,size)
---			set_mailmessage_uidl(pstate,i+nmesg_old,uidl)
---		end
---		
---		return true,nil
---	end 
+	end 
 
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s) 
 		local _,_,nex = string.find(s,lycos_string.nextC)
 		if nex ~= nil then
-			uri = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp" .. nex
+			uri = lycos_string.next .. nex
 			-- continue the loop
 			return false
 		else
@@ -457,7 +433,7 @@ function stat(pstate)
 	--		internal_state.login_done = nil
 	--		session.remove(key())
 
-	--		local rc = tin_login()
+	--		local rc = lycos_login()
 	--		if rc ~= POPSERVER_ERR_OK then
 	--			return nil,"Session ended,unable to recover"
 	--		end

@@ -524,14 +524,18 @@ else
 HIDDEN list_t* epurate(list_t* data,int len,list_t* dl,char* txt,
 	list_t* get,char* str)
 {
+int check;
+	
 if( (data == NULL && get == NULL) || len == 0)
 	return NULL;
-else if ( dl != NULL && 
+
+check = dl != NULL && 
 	get != NULL && 
 	get->data != NULL &&
 	dl->data != NULL &&
-	(((struct token_t*)get->data)->tag & (TOK_OPT_TAG|TOK_OPT_STR)) && 
-	*((int*)dl->data) == 0)
+	(((struct token_t*)get->data)->tag & (TOK_OPT_TAG|TOK_OPT_STR));
+
+if ( check && *((int*)dl->data) == 0)
 	{
 	//skip optional tag not matched
 	return epurate(data,len,dl->next,txt,get->next,str);
@@ -540,7 +544,7 @@ else if( data == NULL || get == NULL)
 	{
 	ERROR_ABORT("internal error: len(ans) != len(get)");
 	}
-else
+else 
 	{
 	if(is_a_keep(get->data,str))
 		{
@@ -552,7 +556,12 @@ else
 		MALLOC_CHECK(tmp);
 
 		tmp->data=new_chunk(start,stop);
-		tmp->next=epurate(data->next,len-1,dl,txt,get->next,str);
+		if ( check )
+			tmp->next=epurate(data->next,len-1,
+				dl->next,txt,get->next,str);
+		else
+			tmp->next=epurate(data->next,len-1,
+				dl,txt,get->next,str);
 		
 		return tmp;
 		}
@@ -563,8 +572,11 @@ else
 		print_token(((struct token_t*)(data->data)),txt);
 		printf("\n");
 #endif		
-
-		return epurate(data->next,len-1,dl,txt,get->next,str);
+		if ( check)
+			return epurate(data->next,len-1,
+				dl->next,txt,get->next,str);
+		else
+			return epurate(data->next,len-1,dl,txt,get->next,str);
 		}
 	}
 }

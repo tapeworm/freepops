@@ -66,8 +66,6 @@ function Private.get_uri(self,url,exhed)
 	-- go
 	local rc,err = self.curl:perform()
 
-	print("XXXXX:".. (rc or "nil") .. (err or "nil") )
-
 	-- check result
 	if rc == 0 then
 		-- save referrer

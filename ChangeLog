@@ -1,4 +1,7 @@
+22/06/2004 0.0.8 fix release
+- now lycos deletes messages from the trash
 - doc to kernel.lua
+- fixed some lycos issues
 20/06/2004 0.0.7 fix release
 - fixed gentoo (thanks Er Capoccia)
 - added some shortcuts to the win32 installer

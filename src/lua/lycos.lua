@@ -49,7 +49,7 @@ local lycos_string = {
 	save_header = "http://%s/Europe/Bin/Mail/Features/MailContent/headerContent.jsp?MESSAGEID=%d",
 	-- The uri to delete some messages
 	delete = "http://%s/Europe/Bin/Mail/Features/FolderContent/actionFolderContent.jsp",
-	delete_post = "ACTION=3&",
+	delete_post = "ACTION=3&FOLDERID=7&",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
 	delete_next = "CHECK_%d=1&",

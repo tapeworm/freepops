@@ -34,7 +34,7 @@ gzip -9 ${RPM_BUILD_ROOT}/usr/share/man/man1/freepopsd.1
 cp buildfactory/freepops.rc ${RPM_BUILD_ROOT}/etc/init.d/freepops
 chmod a+x ${RPM_BUILD_ROOT}/etc/init.d/freepops
 cp buildfactory/freepops.sysconfig ${RPM_BUILD_ROOT}/etc/sysconfig/freepops
-
+mv ${RPM_BUILD_ROOT}/usr/share/doc/freepops/* ${RPM_BUILD_ROOT}/usr/share/doc/freepops-%{version}
 %post
 
 %clean

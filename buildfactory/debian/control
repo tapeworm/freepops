@@ -2,8 +2,7 @@ Source: freepops
 Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@users.sourceforge.net>
-#should be debhelper (>= 4.1.16)
-Build-Depends: debhelper (>= 4.0.0), libexpat1-dev, libcurl3-dev | libcurl2-dev | libcurl-ssl-dev | libcurl-dev , tetex-extra, flex, bison, libreadline-dev, gs-common, libssl-dev, po-debconf
+Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl3-dev | libcurl2-dev | libcurl-ssl-dev | libcurl-dev , tetex-extra, flex, bison, libreadline-dev, gs-common, libssl-dev, po-debconf
 Standards-Version: 3.6.1.0
 
 Package: freepops

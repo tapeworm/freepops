@@ -13,7 +13,7 @@ H=@
 #>----------------------------------------------------------------------------<#
 
 help:
-	$(H)ln -s buildfactory/debian . 1>/dev/null 2>/dev/null || true
+	$(H)#ln -s buildfactory/debian . 1>/dev/null 2>/dev/null || true
 	$(H)echo "Targets are:"
 	$(H)echo "  all          - build it (remember to ./configure.sh first)"
 	$(H)echo "  clean        - clean the source tree"
@@ -33,7 +33,7 @@ all : modules src
 	$(H)echo -n
 
 clean: 
-	$(H)ln -s buildfactory/debian . 2>/dev/null || true
+	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)echo "cleaning freepopsd"
 	$(H)$(MAKE) -C src clean CONFIG=$(PWD)/config || true
 	$(H)$(MAKE) -C modules clean CONFIG=$(PWD)/config || true
@@ -86,7 +86,7 @@ uninstall:
 	$(H)-rmdir $(PREFIX)
 
 tgz-dist: 
-	$(H)ln -s buildfactory/debian . 2>/dev/null || true
+	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)CUR=`pwd`;\
 		BASE=`basename $$CUR`;\
 		cd ..;\
@@ -105,13 +105,13 @@ tgz-dist:
 		rm -r freepops-$(VERSION)
 	
 buildfactory:
-	$(H)ln -s buildfactory/debian . 2>/dev/null || true
+	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)$(MAKE) -C buildfactory all CONFIG=$(PWD)/config
 	
 #>----------------------------------------------------------------------------<#
 
 modules: config
-	$(H)ln -s buildfactory/debian . 2>/dev/null || true
+	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)$(MAKE) -C modules all CONFIG="$(PWD)/config"
 	
 src: config

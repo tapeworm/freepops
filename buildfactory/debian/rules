@@ -48,6 +48,7 @@ clean:
 	-$(MAKE) clean
 
 	dh_clean 
+	debconf-updatepo
 
 install: build
 	dh_testdir
@@ -73,6 +74,13 @@ install: build
 	#istall the icon
 	DESTDIR=$(CURDIR)/debian/freepops; 	\
 	 cp modules/src/winsystray/freepops-32.xpm $$DESTDIR/usr/share/pixmaps/
+
+	# .po stuff
+	#DESTDIR=$(CURDIR)/debian/freepops; 	\
+	#  po2debconf \
+	#    debian/freepops.templates > debian/freepops.templates.merged;
+	#  cp debian/freepops.templates.merged \
+	#    $$DESTDIR/DEBIAN/templates
 
 
 # Build architecture-independent files here.

@@ -1,6 +1,6 @@
 -- --------------------------- READ THIS PLEASE ----------------------------- --
 -- This file is not only the RSS/RDF aggregator plugin. Is is also a well 
--- documented example of webmail plugin. 
+-- documented example of webnews plugin. 
 --
 -- Before reading this you should learn something about lua. The lua 
 -- language is an excellen (at least in my opinion), small and easy 

@@ -1,3 +1,4 @@
+- fixed aggregator.lua
 - added FreePOPsService.exe to the win distribution, not completely working.
 - fixed debian chroot jail (thanks Alessandro B.).
 - added win32 script to starf FP & OE. (thanks pegasus).

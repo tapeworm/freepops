@@ -381,6 +381,9 @@ function stat(pstate)
 		-- sets global var rss
 		rss=s
 		_,_,charset=string.find(rss,rss_string.charsetC)
+		if (charset == nil) then
+			charset = "ISO-8859-1"
+		end
 		local a=0
 		local start=0
 		local nmess=0

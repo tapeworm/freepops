@@ -59,8 +59,9 @@ Introduction
 FreePOPs is a POP3 daemon plus a LUA interpreter and some extra libraries
  for HTTP and HTML parsing.
  Its main purpose is translating local POP3 requests to remote HTTP actions
- on the supported web-mails, but it is really more flexible: for example there
- is a plugin to read news from a website as if they were mails in a mailbox.
+ on the supported web-mails, but it is really more flexible: for example
+ there is a plugin to read news from a website as if they were mails in
+ a mailbox.
  You can easily extend FreePOPs on the fly, without even restarting it;
  you can add a plugin or modify an existing one simply changing the script
  file since the plugins are written in LUA and are interpreted on the fly.
@@ -161,8 +162,8 @@ popforward.lua This is a plugin mainly used for testing some FreePOPs modules.
 \layout Description
 
 aggregator.lua Many sites provide an RSS backend for indexing their news.
- This plugin makes this RSS behave as a mailbox in which you can find a mail
- for each news.
+ This plugin makes this RSS behave as a mailbox in which you can find a
+ mail for each news.
 \layout Description
 
 flatnuke.lua This is a more powerful aggregator for the FlatNuke CMS
@@ -196,8 +197,8 @@ plugins
 \end_inset 
 
  but in a more static and complex way.
- The POP3 server frontend could be attached to a backend written in C,
- this means you have to recompile and restart LiberoPOPs each time to change
+ The POP3 server frontend could be attached to a backend written in C, this
+ means you have to recompile and restart LiberoPOPs each time to change
  a line in a plugin.
  Another interesting point is that LiberPOPs was created from scratch in
  a really short time (you have to be Italian and use a 
@@ -209,8 +210,8 @@ plugins
  
 \layout Standard
 
-The LiberoPOPs project had a quick success, because everybody needed it, and
- this means we had a lot of users.
+The LiberoPOPs project had a quick success, because everybody needed it,
+ and this means we had a lot of users.
  In the opensource (and also Linux) philosophy you have to release frequently
  and this was exactly what we did: we used to release every two days.
  We were working not with Unix users, nor hackers, but mostly with Win32
@@ -322,8 +323,8 @@ To configure your email client you must change the pop3 server settings.
  Usually you must use localhost as the pop3 host name, and 2000 as the pop3
  port.
  In case you install FreePOPs in another computer of your LAN, you should
- use the host's name instead of localhost, while
- in case you changed the default port with the 
+ use the host's name instead of localhost, while in case you changed the
+ default port with the 
 \family typewriter 
 -p
 \family default 
@@ -337,7 +338,8 @@ something@libero.it
 something
 \family default 
 .
- This is because FreePOPs chooses the plugin to load by looking at your username.
+ This is because FreePOPs chooses the plugin to load by looking at your
+ username.
  Later we will present all the plugins and their associated domains.
 \layout Section
 
@@ -369,8 +371,8 @@ This plugin allows you to read the mails you have in a
 mailbox.
  This means you can still use your favorite mail reader instead of using
  the webmail.
- This plugin acts as a browser that surfs your webmail account and make it
- appear as a POP3 server.
+ This plugin acts as a browser that surfs your webmail account and make
+ it appear as a POP3 server.
  For more info on this plugin you may read the LiberoPOPs (FreePOPs ancestor)
  website at 
 \family typewriter 
@@ -499,7 +501,7 @@ something@aggregatordomain
 \newline 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="8" columns="2">
+<lyxtabular version="3" rows="9" columns="2">
 <features>
 <column alignment="left" valignment="top" leftline="true" width="0">
 <column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
@@ -679,6 +681,32 @@ linuxdevices.com
 http://linuxdevices.com/
 \family default 
  news (English)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+gaim.sf.net
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://gaim.sourceforge.net/ 
+\family default 
+news (English)
 \end_inset 
 </cell>
 </row>

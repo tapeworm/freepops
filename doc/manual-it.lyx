@@ -56,8 +56,8 @@ newpage
 Introduzione
 \layout Standard
 
-FreePOPs e' un demone POP3 piu' un interprete LUA e alcune librerie extra per
- il parsing di HTTP e HTML.
+FreePOPs e' un demone POP3 piu' un interprete LUA e alcune librerie extra
+ per il parsing di HTTP e HTML.
  Il suo scopo principale e' tradurre richieste POP3 locali in azioni HTTP
  remote per le webmail supportate, ma in realta' e' piu' flessibile di cosi':
  per esempio esiste un plugin per leggere news da un sito web come se fossero
@@ -71,7 +71,8 @@ FreePOPs e' un demone POP3 piu' un interprete LUA e alcune librerie extra per
 Situazioni d'uso
 \layout Standard
 
-FreePOPs puo' essere utile in molte situazioni, qui descriviamo le piu' ovvie:
+FreePOPs puo' essere utile in molte situazioni, qui descriviamo le piu'
+ ovvie:
 \layout Itemize
 
 Siete dietro un firewall che chiude la porta 110 ma volete comunque leggere
@@ -119,8 +120,8 @@ Estremamente estendibile al volo mediante un linguaggio semplice e potente.
 Piuttosto documentato.
 \layout Itemize
 
-Rilasciato sotto la licenza GNU/GPL (questo significa che FreePOPs e'
- Software Libero).
+Rilasciato sotto la licenza GNU/GPL (questo significa che FreePOPs e' Software
+ Libero).
 \layout Subsection
 
 Plugin
@@ -156,12 +157,12 @@ popforward.lua Questo e' un plugin usato principalmente per testare moduli
  di FreePOPs.
  Esso agisce come un forward POP3, semplicemente si comporta come mediatore
  tra voi ed un vero server POP3.
- Questo plugin ci ha permesso di testare FreePOPs senza avere alcun vero plugin
- gia' scritto.
+ Questo plugin ci ha permesso di testare FreePOPs senza avere alcun vero
+ plugin gia' scritto.
  Potreste usarlo per mascherare un server POP3 con molti bug che puo' venire
  facilmente compromesso grazie a richieste malevole.
- Ovviamente suggeriamo di esaminare per bene questo plugin, e fare un po' di
- hacking per prevenire richieste malevole al vostro server.
+ Ovviamente suggeriamo di esaminare per bene questo plugin, e fare un po'
+ di hacking per prevenire richieste malevole al vostro server.
 \layout Description
 
 aggregator.lua Molti siti forniscono un backend RSS per indicizzare le loro
@@ -191,8 +192,8 @@ FreePOPs non nasce dal nulla.
  
 \layout Standard
 
-L'antenato di FreePOPs e' completamente scritto in C per ragioni poco
- interessanti.
+L'antenato di FreePOPs e' completamente scritto in C per ragioni poco interessan
+ti.
  LiberoPOPs supporta 
 \begin_inset Quotes eld
 \end_inset 
@@ -202,24 +203,25 @@ plugin
 \end_inset 
 
  ma in maniera piu' statica e complessa.
- Il frontend al server POP3 potrebbe essere collegato ad un backend scritto in
- C, questo significa che dovreste ricompilare e far ripartire LiberoPOPs ogni
- volta che cambiate una riga in un plugin.
- Un altro punto interessante e' che LiberoPOPs era stato creato dal nulla in
- un tempo molto breve (dovete essere Italiani e usare un indirizzo di posta
+ Il frontend al server POP3 potrebbe essere collegato ad un backend scritto
+ in C, questo significa che dovreste ricompilare e far ripartire LiberoPOPs
+ ogni volta che cambiate una riga in un plugin.
+ Un altro punto interessante e' che LiberoPOPs era stato creato dal nulla
+ in un tempo molto breve (dovete essere Italiani e usare un indirizzo di
+ posta
 \family typewriter 
 @libero.it
 \family default 
- per capire perche'), cio' vuol dire che era nato con molti bug e FIX-ME nel
- codice.
+ per capire perche'), cio' vuol dire che era nato con molti bug e FIX-ME
+ nel codice.
  
 \layout Standard
 
 Il progetto LiberoPOPs ebbe un rapido successo, perche' tutti ne avevano
  bisogno, quindi avevamo molti utenti.
  Nella filosofia della comunita' opensource (e anche di Linux) devi rilasciare
- il software frequentemente, e questo e' cio' che facevamo: rilasciavamo nuove
- versioni ogni due giorni.
+ il software frequentemente, e questo e' cio' che facevamo: rilasciavamo
+ nuove versioni ogni due giorni.
  Non avevamo a che fare con utenti Unix, ne' hacker, ma per la maggior parte
  utenti Win32.
  Ad un certo punto capimmo che questi erano pigri/stufi di aggiornare il
@@ -237,8 +239,8 @@ Cercammo di risolvere il problema tirando fuori dal motore in C la maggior
  
 \layout Standard
 
-Un linguaggio di scripting/interpretato sembro' una buona scelta e dopo una
- lunga ricerca in rete e nei newsgroup universitari trovai LUA..
+Un linguaggio di scripting/interpretato sembro' una buona scelta e dopo
+ una lunga ricerca in rete e nei newsgroup universitari trovai LUA..
  Questo non e' il luogo per dire al mondo quanto sia bello questo linguaggio
  quindi non ne parlero' oltre qui.
  Integrare l'interprete LUA in LiberoPOPs non fu cosi' difficile e FreePOPs
@@ -257,7 +259,7 @@ FreePOPs non ha bisogno di una vera configurazione.
  Se siete sviluppatori o utenti curiosi il file di configurazione e' 
 \family typewriter 
 config.lua
-\family default
+\family default 
 , che si trova nella directory del programma sotto win32 o in  
 \family typewriter 
 /etc/freepops/
@@ -265,20 +267,21 @@ config.lua
  in ambiente posix.
 \layout Standard
 
-Piu' avanti vedremo come i plugin sono associati al dominio di un indirizzo 
- di posta, e alcuni di questi plugin hanno alias per altri domini per rendere 
- piu' facile la raccolta di news da alcuni siti.
- Leggete la documentazione dei plugin per maggiori informazioni su di essi, e 
- magari inviate una mail con il vostro nuovo alias se volete che venga 
- integrato nella prossima versione di FreePOPs.
+Piu' avanti vedremo come i plugin sono associati al dominio di un indirizzo
+  di posta, e alcuni di questi plugin hanno alias per altri domini per rendere
+  piu' facile la raccolta di news da alcuni siti.
+ Leggete la documentazione dei plugin per maggiori informazioni su di essi,
+ e  magari inviate una mail con il vostro nuovo alias se volete che venga
+  integrato nella prossima versione di FreePOPs.
 \layout Section
 
 Parametri a riga di comando di FreePOPs
 \layout Standard
 
-La vera configurazione di FreePOPs viene impostata tramite argomenti a riga 
- di comando. Questi sono descritti in dettaglio nelle pagine del man in 
- ambienti Unix, qui presentiamo solo i piu' utili:
+La vera configurazione di FreePOPs viene impostata tramite argomenti a riga
+  di comando.
+ Questi sono descritti in dettaglio nelle pagine del man in  ambienti Unix,
+ qui presentiamo solo i piu' utili:
 \layout Description
 
 -p\SpecialChar ~
@@ -291,30 +294,33 @@ La vera configurazione di FreePOPs viene impostata tramite argomenti a riga
 -P\SpecialChar ~
 <host>:<port>,\SpecialChar ~
 --proxy\SpecialChar ~
-<host>:<port> Per dire a FreePOPs quale e' il vostro proxy HTTP.
+<host>:<port> Per dire a FreePOPs quale e' il vostro
+ proxy HTTP.
 \layout Description
 
 -v,\SpecialChar ~
 --verbose,\SpecialChar ~
 -w,\SpecialChar ~
---veryverbose Questo dice a FreePOPs di loggare alcune informazioni utili per 
- riportare bug.
+--veryverbose Questo dice a FreePOPs di loggare alcune informazi
+oni utili per  riportare bug.
 \layout Description
 
 -t\SpecialChar ~
 <num>,\SpecialChar ~
 --threads\SpecialChar ~
-<num> FreePOPs puo' gestire connessioni multiple, fino a num.
+<num> FreePOPs puo' gestire connessioni multiple, fino
+ a num.
  Il default e' 5.
 \layout Standard
 
-In ambienti posix come Debian GNU/Linux potete avviare FreePOPs al boot come 
- servizio standard.
+In ambienti posix come Debian GNU/Linux potete avviare FreePOPs al boot
+ come  servizio standard.
  In questo caso gli switch a riga di comando sono memorizzati in 
 \family typewriter 
 /etc/default/freepops
 \family default 
-, in alcuni sistemi basati su rpm dovreste trovare lo stesso file con nome 
+, in alcuni sistemi basati su rpm dovreste trovare lo stesso file con nome
+ 
 \family typewriter 
 /etc/sysconfig/freepops
 \family default 
@@ -324,17 +330,19 @@ In ambienti posix come Debian GNU/Linux potete avviare FreePOPs al boot come
 Configurazione del client email
 \layout Standard
 
-Per configurare il client email dovete cambiare le impostazioni del server POP3.
+Per configurare il client email dovete cambiare le impostazioni del server
+ POP3.
  Solitamente dovrete usare localhost come nome del server POP3 e 2000 come
  porta.
- Nel caso in cui installiate FreePOPs in un altro computer della vostra LAN,
- dovreste usare il nome di quell'host invece di localhost, mentre
- nel caso in cui abbiate cambiato la porta di default con lo switch 
+ Nel caso in cui installiate FreePOPs in un altro computer della vostra
+ LAN, dovreste usare il nome di quell'host invece di localhost, mentre nel
+ caso in cui abbiate cambiato la porta di default con lo switch 
 \family typewriter 
 -p
 \family default 
  dovrete immettere la stessa porta anche nel client email..
- Dovete sempre usare come nome utente l'indirizzo di posta completo, per esempio 
+ Dovete sempre usare come nome utente l'indirizzo di posta completo, per
+ esempio 
 \family typewriter 
 qualcosa@libero.it
 \family default 
@@ -374,42 +382,44 @@ Questo plugin vi permette di leggere le mail che avete in una mailbox
 @blu.it 
 \family default 
 .
- Cio' significa che potete ancora usare il vostro mail reader preferito invece
- di usare la webmail.
- Questo plugin agisce come un browser che sfoglia il vostro account webmail e
- lo fa apparire come un server POP3.
- Per maggiori informazioni su questo plugin potete guardare il sito web di
- LiberoPOPs (antenato di FreePOPs) a
+ Cio' significa che potete ancora usare il vostro mail reader preferito
+ invece di usare la webmail.
+ Questo plugin agisce come un browser che sfoglia il vostro account webmail
+ e lo fa apparire come un server POP3.
+ Per maggiori informazioni su questo plugin potete guardare il sito web
+ di LiberoPOPs (antenato di FreePOPs) a
 \family typewriter 
 http://liberopops.sourceforge.net
 \layout Standard
 
-Per usare questo plugin dovete usare il vostro indirizzo email completo come
- username e la vostra password reale come password.
+Per usare questo plugin dovete usare il vostro indirizzo email completo
+ come username e la vostra password reale come password.
 \layout Subsection
 
 popforward.lua
 \layout Standard
 
-Questo plugin e' stato sviluppato per testare FreePOPs prima che fossero scritti
- altri veri plugin.
+Questo plugin e' stato sviluppato per testare FreePOPs prima che fossero
+ scritti altri veri plugin.
  Esso semplicemente inoltra richieste locali verso un vero server POP3.
  Puo' essere usato per mascherare un server POP3 che ha dei bug, ma se pensate
- di averne bisogno dovreste esaminare attentamente il codice del plugin e
- aggiungere controlli per migliorare il rilevamento/la prevenzione di richieste
- malevole, dato che il plugin stesso non e' nato con in mente la sicurezza.
+ di averne bisogno dovreste esaminare attentamente il codice del plugin
+ e aggiungere controlli per migliorare il rilevamento/la prevenzione di
+ richieste malevole, dato che il plugin stesso non e' nato con in mente
+ la sicurezza.
  
 \layout Standard
 
 Per usare questo plugin dovete modificare il file config.lua.
- Questo perche' non possiamo aggiungere tutti i server POP3 esistenti al file :)
- Il plugin richiede due argomenti, l'host POP3 e la porta (di solito 
+ Questo perche' non possiamo aggiungere tutti i server POP3 esistenti al
+ file :) Il plugin richiede due argomenti, l'host POP3 e la porta (di solito
+ 
 \family typewriter 
 110
 \family default 
 ) su cui il server e' in ascolto.
- Questo e' un esempio di una riga di configurazione per questo plugin, in cui
- ogni indirizzo email del dominio 
+ Questo e' un esempio di una riga di configurazione per questo plugin, in
+ cui ogni indirizzo email del dominio 
 \family typewriter 
 @virgilio.it
 \family default 
@@ -465,17 +475,18 @@ end{footnotesize}
 aggregator.lua
 \layout Standard
 
-Solitamente potete trarre beneficio dal formato RSS del W3C quando leggete news
- da qualche sito web.
+Solitamente potete trarre beneficio dal formato RSS del W3C quando leggete
+ news da qualche sito web.
  Il file RSS indicizza le news, fornendo un link verso di esse.
- Questo plugin puo' far si' che il vostro client di posta veda il file RSS come
- una mailbox da cui potete scaricare ogni news come se fosse una mail.
+ Questo plugin puo' far si' che il vostro client di posta veda il file RSS
+ come una mailbox da cui potete scaricare ogni news come se fosse una mail.
  L'unica limitazione e' che questo plugin puo' prelevare solo un sunto delle
  news piu' il link alle news.
  
 \layout Standard
 
-Per usare questo plugin dovete usare un nome utente casuale con il suffisso 
+Per usare questo plugin dovete usare un nome utente casuale con il suffisso
+ 
 \family typewriter 
 @aggregator
 \family default 
@@ -507,7 +518,7 @@ qualcosa@aggregatordomain
 \newline 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="8" columns="2">
+<lyxtabular version="3" rows="9" columns="2">
 <features>
 <column alignment="left" valignment="top" leftline="true" width="0">
 <column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
@@ -556,7 +567,7 @@ freepops.rss.en
 \size footnotesize 
 http://freepops.sourceforge.net/
 \family default 
- news (English)
+ news (Inglese)
 \end_inset 
 </cell>
 </row>
@@ -582,7 +593,7 @@ freepops.rss.it
 \size footnotesize 
 http://freepops.sourceforge.net/
 \family default 
- news (Italian)
+ news (Italiano)
 \end_inset 
 </cell>
 </row>
@@ -608,7 +619,7 @@ flatnuke.sf.net
 \size footnotesize 
 http://flatnuke.sourceforge.net/
 \family default 
- news (Italian)
+ news (Italiano)
 \end_inset 
 </cell>
 </row>
@@ -634,7 +645,7 @@ ziobudda.net
 \size footnotesize 
 http://ziobudda.net/
 \family default 
- news (both Italian and English)
+ news (sia Italiano che Inglese)
 \end_inset 
 </cell>
 </row>
@@ -660,7 +671,33 @@ punto-informatico.it
 \size footnotesize 
 http://punto-informatico.it/
 \family default 
- news (Italian)
+ news (Italiano)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+gaim.sf.net
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://gaim.sourceforge.net/
+\family default 
+ news (Inglese)
 \end_inset 
 </cell>
 </row>
@@ -686,7 +723,7 @@ linuxdevices.com
 \size footnotesize 
 http://linuxdevices.com/
 \family default 
- news (English)
+ news (Inglese)
 \end_inset 
 </cell>
 </row>
@@ -712,7 +749,7 @@ securityfocus.com
 \size footnotesize 
 http://www.securityfocus.com/ 
 \family default 
-new vulnerabilities (English)
+new vulnerabilities (Inglese)
 \end_inset 
 </cell>
 </row>
@@ -726,8 +763,8 @@ new vulnerabilities (English)
 flatnuke.lua
 \layout Standard
 
-Questo plugin e' un plugin aggregator specializzato nei siti web fatti con il
- CMS FlatNuke
+Questo plugin e' un plugin aggregator specializzato nei siti web fatti con
+ il CMS FlatNuke
 \begin_inset Foot
 collapsed false
 
@@ -737,10 +774,11 @@ HTTP://flatnuke.sourceforge.net
 \end_inset 
 
  , o altri siti che usano lo stesso formato delle news come il sito di FreePOPs.
- Dato che in un sito FlatNuke le news sono memorizzate in semplici file xml
- questo plugin e' in grado di prelevare tutte le news, non solo le intestazioni
- come il plugin aggregator.
- Cio' e' molto utile se non vuoi sfogliare l'intero sito web per leggere le news.
+ Dato che in un sito FlatNuke le news sono memorizzate in semplici file
+ xml questo plugin e' in grado di prelevare tutte le news, non solo le intestazi
+oni come il plugin aggregator.
+ Cio' e' molto utile se non vuoi sfogliare l'intero sito web per leggere
+ le news.
 \layout Standard
 
 Per usare questo plugin dovete avere un nome utente con il dominio 
@@ -755,8 +793,8 @@ qualcosa@flatnuke
 \family typewriter 
 http://flatnuke.sourceforge.net/
 \family default 
-, non c'e' bisogno di URL di file RSS visto che FlatNuke mette gli RSS in una
- posizione nota e fissata.
+, non c'e' bisogno di URL di file RSS visto che FlatNuke mette gli RSS in
+ una posizione nota e fissata.
  Ci sono alcuni alias per siti FlatNuke, vedi la documentazione del plugin
  aggregator per sapere cosa significa):
 \newline 
@@ -883,8 +921,8 @@ Il modo migliore di farlo e' leggere attentamente il file
 \family typewriter 
 libero.lua
 \family default 
- , che e' un esempio molto semplice ma anche molto commentato di plugin per
- webmail.
+ , che e' un esempio molto semplice ma anche molto commentato di plugin
+ per webmail.
  Poi dovreste copiare il file 
 \family typewriter 
 skeleton.lua
@@ -906,11 +944,11 @@ flatnuke.lua
 L'interfaccia tra il nucleo C ed un plugin
 \layout Standard
 
-Come abbiamo spiegato prima il frontend POP3 in C deve essere collegato ad un
- backend in LUA.
+Come abbiamo spiegato prima il frontend POP3 in C deve essere collegato
+ ad un backend in LUA.
  L'interfaccia e' molto semplice se conoscete il protocollo POP3.
- Qui riassumiamo brevemente il significato, ma la RFC 1939 (inclusa nella 
- directory 
+ Qui riassumiamo brevemente il significato, ma la RFC 1939 (inclusa nella
+  directory 
 \family typewriter 
 doc/
 \family default 
@@ -921,8 +959,8 @@ doc/
  E questo e' esattamente cio' che fa.
 \layout Standard
 
-Il backend deve implementare tutti i comandi POP3 (come USER, PASS, RETR, DELE,
- QUIT, LIST, ...) e deve restituire al frontend il risultato.
+Il backend deve implementare tutti i comandi POP3 (come USER, PASS, RETR,
+ DELE, QUIT, LIST, ...) e deve restituire al frontend il risultato.
  Diamo un semplice esempio di una sessione POP3 dalla RFC:
 \layout Standard
 
@@ -1001,8 +1039,8 @@ end{footnotesize}
 
 \layout Standard
 
-In questa sessione il backend verra' chiamato per le righe 4, 6, 8, 10, 14, 18,
- 20 (tutte le righe 
+In questa sessione il backend verra' chiamato per le righe 4, 6, 8, 10,
+ 14, 18, 20 (tutte le righe 
 \family typewriter 
 C:
 \family default 
@@ -1055,8 +1093,8 @@ end{footnotesize}
 
 Piu' tardi chiariremo cos'e' p.
  Speriamo di toglierlo e renderlo implicito per completa trasparenza.
- E' facile capire che c'e' un mapping 1-1 tra i comandi POP3 e le chiamate a
- funzione del plugin.
+ E' facile capire che c'e' un mapping 1-1 tra i comandi POP3 e le chiamate
+ a funzione del plugin.
  Potete vedere un plugin come l'implementazione dell'interfaccia POP3.
 \layout Subsection
 
@@ -1078,8 +1116,8 @@ linux@kernel.org
 .
  Qui il plugin dovrebbe autenticare l'utente (se c'e' un qualche tipo di
  autenticazione) e informare il nucleo C del risultato.
- Per ottenere questo ogni funzione dei plugin deve restituire un flag di errore,
- per essere piu' precisi uno di questi errori:
+ Per ottenere questo ogni funzione dei plugin deve restituire un flag di
+ errore, per essere piu' precisi uno di questi errori:
 \newline 
 
 \layout Standard
@@ -1347,22 +1385,23 @@ list_all(p)
 .
  Qui dobbiamo restituire un codice d'errore come prima, ma dobbiamo anche
  informare il nucleo C della grandezza di tutti i messaggi nella mailbox.
- Qui abbiamo bisogno del parametro p passato ad ogni funzione del plugin (notate
- che tale parametro potra' divenire implicito in futuro).
+ Qui abbiamo bisogno del parametro p passato ad ogni funzione del plugin
+ (notate che tale parametro potra' divenire implicito in futuro).
  
 \family typewriter 
 p
 \family default 
- indica la struttura dati che il C si aspetta venga riempita chiamando
- funzioni appropriate come 
+ indica la struttura dati che il C si aspetta venga riempita chiamando funzioni
+ appropriate come 
 \family typewriter 
 set_mailmessage_size(p,num,size)
 \family default 
  dove num e' il numero del messaggio e size e' la grandezza in byte.
  Solitamente e' molto comune mettere insieme piu' funzioni.
  Per esempio quando guardate la pagina di una webmail con la lista di messaggi
- conoscete il numero dei messaggi, la loro grandezza e lo UIDL cosi' che potete
- riempire la struttura dati p con tutte le informazioni per LIST, STAT, UIDL.
+ conoscete il numero dei messaggi, la loro grandezza e lo UIDL cosi' che
+ potete riempire la struttura dati p con tutte le informazioni per LIST,
+ STAT, UIDL.
  
 \layout Standard
 
@@ -1371,11 +1410,12 @@ L'ultimo caso che esaminiamo e'
 retr(p,num,data)
 \family default 
 .
- Poiche' un messaggio di posta puo' essere molto grande, non e' un modo elegante
- di scaricare l'intero messaggio senza far si' che il client di posta si lamenti
- per la morte del server.
+ Poiche' un messaggio di posta puo' essere molto grande, non e' un modo
+ elegante di scaricare l'intero messaggio senza far si' che il client di
+ posta si lamenti per la morte del server.
  La soluzione e' usare un callback.
- Ogni volta che un plugin ha dei dati da mandare al client dovrebbe chiamare la 
+ Ogni volta che un plugin ha dei dati da mandare al client dovrebbe chiamare
+ la 
 \family typewriter 
 popserver_callback(buffer,data)
 \family default 
@@ -1405,8 +1445,8 @@ iter
 Aggiornate alla versione piu' recente di FreePOPs.
 \layout Enumerate
 
-Cercate di riprodurre il bug, se questo non e' facilmente riproducibile siamo
- sfortunati.
+Cercate di riprodurre il bug, se questo non e' facilmente riproducibile
+ siamo sfortunati.
  Si puo' ancora tentare qualcosa, se il software e' andato in crash potreste
  compilarlo dai sorgenti, installare valgrind, lanciare freepopsd con valgrind
  e sperare che i messaggi d'errore siano interessanti.
@@ -1421,8 +1461,8 @@ Lanciate FreePOPs con lo switch -w
 Riproducete il bug
 \layout Enumerate
 
-Inviate agli sviluppatori il log, piu' ogni altra informazione utile come che
- tipo di sistema avete e come riprodurre il bug.
+Inviate agli sviluppatori il log, piu' ogni altra informazione utile come
+ che tipo di sistema avete e come riprodurre il bug.
 \layout Section
 
 Autori
@@ -1494,7 +1534,7 @@ Giacomo Tenaglia
 Ringraziamenti
 \layout Standard
 
-Ringraziamenti speciali vanno agli utenti che hanno testato il software, agli
- hacker che hanno reso possibile avere un ambiente di sviluppo affidabile e
- libero come il sistema Debian GNU/Linux.
+Ringraziamenti speciali vanno agli utenti che hanno testato il software,
+ agli hacker che hanno reso possibile avere un ambiente di sviluppo affidabile
+ e libero come il sistema Debian GNU/Linux.
 \the_end

@@ -41,27 +41,32 @@ Inviati,Anti-spam, Cestino). For user defined folders, use their name as the val
 		}	
 	},
 	{name = "view", description = {
+		it = [[ Viene usato per ottenere la lista dei messaggi da scaricare. Esso determina quali insiemi di messaggi scaricare: valori possibili sono All (tutti), Unread (solo non letti), e Flag (segnalati).]],
 		en = [[ Parameter is used when getting the list of messages to 
 pull.  It determines what messages to be pulled.  Possible values are All, Unread and Flag.]]
 		}
 	},
 	{name = "markunread", description = {
+		it = [[ Viene usato per fare in modo che il plugin segnali tutti i messaggi che scarica come letti. Se il valore e` 1, questo comportamento e` attivo.]],
 		en = [[ Parameter is used to have the plugin mark all messages that it
 pulls as unread.  If the value is 1, the behavior is turned on.]]
 		}
 	},
 	{name = "nossl", description = {
+		it = [[ Viene usato per forzare il plugin a fare login attraverso HTTP semplice e non HTTPS con SSL. Se il valore e` 1, SSL non viene usato.]],
 		en = [[ Parameter is used to force the module to login through plain
 HTTP and not HTTPS with SSL.  If the value is 1, the SSL is not used.]]
 		}
 	},
 	{name = "emptytrash", description = {
+		it = [[ Viene usato per forzare il plugin a svuotare il cestino quando ha finito di scaricare i messaggi, immpostando il valore a 1.]],
 		en = [[
 Parameter is used to force the plugin to empty the trash when it is done
 pulling messages.  Set the value to 1.]]
 		}	
 	},
 	{name = "emptybulk", description = {
+		it = [[ Viene usato per forzare il plugin a svuotare la cartella anti-spam quando ha finito di scaricare i messaggi. Impostare il valore a 1.]],
 		en = [[
 Parameter is used to force the plugin to empty the bulk when it is done
 pulling messages.  Set the value to 1.]]

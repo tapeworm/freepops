@@ -19,7 +19,6 @@ MODULES-Common= lua		\
 		log_lua		\
 		mlex_lua	\
 		support_lua	\
-		pkg2luadoc	\
 		getdate		\
 		getdate_lua	\
 		curl_lua	\

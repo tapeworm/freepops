@@ -37,21 +37,16 @@ clean: src/config
 doc: all
 	$(H)doxygen
 	$(H)mkdir html_lua 2> /dev/null || true
-	$(H)find src -name \*_lua.pkg -exec bin/pkg2luadoc \{\} \;
-	$(H)FILES=`find src -name \*_lua.pkg.lua`;\
-		for X in $$FILES ; do \
-		mv $$X $$PWD/html_lua/`basename $$X | \
-			sed s/_lua\.pkg\.lua/_lua_pkg.lua/` ; done
-	$(H)find src -name \*_lua.luadoc -exec cp \{\} $$PWD/html_lua/ \;
+	$(H)find src -name \*.luadoc -exec cp \{\} $$PWD/html_lua/ \;
 	$(H)cd $$PWD/html_lua/;\
 		for X in *.luadoc ; do\
 			mv $$X `basename $$X | \
-				sed s/_lua\.luadoc/_lua_luadoc.lua/`;\
+				sed s/\.luadoc/_luadoc.lua/`;\
 		done
-	$(H)bin/luadoc $$PWD/html_lua/*_lua_pkg.lua \
-		$$PWD/html_lua/*_lua_luadoc.lua \
+	$(H)bin/luadoc  \
+		$$PWD/html_lua/*_luadoc.lua \
 		$$PWD/include/*.lua -d $$PWD/html_lua/
-	$(H)rm $$PWD/html_lua/*_lua_pkg.lua $$PWD/html_lua/*_lua_luadoc.lua
+	$(H)rm $$PWD/html_lua/*_luadoc.lua
 	
 
 #########################################################################

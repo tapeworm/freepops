@@ -30,7 +30,6 @@ MK_TEMPLATE=	luabind \
 MK_TEMPL_CTRIB=	lua \
 		pthread \
 		luadoc \
-		pkg2luadoc \
 		getdate 
 
 MK_CUSTOM=	curl_lua 

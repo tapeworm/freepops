@@ -60,7 +60,7 @@ static int lhmac(lua_State* L){
 	HMAC_Update(&C,(const void *)data,(unsigned long) len);
 	len = EVP_MAX_MD_SIZE;
 	HMAC_Final(&C,md,&len);
-	HMAC_CTX_cleanup(&C);
+	HMAC_cleanup(&C);
 		
 	lua_pushlstring(L,md,len);
 	return 1;
@@ -126,8 +126,10 @@ static const struct L_Tuserdata crypto_evp [] = {
   {"EVP_dss",EVP_dss},
   {"EVP_dss1",EVP_dss1},
 #endif
+#if defined(HEADER_MDC2_H)
 #ifndef OPENSSL_NO_MDC2
   {"EVP_mdc2",EVP_mdc2},
+#endif
 #endif
 #ifndef OPENSSL_NO_RIPEMD
   {"EVP_ripemd160",EVP_ripemd160},

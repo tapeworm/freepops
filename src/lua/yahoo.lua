@@ -3,7 +3,7 @@
 --  
 --  Released under the GNU/GPL license
 --  Written by Russell Schwager <russells@despammed.com>
---  Yahoo.it added by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+--  yahoo.it added by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
 -- ************************************************************************** --
 
 -- Globals

@@ -20,6 +20,9 @@ freepops.MODULES_MAP["blu.it"] 		= {name="libero.lua"}
 freepops.MODULES_MAP["virgilio.it"]	= {name="tin.lua"}
 freepops.MODULES_MAP["tin.it"]		= {name="tin.lua"}
 
+-- lycos
+freepops.MODULES_MAP["lycos.it"]	= {name="lycos.lua"}
+
 -- popforward plugin
 --freepops.MODULES_MAP["virgilio.it"] 	= {
 --	name="popforward.lua",

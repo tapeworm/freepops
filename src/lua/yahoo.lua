@@ -110,6 +110,7 @@ local globals = {
   -- Get the crumb value that is needed for deleting messages and emptying the trash
   --
   strRegExpCrumb = "=1&%.crumb=([^&]*)&",
+  strRegExpCrumb2 = "&UNR=1&.crumb=([^&]*)&",
 
   -- Pattern to determine if we have no messages.  If this is found, we have messages.
   --
@@ -148,6 +149,7 @@ local globals = {
   --
   strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date",
   strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&Nhead=f&toc=1&MsgId=%s&bodyPart=%s",
+  strCmdMsgWebView = "%sym/ShowLetter?box=%s&MsgId=%s",
   strCmdDelete = "%sym/ShowFolder?box=%s&DEL=Delete", -- &Mid=%s&.crumb=%s
   strCmdEmptyTrash = "%sym/ShowFolder?ET=1&.crumb=%s&reset=1", -- &box=Inbox
   strCmdUnread = "%sym/ShowLetter?box=%s&MsgId=%s&.crumb=%s&UNR=1",
@@ -437,9 +439,18 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   -- Do we need to mark the message as unread?
   --
   if internalState.bMarkMsgAsUnread == true then
-    local cmdUrl = string.format(globals.strCmdUnread, internalState.strMailServer,
-      internalState.strMBox, uidl, internalState.strCrumb);
-    browser:get_uri(cmdUrl) -- We don't care about the results.
+    local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
+      internalState.strMBox, uidl);
+    local str, _ = browser:get_uri(cmdUrl) 
+    _, _, str = string.find(str, globals.strRegExpCrumb2)
+    if str == nil then
+      log.warn("Unable to get the crumb view for marking message as unread.")
+    else
+      cmdUrl = string.format(globals.strCmdUnread, internalState.strMailServer,
+        internalState.strMBox, uidl, str);
+log.dbg(cmdUrl)
+      browser:get_uri(cmdUrl) -- We don't care about the results.
+    end
   end
 
   return POPSERVER_ERR_OK

@@ -134,21 +134,21 @@ Section "Start Menu Shortcuts"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Service\it-manual.lnk" \
   	"$INSTDIR\SERVICE.txt" "" "$INSTDIR\SERVICE.txt" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Service\Uninstall service.lnk" \
-  	"$INSTDIR\freeservice.exe" "uninstall" "$INSTDIR\uninstall.exe" 0
+  	"$INSTDIR\freepopsservice.exe" "uninstall" "$INSTDIR\uninstall.exe" 0
   CreateShortCut \
-      "$SMPROGRAMS\FreePOPs\Service\Install service (with default options).lnk"\
-  	"$INSTDIR\freeservice.exe" "install" "$INSTDIR\freepopsd.exe" 0
+	"$SMPROGRAMS\FreePOPs\Service\Install service (default options).lnk" \
+  	"$INSTDIR\freepopsservice.exe" "install" "$INSTDIR\freepopsd.exe" 0
   CreateShortCut \
   	"$SMPROGRAMS\FreePOPs\Service\Install service (-p 110 -b 0.0.0.0).lnk" \
-  	"$INSTDIR\freeservice.exe" "install -p 110 -b 0.0.0.0" \
+  	"$INSTDIR\freepopsservice.exe" "install -p 110 -b 0.0.0.0" \
 	"$INSTDIR\freepopsd.exe" 0
   CreateShortCut \
   	"$SMPROGRAMS\FreePOPs\Service\Install service (-p 110 -b 0.0.0.0).lnk" \
-  	"$INSTDIR\freeservice.exe" "install -p 110 -b 0.0.0.0" \
+  	"$INSTDIR\freepopsservice.exe" "install -p 110 -b 0.0.0.0" \
 	"$INSTDIR\freepopsd.exe" 0
   CreateShortCut \
   	"$SMPROGRAMS\FreePOPs\Service\Install service (-b 0.0.0.0).lnk" \
-  	"$INSTDIR\freeservice.exe" "install -b 0.0.0.0" \
+  	"$INSTDIR\freepopsservice.exe" "install -b 0.0.0.0" \
 	"$INSTDIR\freepopsd.exe" 0
 
   ; mail & FP

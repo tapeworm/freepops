@@ -1,8 +1,10 @@
 include $(CONFIG)
 
+TGT=freepopsservice.exe
+
 all:
-	$(CC) -Wall -O2 -o FreePOPsService.exe *.c -I.
-	$(STRIP) FreePOPsService.exe
+	@$(CC) -Wall -O2 -o $(TGT) *.c -I.
+	@$(STRIP) $(TGT)
 
 clean:
-	rm FreePOPsService.exe
+	rm $(TGT)

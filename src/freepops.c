@@ -103,7 +103,7 @@ HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 					 required_argument, NULL, 1000 },
 				 { "fpat", 
 					 required_argument, NULL, 1000 },
-				 { "no-icon",no_argument, NULL, 1001}
+				 { "no-icon",no_argument, NULL, 1001},
 	                         { NULL, 0, NULL, 0 } };
 
 void usage(const char *progname) {

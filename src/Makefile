@@ -108,7 +108,7 @@ ifeq "$(OS)" "Darwin-static"
 	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
 		/usr/local/lib/libdl.a /sw/lib/libcurl.a \
 		/sw/lib/libssl.a /sw/lib/libcrypto.a \
-		/sw/lib/libexpat.a /sw/lib/readline.a \
+		/sw/lib/libexpat.a \
 		-L/usr/lib -lgetopt -lm -lpthread -lz
 else
 ifeq "$(OS)" "OpenBSD"

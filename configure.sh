@@ -147,7 +147,6 @@ case $1 in
 	fbsd)
 		set_fbsd
 	;;
-
 	osx)
 		set_osx
 	;;

@@ -46,6 +46,9 @@ MODULES-Linux-post=
 MODULES-Darwin-pre=getopt
 MODULES-Darwin-post=
 
+MODULES-Darwin-static-pre=getopt
+MODULES-Darwin-static-post=
+
 MODULES-OpenBSD-pre=getopt
 MODULES-OpenBSD-post=
 

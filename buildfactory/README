@@ -20,5 +20,6 @@ win32:
 	freepops-remove.xpm
 
 osx:
-	freepops.pspm
+	freepops.psmp
+	freepops-static.psmp
 	osx/*

@@ -227,7 +227,12 @@ freepops.set_sanity_checks = function()
 			local s = "BUG in '".. d.source ..
 				"' that sets an undefined global '" .. k .. 
 				"' at function '".. d.name .. 
-				"' line " .. d.currentline
+				"' line " .. d.currentline.."\n".. [[
+	This is a sanity check added by freepops.set_sanity_checks() that
+	prevents the plugin to create new global variables. This means you
+	must use the 'local' keyword or declare a global table 
+	(ex. plugin_state) and use it as the global state of the plugin. 
+	This avoids some hard-to-detect bugs.]]
 			log.say(s.."\n")
 			error(s)
 		end

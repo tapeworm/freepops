@@ -55,6 +55,15 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)mkdir ../dist-win || true
 	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe ../dist-win
 	
+	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl-3.dll \
+		_win_/freepops/libcurl-3.dll
+	$(H)/usr/local/cross-tools/i386-mingw32msvc/bin/strip \
+		_win_/freepops/*.exe _win_/freepops/*.dll
+	$(H)cd _win_/freepops/;\
+		wine /usr/local/NSIS/makensis.exe freepops.nsi
+	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe \
+		../dist-win/FreePOPs-$(VERSION)-SSL.exe
+	
 	$(H)rm -r _win_
 
 dist-rpm: freepops-$(VERSION).tar.gz

@@ -216,16 +216,54 @@ function noop(pstate)
 	return common.noop(pstate)
 end
 
+--------------------------------------------------------------------------------
+-- The callbach factory for retr
+--
+function retr_cb(data)
+	local a = stringhack.new()
+	
+	return function(s,len)
+		s = a:dothack(s).."\0"
+			
+		popserver_callback(s,data)
+			
+		return len,nil
+	end
+end
+
 -- -------------------------------------------------------------------------- --
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
 function top(pstate,msg,lines,pdata)
+	return POPSERVER_ERR_OK
+
 end
 
 -- -------------------------------------------------------------------------- --
 -- Get message msg, must call 
 -- popserver_callback to send the data
 function retr(pstate,msg,pdata)
+		-- we need the stat
+	local st = stat(pstate)
+	if st ~= POPSERVER_ERR_OK then return st end
+	
+	-- the callback
+	local cb = retr_cb(data)
+	
+	-- some local stuff
+	local session_id = foo_globals.session_id
+	local b = internal_state.b
+	local uri = b:wherearewe() .. "/download.php?session_id="..session_id..
+		"&message="..get_mailmessage_uidl(pstate,msg)
+	
+	-- tell the browser to pipe the uri using cb
+	local f,rc = b:pipe_uri(uri,cb)
+
+	if not f then
+		log.error_print("Asking for "..uri.."\n")
+		log.error_print(rc.."\n")
+		return POPSERVER_ERR_NETWORK
+	end
 end
 
 -- EOF

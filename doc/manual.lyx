@@ -472,7 +472,7 @@ in.virgilio.it:110
 \family default 
 :
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -859,7 +859,7 @@ flatnuke.lua
 This plugin is an aggregator plugin specialized in the websites made with
  the FlatNuke
 \begin_inset Foot
-collapsed false
+collapsed true
 
 \layout Standard
 
@@ -1036,31 +1036,44 @@ something@kernel.org.26
 Creating a plugin
 \layout Standard
 
-The best way of doing this is to read carefully the 
-\family typewriter 
-libero.lua
-\family default 
- file, that is a quite simple but really commented example of web-mail plugin.
- Then you should copy the 
-\family typewriter 
-skeleton.lua
-\family default 
- file and start hacking on it.
- Remember to edit 
-\family typewriter 
-config.lua
-\family default 
- to make FreePOPs associate the right mail-addresses domains to your new
- plugin.
- A simpler example is 
-\family typewriter 
-flatnuke.lua
-\family default 
- that is a web-news plugin.
-\layout Standard
-
 Two sections follow, the first is a quick overview of what a plugin has
  to do, the latter is a more detailed tutorial.
+ Before proceding I suggest you to read some stuff that is at the base of
+ plugin writing:
+\layout Enumerate
+
+Since plugins are written in LUA you must read at least the lua tutorial
+ (http://lua-users.org/wiki/LuaTutorial), many thanks to the guys who wrote
+ it.
+ LUA is a quite simple scripting language, easy to learn, and easy to read.
+ If you are interested in this language you should read THE book about LUA
+ (Programming in Lua, by Roberto Ierusalimschy http://www.inf.puc-rio.br/~roberto/b
+ook/).
+ It is a really good book, belive me.
+\layout Enumerate
+
+Since we have to implement a POP3 backend you should know what POP3 is.
+ The rfc is number 1939 and is included in the doc/ directory of the source
+ package of FreePOPs, but you can fetch it from the net http://www.ietf.org/rfc/rf
+c1939.txt
+\layout Enumerate
+
+Read carefully this tutorial, it is fairly a good tutorial, but is better
+ than nothig.
+\layout Enumerate
+
+The website contains, in the doc section, a quite good documentation of
+ the sources.
+ You should keep a web browser at the LUA modules documentation page while
+ writing a plugin.
+\layout Enumerate
+
+After creating a prototype, you should read a full featured plugin.
+ The libero.lua plugin is really well commented, strat from it.
+\layout Enumerate
+
+Remember that this software has an official forum (http://freepops.diludovico.it)
+ and some authors you may ask for help.
 \layout Subsection
 
 Plugins overview
@@ -1074,8 +1087,6 @@ collapsed false
 \layout Standard
 
 The language website is HTTP://www.lua.org
-\newline 
-See HTTP://www.lua-user.org for a tutorial.
 \end_inset 
 
  while the POP3 server is written in C.
@@ -1607,7 +1618,7 @@ foo.lua
  and change the first few lines adding the plugin name, version, your name,
  your email and a short comment in the proper places.
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -1666,7 +1677,7 @@ config.lua
 ; other copies of this file may be included in the distributions, but they
  are backup copies) and add a line like this
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -1707,7 +1718,7 @@ user()
 \emph default 
 .
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -2886,7 +2897,7 @@ We have not listed here how we added the dummy return POPSERVER_ERR_OK line
  <b> tag is optional (you can see that only the first message is in bold).
  so we change the expressions to
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -2918,7 +2929,7 @@ end{footnotesize}
 
 and
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -2950,7 +2961,7 @@ end{footnotesize}
 
 Now the stat command responds with +OK 4 45056 and the debug print is 
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -3195,7 +3206,7 @@ Deleting messages is usually a normal post and an example of the post_data
  is session_id=ABCD1234&check_124=on&check_126=on.
  The code follows
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -3279,15 +3290,291 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-
+Consider we do the post only if at least one message is marked for deletion.
+ anothere important think to keep in mind that making only one port for
+ all messages is better than making a single post for each message.
+ When it is possible you should reduce the number of http requests as much
+ as you can since it is here we more freepops from a rabbit to a tortoise.
 \layout Subsubsection
 
 (step 6) downloading messages
 \layout Standard
 
+You may ask why I talk about this only at point 6, while having the mail
+ is probably what you want from a plugin.
+ Implementing the retr() function is usually simple.
+ It really depends on the webmail, but here we will talk of the simple case,
+ while at the end of the tutorial you will see how to deal with complex
+ webmails.
+ The simple case is the one in which the webmail has a save message button.
+ And the saved message is a plain text file containing both the header and
+ the body of the message.
+ There are only two interesting points in this case, first big messages,
+ last the dot issue.
+\layout Standard
+
+Big messages are a cause of timeout.
+ Yes, the most simple way of downloading a message is calling b:get_uri(...)
+ and store the message in a variable, and the send it to the mail clinet
+ with popserver_callbak().
+ But think a 5MB mail, downloaded with a 640Kb DSL connection, at full 80KB
+ speed, it takes 64 seconds to download.
+ This means your plugin will not send any data to the mail client for more
+ than one minute.
+ And this will make the mail client to diconnect from FreePOPs thinking
+ the POP3 server is dead.
+ So we must send the data to the mail client as soon as we can.
+ For this we have the b:pipe_uri() function that calls a callback whenever
+ is has some fresh data.
+ The following code is the callback_factory function, that creates a new
+ callback to pass to the pipe_uri browser method.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-------------------------------------------------------------------------------- 
+\layout Standard
+-- The callbach factory for retr 
+\layout Standard
+-- 
+\layout Standard
+function retr_cb(data)
+\layout Standard
+        local a = stringhack.new() 
+\layout Standard
+        return function(s,len)
+\layout Standard
+                s = a:dothack(s).."
+\backslash 
+0"          
+\layout Standard
+                popserver_callback(s,data)              
+\layout Standard
+                return len,nil
+\layout Standard
+        end
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Here you see that the callback simply uses popserver_callback to pass the
+ data to the mail client, bu before doing this it mangles the data with
+ the stringhack.
+ But this is the second interesting point.
+\layout Standard
+
+The POP3 protocol should end the retr command answer with a line then containt
+ only 3 bytes, .
+\backslash 
+r
+\backslash 
+n.
+ But what if a line, inside the mail body, is a simple pont? We have to
+ escape it to ..
+\backslash 
+r
+\backslash 
+n.
+ This is not so hard, a string.gsub(s,
+\begin_inset Quotes erd
+\end_inset 
+
+
+\backslash 
+r
+\backslash 
+n.
+\backslash 
+r
+\backslash 
+n
+\begin_inset Quotes erd
+\end_inset 
+
+,
+\begin_inset Quotes erd
+\end_inset 
+
+
+\backslash 
+r
+\backslash 
+n..
+\backslash 
+r
+\backslash 
+n
+\begin_inset Quotes erd
+\end_inset 
+
+) is all we need...
+ but not in the case of callbacks.
+ The send callback will be called with some fresh data, and called more
+ than one time if the mail is big.
+ And if the searched pattern is truncated betwee two calls the string.gsub(...)
+ method will fail.
+ This is why the stringhack module helps us.
+ The a object lives as long as the callback function will be called (see
+ the closure page of the lua tutorial) and will keep in mind that the searched
+ pattern may be trucated.
+\layout Standard
+
+Finally the retr() code
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Get message msg, must call  
+\layout Standard
+-- popserver_callback to send the data 
+\layout Standard
+function retr(pstate,msg,pdata)          
+\layout Standard
+        -- we need the stat
+\layout Standard
+        local st = stat(pstate)
+\layout Standard
+        if st ~= POPSERVER_ERR_OK then return st end 
+\layout Standard
+    
+\layout Standard
+        -- the callback
+\layout Standard
+        local cb = retr_cb(data) 
+\layout Standard
+     
+\layout Standard
+        -- some local stuff
+\layout Standard
+       local session_id = foo_globals.session_id
+\layout Standard
+       local b = internal_state.b
+\layout Standard
+       local uri = b:wherearewe() .. "/download.php?session_id="..session_id..
+\layout Standard
+                "&message="..get_mailmessage_uidl(pstate,msg) 
+\layout Standard
+
+\layout Standard
+        -- tell the browser to pipe the uri using cb
+\layout Standard
+        local f,rc = b:pipe_uri(uri,cb)
+\layout Standard
+        if not f then
+\layout Standard
+                log.error_print("Asking for "..uri.."
+\backslash 
+n")
+\layout Standard
+                log.error_print(rc.."
+\backslash 
+n")
+\layout Standard
+                return POPSERVER_ERR_NETWORK
+\layout Standard
+        end
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Subsubsection
+
+(step 7) test it
+\layout Standard
+
+Making a good plugin needs a lot of testing.
+ You should ask for betha testers at the FreePOPs forum (http://freepops.diludovi
+co.it) and ask the software authors to include it in the main distribuition.
+ You should also read the webmail contract, check if there is something
+ like 
+\begin_inset Quotes eld
+\end_inset 
+
+I'll never use webmail->pop3 server to read my mail
+\begin_inset Quotes erd
+\end_inset 
+
+ and send a copy to the authors of the software.
+\layout Subsubsection
+
+(step 8) the so mentioned last part of the tutorial
+\layout Standard
+
+There are a lot of things we hav omitted here.
+\layout Standard
+
 
 \begin_inset ERT
-status Open
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\begin_inset ERT
+status Collapsed
 
 \layout Standard
 

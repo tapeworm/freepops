@@ -261,7 +261,7 @@ Later you will learn that plugins are associated with a mail address domain,
  and some of these plugins are aliased to other domains to make it easier
  to fetch some news from some sites.
  Read the plugin documentation for more info about them, and maybe send
- as a mail with you new alias if you want it to be integrated in the next
+ as a mail with your new alias if you want it to be integrated in the next
  FreePOPs release.
 \layout Section
 
@@ -302,7 +302,7 @@ The real FreePOPs configuration is made trough command line arguments.
  Default is 5.
 \layout Standard
 
-In posix environment like Debian GNU/Linux you can start FreePOPs at boot
+In posix environments like Debian GNU/Linux you can start FreePOPs at boot
  time as a standard service.
  In this case the command line switches are stored in 
 \family typewriter 
@@ -327,7 +327,7 @@ To configure your email client you must change the pop3 server settings.
 \family typewriter 
 -p
 \family default 
- switch you should now what you are doing.
+ switch you should know what you are doing.
  You have to use a full username, for example 
 \family typewriter 
 something@libero.it
@@ -337,7 +337,7 @@ something@libero.it
 something
 \family default 
 .
- This is because FreePOPs chooses the plugin to load looking at you username.
+ This is because FreePOPs chooses the plugin to load looking at your username.
  Later we will present all the plugins and their associated domains.
 \layout Section
 

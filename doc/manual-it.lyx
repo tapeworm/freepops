@@ -252,105 +252,103 @@ Un linguaggio di scripting/interpretato sembro' una buona scelta e dopo una
 File di configurazione di FreePOPs
 \layout Standard
 
-FreePOPs doesn't really need a configuration.
- Most users shouldn't change the configuration file.
- In case you are a developer or a really curious user the configuration
- file is 
+FreePOPs non ha bisogno di una vera configurazione.
+ La maggior parte degli utenti non dovrebbe modificare il file di configurazione.
+ Se siete sviluppatori o utenti curiosi il file di configurazione e' 
 \family typewriter 
 config.lua
-\family default 
-, placed in the program directory under win32 or in 
+\family default
+, che si trova nella directory del programma sotto win32 o in  
 \family typewriter 
 /etc/freepops/
 \family default 
- in a posix environment.
+ in ambiente posix.
 \layout Standard
 
-Later you will learn that plugins are associated with a mail address domain,
- and some of these plugins are aliased to other domains to make it easier
- to fetch some news from some sites.
- Read the plugin documentation for more info about them, and maybe send
- as a mail with you new alias if you want it to be integrated in the next
- FreePOPs release.
+Piu' avanti vedremo come i plugin sono associati al dominio di un indirizzo 
+ di posta, e alcuni di questi plugin hanno alias per altri domini per rendere 
+ piu' facile la raccolta di news da alcuni siti.
+ Leggete la documentazione dei plugin per maggiori informazioni su di essi, e 
+ magari inviate una mail con il vostro nuovo alias se volete che venga 
+ integrato nella prossima versione di FreePOPs.
 \layout Section
 
-FreePOPs command line parameters
+Parametri a riga di comando di FreePOPs
 \layout Standard
 
-The real FreePOPs configuration is made trough command line arguments.
- They are described in depth in the man page in Unix environments, here
- we present only the most useful:
+La vera configurazione di FreePOPs viene impostata tramite argomenti a riga 
+ di comando. Questi sono descritti in dettaglio nelle pagine del man in 
+ ambienti Unix, qui presentiamo solo i piu' utili:
 \layout Description
 
 -p\SpecialChar ~
 <port>,\SpecialChar ~
 --port\SpecialChar ~
-<port> By default FreePOPs binds on port 2000.
- To alter this behaviour just use this switch.
+<port> Per default FreePOPs fa bind sulla porta 2000.
+ Per modificare questo comportamento basta usare questo switch.
 \layout Description
 
 -P\SpecialChar ~
 <host>:<port>,\SpecialChar ~
 --proxy\SpecialChar ~
-<host>:<port> To tell FreePOPs which is your HTTP
- proxy.
+<host>:<port> Per dire a FreePOPs quale e' il vostro proxy HTTP.
 \layout Description
 
 -v,\SpecialChar ~
 --verbose,\SpecialChar ~
 -w,\SpecialChar ~
---veryverbose This tells FreePOPs to log some interesting
- info for bug reporting.
+--veryverbose Questo dice a FreePOPs di loggare alcune informazioni utili per 
+ riportare bug.
 \layout Description
 
 -t\SpecialChar ~
 <num>,\SpecialChar ~
 --threads\SpecialChar ~
-<num> FreePOPs is able to manage multiple connections,
- up to num.
- Default is 5.
+<num> FreePOPs puo' gestire connessioni multiple, fino a num.
+ Il default e' 5.
 \layout Standard
 
-In posix environment like Debian GNU/Linux you can start FreePOPs at boot
- time as a standard service.
- In this case the command line switches are stored in 
+In ambienti posix come Debian GNU/Linux potete avviare FreePOPs al boot come 
+ servizio standard.
+ In questo caso gli switch a riga di comando sono memorizzati in 
 \family typewriter 
 /etc/default/freepops
 \family default 
-, in some rpm based systems you should find the same file as 
+, in alcuni sistemi basati su rpm dovreste trovare lo stesso file con nome 
 \family typewriter 
 /etc/sysconfig/freepops
 \family default 
 .
 \layout Section
 
-Email client configuration
+Configurazione del client email
 \layout Standard
 
-To configure your email client you must change the pop3 server settings.
- Usually you must use localhost as the pop3 host name, and 2000 as the pop3
- port.
- In case you install FreePOPs in another computer of your LAN, you should
- use the host's name instead of localhost.
- In case you changed the default port with the 
+Per configurare il client email dovete cambiare le impostazioni del server POP3.
+ Solitamente dovrete usare localhost come nome del server POP3 e 2000 come
+ porta.
+ Nel caso in cui installiate FreePOPs in un altro computer della vostra LAN,
+ dovreste usare il nome di quell'host invece di localhost.
+ Nel caso in cui abbiate cambiato la porta di default con lo switch 
 \family typewriter 
 -p
 \family default 
- switch you should now what you are doing.
- You have to use a full username, for example 
+ dovreste sapere cosa fare.
+ Dovete usare un nome utente completo, per esempio 
 \family typewriter 
-something@libero.it
+qualcosa@libero.it
 \family default 
- instead of only 
+ invece che solo 
 \family typewriter 
-something
+qualcosa
 \family default 
 .
- This is because FreePOPs chooses the plugin to load looking at you username.
- Later we will present all the plugins and their associated domains.
+ Questo e' perche' FreePOPs sceglie il plugin da caricare guardando al nome
+ utente.
+ Piu' sotto presentiamo tutti i plugin e i loro domini associati.
 \layout Section
 
-Plugins
+Plugin
 \layout Standard
 
 Here we give a detailed description of each plugin.

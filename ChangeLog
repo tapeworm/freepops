@@ -1,3 +1,6 @@
+- fixed Makefile verbosity
+- fixed chroot jail for curl
+- fixed aggregator.lua (thanks to bimbosuper)
 - added games.gamespot.com and news.gamespot.com aggregator domains
 - updated the website with FAQ section
 - documentation for curl_lua and psock

@@ -30,6 +30,7 @@ all : modules src doc/manual.pdf doc/manual-it.pdf
 
 clean: 
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
+	$(H)echo "cleaning freepopsd"
 	$(H)make -C src clean CONFIG=$$PWD/config || true
 	$(H)make -C modules clean CONFIG=$$PWD/config || true
 	$(H)make -C buildfactory clean CONFIG=$$PWD/config || true
@@ -101,6 +102,7 @@ modules: config
 	$(H)make -C modules all CONFIG=$$PWD/config
 	
 src: config
+	$(H)echo "building freepopsd"
 	$(H)make -C src all CONFIG=$$PWD/config PREFIX=$(PREFIX)
 
 doc/manual.ps:doc/manual.lyx

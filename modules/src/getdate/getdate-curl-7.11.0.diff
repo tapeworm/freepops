@@ -3,19 +3,19 @@ diff -ruN getdate-curl-7.11.0/Makefile getdate-curl-7.11.0-new/Makefile
 +++ getdate-curl-7.11.0-new/Makefile	2004-02-03 18:26:37.000000000 +0100
 @@ -0,0 +1,14 @@
 +include $(CONFIG)
-+
++H=@
 +LIBRARY=lib$(TARGET)$(STATICEXTENSION)
 +
 +all:
-+	bison -o getdate.c -p gd_ getdate.y
-+	$(CC) $(CFLAGS) -c getdate.c
-+	$(AR) r $(LIBRARY) getdate.o
-+	cp $(LIBRARY) $(PREFIX)/lib
-+	cp getdate.h $(PREFIX)/include
-+	rm getdate.c
++	$(H)bison -o getdate.c -p gd_ getdate.y
++	$(H)$(CC) $(CFLAGS) -c getdate.c
++	$(H)$(AR) r $(LIBRARY) getdate.o
++	$(H)cp $(LIBRARY) $(PREFIX)/lib
++	$(H)cp getdate.h $(PREFIX)/include
++	$(H)rm getdate.c
 +
 +clean:
-+	rm -f *.o
++	$(H)rm -f *.o
 diff -ruN getdate-curl-7.11.0/getdate.h getdate-curl-7.11.0-new/getdate.h
 --- getdate-curl-7.11.0/getdate.h	2004-02-03 18:23:54.000000000 +0100
 +++ getdate-curl-7.11.0-new/getdate.h	2004-02-03 18:19:13.000000000 +0100

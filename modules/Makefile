@@ -9,6 +9,7 @@ MODULES=$(MODULES-$(OS)-pre) $(MODULES-Common) $(MODULES-$(OS)-post)
 PRESET=	make -C src/ all
 	
 FORALL=	for X in $(MODULES); do						\
+		echo "$$NAME $$X";					\
 		make -C src/$$X $$ACTION 				\
 			TARGET=`echo $$X | cut -d "-" -f 1` 		\
 			PREFIX=$$PWD					\
@@ -21,10 +22,12 @@ FORALL=	for X in $(MODULES); do						\
 all: src/config
 	$(H)cd include/;ln -s ../../config.h . || true
 	$(H)ACTION="all";\
+	NAME="building";\
 	$(FORALL)
 
 clean: src/config
 	$(H)ACTION="clean";\
+	NAME="cleaninig";\
 	$(FORALL)
 	$(H)rm -f lib/* bin/* include/* src/config config || true
 	$(H)rm -fr  bin/luafiles/ || true

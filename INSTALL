@@ -10,6 +10,7 @@ Available systems:
   linux		- to compile on a linux host
   osx		- to compile on a darwin host
   obsd		- to compile on an OpenBSD host
+  fbsd		- to compile on an FreeBSD host
   beos		- to compile on a beos host
   cygwin	- to compile on a cygwin environment
   win		- to cross-compile for win on a linux host with mingw32msvc
@@ -37,5 +38,6 @@ Valid targets in this case are:
   dist-rpm	- Red Hat Linux .rpm
   dist-gen	- Gentoo Linux .ebuild
   dist-tgz	- Source .tgz
+  dist-obsd	- 
 
 Enjoy!

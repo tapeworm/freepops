@@ -54,14 +54,14 @@ CFLAGS="$CFLAGS -DMACOSX"
 LDFLAGS="$LDFLAGS -framework Carbon"
 }
 
-set_obsd() {
+set_fbsd() {
 set_default
 OS=FreeBSD
 CFLAGS="$CFLAGS -DMACOSX"
 MAKE=gmake
 }
 
-set_fbsd() {
+set_obsd() {
 set_default
 OS=OpenBSD
 CFLAGS="$CFLAGS -DMACOSX"

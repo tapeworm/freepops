@@ -12,6 +12,9 @@ Per chiedere assistenza, DOPO aver letto la documentazione inclusa, potete guard
 - Sito ufficiale su http://freepops.sourceforge.net
 - Un tutorial per principianti su http://freepops.sourceforge.net/it/tutorial/index.shtml
 - Forum degli utenti su http://liberopops.diludovico.it/
+- Manuali completi su:
+  http://freepops.sourceforge.net/it/files/manual-it.pdf (IT version)
+  http://freepops.sourceforge.net/it/files/manual.pdf    (EN version)
 
 
 ChangeLog:

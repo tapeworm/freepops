@@ -7,11 +7,14 @@ In case you have problems updating from an older version, delete manually the di
 LiberoPOPs users might find the included LP-to-FP migration howto useful.
 
 Please remember to generate a verbose log with the '-w -l log.txt' options if you need to ask the developers for help or report a bug.
-To ask for help, AFTER you've read the included documentation, you may look at:
+To ask for help, AFTER you've read the documentation, you may look at:
 
 - Official website at http://freepops.sourceforge.net
 - A tutorial for dummies at http://freepops.sourceforge.net/en/tutorial/index.shtml
 - Users forum at http://liberopops.diludovico.it/
+- Complete manuals at:
+  http://freepops.sourceforge.net/it/files/manual-it.pdf (IT version)
+  http://freepops.sourceforge.net/it/files/manual.pdf    (EN version)
 
 
 ChangeLog:

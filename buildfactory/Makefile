@@ -110,7 +110,7 @@ dist-osx:
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
 	$(H)cp README-osx.txt ../dist-osx/FreePOPs/
 	$(H)cd ..;cp COPYING AUTHORS ChangeLog config.lua dist-osx/FreePOPs/
-	$(H)cd ../doc;cp LP-FP-HOWTO.txt manual-it.pdf manual.pdf ../dist-osx/FreePOPs/doc/
+	$(H)cd ../doc;cp LP-FP-HOWTO.txt MANUAL ../dist-osx/FreePOPs/doc/
 	$(H)cd ../src;strip freepopsd;cp freepopsd ../dist-osx/FreePOPs/src/
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd ../src/lua;cp *.lua ../../dist-osx/FreePOPs/src/lua

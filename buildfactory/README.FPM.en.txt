@@ -92,6 +92,8 @@ of the problem. Thanks for reporting bugs. I'll fix them as soon as possible.
 Changelog
 ----------
 
+v. 1.4 Some minor bugs corrected.
+
 v. 1.3 Now the script does not read the path of mail client to start from windows registry. 
        It reads the windows registry (and creates the configuration file) only when "fpm.ini"
        does not exist. When this file exists, the path of the mail client to start is read on it.

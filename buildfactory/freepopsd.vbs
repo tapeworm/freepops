@@ -1,4 +1,4 @@
-'FreePOPS & Mail v. 1.3 16/10/2004
+'FreePOPS & Mail v. 1.4 23/10/2004
 
 Option Explicit
 
@@ -40,10 +40,10 @@ Function GetDefaultMailClientPath(sh)
   End If
 End Function
 
-Function GetMailProcessName(mailClientPath)
+Function GetProcessName(mailClientPath)
   Dim arr
   arr = Split(mailClientPath, "\")
-  GetMailProcessName = arr(UBound(arr))
+  GetProcessName = arr(UBound(arr))
 End Function
 
 Function GetIstances (nome,objWMIService)
@@ -61,11 +61,12 @@ Function IsActive (nome,objWMIService)
   IsActive = False
 End Function
 
-Function TerminateIstances (nome,objWMIService)
+Function TerminateSingleIstance (nome,objWMIService)
   Dim colProcess,objProcess
   Set colProcess = GetIstances(nome, objWMIService)
   For Each objProcess in colProcess
      objProcess.Terminate
+     Exit Function
   Next
 End Function
 
@@ -80,7 +81,7 @@ If oFS.FileExists(fileName) = True Then
   ReadFile oFS,delay,mailClientPath,mailProcessName,mailClientCla
 Else
   mailClientPath = GetDefaultMailClientPath(sh)
-  mailProcessName = GetMailProcessName(mailClientPath)
+  mailProcessName = GetProcessName(mailClientPath)
   delay = 100
   mailClientCla = VbCrLf
   WriteFile oFS,mailClientPath,mailProcessName
@@ -104,6 +105,6 @@ Else
   sh.Run """" & mailClientPath & """ " & mailClientCla,1,true
 End If
 If active = False Then
-  TerminateIstances "freepopsd.exe",objWMIService
+  TerminateSingleIstance "freepopsd.exe",objWMIService
 End If
 wScript.Quit

@@ -92,6 +92,8 @@ prima possibile.
 Storia delle versioni
 ---------------------
 
+v. 1.4 Corretti bug minori.
+
 v. 1.3 Ora lo script non legge più ogni volta il percorso del mail client da avviare dal
        registro di Windows. Legge il registro (e crea il file di configurazione) solo quando 
        non esiste il file "fpm.ini". Quando questo esiste, il mail client da avviare viene

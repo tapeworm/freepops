@@ -26,6 +26,8 @@
 
 #define HIDDEN static
 
+#define OPENLOG_NAME "freepopsd"
+
 /******************************************************************************/
 
 HIDDEN int verbose_output = 0;
@@ -154,7 +156,7 @@ int log_init(char* logfile, int sysmode)
 
 	if(do_syslog)
 		{
-		openlog("liberopops",LOG_CONS,LOG_USER);
+		openlog(OPENLOG_NAME,LOG_CONS,LOG_USER);
 		}
 	else
 		{
@@ -269,8 +271,8 @@ int logit(char* zone, char *str, ...)
 			if (p.begin != -1)
 				timestr[p.begin] = '\0';
 
-			snprintf(strtmp, MAX_LOG_STRING, "%s%s%s", timestr,
-				 " liberopopsd: ", logstr);
+			snprintf(strtmp, MAX_LOG_STRING, "%s %s: %s", timestr,
+				 OPENLOG_NAME, logstr);
 		}else{
 			free(strtmp);
 			strtmp = strdup(logstr);

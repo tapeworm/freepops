@@ -70,6 +70,20 @@ Function TerminateSingleIstance (nome,objWMIService)
   Next
 End Function
 
+'==Modification for a function which deletes the log files
+Function DeleteLogs (oFS)
+  If oFS.FileExists("log.txt") = True Then
+    oFS.DeleteFile("log.txt")
+  End If
+  If oFS.FileExists("stderr.txt") = True Then
+    oFS.DeleteFile("stderr.txt")
+  End If
+  If oFS.FileExists("stdout.txt") = True Then
+    oFS.DeleteFile("stdout.txt")
+  End If
+End Function
+'==End of modification
+
 Const fileName = "fpm.ini"
 Dim sh, objWMIService,active,delay,mailClientPath,mailProcessName,mailClientCla,cla,arg,i,oFs
 Set sh=wScript.CreateObject("wScript.Shell")
@@ -93,9 +107,17 @@ End If
 active = IsActive("freepopsd.exe",objWMIService)
 If active = False Then
   arg = ""
+
+  '==Modification to delete the log files prior to running FreePOPs
   For i=0 To cla.Count-1
-     arg = arg & " " & cla(i)
+     If Lcase(cla(i)) = "-clearlogs" Then
+       DeleteLogs oFS
+     Else
+       arg = arg & " " & cla(i)
+     End If
   Next
+  '==End of modification
+
   sh.Run("freepopsd.exe" & arg)
   wScript.sleep delay
 End If

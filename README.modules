@@ -86,6 +86,10 @@
  //-- @return type description
  function prototype or defined value
 
+ An handmade binding can't be documented via the .pkg, so you have to add
+ a .luadoc file. This file a lua documented file containing only the
+ functions prototypes and theyr documentation.
+
 ** COPYING
 
  All modules in the module directory are copyrighted under the GNU/GPL license,

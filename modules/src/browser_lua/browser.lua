@@ -32,7 +32,9 @@ function Private.get_uri(self,uri,exhed)
 	local rc
 	local u = socket.url.parse(uri)
 	if not u.path then u.path = "/" end
-	--table.foreach(u,print)
+	--clean expired cookies
+	cookie.clean_expired(self.cookies)
+	--build the header
 	local r = {url=uri,headers={referrer = self.referrer,
 		cookie = cookie.get(self.cookies,u.path,u.host,u.host),
 		["user-agent"] = self.USERAGENT},method="GET",stay=nil}
@@ -41,8 +43,6 @@ function Private.get_uri(self,uri,exhed)
 			r.headers[k] = v
 		end
 	end
-	--table.foreach(r,print)	
-	--table.foreach(r.headers,print)
 	
 	rc = socket.http.request(r)
 	if rc.code == 200 then
@@ -59,7 +59,9 @@ function Private.pipe_uri(self,uri,cb,exhed)
 	local rc
 	local u = socket.url.parse(uri)
 	if not u.path then u.path = "/" end
-	--table.foreach(u,print)
+	--clean expired cookies
+	cookie.clean_expired(self.cookies)
+	-- build header
 	local r = {url=uri,headers={referrer = self.referrer,
 		cookie = cookie.get(self.cookies,u.path,u.host,u.host),
 		["user-agent"] = self.USERAGENT}}

@@ -7,6 +7,7 @@
 -- build data structures for parsing
 local Private = {}
 
+-- create a lua regex expression to capture v in both uppercase/lowercase
 function Private.create_match(v)
 	local vU = string.upper(v)
 	local vL = string.lower(v)
@@ -18,6 +19,7 @@ function Private.create_match(v)
 	return "("..table.concat(r)..")"
 end
 
+-- fields of a cooker record
 Private.cookie_av={
 	"domain",
 	"path",
@@ -28,6 +30,7 @@ Private.cookie_av={
 	"expires"
 }
 
+-- some captures for the cookie fields
 Private.value = {}
 Private.value.token='=%s*("?[%w%.%_%-%%%/%+%-%*%|%=]+"?)'
 Private.value.name="^(%s*[%w%_]+)"
@@ -37,11 +40,21 @@ Private.value.secure="(%s?)"
 Private.value.version="=%s*(%d)"
 
 Private.left_table = {}
+
+-- puts in left_table the map: name -> expression_to_capture_name_value
+-- used for catching the left part of an equality,
+-- consider that the left_table["domain"] will capture 
+-- "([Dd][Oo][Mm][Aa][Ii][Nn])" that will be used to find the first part of
+-- a string like:
+-- DOMAIN = VALUE
 table.foreach(Private.cookie_av,function(_,v) 
 	Private.left_table[v] = Private.create_match(v) 
 	end)
 Private.left_table["name"]=Private.value.name
 
+-- eat generates functions that will be called on the cookie string s and
+-- the storage table t, these eating functions will put in 
+-- t[name] the capture
 function Private.eat(name,value)
 	return function(s,t)
 		local b,e,l,r =
@@ -67,13 +80,15 @@ function Private.eat2(name1,name2,value)
 	end
 end
 
-
+-- temp table used to build the following one
 Private.types = {}
 table.foreach(Private.cookie_av,function(_,v) 
 	Private.types[v] = Private.value[v] or Private.value["token"]
 	end)
 Private.types["name"] = Private.value["token"]
 
+-- this table will contains the eaters funcions for all the elements in the
+-- cookie grammar, see cookie_av
 Private.syntax = {}
 table.foreach(Private.cookie_av,function(_,v) 
 	Private.syntax[v] = Private.eat(v,Private.types[v])
@@ -83,6 +98,8 @@ Private.syntax["name"] = Private.eat2("name","value",Private.types["name"])
 --<==========================================================================>--
 -- helper functions
 
+-- given a host h and a string s, this returns a table with all the cookie 
+-- fields plus host h
 function Private.parse_cookie(s,h)
 	local t = {}
 	local s1 = s
@@ -99,6 +116,8 @@ function Private.parse_cookie(s,h)
 	return t
 end
 
+-- If we receive more cookies they are separated by 2 comma, but 
+-- the paring function works only on strings containing one cookie
 function Private.split_cookies(s)
 	local t = {}
 	while true do
@@ -134,6 +153,7 @@ function Private.split_cookies(s)
 	end
 end
 
+-- return a teble of cookies, h is the host
 function Private.parse_cookie_table(t,h)
 	local r = {}
 	table.foreach(t,function(_,s) 
@@ -142,6 +162,7 @@ function Private.parse_cookie_table(t,h)
 	return r
 end
 
+-- checks if the cookie has to be purged
 function Private.is_expired(c)
 	local date = os.time()
 	if c["max-age"] then
@@ -163,6 +184,7 @@ function Private.is_expired(c)
 	return false
 end
 
+-- puts a uri in a table containing the / separated parts
 function Private.split_uri(path)
 	local t = {}
 	if not path then return t end
@@ -172,6 +194,7 @@ function Private.split_uri(path)
 	return t
 end
 
+-- counts how many parts of path are in common
 function Private.subpath_len(path,sub)
 	if not sub then
 		return -1 --no path was
@@ -195,7 +218,7 @@ end
 
 cookie = {}
 
--- cookie interface
+-- parse
 function cookie.parse_cookies(s,h)
 	if s then
 		return Private.parse_cookie_table(Private.split_cookies(s),h)
@@ -204,6 +227,7 @@ function cookie.parse_cookies(s,h)
 	end
 end
 
+-- merges two tables of cookies
 function cookie.merge(t2,t1)
 	if not t1 then
 		return
@@ -227,6 +251,8 @@ function cookie.merge(t2,t1)
 	end)
 end
 
+-- returns the needed cookie for the domain...
+-- returns the string
 function cookie.get(t,res,domain,host)
 	local r = {}
 	--print(res,domain,host)
@@ -257,3 +283,12 @@ function cookie.get(t,res,domain,host)
 		return nil
 	end
 end
+
+-- cleans expired cookies
+function cookie.clean_expired(t)
+	table.foreach(t,function(x,c)
+	if Private.is_expired(c) then
+		t[x] = nil
+	end
+end
+

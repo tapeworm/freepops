@@ -41,13 +41,20 @@ freepops.MODULES_MAP["lycos.it"]	= {name="lycos.lua"}
 -- gmail
 freepops.MODULES_MAP["gmail.com"]	= {name="gmail.lua"}
 
--- squirrelmail
-freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}
-
 -- yahoo
 freepops.MODULES_MAP["yahoo.com"]	= {name="yahoo.lua"}
-freepops.MODULES_MAP["yahoo.it"]	= {name="yahoo.lua"}
+freepops.MODULES_MAP["yahoo.it"]       = {name="yahoo.lua"}
 
+-- hotmail
+freepops.MODULES_MAP["hotmail.com"]	= {name="hotmail.lua"}
+freepops.MODULES_MAP["msn.com"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["webtv.com"]	= {name="hotmail.lua"}
+freepops.MODULES_MAP["charter.com"]	= {name="hotmail.lua"}
+freepops.MODULES_MAP["compaq.net"]	= {name="hotmail.lua"}
+freepops.MODULES_MAP["passport.com"]	= {name="hotmail.lua"}
+
+-- squirrelmail
+freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}
 
 -- popforward plugin
 --freepops.MODULES_MAP["something.xx"] 	= {
@@ -152,11 +159,6 @@ freepops.MODULES_MAP["linux.kerneltrap.org"] 	= {
 freepops.MODULES_MAP["mozillaitalia.org"] 	= {
 	name="aggregator.lua",
 	args={host="http://www.mozillaitalia.org/feed/"}
-}
-
-freepops.MODULES_MAP["linuxgazette.net"] 	= {
-	name="aggregator.lua",
-	args={host="http://linuxgazette.net/lg.rss"}
 }
 
 -- -------------------------------------------------------------------------- --

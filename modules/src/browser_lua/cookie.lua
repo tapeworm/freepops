@@ -35,7 +35,7 @@ Private.cookie_av={
 
 -- some captures for the cookie fields
 Private.value = {}
-Private.value.token='=%s*("?[%w%.%_%-%%%/%+%-%*%|%=%&]*"?)'
+Private.value.token='=%s*("?[%w%.%_%-%%%/%+%-%*%|%=&@:!$%?]*"?)'
 Private.value.name="^(%s*[%w%_]+)"
 Private.value.domain='=%s*("?%.[%w%.%_%-%%%/%+%-%*]+"?)'
 Private.value.expires="=%s*(%a+%s*,%s*[%w%:%s%-]+)"
@@ -338,20 +338,18 @@ end
 -- returns the needed cookie for the domain...
 -- returns the string
 function cookie.get(t,res,domain,host)
-	--print("cookie.get(res='"..(res or"nil").. 
-	--	"', domain='" ..(domain or"nil").. 
-	--	"', host='" ..(host or"nil").."')")
+      --print("cookie.get("..(res or"nil")..(domain or"nil")..(host or"nil"))
 	local function domain_match(a,b)
 		local x,_ = string.find(a,b)
 		--print("Find: '"..a.."' '"..b.."' = "..tostring(x ~= nil))
 		return x ~= nil
 	end
 	local r = {}
-	--print(res,domain,host)
+      --print(res,domain,host)
 	table.foreach(t,function(_,c)
-		--table.foreach(c,print)
+      --table.foreach(c,print)
 		local l = Private.subpath_len(res,c["path"])
-		--print(Private.is_expired(c),l,c["domain"],c.host)
+	      --print(Private.is_expired(c),l,c["domain"],c.host)
 		if not Private.is_expired(c) and
 		   l >= 0 and
 		   (domain_match("."..domain,c["domain"]) or c.host == host)
@@ -370,11 +368,9 @@ function cookie.get(t,res,domain,host)
 	table.sort(r,function(a,b) return a.l > b.l end)
 	local s = ""
 	table.foreach(r,function(_,w)
-		if w.c.name ~= nil then
-			s = s .. "; " .. w.c.name .. "=" .. w.c.value 	
-			--else
-			--print("ask russell why he added this check")
-		end
+                if w.c.name then
+		        s = s .. "; " .. w.c.name .. "=" .. w.c.value 
+                end
 	--	if w.c.domain then
 	--		s = s .. '; $Domain = "' .. w.c.domain .. '"'
 	--	end

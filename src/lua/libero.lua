@@ -78,6 +78,8 @@ local libero_string = {
 		"From_Vu=1&C_Folder=aW5ib3g%%3D&msgID=&Msg_Read=&"..
 		"R_Folder=&ZONEID=&Fld_P_List=aW5ib3g%%3D&"..
 		"dummy1_List=aW5ib3g%%3D&dummy2_List=aW5ib3g%%3D",
+	-- The capture to understand if the session ended
+	timeoutC = "Sessione non valida. Riconnettersi",
 	-- The uri to save a message (read download the message)
 	save = "http://%s/cgi-bin/webmail.cgi/message.txt?ID=%s&"..
 		"msgID=%s&Act_V_Save=1&"..
@@ -543,8 +545,33 @@ function stat(pstate)
 
 	-- this is simple and uri-dependent
 	local function retrive_f ()  
-		print("---->" .. uri)
-		return b:get_uri(uri)
+		local f,err = b:get_uri(uri)
+		if f == nil then
+			return f,err
+		end
+
+		local _,_,c = string.find(f,libero_string.timeoutC)
+		if c ~= nil then
+			internal_state.login_done = nil
+			session.remove(key())
+
+			local rc = libero_login()
+			if rc ~= POPSERVER_ERR_OK then
+				return nil,{
+					error="Session ended,unable to recover"
+					}
+			end
+			
+			popserver = internal_state.popserver
+			session_id = internal_state.session_id
+			b = internal_state.b
+			
+			uri = string.format(libero_string.first,
+				popserver,session_id)
+			return b:get_uri(uri)
+		end
+		
+		return f,err
 	end
 
 	-- this to initialize the data structure
@@ -657,6 +684,8 @@ function top(pstate,msg,lines,data)
 	-- we need the stat
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
+
+	--XXX FIXME try to avoid the webmail bug FIXME XXX
 
 	-- some local stuff
 	local popserver = internal_state.popserver

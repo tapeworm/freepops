@@ -28,6 +28,8 @@
 	#include <syslog.h>
 #endif
 
+#include "liberopops.h"
+
 /** @name Wrappers 
  * After including log.h you have to define the current zone with 
  * the following statement:<BR><TT>
@@ -97,5 +99,9 @@ int log_get_verbosity(void);
 
 //! set verbosity level
 void log_set_verbosity(int v);
+
+int log_rotate(char *logfile);
+
+char *log_get_logfile(void);
 
 #endif

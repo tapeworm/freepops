@@ -21,7 +21,8 @@ second release 0.0.2
 	tradurre faq
 
 first public release 0.0.1:
-	sistemare se la sessione caricata e' scaduta in libero.lua
+++++	sistemare se la sessione caricata e' scaduta in libero.lua
+	(ancora da testare)
 +++++	sistemare l'installer win (icona, messagi di manuali in italiano) 
 +++++++	da vedere se e' il caso di farlo anche in ~/.config.lua(no)
 	testare gli installer

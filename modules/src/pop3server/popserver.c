@@ -826,6 +826,13 @@ while(1)
 		free(data);
 		ERROR_ABORT("pthread_create failed\n");
 		}
+
+	#ifdef WIN32
+	//FIXME
+	// richiama il log_rotate a run time
+	if((char*)log_get_logfile()!=NULL)
+		log_rotate((char*)log_get_logfile());
+	#endif
 	}
 }
 

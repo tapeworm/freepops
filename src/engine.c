@@ -404,7 +404,7 @@ return rc;
 
 void freepops_delete_other(void *x)
 {
-if(CAST(x)->l != NULL)
+if(x != NULL && CAST(x)->l != NULL)
 	lua_close(CAST(x)->l);
 free(x);
 }

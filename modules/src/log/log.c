@@ -24,13 +24,13 @@
 #include "log.h"
 #define LOG_ZONE "LOG"
 
-#define HIDDEN static
-
 /******************************************************************************/
 
 HIDDEN int verbose_output = 0;
 HIDDEN FILE *fd = NULL;
 HIDDEN int syslogmode = 0;
+HIDDEN char *log_file_name = NULL;
+
 #ifndef WIN32
 HIDDEN int do_syslog = 0;
 #endif
@@ -41,19 +41,81 @@ HIDDEN int do_syslog = 0;
 
 HIDDEN pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
+int file_exists(char *filename) {
+	
+	FILE *fp;
+	fp = fopen(filename,"r");
+
+	if(fp != NULL){
+		fclose(fp);
+		return(1);
+	}
+	else
+		return(0);
+}
+
+char *get_free_logfile(char *logfile){
+
+	int suffix=-1;
+	char *str=(char*)malloc(strlen(logfile)+3);
+	
+	do {	
+		suffix++;
+		memset(str,0,(strlen(logfile)+3));
+		sprintf(str,"%s.%d",logfile,suffix);
+	} while(file_exists(str));
+	
+	return(str);
+}
+
+void copy_file(char *src, char* dst){
+
+	FILE *fpin, *fpout;
+
+	char buf[512];
+	int n;
+
+	fpin = fopen(src,"r");
+	fpout = fopen(dst,"w");
+
+	for(;;){
+		n = fread(buf, 1, 512, fpin);
+
+		if(n == 0)
+			break;
+		fwrite(buf, 1, n, fpout);
+	}
+
+	fclose(fpin);
+	fclose(fpout);
+
+}
+
 // controls logfile size
 int log_rotate(char *logfile)
 {
 	struct stat filestats;
 	int rc;
-	
+	int reopen=0;
+
 	pthread_mutex_lock(&mutex);
+
+	if(fd!=NULL)
+		reopen=1;
 
 	rc = stat(logfile, &filestats);
 	
-	if (rc != -1 && filestats.st_size > MAX_LOG_SIZE)
+	if (rc != -1 && filestats.st_size > MAX_LOG_SIZE){
+		char *freefile=get_free_logfile(logfile);
+		// creates backup file
+		copy_file(logfile, freefile);
+		free(freefile);
 		unlink(logfile);
+	}
 
+	if(reopen)
+		fd = fopen(logfile, "a");
+	
 	pthread_mutex_unlock(&mutex);
 
 	return 0;
@@ -101,6 +163,7 @@ int log_init(char* logfile, int sysmode)
 		else
 			{
 			log_rotate(filestr);
+			log_file_name=(char*)strdup(filestr);
 			fd = fopen(filestr,"a");
 			if(strcmp("/dev/null",filestr))
 				chmod(filestr,S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
@@ -118,6 +181,7 @@ int log_init(char* logfile, int sysmode)
 		logfile == strdup("log.txt");
 	
 	log_rotate(logfile);
+	log_file_name=(char*)strdup(logfile);
 
 	fd = fopen(logfile, "a");
 	if (fd == NULL)
@@ -231,3 +295,10 @@ void log_set_verbosity(int v)
 {
 verbose_output = v;
 }
+
+char *log_get_logfile(){
+	return(log_file_name);
+}
+
+
+

@@ -41,7 +41,8 @@
 #ifdef MACOSX
 	#define LOGFILE		"stdout"
 	#define BINDADDRESS  	INADDR_ANY
-	#define "Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O;"\
+	#define DEFAULT_USERAGENT \
+		"Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O;"\
 		" en-US; rv:1.6) Gecko/20040113"
 #endif
 		

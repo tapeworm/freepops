@@ -1,7 +1,7 @@
 FreePOPs 0.0.4 Readme file
 
 
-Questo pacchetto contiene la distribuzione pre-compilata di FreePOPs per sistemi Mac OS X. Per usarla, lanciare <percorso>/freepopsd da un Terminale, con i parametri preferiti, dove <percorso> è il percorso dove è stato installato FreePOPs. Vedi freepopsd -h o i manuali inclusi nella directory doc/ per una lista completa di opzioni a riga di comando.
+Questo pacchetto contiene la distribuzione pre-compilata di FreePOPs per sistemi Mac OS X. Per usarla, lanciate un Terminale, spostatevi nella directory dove è installato FreePOPs e lanciate ./freepopsd, con i parametri preferiti. Vedi freepopsd -h o i manuali inclusi nella directory doc/ per una lista completa di opzioni a riga di comando.
 In caso di problemi nell'aggiornamento da versioni precedenti consigliamo di cancellare a mano la directory con la versione precedente e anche il file /Library/Receipts/FreePOPs-x.y.z.pkg (x.y.z e' la versione precedente di FreePOPs installata).
 
 Gli utenti di LiberoPOPs troveranno utile l'howto per la migrazione da LP a FP allegato.

@@ -13,3 +13,6 @@ next release 0.0.6
 	document KERNEL.LUA, LYCOS.LUA
 	fix cleaning header in lycos... some residuate of a multilyne mime 
 		header may remain
+	allegati sopra i 499K in tin
+	problemi in lycos
+	documentare bene lycos(manuale) e kernel(manuale e sito)

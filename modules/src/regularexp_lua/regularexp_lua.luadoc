@@ -1,0 +1,51 @@
+---
+-- regularep.
+-- Posix regular expression library.
+-- The object has the following methods:<BR/>
+-- <BR/>
+-- <B>match(s[,maxmatch])</B> : returns table and takes the string on
+-- -- which we want to match and optionally a maximum number of matches.
+-- The table contains the matches.<BR/>
+-- <BR/>
+-- -- <B>match(s,f[,maxmatch])</B> : takes the string on
+-- which we want to match and a function f(from,to,match) and optionally a 
+-- maximum number of matches. f will be called with hthe offsets of the match
+-- and the matched string. if f return not nil then we stop matching. 
+-- returns nothing.<BR/>
+-- <BR/>
+-- Example:
+-- <PRE>
+--r = regularexp.new("(aaa|bbb)")
+--s = "123aaa456bbb789aaa0"
+--
+--capt = r:match(s)
+--print("Capt:",table.getn(capt))
+--table.foreach(capt,print)
+--
+--capt = r:match(s,2)
+--print("Capt:",table.getn(capt))
+--table.foreach(capt,print)
+--
+--r:gmatch(s,function(f,t,m)
+--	print("match:",f,t,m)
+--	return true
+--end)
+-- </PRE>
+-- Prints:
+-- <PRE>
+--Capt:   3
+--1       aaa
+--2       bbb
+--3       aaa
+--Capt:   2
+--1       aaa
+--2       bbb
+--match:  3       6       aaa
+--</PRE>
+
+---
+-- creates a regularexp object for s.
+-- @param s string the regex.
+-- @return userdata the regularexp object.
+function regularexp.new(s) end
+

@@ -2,7 +2,7 @@
 #
 #       FreePOPs is a tool to get html mail through a pop daemon
 # processname: freepopsd
-# config: /usr/share/freepops/libero.cfg
+# config: /etc/freepops/config.lua
 # pidfile:
 ### BEGIN INIT INFO
 # Provides: freepopsd

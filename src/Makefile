@@ -31,7 +31,8 @@ endif
 
 BINARY=freepopsd$(EXEEXTENSION)
 
-LIBS=		stringhack_lua	\
+LIBS=		regularexp_lua	\
+		stringhack_lua	\
                 browser_lua     \
                 getdate_lua     \
                 getdate         \

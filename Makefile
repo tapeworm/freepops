@@ -110,7 +110,7 @@ src: config
 	$(H)echo "building freepopsd"
 	$(H)$(MAKE) -C src all CONFIG=$(PWD)/config PREFIX=$(PREFIX)
 
-doc/manual.pdf doc/manual-it.pdf:
+doc/manual.pdf doc/manual-it.pdf: doc/manual/manual.tex doc/manual/manual-it.tex
 	$(H)$(MAKE) -C doc/manual/
 
 config:

@@ -369,7 +369,7 @@ This plugin allows you to read the mails you have in a
 mailbox.
  This means you can still use your favorite mail reader instead of using
  the webmail.
- This plugin acts as a browser that surfs you webmail account and make it
+ This plugin acts as a browser that surfs your webmail account and make it
  appear as a POP3 server.
  For more info on this plugin you may read the LiberoPOPs (FreePOPs ancestor)
  website at 
@@ -461,7 +461,7 @@ aggregator.lua
 Usually you can benefit from the W3C's RSS format when you read some website
  news.
  The RSS file indexes the news, providing a link to them.
- This plugin can make you mail client see the RSS file as a mailbox from
+ This plugin can make your mail client see the RSS file as a mailbox from
  which you can download each news as if it was a mail message.
  The only limitation is that this plugin can fetch only a news summary plus
  the news link.
@@ -914,7 +914,7 @@ doc/
 
 The backend must implement all the POP3 commands (like USER, PASS, RETR,
  DELE, QUIT, LIST, ...) and must give back to the frontend the result.
- Let us give a simple example of a POP3 section taken from the RFC:
+ Let us give a simple example of a POP3 session taken from the RFC:
 \layout Standard
 
 
@@ -1350,8 +1350,8 @@ p
 set_mailmessage_size(p,num,size)
 \family default 
  where num is the message number and size is the size in bytes.
- Usually it is really common to put more function all together.
- For example wen you get the message list page in a webmail you know the
+ Usually it is really common to put more functions all together.
+ For example when you get the message list page in a webmail you know the
  number of the messages, their size and uidl so you can fill the p data
  structure with all the informations for LIST, STAT, UIDL.
  
@@ -1386,7 +1386,7 @@ data
 Submitting a bug
 \layout Standard
 
-When you have problems, you think you found a bug, please follow strictly
+When you have problems or you think you found a bug, please follow strictly
  this 
 \emph on 
 iter
@@ -1424,7 +1424,7 @@ This manual has been written by Enico Tassi
 \family typewriter 
 <gareuselesinge@users.sourceforge.net>
 \family default 
- and revised by Nicola Cocchiaro 
+ and revised and translated by Nicola Cocchiaro 
 \family typewriter 
 <ncocchiaro@users.sourceforge.net>
 \layout Subsection
@@ -1455,7 +1455,7 @@ Simone Vellei
 <simone_vellei@users.sourceforge.net>
 \layout Standard
 
-LiberoPOPs id developed by:
+LiberoPOPs is developed by:
 \layout Itemize
 
 Enico Tassi 

@@ -1,16 +1,9 @@
 legeng: more + means more done! (from 1 to 7)
 
 second release 0.0.2
-	aggiungere a luasocket il supporto proxy.auth con una var d'ambiente
-		LUA_HTTP_PROXY_AUTH e patchare BROWSER di CONSEUENZA e fare la
-		stessa operazione di trasporto nel main delle funzioni http
-		come per il proxy semplice. magari curl... ma da vederne 
-		la fattibilita'. se si rimane a luasocket muovere i lua
-		embedded in C in lua semplici in modo che si possa fare 
-		autoupdate anche di quelli
 	servizio di autoupdate. da valutare la sicurezza di cio'.
 		valutare se far scaricare uno script e farlo eseguire.
-	fare documentazione per moduli lua e C decente
++++++	fare documentazione per moduli lua e C decente
 	plugin (superva?)(freepass?)
 	aggiustare winsystray, download di news, aggiornamento (magari essendo
 		i files dei plugin dei files 

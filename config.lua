@@ -29,6 +29,18 @@ freepops.MODULES_MAP["lycos.it"]	= {name="lycos.lua"}
 --	args={port=110,host="in.virgilio.it"}
 --}
 
+-- kernel.org Changelog plugin
+freepops.MODULES_MAP["kernel.org"] 	= {name="kernel.lua"}
+
+freepops.MODULES_MAP["kernel.org.24"] 	= {
+	name="kernel.lua",
+	args={host="24"}
+}
+freepops.MODULES_MAP["kernel.org.26"] 	= {
+	name="kernel.lua",
+	args={host="26"}
+}
+
 -- flatnuke news plugin
 freepops.MODULES_MAP["flatnuke"] 	= {
 	name="flatnuke.lua"

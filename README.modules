@@ -1,9 +1,9 @@
 		README for the modules building system
 
-** Files in the module directory:
+** Files in the modules directory:
  
  bin/ 		binary produced by modules
- lib/ 		libraryes produced by modules
+ lib/ 		libraries produced by modules
  include/ 	interfaces produced by modules
  Makefile	targets: all clean doc
  modules	list of modules needed by each target
@@ -21,7 +21,7 @@
  SHAREDEXTENSION, OS.
 
  These variable must be used as the compiler,linker,..
- The module makefile is alco called definig PREFIX, CONFIG and TARGET.
+ The module makefile is alco called defining PREFIX, CONFIG and TARGET.
 
  A module file may contain something like:
  
@@ -29,7 +29,7 @@
  #	include "config.h"
  #endif
  
- to integrate the globals #define for the projects, like 
+ to integrate the global #define for the projects, like 
  VERSION and PROGRAMNAME and other options for compilation not concerning 
  platform but only the software itself.
 
@@ -38,31 +38,31 @@
  all, clean.
 
  The first must compile and link lib$(TARGET)$(STATICEXTENSION) and
- copy it to $(PREFIX)/lib ; the copy all the .h needed to $(PREFIX)/include.
+ copy it to $(PREFIX)/lib ; then copy all the .h needed to $(PREFIX)/include.
  The other targets are trivial.
 
- Each module must be subscribed in mosules/src/subscribed, and the 
+ Each module must be subscribed in modules/src/subscribed, and the 
  right Makefile.template* will be used to build it. As a special case a module
- may have a ad-hoc Makefile, but you are suggested to use default Makefiles.
+ may have an ad-hoc Makefile, but you are suggested to use default Makefiles.
  
- Makefile.template is generic makefile that can be personalyzed by 
+ Makefile.template is a generic makefile that can be personalized by 
  adding these files to the module directory:  source, interface, shared.
  The first contains the .c files that must be compiled, while the second 
- defines the .h file that should be copyed to $(PREFIX)/include. The third
+ defines the .h file that should be copied to $(PREFIX)/include. The third
  contains -l flags to link the shared library. The shared library is built only
  if this file is present.
 
- Contrib modules shoud be in the vanilla module-version.tar.gz format and 
+ Contrib modules should be in the vanilla module-version.tar.gz format and 
  may be patched with a patch module-version.diff present in the same directory.
  Makefile.template-contrib must be used as a Makefile to do this. See the lua 
  module for a working example.
 
- Special packages can use theyr own Makefile. This is usefull in some special
+ Special packages can use their own Makefile. This is useful in some special
  modules, but weakens the build system, so be careful.
 
  ** name policy
 
- Lua bindings packages must be called packagename_lua and lua only pachage
+ Lua bindings packages must be called packagename_lua and lua-only packages
  (containig .lua modules) must be called packagename_lua.
 
  ** documentation
@@ -92,6 +92,6 @@
 ** COPYING
 
  All modules in the module directory are copyrighted under the GNU/GPL license,
- except the one containig a different license specification.
+ except the one containing a different license specification.
  
 ** eof

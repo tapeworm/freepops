@@ -2,8 +2,7 @@ legeng: more + means more done! (from 1 to 7)
 
 next release 0.0.13
 	plugin (superva,freepass,hotmail,yahoo,excite,gmail)
-	problemi in lycos(magari sistemare il mimer decentemente)
+	problemi in lycos utf8 (magari sistemare il mimer decentemente)
 	problemi login tin(aspetta ethereal)
 	fai generare i ps in /doc al volo dai jpg
-	fissare crash se offline (chiedi come riprodurre)
 	edit categorization in SF (add openbsd)

@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+        |-----handy-ruler------------------------------------------------------|
+freepops: FreePOPs
+freepops:
+freepops: FreePOPs is an extensible pop3 server. Its main purpose is to provide
+freepops: a pop3 interface to a webmail.
+freepops:
+freepops: To run freepopsd at startup, add the following line
+freepops: to /etc/rc.d/rc.local
+freepops: 
+freepops: /etc/rc.d/rc.freepops start
+freepops:
+freepops:

@@ -1,3 +1,5 @@
+- added slackware patch by Lorenzo Buzzi
+- linux_usr configure.sh target (to have a good make install)
 - fixed jail in sid
 - fixed popforward.lua (thanks Rojous and CWP)
 - added crypto HMAC routine to lua

@@ -7,7 +7,8 @@ type:
  make <target>
  
 Available systems:
-  linux		- to compile on a linux host
+  linux		- to compile on a linux host and install in /usr/local
+  linux_usr	- to compile on a linux host and install in /usr
   osx		- to compile on a darwin host
   obsd		- to compile on an OpenBSD host
   fbsd		- to compile on an FreeBSD host
@@ -37,7 +38,8 @@ Valid targets in this case are:
   dist-deb	- Debian GNU/Linux .deb
   dist-rpm	- Red Hat Linux .rpm
   dist-gen	- Gentoo Linux .ebuild
-  dist-tgz	- Source .tgz
+  dist-slack	- Slackware .tgz
+  dist-tgz	- Source .tar.gz
   dist-obsd	- 
 
 Enjoy!

@@ -1,5 +1,6 @@
 include $(CONFIG)
 
+
 VERSION=$(shell grep "\#define VERSION" ../config.h | cut -d \" -f 2)
 
 H=@
@@ -11,7 +12,7 @@ help:
 	$(H)echo "Targets are: all dist-{osx,win,deb,rpm,gen,tgz,obsd}"
 	$(H)echo
 
-all: dist-deb dist-rpm dist-win dist-gen 
+all: dist-deb dist-rpm dist-win dist-gen dist-slack
 
 clean:
 	$(H)rm -rf _*_ freepops-[0-9\.]*.tar.gz
@@ -107,6 +108,35 @@ dist-deb: freepops-$(VERSION).tar.gz
 
 	$(H)rm -rf _deb_
 
+dist-slack: freepops-$(VERSION).tar.gz
+	$(H)mkdir -p _slack_
+	$(H)mkdir -p dist-slack
+	$(H)[ -d _slack_/freepops-$(VERSION) ] || \
+		tar -xzf freepops-$(VERSION).tar.gz -C _slack_
+	$(H)cd _slack_/freepops-$(VERSION); \
+		./configure.sh linux_usr; \
+		$(MAKE) all; \
+		$(MAKE) install DESTDIR="../../dist-slack/"
+	$(H)cd dist-slack; \
+		strip usr/bin/freepopsd; \
+		mkdir -p install; \
+		cp ../slackware/slack-desc install; \
+		mkdir -p etc/rc.d; \
+		cp ../slackware/freepops.conf etc/freepops; \
+		cp ../slackware/rc.freepops etc/rc.d; \
+		gzip usr/share/man/man1/freepopsd.1; \
+		rm usr/share/doc/freepops/MANUAL.txt; \
+		mv usr/share/doc/freepops usr/share/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/AUTHORS usr/share/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/COPYING usr/share/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/ChangeLog usr/share/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/README usr/share/doc/freepops-$(VERSION); \
+		makepkg --chown n freepops-$(VERSION)-i686-1.tgz; \
+		rm -rf etc; \
+		rm -rf install; \
+		rm -rf usr
+	$(H)rm -rf _slack_
+	
 dist-osx: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _osx_
 	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
@@ -224,10 +254,13 @@ dist-obsd:
 	-D DISPLAY freepops-$(VERSION)
 	$(H)gzip openbsd/freepops-$(VERSION)
 	$(H)mv openbsd/freepops-$(VERSION).gz freepops-$(VERSION).tgz
-	
+
+dist-tgz: freepops-$(VERSION).tar.gz
+	$(H)mkdir -p dist-tgz
+	$(H)mv freepops-$(VERSION).tar.gz dist-tgz
+
 freepops-$(VERSION).tar.gz: 
 	$(H)cd ..;./configure.sh linux || true
 	$(H)$(MAKE) -C .. tgz-dist
-	$(H)cp ../dist-tgz/freepops-$(VERSION).tar.gz .
-	
-	
+	$(H)mv ../dist-tgz/freepops-$(VERSION).tar.gz .
+	$(H)rm -rf ../dist-tgz

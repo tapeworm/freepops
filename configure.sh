@@ -7,7 +7,8 @@ Usage: ./configure.sh <option>
 
 Available options: 
 	help		this screen
-	linux		to compile on a linux host
+	linux		to compile on a linux host and install in /usr/local
+	linux_usr	to compile on a linux host and install in /usr
 	osx		to compile on a darwin host
 	osx-static	to compile on a darwin host with some static libs
 	obsd		to compile on a openbsd host
@@ -41,10 +42,17 @@ HLDFLAGS=$LDFLAGS
 WINDRES=windres
 DLLTOOL=dlltool
 MAKE=make
+WHERE=/usr/local/
 }
 
 set_linux() {
 set_default
+OS=Linux
+}
+
+set_linux_usr() {
+set_default
+WHERE=/usr/
 OS=Linux
 }
 
@@ -141,6 +149,9 @@ case $1 in
 	linux)
 		set_linux
 	;;
+	linux_usr)
+		set_linux_usr
+	;;
 	obsd)
 		set_obsd
 	;;
@@ -190,5 +201,6 @@ WINDRES=$WINDRES
 DLLTOOL=$DLLTOOL
 OS=$OS
 MAKE=$MAKE
+WHERE=$WHERE
 EOT
 

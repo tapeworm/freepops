@@ -14,7 +14,7 @@ LATEX_HTML= \
 all: pdf html
 	
 pdf: manual.pdf manual-it.pdf
-	@cp manual.pdf manual-it.pdf ../
+	@cp manual.pdf manual-it.pdf ../ || true
 
 html: macro.tex manual.tex manual-it.tex
 	@echo Generating the HTML manuals

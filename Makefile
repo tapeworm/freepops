@@ -1,6 +1,8 @@
 include config
 
-WHERE=/usr/local/
+#
+# WHERE=/usr/local/
+# WHERE is now set by configure.sh
 PREFIX=$(DESTDIR)$(WHERE)
 VERSION=$(shell grep "\#define VERSION" config.h | cut -d \" -f 2)
 MAKEFLAGS+=--no-print-directory
@@ -93,7 +95,7 @@ tgz-dist:
 		cd dist-tgz/;\
 		tar -xzf freepops.tgz;\
 		rm freepops.tgz;\
-		cd $$BASE; $(MAKE) realclean;cd ..;\
+		cd $$BASE; $(MAKE) realclean; cd ..;\
 		find $$BASE -name CVS -exec rm -fr \{\} \; 2>/dev/null;\
 		mv $$BASE freepops-$(VERSION) || true;\
 		tar -cf freepops-$(VERSION).tar freepops-$(VERSION);\

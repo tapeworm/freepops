@@ -62,8 +62,8 @@ dpkg-source -b freepops-*
 function prepare_tgz(){
 make realclean
 ./configure.sh linux
-make tgz-dist
-tar -xvzf dist-tgz/* -C $1
+make -C buildfactory -C dist-deb tgz-dist
+cp dist-deb/freepops/* $1
 }
 
 function build(){

@@ -96,7 +96,7 @@ dist-deb: freepops-$(VERSION).tar.gz
 	$(H)cd _deb_/freepops-$(VERSION);\
 		cp -r buildfactory/debian .;\
 		./configure.sh linux;\
-		dpkg-buildpackage -rfakeroot #-us -uc
+		dpkg-buildpackage -rfakeroot -us -uc
 	$(H)mkdir -p ../dist-deb/freepops || true
 	$(H)cp _deb_/*.tar.gz _deb_/*.deb _deb_/*.dsc _deb_/*.changes \
 		_deb_/*.diff.gz ../dist-deb/freepops

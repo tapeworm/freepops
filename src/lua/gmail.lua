@@ -26,14 +26,14 @@ Le cartelle standard disponibili sono inbox, starred, sent, all, spam, trash.
 Questo &egrave; un esempio di uno user name per leggere la cartella starred:<br/>
 foo@gmail.com?folder=starred<br/>
 <br/>
-Se hai creato delle label, puoi accedervi usando il parametro ?label=nome]],
+Se hai creato delle label personalizzate, puoi accedervi usando il parametro ?label=nome]],
 		en = [[
 Used for selecting the folder to operate on (inbox is the default one).<br/>
 The standard folders are: inbox, starred, sent, all, spam, trash.<br/>
 Here is an example of a username to get the email from the starred folder:<br/>
 foo@gmail.com?folder=starred<br/>
 <br/>
-If you created personalized labels in gmail, you can access them using
+If you created custom labels in gmail, you can access them using
 the label parameter label=name.]],
 		}	
 	},
@@ -53,13 +53,13 @@ foo@gmail.com?label=Friends]],
 		it = [[
 Valori possibili:<br/>
 - export: esporta la rubrica di gmail in un file chiamato 
-gmail_contacts_export.csv che verrà generato nella tua home (Unix)
+gmail_contacts_export.csv che verr&agrave; generato nella vostra home (Unix)
 o nella directory Documenti (Windows), 
-che pu&ograve; essere importato nel tuo mail client preferito.]],
+che pu&ograve; essere importato nel vostro mail client preferito.]],
 		en = [[
 Possible values:<br/>
 - export: Exports your gmail contacts into a file called 
-gmail_contacts_export.csv that will be saved in you home (Unix)
+gmail_contacts_export.csv that will be saved in your home (Unix)
 or in the My Documents directory (Windows), that can be imported 
 into your email client.]],
 		}
@@ -67,21 +67,20 @@ into your email client.]],
 }
 PLUGIN_DESCRIPTIONS = {
 	it=[[
-Questo plugin vi per mette di leggere le mail che avete in una 
+Questo plugin vi permette di leggere le mail che avete in una 
 mailbox @gmail.com.<br/>
 Per usare questo plugin dovete usare il vostro indirizzo email completo come
 user name e la vostra password reale come password.<br/>
-Aggiungendo dei parametri all username si puo scaricare la posta dalle diverse
-cartelle o label, ed anche esportare la rubrica in formatto CSV.<br/>
-Controllare la sezione "Parametri supportati" per maggiore informazione sui
+Aggiungendo dei parametri allo username si pu&ograve; scaricare la posta dalle diverse
+cartelle o label, ed anche esportare la rubrica in formato CSV.<br/>
+Controllare la sezione &quot;Parametri supportati&quot; per maggiore informazione sui
 parametri disponibili.<br/>
 <br/>
 Nota:<br/>
-Quando il cliente di posta cancella dei messagi (perche e' stato configurato per
-cancellare i messaggi dal server [dopo x giorni]), se sei nella cartella inbox
-i messaggi saranno spostati nell'archivio (cartella "all"), se sei nella cartella
-spam i messaggi saranno spostati nel cestiono (cartella trash), altrimenti i messaggi
-vengono segnati come letti.]],
+Quando il client di posta cancella dei messaggi (perche &egrave; stato configurato per
+cancellare i messaggi dal server [dopo x giorni]), se avete controllato la cartella inbox
+i messaggi saranno spostati nell'archivio (cartella "all"), se avete controllato la cartella
+spam i messaggi saranno spostati nel cestino (cartella "trash"), altrimenti saranno solo segnati come letti.]],
 	en=[[
 This is the webmail support for @gmail.com mailboxes.<br/>
 To use this plugin you have to use your full email address as the user name 
@@ -91,10 +90,10 @@ email from different folder and/or labels, and export the contacts in CSV format
 Check "Supported parameters" for more details about the available parameters.<br/>
 <br/>
 Note:<br/>
-When the email client issue the command to delete some messages (because in its
-options it is set to delete messages from server [after x days]), if you are in the
-inbox folder, email will be moved to the archive (folder "all"), if you are in the
-spam folder, email will be moved to the trash folder, else it will only be marked
+When the email client issues the command to delete some messages (because in its
+options it is set to delete messages from the server [after x days]), if checked the
+inbox folder, the email will be moved to the archive (folder "all"), while if you checked the
+spam folder, the email will be moved to the trash folder, else it will only be marked
 as read.]]
 }
 

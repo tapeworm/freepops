@@ -1,3 +1,9 @@
+freepops (0.0.7-1) unstable; urgency=low
+
+  * fixed gentoo
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sun, 20 Jun 2004 17:36:59 +0200
+
 freepops (0.0.6-1) unstable; urgency=low
 
   * fixed lycos 

@@ -1,3 +1,24 @@
++-----------------------------------------------------------------------------+
+|                              NOTA IMPORTANTE                                |
+|                                                                             |
+| FreePOPs e' nato per supportare varie webmail ed e' infatti organizzato a   |
+| plugin. Ogni plugin fornisce l'accesso a una determinata webmail. Il plugin |
+| che ti interessa e' libero.lua e FreePOPs deve capire che tu vuoi usare     |
+| quello. Per far cio' guarda il tuo username, che se hai letto un minimo     |
+| la documentazione di LiberoPOPs, hai scritto completo di @libero.it.        |
+| Infatti per decidere che plugin usare guarda la parte dopo la chiocciola,   |
+| quindi se metti solo il tuo username non sara' in grado di capire           |
+| che plugin deve usare. Quindi e' *necessario* che lo username               |
+| sia completo di dominio, nella forma username@libero.it (o @inwind,         |
+| @blu, @iol.it)                                                              |
+| Altro dettaglio da non dimenticare e' che sia FreePOPs sia LiberoPOPs si    |
+| mettono in ascolto sulla porta 2000 se non si specifica diversamente.       |
+| Dal momento che solo *un* programma puo' essere in ascolto su una porta,    |
+| non e' possibile avviare contemporaneamente i due programmi                 | 
+| (ma tanto ne basta uno solo).                                               |
+|                                                                             |
++-----------------------------------------------------------------------------+
+
 Come faccio a passare da LiberoPOPs a FreePOPs?
 
   Prima di tutto e' giusto che tu sappia che mentre LiberoPOPs e' un software

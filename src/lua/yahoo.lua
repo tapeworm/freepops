@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.3"
+PLUGIN_VERSION = "0.1.4"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -228,6 +228,67 @@ internalState = {
 }
 
 -- ************************************************************************** --
+--  Temporary functions for debugging and fixing CRLF bug
+-- ************************************************************************** --
+
+-- Raw Logging does not modify the given log line or data in any way:
+--   i.e. the strings are not truncated and any CR / LFs are written unchanged.
+--   The current date and time is also prefixed.
+-- 
+-- Example entry:
+--   12/05/04 03:48:17 : My Log Line
+--   --------------------------------------------------
+--   My Data
+--   --------------------------------------------------
+--
+
+-- Set to true to enable Raw Logging
+local ENABLE_LOGRAW = false
+
+-- The platform dependent End Of Line string
+-- e.g. this should be changed to "\n" under UNIX, etc.
+local EOL = "\r\n"
+
+-- The raw logging function
+--
+log.raw = function ( line, data )
+  if not ENABLE_LOGRAW then
+    return
+  end
+
+  local out = assert(io.open("log_raw.txt", "ab"))
+  out:write( EOL .. os.date("%c") .. " : " )
+  out:write( line )
+  if data ~= nil then
+    out:write( EOL .. "--------------------------------------------------" .. EOL )
+    out:write( data )
+    out:write( EOL .. "--------------------------------------------------" )
+  end
+  assert(out:close())
+end
+
+-- Returns "data" with "{LF}" prefixing all \n and "{CR}" prefixing all \r,
+--   so hex viewing for those bytes isn't necessary.
+--
+function showCRLF( data )
+  local str = data
+  str = string.gsub(str, "\n", "{LF}\n")
+  str = string.gsub(str, "\r", "{CR}\r")
+  return str
+end
+
+-- Returns "data" with all single \r and \n replaced by \r\n
+--
+function fixCRLF( data )
+  local str = data
+  -- temporarily convert proper ending to \n
+  str = string.gsub(str, "\r\n", "\n")
+  str = string.gsub(str, "\r", "\n") -- should we worry about embedded \r?
+  str = string.gsub(str, "\n", "\r\n")
+  return str
+end
+
+-- ************************************************************************** --
 --  Helper functions
 -- ************************************************************************** --
 
@@ -261,6 +322,9 @@ end
 function loginYahoo()
   -- Check to see if we've already logged in
   --
+
+  log.raw( "Entering loginYahoo()" )
+
   if internalState.loginDone then
     return POPSERVER_ERR_OK
   end
@@ -388,6 +452,9 @@ end
 function downloadYahooMsg(pstate, msg, nLines, data)
   -- Make sure we aren't jumping the gun
   --
+  
+  log.raw("Entering downloadYahooMsg")
+  
   local retCode = stat(pstate)
   if retCode ~= POPSERVER_ERR_OK then 
     return retCode 
@@ -402,6 +469,9 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     internalState.strMBox, uidl, "HEADER");
   local bodyUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
     internalState.strMBox, uidl, "TEXT");
+
+  log.raw("hdrUrl = " .. hdrUrl)
+  log.raw("bodyUrl = " .. bodyUrl)
 
   -- Get the header
   --
@@ -445,11 +515,13 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   if not f then
     -- An empty message.  Send the headers anyway
     --
-    popserver_callback(headers, data)
+    log.dbg("Empty message")
+--    popserver_callback(headers, data)
   else
     -- Just send an extra carriage return
     --
-    popserver_callback("\r\n\0", data)
+    log.dbg("There is a message body")
+--    popserver_callback("\r\n\0", data)
   end
 
   -- Do we need to mark the message as unread?
@@ -468,6 +540,8 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     end
   end
 
+  log.raw("Exiting downloadYahooMsg")
+
   return POPSERVER_ERR_OK
 end
 
@@ -476,15 +550,23 @@ end
 function downloadMsg_cb(cbInfo, data)
 	
   return function(body, len)
+
+    log.raw("Entering downloadMsg_cb generated function")
+
+    log.raw("cbInfo.nLinesRequested = " .. cbInfo.nLinesRequested)
+    log.raw("cbInfo.nLinesReceived = " .. cbInfo.nLinesReceived)
+    log.raw("cbInfo.strHack:current_lines() = " .. cbInfo.strHack:current_lines())
+
     -- Are we done with Top and should just ignore the chunks
     --
     if (cbInfo.nLinesRequested ~= -2 and cbInfo.nLinesReceived == -1) then
+      log.raw("downloadMsg_cb: return 0, nil")
       return 0, nil
     end
   
     -- Clean up the end of line
     --
-    body = string.gsub(body, "([^\r])\n", "%1\r\n")
+    body = fixCRLF(body)
 
     -- Perform our "TOP" actions
     --
@@ -496,7 +578,8 @@ function downloadMsg_cb(cbInfo, data)
       if cbInfo.strHack:check_stop(cbInfo.nLinesRequested) then
         cbInfo.nLinesReceived = -1;
         if (string.sub(body, -2, -1) ~= "\r\n") then
-          body = body .. "\r\n"
+          log.error_print("Does NOT end in CRLF!")
+--          body = body .. "\r\n"
         end
       else
         cbInfo.nLinesReceived = cbInfo.nLinesRequested - 
@@ -508,10 +591,14 @@ function downloadMsg_cb(cbInfo, data)
     --
     body = cbInfo.strHack:dothack(body) .. "\0"
 
+    log.raw("finished text = ", body)
+
     -- Send the data up the stream
     --
     popserver_callback(body, data)
 			
+    log.raw("Exiting downloadMsg_cb generated function")
+    
     return len, nil
   end
 end

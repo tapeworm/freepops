@@ -83,9 +83,9 @@ MAKE=gmake
 set_beos() {
 set_default
 OS=BeOS
-CFLAGS="$CFLAGS -DBEOS -I/boot/home/config/include/ -I/boot/develop/headers/be/bone/"
+CFLAGS="$CFLAGS -DBEOS -I/boot/home/config/include/ "
 LDFLAGS="$LDFLAGS -L/boot/home/config/lib/"
-HCFLAGS="$HCFLAGS -DBEOS -I/boot/home/config/include/ -I/boot/develop/headers/be/bone/"
+HCFLAGS="$HCFLAGS -DBEOS -I/boot/home/config/include/ "
 HLDFLAGS="$HLDFLAGS -L/boot/home/config/lib/"
 
 }

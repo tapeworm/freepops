@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.1.1"
+PLUGIN_VERSION = "0.1.2"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -85,8 +85,9 @@ PLUGIN_DESCRIPTIONS = {
 -- 
 local libero_string = {
 	-- The uri the browser uses when you click the "login" button
-	login = "http://wpop%d%s/cgi-bin/webmail.cgi?dominio=%s&"..
-		"LOGIN=%s&PASSWD=%s&choice=%s&Act_Login.x=%d&Act_Login.y=%d",
+	login_url = "http://wpop%d%s/cgi-bin/webmail.cgi",		
+	login_post = "dominio=%s&"..
+		"LOGIN=%s&PASSWD=%s&choice=%s&Act_Login.x=%d&Act_Login.y=%d",		
 	-- This is the capture to get the session ID from the login-done webpage
 	sessionC = "/cgi%-bin/webmail%.cgi%?ID=([a-zA-Z0-9_%-]+)&",
 	-- This is the mlex expression to interpret the message list page.
@@ -223,8 +224,9 @@ function libero_login()
 		user = user .. "@" .. domain
 	end
 	local x,y = math.mod(os.time(),16),math.mod(os.time()*2,16)
-	local uri = string.format(libero_string.login,
-		popnumber,site,domain,user,password,choice,x,y)
+	local uri = string.format(libero_string.login_url,popnumber,site)
+	local post= string.format(libero_string.login_post,
+	            domain,user,password,choice,x,y)
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()
@@ -243,7 +245,7 @@ function libero_login()
 		internal_state,"session_id",libero_string.sessionC)
 	local check_f = support.check_fail
 	local retrive_f = support.retry_n(
-		3,support.do_retrive(internal_state.b,uri))
+		3,support.do_post(internal_state.b,uri,post))
 
 	-- maybe implement a do_once
 	if not support.do_until(retrive_f,check_f,extract_f) then

@@ -1,3 +1,5 @@
+- libero_login now made with a POST, since some proxy logs in clear the GET
+parameters. Thanks Roberto F.
 - added --no-icon win32 flag
 - fissato uninstall win32
 27/09/2004 0.0.18 fix release

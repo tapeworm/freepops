@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 TODO=$1
 if [ -z "$TODO" ]; then TODO="woody sarge sid"; fi
 
@@ -62,7 +64,7 @@ dpkg-source -b freepops-*
 function prepare_tgz(){
 make realclean
 ./configure.sh linux
-make -C buildfactory -C dist-deb tgz-dist
+make -C buildfactory -C dist-deb 
 cp dist-deb/freepops/* $1
 }
 

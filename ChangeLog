@@ -1,3 +1,19 @@
+23/10/2004 0.0.20
+- aol.lua: Changed the references to netscape.com to netscape.net (russell822)
+- es: fixed news namespace (alessiofender)
+- es: fixed rss (gareuselesinge)
+- hotmail.lua: Added a buffer to better escape &...; chars (russell822)
+- yahoo.lua: a tweak on the new line substitution (russell822)
+- es: *** empty log message *** (lisar314)
+- README.FPM.en.txt, README.FPM.it.txt, freepopsd.vbs: Versione 1.1 dello script FreePOPs & Mailv. 1.1 Corretto un bug che non faceva funzionare lo script quando il client di default era indicato nel registro di windows senza le virgolette (") (p3g4sus)
+- es: I have finished the traslation of the tutorial into Spanish. (lisar314)
+- aol.lua: fix (gareuselesinge)
+- es: Incredimail in Spanish (lisar314)
+- yahoo.lua: Fixed a bug with markunread (russell822)
+- hotmail.lua: Fixed regexp for mac (russell822)
+- README.FPM.en.txt, README.FPM.it.txt, freepopsd.vbs: Versione 1.3 di FreePOPs & Mail:v. 1.3 Ora lo script non legge più ogni volta il percorso del mail client da avviare dal registro di Windows. Legge il registro (e crea il file di configurazione) solo quando non esiste il file "fpm.ini". Quando questo esiste, il mail client da avviare viene letto al suo interno. Questo permette di personalizzare il mail client da avviare. (p3g4sus)
+- es: news (lisar314)
+- es: News (lisar314)
 - fixed mimer.lua bug
 - added close_ch.sh script to automatically build the ChageLog from contributors
 - fixed manual for --no-icon (thanks pegasus)

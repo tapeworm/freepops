@@ -26,19 +26,18 @@ Maybe fake reports (bugs do not appear true)
  * tin multipage (seems to work, but the parsing is ugly)
  * they say tin.it mail with a pdf attached are mangled (pdf unreadable),
    but it doesn't seem true to me (checked sending and receiving one pdf)
+ * fix -l (it should work... maybe they were using a chrooted 
+   and nobody.nogroup daemon?)
 
 For next version or later (in random order, lucky first)
 ========================================================
 
- * fix -l
  * libero TOP bug reloaded: 
    http://freepops.diludovico.it/index.php?showtopic=1542&st=0&#entry8974
  * they say that win32 without -w can crash
  * link the rss feed in the homepage
  * create the -dev ML
  * curl_info
- * add a LUA_CONTRIB dir that is scanned for plugins 
-   (avoid hacking the config.lua)
  * fix gmail addressbook exportation
  * fix gmail TOP 1 9999
  * fix gmail 695 tonumber(nil)
@@ -59,7 +58,6 @@ For next version or later (in random order, lucky first)
  * OWA plugin, maybe we ned an owa account to test the plugin on
    http://freepops.diludovico.it/index.php?showtopic=1419&st=0&#entry8202
  * lycos co uk login
- * lycos.com
  * excite.com
  * some fixes to the win32 installer. 
    (http://freepops.diludovico.it/index.php?showtopic=1428)

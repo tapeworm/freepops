@@ -100,9 +100,11 @@ else
 ifeq "$(OS)" "Darwin"
 	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
 		-lgetopt -lm \
-	 	-lpthread -L/sw/lib -lexpat \
-	 	-lcurl -lz -lssl \
-		-lcrypto -ldl -lssl -lcrypto -lz 
+	 	-lpthread -L/usr/lib /usr/local/lib/libexpat.a \
+		/usr/local/lib/libcurl.a /usr/local/lib/libdl.a \
+		-lz -lssl \
+		-lcrypto
+#		-lcrypto -ldl -lssl -lcrypto -lz 
 else
 ifeq "$(OS)" "OpenBSD"
 	LIBSTOLINK+= getopt

@@ -50,10 +50,10 @@ OS=Linux
 set_osx() {
 set_default
 OS=Darwin
-CFLAGS="$CFLAGS -I/sw/include/ -DMACOSX"
-HCFLAGS="$HCFLAGS -I/sw/include/ -DMACOSX"
-LDFLAGS="$LDFLAGS -L/usr/lib -L/sw/lib/ -bind_at_load -framework Carbon"
-HLDFLAGS="$HLDFLAGS -L/usr/lib -L/sw/lib/ -bind_at_load"
+CFLAGS="$CFLAGS -DMACOSX"
+HCFLAGS="$HCFLAGS -DMACOSX"
+LDFLAGS="$LDFLAGS -L/usr/lib -bind_at_load -framework Carbon"
+HLDFLAGS="$HLDFLAGS -L/usr/lib -bind_at_load"
 }
 
 set_fbsd() {

@@ -1,6 +1,9 @@
 #LyX 1.3 created this file. For more info see http://www.lyx.org/
 \lyxformat 221
 \textclass article
+\begin_preamble
+\usepackage{graphicx}
+\end_preamble
 \language english
 \inputencoding auto
 \fontscheme bookman
@@ -22,16 +25,29 @@
 \quotes_times 2
 \papercolumns 1
 \papersides 1
-\paperpagestyle default
+\paperpagestyle fancy
 
 \layout Title
 
-FreePOPs manual
+FreePOPs Manual
 \layout Standard
 
 
 \begin_inset LatexCommand \tableofcontents{}
 
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+newpage
 \end_inset 
 
 
@@ -46,24 +62,105 @@ FreePOPs is a POP3 daemon plus a LUA interpreter and some extra libraries
  actions on the supported web-mails, but is really more flexible.
  For example there is a plugin to read news from a website as if they were
  mails in mailbox.
- 
+ You can easily extend FreePOPs on the fly, without even restarting it.
+ You can add a plugin or modify an existing one simply changing the script
+ file since the plugins are written in LUA and are interpreted on the fly.
 \newline 
-FreePOPs is useful in some situations:
-\layout Enumerate
+FreePOPs can be useful in some situations, here we give the most obvious
+ ones:
+\layout Itemize
 
 You are behind a firewall that closes the 110 port but you need to read
  your mail and the web-mail of you mail provider sucks.
-\layout Enumerate
+\layout Itemize
 
 Your mail provider does not allow you to access your mailbox with POP3 protocol,
  but only by the web-mail service.
-\layout Enumerate
+\layout Itemize
 
 You prefer looking at your mailbox instead of a browsing some websites news.
-\layout Enumerate
+\layout Itemize
 
 You have to develop a pop3 server in less than a week and you want it to
  be reasonably fast and not so memory consuming.
+\layout Itemize
+
+You are not a C hacker, but you want to benefit from a fast POP3 server
+ frontend written in C and you want not to loose a month in writing the
+ backend in C.
+ LUA is a really simple and tiny language, one week is enough to learn it
+ in way that allows you to use it productively.
+\layout Section
+
+Features
+\layout Standard
+
+FreePOPs is the only software I know with these features:
+\layout Itemize
+
+POP3 server RFC compliant (not full featured but compliant).
+\layout Itemize
+
+Portable (written in C and LUA that is written in C, so everything is written
+ in the most portable language around the world).
+\layout Itemize
+
+Small (in the sense of resources usage) and reasonably fast.
+\layout Itemize
+
+Extremely extensible on the fly using a simple and powerful language.
+\layout Itemize
+
+Pretty documented.
+\layout Itemize
+
+Released under the GNU/GPL license (this means FreePOPs is Free Software)
+\layout Section
+
+History
+\layout Standard
+
+FreePOPs is not born from scratch.
+ A similar (only in the main usage situation) project is LiberoPOPs.
+ The ancestor of FreePOPs is completely written in C for some non interesting
+ reasons.
+ LiberoPOPs supports 
+\begin_inset Quotes eld
+\end_inset 
+
+plugins
+\begin_inset Quotes erd
+\end_inset 
+
+ but in more static and complex way.
+ The POP3 server frontend can be attached to a backend written in C.
+ This means you have to recompile and restart LiberoPOPs each time to change
+ a line in a plugin.
+ Another interesting point is that LiberPOPs was created from scratch in
+ really short amount of time (you have to be Italian and use a @libero.it
+ mail address to understand why), this means it was born with a lot of bugs
+ and FIX-ME in the code.
+ The project had a quick success, since everybody need it.
+ This means we had a lot of users.
+ In the opensource (and also Linux) philosophy you have to release frequently
+ and this was exactly what we had to do.
+ We used to release every 2 days.
+ But we were working not with Unix users, nor hackers, mostly Win32 users.
+ I've not really understood why the considered a boring task to read a 3
+ pages tutorial and a 1 page F.A.Q.
+ but I've realized that the are lazy-bored of updating the software every
+ 2 days.
+ The ugly Win-world has taught them that software auto-updates, auto-install
+ and even auto-code-itself probably.
+ We tried to solve this putting out of the C engine the most of the change-prone
+ code, but this was really hard since C is not thought to do this.
+ After LiberoPOPs had stabilized we started to think how to solve this.
+ A scripting/interpreted embedded language seemed me a nice choice and after
+ a long search on the net an on the newsgroup of my university I found LUA.
+ This is not the place for telling the world how good is this small language
+ and I'll not talk about it.
+ Integrating the LUA interpreter in LiberoPOPs was not so hard and FreePOPs
+ is the result.
 \layout Section
 
 FreePOPs configuration file
@@ -201,4 +298,24 @@ Reproduce the bug
 
 Send to the developers the log, plus any other info like your system type
  and how to reproduce this bug.
+\layout Section
+
+Authors
+\layout Standard
+
+This manual has been written by Enico Tassi <gareuselesinge@users.sourceforge.net>
+ and revised by ...
+\newline 
+FreePOPs is developed by:
+\layout Itemize
+
+Enico Tassi <gareuselesinge@users.sourceforge.net>
+\layout Section
+
+Thanks
+\layout Standard
+
+Special thanks goes to the users who tested the software, to the hackers
+ who made it possible to have a free and reliable devolpment environment
+ as the Debian GNU/Linux system.
 \the_end

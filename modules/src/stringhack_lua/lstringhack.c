@@ -149,7 +149,7 @@ if(n>0)
 	{
 	int i,o;
 	int len = strlen(buff);
-	int n1=n; //DELETE ME!!!!
+	//int n1=n; //DELETE ME!!!!
 	rc = calloc(len + 1 + n,sizeof(char));
 	for(i=0,o=0;n>0;i++,o++)
 		{

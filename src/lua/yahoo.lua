@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9"
+PLUGIN_VERSION = "0.1.0"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -268,6 +268,7 @@ function loginYahoo()
   -- browser:verbose_mode()
 
   if internalState.bNoSSL == true then
+    log.dbg("Yahoo: SSL login will not be used.")
     SSLEnabled = false
   end
 
@@ -586,13 +587,15 @@ function user(pstate, username)
   -- that we pull as unread when done.
   --
   local val = (freepops.MODULE_ARGS or {}).markunread or 0
-  if val == 1 then
-    interalState.bMarkMsgAsUnread = true
+  if val == "1" then
+    log.dbg("Yahoo: All messages pulled will be marked unread.")
+    internalState.bMarkMsgAsUnread = true
   end
 
-  local val = (freepops.MODULE_ARGS or {}).nossl or 0
-  if val == 1 then
-    interalState.bNoSSL = true
+  val = (freepops.MODULE_ARGS or {}).nossl or 0
+  if val == "1" then
+    log.dbg("Yahoo: SSL is disabled.")
+    internalState.bNoSSL = true
   end
 
   return POPSERVER_ERR_OK

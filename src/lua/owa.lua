@@ -155,7 +155,7 @@ function pass(pstate,password)
 		local c,err = loadstring(s)
 		if not c then
 			log.error_print("Unable to load saved session: "..err)
-			return libero_login()
+			return owa_login()
 		end
 		
 		-- exec the code loaded from the session string

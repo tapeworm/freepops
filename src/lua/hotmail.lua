@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -21,7 +21,14 @@ PLUGIN_PARAMETERS = {
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
 		en=[[The folder you want to interact with. Default is Inbox, other values are: Junk, Trash, Draft, Sent.]]}
-	}
+	},
+	{name = "emptytrash", description = {
+		en = [[
+Parameter is used to force the plugin to empty the trash when it is done
+pulling messages.  Set the value to 1.]]
+		}	
+	},
+
 }
 PLUGIN_DESCRIPTIONS = {
 	it=[[
@@ -92,7 +99,7 @@ local globals = {
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
-  strMsgListNextPagePattern = '<a href="[^"]+" title="(Next Page)">',
+  strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
@@ -110,12 +117,13 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s&sort=Date",
+  strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s",
   strCmdMsgListNextPage = "&page=%d&wo=",
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=&s&a=&s",
   strCmdMsgViewRaw = "&raw=0",
+  strCmdEmptyTrash = "http://%s/cgi-bin/dofolders?_HMaction=DoEmpty&curmbox=F000000004&a=%s&i=F000000004",
 }
 
 -- ************************************************************************** --
@@ -132,7 +140,8 @@ internalState = {
   strImgServer = nil,
   strDomain = nil,
   strCrumb = nil,
-  strMBox = nil
+  strMBox = nil,
+  bEmptyTrash = false,
 }
 
 -- ************************************************************************** --
@@ -445,6 +454,15 @@ function user(pstate, username)
   internalState.strDomain = domain
   internalState.strUser = user
 
+  -- If the flag emptyTrash is set to 1 ,
+  -- the trash will be emptied on 'quit'
+  --
+  local val = (freepops.MODULE_ARGS or {}).emptytrash or 0
+  if val == "1" then
+    log.dbg("Hotmail: Trash folder will be emptied on exit.")
+    internalState.bEmptyTrash = true
+  end
+
   -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
@@ -600,6 +618,22 @@ function quit_update(pstate)
       log.error_print("Unable to delete messages.\n")
     end
   end
+
+  -- Empty the trash
+  --
+  if internalState.bEmptyTrash then
+    if internalState.strCrumb ~= '' then
+      cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer,internalState.strCrumb)
+      log.dbg("Sending Empty Trash URL: ".. cmdUrl .."\n")
+      local body, err = browser:get_uri(cmdUrl)
+      if not body or err then
+        log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
+      end
+    else
+      log.error_print("Cannot empty trash - crumb not found\n")
+    end
+  end
+
 
   -- Save and then Free up the session
   --

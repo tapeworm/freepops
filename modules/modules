@@ -29,7 +29,9 @@ MODULES-Common= lua		\
 		mimer_lua	\
 		commonimpl_lua	\
 		regularexp_lua 	\
-		luadoc
+		luaexpat	\
+		luadoc		\
+		luafull
 	
 MODULES-Windows-pre=regex pthread 
 MODULES-Windows-post=winsystray

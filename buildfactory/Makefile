@@ -28,8 +28,6 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
-	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl_nossl-3.dll \
-		_win_/freepops/libcurl-3.dll
 	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/modules/include/*.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/
@@ -42,29 +40,23 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)unix2dos _win_/freepops/COPYING.txt
 	$(H)unix2dos _win_/freepops/ChangeLog.txt
 
-	$(H)/usr/local/cross-tools/i386-mingw32msvc/bin/strip \
-		_win_/freepops/*.exe _win_/freepops/*.dll
-
 	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \
 		_win_/freepops/freepops.nsi
 
 	$(H)xpm2wico -f freepops-setup.xpm _win_/freepops/freepops-setup.ico
 	$(H)xpm2wico -f freepops-remove.xpm _win_/freepops/freepops-remove.ico
-
-	$(H)cd _win_/freepops/;\
-		wine /usr/local/NSIS/makensis.exe freepops.nsi
-	
-	$(H)mkdir ../dist-win || true
-	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe ../dist-win
 	
 	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl-3.dll \
 		_win_/freepops/libcurl-3.dll
+	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/expat.dll \
+		_win_/freepops/expat.dll
 	$(H)/usr/local/cross-tools/i386-mingw32msvc/bin/strip \
 		_win_/freepops/*.exe _win_/freepops/*.dll
 	$(H)cd _win_/freepops/;\
 		wine /usr/local/NSIS/makensis.exe freepops.nsi
-	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe \
-		../dist-win/FreePOPs-$(VERSION)-SSL.exe
+
+	$(H)mkdir ../dist-win || true
+	$(H)cp _win_/freepops/FreePOPs-$(VERSION).exe ../dist-win
 	
 	$(H)rm -r _win_
 

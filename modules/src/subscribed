@@ -33,6 +33,8 @@ MK_TEMPLATE=	luabind \
 MK_TEMPL_CTRIB=	lua \
 		pthread \
 		luadoc \
-		getdate 
+		getdate \
+		luaexpat
 
-MK_CUSTOM=	curl_lua 
+MK_CUSTOM=	curl_lua \
+		luafull

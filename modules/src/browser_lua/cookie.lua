@@ -35,7 +35,7 @@ Private.cookie_av={
 
 -- some captures for the cookie fields
 Private.value = {}
-Private.value.token='=%s*("?[%w%.%_%-%%%/%+%-%*%|%=&@:!$%?]*"?)'
+Private.value.token='=%s*("?[^";]*"?)'
 Private.value.name="^(%s*[%w%_]+)"
 Private.value.domain='=%s*("?%.[%w%.%_%-%%%/%+%-%*]+"?)'
 Private.value.expires="=%s*(%a+%s*,%s*[%w%:%s%-]+)"

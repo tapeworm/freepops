@@ -23,28 +23,37 @@ PLUGIN_NAME = "Lycos.IT"
 -- C, E, G are postfix respectively to Captures (lua string pcre-style 
 -- expressions), mlex expressions, mlex get expressions.
 -- 
+local lycos_mbox_id = {
+	inbox = 5,
+	spam = 13,
+	altro = 16,
+	sent = 6,
+	dust = 7,
+	draft = 12,
+}
+
 local lycos_string = {
 	-- The uri the browser uses when you click the "login" button
-	login = "http://login.lycos.it/lsu/lsu_login.php",
-	login_post= "membername=%s&passtxt=******&password=%s&product=email&"..
-		"service=MAIL&redirect=http://mail.lycos.it/&"..
-		"target_url=1&fail_url=&"..
-		"format=&redir_fail=http://www.lycos.it/",
-	login_failC="(Spiacente, ma questo Alias non esiste)",
+	prelogin = "http://secure.mail.lycos.it/",
+	login = "http://secure.mail.lycos.it/lsu/signin/action.jsp",
+	login_post = "login=%s&password=%s&act=30",
+
+	login_failC="(warning.gif.*la password digitata.*errata)",
 	session_errorC = "(http://[^/]+/Europe/Bin/Utils/error.jsp)",
-	loginC = '<frame.*src="([^"]+)"',
+	loginC = '<frame[^>]*src="([^"]+)"[^>]*target="_top"',
 	-- mesage list mlex
-	statE = '.*<div class="whrnopadding">.*</div>.*<div>.*<div>[.*]{img}.*</div>.*<div>.*</div>.*<div>.*</div>.*<div>[.*]{img}.*</div>.*<div class="w15L">.*<input.*name.*CHECK_>.*</div>.*</div>',
-	statG = 'O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}X<O>O<O>O<X>O<O>O<O>',
+	stat = '<input%s*class="lstchk"%s*value="(%d+)"'..
+		'%s*name="chkitem"%s*type="checkbox">',
 	-- The uri for the first page with the list of messages
-	first = "http://%s/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp?FOLDERID=5&",
+	first = "http://%s/app/msg/mail/list.jsp?id=%d",
 	-- The uri to get the next page of messages
-	nextC ='<a href="(?FOLDERID=5&MYNEXT=%d+&MYSORT=%-1)">Successivo</a>',
-	next = "http://%s/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp",
+	nextC ='(http://images.lycos.europe.com/m/comc/lycos/nav/R.gif)',
+	next = "http://%s/app/msg/mail/list.jsp?id=%d&f=%d",
 
 	-- The capture to understand if the session ended
 	timeoutC = '(FIXME)',
 	-- The uri to save a message (read download the message)
+	save = "http://%s/app/msg/mail/read/view.jsp?id=%d",
 	save = "http://%s/Europe/Bin/Mail/Features/MailContent/mailContent.jsp?MESSAGEID=%d&PARENTID=5&MYSORT=-1",
 	save_header = "http://%s/Europe/Bin/Mail/Features/MailContent/headerContent.jsp?MESSAGEID=%d",
 	-- The uri to delete some messages
@@ -130,26 +139,6 @@ function key()
 		(internal_state.password or "")
 end
 
---------------------------------------------------------------------------------
--- Login to the libero website
---
-function mk_cookie(name,val,expires,path,domain,secure)
-	local s = name .. "=" .. curl.escape(val)
-	if expires then
-		s = s .. ";expires=" .. os.date("%c",expires)
-	end
-	if path then
-		s = s .. ";path=" .. path
-	end
-	if domain then
-		s = s .. ";domain=" .. domain
-	end
-	if secure then
-		s = s .. ";secure"
-	end
-	return s
-end
-
 function lycos_login()
 	if internal_state.login_done then
 		return POPSERVER_ERR_OK
@@ -166,13 +155,10 @@ function lycos_login()
 	internal_state.b = browser.new()
 
 	local b = internal_state.b
---	b:verbose_mode()
+	--b:verbose_mode()
 
-	local bisquit = mk_cookie("logged_in","true",os.time() + 60 * 60
-	,"/",".lycos.it")
-
-	b:add_cookie("lycos.it",bisquit)
-
+	b:get_uri(lycos_string.prelogin)
+	
 	local extract_f = support.do_extract(
 		internal_state,"login_url",lycos_string.loginC)
 	local check_f = support.check_fail
@@ -188,25 +174,6 @@ function lycos_login()
 		log.error_print("unable to get the first loginC")
 		return POPSERVER_ERR_AUTH
 	end
-
-	local uri = "http://" .. b:wherearewe() .. internal_state.login_url
-
-	local extract_f = support.do_extract(
-		internal_state,"login_url",lycos_string.loginC)
-	local check_f = support.check_fail
-	local retrive_f = support.retry_n(
-		3,support.do_post(internal_state.b,uri,post))
-
-	if not support.do_until(retrive_f,check_f,extract_f) then
-		log.error_print("Login failed\n")
-		return POPSERVER_ERR_AUTH
-	end
-
-	if internal_state.login_url == nil then
-		log.error_print("unable to get the second loginC")
-		return POPSERVER_ERR_AUTH
-	end
-
 	local uri = "http://" .. b:wherearewe() .. internal_state.login_url
 
 	local body,err = b:get_uri(uri)
@@ -215,7 +182,7 @@ function lycos_login()
 		log.error_print("login falied, unable to get the mail site")
 		return POPSERVER_ERR_AUTH
 	end
-
+	b:show()
 	-- save all the computed data
 	internal_state.login_done = true
 	
@@ -223,6 +190,8 @@ function lycos_login()
 	log.say("Session started for " .. internal_state.name .. "@" .. 
 		internal_state.domain .. "\n")
 
+	internal_state.folder=5
+		
 	return POPSERVER_ERR_OK
 end
 
@@ -456,20 +425,21 @@ function stat(pstate)
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri = string.format(lycos_string.first,b:wherearewe())
+	local uri = string.format(
+		lycos_string.first,b:wherearewe(),internal_state.folder)
 	
 	-- The action for do_until
 	--
 	-- uses mlex to extract all the messages uidl and size
 	local function action_f (s) 
-		-- calls match on the page s, with the mlexpressions
-		-- statE and statG
-		local x = mlex.match(s,lycos_string.statE,lycos_string.statG)
-		--x:print()
-
-		-- the number of results
-		local n = x:count()
-
+		local mails = {}
+		string.gsub(s,lycos_string.stat,
+			function(uid)
+				table.insert(mails,uid) 
+			end)
+		
+		local n = table.getn(mails)
+		
 		if n == 0 then
 			return true,nil
 		end 
@@ -482,26 +452,11 @@ function stat(pstate)
 
 		-- gets all the results and puts them in the popstate structure
 		for i = 1,n do
-			local uidl = x:get (1,i-1) 
-			local size = x:get (0,i-1)
-
-			-- arrange message size
-			local k,m = nil,nil
-			_,_,k = string.find(size,"([Kk][Bb])")
-			_,_,m = string.find(size,"([Mm][Bb])")
-			_,_,size = string.find(size,"([%.%d]+)")
-			_,_,uidl = string.find(uidl,'CHECK_([%d]+)')
+			local uidl = mails[i] 
+			local size = 1
 
 			if not uidl or not size then
 				return nil,"Unable to parse page"
-			end
-
-			-- arrange size
-			size = math.max(tonumber(size),2)
-			if k ~= nil then
-				size = size * 1024
-			elseif m ~= nil then
-				size = size * 1024 * 1024
 			end
 
 			-- set it
@@ -517,8 +472,11 @@ function stat(pstate)
 	local function check_f (s) 
 		local _,_,nex = string.find(s,lycos_string.nextC)
 		if nex ~= nil then
-			uri = string.format(lycos_string.next,b:wherearewe())..
-				nex
+			uri = string.format(
+				lycos_string.next,
+				b:wherearewe(),
+				internal_state.folder,
+				get_popstate_nummesg(pstate))
 			-- continue the loop
 			return false
 		else
@@ -534,6 +492,13 @@ function stat(pstate)
 			return f,err
 		end
 
+		--local _,_,real_uri = string.find(f,lycos_string.loginC)
+
+		--local f,err = b:get_uri("http://" .. b:wherearewe() .. real_uri)
+		--if f == nil then
+		--	return f,err
+		--end
+
 		local _,_,c = string.find(f,lycos_string.session_errorC)
 		if c ~= nil then
 			internal_state.login_done = nil
@@ -547,7 +512,10 @@ function stat(pstate)
 			b = internal_state.b
 			-- popserver has not changed
 			
-			uri = string.format(lycos_string.first,b:wherearewe())		
+			uri = string.format(
+				lycos_string.first,
+				b:wherearewe(),
+				internal_state.folder)		
 			return b:get_uri(uri)
 		end
 		

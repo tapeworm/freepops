@@ -43,6 +43,9 @@ ifeq "$(CURL_LD_FLAGS)" ""
 	CURL_LD_FLAGS= -lcurl
 endif
 
+EXPAT_LD_FLAGS= -lexpat
+
+
 BINARY=freepopsd$(EXEEXTENSION)
 
 LIBS=		regularexp_lua	\
@@ -72,6 +75,7 @@ LIBS=		regularexp_lua	\
                 regularexp      \
                 oscompatibility \
 		luabind		\
+		luaexpat	\
                 luay            \
                 lua             \
                 lualib          
@@ -89,30 +93,30 @@ ifeq "$(OS)" "Windows"
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
 		-lregex -lm -lcurl -lmingw32 -lwsock32 \
-			-lpthread -lgdi32 -mwindows
+			-lpthread -lexpat -lgdi32 -mwindows
 
 else
 ifeq "$(OS)" "Darwin"
 	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm \
-		-lpthread -L/usr/lib -lcurl -arch ppc -lz -lssl -lcrypto
+		-lpthread -L/usr/lib -lexpat -lcurl -arch ppc -lz -lssl -lcrypto
 else
 ifeq "$(OS)" "OpenBSD"
 	LIBSTOLINK+= getopt
 	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
-		$(CURL_LD_FLAGS)
+		$(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 else
 ifeq "$(OS)" "FreeBSD"
         LIBSTOLINK+= getopt     
         LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
-                $(CURL_LD_FLAGS)
+                $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 else
 ifeq "$(OS)" "Cygwin"
 	LDFLAGS= -L ../modules/lib \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
-		-lwsock32 -lgdi32   -lcygwin
+		-lwsock32 -lexpat -lgdi32   -lcygwin
 else	
 	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
-		-ldl -lm -lpthread -rdynamic $(CURL_LD_FLAGS)
+		-ldl -lm -lpthread -rdynamic $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 
 endif	
 endif

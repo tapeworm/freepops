@@ -37,6 +37,7 @@
 #include "psock_lua.h"
 #include "base64_lua.h"
 #include "regularexp_lua.h"
+#include "lxplib.h"
 
 #include "log.h"
 #define LOG_ZONE "ENGINE"
@@ -222,6 +223,7 @@ luaopen_psock(tmp->l);
 luaopen_base64(tmp->l);
 luaopen_getdate(tmp->l);
 luaopen_regularexp(tmp->l);
+luaopen_lxp(tmp->l);
 luay_emptystack(tmp->l);
 
 //init lua module

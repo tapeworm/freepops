@@ -26,7 +26,8 @@ help:
 	$(H)make all
 	
 
-all : modules src doc/manual.pdf doc/manual-it.pdf
+all : modules src
+#doc/manual.pdf doc/manual-it.pdf
 
 clean: 
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
@@ -105,16 +106,16 @@ src: config
 	$(H)echo "building freepopsd"
 	$(H)make -C src all CONFIG=$$PWD/config PREFIX=$(PREFIX)
 
-doc/manual.ps:doc/manual.lyx
+doc/manual.ps: doc/manual.lyx
 	cd doc; lyx -e ps manual.lyx
 
-doc/manual.pdf:doc/manual.ps
+doc/manual.pdf: doc/manual.ps
 	cd doc; ps2pdf manual.ps
 
-doc/manual-it.ps:doc/manual-it.lyx
+doc/manual-it.ps: doc/manual-it.lyx
 	cd doc; lyx -e ps manual-it.lyx
 	
-doc/manual-it.pdf:doc/manual-it.ps
+doc/manual-it.pdf: doc/manual-it.ps
 	cd doc; ps2pdf manual-it.ps	
 
 config:

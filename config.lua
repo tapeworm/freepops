@@ -94,6 +94,7 @@ freepops.MODULES_MAP["tre.it"]		= {name="tre.lua"}
 
 -- supereva.it
 freepops.MODULES_MAP["supereva.it"]	= {name="supereva.lua"}
+freepops.MODULES_MAP["supereva.com"]	= {name="supereva.lua"}
 freepops.MODULES_MAP["freemail.it"]	= {name="supereva.lua"}
 freepops.MODULES_MAP["freeweb.org"]	= {name="supereva.lua"}
 freepops.MODULES_MAP["mybox.it"]	= {name="supereva.lua"}

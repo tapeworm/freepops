@@ -1,3 +1,18 @@
+/******************************************************************************
+ * $Id$
+ * This file is part of FreePOPs (http://freepops.sf.net)                     *
+ * This file is distributed under the terms of GNU GPL license.               *
+ ******************************************************************************/
+
+/******************************************************************************
+ * File description:
+ *	FreePOPs Win32 service daemon
+ * Notes:
+ *	really inspired by http://www.muukka.net/programming/service.html
+ * Authors:
+ * 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
+ ******************************************************************************/
+
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -307,6 +322,7 @@ if ( service_control_manager != NULL ) {
 			else
 				fprintf(stderr,"Unable to uninstall."
 						" Service must be stopped\n");
+				die();
 		}
 		CloseServiceHandle( service );
 	} else {
@@ -327,15 +343,15 @@ int _tmain( int argc, TCHAR* argv[] ) {
 service_name = TEXT("FreePOPs");
 	
 if ( argc > 1 && lstrcmpi( argv[1], TEXT("install") ) == 0 ) {
-	char dummy;
+	char dummy[10];
 	install_service(argc - 2,&argv[2]);
-	printf("Service installed - press enter to continue.");
-	fgets(&dummy,1,stdin);
+	printf("\nService installed - press enter to continue...\n");
+	fgets(dummy,10,stdin);
 } else if ( argc > 1 && lstrcmpi( argv[1], TEXT("uninstall") ) == 0 ) {
-	char dummy;
+	char dummy[10];
 	uninstall_service();
-	printf("Service removed - press enter to continue.");
-	fgets(&dummy,1,stdin);
+	printf("\nService removed - press enter to continue...\n");
+	fgets(dummy,10,stdin);
 } else if ( argc == 1) {
 	run_service();
 } else {

@@ -1604,6 +1604,17 @@ Dopo aver creato un prototipo, dovreste leggere un plugin completo.
 
 Ricordate che questo software ha un forum ufficiale (HTTP://freepops.diludovico.it
 ) e degli autori a cui potete chiedere aiuto.
+\layout Enumerate
+
+FreePOPs è distribuito sotto licenza GNU/GPL.
+ Questo significa che ogni software che fa uso del codice di FreePOPs deve
+ essere rilasciato sotto la stessa licenza.
+ Questo include i plugin.
+ Per maggiori informazioni leggete il testo della licenza nel file 
+\family typewriter 
+COPYING
+\family default 
+ incluso o su HTTP://www.gnu.org/licenses/gpl.html.
 \layout Subsection
 
 Panoramica sui plugin

@@ -1,9 +1,8 @@
 legeng: more + means more done! (from 1 to 7)
 
-next release 0.0.11
+next release 0.0.12
 	plugin (superva,freepass,hotmail,yahoo,excite,gmail)
 	problemi in lycos(magari sistemare il mimer decentemente)
 	problemi login tin(aspetta ethereal)
-	sostituire le faq sul sito con quelle nei manuali
-	aggiungere sul sito due righe su gmail.lua e specificare l'autore
-	aggiungere tutorial su web e se necessario replicarli sul manuale (quelli di liberopops)
+	sostituire le faq sul sito con quelle nei manuali (gia' aggiornate)
+	aggiungere tutorial di liberopops su web e se necessario replicarli sul manuale

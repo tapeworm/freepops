@@ -1,8 +1,8 @@
 t = 	{
 	-- name is reserved and is the tag name
 	name="tag1",
-	-- attributs if different from name
-	param1="val1",
+	-- attributes if different from name
+	param1="val1'\"&",
 	param2="val2",
 		-- a son
 		{
@@ -43,8 +43,6 @@ t = 	{
 
 	}
 
--- XXX la chiamo solo su data ma non sui param, va bene? XXX
--- si dovrebbe usare per controllare anche i nomi dei parametri	
 function escape(s)
 	return (string.gsub(s,[[([><"'&])]],function(x)
 		if x == ">" then
@@ -53,7 +51,6 @@ function escape(s)
 			return "&lt;"
 		elseif x == '"' then
 			return "&quot;"
-		-- XXX controlla cosa e' apos XXX
 		elseif x == "'" then
 			return "&apos;"
 		elseif x == "&" then
@@ -87,7 +84,7 @@ function table2xml_aux(t,oc,indent)
 		local pt = {}
 		table.foreach(t,function(k,v) 
 			if k ~= "name" and type(k) ~= "number" then 
-				table.insert(pt,k..'="'..escape(v)..'" ') 
+				table.insert(pt,' '..k..'="'..escape(v)..'"') 
 			end 
 		end)
 		local noson = true
@@ -98,10 +95,10 @@ function table2xml_aux(t,oc,indent)
 			end
 		end)
 		if noson then
-			oc:write(c_p.."<"..name.." "..table.concat(pt).."/>")
+			oc:write(c_p.."<"..name..table.concat(pt).." />")
 		else
 			local no_cp = false
-			oc:write(c_p.."<"..name.." "..table.concat(pt)..">")
+			oc:write(c_p.."<"..name..table.concat(pt)..">")
 			table.foreachi(t,function(k,v)
 				if no_cp == true then
 					print("double data")
@@ -118,9 +115,9 @@ function table2xml_aux(t,oc,indent)
 				end
 			end)
 			if no_cp then
-				oc:write("</"..name.." >")
+				oc:write("</"..name..">")
 			else
-				oc:write(c_p.."</"..name.." >")
+				oc:write(c_p.."</"..name..">")
 			end
 		end
 		oc:write('\n')
@@ -128,7 +125,7 @@ function table2xml_aux(t,oc,indent)
 end
 
 function table2xml(t,oc)
-	oc:write('<?xml version="1.0" encoding="iso-8859-1" ?>\n')
+	oc:write('<?xml version="1.0" encoding="iso-8859-1" ?>\n\n')
 	table2xml_aux(t,oc,0)
 end
 

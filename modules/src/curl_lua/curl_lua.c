@@ -36,9 +36,10 @@
 
 /* think more if this means unicity... maybe store in the bag some pointers */
 /* this need that a has size > bigger_offset */
-#define CURL_WRITECB_OFF(a)	((void*)(((unsigned int)a)+0))
-#define CURL_READCB_OFF(a)	((void*)(((unsigned int)a)+1))
-#define CURL_HEADCB_OFF(a)	((void*)(((unsigned int)a)+2))
+
+#define CURL_WRITECB_OFF(a)	((void*)(((__UWORD_TYPE)a)+0))
+#define CURL_READCB_OFF(a)	((void*)(((__UWORD_TYPE)a)+1))
+#define CURL_HEADCB_OFF(a)	((void*)(((__UWORD_TYPE)a)+2))
 
 /* to check the curl version on the fly, this is a v >= LIBCURL_VERSION */
 #define CURL_NEWER(M,m,p) ((p + (m << 8) + (M << 16)) <= LIBCURL_VERSION_NUM)
@@ -679,6 +680,8 @@ while( lua_next(L,3) != 0 ){
 					L_error(L,
 					 "incomplete FORM, value missed");
 				forms[position].value = (char*)
+					(__UWORD_TYPE) 
+					//not sure this makes sense
 					luaL_checkint(L,7);
 			}break;
 						   

@@ -318,7 +318,7 @@ return sd;
 int sockinfo(int sd, char *info)
 {
     struct sockaddr_in sin;
-    int len = sizeof(sin);
+    socklen_t len = sizeof(sin);
     memset(&sin, 0, sizeof(sin));
     if (getsockname(sd, (struct sockaddr *) &sin, &len) == -1) {
 		sockerror("sockinfo");

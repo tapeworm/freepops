@@ -35,7 +35,7 @@ static int lmd5(lua_State* L){
 
 	MD5_Init(&C);
         MD5_Update(&C, (const void *)data,(unsigned long) len);
-        MD5_Final(md, &C);
+        MD5_Final((unsigned char *)md, &C);
 
 	lua_pushlstring(L,md,MD5_DIGEST_LENGTH);
 	return 1;
@@ -45,25 +45,30 @@ static int lhmac(lua_State* L){
 	HMAC_CTX C;
 	const char *data;
 	const char *key;
-	size_t len;
+	size_t len_sizet;
+	unsigned int len_uint;
 	size_t klen;
 	const EVP_MD *evp;
 	char md[EVP_MAX_MD_SIZE];
 	
-	data = luaL_checklstring(L,1,&len);
+	data = luaL_checklstring(L,1,&len_sizet);
 	key = luaL_checklstring(L,2,&klen);
 	evp = *(const EVP_MD **) luaL_checkudata(L,3,CRYPTO_EVP_MD);
         luaL_argcheck(L,evp != NULL,3,"crypto.EVP_* expected");
 	
+	len_uint = len_sizet;
+	
 	//HMAC_CTX_init(&C);
 	//printf("%p %p\n",evp,EVP_sha1);
 	HMAC_Init/*_ex*/(&C,key,klen,((const EVP_MD *(*)(void))evp)());
-	HMAC_Update(&C,(const void *)data,(unsigned long) len);
-	len = EVP_MAX_MD_SIZE;
-	HMAC_Final(&C,md,&len);
+	HMAC_Update(&C,(const void *)data,len_uint);
+	len_uint = EVP_MAX_MD_SIZE;
+	HMAC_Final(&C,(unsigned char *)md,&len_uint);
 	HMAC_cleanup(&C);
+
+	len_sizet = len_uint;
 		
-	lua_pushlstring(L,md,len);
+	lua_pushlstring(L,md,len_sizet);
 	return 1;
 }
 

@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5d"
+PLUGIN_VERSION = "0.1.6"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -438,21 +438,7 @@ function loginYahoo()
       body, err = browser:get_uri(str)
     end
   end
-  
-  -- Extract the crumb - This is needed for deletion of items
-  --
-  _, _, str = string.find(body, globals.strRegExpCrumb)
-  if str == nil then
-    log.error_print("Can't get the 'crumb' value. Will not be able to delete messages.")
-    internalState.strCrumb = ""
-  else
-    internalState.strCrumb = str
-  
-    -- Debug Message
-    -- 
-    log.dbg("Yahoo Crumb value: " .. str .. "\n")
-  end
-  
+    
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true
@@ -1095,6 +1081,22 @@ function stat(pstate)
       -- Retry to load the page
       --
       return browser:get_uri(cmdUrl)
+    end
+
+    -- Extract the crumb - This is needed for deletion of items
+    --
+    if (internalState.strCrumb == nil) then
+      local _, _, str = string.find(body, globals.strRegExpCrumb)
+      if str == nil then
+        log.error_print("Can't get the 'crumb' value. Will not be able to delete messages.")
+        internalState.strCrumb = ""
+      else
+        internalState.strCrumb = str
+  
+        -- Debug Message
+        -- 
+        log.dbg("Yahoo Crumb value: " .. str .. "\n")
+      end
     end
 		
     return body, err

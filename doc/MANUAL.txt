@@ -1,0 +1,3 @@
+The FreePOPs manual is available here:
+	http://freepops.sourceforge.net/it/files/manual-it.pdf (IT version)
+	http://freepops.sourceforge.net/it/files/manual.pdf    (EN version)

@@ -31,6 +31,8 @@ freepops.MODULES_MAP["flatnuke"] 	= {name="flatnuke.lua"}
 -- Not really interesting for the user.
 -- 
 freepops.MODULES_PREFIX = {
+	-- Culd this be a security hole? this VAR is set by FP, but ...
+	-- ... I need to read more about environment ...
 	os.getenv("FREEPOPSLUA_PATH") or "./",
 	"./lua/",
 	"./",

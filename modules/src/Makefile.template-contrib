@@ -14,7 +14,7 @@ all: $(SUBDIR)
 $(SUBDIR):
 	$(H)tar -xzf $(TGZ)
 	$(H)if test ! "nodiff" = "$(DIFF)"; then cd $(SUBDIR); patch -p1 < ../$(DIFF) 1>/dev/null; if [ $$? != 0 ]; then echo " ! error patching !"; fi;  fi
-	$(H)$(MAKE) -C $(SUBDIR) PREFIX=$(PREFIX) TARGET=$(TARGET) CONFIG=$(CONFIG)
+	$(H)cd $(SUBDIR);$(MAKE) -f Makefile PREFIX=$(PREFIX) TARGET=$(TARGET) CONFIG=$(CONFIG)
 
 clean:
 	$(H)rm -rf $(SUBDIR)

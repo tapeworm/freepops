@@ -10,6 +10,48 @@
 --
 PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "yahoo.com"
+PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=yahoo.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
+PLUGIN_AUTHORS_CONTACTS = 
+	{"russells@despammed.com","ncocchiaro@users.sourceforge.net"}
+PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it"}
+PLUGIN_PARAMETERS = {
+	{name = "folder", description = {
+		it = [[
+Viene usato per scegliere la cartella (Inbox &egrave; il 
+default) con cui volete interagire. Le cartelle disponibili sono quelle 
+standard di Yahoo, chiamate 
+Inbox, Draft, Sent, Bulk e 
+Trash (per domini yahoo.it potete usare gli stessi nomi per oppure 
+quelli corrispondenti in Italiano: InArrivo, Bozza, 
+Inviati, Anti-spam, Cestino). Se avete creato delle 
+cartelle potete usarle con i loro nomi.]],
+		en = [[
+Is used to select the folder (Inbox is the default)
+you want to interact with. The folders that are available are the standard 
+Yahoo folders, called 
+Inbox, Draft, Sent, Bulk and 
+Trash (for yahoo.it domains you may use the same folder names or the 
+corresponding names in Italian: InArrivo, Bozza, 
+Inviati,Anti-spam, Cestino). If you created some 
+folders you can use them using their names.]]
+		}	
+	},
+}
+PLUGIN_DESCRIPTIONS = {
+	it=[[
+Questo plugin vi per mette di leggere le mail che avete in una 
+mailbox @yahoo.com o @yahoo.it.
+Per usare questo plugin dovete usare il vostro indirizzo email completo come
+user name e la vostra password reale come password.]],
+	en=[[
+This is the webmail support for @yahoo.com and @yahoo.it mailboxes. 
+To use this plugin you have to use your full email address as the user 
+name and your real password as the password.]]
+}
 
 -- ************************************************************************** --
 --  Global Strings

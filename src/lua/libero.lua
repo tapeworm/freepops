@@ -184,6 +184,7 @@ function libero_login()
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()
+	local b = internal_state.b
 --	b:verbose_mode()
 	
 	-- the functions for do_until

@@ -321,6 +321,8 @@ rc = marshaller(p,f,s,msg,lines);
 
 if(rc != POPSERVER_ERR_OK && rc != POPSERVER_ERR_EOF)
 		{
+		P(".");
+		sock_send(s,ans);	
 		return err_next[MIN(rc-1,numerr-1)];
 		}
 

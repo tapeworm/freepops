@@ -291,7 +291,7 @@ function top_cb(global,data)
 	local purge = false
 	
 	return function(s,len)
-		print("GOT:",len)
+		--print("GOT:",len)
 		if purge == true then
 			--print("purging: "..string.len(s))
 			return len,nil
@@ -748,7 +748,6 @@ function top(pstate,msg,lines,data)
 	end
 
 	-- go!
-	support.do_until(retrive_f,check_f,action_f)
 	if not support.do_until(retrive_f,check_f,action_f) then
 		if global.lines ~= -1 then
 			log.error_print("Top failed\n")

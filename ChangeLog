@@ -1,3 +1,4 @@
+- added plugin tutorial to the manual
 - fixed bug in aggregator.lua
 - fixed bug in mimer (thanks nickshw for bugreporting)
 - regularexp lua bindings added

@@ -1,3 +1,4 @@
+19/09/2004 0.0.17 fix release
 - fixed XML generation. no more escaped entities
 - fixed out of boud RETR don't send . bug (thanks ramik for submitting)
 - fix per yahoo (ramik)

@@ -3,7 +3,7 @@ legend: more + means more done! (from 1 to 7, if your tab is 8)
 for future versions:
 	regression tests maybe with netcat or other to make it possible to run
 		some tests at least over some plugin
-	plugin (superva,freepass,hotmail,yahoo,excite)
+	plugin (supereva,freepass,excite)
 	problemi in lycos utf8 (magari sistemare il mimer decentemente)
 	problemi login tin(aspetta ethereal)
 	porting pocketpc
@@ -28,7 +28,7 @@ for version 0.0.15:
 		instructions readin the file (used by MacFP)
 	http://liberopops.diludovico.it/index.php?showtopic=877&st=0&#entry4499
 	http://liberopops.diludovico.it/index.php?showtopic=890&st=0&#entry4594
-	folder in yahoo.com /it
++++++	folder in yahoo.com /it
 	finire squirrel
 	http://freepops.diludovico.it/index.php?showtopic=920&st=0&#entry4834
 	opzioni proxy in config.lua e integra lettura impostazioni di IE

@@ -119,7 +119,7 @@ per mailbox con domini come \texttt{@libero.it}, \texttt{@iol.it},
 \item [tin.lua]Questo plugin supporta in pieno la webmail di \texttt{communicator.virgilio.it}
 per mailbox con domini come \texttt{@tin.it}, \texttt{@virgilio.it}.
 \item [lycos.lua]Questo plugin supporta la webmail \texttt{mail.lycos.it}
-per mailbox col dominio \texttt{@lycos.it.}
+per mailbox col dominio \texttt{@lycos.it}.
 \item [popforward.lua]Questo è un plugin usato principalmente per testare
 moduli di FreePOPs. Esso agisce come un forward POP3, semplicemente
 si comporta come mediatore tra voi ed un vero server POP3. Questo
@@ -138,11 +138,21 @@ sul CMS FlatNuke, e permette il download dell'intero corpo delle news.%
 \item [kernel.lua]Questo è un plugin per tenersi aggiornati sulle ultime
 versioni del kernel Linux.
 \item [gmail.lua]Questo plugin supporta la mailbox su \texttt{gmail.google.com}
-per mailbox col dominio \texttt{@gmail.com.}
+per mailbox col dominio \texttt{@gmail.com}.
 \item [yahoo.lua]Questo plugin supporta la mailbox su \texttt{yahoo.com}
-per mailbox col dominio \texttt{@yahoo.com.}
+per mailbox con domini \texttt{@yahoo.com.} e \texttt{@yahoo.it}.
 \item [squirrelmail.lua]Questo plugin supporta le webmail fatte con
 http://suirrelmail.org.
+\item [hotmail.lua]Questo plugin supporta le mailbox con i domini: 
+\texttt{@hotmail.com}, \texttt{@msn.com}, \texttt{@webtv.com}, 
+\texttt{@charter.com}, \texttt{@compaq.net}, \texttt{@passport.com}.
+\item [aol.lua]Questo plugin supporta i domini di mailbox seguenti: 
+\texttt{@aol.com}, \texttt{@aol.com.ar}, \texttt{@aol.fr}, \texttt{@aol.com.mx},
+ \texttt{@aol.com.au}, \texttt{@aol.de}, \texttt{@aol.com.pr}, 
+\texttt{@aol.com.br}, \texttt{@jp.aol.com}, \texttt{@aol.com.uk}, 
+\texttt{@aol.ca}, \texttt{@aola.com}.
+\item[tre.lua]Questo plugin supporta la webmail di \texttt{tre.it} per 
+mailbox con il dominio \texttt{@tre.it}.
 
 \end{description}
 
@@ -733,9 +743,10 @@ installare openssl).
 
 \subsection{yahoo.lua}
 
-Questo plugin vi permette di leggere le mail che avete in una mailbox
-\texttt{@yahoo.com}. Per usare questo plugin dovete usare il vostro
-indirizzo email completo come username e la vostra password reale
+Questo plugin vi permette di leggere le mail che avete in una mailbox 
+\texttt{@yahoo.com} o \texttt{@yahoo.it}. Per usare questo plugin dovete usare 
+il vostro 
+indirizzo email completo come username e la vostra password reale 
 come password. Il plugin accetta i seguenti parametri:
 
 \begin{description}
@@ -753,8 +764,32 @@ cartelle potete usarle con i loro nomi.
 
 Questo plugin vi permette di leggere le mail in una webmail fatta con
 squirrelmail. Il plugin \`e molto beta e bisogna modificarlo a mano
-per adattarlo al proprio sito. Per ora supporta solo la verisone 1.2
+per adattarlo al proprio sito. Per ora supporta solo la versione 1.2
 di squirrelmail.
+
+\subsection{hotmail.lua}
+
+Questo plugin vi permette di leggere le mail che avete in una mailbox con 
+dominio 
+\texttt{@hotmail.com}, \texttt{@msn.com}, \texttt{@webtv.com}, 
+\texttt{@charter.com}, \texttt{@compaq.net} o \texttt{@passport.com} 
+. Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
+nome utente e la vostra vera password come password.
+
+\subsection{aol.lua}
+Quest plugin vi permette di leggere le mail che avete in una mailbox con dominio 
+\texttt{@aol.com}, \texttt{@aol.com.ar}, \texttt{@aol.fr}, \texttt{@aol.com.mx},
+ \texttt{@aol.com.au}, \texttt{@aol.de}, \texttt{@aol.com.pr}, 
+\texttt{@aol.com.br}, \texttt{@jp.aol.com}, \texttt{@aol.com.uk}, 
+\texttt{@aol.ca} o \texttt{@aola.com} 
+. Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
+nome utente e la vostra vera password come password.
+
+\subsection{tre.lua}
+Questo plugin vi permette di leggere le mail che avete nella mailbox di
+ \texttt{@tre.it}. 
+Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
+nome utente e la vostra vera password come password.
 
 \section{Creare un plugin}
 

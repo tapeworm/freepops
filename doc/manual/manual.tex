@@ -135,9 +135,19 @@ kernel through ChangeLogs.
 \item [gmail.lua]This plugin supports the \texttt{gmail.google.com} webmail
 for mailboxes with \texttt{@gmail.com} domains.
 \item [yahoo.lua]This plugin supports the \texttt{yahoo.com} webmail
-for mailboxes with \texttt{@yahoo.com} domains.
+for mailboxes with \texttt{@yahoo.com} and \texttt{@yahoo.it} domains.
 \item [squirrelmail.lua] This plugin supports the
 http://squirrelmail.org webmail.
+\item [hotmail.lua]This plugin supports a variety of mailbox domains: 
+\texttt{@hotmail.com}, \texttt{@msn.com}, \texttt{@webtv.com}, 
+\texttt{@charter.com}, \texttt{@compaq.net}, \texttt{@passport.com}.
+\item [aol.lua]This plugin supports the following mailbx domains: 
+\texttt{@aol.com}, \texttt{@aol.com.ar}, \texttt{@aol.fr}, \texttt{@aol.com.mx},
+ \texttt{@aol.com.au}, \texttt{@aol.de}, \texttt{@aol.com.pr}, 
+\texttt{@aol.com.br}, \texttt{@jp.aol.com}, \texttt{@aol.com.uk}, 
+\texttt{@aol.ca}, \texttt{@aola.com}.
+\item[tre.lua]This plugin supports the \texttt{tre.it} webmail for mailboxes 
+with \texttt{@tre.it} domain.
 \end{description}
 
 \section{History}
@@ -688,8 +698,9 @@ setup file, under Unix you probably need OpenSSL installed).
 
 \subsection{yahoo.lua}
 
-This is the webmail support for \texttt{@yahoo.com} mailboxes. To
-use this plugin you have to use your full email address as the username
+This is the webmail support for \texttt{@yahoo.com} and \texttt{yahoo.it} 
+mailboxes. To 
+use this plugin you have to use your full email address as the username 
 and your real password as the password. This plugin accepts the following 
 parameters:
 
@@ -709,6 +720,30 @@ folders you can use them using their names.
 This plugin supports webmails made with squirrelmail. You have to hack
 by hand the plugin to make it work with your website. since now it
 supports only version 1.2.
+
+\subsection{hotmail.lua}
+
+This is the webmail support for 
+\texttt{@hotmail.com}, \texttt{@msn.com}, \texttt{@webtv.com}, 
+\texttt{@charter.com}, \texttt{@compaq.net}, \texttt{@passport.com} 
+mailboxes. To use
+this plugin you have to use your full email address as the username
+and your real password as the password.
+
+\subsection{aol.lua}
+This is the webmail support for 
+\texttt{@aol.com}, \texttt{@aol.com.ar}, \texttt{@aol.fr}, \texttt{@aol.com.mx},
+ \texttt{@aol.com.au}, \texttt{@aol.de}, \texttt{@aol.com.pr}, 
+\texttt{@aol.com.br}, \texttt{@jp.aol.com}, \texttt{@aol.com.uk}, 
+\texttt{@aol.ca}, \texttt{@aola.com} 
+mailboxes. To use
+this plugin you have to use your full email address as the username
+and your real password as the password.
+
+\subsection{tre.lua}
+This is the webmail support for \texttt{@tre.it} mailboxes. To use
+this plugin you have to use your full email address as the username
+and your real password as the password.
 
 \section{Creating a plugin}
 

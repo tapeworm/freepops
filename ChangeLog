@@ -1,5 +1,6 @@
+- fixed gmail.lua \r\n issue
 - added luaexpat bindings
-- added aol.lua
+- added aol.lua (thanks to russell)
 - adedd the arrow winsystray stuff (thanks russells)
 - added option -k to kill the running freepopsd
 - fixed URL decoding for plugin parameters and added support for space

@@ -258,7 +258,7 @@ function retr_cb(data)
 	local FirstBlock = true
 	
 	return function(s,len)
-		s = string.gsub(s,"\n","\r\n")
+--		s = string.gsub(s,"\n","\r\n")
 		s = a:dothack(s).."\0"
 -- without the above string end of stream is: 00 00 00 0a 0a 2e 0d 0a
 		-- \r = 13 = 0d                        \n \n .  \r \n
@@ -301,7 +301,7 @@ function top_cb(global,data)
 			FirstBlock = false
 		end	
 		s = global.a:tophack(s,global.lines_requested)
-		s = string.gsub(s,"\n","\r\n")
+--		s = string.gsub(s,"\n","\r\n")
 		s = global.a:dothack(s).."\0"
 			
 		popserver_callback(s,data)

@@ -20,8 +20,8 @@
  CFLAGS, HCFLAGS, LDFLAGS, HLDFLAGS, EXEEXTENSION, STATICEXTENSION, 
  SHAREDEXTENSION, OS.
 
- These variable must be used as the compiler, linker, etc.
- The module makefile is also called defining PREFIX, CONFIG and TARGET.
+ These variables must be used as the compiler, linker, etc.
+ The modules makefile is also called defining PREFIX, CONFIG and TARGET.
 
  A module file may contain something like:
  
@@ -43,7 +43,7 @@
 
  Each module must be subscribed in modules/src/subscribed, and the 
  right Makefile.template* will be used to build it. As a special case a module
- may have an ad-hoc Makefile, but you are suggested to use default Makefiles.
+ may have an ad-hoc Makefile, but you are encouraged to use default Makefiles.
  
  Makefile.template is a generic makefile that can be personalized by 
  adding these files to the module directory:  source, interface, shared.
@@ -92,6 +92,6 @@
 ** COPYING
 
  All modules in the module directory are copyrighted under the GNU/GPL license,
- except the one containing a different license specification.
+ except the ones containing a different license specification.
  
 ** eof

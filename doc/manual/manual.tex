@@ -193,42 +193,42 @@ to use any of these, but if you have special needs it's useful to
 use the following list as reference:
 
 \begin{description}
-\item [-p~<port>,~--port~<port>]By default FreePOPs binds on port 2000.
+\item [-p~<port>,~-\hspace{1mm}-port~<port>]By default FreePOPs binds on port 2000.
 To alter this behavior just use this switch.
-\item [-t~<num>,~--threads~<num>]FreePOPs is able to manage multiple
+\item [-t~<num>,~-\hspace{1mm}-threads~<num>]FreePOPs is able to manage multiple
 connections, up to \emph{num}. Default is 5.
-\item [-b~addr,~--bind~addr]Binds over \emph{addr} instead INADDR\_ANY
+\item [-b~addr,~-\hspace{1mm}-bind~addr]Binds over \emph{addr} instead INADDR\_ANY
 (0.0.0.0). \emph{addr} must be a character string containing an IPv4
 network address in the dotted-quad format, {}``ddd.ddd.ddd.ddd''
 or a host name.
-\item [-l~logfacility,~--logmode~logfacility]Can be used to specify
+\item [-l~logfacility,~-\hspace{1mm}-logmode~logfacility]Can be used to specify
 the logging facility. \emph{logfacility} can be {}``stdout'' for
 stdout (the default), {}``syslog'' to use the logging daemon or
 a valid filename to log to this file.
-\item [-d,~--daemonize]Moves the process to background releasing the tty.
-\item [-P~<host>:<port>,~--proxy~<host>:<port>]To tell FreePOPs which
+\item [-d,~-\hspace{1mm}-daemonize]Moves the process to background releasing the tty.
+\item [-P~<host>:<port>,~-\hspace{1mm}-proxy~<host>:<port>]To tell FreePOPs which
 is your HTTP proxy. If \emph{port} is not set then the default 8080
 is used.
-\item [-A~<username>:<password>,~--auth~<username>:<password>]For proxies
+\item [-A~<username>:<password>,~-\hspace{1mm}-auth~<username>:<password>]For proxies
 with basic authentication, to specify username and password. Must
 be used with \emph{-P} or its long form.
-\item [-u~name,~--useragent~name]Use this useragent in http connections.
+\item [-u~name,~-\hspace{1mm}-useragent~name]Use this useragent in http connections.
 The default is {}``Firefox/0.8''. A valid example is mozilla's {}``Mozilla/5.0
 (X11; U; Linux i686; en-US; rv:1.5) Gecko/20031024 Debian/1.5-2''.
-\item [-s~user.group,~--suid~user.group]This option is used to make
+\item [-s~user.group,~-\hspace{1mm}-suid~user.group]This option is used to make
 freepopsd drop root privileges after binding. If you run it as a normal
 user there is no need to use this option. \emph{(Not used under Windows)}
-\item [-k,~--kill]Terminates a running FreePOPs program.
+\item [-k,~-\hspace{1mm}-kill]Terminates a running FreePOPs program.
 \emph{(Not used under Windows)}
-\item [-x~pluginfile,~--toxml~pluginfile]Prints on standard
+\item [-x~pluginfile,~-\hspace{1mm}-toxml~pluginfile]Prints on standard
 output the XML description of the plugin.
-\item [--fpat~authtype,~--force-proxy-auth-type~authtype]
+\item [-\hspace{1mm}-fpat~authtype,~-\hspace{1mm}-force-proxy-auth-type~authtype]
 To forse a specific proxy auth method.
 Accepted values are: ntlm, basic, digest e gss.
-\item [--no-icon]
+\item [-\hspace{1mm}-no-icon]
 To disable the win32 systray icon (windows only).
-\item [-h,~--help]Prints the usage message.
-\item [-v,~--verbose,~-w,~--veryverbose]This tells FreePOPs to log some
+\item [-h,~-\hspace{1mm}-help]Prints the usage message.
+\item [-v,~-\hspace{1mm}-verbose,~-w,~-\hspace{1mm}-veryverbose]This tells FreePOPs to log some
 interesting info for bug reporting.
 \end{description}
 In posix environments like Debian GNU/Linux you can start FreePOPs

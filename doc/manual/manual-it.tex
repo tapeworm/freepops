@@ -202,42 +202,42 @@ ma in caso di esigenze specifiche è bene fare riferimento a questo
 elenco:
 
 \begin{description}
-\item [-p~<port>,~--port~<port>]Per default FreePOPs fa bind sulla porta
+\item [-p~<port>,~-\hspace{1mm}-port~<port>]Per default FreePOPs fa bind sulla porta
 2000. Per modificare questo comportamento basta usare questo switch.
-\item [-t~<num>,~--threads~<num>]FreePOPs può gestire connessioni multiple,
+\item [-t~<num>,~-\hspace{1mm}-threads~<num>]FreePOPs può gestire connessioni multiple,
 fino a \emph{num}. Il default è 5.
-\item [-b~addr,~--bind~addr]Per fare bind su \emph{addr} invece che
+\item [-b~addr,~-\hspace{1mm}-bind~addr]Per fare bind su \emph{addr} invece che
 INADDR\_ANY (0.0.0.0). \emph{addr} deve essere una stringa contenente
 un indirizzo IPv4 nel formato {}``ddd.ddd.ddd.ddd'', o un nome host.
-\item [-l~logfacility,~--logmode~logfacility]Può essere usato per specificare
+\item [-l~logfacility,~-\hspace{1mm}-logmode~logfacility]Può essere usato per specificare
 il tipo di logging. \emph{logfacility} può essere {}``stdout'' per
 standard output (il default), {}``syslog'' per usare un demone di
 logging o un nome di file valido per avere un log su file.
-\item [-d,~--daemonize]Sposta il processo in background rilasciando la
+\item [-d,~-\hspace{1mm}-daemonize]Sposta il processo in background rilasciando la
 tty.
-\item [-P~<host>:<port>,~--proxy~<host>:<port>]Per dire a FreePOPs quale
+\item [-P~<host>:<port>,~-\hspace{1mm}-proxy~<host>:<port>]Per dire a FreePOPs quale
 è il vostro proxy HTTP. Se \emph{port} non è impostato viene usata
 la porta 8080 di default.
-\item [-A~<username>:<password>,~--auth~<username>:<password>]Si usa
+\item [-A~<username>:<password>,~-\hspace{1mm}-auth~<username>:<password>]Si usa
 per proxy con autenticazione, per specificare nome utente e password.
 Va usato con \emph{-P} o la sua forma estesa.
-\item [-u~name,~--useragent~name]Imposta lo useragent da usare nelle
+\item [-u~name,~-\hspace{1mm}-useragent~name]Imposta lo useragent da usare nelle
 connessioni HTTP. Il default è {}``Firefox/0.8''.
-\item [-s~user.group,~--suid~user.group]Lascia i privilegi di root dopo
+\item [-s~user.group,~-\hspace{1mm}-suid~user.group]Lascia i privilegi di root dopo
 il bind. Se lanciato da utente normale non serve questa opzione.
 \emph{(Non usato in Windows)}
-\item [-k,~--kill]Termina il programma FreePOPs in esecuzione.
+\item [-k,~-\hspace{1mm}-kill]Termina il programma FreePOPs in esecuzione.
 \emph{(Non usato in Windows)}
-\item [-x~pluginfile,~--toxml~pluginfile]
+\item [-x~pluginfile,~-\hspace{1mm}-toxml~pluginfile]
 Stampa la descrizione in XML del plugin sullo standard output.
-\item [--fpat~authtype,~--force-proxy-auth-type~authtype]
+\item [-\hspace{1mm}-fpat~authtype,~-\hspace{1mm}-force-proxy-auth-type~authtype]
 Per forzare l'utilizzo di un determinato metodo di autenticazione per
 il proxy.
 I valori accettati sono: ntlm, basic, digest e gss.
-\item [--no-icon]
+\item [-\hspace{1mm}-no-icon]
 Per disattivare l'icona nella try bar di windows (solo per windows).
-\item [-h,~--help]Stampa un messaggio di aiuto.
-\item [-v,~--verbose,~-w,~--veryverbose]Questo dice a FreePOPs di loggare
+\item [-h,~-\hspace{1mm}-help]Stampa un messaggio di aiuto.
+\item [-v,~-\hspace{1mm}-verbose,~-w,~-\hspace{1mm}-veryverbose]Questo dice a FreePOPs di loggare
 alcune informazioni utili per  riportare bug.
 \end{description}
 In ambienti posix come Debian GNU/Linux potete avviare FreePOPs al

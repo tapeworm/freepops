@@ -1,3 +1,4 @@
+- double - in the manual are now separated by a \hspace{1mm}
 - removed rfcs and contracts from the default tarball since they are not
 conforming to DFSG.
 - added command 'status' to RPM init script

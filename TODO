@@ -20,4 +20,6 @@ for version 0.0.14:
 for version 0.0.13:
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
+	freebsd port
+	add squirrel to manual
 

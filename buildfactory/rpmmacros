@@ -8,4 +8,4 @@
 %_srcrpmdir	%(pwd)/_rpm_
 %_rpmfilename	%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
 %_sysconfdir	/etc/
-
+%_mandir	/usr/share/man/

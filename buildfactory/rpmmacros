@@ -7,5 +7,5 @@
 %_rpmdir	%(pwd)/_rpm_
 %_srcrpmdir	%(pwd)/_rpm_
 %_rpmfilename	%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
-
+%_sysconfdir	/etc/
 

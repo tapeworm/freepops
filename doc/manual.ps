@@ -1,17 +1,16 @@
 %!PS-Adobe-2.0
-%%Creator: dvips(k) 5.92b Copyright 2002 Radical Eye Software
+%%Creator: dvips(k) 5.86e Copyright 2001 Radical Eye Software
 %%Title: manual.dvi
 %%Pages: 11
 %%PageOrder: Ascend
 %%BoundingBox: 0 0 596 842
-%%DocumentFonts: Bookman-Light Bookman-Demi CMSY10 Courier
-%%+ Bookman-LightItalic
+%%DocumentFonts: Bookman-Light Bookman-Demi Courier Bookman-LightItalic
 %%DocumentPaperSizes: a4
 %%EndComments
 %DVIPSWebPage: (www.radicaleye.com)
 %DVIPSCommandLine: dvips -t a4 -o manual.ps manual.dvi
 %DVIPSParameters: dpi=600, compressed
-%DVIPSSource:  TeX output 2004.05.15:1046
+%DVIPSSource:  TeX output 2004.05.15:2026
 %%BeginProcSet: texc.pro
 %!
 /TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
@@ -71,16 +70,19 @@ rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
 
 %%EndProcSet
 %%BeginProcSet: 8r.enc
-% File  8r.enc as of 2002-03-12 for PSNFSS 9
-%
-% This is the encoding vector for Type1 and TrueType fonts to be used
-% with TeX.  This file is part of the PSNFSS bundle, version 9
+% @@psencodingfile@{
+%   author = "S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry",
+%   version = "0.6",
+%   date = "1 July 1998",
+%   filename = "8r.enc",
+%   email = "tex-fonts@@tug.org",
+%   docstring = "Encoding for TrueType or Type 1 fonts
+%                to be used with TeX."
+% @}
 % 
-% Authors: S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry, W. Schmidt
-%
 % Idea is to have all the characters normally included in Type 1 fonts
 % available for typesetting. This is effectively the characters in Adobe
-% Standard Encoding + ISO Latin 1 + extra characters from Lucida + Euro.
+% Standard Encoding + ISO Latin 1 + extra characters from Lucida.
 % 
 % Character code assignments were made as follows:
 % 
@@ -103,9 +105,8 @@ rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
 % upward-compatible revisions, if someday more characters are generally
 % available.
 % 
-% (5) hyphen appears twice for compatibility with both ASCII and Windows.
-%
-% (6) /Euro is assigned to 128, as in Windows ANSI
+% (5) hyphen appears twice for compatibility with both 
+% ASCII and Windows.
 % 
 /TeXBase1Encoding [
 % 0x00 (encoded characters from Adobe Standard not in Windows 3.1)
@@ -123,7 +124,7 @@ rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
  /.notdef /.notdef /.notdef /.notdef
  /.notdef /.notdef /.notdef /.notdef
  % very contentious; it's so painful not having quoteleft and quoteright
- % at 96 and 145 that we move the things normally found there down to here.
+ % at 96 and 145 that we move the things normally found there to here.
  /grave /quotesingle 
 % 0x20 (ASCII begins)
  /space /exclam /quotedbl /numbersign
@@ -144,7 +145,7 @@ rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
  /x /y /z /braceleft /bar /braceright /asciitilde
  /.notdef % rubout; ASCII ends
 % 0x80
- /Euro /.notdef /quotesinglbase /florin
+ /.notdef /.notdef /quotesinglbase /florin
  /quotedblbase /ellipsis /dagger /daggerdbl
  /circumflex /perthousand /Scaron /guilsinglleft
  /OE /.notdef /.notdef /.notdef
@@ -189,174 +190,74 @@ rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
 ] def
 
 %%EndProcSet
-%%BeginProcSet: bbad153f.enc
-% Thomas Esser, Dec 2002. public domain
-%
-% Encoding for:
-%     cmsy10 cmsy5 cmsy6 cmsy7 cmsy8 cmsy9
-%
-/TeXbbad153fEncoding [
-/minus /periodcentered /multiply /asteriskmath /divide /diamondmath
-/plusminus /minusplus /circleplus /circleminus /circlemultiply
-/circledivide /circledot /circlecopyrt /openbullet /bullet
-/equivasymptotic /equivalence /reflexsubset /reflexsuperset /lessequal
-/greaterequal /precedesequal /followsequal /similar /approxequal
-/propersubset /propersuperset /lessmuch /greatermuch /precedes /follows
-/arrowleft /arrowright /arrowup /arrowdown /arrowboth /arrownortheast
-/arrowsoutheast /similarequal /arrowdblleft /arrowdblright /arrowdblup
-/arrowdbldown /arrowdblboth /arrownorthwest /arrowsouthwest /proportional
-/prime /infinity /element /owner /triangle /triangleinv /negationslash
-/mapsto /universal /existential /logicalnot /emptyset /Rfractur /Ifractur
-/latticetop /perpendicular /aleph /A /B /C /D /E /F /G /H /I /J /K
-/L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /union /intersection
-/unionmulti /logicaland /logicalor /turnstileleft /turnstileright
-/floorleft /floorright /ceilingleft /ceilingright /braceleft /braceright
-/angbracketleft /angbracketright /bar /bardbl /arrowbothv /arrowdblbothv
-/backslash /wreathproduct /radical /coproduct /nabla /integral
-/unionsq /intersectionsq /subsetsqequal /supersetsqequal /section
-/dagger /daggerdbl /paragraph /club /diamond /heart /spade /arrowleft
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/minus /periodcentered /multiply /asteriskmath /divide /diamondmath
-/plusminus /minusplus /circleplus /circleminus /.notdef /.notdef
-/circlemultiply /circledivide /circledot /circlecopyrt /openbullet
-/bullet /equivasymptotic /equivalence /reflexsubset /reflexsuperset
-/lessequal /greaterequal /precedesequal /followsequal /similar
-/approxequal /propersubset /propersuperset /lessmuch /greatermuch
-/precedes /follows /arrowleft /spade /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
-] def
-
-%%EndProcSet
 %%BeginProcSet: texps.pro
 %!
 TeXDict begin/rf{findfont dup length 1 add dict begin{1 index/FID ne 2
 index/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll
-exec 0 exch 5 -1 roll VResolution Resolution div mul neg 0 0]FontType 0
-ne{/Metrics exch def dict begin Encoding{exch dup type/integertype ne{
-pop pop 1 sub dup 0 le{pop}{[}ifelse}{FontMatrix 0 get div Metrics 0 get
-div def}ifelse}forall Metrics/Metrics currentdict end def}{{1 index type
-/nametype eq{exit}if exch pop}loop}ifelse[2 index currentdict end
-definefont 3 -1 roll makefont/setfont cvx]cvx def}def/ObliqueSlant{dup
-sin S cos div neg}B/SlantFont{4 index mul add}def/ExtendFont{3 -1 roll
-mul exch}def/ReEncodeFont{CharStrings rcheck{/Encoding false def dup[
-exch{dup CharStrings exch known not{pop/.notdef/Encoding true def}if}
-forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}def
-end
+exec 0 exch 5 -1 roll VResolution Resolution div mul neg 0 0]/Metrics
+exch def dict begin Encoding{exch dup type/integertype ne{pop pop 1 sub
+dup 0 le{pop}{[}ifelse}{FontMatrix 0 get div Metrics 0 get div def}
+ifelse}forall Metrics/Metrics currentdict end def[2 index currentdict
+end definefont 3 -1 roll makefont/setfont cvx]cvx def}def/ObliqueSlant{
+dup sin S cos div neg}B/SlantFont{4 index mul add}def/ExtendFont{3 -1
+roll mul exch}def/ReEncodeFont{CharStrings rcheck{/Encoding false def
+dup[exch{dup CharStrings exch known not{pop/.notdef/Encoding true def}
+if}forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}
+def end
 
 %%EndProcSet
-%%BeginFont: CMSY10
-%!PS-AdobeFont-1.1: CMSY10 1.0
-%%CreationDate: 1991 Aug 15 07:20:57
-% Copyright (C) 1997 American Mathematical Society. All Rights Reserved.
-11 dict begin
-/FontInfo 7 dict dup begin
-/version (1.0) readonly def
-/Notice (Copyright (C) 1997 American Mathematical Society. All Rights Reserved) readonly def
-/FullName (CMSY10) readonly def
-/FamilyName (Computer Modern) readonly def
-/Weight (Medium) readonly def
-/ItalicAngle -14.035 def
-/isFixedPitch false def
-end readonly def
-/FontName /CMSY10 def
-/PaintType 0 def
-/FontType 1 def
-/FontMatrix [0.001 0 0 0.001 0 0] readonly def
-/Encoding 256 array
-0 1 255 {1 index exch /.notdef put} for
-dup 0 /.notdef put
-readonly def
-/FontBBox{-29 -960 1116 775}readonly def
-/UniqueID 5000820 def
-currentdict end
-currentfile eexec
-D9D66F633B846A97B686A97E45A3D0AA052F09F9C8ADE9D907C058B87E9B6964
-7D53359E51216774A4EAA1E2B58EC3176BD1184A633B951372B4198D4E8C5EF4
-A213ACB58AA0A658908035BF2ED8531779838A960DFE2B27EA49C37156989C85
-E21B3ABF72E39A89232CD9F4237FC80C9E64E8425AA3BEF7DED60B122A52922A
-221A37D9A807DD01161779DDE7D31FF2B87F97C73D63EECDDA4C49501773468A
-27D1663E0B62F461F6E40A5D6676D1D12B51E641C1D4E8E2771864FC104F8CBF
-5B78EC1D88228725F1C453A678F58A7E1B7BD7CA700717D288EB8DA1F57C4F09
-0ABF1D42C5DDD0C384C7E22F8F8047BE1D4C1CC8E33368FB1AC82B4E96146730
-DE3302B2E6B819CB6AE455B1AF3187FFE8071AA57EF8A6616B9CB7941D44EC7A
-71A7BB3DF755178D7D2E4BB69859EFA4BBC30BD6BB1531133FD4D9438FF99F09
-4ECC068A324D75B5F696B8688EEB2F17E5ED34CCD6D047A4E3806D000C199D7C
-515DB70A8D4F6146FE068DC1E5DE8BC5703711DA090312BA3FC00A08C453C609
-C627A8BECD6E1FA14A3B02476E90AAD8B4700C400380BC9AFFBF7847EB28661B
-9DC3AA0F44C533F2E07DCC4DE19D367BF223E33DC321D0247A0E6EF6ABC8FA52
-15AE044094EF678A8726CD7C011F02BFF8AB6EAEEE391AD837120823BED0B5D8
-F8B15245377871A64F78378BB4330149D6941F7A86FBFFC49B93C94155F5FA7D
-F22E7214511C0A92693F4CDBF38411651540572F2DD70D924AE0F18E1CD581F3
-C871399127FF5D07A868885B5FF7CDEB50B8323B2533DEF8DC973B1AE84FA0A2
-
-0000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000000000000000000000000000000000000000000000000
-0000000000000000000000000000000000000000000000000000000000000000
-cleartomark
-%%EndFont 
 TeXDict begin 39158280 55380996 1000 600 600 (manual.dvi)
-@start /Fa 139[34 1[40 8[28 3[54 101[{ TeXBase1Encoding ReEncodeFont }4
+@start /Fa 139[34 1[40 8[28 3[54 101[{TeXBase1Encoding ReEncodeFont}4
 99.6264 /Bookman-LightItalic rf /Fb 130[50 1[50 50 50
 50 50 50 50 50 50 50 50 50 50 50 50 50 50 1[50 50 50
 50 50 50 50 50 50 1[50 1[50 1[50 3[50 50 50 50 50 50
 50 50 50 50 50 50 50 1[50 50 50 50 50 50 50 1[50 50 1[50
 50 50 1[50 50 50 50 50 50 50 50 50 50 50 50 50 50 50
-50 1[50 50 50 4[50 34[{ TeXBase1Encoding ReEncodeFont }75
+50 1[50 50 50 4[50 34[{TeXBase1Encoding ReEncodeFont}75
 83.022 /Courier rf /Fc 133[40 45 46 65 43 56 32 43 37
 1[51 46 55 78 25 51 25 25 55 45 27 43 51 43 51 48 1[42
-5[53 4[51 55 2[51 1[61 76 3[28 66 2[60 1[61 1[56 6[27
-10[50 27 1[27 2[25 25 18 35[51 3[{ TeXBase1Encoding ReEncodeFont }45
+5[53 4[51 55 2[51 1[61 76 3[28 66 66 1[60 1[61 1[56 6[27
+10[50 27 1[27 2[25 25 18 35[51 3[{TeXBase1Encoding ReEncodeFont}46
 83.022 /Bookman-Light rf /Fd 205[36 36 49[{
- TeXBase1Encoding ReEncodeFont }2 58.1154 /Bookman-Light
-rf /Fe 205[41 41 49[{ TeXBase1Encoding ReEncodeFont }2
+TeXBase1Encoding ReEncodeFont}2 58.1154 /Bookman-Light
+rf /Fe 205[41 41 49[{TeXBase1Encoding ReEncodeFont}2
 66.4176 /Bookman-Light rf /Ff 107[60 25[60 60 60 60 60
 60 60 60 60 1[60 60 60 60 60 60 1[60 60 60 60 60 60 60
 60 60 1[60 8[60 60 60 60 60 1[60 60 3[60 2[60 2[60 1[60
 1[60 60 1[60 1[60 1[60 8[60 60 60 60 60 60 2[60 60 40[{
- TeXBase1Encoding ReEncodeFont }50 99.6264 /Courier rf
-/Fg 240[50 15[{ TeXbbad153fEncoding ReEncodeFont }1 99.6264
-/CMSY10 rf /Fh 136[96 72 79 55 62 55 1[77 74 81 1[41
-79 1[43 81 69 45 69 77 69 72 69 11[88 84 3[79 9[81 1[93
-88 9[79 1[79 79 1[79 79 79 79 2[41 42[88 3[{
- TeXBase1Encoding ReEncodeFont }35 119.552 /Bookman-Demi
-rf /Fi 136[78 1[68 38 52 44 1[62 56 66 1[30 62 1[30 66
-54 32 52 62 52 62 58 7[64 3[78 62 66 72 1[62 80 74 92
-60 72 1[34 80 80 64 72 80 74 74 68 7[62 62 62 62 1[62
-62 62 62 62 1[32 42[62 3[{
- .167 SlantFont TeXBase1Encoding ReEncodeFont }50 99.6264
+TeXBase1Encoding ReEncodeFont}50 99.6264 /Courier rf
+%DVIPSBitmapFont: Fg cmsy10 12 1
+/Fg 1 16 df<49B4FC010F13E0013F13F8497F48B6FC4815804815C04815E04815F0A248
+15F8A24815FCA3B712FEA96C15FCA36C15F8A26C15F0A26C15E06C15C06C15806C15006C
+6C13FC6D5B010F13E0010190C7FC27277BAB32>15 D E
+%EndDVIPSBitmapFont
+/Fh 136[96 72 79 55 62 55 1[77 74 81 1[41 79 1[43 81
+69 45 69 77 69 72 69 11[88 84 3[79 9[81 1[93 88 9[79
+1[79 79 1[79 79 79 79 2[41 42[88 3[{TeXBase1Encoding ReEncodeFont}35
+119.552 /Bookman-Demi rf /Fi 136[78 1[68 38 52 44 1[62
+56 66 1[30 62 1[30 66 54 32 52 62 52 62 58 7[64 3[78
+62 66 72 1[62 80 74 92 60 72 1[34 80 80 64 72 80 74 74
+68 7[62 62 62 62 1[62 62 62 62 62 1[32 42[62 3[{
+.167 SlantFont TeXBase1Encoding ReEncodeFont}50 99.6264
 /Bookman-Light rf /Fj 107[40 40 24[48 54 56 78 52 68
 38 52 44 58 62 56 66 94 30 62 30 30 66 54 32 52 62 52
 62 58 7[64 72 96 70 78 62 66 72 82 62 80 74 92 60 2[34
 80 80 64 72 80 74 74 68 5[32 32 62 62 62 62 62 62 62
 62 62 62 60 32 40 32 2[30 30 22 35[62 62 2[{
- TeXBase1Encoding ReEncodeFont }72 99.6264 /Bookman-Light
+TeXBase1Encoding ReEncodeFont}72 99.6264 /Bookman-Light
 rf /Fk 105[50 28[62 60 80 60 66 46 52 46 1[64 62 68 100
 34 66 1[36 68 58 38 58 64 58 60 58 12[70 66 2[66 80 5[40
 82 1[68 72 1[74 1[72 2[60 1[60 1[34 66 66 66 66 66 66
-66 66 66 66 1[34 36 34 40[74 74 2[{ TeXBase1Encoding ReEncodeFont }52
+66 66 66 66 1[34 36 34 40[74 74 2[{TeXBase1Encoding ReEncodeFont}52
 99.6264 /Bookman-Demi rf /Fl 134[89 3[95 66 75 66 1[92
 89 98 143 49 95 1[52 98 83 1[83 92 83 86 83 12[100 95
 2[95 115 5[57 118 1[98 103 1[106 1[103 7[95 95 95 95
-95 95 95 95 95 95 45[106 2[{ TeXBase1Encoding ReEncodeFont }40
+95 95 95 95 95 95 45[106 2[{TeXBase1Encoding ReEncodeFont}40
 143.462 /Bookman-Demi rf /Fm 134[65 4[45 11[79 6[69 19[110
-23[74 74 1[74 74 74 48[{ TeXBase1Encoding ReEncodeFont }10
+23[74 74 1[74 74 74 48[{TeXBase1Encoding ReEncodeFont}10
 119.552 /Bookman-Light rf /Fn 138[117 1[90 76 3[114 1[52
-6[90 3[100 16[107 138 1[158 6[110 70[{ TeXBase1Encoding ReEncodeFont }
-11 172.188 /Bookman-Light rf end
+6[90 3[100 16[107 138 1[158 6[110 70[{TeXBase1Encoding ReEncodeFont}11
+172.188 /Bookman-Light rf end
 %%EndProlog
 %%BeginSetup
 %%Feature: *Resolution 600dpi
@@ -364,17 +265,17 @@ TeXDict begin
 %%BeginPaperSize: a4
 a4
 %%EndPaperSize
- end
+
 %%EndSetup
 %%Page: 1 1
-TeXDict begin 1 0 bop 1161 814 a Fn(Fr)q(eePOPs)53 b(Manual)1468
-1349 y Fm(15th)39 b(May)f(2004)0 1808 y Fl(Contents)0
-2039 y Fk(1)83 b(Intr)o(oduction)2949 b(2)149 2160 y
-Fj(1.1)74 b(Usage)30 b(situations)59 b(.)50 b(.)g(.)f(.)h(.)g(.)f(.)h
-(.)g(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)g(.)f(.)h(.)
-g(.)f(.)h(.)g(.)193 b(2)149 2280 y(1.2)74 b(Featur)q(es)34
-b(.)50 b(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)g(.)f(.)h(.)
-g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)193
+1 0 bop 1161 814 a Fn(Fr)q(eePOPs)53 b(Manual)1468 1349
+y Fm(15th)39 b(May)f(2004)0 1808 y Fl(Contents)0 2039
+y Fk(1)83 b(Intr)o(oduction)2949 b(2)149 2160 y Fj(1.1)74
+b(Usage)30 b(situations)59 b(.)50 b(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)g(.)f
+(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)g(.)f(.)h(.)g(.)f(.)h(.)
+g(.)193 b(2)149 2280 y(1.2)74 b(Featur)q(es)34 b(.)50
+b(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)g(.)f(.)h(.)g(.)f
+(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)193
 b(2)149 2401 y(1.3)74 b(Plugins)101 b(.)50 b(.)f(.)h(.)g(.)f(.)h(.)g(.)
 f(.)h(.)g(.)f(.)h(.)g(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h
 (.)g(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)193 b(3)0 2621 y Fk(2)83
@@ -403,22 +304,21 @@ b(9)0 4883 y(9)83 b(Authors)3132 b(10)149 5003 y Fj(9.1)74
 b(Developers)94 b(.)50 b(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)g(.)
 f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)f(.)h(.)g(.)g(.)f(.)h(.)g(.)f(.)h
 (.)g(.)131 b(10)0 5223 y Fk(10)17 b(Thanks)3162 b(11)1882
-5712 y Fj(1)p eop end
+5712 y Fj(1)p eop
 %%Page: 2 2
-TeXDict begin 2 1 bop 2863 84 a Fi(1)99 b(INTRODUCTION)p
-0 124 3825 4 v 0 410 a Fl(1)143 b(Intr)o(oduction)0 641
-y Fj(Fr)q(eePOPs)25 b(is)i(a)g(POP3)g(daemon)e(plus)i(a)g(LUA)f
-(interpr)q(eter)f(and)i(some)f(extra)h(libraries)e(for)0
-761 y(HTTP)f(and)f(HTML)h(parsing.)36 b(Its)24 b(main)f(purpose)g(is)i
-(translating)d(local)i(POP3)g(r)q(equests)e(to)0 882
-y(r)q(emote)29 b(HTTP)h(actions)g(on)h(the)f(supported)f(web-mails,)g
-(but)i(it)f(is)h(r)q(eally)f(mor)q(e)f(\003exible:)0
-1002 y(for)j(example)f(ther)q(e)g(is)h(a)g(plugin)g(to)g(r)q(ead)f
-(news)g(fr)q(om)h(a)g(website)f(as)h(if)g(they)g(wer)q(e)f(mails)0
-1122 y(in)25 b(a)f(mailbox.)36 b(Y)-6 b(ou)25 b(can)f(easily)g(extend)g
-(Fr)q(eePOPs)f(on)h(the)h(\003y,)g(without)f(even)g(r)q(estarting)0
-1243 y(it;)40 b(you)d(can)g(add)f(a)i(plugin)e(or)h(modify)f(an)h
-(existing)f(one)h(simply)f(changing)g(the)h(script)0
+2 1 bop 2863 84 a Fi(1)99 b(INTRODUCTION)p 0 124 3825
+4 v 0 410 a Fl(1)143 b(Intr)o(oduction)0 641 y Fj(Fr)q(eePOPs)25
+b(is)i(a)g(POP3)g(daemon)e(plus)i(a)g(LUA)f(interpr)q(eter)f(and)i
+(some)f(extra)h(libraries)e(for)0 761 y(HTTP)f(and)f(HTML)h(parsing.)36
+b(Its)24 b(main)f(purpose)g(is)i(translating)d(local)i(POP3)g(r)q
+(equests)e(to)0 882 y(r)q(emote)29 b(HTTP)h(actions)g(on)h(the)f
+(supported)f(web-mails,)g(but)i(it)f(is)h(r)q(eally)f(mor)q(e)f
+(\003exible:)0 1002 y(for)j(example)f(ther)q(e)g(is)h(a)g(plugin)g(to)g
+(r)q(ead)f(news)g(fr)q(om)h(a)g(website)f(as)h(if)g(they)g(wer)q(e)f
+(mails)0 1122 y(in)25 b(a)f(mailbox.)36 b(Y)-6 b(ou)25
+b(can)f(easily)g(extend)g(Fr)q(eePOPs)f(on)h(the)h(\003y,)g(without)f
+(even)g(r)q(estarting)0 1243 y(it;)40 b(you)d(can)g(add)f(a)i(plugin)e
+(or)h(modify)f(an)h(existing)f(one)h(simply)f(changing)g(the)h(script)0
 1363 y(\002le)31 b(since)g(the)h(plugins)e(ar)q(e)h(written)g(in)g(LUA)
 g(and)g(ar)q(e)g(interpr)q(eted)f(on)h(the)h(\003y.)0
 1660 y Fh(1.1)119 b(Usage)42 b(situations)0 1853 y Fj(Fr)q(eePOPs)24
@@ -458,20 +358,20 @@ h(using)f(a)g(simple)g(and)g(power)s(ful)g(language.)145
 5140 y Fg(\017)49 b Fj(Pr)q(etty)30 b(documented.)145
 5328 y Fg(\017)49 b Fj(Released)34 b(under)g(the)h(GNU/GPL)e(license)h
 (\(this)h(means)f(Fr)q(eePOPs)g(is)h(Fr)q(ee)f(Soft-)244
-5449 y(war)q(e\).)1882 5712 y(2)p eop end
+5449 y(war)q(e\).)1882 5712 y(2)p eop
 %%Page: 3 3
-TeXDict begin 3 2 bop 0 84 a Fi(1.3)99 b(Plugins)2588
-b(2)99 b(HISTOR)s(Y)p 0 124 3825 4 v 0 428 a Fh(1.3)119
-b(Plugins)0 620 y Fj(These)31 b(ar)q(e)g(the)g(plugin)g(curr)q(ently)f
-(included)g(in)i(Fr)q(eePOPs:)0 849 y Fk(liber)o(o.lua)47
-b Fj(This)d(plugins)f(fully)h(supports)f(the)i Ff(www.libero.it)c
-Fj(webmail)j(for)g(mail-)244 969 y(boxes)31 b(with)g(domains)f(like)h
-Ff(@libero.it)p Fj(,)f Ff(@iol.it)p Fj(,)g Ff(@inwind.it)p
-Fj(,)g Ff(@blu.it)p Fj(.)0 1172 y Fk(popforwar)o(d.lua)46
-b Fj(This)34 b(is)h(a)g(plugin)f(mainly)g(used)g(for)h(testing)f(some)g
-(Fr)q(eePOPs)f(mod-)244 1293 y(ules.)58 b(It)38 b(acts)f(as)h(a)g(POP3)
-f(forwar)q(d,)h(it)g(simply)f(works)g(as)h(a)g(man)g(in)g(the)f(middle)
-244 1413 y(of)45 b(you)f(and)g(a)h(r)q(eal)f(POP3)g(server)-6
+3 2 bop 0 84 a Fi(1.3)99 b(Plugins)2588 b(2)99 b(HISTOR)s(Y)p
+0 124 3825 4 v 0 428 a Fh(1.3)119 b(Plugins)0 620 y Fj(These)31
+b(ar)q(e)g(the)g(plugin)g(curr)q(ently)f(included)g(in)i(Fr)q(eePOPs:)0
+849 y Fk(liber)o(o.lua)47 b Fj(This)d(plugins)f(fully)h(supports)f(the)
+i Ff(www.libero.it)c Fj(webmail)j(for)g(mail-)244 969
+y(boxes)31 b(with)g(domains)f(like)h Ff(@libero.it)p
+Fj(,)f Ff(@iol.it)p Fj(,)g Ff(@inwind.it)p Fj(,)g Ff(@blu.it)p
+Fj(.)0 1172 y Fk(popforwar)o(d.lua)46 b Fj(This)34 b(is)h(a)g(plugin)f
+(mainly)g(used)g(for)h(testing)f(some)g(Fr)q(eePOPs)f(mod-)244
+1293 y(ules.)58 b(It)38 b(acts)f(as)h(a)g(POP3)f(forwar)q(d,)h(it)g
+(simply)f(works)g(as)h(a)g(man)g(in)g(the)f(middle)244
+1413 y(of)45 b(you)f(and)g(a)h(r)q(eal)f(POP3)g(server)-6
 b(.)77 b(This)45 b(allowed)e(us)i(to)g(test)f(Fr)q(eePOPs)f(with-)244
 1534 y(out)36 b(having)g(any)g(r)q(eal)g(plugin)g(alr)q(eady)f
 (written.)54 b(Y)-6 b(ou)36 b(may)g(consider)g(using)g(it)g(to)244
@@ -521,23 +421,22 @@ b(taught)e(them)i(that)f(softwar)q(e)f(auto-updates,)g(auto-install)g
 (and)i(even)f(auto-codes)0 5292 y(pr)q(obably.)p 0 5382
 1530 4 v 109 5445 a Fd(1)149 5475 y Fc(See)c(HTTP://\003atnuke.sour)q
 (ceforge.net)g(for)f(the)h(pr)q(oject)f(homepage)1882
-5733 y Fj(3)p eop end
+5733 y Fj(3)p eop
 %%Page: 4 4
-TeXDict begin 4 3 bop 1520 84 a Fi(4)100 b(FREEPOPS)30
-b(COMMAND)f(LINE)i(P)o(ARAMETERS)p 0 124 3825 4 v 146
-428 a Fj(W)-7 b(e)36 b(tried)g(to)g(solve)f(this)h(pulling)f(out)h(of)g
-(the)f(C)h(engine)g(most)f(of)h(the)g(change-pr)q(one)0
-548 y(code,)25 b(but)f(this)f(was)h(r)q(eally)f(har)q(d)g(since)g(C)h
-(is)g(not)g(thought)f(to)h(do)g(this.)36 b(After)23 b(Liber)q(oPOPs)0
-668 y(had)31 b(stabilized)f(we)i(started)e(to)i(think)f(how)g(to)g
-(solve)g(this.)146 789 y(A)f(scripting/interpr)q(eted)c(embedded)i
-(language)h(seemed)f(to)i(me)g(a)f(nice)h(choice)f(and)0
-909 y(after)36 b(a)h(long)f(sear)q(ch)f(on)i(the)f(net)g(and)h(on)f
-(the)g(newsgr)q(oup)f(of)i(my)f(university)f(I)i(found)0
-1029 y(LUA..)53 b(This)35 b(is)i(not)f(the)g(place)f(for)h(telling)g
-(the)g(world)g(how)f(good)h(this)g(small)g(language)0
-1150 y(is)52 b(and)g(I)g(won't)f(talk)h(mor)q(e)f(about)g(it)h(her)q
-(e.)100 b(Integrating)50 b(the)i(LUA)f(interpr)q(eter)f(in)0
+4 3 bop 1520 84 a Fi(4)100 b(FREEPOPS)30 b(COMMAND)f(LINE)i(P)o
+(ARAMETERS)p 0 124 3825 4 v 146 428 a Fj(W)-7 b(e)36
+b(tried)g(to)g(solve)f(this)h(pulling)f(out)h(of)g(the)f(C)h(engine)g
+(most)f(of)h(the)g(change-pr)q(one)0 548 y(code,)25 b(but)f(this)f(was)
+h(r)q(eally)f(har)q(d)g(since)g(C)h(is)g(not)g(thought)f(to)h(do)g
+(this.)36 b(After)23 b(Liber)q(oPOPs)0 668 y(had)31 b(stabilized)f(we)i
+(started)e(to)i(think)f(how)g(to)g(solve)g(this.)146
+789 y(A)f(scripting/interpr)q(eted)c(embedded)i(language)h(seemed)f(to)
+i(me)g(a)f(nice)h(choice)f(and)0 909 y(after)36 b(a)h(long)f(sear)q(ch)
+f(on)i(the)f(net)g(and)h(on)f(the)g(newsgr)q(oup)f(of)i(my)f
+(university)f(I)i(found)0 1029 y(LUA..)53 b(This)35 b(is)i(not)f(the)g
+(place)f(for)h(telling)g(the)g(world)g(how)f(good)h(this)g(small)g
+(language)0 1150 y(is)52 b(and)g(I)g(won't)f(talk)h(mor)q(e)f(about)g
+(it)h(her)q(e.)100 b(Integrating)50 b(the)i(LUA)f(interpr)q(eter)f(in)0
 1270 y(Liber)q(oPOPs)30 b(was)i(not)g(so)h(har)q(d)e(and)h(Fr)q(eePOPs)
 f(is)h(the)g(r)q(esult.)40 b(Now)32 b(it)g(is)h(r)q(eally)e(easier)0
 1391 y(to)42 b(write/test)f(a)h(plugin)g(and)g(\(even)f(if)i(it)f(is)g
@@ -577,46 +476,46 @@ b(tells)g(Fr)q(eePOPs)f(to)h(log)g(some)g(inter)q(esting)f(info)244
 4997 y(for)31 b(bug)g(r)q(eporting.)0 5200 y Fk(-t)j(<num>,)e(\226thr)o
 (eads)g(<num>)48 b Fj(Fr)q(eePOPs)26 b(is)j(able)f(to)g(manage)f
 (multiple)g(connections,)244 5321 y(up)k(to)h(num.)38
-b(Default)31 b(is)g(5.)1882 5733 y(4)p eop end
+b(Default)31 b(is)g(5.)1882 5733 y(4)p eop
 %%Page: 5 5
-TeXDict begin 5 4 bop 3211 84 a Fi(6)100 b(PLUGINS)p
-0 124 3825 4 v 0 428 a Fj(In)32 b(posix)g(envir)q(onments)e(like)i
-(Debian)f(GNU/Linux)f(you)i(can)g(start)g(Fr)q(eePOPs)f(at)h(boot)0
-548 y(time)h(as)h(a)g(standar)q(d)e(service.)44 b(In)34
-b(this)f(case)g(the)g(command)g(line)g(switches)f(ar)q(e)h(stor)q(ed)0
-668 y(in)j Ff(/etc/default/freepops)p Fj(,)c(in)k(some)f(rpm)g(based)g
-(systems)g(you)g(should)g(\002nd)h(the)0 789 y(same)31
-b(\002le)g(as)h Ff(/etc/sysconfig/freepops)p Fj(.)0 1140
-y Fl(5)143 b(Email)49 b(client)f(con\002guration)0 1371
-y Fj(T)q(o)32 b(con\002gur)q(e)d(your)i(email)f(client)h(you)g(must)f
-(change)g(the)h(pop3)g(server)f(settings.)38 b(Usu-)0
-1492 y(ally)28 b(you)g(must)g(use)g(localhost)e(as)j(the)f(pop3)f(host)
-h(name,)g(and)g(2000)g(as)g(the)g(pop3)g(port.)0 1612
-y(In)48 b(case)f(you)g(install)g(Fr)q(eePOPs)e(in)j(another)e(computer)
-g(of)i(your)f(LAN,)g(you)g(should)0 1733 y(use)c(the)g(host's)g(name)g
-(instead)g(of)g(localhost,)i(while)e(in)h(case)f(you)g(changed)f(the)i
-(de-)0 1853 y(fault)32 b(port)h(with)f(the)g Ff(-p)h
-Fj(switch)f(you)g(will)h(have)f(to)h(use)f(that)h(same)f(port)g(in)h
-(your)f(email)0 1973 y(client.)54 b(Y)-6 b(ou)36 b(always)g(have)g(to)h
-(use)f(a)h(full)f(email)g(addr)q(ess)f(as)i(user)s(name,)f(for)h
-(example)0 2094 y Ff(something@libero.it)c Fj(instead)j(of)h(only)g
-Ff(something)p Fj(.)54 b(This)36 b(is)h(because)f(Fr)q(eePOPs)0
-2214 y(chooses)d(the)h(plugin)f(to)h(load)g(by)g(looking)f(at)h(your)f
-(user)s(name.)46 b(Later)33 b(we)h(will)g(pr)q(esent)0
-2334 y(all)d(the)h(plugins)e(and)h(their)g(associated)f(domains.)0
-2686 y Fl(6)143 b(Plugins)0 2917 y Fj(Her)q(e)31 b(we)g(give)g(a)h
-(detailed)e(description)g(of)i(each)f(plugin.)0 3223
-y Fh(6.1)119 b(liber)o(o.lua)0 3416 y Fj(This)35 b(plugin)f(allows)g
-(you)h(to)g(r)q(ead)f(the)h(mails)f(you)h(have)g(in)g(a)g
-Ff(@libero.it)p Fj(,)f Ff(@iol.it)p Fj(,)0 3536 y Ff(@inwind.it)e
-Fj(and)i Ff(@blu.it)f Fj(mailbox.)46 b(This)33 b(means)g(you)h(can)g
-(still)g(use)g(your)f(favorite)0 3657 y(mail)38 b(r)q(eader)g(instead)f
-(of)i(using)f(the)g(webmail.)59 b(This)38 b(plugin)g(acts)g(as)h(a)f
-(br)q(owser)g(that)0 3777 y(sur)s(fs)i(your)f(webmail)g(account)g(and)g
-(make)g(it)h(appear)f(as)h(a)g(POP3)g(server)-6 b(.)63
-b(For)39 b(mor)q(e)0 3898 y(info)d(on)h(this)f(plugin)g(you)h(may)f(r)q
-(ead)g(the)g(Liber)q(oPOPs)f(\(Fr)q(eePOPs)g(ancestor\))g(website)0
-4018 y(at)d Ff(http://liberopops.sourcefor)o(ge.ne)o(t)146
+5 4 bop 3211 84 a Fi(6)100 b(PLUGINS)p 0 124 3825 4 v
+0 428 a Fj(In)32 b(posix)g(envir)q(onments)e(like)i(Debian)f(GNU/Linux)
+f(you)i(can)g(start)g(Fr)q(eePOPs)f(at)h(boot)0 548 y(time)h(as)h(a)g
+(standar)q(d)e(service.)44 b(In)34 b(this)f(case)g(the)g(command)g
+(line)g(switches)f(ar)q(e)h(stor)q(ed)0 668 y(in)j Ff
+(/etc/default/freepops)p Fj(,)c(in)k(some)f(rpm)g(based)g(systems)g
+(you)g(should)g(\002nd)h(the)0 789 y(same)31 b(\002le)g(as)h
+Ff(/etc/sysconfig/freepops)p Fj(.)0 1140 y Fl(5)143 b(Email)49
+b(client)f(con\002guration)0 1371 y Fj(T)q(o)32 b(con\002gur)q(e)d
+(your)i(email)f(client)h(you)g(must)f(change)g(the)h(pop3)g(server)f
+(settings.)38 b(Usu-)0 1492 y(ally)28 b(you)g(must)g(use)g(localhost)e
+(as)j(the)f(pop3)f(host)h(name,)g(and)g(2000)g(as)g(the)g(pop3)g(port.)
+0 1612 y(In)48 b(case)f(you)g(install)g(Fr)q(eePOPs)e(in)j(another)e
+(computer)g(of)i(your)f(LAN,)g(you)g(should)0 1733 y(use)c(the)g
+(host's)g(name)g(instead)g(of)g(localhost,)i(while)e(in)h(case)f(you)g
+(changed)f(the)i(de-)0 1853 y(fault)32 b(port)h(with)f(the)g
+Ff(-p)h Fj(switch)f(you)g(will)h(have)f(to)h(use)f(that)h(same)f(port)g
+(in)h(your)f(email)0 1973 y(client.)54 b(Y)-6 b(ou)36
+b(always)g(have)g(to)h(use)f(a)h(full)f(email)g(addr)q(ess)f(as)i(user)
+s(name,)f(for)h(example)0 2094 y Ff(something@libero.it)c
+Fj(instead)j(of)h(only)g Ff(something)p Fj(.)54 b(This)36
+b(is)h(because)f(Fr)q(eePOPs)0 2214 y(chooses)d(the)h(plugin)f(to)h
+(load)g(by)g(looking)f(at)h(your)f(user)s(name.)46 b(Later)33
+b(we)h(will)g(pr)q(esent)0 2334 y(all)d(the)h(plugins)e(and)h(their)g
+(associated)f(domains.)0 2686 y Fl(6)143 b(Plugins)0
+2917 y Fj(Her)q(e)31 b(we)g(give)g(a)h(detailed)e(description)g(of)i
+(each)f(plugin.)0 3223 y Fh(6.1)119 b(liber)o(o.lua)0
+3416 y Fj(This)35 b(plugin)f(allows)g(you)h(to)g(r)q(ead)f(the)h(mails)
+f(you)h(have)g(in)g(a)g Ff(@libero.it)p Fj(,)f Ff(@iol.it)p
+Fj(,)0 3536 y Ff(@inwind.it)e Fj(and)i Ff(@blu.it)f Fj(mailbox.)46
+b(This)33 b(means)g(you)h(can)g(still)g(use)g(your)f(favorite)0
+3657 y(mail)38 b(r)q(eader)g(instead)f(of)i(using)f(the)g(webmail.)59
+b(This)38 b(plugin)g(acts)g(as)h(a)f(br)q(owser)g(that)0
+3777 y(sur)s(fs)i(your)f(webmail)g(account)g(and)g(make)g(it)h(appear)f
+(as)h(a)g(POP3)g(server)-6 b(.)63 b(For)39 b(mor)q(e)0
+3898 y(info)d(on)h(this)f(plugin)g(you)h(may)f(r)q(ead)g(the)g(Liber)q
+(oPOPs)f(\(Fr)q(eePOPs)g(ancestor\))g(website)0 4018
+y(at)d Ff(http://liberopops.sourcefor)o(ge.ne)o(t)146
 4138 y Fj(T)q(o)g(use)g(this)f(plugin)g(you)g(have)g(to)h(use)f(your)g
 (full)h(email)f(addr)q(ess)f(as)h(the)h(user)s(name)0
 4259 y(and)f(your)g(r)q(eal)g(passwor)q(d)f(as)h(the)h(passwor)q(d.)0
@@ -631,20 +530,20 @@ b(,)46 b(but)d(if)g(you)g(think)g(you)g(need)g(this)0
 (and)g(add)g(checks)f(to)i(impr)q(ove)e(the)0 5239 y
 (detection/avoidance)24 b(of)j(malicious)g(r)q(equests,)f(since)h(the)g
 (plugins)g(was)g(not)g(bor)s(n)g(with)0 5359 y(security)j(in)i(mind.)
-1882 5733 y(5)p eop end
+1882 5733 y(5)p eop
 %%Page: 6 6
-TeXDict begin 6 5 bop 0 84 a Fi(6.3)99 b(aggr)q(egator)-6
-b(.lua)2261 b(6)100 b(PLUGINS)p 0 124 3825 4 v 146 428
-a Fj(T)q(o)31 b(use)f(this)g(plugin)g(you)g(have)g(to)h(edit)f(the)g
-(con\002g.lua)f(\002le.)38 b(This)30 b(because)g(we)g(can't)0
-548 y(add)g(all)h(the)g(existing)e(POP3)i(server)f(to)h(this)f(\002le)h
-(:\))38 b(The)31 b(plugin)f(wants)g(two)g(arguments,)0
-668 y(the)37 b(POP3)g(host)h(and)f(the)g(port)g(\(usually)g
-Ff(110)p Fj(\))g(on)h(which)e(the)i(server)f(listens.)56
-b(This)37 b(is)0 789 y(an)32 b(example)e(of)i(a)g(con\002guration)e
-(line)i(for)g(this)f(plugin,)g(in)h(which)f(all)h(email)f(addr)q(esses)
-0 909 y(of)h(the)f Ff(@virgilio.it)e Fj(domain)i(ar)q(e)g(forwar)q(ded)
-e(to)j Ff(in.virgilio.it:110)p Fj(:)0 1128 y Fb(--)49
+6 5 bop 0 84 a Fi(6.3)99 b(aggr)q(egator)-6 b(.lua)2261
+b(6)100 b(PLUGINS)p 0 124 3825 4 v 146 428 a Fj(T)q(o)31
+b(use)f(this)g(plugin)g(you)g(have)g(to)h(edit)f(the)g(con\002g.lua)f
+(\002le.)38 b(This)30 b(because)g(we)g(can't)0 548 y(add)g(all)h(the)g
+(existing)e(POP3)i(server)f(to)h(this)f(\002le)h(:\))38
+b(The)31 b(plugin)f(wants)g(two)g(arguments,)0 668 y(the)37
+b(POP3)g(host)h(and)f(the)g(port)g(\(usually)g Ff(110)p
+Fj(\))g(on)h(which)e(the)i(server)f(listens.)56 b(This)37
+b(is)0 789 y(an)32 b(example)e(of)i(a)g(con\002guration)e(line)i(for)g
+(this)f(plugin,)g(in)h(which)f(all)h(email)f(addr)q(esses)0
+909 y(of)h(the)f Ff(@virgilio.it)e Fj(domain)i(ar)q(e)g(forwar)q(ded)e
+(to)j Ff(in.virgilio.it:110)p Fj(:)0 1128 y Fb(--)49
 b(popforward)f(plugin)0 1239 y(freepops.MODULES_MAP["virgilio.it"])243
 b(=)49 b({)349 1351 y(name="popforward.lua",)349 1462
 y(args={)697 1573 y(port=110,)697 1684 y(host="in.virgilio.it")349
@@ -698,31 +597,36 @@ w(http://gaim.sourceforge.net/)h Fc(news)f(\(English\))p
 3828 4982 V 0 4986 3831 4 v 0 5106 4 121 v 53 5070 a
 Fb(securityfocus.com)p 1099 5106 V 249 w(http://www.securityfocus.com/)
 h Fc(new)f(vulnerabilities)h(\(English\))p 3828 5106
-V 0 5109 3831 4 v 1882 5733 a Fj(6)p eop end
+V 0 5109 3831 4 v 0 5230 4 121 v 53 5194 a Fb(games.gamespot.com)p
+1099 5230 V 199 w(http://www.gamespot.com/)h Fc(computer)f(games)g
+(news)g(\(English\))p 3828 5230 V 0 5233 3831 4 v 0 5353
+4 121 v 53 5317 a Fb(news.gamespot.com)p 1099 5353 V
+249 w(http://www.gamespot.com/)h Fc(GameSpot)f(news)g(\(English\))p
+3828 5353 V 0 5357 3831 4 v 1882 5733 a Fj(6)p eop
 %%Page: 7 7
-TeXDict begin 7 6 bop 0 84 a Fi(6.4)99 b(\003atnuke.lua)1762
-b(7)100 b(CREATING)30 b(A)h(PLUGIN)p 0 124 3825 4 v 0
-428 a Fh(6.4)119 b(\003atnuke.lua)0 620 y Fj(This)37
-b(plugin)h(is)f(an)h(aggr)q(egator)e(plugin)h(specialized)g(in)h(the)f
-(websites)g(made)g(with)h(the)0 741 y(FlatNuke)446 705
-y Fe(2)522 741 y Fj(content)32 b(management)e(system,)i(or)g(other)g
-(sites)g(that)g(use)g(the)g(same)g(news)0 861 y(for)s(mat)e(like)h(the)
-g(Fr)q(eePOPs)e(website.)38 b(Since)31 b(in)g(a)g(FlatNuke)f(site)h
-(the)f(news)h(ar)q(e)f(stor)q(ed)0 981 y(in)36 b(plain)f(xml)g(\002les)
-h(this)f(plugin)g(is)h(able)f(to)h(fetch)f(the)h(whole)f(news,)h(and)g
-(not)f(only)h(the)0 1102 y(headings)26 b(as)h(the)g(aggr)q(egator)f
-(plugin.)36 b(This)27 b(is)h(r)q(eally)e(useful)g(if)i(you)f(don't)f
-(want)h(to)g(sur)s(f)0 1222 y(the)k(website)g(to)g(r)q(ead)g(the)g
-(news.)146 1343 y(T)q(o)h(use)f(this)g(plugin)f(you)h(have)g(to)g(use)g
-(a)g(user)s(name)f(with)h(the)g Ff(@flatnuke)e Fj(domain)0
-1463 y(\(ex:)74 b Ff(something@flatnuke)p Fj(\))46 b(and)j(a)h
-(\003atnuke)e(homepage)g(URL)h(as)g(the)g(passwor)q(d)0
-1583 y(\(ex:)37 b Ff(http://flatnuke.sourceforge.n)o(et/)p
-Fj(,)23 b(no)k(need)h(for)g(the)f(RSS)h(\002le)f(URL)h(since)0
-1704 y(FlatNuke)d(puts)h(the)g(RSS)g(in)h(a)g(\002xed)f(and)g(well)g
-(known)f(position.)37 b(Ther)q(e)25 b(ar)q(e)h(some)g(alias)0
-1824 y(for)31 b(FlatNuke)g(sites,)g(see)g(the)g(aggr)q(egator)f(plugin)
-h(documentation)e(to)j(know)f(what)g(this)0 1944 y(means\):)p
+7 6 bop 0 84 a Fi(6.4)99 b(\003atnuke.lua)1762 b(7)100
+b(CREATING)30 b(A)h(PLUGIN)p 0 124 3825 4 v 0 428 a Fh(6.4)119
+b(\003atnuke.lua)0 620 y Fj(This)37 b(plugin)h(is)f(an)h(aggr)q(egator)
+e(plugin)h(specialized)g(in)h(the)f(websites)g(made)g(with)h(the)0
+741 y(FlatNuke)446 705 y Fe(2)522 741 y Fj(content)32
+b(management)e(system,)i(or)g(other)g(sites)g(that)g(use)g(the)g(same)g
+(news)0 861 y(for)s(mat)e(like)h(the)g(Fr)q(eePOPs)e(website.)38
+b(Since)31 b(in)g(a)g(FlatNuke)f(site)h(the)f(news)h(ar)q(e)f(stor)q
+(ed)0 981 y(in)36 b(plain)f(xml)g(\002les)h(this)f(plugin)g(is)h(able)f
+(to)h(fetch)f(the)h(whole)f(news,)h(and)g(not)f(only)h(the)0
+1102 y(headings)26 b(as)h(the)g(aggr)q(egator)f(plugin.)36
+b(This)27 b(is)h(r)q(eally)e(useful)g(if)i(you)f(don't)f(want)h(to)g
+(sur)s(f)0 1222 y(the)k(website)g(to)g(r)q(ead)g(the)g(news.)146
+1343 y(T)q(o)h(use)f(this)g(plugin)f(you)h(have)g(to)g(use)g(a)g(user)s
+(name)f(with)h(the)g Ff(@flatnuke)e Fj(domain)0 1463
+y(\(ex:)74 b Ff(something@flatnuke)p Fj(\))46 b(and)j(a)h(\003atnuke)e
+(homepage)g(URL)h(as)g(the)g(passwor)q(d)0 1583 y(\(ex:)37
+b Ff(http://flatnuke.sourceforge.n)o(et/)p Fj(,)23 b(no)k(need)h(for)g
+(the)f(RSS)h(\002le)f(URL)h(since)0 1704 y(FlatNuke)d(puts)h(the)g(RSS)
+g(in)h(a)g(\002xed)f(and)g(well)g(known)f(position.)37
+b(Ther)q(e)25 b(ar)q(e)h(some)g(alias)0 1824 y(for)31
+b(FlatNuke)g(sites,)g(see)g(the)g(aggr)q(egator)f(plugin)h
+(documentation)e(to)j(know)f(what)g(this)0 1944 y(means\):)p
 0 2076 3381 4 v 0 2197 4 121 v 53 2161 a Fb(aggregatordomain)p
 900 2197 V 100 w Fc(description)p 3378 2197 V 0 2200
 3381 4 v 0 2220 V 0 2340 4 121 v 53 2304 a Fb(freepops.en)p
@@ -764,36 +668,36 @@ h(is)h(in)f(the)g(mailbox)f(and)h(eventually)f(r)q(etrieve/delete)e(a)k
 q(ontend)f(the)g(r)q(esult.)0 5259 y(Let)31 b(us)h(give)f(a)h(simple)e
 (example)h(of)g(a)h(POP3)f(session)f(taken)h(fr)q(om)g(the)g(RFC:)p
 0 5351 1530 4 v 109 5414 a Fd(2)149 5444 y Fc(HTTP://\003atnuke.sour)q
-(ceforge.net)1882 5733 y Fj(7)p eop end
+(ceforge.net)1882 5733 y Fj(7)p eop
 %%Page: 8 8
-TeXDict begin 8 7 bop 0 84 a Fi(7.2)99 b(The)31 b(inter)s(face)g
-(between)f(a)i(plugin)f(and)g(the)g(C)h(cor)q(e)111 b(7)100
-b(CREATING)30 b(A)h(PLUGIN)p 0 124 3825 4 v 249 489 a
-Fb(1)100 b(S:)49 b(<wait)g(for)g(connection)f(on)h(TCP)h(port)f(110>)
-249 600 y(2)100 b(C:)49 b(<open)g(connection>)249 711
-y(3)100 b(S:)198 b(+OK)50 b(POP3)f(server)249 823 y(4)100
-b(C:)198 b(USER)49 b(linux@kernel.org)249 934 y(5)100
-b(S:)198 b(+OK)50 b(now)f(insert)g(the)g(pasword)249
-1045 y(6)100 b(C:)198 b(PASS)49 b(gpl)249 1156 y(7)100
-b(S:)198 b(+OK)50 b(linux's)e(maildrop)g(has)i(2)f(messages)g(\(320)g
-(octets\))249 1267 y(8)100 b(C:)198 b(STAT)249 1379 y(9)100
-b(S:)198 b(+OK)50 b(1)f(320)199 1490 y(10)100 b(C:)198
-b(LIST)199 1601 y(11)100 b(S:)198 b(+OK)50 b(2)f(messages)g(\(320)g
-(octets\))199 1712 y(12)100 b(S:)198 b(1)50 b(320)199
-1823 y(13)100 b(S:)198 b(.)199 1935 y(14)100 b(C:)198
-b(RETR)49 b(1)199 2046 y(15)100 b(S:)198 b(+OK)50 b(120)f(octets)199
-2157 y(16)100 b(S:)198 b(<the)49 b(POP3)h(server)e(sends)h(message)g
-(1>)199 2268 y(17)100 b(S:)198 b(.)199 2379 y(18)100
-b(C:)198 b(DELE)49 b(1)199 2491 y(19)100 b(S:)198 b(+OK)50
-b(message)e(1)i(deleted)199 2602 y(20)100 b(C:)198 b(QUIT)199
-2713 y(21)100 b(S:)198 b(+OK)50 b(dewey)f(POP3)g(server)f(signing)h
-(off)g(\(maildrop)f(empty\))199 2824 y(22)100 b(C:)f(<close)48
-b(connection>)199 2936 y(23)100 b(S:)f(<wait)49 b(for)g(next)g
-(connection>)146 3186 y Fj(In)31 b(this)f(session)f(the)h(backend)g
-(will)g(be)g(called)g(for)g(lines)g(4,)h(6,)f(8,)h(10,)f(14,)h(18,)f
-(20)h(\(all)0 3307 y(the)f Ff(C:)g Fj(lines\))g(and)g(r)q(espectively)e
-(the)i(functions)e(implementing)g(the)i(POP3)g(commands)0
-3427 y(will)h(be)h(called)f(this)g(way)199 3619 y Fb
+8 7 bop 0 84 a Fi(7.2)99 b(The)31 b(inter)s(face)g(between)f(a)i
+(plugin)f(and)g(the)g(C)h(cor)q(e)111 b(7)100 b(CREATING)30
+b(A)h(PLUGIN)p 0 124 3825 4 v 249 489 a Fb(1)100 b(S:)49
+b(<wait)g(for)g(connection)f(on)h(TCP)h(port)f(110>)249
+600 y(2)100 b(C:)49 b(<open)g(connection>)249 711 y(3)100
+b(S:)198 b(+OK)50 b(POP3)f(server)249 823 y(4)100 b(C:)198
+b(USER)49 b(linux@kernel.org)249 934 y(5)100 b(S:)198
+b(+OK)50 b(now)f(insert)g(the)g(pasword)249 1045 y(6)100
+b(C:)198 b(PASS)49 b(gpl)249 1156 y(7)100 b(S:)198 b(+OK)50
+b(linux's)e(maildrop)g(has)i(2)f(messages)g(\(320)g(octets\))249
+1267 y(8)100 b(C:)198 b(STAT)249 1379 y(9)100 b(S:)198
+b(+OK)50 b(1)f(320)199 1490 y(10)100 b(C:)198 b(LIST)199
+1601 y(11)100 b(S:)198 b(+OK)50 b(2)f(messages)g(\(320)g(octets\))199
+1712 y(12)100 b(S:)198 b(1)50 b(320)199 1823 y(13)100
+b(S:)198 b(.)199 1935 y(14)100 b(C:)198 b(RETR)49 b(1)199
+2046 y(15)100 b(S:)198 b(+OK)50 b(120)f(octets)199 2157
+y(16)100 b(S:)198 b(<the)49 b(POP3)h(server)e(sends)h(message)g(1>)199
+2268 y(17)100 b(S:)198 b(.)199 2379 y(18)100 b(C:)198
+b(DELE)49 b(1)199 2491 y(19)100 b(S:)198 b(+OK)50 b(message)e(1)i
+(deleted)199 2602 y(20)100 b(C:)198 b(QUIT)199 2713 y(21)100
+b(S:)198 b(+OK)50 b(dewey)f(POP3)g(server)f(signing)h(off)g(\(maildrop)
+f(empty\))199 2824 y(22)100 b(C:)f(<close)48 b(connection>)199
+2936 y(23)100 b(S:)f(<wait)49 b(for)g(next)g(connection>)146
+3186 y Fj(In)31 b(this)f(session)f(the)h(backend)g(will)g(be)g(called)g
+(for)g(lines)g(4,)h(6,)f(8,)h(10,)f(14,)h(18,)f(20)h(\(all)0
+3307 y(the)f Ff(C:)g Fj(lines\))g(and)g(r)q(espectively)e(the)i
+(functions)e(implementing)g(the)i(POP3)g(commands)0 3427
+y(will)h(be)h(called)f(this)g(way)199 3619 y Fb
 (user\(p,"linux@kernel.org"\))199 3730 y(pass\(p,"gpl"\))199
 3841 y(stat\(p\))199 3952 y(list_all\(p\))199 4064 y(retr\(p,1\))199
 4175 y(dele\(p,1\))199 4286 y(quit_update\(p\))146 4537
@@ -810,18 +714,17 @@ g(the)g(C)g(cor)o(e)0 5363 y Fj(Let)25 b(us)h(take)f(in)g(exam)g(the)g
 Fj(.)31 b(Her)q(e)25 b(the)g(plugin)0 5484 y(should)40
 b(authenticate)f(the)i(user)f(\(if)h(ther)q(e)f(is)h(a)g(sort)g(of)g
 (authentication\))e(and)h(infor)s(m)1882 5733 y(8)p eop
-end
 %%Page: 9 9
-TeXDict begin 9 8 bop 2647 84 a Fi(8)100 b(SUBMITTING)29
-b(A)j(BUG)p 0 124 3825 4 v 0 428 a Fj(the)k(C)h(cor)q(e)f(of)h(the)f(r)
-q(esult.)54 b(T)q(o)37 b(achieve)f(this)g(each)g(plugin)g(function)g
-(must)g(r)q(etur)s(n)f(an)0 548 y(err)q(or)c(\003ag,)g(to)g(be)h(mor)q
-(e)f(accurate)f(one)h(of)h(these)f(err)q(ors:)p 146 680
-3436 4 v 146 800 4 121 v 199 764 a Fc(Code)p 1345 800
-V 998 w(Meaning)p 3578 800 V 146 804 3436 4 v 146 824
-V 146 944 4 121 v 199 908 a Fb(POPSERVER_ERR_OK)p 1345
-944 V 399 w Fc(No)d(err)q(or)p 3578 944 V 146 947 3436
-4 v 146 1068 4 121 v 199 1032 a Fb(POPSERVER_ERR_NETWORK)p
+9 8 bop 2647 84 a Fi(8)100 b(SUBMITTING)29 b(A)j(BUG)p
+0 124 3825 4 v 0 428 a Fj(the)k(C)h(cor)q(e)f(of)h(the)f(r)q(esult.)54
+b(T)q(o)37 b(achieve)f(this)g(each)g(plugin)g(function)g(must)g(r)q
+(etur)s(n)f(an)0 548 y(err)q(or)c(\003ag,)g(to)g(be)h(mor)q(e)f
+(accurate)f(one)h(of)h(these)f(err)q(ors:)p 146 680 3436
+4 v 146 800 4 121 v 199 764 a Fc(Code)p 1345 800 V 998
+w(Meaning)p 3578 800 V 146 804 3436 4 v 146 824 V 146
+944 4 121 v 199 908 a Fb(POPSERVER_ERR_OK)p 1345 944
+V 399 w Fc(No)d(err)q(or)p 3578 944 V 146 947 3436 4
+v 146 1068 4 121 v 199 1032 a Fb(POPSERVER_ERR_NETWORK)p
 1345 1068 V 149 w Fc(An)f(err)q(or)f(concer)s(ning)f(the)h(network)p
 3578 1068 V 146 1071 3436 4 v 146 1191 4 121 v 199 1155
 a Fb(POPSERVER_ERR_AUTH)p 1345 1191 V 299 w Fc(Authorization)h(failed)p
@@ -886,13 +789,13 @@ b(the)h(popserver)f(needs)h(to)h(accomplish)e(its)h(work)g(\(note)g
 b(Submitting)48 b(a)h(bug)0 5249 y Fj(When)37 b(you)g(have)h(pr)q
 (oblems)e(or)i(you)f(think)g(you)h(found)f(a)g(bug,)i(please)e(follow)g
 (strictly)0 5370 y(this)31 b Fa(iter)8 b Fj(:)1882 5733
-y(9)p eop end
+y(9)p eop
 %%Page: 10 10
-TeXDict begin 10 9 bop 3159 84 a Fi(9)100 b(AUTHORS)p
-0 124 3825 4 v 101 428 a Fj(1.)49 b(Update)30 b(to)i(the)f(most)g(r)q
-(ecent)g(version)f(of)i(Fr)q(eePOPs.)101 631 y(2.)49
-b(T)t(ry)34 b(to)g(r)q(epr)q(oduce)f(the)h(bug,)g(if)h(the)f(bug)g(is)h
-(not)f(easily)g(r)q(epr)q(oducible)d(we)k(ar)q(e)f(out)244
+10 9 bop 3159 84 a Fi(9)100 b(AUTHORS)p 0 124 3825 4
+v 101 428 a Fj(1.)49 b(Update)30 b(to)i(the)f(most)g(r)q(ecent)g
+(version)f(of)i(Fr)q(eePOPs.)101 631 y(2.)49 b(T)t(ry)34
+b(to)g(r)q(epr)q(oduce)f(the)h(bug,)g(if)h(the)f(bug)g(is)h(not)f
+(easily)g(r)q(epr)q(oducible)d(we)k(ar)q(e)f(out)244
 751 y(of)42 b(luck.)69 b(Something)40 b(can)h(still)g(be)h(tried:)59
 b(if)41 b(the)h(softwar)q(e)e(crashed)h(you)g(could)244
 872 y(compile)35 b(it)h(fr)q(om)f(the)h(sour)q(ces,)f(install)g
@@ -926,16 +829,16 @@ y Fg(\017)49 b Fj(Nicola)31 b(Cocchiar)q(o)e Ff
 b Fj(Simone)30 b(V)-7 b(ellei)31 b Ff(<simone_vellei@users.sourcefor)o
 (ge.n)o(et>)145 5156 y Fg(\017)49 b Fj(Giacomo)30 b(T)q(enaglia)h
 Ff(<sonicsmith@users.sourceforge)o(.net)o(>)1851 5733
-y Fj(10)p eop end
+y Fj(10)p eop
 %%Page: 11 11
-TeXDict begin 11 10 bop 3181 84 a Fi(10)100 b(THANKS)p
-0 124 3825 4 v 0 430 a Fl(10)143 b(Thanks)0 662 y Fj(Special)36
-b(thanks)g(goes)g(to)h(the)g(users)f(who)g(tested)g(the)h(softwar)q(e,)
-g(to)f(the)h(hackers)f(who)0 782 y(made)41 b(it)h(possible)e(to)i(have)
-f(a)g(fr)q(ee)g(and)h(r)q(eliable)e(development)g(envir)q(onment)f(as)j
-(the)0 902 y(Debian)31 b(GNU/Linux)e(system.)1851 5733
-y(11)p eop end
+11 10 bop 3181 84 a Fi(10)100 b(THANKS)p 0 124 3825 4
+v 0 430 a Fl(10)143 b(Thanks)0 662 y Fj(Special)36 b(thanks)g(goes)g
+(to)h(the)g(users)f(who)g(tested)g(the)h(softwar)q(e,)g(to)f(the)h
+(hackers)f(who)0 782 y(made)41 b(it)h(possible)e(to)i(have)f(a)g(fr)q
+(ee)g(and)h(r)q(eliable)e(development)g(envir)q(onment)f(as)j(the)0
+902 y(Debian)31 b(GNU/Linux)e(system.)1851 5733 y(11)p
+eop
 %%Trailer
-
+end
 userdict /end-hook known{end-hook}if
 %%EOF

@@ -569,58 +569,31 @@ end
 
 -- -------------------------------------------------------------------------- --
 -- Fill msg uidl field
-function uidl(pstate,msg)
-	return stat(pstate)
-end
+uidl = common.uidl
 
 -- -------------------------------------------------------------------------- --
 -- Fill all messages uidl field
-function uidl_all(pstate)
-	return stat(pstate)
-end
+uidl_all = common.uidl_all
 
 -- -------------------------------------------------------------------------- --
 -- Fill msg size
-function list(pstate,msg)
-	return stat(pstate)
-end
+list = common.list
 
 -- -------------------------------------------------------------------------- --
 -- Fill all messages size
-function list_all(pstate,msg)
-	return stat(pstate)
-end
+list_all = common.list_all
 
 -- -------------------------------------------------------------------------- --
 -- Do nothing
-function noop(pstate)
-	return POPSERVER_ERR_OK
-end
+noop = common.noop
 
 -- -------------------------------------------------------------------------- --
 -- Unflag each message merked for deletion
-function rset(pstate)
-	local st = stat(pstate)
-	if st ~= POPSERVER_ERR_OK then return st end
-	
-	for i=1,get_popstate_nummesg(pstate) do
-		unset_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE)
-	end
-	return POPSERVER_ERR_OK
-end
+rset = common.rset
 
 -- -------------------------------------------------------------------------- --
 -- Mark msg for deletion
-function dele(pstate,msg)
-	local st = stat(pstate)
-	if st ~= POPSERVER_ERR_OK then return st end
-
-	if not check_range(pstate,msg) then
-		return POPSERVER_ERR_NOMSG
-	end
-	set_mailmessage_flag(pstate,msg,MAILMESSAGE_DELETE)
-	return POPSERVER_ERR_OK
-end
+dele = common.dele
 
 -- -------------------------------------------------------------------------- --
 -- Get first lines message msg lines, must call 

@@ -227,6 +227,7 @@ freepops.init = function (mailaddress)
 
 	-- standard lua modules that must be loaded
 	if freepops.dofile("support.lua") == nil then return 1 end
+	if freepops.dofile("common.lua") == nil then return 1 end
 	
 	if freepops.load_module_for(mailaddress) == nil then return 1 end
 

@@ -184,7 +184,6 @@ Private.base64wrap = 45
 function Private.base64_io_slave(cb)
 	local buffer = ""
 	return function(s,len)
-		
 		buffer = buffer .. s
 		
 		local todo_table = {}
@@ -303,11 +302,10 @@ end
 
 function Private.attach_it(browser,boundary,send_cb)
 	return function(k,uri)
+
 		local h,err = browser:get_head(uri)
 
-		--print(h)
-
-		local _,_,x = string.find(h,
+		local _,_,x = string.find(h or "",
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")
 
 		x = x or "application/octet-stream"
@@ -323,7 +321,7 @@ function Private.attach_it(browser,boundary,send_cb)
 		if Private.needs_encoding(x) then
 			cb = Private.base64_io_slave(send_cb)
 		else
-			cb = Private.quoted_printable_io_slave(cb)
+			cb = Private.quoted_printable_io_slave(send_cb)
 		end
 	
 		-- do the work

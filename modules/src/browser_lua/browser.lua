@@ -198,9 +198,12 @@ end
 -- DONE,nil if ok
 -- REDO,url if 3xx code
 function Hidden.parse_header(self,gl_h)
+	if gl_h[1] == nil then
+		return Hidden.error("malformed HTTP header line: nil")
+	end
 	local _,_,ret = string.find(gl_h[1],"[^%s]+%s+(%d%d%d)")
 	if ret == nil then
-		print("STRANGE HEADER!")
+		--print("STRANGE HEADER!")
 		table.foreach(gl_h,print)
 		return Hidden.error("malformed HTTP header line: "..gl_h[1])
 	end
@@ -263,6 +266,7 @@ function Hidden.perform(self,url,gl_h,gl_b)
 			", but is called with a "..type(gl_b))		
 	end
 	self.curl:setopt(curl.OPT_HEADERFUNCTION,Hidden.build_w_cb(gl_h))
+
 	local rc,err = self.curl:perform()
 
 	-- check result
@@ -393,7 +397,7 @@ function Private.get_head(self,url,exhed)
 	local gl_b,gl_h = {},{}
 	
 	self.curl:setopt(curl.OPT_HTTPGET,1)
-	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"HEAD")
 	self.curl:setopt(curl.OPT_NOBODY,1)
 	
 	Hidden.build_header(self,url,exhed)
@@ -413,7 +417,6 @@ function Private.pipe_uri(self,url,cb,exhed)
 	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
 	
 	Hidden.build_header(self,url,exhed)
-	
 	local rc,err = Hidden.perform(self,url,gl_h,cb)
 
 	return Hidden.continue_or_return(rc,err,{""},

@@ -23,7 +23,8 @@ for next version or later:
 	add proxy section in config.lua e integrate win-IE settings 
 		discovery code from LiberoPOPs
 	link the rss feed in the homepage
-	fix in owa that Host and Cookie is repeated 3 times.
+	fix in owa that Host and Cookie is repeated 3 times and rename it 
+		DAVMAIL.lua.
 	create a xslt to generate the XHTML for the homepage,
 		would be nice to have many views:
 		- listed by domain

@@ -30,8 +30,6 @@ Maybe fake reports (bugs do not appear true)
 For next version or later (in random order, lucky first)
 ========================================================
 
- * add directory listing function and lua binding to end implementation
-   of LUA_UNOFFICIAL plugin scanning
  * they say that win32 without -w can crash
  * link the rss feed in the homepage
  * create the -dev ML

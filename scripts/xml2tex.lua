@@ -92,6 +92,7 @@ function E(s)
 	s = string.gsub(s,"&igrave;","\\`i")
 	s = string.gsub(s,"&apos;","`")
 	s = string.gsub(s,"&quote;","``")
+	s = string.gsub(s,"&quot;","``")
 	s = string.gsub(s,"<br/>","\n\n")
 	return s
 end

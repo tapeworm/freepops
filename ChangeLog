@@ -1,3 +1,4 @@
+- added luafilesystem bindings (from http://keplerproject.org)
 - added lua_unofficial directory scanning for unofficial plugins
 - added freepops.safe_extract_domains(file) to extract the domains supported
 by a plugin (should be used to implement the LUA_UNOFFICIAL auto scan)

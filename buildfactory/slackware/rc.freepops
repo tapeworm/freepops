@@ -15,12 +15,14 @@
 # Description: Start the freepopsd daemon
 ### END INIT INFO
 
+FREEPOPSD="/usr/bin/freepopsd"
+
 success() {
-        echo -n OK!
+        echo -n $FREEPOPSD
 }
 
 failure() {
-        echo -n KO!
+        echo -n "failed!"
 }
 
 if [ -f /etc/freepops/freepops.conf ]; then
@@ -35,10 +37,10 @@ fi
 pid=/var/run/freepopsd.pid
 
 start(){
-        echo -n "Starting FreePOPs Service :"
+        echo -n "Starting FreePOPs daemon: "
         if [ -f $pid ]; then
                 SAVED_PID=`cat $pid`
-                EXE_PID=`ps -elf | grep -m 1 /usr/bin/freepopsd |awk '{print $4}'`
+                EXE_PID=`ps -elf | grep -m 1 $FREEPOPSD |awk '{print $4}'`
                 if [ x$SAVED_PID = x$EXE_PID ]; then
                         failure
                         echo
@@ -49,13 +51,13 @@ start(){
                         killall freepopsd > /dev/null 2>&1
                 fi
         fi
-        /usr/bin/freepopsd $BIND_IP_STR $BIND_PORT_STR $LP_OPTIONS
+        $FREEPOPSD $BIND_IP_STR $BIND_PORT_STR $LP_OPTIONS
         ret=$?
         touch $pid
         if [ $ret -ne 0 ]; then
                 failure
         else
-                ps -elf | grep -m 1 /usr/bin/freepopsd |awk '{print $4}' > $pid
+                ps -elf | grep -m 1 $FREEPOPSD |awk '{print $4}' > $pid
                 success
         fi
         echo
@@ -64,7 +66,7 @@ start(){
 
 
 stop(){
-        echo -n "Stopping FreePOPs Service :"
+        echo -n "Stopping FreePOPs daemon: "
         if [ -f $pid ]; then
                 /bin/kill `cat /var/run/freepopsd.pid  2>/dev/null ` > /dev/null 2>&1
                 ret=$?

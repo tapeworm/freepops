@@ -15,8 +15,8 @@ PLUGIN_URL = "http://freepops.org/download.php?file=owa.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
-PLUGIN_DOMAINS = {"lycos.co.uk","lycos.ch","lycos.de","lycos.es",
-	"lycos.it","lycos.at","lycos.nl","spray.se"}
+PLUGIN_DOMAINS = {"@lycos.co.uk","@lycos.ch","@lycos.de","@lycos.es",
+	"@lycos.it","@lycos.at","@lycos.nl","@spray.se"}
 PLUGIN_PARAMETERS = {}
 PLUGIN_DESCRIPTIONS = {
 	it="Questo plugin &egrave; per gli account che usano il "..

@@ -472,126 +472,12 @@ will be no default arguments, thus \texttt{port=110} can't be omitted
 as in the previous example.
 
 
-\subsection{libero.lua}
-
-This plugin allows you to read the mails you have in a \texttt{@libero.it},
-\texttt{@iol.it}, \texttt{@inwind.it} and \texttt{@blu.it} mailbox.
-This means you can still use your favorite mail reader instead of
-using the webmail. This plugin acts as a browser that surfs your webmail
-account and make it appear as a POP3 server. For more info on this
-plugin you may read the LiberoPOPs (FreePOPs ancestor) website at
-\texttt{http://liberopops.sourceforge.net}
-
-To use this plugin you have to use your full email address as the
-username and your real password as the password. This plugin accepts
-the following parameters:
-
-\begin{description}
-\item [folder]is used to select the folder (\texttt{inbox} is the default)
-you want to interact with. The folders that are available are called
-\texttt{draft}, \texttt{inbox}, \texttt{outbox}, \texttt{trash}. If
-you created some folders you can use them using their names. If your
-folder is not at top level you have to use the \texttt{/} to separate
-it from the parent. This is an example of a username for reading the
-\texttt{son} folder, a sub folder of the \texttt{father} one:\\
-\texttt{foo@libero.it?folder=father/son}
-\end{description}
-
-\subsection{tin.lua}
-
-This is the webmail support for \texttt{@virgilio.it} and \texttt{@tin.it}
-mailboxes. To use this plugin you have to use your full email address
-as the username and your real password as the password. Since you
-may need to inspect other folders than \texttt{INBOX}, you can pass
-the folder parameter to the plugin. The only tested folder is \texttt{Spam},
-but other folder may work. This is an example of a username for the
-\texttt{Spam} folder (the default folder is the \texttt{INBOX} one):\\
-\texttt{foo@virgilio.it?folder=Spam }
-
-
-\subsection{owa.lua}
-
-This is the webmail support for 
-\texttt{@lycos.it}, 
-\texttt{@lycos.co.uk},
-\texttt{@lycos.ch},
-\texttt{@lycos.de},
-\texttt{@lycos.es},
-\texttt{@spray.se},
-\texttt{@lycos.at} and
-\texttt{@lycos.nl} mailboxes. To use
-this plugin you have to use your full email address as the username
-and your real password as the password. It supports the folder
-parameter. (FIXME: not tested).
-
-\subsection{popforward.lua}
-
-This plugin was developed to test FreePOPs before any real plugins
-were written. It simply forwards to a real POP3 server your local
-requests. This can be used for masquerading a buggy POP3 server, but
-if you think you need this you should examine carefully the plugin
-code and add checks to improve the detection/avoidance of malicious
-requests, since the plugins was not born with security in mind. 
-
-To use this plugin you have to edit the config.lua file. This because
-we can't add all the existing POP3 server to this file :) The plugin
-wants two arguments, the POP3 host and the port (usually \texttt{110})
-on which the server listens. This is an example of a configuration
-line for this plugin, in which all email addresses of the \texttt{@virgilio.it}
-domain are forwarded to \texttt{in.virgilio.it:110}:\linespread{0.5}
-
-\begin{footnotesize}
-
-\begin{verbatim}
-
--- popforward plugin 
-
-freepops.MODULES_MAP["virgilio.it"]     = {         
-
-       name="popforward.lua",         
-
-       args={ 
-
-              port=110,
-
-              host="in.virgilio.it"
-
-       } 
-
-} 
-
-\end{verbatim}
-
-\end{footnotesize}You can reach the same result using the passing argument method described
-in the first paragraph of this chapter. These are the accepted arguments:
-
-\begin{description}
-\item [host]The pop3 server you want to connect to
-\item [port]The pop3 server port, usually 110
-\item [realusername]If you bind this plugin on the fly you probably need
-to specify the real username here, since the username you specified
-contains the plugin name and is probably invalid.
-\end{description}
-
-\subsection{aggregator.lua}
-
-Usually you can benefit from the W3C's RSS format when you read some
-website news. The RSS file indexes the news, providing a link to them.
-This plugin can make your mail client see the RSS file as a mailbox
-from which you can download each news as if it was a mail message.
-The only limitation is that this plugin can fetch only a news summary
-plus the news link. 
-
-To use this plugin you have to use a casual username with the \texttt{@aggregator}
-suffix (ex: \texttt{foo@aggregator}) and as the password the URL of
-the RSS file(ex: \texttt{http://www.securityfocus.com/rss/vulnerabilities.xml}).
-For your commodity we added some alias for you. This means you have
-not to search by hand the URL of the RSS file. We added some domain,
-for example \texttt{@securityfocus.com}, that can be used to directly
-use the aggregator plugin with these website. To use these alias you
-have to use a username in the form \texttt{something@aggregatordomain}
-and a casual password. This is the list of aliases for the aggregator
-plugin.\\
+\input{libero.lua.xml.en.xmltex}
+\input{tin.lua.xml.en.xmltex}
+\input{owa.lua.xml.en.xmltex}
+\input{popforward.lua.xml.en.xmltex}
+\input{aggregator.lua.xml.en.xmltex}
+This is the list of aliases for the aggregator plugin.\\
 \\
 \begin{tabular}{|l|l|}
 \hline 
@@ -658,24 +544,9 @@ news (English)}\tabularnewline
 \end{tabular}
 
 
-\subsection{flatnuke.lua}
-
-This plugin is an aggregator plugin specialized in the websites made
-with the FlatNuke%
-\footnote{HTTP://flatnuke.sourceforge.net%
-} content management system, or other sites that use the same news
-format like the FreePOPs website. Since in a FlatNuke site the news
-are stored in plain XML files this plugin is able to fetch the whole
-news, and not only the headings as the aggregator plugin does. This
-is really useful if you don't want to surf the website to read the
-news.
-
-To use this plugin you have to use a username with the \texttt{@flatnuke}
-domain (ex: \texttt{something@flatnuke}) and a flatnuke homepage URL
-as the password (ex: \texttt{http://flatnuke.sourceforge.net/}, no
-need for the RSS file URL since FlatNuke puts the RSS in a fixed and
-well known position. There are some alias for FlatNuke sites, see
-the aggregator plugin documentation to know what this means):\\
+\input{flatnuke.lua.xml.en.xmltex}
+There are some alias for FlatNuke sites, see
+the aggregator plugin documentation to know what this means:\\
 \\
 \begin{tabular}{|l|l|}
 \hline 
@@ -697,77 +568,13 @@ news (Italian)}\tabularnewline
 \hline
 \end{tabular}
 
-
-\subsection{kernel.lua}
-
-This plugin helps in staying up to date with the Linux kernel releases.
-\texttt{http://kernel.org} is the official page with the Linux kernel
-releases, each with its ChangeLog. You should use \texttt{something@kernel.org}
-to receive news about every tree, \texttt{something@kernel.org.24}
-or \texttt{something@kernel.org.26} for a specific tree. Password
-is not used, type a random string.
-
-
-\subsection{gmail.lua}
-
-This is the webmail support for \texttt{@gmail.com} mailboxes. To
-use this plugin you have to use your full email address as the username
-and your real password as the password. An extensions is the \texttt{\#export}
-that allows you to export in csv format you address book. To do this
-you should use something like \texttt{username\#export@gmail.com}
-and a \texttt{gmail\_contacts\_export.csv} will be saved in you home
-(Unix) or in the My Documents directory (Windows). To use this plugin
-you need the SSL version of FreePOPs (for Windows download the FreePOPs-X.Y.Z-SSL.exe
-setup file, under Unix you probably need OpenSSL installed).
-
-\subsection{yahoo.lua}
-
-This is the webmail support for \texttt{@yahoo.com} and \texttt{yahoo.it} 
-mailboxes. To 
-use this plugin you have to use your full email address as the username 
-and your real password as the password. This plugin accepts the following 
-parameters:
-
-\begin{description}
-\item [folder]is used to select the folder (\texttt{Inbox} is the default)
-you want to interact with. The folders that are available are the standard 
-Yahoo folders, called 
-\texttt{Inbox}, \texttt{Draft}, \texttt{Sent}, \texttt{Bulk} and 
-\texttt{Trash} (for yahoo.it domains you may use the same folder names or the 
-corresponding names in Italian: \texttt{InArrivo}, \texttt{Bozza}, 
-\texttt{Inviati}, \texttt{Anti-spam}, \texttt{Cestino}). If you created some 
-folders you can use them using their names. 
-\end{description}
-
-\subsection{squirrelmail.lua}
-
-This plugin supports webmails made with squirrelmail. You have to hack
-by hand the plugin to make it work with your website. since now it
-supports only version 1.2.
-
-\subsection{hotmail.lua}
-
-This is the webmail support for 
-\texttt{@hotmail.com}, \texttt{@msn.com}, \texttt{@webtv.com}, 
-\texttt{@charter.com}, \texttt{@compaq.net}, \texttt{@passport.com} 
-mailboxes. To use
-this plugin you have to use your full email address as the username
-and your real password as the password.
-
-\subsection{aol.lua}
-This is the webmail support for 
-\texttt{@aol.com}, \texttt{@aol.com.ar}, \texttt{@aol.fr}, \texttt{@aol.com.mx},
- \texttt{@aol.com.au}, \texttt{@aol.de}, \texttt{@aol.com.pr}, 
-\texttt{@aol.com.br}, \texttt{@jp.aol.com}, \texttt{@aol.com.uk}, 
-\texttt{@aol.ca}, \texttt{@aola.com} 
-mailboxes. To use
-this plugin you have to use your full email address as the username
-and your real password as the password.
-
-\subsection{tre.lua}
-This is the webmail support for \texttt{@tre.it} mailboxes. To use
-this plugin you have to use your full email address as the username
-and your real password as the password.
+\input{kernel.lua.xml.en.xmltex}
+\input{gmail.lua.xml.en.xmltex}
+\input{yahoo.lua.xml.en.xmltex}
+\input{squirrelmail.lua.xml.en.xmltex}
+\input{hotmail.lua.xml.en.xmltex}
+\input{aol.lua.xml.en.xmltex}
+\input{tre.lua.xml.en.xmltex}
 
 \section{Creating a plugin}
 

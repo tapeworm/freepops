@@ -10,6 +10,22 @@
 
 PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "Foo web mail"
+PLUGIN_REQUIRE_VERSION = "----"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "-------"
+PLUGIN_HOMEPAGE = "---------"
+PLUGIN_AUTHORS_NAMES = {"--- "}
+PLUGIN_AUTHORS_CONTACTS = {"-----"}
+PLUGIN_DOMAINS = {"@..."}
+PLUGIN_PARAMETERS = { 
+	{name="--name--", description={en="--desc--",it=="--desc--"}},
+}
+PLUGIN_DESCRIPTIONS = {
+	it=[[----]],
+	en=[[----]]
+}
+
+
 
 foo_globals= {
 	username="nothing",

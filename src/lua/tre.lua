@@ -10,6 +10,24 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "Tre"
+PLUGIN_REQUIRE_VERSION = "0.0.15"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=tre.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Eddi De Pieri"}
+PLUGIN_AUTHORS_CONTACTS = {"dpeddi@users.sourceforge.net"}
+PLUGIN_DOMAINS = {"tre.it"} 
+PLUGIN_PARAMETERS = {}
+PLUGIN_DESCRIPTIONS = {
+	it=[[
+Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
+nome utente e la vostra vera password come password.]],
+	en=[[
+To use
+this plugin you have to use your full email address as the username
+and your real password as the password.]]
+}
+
 
 -- Todo:
 -- Delete message -> ok

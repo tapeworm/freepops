@@ -9,6 +9,20 @@
 
 PLUGIN_VERSION = "--put version here--"
 PLUGIN_NAME = "--put name here--"
+PLUGIN_REQUIRE_VERSION = "----"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "-------"
+PLUGIN_HOMEPAGE = "---------"
+PLUGIN_AUTHORS_NAMES = {"--- "}
+PLUGIN_AUTHORS_CONTACTS = {"-----"}
+PLUGIN_DOMAINS = {"@..."}
+PLUGIN_PARAMETERS = { 
+	{name="--name--", description={en="--desc--",it=="--desc--"}},
+}
+PLUGIN_DESCRIPTIONS = {
+	it=[[----]],
+	en=[[----]]
+}
 
 -- ************************************************************************** --
 -- 

@@ -10,9 +10,25 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "Lycos.IT (this plugin doesn't work!)"
-
-
-
+PLUGIN_REQUIRE_VERSION = "----"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "-------"
+PLUGIN_HOMEPAGE = "---------"
+PLUGIN_AUTHORS_NAMES = {"--- "}
+PLUGIN_AUTHORS_CONTACTS = {"-----"}
+PLUGIN_DOMAINS = {"@..."}
+PLUGIN_PARAMETERS = { 
+	{name="--name--", description={en="--desc--",it=="--desc--"}},
+}
+PLUGIN_DESCRIPTIONS = {
+	it=[[
+questo plugin non fa la dele e la top/retr. E' a met&agrave; in quanto lycos viene gestito da owa.lua.	
+]],
+	en=[[
+this plugin cant' do a delete and retr/top. this is half done since 
+now the lycos webmail is served by the owa.lua plugin.
+]]
+}
 
 -- XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX
 -- this plugin cant' do a delete and retr/top. this is half done since 

@@ -9,6 +9,26 @@
 --
 PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "hotmail.com"
+PLUGIN_REQUIRE_VERSION = "0.0.15"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=hotmail.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
+PLUGIN_AUTHORS_CONTACTS = {"russells@despammed.com"}
+PLUGIN_DOMAINS = {"@hotmail.com","@msn.com","@webtv.com","@charter.com",
+	"@compaq.net","@passport.com"}
+PLUGIN_PARAMETERS = {}
+PLUGIN_DESCRIPTIONS = {
+	it=[[
+Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
+nome utente e la vostra vera password come password.]],
+	en=[[
+To use
+this plugin you have to use your full email address as the username
+and your real password as the password.]]
+}
+
+
 
 -- Domains supported:  hotmail.com, msn.com, webtv.com, charter.com, compaq.net,
 --                     passport.com

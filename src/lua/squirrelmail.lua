@@ -10,6 +10,26 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "SquirrelMail"
+PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=squirrelmail.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Eddi De Pieri"}
+PLUGIN_AUTHORS_CONTACTS = {"dpeddi@users.sourceforge.net"}
+PLUGIN_DOMAINS = {"-"}
+PLUGIN_PARAMETERS = {}
+PLUGIN_DESCRIPTIONS = {
+	it=[[
+Questo plugin vi permette di leggere le mail in una webmail fatta con
+squirrelmail. Il plugin &egrave; molto beta e bisogna modificarlo a mano
+per adattarlo al proprio sito. Per ora supporta solo la versione 1.2
+di squirrelmail.
+]],
+	en=[[
+This plugin supports webmails made with squirrelmail. You have to hack
+by hand the plugin to make it work with your website. since now it
+supports only version 1.2.]]
+}
 
 -- Tested with debian woody + apache (not ssl) + squirrelmail 1.2.6-1.3
 -- To get this plugin working you have to add size to "Options/Index Order" 

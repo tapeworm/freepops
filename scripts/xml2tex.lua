@@ -104,7 +104,7 @@ s = s .. "\\item["..multilang["url"][lang]..":]"..E(t.url._content).."\n"
 s = s .. "\\item["..multilang["homepage"][lang]..":]"..
 	E(t.homepage._content).."\n"
 --------
-if table.getn(t.authors) > 2 then
+if table.getn(t.authors) > 1 then
 	s = s .. "\\item["..multilang["authors"][lang]..":]"
 else
 	s = s .. "\\item["..multilang["author"][lang]..":]"
@@ -116,7 +116,7 @@ if string.sub(s,-2,-1) == ", " then
 	s = string.sub(s,1,-3) .. "\n"
 end
 -------
-if table.getn(t.domains) > 2 then
+if table.getn(t.domains) > 1 then
 	s = s .. "\\item["..multilang["domains"][lang]..":]"
 else
 	s = s .. "\\item["..multilang["domain"][lang]..":]"

@@ -519,7 +519,7 @@ function quit_update(pstate)
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
 			post = post .. string.format(tre_string.delete_next,
 				get_mailmessage_uidl(pstate,i))
-			if ( purge == "yes") then
+			if ( internal_state.purge == "yes") then
 				post_trash = post_trash .. string.format(tre_string.delete_next,
 	    			    get_mailmessage_uidl(pstate,i))
 			end

@@ -201,7 +201,7 @@ struct mail_msg_t* get_popstate_mailmessage(struct popstate_t *p,int n)
 {
 if(p == NULL)
 	ERROR_ABORT("popstate is NULL\n");
-if(n >= 0 && n <= p->num_msgs)
+if(n >= 0 && n < p->num_msgs)
 	return p->msg_list[n];
 /*if(n>p->num_msgs)
 	{

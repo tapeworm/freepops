@@ -503,7 +503,7 @@ function quit_update(pstate)
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 
-        local f = (freepops.MODULE_ARGS or {}).purge or "yes"
+        local purge = (freepops.MODULE_ARGS or {}).purge or "yes"
 
 	-- shorten names, not really important
 	local b = internal_state.b
@@ -519,7 +519,7 @@ function quit_update(pstate)
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
 			post = post .. string.format(tre_string.delete_next,
 				get_mailmessage_uidl(pstate,i))
-			if ( internal_state.purge == "yes") then
+			if ( purge == "yes") then
 				post_trash = post_trash .. string.format(tre_string.delete_next,
 	    			    get_mailmessage_uidl(pstate,i))
 			end

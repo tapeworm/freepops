@@ -16,7 +16,7 @@ PLUGIN_URL = "http://freepops.org/download.php?file=squirrelmail.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Eddi De Pieri"}
 PLUGIN_AUTHORS_CONTACTS = {"dpeddi@users.sourceforge.net"}
-PLUGIN_DOMAINS = {"-"}
+PLUGIN_DOMAINS = {"@..."}
 PLUGIN_PARAMETERS = {}
 PLUGIN_DESCRIPTIONS = {
 	it=[[

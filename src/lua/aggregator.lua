@@ -31,7 +31,7 @@ PLUGIN_URL = "http://freepops.org/download.php?file=aggregator.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
 PLUGIN_AUTHORS_CONTACTS = {"simone_vellei@users.sourceforge.net"}
-PLUGIN_DOMAINS = {"@aggregator","..."}
+PLUGIN_DOMAINS = {"@aggregator","@..."}
 PLUGIN_PARAMETERS = {}
 PLUGIN_DESCRIPTIONS = {
 	it= [[

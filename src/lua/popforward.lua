@@ -19,7 +19,7 @@ PLUGIN_URL = "http://freepops.org/download.php?file=popforward.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
-PLUGIN_DOMAINS = {"-"}
+PLUGIN_DOMAINS = {"@..."}
 PLUGIN_PARAMETERS = {
 	{name = "realusername", description = {
 		it = [[Se lanci il plugin con username foo@popforward.lua hai bisogno di questo per scegliere lo username reale]],

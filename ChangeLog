@@ -1,3 +1,6 @@
+- added owa.lua for httpmail based webmails
+- added some methods to browser to easily implement DAV
+- added httpmail-DAV implementation
 - fixed gmail.lua \r\n issue
 - added luaexpat bindings
 - added aol.lua (thanks to russell)

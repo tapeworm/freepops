@@ -36,7 +36,7 @@ freepops.MODULES_MAP["tin.it"]		= {
 }
 
 -- lycos
-freepops.MODULES_MAP["lycos.it"]	= {name="lycos.lua"}
+freepops.MODULES_MAP["lycos.it"]	= {name="owa.lua"}
 
 -- gmail
 freepops.MODULES_MAP["gmail.com"]	= {name="gmail.lua"}

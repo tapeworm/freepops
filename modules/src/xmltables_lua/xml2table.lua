@@ -149,8 +149,8 @@ function xml2table.xml2table(s,m,force_encoding)
 	end
 	local p = lxp.new(Private.lpx_cb_factory(tab),handle_namespaces)
 	if force_encoding then
-		if type(b.setencoding) == "function" then
-			b:setencoding(force_encoding)
+		if type(p.setencoding) == "function" then
+			p:setencoding(force_encoding)
 		else
 			s = string.gsub(s,'encoding="[%w%-]+"',
 				'encoding="'..force_encoding..'"')

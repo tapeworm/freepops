@@ -34,7 +34,7 @@ $(LIBRARY): $(OBJ) $(INTERFACE)
 	@echo "$@"
 
 clean:
-	@rm *.o
+	@rm -f $(OBJ) $(CDEPFILES:%.c=.%.d) $(LIBRARY)
 	
 -include $(CDEPFILES:%.c=.%.d)	
 

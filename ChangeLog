@@ -1,3 +1,4 @@
+- fixed ebuild (thanks er_capoccia)
 - added support for w3c date format in aggregator.lua
 - httpmail now uses iso-8859-1 instead of utf8 since Windows-1252 is 8 bit
 - added support for charset encoding in aggregator.lua

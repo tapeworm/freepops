@@ -429,7 +429,7 @@ while( lua_next(L,tab_index) != 0 ){
 		L_error(L,"this table is a list, keys must be unused");
 	}
 	/* get the string */
-	const char * val = luaL_checkstring(L,-1);
+	const char * val = lua_tostring(L,-1);
 	
 	/* pop val */
 	lua_pop(L,1);

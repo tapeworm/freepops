@@ -1,5 +1,6 @@
 -- ************************************************************************** --
---  FreePOPs @foo.xx webmail interface
+--  FreePOPs @foo.xx webmail interface, the plugin made in the tutorial,
+--  see the manal for more infos about this simple example
 -- 
 --  $Id$
 -- 
@@ -178,39 +179,49 @@ function stat(pstate)
 	foo_globals.stat_done = true
 	return POPSERVER_ERR_OK
 end
+
 -- -------------------------------------------------------------------------- --
 -- Fill msg uidl field
 function uidl(pstate,msg)
+	return common.uidl(pstate,msg)
 end
 -- -------------------------------------------------------------------------- --
 -- Fill all messages uidl field
 function uidl_all(pstate)
+	return common.uidl_all(pstate)
 end
 -- -------------------------------------------------------------------------- --
 -- Fill msg size
 function list(pstate,msg)
+	return common.list(pstate,msg)
 end
 -- -------------------------------------------------------------------------- --
 -- Fill all messages size
 function list_all(pstate)
+	return common.list_all(pstate)
 end
 -- -------------------------------------------------------------------------- --
 -- Unflag each message merked for deletion
 function rset(pstate)
+	return common.rset(pstate)
 end
 -- -------------------------------------------------------------------------- --
 -- Mark msg for deletion
 function dele(pstate,msg)
+	return common.dele(pstate,msg)
 end
 -- -------------------------------------------------------------------------- --
 -- Do nothing
 function noop(pstate)
+	return common.noop(pstate)
 end
+
 -- -------------------------------------------------------------------------- --
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
 function top(pstate,msg,lines,pdata)
 end
+
 -- -------------------------------------------------------------------------- --
 -- Get message msg, must call 
 -- popserver_callback to send the data

@@ -10,6 +10,7 @@
 -- passing plugin.
 -- 
 
+-- this is the tutorial plugin...
 freepops.MODULES_MAP["foo.xx"] 	= {name="foo.lua"}
 
 -- libero plugin

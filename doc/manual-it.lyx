@@ -204,6 +204,8 @@ collapsed true
 
 Vedete HTTP://flatnuke.sourceforge.net per l'homepage del progetto
 \end_inset 
+
+
 \layout Description
 
 kernel.lua Questo e' un plugin per tenersi aggiornati sulle ultime versioni
@@ -302,9 +304,9 @@ Piu' avanti vedremo come i plugin sono associati al dominio di un indirizzo
 \layout Standard
 
 Dalla versione 0.0.11 il file 
-\family typewriter
+\family typewriter 
 config.lua
-\family default
+\family default 
  ha una sezione policy.
  In questa sezione potete escludere o accettare classi di indirizzi mail.
  Questo puo' essere utile ad amministratori di rete.
@@ -1139,50 +1141,52 @@ ChangeLog
 Creare un plugin
 \layout Standard
 
-Seguono due sezioni, la prima e' una panoramica veloce su cosa un plugin deve
- fare, la seconda e' un tutorial piu' dettagliato.
- Prima di procedere oltre suggeriamo di leggere un po' di documentazione alla 
- base della scrittura dei plugin:
+Seguono due sezioni, la prima e' una panoramica veloce su cosa un plugin
+ deve fare, la seconda e' un tutorial piu' dettagliato.
+ Prima di procedere oltre suggeriamo di leggere un po' di documentazione
+ alla  base della scrittura dei plugin:
 \layout Enumerate
 
-Dato che i plugin sono scritti in LUA dovete leggere almeno il tutorial LUA
- (HTTP://lua-users.org/wiki/LuaTutorial); molte grazie a chi l'ha scritto.
- LUA e' un linguaggio di scripting piuttosto semplice, facile da imparare, 
- e facile da leggere. Se siete interessati a questo linguaggio dovreste leggere
- IL libro su LUA
+Dato che i plugin sono scritti in LUA dovete leggere almeno il tutorial
+ LUA (HTTP://lua-users.org/wiki/LuaTutorial); molte grazie a chi l'ha scritto.
+ LUA e' un linguaggio di scripting piuttosto semplice, facile da imparare,
+  e facile da leggere.
+ Se siete interessati a questo linguaggio dovreste leggere IL libro su LUA
  (
 \begin_inset Quotes eld
-\end_inset
+\end_inset 
 
 Programming in LUA
 \begin_inset Quotes erd
-\end_inset
+\end_inset 
 
  di Roberto Ierusalimschy HTTP://www.inf.puc-rio.br/~roberto/book/).
  E' davvero un buon libro, credetemi.
 \layout Enumerate
 
 Visto che dobbiamo implementare un backend POP3 dovreste sapere cos'e' il
- POP3. La RFC 1939 e' inclusa nella directory doc/ del pacchetto dei sorgenti
- di FreePOPs, ma potete prelevarla anche dalla rete HTTP://www.ietf.org/rfc/rfc1939.txt.
+ POP3.
+ La RFC 1939 e' inclusa nella directory doc/ del pacchetto dei sorgenti
+ di FreePOPs, ma potete prelevarla anche dalla rete HTTP://www.ietf.org/rfc/rfc193
+9.txt.
 \layout Enumerate
 
-Leggete attentamente questo tutorial, e' lontano dall'essere ben fatto ma e'
- meglio di niente.
+Leggete attentamente questo tutorial, e' lontano dall'essere ben fatto ma
+ e' meglio di niente.
 \layout Enumerate
 
 Il sito web contiene, nella sezione doc, un bel po' di documentazione sui
  sorgenti.
- Dovreste tenere un web browser aperto alla pagina della documentazione sui
- moduli LUA mentre scrivete un plugin.
+ Dovreste tenere un web browser aperto alla pagina della documentazione
+ sui moduli LUA mentre scrivete un plugin.
 \layout Enumerate
 
 Dopo aver creato un prototipo, dovreste leggere un plugin completo.
  Il plugin libero.lua e' davvero ben commentato, iniziate pure da li'.
 \layout Enumerate
 
-Ricordate che questo software ha un forum ufficiale (HTTP://freepops.diludovico.it)
- e degli autori a cui potete chiedere aiuto.
+Ricordate che questo software ha un forum ufficiale (HTTP://freepops.diludovico.it
+) e degli autori a cui potete chiedere aiuto.
 \layout Subsection
 
 Panoramica sui plugin
@@ -1196,7 +1200,7 @@ collapsed true
 \layout Standard
 
 Il sito web del linguaggio e' HTTP://www.lua.org
-\end_inset
+\end_inset 
 
  mentre il server POP3 e' scritto in C.
  Qui esamineremo l'interfaccia tra il nucleo C e i plugin LUA.
@@ -1705,49 +1709,48 @@ In questa sezione scriveremo un plugin passo passo, esaminando ogni dettaglio
 \layout Standard
 
 La prima cosa che faremo sara' copiare il file 
-\family typewriter
+\family typewriter 
 skeleton.lua
-\family default
+\family default 
  in 
-\family typewriter
+\family typewriter 
 foo.lua
-\family default
+\family default 
  (perche' scriveremo il plugin per la webmail 
-\emph on
+\emph on 
 foo.xx
-\emph default
+\emph default 
  , 
-\emph on
+\emph on 
 xx
-\emph default
+\emph default 
  sta per un dominio vero, ma non vogliamo menzionare alcun sito qui...).
  Ora con il vostro editor migliore (suggeriamo vim su Unix e scintilla per
- win32, visto che supportano il syntax highlighting per LUA, ma qualsiasi altro
- editor di testo va bene) aprite 
-\family typewriter
+ win32, visto che supportano il syntax highlighting per LUA, ma qualsiasi
+ altro editor di testo va bene) aprite 
+\family typewriter 
 foo.lua
-\family default
- e cambiate le prime righe aggiungendo il nome del plugin, la versione, il
- vostro nome, il vostro indirizzo email e un breve commento, nei posti
+\family default 
+ e cambiate le prime righe aggiungendo il nome del plugin, la versione,
+ il vostro nome, il vostro indirizzo email e un breve commento, nei posti
  appropriati.
 \begin_inset ERT
 status Collapsed
 
 \layout Standard
 
-\backslash
+\backslash 
 linespread{0.5}
 \layout Standard
 
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 -- ************************************************************************** --
-
 \layout Standard
 --  FreePOPs @--put domain here-- webmail interface
 \layout Standard
@@ -1770,40 +1773,41 @@ PLUGIN_VERSION = "--put version here--"
 PLUGIN_NAME = "--put name here--"
 \layout Standard
 
-\backslash
+\backslash 
 end{verbatim}
 \layout Standard
 
-\backslash
+\backslash 
 end{footnotesize}
-\end_inset
+\end_inset 
 
  Ora abbiamo un plugin vuoto, ma non e' abbastanza per iniziare a farci
- hacking. Dobbiamo aprire il file 
-\family typewriter
+ hacking.
+ Dobbiamo aprire il file 
+\family typewriter 
 config.lua
-\family default
+\family default 
  (nella distribuzione win32 si trova nella directory principale, mentre
  nella distribuzione Unix e' in 
-\family typewriter
+\family typewriter 
 /etc/freepops/
-\family default
-; altre copie di questo file possono essere incluse nelle distribuzioni, ma
- sono copie di backup) e aggiungete una riga come questa
+\family default 
+; altre copie di questo file possono essere incluse nelle distribuzioni,
+ ma sono copie di backup) e aggiungete una riga come questa
 \begin_inset ERT
 status Collapsed
 
 \layout Standard
 
-\backslash
+\backslash 
 linespread{0.5}
 \layout Standard
 
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 -- foo plugin
@@ -1811,44 +1815,43 @@ begin{verbatim}
 freepops.MODULES_MAP["foo.xx"]      = {name="foo.lua"}
 \layout Standard
 
-\backslash
+\backslash 
 end{verbatim}
 \layout Standard
 
-\backslash
+\backslash 
 end{footnotesize}
-\end_inset
+\end_inset 
 
  all'inizio del file.
- Prima di finire il primo passo dovreste provare se il plugin viene
- correttamente attivato da FreePOPs quando necessario.
+ Prima di finire il primo passo dovreste provare se il plugin viene correttament
+e attivato da FreePOPs quando necessario.
  Per questo dovremo aggiungere alcune righe a 
-\family typewriter
+\family typewriter 
 foo.lua
-\family default
+\family default 
 , in particolare dovremo aggiungere un valore di ritorno di errore a 
-\family typewriter
+\family typewriter 
 user()
-\family default
+\family default 
 .
 \begin_inset ERT
 status Collapsed
 
 \layout Standard
 
-\backslash
+\backslash 
 linespread{0.5}
 \layout Standard
 
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 -- -------------------------------------------------------------------------- --
-
 \layout Standard
 -- Must save the mailbox name
 \layout Standard
@@ -1859,40 +1862,40 @@ function user(pstate,username)
 end
 \layout Standard
 
-\backslash
+\backslash 
 end{verbatim}
 \layout Standard
 
-\backslash
+\backslash 
 end{footnotesize}
-\end_inset
+\end_inset 
 
  Ora la funzione user fallisce sempre, restituendo un errore di autenticazione.
  Dovrete ora lanciare FreePOPs (se e' gia' in esecuzione non e' necessario
- farlo ripartire) e lanciare telnet (sotto win32 dovreste aprire un prompt DOS,
- sotto Unix avrete una shell) e digitate 
-\family typewriter
+ farlo ripartire) e lanciare telnet (sotto win32 dovreste aprire un prompt
+ DOS, sotto Unix avrete una shell) e digitate 
+\family typewriter 
 telnet localhost 2000
-\family default
+\family default 
  e poi digitate 
-\family typewriter
+\family typewriter 
 user test@foo.xx
-\family default
+\family default 
 .
 \begin_inset ERT
 status Collapsed
 
 \layout Standard
 
-\backslash
+\backslash 
 linespread{0.5}
 \layout Standard
 
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 tassi@garfield:~$ telnet localhost 2000
@@ -1912,24 +1915,24 @@ user test@foo.xx
 Connection closed by foreign host.
 \layout Standard
 
-\backslash
+\backslash 
 end{verbatim}
 \layout Standard
 
-\backslash
+\backslash 
 end{footnotesize}
-\end_inset
+\end_inset 
 
  Il server risponde chiudendo la connessione e stampando un messaggio di
  autorizzazione fallita (va bene, dato che la funzione 
-\family typewriter
+\family typewriter 
 user()
-\family default
+\family default 
  del nostro plugin restituisce questo errore).
  Nel file standard error (la console sotto Unix, il file 
-\family typewriter
+\family typewriter 
 stderr.txt
-\family default
+\family default 
  sotto Windows) vengono stampati i messaggi d'errore, non vi prestate attenzione
  per ora.
 \layout Subsubsection
@@ -1939,26 +1942,23 @@ stderr.txt
 
 La procedura di login e' la prima cosa da fare.
  Il protocollo POP3 ha due comandi per il login, 
-\emph on
+\emph on 
 user
-\emph default
+\emph default 
  e 
-\emph on
+\emph on 
 pass
-\emph default
+\emph default 
 .
  Prima il client esegue uno user, poi dice al server la password.
- Come abbiamo gia' visto nella panoramica questo significa che prima
- verra' eseguito 
-user()
-\family default
- e poi
-\family typewriter
-\emph on
+ Come abbiamo gia' visto nella panoramica questo significa che prima verra'
+ eseguito user() e poi
+\family typewriter 
+\emph on 
  
-\emph default
+\emph default 
 pass()
-\family default
+\family default 
 .
  Questo e' un esempio di login:
 \begin_inset ERT
@@ -1966,15 +1966,15 @@ status Collapsed
 
 \layout Standard
 
-\backslash
+\backslash 
 linespread{0.5}
 \layout Standard
 
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 tassi@garfield:~$ telnet localhost 2000
@@ -1996,33 +1996,33 @@ pass hello
 -ERR AUTH FAILED
 \layout Standard
 
-\backslash
+\backslash 
 end{verbatim}
 \layout Standard
 
-\backslash
+\backslash 
 end{footnotesize}
-\end_inset
+\end_inset 
 
  Se lanciate FreePOPs con il parametro 
-\family typewriter
+\family typewriter 
 -w
-\family default
+\family default 
  dovreste leggere questo sullo standard error/standard output:
 \begin_inset ERT
 status Collapsed
 
 \layout Standard
 
-\backslash
+\backslash 
 linespread{0.5}
 \layout Standard
 
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 freepops started with loglevel 2 on a little endian machine.
@@ -2037,8 +2037,7 @@ DBG(popserver.c, 162): [5118] -> +OK FreePOPs/0.0.10 pop3 server ready
 \layout Standard
 DBG(popserver.c, 162): [5118] <- user test@foo.xx
 \layout Standard
-DBG(log_lua.c,  83): (@src/lua/foo.lua, 37) : FreePOPs plugin 'Foo web mail' ver
-sion '0.0.1' started!
+DBG(log_lua.c,  83): (@src/lua/foo.lua, 37) : FreePOPs plugin 'Foo web mail' version '0.0.1' started!
 \layout Standard
 *** the user wants to login as 'test@foo.xx'
 \layout Standard
@@ -2055,31 +2054,31 @@ AUTH FAILED
 DBG(threads.c,  81): thread 0 will die
 \layout Standard
 
-\backslash
+\backslash 
 end{verbatim}
 \layout Standard
 
-\backslash
+\backslash 
 end{footnotesize}
-\end_inset
+\end_inset 
 
-il plugin e' stato modificato un po' per memorizzare i dati dell'utente e
- stampare delle informazioni di debug.
+il plugin e' stato modificato un po' per memorizzare i dati dell'utente
+ e stampare delle informazioni di debug.
  Questo e' il plugin che ha dato questo output:
 \begin_inset ERT
 status Collapsed
 
 \layout Standard
 
-\backslash
+\backslash 
 linespread{0.5}
 \layout Standard
 
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 foo_globals= {
@@ -2091,17 +2090,16 @@ password="nothing"
 }
 \layout Standard
 -- -------------------------------------------------------------------------- --
-
 \layout Standard
 -- Must save the mailbox name
 \layout Standard
 function user(pstate,username)
 \layout Standard
-	foo_globals.username = username
+foo_globals.username = username
 \layout Standard
-	print("*** the user wants to login as '"..username.."'")
+print("*** the user wants to login as '"..username.."'")
 \layout Standard
-	return POPSERVER_ERR_OK
+return POPSERVER_ERR_OK
 \layout Standard
 end
 \layout Standard
@@ -2111,78 +2109,76 @@ end
 \layout Standard
 function pass(pstate,password)
 \layout Standard
-	foo_globals.password = password
+foo_globals.password = password
 \layout Standard
-	print("*** the user inserted '"..password..
+print("*** the user inserted '"..password..
 \layout Standard
-	    "' as the password for '"..foo_globals.username.."'")
+    "' as the password for '"..foo_globals.username.."'")
 \layout Standard
-	return POPSERVER_ERR_AUTH end
+return POPSERVER_ERR_AUTH end
 \layout Standard
 -- -------------------------------------------------------------------------- --
-
 \layout Standard
 -- Must quit without updating
 \layout Standard
 function quit(pstate)
 \layout Standard
-	return POPSERVER_ERR_OK
+return POPSERVER_ERR_OK
 \layout Standard
 end
 \layout Standard
 
-\backslash
+\backslash 
 end{verbatim}
 \layout Standard
 
-\backslash
+\backslash 
 end{footnotesize}
-\end_inset
+\end_inset 
 
 Qui vediamo delle importanti novita'.
  Per prima cosa, la tabella 
-\family typewriter
+\family typewriter 
 foo_globals
-\family default
+\family default 
  che contiene tutti i valori globali (valori che devono essere a disposizione
  di chiamate a funzioni successive) di cui abbiamo bisogno.
  Per ora ci abbiamo messo il nome utente e la password.
  La funzione
-\family typewriter
+\family typewriter 
 user()
-\family default
+\family default 
  ora memorizza il nome utente passato nella tabella 
-\family typewriter
+\family typewriter 
 foo_globals
-\family default
+\family default 
  e stampa qualcosa sullo standard output.
  La funzione 
-\family typewriter
+\family typewriter 
 pass()
-\family default
- allo stesso modo memorizza la password nella tabella globale e stampa
- qualcosa.
+\family default 
+ allo stesso modo memorizza la password nella tabella globale e stampa qualcosa.
  La funzione 
-\family typewriter
+\family typewriter 
 quit()
-\family default
+\family default 
  restituisce semplicemente 
-\family typewriter
+\family typewriter 
 POPSERVER_ERR_OK
-\family default
+\family default 
  per far felice FreePOPs.
 \layout Standard
 
 Ora che sappiamo come FreePOPs si comportera' durante il login dobbiamo
  implementare il login nella webmail, ma prima decommentiamo alcune righe
  nella funzione 
-\family typewriter
+\family typewriter 
 init()
-\family default
+\family default 
  (chiamata alla partenza del plugin), la quale carica il modulo 
-\family typewriter
+\family typewriter 
 browser.lua
-\family default
+\family default 
  (il modulo usato per fare login nella webmail).
  Ecco la pagina di login della webmail vista con Mozilla e il codice sorgente
  della stessa pagina (con Mozilla lo si vede con Ctrl-U).
@@ -2190,12 +2186,12 @@ browser.lua
 
 
 \begin_inset Graphics
-        filename login.eps
-        lyxscale 50
-        scale 80
-        keepAspectRatio
+	filename login.eps
+	lyxscale 50
+	scale 80
+	keepAspectRatio
 
-\end_inset
+\end_inset 
 
 
 \layout Standard
@@ -2206,15 +2202,11 @@ status Collapsed
 
 \layout Standard
 
-\backslash
-\linespread{0.5}
-\layout Standard
-
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 <html>
@@ -2244,28 +2236,28 @@ password: <input type="password" size="10" name="password"> <br>
 </html>
 \layout Standard
 
-\backslash
+\backslash 
 end{verbatim}
 \layout Standard
 
-\backslash
+\backslash 
 end{footnotesize}
-\end_inset
+\end_inset 
 
 Abbiamo due campi di input, uno chiamato username e uno chiamato password.
  Quando l'utente fa click su login il browser web eseguira' 
-\family typewriter
+\family typewriter 
 POST
-\family default
+\family default 
  sul 
-\family typewriter
+\family typewriter 
 HTTP://localhost:3000/
-\family default
+\family default 
  contenuto del form (ho usato un indirizzo locale per comodita', ma dovrebbe
  essere qualcosa come 
-\family typewriter
+\family typewriter 
 HTTP://webmail.foo.xx/login.php
-\family default
+\family default 
 ).
  Questo e' cio' che il browser invia:
 \begin_inset ERT
@@ -2273,23 +2265,22 @@ status Collapsed
 
 \layout Standard
 
-\backslash
+\backslash 
 linespread{0.5}
 \layout Standard
 
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 POST / HTTP/1.1
 \layout Standard
 Host: localhost:3000
 \layout Standard
-User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6) Gecko/20040614 Firef
-ox/0.8 Accept: */*
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6) Gecko/20040614 Firefox/0.8 Accept: */*
 \layout Standard
 Accept-Language: en-us,en;q=0.5
 \layout Standard
@@ -2310,22 +2301,22 @@ Content-Length: 37
 username=test%40foo.xx&password=hello
 \layout Standard
 
-\backslash
+\backslash 
 end{verbatim}
 \layout Standard
 
-\backslash
+\backslash 
 end{footnotesize}
-\end_inset
+\end_inset 
 
  Non ci interessa la prima parte (l'header HTTP, visto che il modulo browser
  se ne occupera'), bensi' l'ultima, i dati inviati.
  Poiche' i campi del form erano username e password, i dati inviati sono
-\family typewriter
+\family typewriter 
 
-\newline
+\newline 
 username=test%40.foo.xx&password=hello
-\family default
+\family default 
 .
  Ora vogliamo riprodurre la stessa richiesta HTTP con il nostro plugin.
  Questo e' il semplice codice che fara' proprio quello.
@@ -2334,43 +2325,42 @@ status Collapsed
 
 \layout Standard
 
-\backslash
+\backslash 
 linespread{0.5}
 \layout Standard
 
-\backslash
+\backslash 
 begin{footnotesize}
 \layout Standard
 
-\backslash
+\backslash 
 begin{verbatim}
 \layout Standard
 -- -------------------------------------------------------------------------- --
-
 \layout Standard
 -- Must login
 \layout Standard
 function pass(pstate,password)
 \layout Standard
-	foo_globals.password = password
+foo_globals.password = password
 \layout Standard
 
 \layout Standard
-	print("*** the user inserted '"..password..
+print("*** the user inserted '"..password..
 \layout Standard
-	     "' as the password for '"..foo_globals.username.."'")
-\layout Standard
-
-\layout Standard
-	-- create a new browser
-\layout Standard
-	local b = browser.new()
+     "' as the password for '"..foo_globals.username.."'")
 \layout Standard
 
 \layout Standard
-	-- store the browser object in globals
+-- create a new browser
 \layout Standard
-	foo_globals.browser = b
+local b = browser.new()
+\layout Standard
+
+\layout Standard
+-- store the browser object in globals
+\layout Standard
+foo_globals.browser = b
 \layout Standard
 
 \layout Standard
@@ -2478,8 +2468,8 @@ curl.escape()
  usare lo stesso browser tutte le volte.
 \layout Standard
 
-Ora che abbiamo fatto login, vogliamo controllare la pagina risultante, e
- magari estrarre un ID di sessione che useremo poi.
+Ora che abbiamo fatto login, vogliamo controllare la pagina risultante,
+ e magari estrarre un ID di sessione che useremo poi.
  Questo e' il codice per estrarre l'ID di sessione e la pagina HTML che
  abbiamo ricevuto in risposta alla richiesta di login
 \begin_inset ERT
@@ -2606,9 +2596,9 @@ session_id=(%w+)
 )
 \family default 
 .
- Questa e' una funzione molto importante nella libreria LUA e, anche se e'
- descritta nel tutorial LUA su HTTP://lua-users.org, parleremo un po' di
- capture anche qui.
+ Questa e' una funzione molto importante nella libreria LUA e, anche se
+ e' descritta nel tutorial LUA su HTTP://lua-users.org, parleremo un po'
+ di capture anche qui.
  Guardiamo i sorgenti della pagina.
  Ci interessa la riga
 \emph on 
@@ -2641,8 +2631,8 @@ session_id=
 \family typewriter 
 %w+
 \family default 
- tra parentesi tonde, intendiamo catturare il contenuto delle parentesi (la
- parte alfanumerica).
+ tra parentesi tonde, intendiamo catturare il contenuto delle parentesi
+ (la parte alfanumerica).
  Cosi' string.find restituira' tre valori, i primi due sono ignorati (assegnati
  alla variabile dummy 
 \family typewriter 
@@ -2653,10 +2643,10 @@ _
 ABCD1234
 \family default 
 ).
- Il tutorial LUA su lua-users e' molto ben fatto e su HTTP://sf.net/projects/lua-users
- potete trovare il LUA short reference che e' un riassunto di tutte le funzioni
- standard LUA ed e' anche un gran bel documento (mille grazie a Enrico Colombini
-).
+ Il tutorial LUA su lua-users e' molto ben fatto e su HTTP://sf.net/projects/lua-
+users potete trovare il LUA short reference che e' un riassunto di tutte
+ le funzioni standard LUA ed e' anche un gran bel documento (mille grazie
+ a Enrico Colombini).
  Se vi piace molto LUA dovreste comprare IL libro su LUA chiamato 
 \emph on 
 
@@ -2681,11 +2671,11 @@ stat()
 \family default 
 .
  La stat e' probabilmente la funzione piu' importante.
- Essa deve prelevare la lista dei messaggi nella webmail, il loro UIDL e la
- loro grandezza.
+ Essa deve prelevare la lista dei messaggi nella webmail, il loro UIDL e
+ la loro grandezza.
  Nel nostro esempio useremo il modulo mlex per tirare fuori le informazioni
- importanti dalla pagina, ma potete usare il modulo per le stringhe di LUA per
- fare la stessa cosa con i capture.
+ importanti dalla pagina, ma potete usare il modulo per le stringhe di LUA
+ per fare la stessa cosa con i capture.
  Questa e' la nostra pagina inbox
 \newline 
 
@@ -2790,8 +2780,8 @@ get_uri()
 </tr>
 \family default 
  di una riga di un messaggio e cancellate tutto tranne i nomi dei i tag.
- Poi sostituite tutti gli spazi vuoti (chiameremo spazio la stringa tra due tag)
- con un
+ Poi sostituite tutti gli spazi vuoti (chiameremo spazio la stringa tra
+ due tag) con un
 \begin_inset Quotes eld
 \end_inset 
 
@@ -2839,10 +2829,10 @@ end{footnotesize}
 
 Questa espressione e' usata per fare match con la riga della tabella che
  contiene informazioni sul messaggio.
- Ora copiate e incollate a parte la riga e sostituite ogni spazio e ogni tag
- con O (la lettera, non la cifra 0) o X.
- Mettete una X nei campi interessanti (nel nostro esempio la grandezza e il
- tag input, che contiene lo UIDL del messaggio).
+ Ora copiate e incollate a parte la riga e sostituite ogni spazio e ogni
+ tag con O (la lettera, non la cifra 0) o X.
+ Mettete una X nei campi interessanti (nel nostro esempio la grandezza e
+ il tag input, che contiene lo UIDL del messaggio).
 \begin_inset ERT
 status Collapsed
 
@@ -2876,8 +2866,8 @@ end{footnotesize}
 
 Mentre la prima espressione verra' usata per fare match con la riga della
  tabella, questa verra' usata per estrarre i campi importanti.
- Questo codice lancia mlex sull'HTML e riempie la struttura dati popstate con
- i dati catturati.
+ Questo codice lancia mlex sull'HTML e riempie la struttura dati popstate
+ con i dati catturati.
 \begin_inset ERT
 status Collapsed
 
@@ -3178,9 +3168,8 @@ end{footnotesize}
 Ora abbiamo una vera e propria funzione stat che riempie la struttura dati
  popstate con le informazioni che il server POP necessita per rispondere
  ad una richiesta di stat.
- Poiche' le richieste list, uidl, list_all e uidl_all possono essere
- soddisfatte con gli stessi dati, useremo la funzione standard fornita dal
- modulo common.lua.
+ Poiche' le richieste list, uidl, list_all e uidl_all possono essere soddisfatte
+ con gli stessi dati, useremo la funzione standard fornita dal modulo common.lua.
  Esso verra' spiegato nel prossimo passo, ma dobbiamo aggiungere due righe
  importanti alla funzione
 \family typewriter 
@@ -3253,7 +3242,8 @@ support.lua
 (step 4) Le funzioni comuni
 \layout Standard
 
-Il modulo comune ci da' alcune funzioni precotte che dipendono solo da una 
+Il modulo comune ci da' alcune funzioni precotte che dipendono solo da una
+ 
 \family typewriter 
 stat()
 \family default 
@@ -3340,7 +3330,8 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-ma prima aggiungete il codice per caricare il modulo comune alla vostra funzione 
+ma prima aggiungete il codice per caricare il modulo comune alla vostra
+ funzione 
 \family typewriter 
 init()
 \family default 
@@ -3400,7 +3391,8 @@ end{footnotesize}
 (step 5) Cancellazione dei messaggi
 \layout Standard
 
-La cancellazione di un messaggio e' solitamente un normale POST e un esempio di 
+La cancellazione di un messaggio e' solitamente un normale POST e un esempio
+ di 
 \family typewriter 
 post_data
 \family default 
@@ -3496,10 +3488,11 @@ end{footnotesize}
 \end_inset 
 
 Considerate che facciamo il POST solo se almeno un messaggio e' segnato
- per la cancellazione. Un'altra cosa importante da tenere a mente e' che
- fare un solo POST per tutti i messaggi e' meglio che farne uno per ognuno.
- Quando possibile dovreste ridurre il numero di richieste HTTP al massimo dato
- che e' qui che portiamo FreePOPs da lepre a tartaruga.
+ per la cancellazione.
+ Un'altra cosa importante da tenere a mente e' che fare un solo POST per
+ tutti i messaggi e' meglio che farne uno per ognuno.
+ Quando possibile dovreste ridurre il numero di richieste HTTP al massimo
+ dato che e' qui che portiamo FreePOPs da lepre a tartaruga.
 \layout Subsubsection
 
 (step 6) Scaricare messaggi
@@ -3512,11 +3505,11 @@ Potrete chiedervi perche' parliamo di questo argomento solo al punto 6,
 retr()
 \family default 
  e' di solito facile.
- Dipende in realta' dalla webmail, ma qui parleremo del caso semplice,
- mentre alla fine del tutorial vedrete come gestire webmail complesse.
- Il caso base e' quello in cui la webmail ha un pulsante per salvare
- i messaggi, e il messaggio salvato e' un file di testo semplice che
- contiene sia l'header che il corpo del messaggio.
+ Dipende in realta' dalla webmail, ma qui parleremo del caso semplice, mentre
+ alla fine del tutorial vedrete come gestire webmail complesse.
+ Il caso base e' quello in cui la webmail ha un pulsante per salvare i messaggi,
+ e il messaggio salvato e' un file di testo semplice che contiene sia l'header
+ che il corpo del messaggio.
  Ci sono solo due questioni interessanti in questo caso, e cioe' quelle
  relativa ai messaggi grandi al punto.
 \layout Standard
@@ -3526,8 +3519,8 @@ I messaggi grandi causano timeout.
 \family typewriter 
 b:get_uri()
 \family default 
- e memorizzare il messaggio in una variabile, poi mandarlo al client di posta
- con 
+ e memorizzare il messaggio in una variabile, poi mandarlo al client di
+ posta con 
 \family typewriter 
 popserver_callback()
 \family default 
@@ -3625,8 +3618,8 @@ n
 \end_inset 
 
 .
- Ma che succede se una riga, dentro il corpo della mail, e' un semplice punto?
- Dobbiamo cambiarlo in 
+ Ma che succede se una riga, dentro il corpo della mail, e' un semplice
+ punto? Dobbiamo cambiarlo in 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -3693,8 +3686,8 @@ string.gsub()
 \family typewriter 
 a
 \family default 
- vive fintantoche' la funzione di callback viene chiamata (vedi il tutorial LUA)
- e terra' a mente che il pattern cercato puo' essere troncato.
+ vive fintantoche' la funzione di callback viene chiamata (vedi il tutorial
+ LUA) e terra' a mente che il pattern cercato puo' essere troncato.
 \layout Standard
 
 Infine, il codice della 
@@ -3788,9 +3781,9 @@ end{footnotesize}
 \layout Standard
 
 Per fare un buon plugin ci vuole un sacco di testing.
- Dovreste cercare beta tester presso il forum di FreePOPs
- (HTTP://freepops.diludovico.it) e chiedere agli autori del software di
- includerlo nella distribuzione principale.
+ Dovreste cercare beta tester presso il forum di FreePOPs (HTTP://freepops.diludo
+vico.it) e chiedere agli autori del software di includerlo nella distribuzione
+ principale.
  Dovreste anche leggere il contratto della webmail, controllare se c'e'
  qualcosa come 
 \begin_inset Quotes eld
@@ -3822,9 +3815,9 @@ stat()
 .
  Abbiamo detto sopra che la nostra implementazione elenca solo i messaggi
  nella prima pagina.
- Il codice per il parsing e l'estrazione di informazioni interessanti da una
- pagina e' gia' scritto, ci serve solo una funzione che controlli se siamo
- all'ultima pagina e se no cambi il valore di una variabile 
+ Il codice per il parsing e l'estrazione di informazioni interessanti da
+ una pagina e' gia' scritto, ci serve solo una funzione che controlli se
+ siamo all'ultima pagina e se no cambi il valore di una variabile 
 \family typewriter 
 uri
 \family default 
@@ -4045,8 +4038,8 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-Le uniche cose strane sono la funzione di prelevamento e quel che serve per
- salvare la sessione.
+Le uniche cose strane sono la funzione di prelevamento e quel che serve
+ per salvare la sessione.
  Dato che le webmail a volte fanno timeout dovreste controllare se la pagina
  prelevata sia valida o no, ed eventualmente ritentare il login.
  Il salvataggio della sessione e' la prossima questione.
@@ -4353,13 +4346,12 @@ end{footnotesize}
 La\SpecialChar ~
 funzione\SpecialChar ~
 top() e' piuttosto complessa.
- Non la descriveremo in modo completo, ma suggeriamo di guardare il plugin 
- 
+ Non la descriveremo in modo completo, ma suggeriamo di guardare il plugin
+  
 \family typewriter 
 libero.lua
 \family default 
- se il server web che vi manda i messaggi supporta il campo
- 
+ se il server web che vi manda i messaggi supporta il campo 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -4371,11 +4363,10 @@ Range:
 \begin_inset Quotes erd
 \end_inset 
 
- nelle richieste HTTP, o il plugin
- HTTP request field, o il plugin 
-\family typewriter
+ nelle richieste HTTP, o il plugin HTTP request field, o il plugin 
+\family typewriter 
 tin.lua
-\family default
+\family default 
  se il server deve essere interrotto in malo modo.
  Ricordate che la 
 \family typewriter 
@@ -4394,8 +4385,8 @@ javascript e' l'inferno delle webmail.
 \family typewriter 
  b:add_cookie()
 \family default 
- come in tin.lua) oppure possono cambiare alcuni campi di form (come nel codice 
- di bilanciamento del carico in  
+ come in tin.lua) oppure possono cambiare alcuni campi di form (come nel
+ codice  di bilanciamento del carico in  
 \family typewriter 
 libero.lua
 \family default 
@@ -4403,8 +4394,8 @@ libero.lua
 \layout Description
 
 I\SpecialChar ~
-cookie sono abbastanza appetibili per noi, visto che il modulo browser se ne
- occupa al posto nostro.
+cookie sono abbastanza appetibili per noi, visto che il modulo browser
+ se ne occupa al posto nostro.
 \layout Description
 
 I\SpecialChar ~
@@ -4428,8 +4419,8 @@ stdout.txt
 La\SpecialChar ~
 forza\SpecialChar ~
 bruta si chiama ethereal.
- A volte le cose non funzionano nel modo giusto e l'unico modo per fare debug
- e' attivare curl debugging per vedere cosa fa FreePOPs (
+ A volte le cose non funzionano nel modo giusto e l'unico modo per fare
+ debug e' attivare curl debugging per vedere cosa fa FreePOPs (
 \family typewriter 
 b.curl:setopt(curl.OPT_VERBOSE,1)
 \family default 
@@ -4459,9 +4450,9 @@ The cathedral and the bazaar
 
 Il\SpecialChar ~
 modulo\SpecialChar ~
-mimer e' molto beta mentre scriviamo queste righe, ma e' cio' di cui avete
- bisogno se siete nel caso sfortunato di una webmail che non ha un pulsante
- per salvare i messaggi.
+mimer e' molto beta mentre scriviamo queste righe, ma e' cio' di
+ cui avete bisogno se siete nel caso sfortunato di una webmail che non ha
+ un pulsante per salvare i messaggi.
  Il plugin 
 \family typewriter 
 lycos.lua
@@ -4472,8 +4463,8 @@ lycos.lua
 mimer.pipe_msg()
 \family default 
  che prende un header di messaggio, il testo del corpo (in html o testo
- semplice) e gli URI di alcuni attachment, scaricati al volo, composti in una
- vera e propria mail che viene inoltrata al client di posta.
+ semplice) e gli URI di alcuni attachment, scaricati al volo, composti in
+ una vera e propria mail che viene inoltrata al client di posta.
 \layout Section
 
 Segnalare un bug

@@ -29,7 +29,7 @@ clean: src/config
 	$(H)ACTION="clean";\
 	NAME="cleaninig";\
 	$(FORALL)
-	$(H)rm -f lib/* bin/* include/* src/config config || true
+	$(H)rm -f lib/* bin/* include/* src/config config 2>/dev/null || true
 	$(H)rm -fr  bin/luafiles/ || true
 	$(H)rm -fr html html_lua
 	$(H)make -C src clean

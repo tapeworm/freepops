@@ -1,3 +1,4 @@
+- added browser:get_head(url,extraheader) method
 - fixed Makefile verbosity
 - fixed chroot jail for curl
 - fixed aggregator.lua (thanks to bimbosuper)

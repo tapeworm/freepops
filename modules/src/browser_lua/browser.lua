@@ -84,6 +84,55 @@ function Private.get_uri(self,url,exhed)
 	end
 end
 
+function Private.get_head(self,url,exhed)
+		local u = cookie.parse_url(url)
+
+	--clean expired cookies
+	cookie.clean_expired(self.cookies)
+
+	-- the header
+	local head = exhed or {}
+	local cook = cookie.get(self.cookies,u.path,u.host,u.host)
+	
+	if self.referrer then
+		table.insert(head,"Referer: "..self.referrer)
+	end
+	if cook ~= nil then
+		table.insert(head,"Cookie: "..cook)
+	end
+	self.curl:setopt(curl.OPT_HTTPHEADER,head)
+	
+	--the url
+	self.curl:setopt(curl.OPT_URL,url)
+	
+	-- the callbacks
+	local gl_b,gl_h = {},{}
+	self.curl:setopt(curl.OPT_WRITEFUNCTION,Private.build_w_cb(gl_b))
+	self.curl:setopt(curl.OPT_HEADERFUNCTION,Private.build_w_cb(gl_h))
+
+	-- go
+	self.curl:setopt(curl.OPT_NOBODY,1)
+	local rc,err = self.curl:perform()
+	self.curl:setopt(curl.OPT_NOBODY,0)
+
+	-- check result
+	if rc == 0 then
+		-- save referrer
+		self.referrer = url
+		table.foreach(gl_h,function(_,l)
+			local _,_,content = string.find(l,
+			   "^[Ss][Ee][Tt]%-[Cc][Oo][Oo][Kk][Ii][Ee]%s*:%s*(.*)")
+			if content ~= nil then
+				local c = cookie.parse_cookies(content,u.host)
+				cookie.merge(self.cookies,c)
+			end
+		end)
+		return table.concat(gl_h),nil
+	else
+		return nil,err
+	end
+end
+
 function Private.pipe_uri(self,url,cb,exhed) 
 	local u = cookie.parse_url(url)
 

@@ -85,7 +85,7 @@ tgz-dist:
 		tar -xzf freepops.tgz;\
 		rm freepops.tgz;\
 		cd freepops; make realclean;cd ..;\
-		find freepops -name CVS -exec rm -r \{\} \; 2>/dev/null;\
+		find freepops -name CVS -exec rm -fr \{\} \; 2>/dev/null;\
 		mv freepops freepops-$(VERSION);\
 		tar -cf freepops-$(VERSION).tar freepops-$(VERSION);\
 		gzip -9 freepops-$(VERSION).tar;\

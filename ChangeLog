@@ -1,3 +1,6 @@
+- added suport for host=hostname:post to popforward.lua
+- added the pipe and pipe_limit options to popforward.lua
+- added the io.dpopen lua primitive unter unix
 - some pretty stuff for make
 - added -x, --toxml to export plugin description to XML
 - fixed building tgz-dist from the sources (not from CVS)

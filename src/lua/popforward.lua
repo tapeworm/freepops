@@ -13,6 +13,40 @@
 
 PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "POPforward"
+PLUGIN_REQUIRE_VERSION = "0.0.15"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=popforward.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
+PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
+PLUGIN_DOMAINS = {"any having a pop3 access"}
+PLUGIN_PARAMETERS = {
+	{name = "realusername", description = {
+		it = [[Se lanci il plugin con username foo@popforward.lua hai bisogno di questo per scegliere lo username reale]],
+		en = [[If you start the plugin with the username foo@popforward.lua then you need this option to set the real username]],}	
+	},
+	{name = "host", description = {
+		it = [[L'hostname del server POP3 a cui connetterti, puoi anche specificare la porta separandola con :. Esempio: 'in.virgilio.it:110'.]],
+		en = [[The POP3 server hostname. You can specify the port in the hostname:portnumber way.]],}	
+	},
+	{name = "port", description = {
+		it = [[Per specificare la ports dell'host a cui connettersi, se non gia' specificato in host con i :]],
+		en = [[To choose to server port to connect to. Use this if you have not specifyed the port in the host parameter.]],}	
+	},
+	{name = "pipe", description = {
+		en = [[Pipe the messages to the specified command before passing them to the mail client. Example: '/usr/bin/spamc -t 10']],
+		it = [[Filtra il messaggio con il comando specificato prima di passarlo al client. Esempio: '/usr/bin/spamc -t 10']],}	
+	},
+	{name = "pipe_limit", description = {
+		it = [[Limita i messaggi filtrati a quelli la cui dimensione e' minore di quelle specificata. Con 0 li filtra tutti. Default: 0. ]],
+		en = [[Limit the maximum size of piped messages, the default (0) is to pipe all of them.]],}	
+	},
+}
+PLUGIN_DESCRIPTIONS = {
+	it=[[Questo e' un proxy POP3. Leggi i parametri per conoscere le 
+feature di cui dispone]],
+	en=[[This is a POP3 proxy. Read the parameters to know the additional features]]
+}
 
 -- ************************************************************************** --
 --  State
@@ -26,19 +60,11 @@ pf_state = {
 	stat_done = false,
 }
 
--- Is called to initialize the module
-function init(pstate)
-	log.dbg("FreePOPs plugin '"..
-		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
-		
-	freepops.export(pop3server)
-	
-	-- checks on globals
-	freepops.set_sanity_checks()
+-- ************************************************************************** --
+--  helpers
+-- ************************************************************************** --
 
-	return POPSERVER_ERR_OK
-end
-
+-- ask for command and call f on the result
 function single_line(cmd,f)
 	local l = pf_state.socket:send(cmd)
 	
@@ -61,6 +87,7 @@ function single_line(cmd,f)
 	end
 end
 
+-- pass all to the client until the ".\r\n" is reached
 function do_pipe(pdata)
 	return function(s)
 	local l = nil
@@ -80,6 +107,7 @@ function do_pipe(pdata)
 	end
 end
 
+-- generates a function that repeats f on each line until "." ir reached
 function do_repeat(f)
 	return function(s)
 	local l = nil
@@ -99,6 +127,8 @@ function do_repeat(f)
 	end
 end
 
+-- spluits a string "aaa bb cccc" in a table {"aaa","bb","cccc"}
+-- usefull for the piping feature
 local function pipe_split(s)
 	if type(s) == "table" then
 		return s
@@ -112,6 +142,28 @@ local function pipe_split(s)
 		return t
 	end
 end
+
+-- ensure that stat is called
+local function ensure_stat(pstate)
+	if pf_state.stat_done then
+		return POPSERVER_ERR_OK
+	end
+
+	return stat(pstate)
+end
+
+-- ensure we know all the messages size
+local function ensure_list_all(pstate)
+	if pf_state.listed then
+		return POPSERVER_ERR_OK
+	end
+
+	return list_all(pstate)
+end
+
+-- ************************************************************************** --
+--  here we are!
+-- ************************************************************************** --
 
 -- Must save the mailbox name
 function user(pstate,username)
@@ -177,14 +229,6 @@ function quit_update(pstate)
 end
 
 
-local function ensure_stat(pstate)
-	if pf_state.stat_done then
-		return POPSERVER_ERR_OK
-	end
-
-	return stat(pstate)
-end
-
 -- Fill the number of messages and their size
 function stat(pstate)
 	local f = function(l)
@@ -249,14 +293,6 @@ function list(pstate,msg)
 	return single_line("LIST "..msg,f)
 end
 
-local function ensure_list_all(pstate)
-	if pf_state.listed then
-		return POPSERVER_ERR_OK
-	end
-
-	return list_all(pstate)
-end
-
 -- Fill all messages size
 function list_all(pstate)
 	local rc = ensure_stat(pstate) 
@@ -306,6 +342,7 @@ function retr(pstate,msg,pdata)
 		end
 		local size = get_mailmessage_size(pstate,msg)
 		if pf_state.pipe_limit == 0 or size < pf_state.pipe_limit then
+			-- fetch the message
 			local m = {}
 			local f = do_repeat(function(l)
 				table.insert(m,l)
@@ -315,22 +352,41 @@ function retr(pstate,msg,pdata)
 				-- fixme
 			end
 			m = table.concat(m,"\r\n") .. "\r\n"
+			-- pipe it 
 			local r,w = io.dpopen(unpack(pf_state.pipe))
 			if r == nil or w == nil then
 				--fixme
 			end
 			w:write(m)
 			w:close()
+			-- read it back
 			m = r:read("*a")
 			r:close()
+			-- send it 
 			popserver_callback(m,pdata)
+			
 			return POPSERVER_ERR_OK
 		else
+			-- too big
 			return single_line("RETR "..msg,do_pipe(pdata))
 		end
 	else
+		-- no pipe asked
 		return single_line("RETR "..msg,do_pipe(pdata))
 	end
+end
+
+-- Is called to initialize the module
+function init(pstate)
+	log.dbg("FreePOPs plugin '"..
+		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
+		
+	freepops.export(pop3server)
+	
+	-- checks on globals
+	freepops.set_sanity_checks()
+
+	return POPSERVER_ERR_OK
 end
 
 -- EOF

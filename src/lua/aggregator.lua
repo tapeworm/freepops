@@ -318,7 +318,7 @@ function stat(pstate)
 			s2=string.sub(s2,ends2+3)
 			
 			local _,_,uidl = string.find(chunk,rss_string.linkC)
-			uidl=string.gsub(uidl,"/","-")
+			--uidl=string.gsub(uidl,"/","-")
 			--fucking default size
 			size=100
 

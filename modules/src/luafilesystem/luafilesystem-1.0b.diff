@@ -179,3 +179,16 @@ diff -u luafilesystem-1.0b-old/lfs.c luafilesystem-1.0b/lfs.c
  	/* blocks allocated for file */
  	lua_pushliteral (L, "blocks");
  	lua_pushnumber (L, (lua_Number)info.st_blocks);
+diff -ruN luafilesystem-1.0b/lfs.c luafilesystem-1.0b-new/lfs.c
+--- luafilesystem-1.0b/lfs.c	2005-01-08 19:05:14.000000000 +0100
++++ luafilesystem-1.0b-new/lfs.c	2005-01-08 19:04:25.000000000 +0100
+@@ -18,7 +18,7 @@
+ #include <time.h>
+ #include <sys/stat.h>
+ 
+-#ifdef WIN32
++#ifdef (defined(WIN32) && !defined(CYGWIN))
+ #include <direct.h>
+ #include <io.h>
+ #include <sys/locking.h>
+Binary files luafilesystem-1.0b/libluafilesystem.a and luafilesystem-1.0b-new/libluafilesystem.a differ

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.1"
+PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -53,6 +53,10 @@ local globals = {
   --
   strLoginPostData = "screenname=%s&password=%s",
   strLoginFailed = "Login Failed - Invalid User name and/or password",
+
+  -- Logout
+  --
+  strLogout = "http://my.screenname.aol.com/_cqr/logout/mcLogout.tmpl?siteId=aolcomnewprod",
 
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem
   --
@@ -113,7 +117,7 @@ internalState = {
   browser = nil,
   strMailServer = nil,
   strDomain = nil,
-  strMBox = nil
+  strMBox = nil,
 }
 
 -- ************************************************************************** --
@@ -558,14 +562,18 @@ function quit_update(pstate)
     end
   end
 
-  -- Save and then Free up the session
+  -- Log out
   --
-  session.save(hash(), serialize_state(), session.OVERWRITE)
+  browser:get_uri(globals.strLogout)
+
+  -- AOL acts retarded if we save the session.  We'll remove it and
+  -- force the browser to log out.
+  --
+  session.remove(hash())
   session.unlock(hash())
 
-  log.dbg("Session saved - Account: " .. internalState.strUser .. 
+  log.dbg("Session removed - Account: " .. internalState.strUser .. 
     "@" .. internalState.strDomain .. "\n")
-
   return POPSERVER_ERR_OK
 end
 
@@ -663,7 +671,7 @@ function stat(pstate)
       --
       browser = internalState.browser
       cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-        internalState.strMBox);
+        internalState.strMBox)
 
       -- Retry to load the page
       --

@@ -87,11 +87,12 @@ function Private.parse_cookie(s,h)
 	local t = {}
 	local s1 = s
 	table.foreach(Private.syntax,function(n,f) s1 = f(s1,t) end)
-	if t.expires then
+	if t.expires ~= nil then
 		local tmp = getdate.toint(t.expires)
+		t["expires-raw"] = t["expires"]
 		if tmp ~= -1 then
-			t["expires-raw"] = t["expires"]
 			t["expires"] = tmp
+			log.error_print(t["expires"].." -> "..tmp.."\n")
 		end
 	end
 	t.timestamp = os.time()
@@ -149,6 +150,12 @@ function Private.is_expired(c)
 			return true
 		end
 	end	
+	
+	-- this should not be necessary, but...
+	if c["expires"] ~= nil and type(c["expires"]) == "string" then
+		c["expires"] = getdate.toint(c["expires"])
+	end
+	
 	if c["expires"] and c["timestamp"] then
 		if os.difftime(date,c["timestamp"]) > c["expires"] then
 			return true

@@ -89,6 +89,7 @@ Section "FreePOPs (required)"
   File "freepopsd.exe"
   File "*.dll"
   File "*.txt"
+  File "*.pdf"
   File "config.lua"
   SetOutPath $INSTDIR\LUA
   File "*.lua"
@@ -105,7 +106,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\FreePOPs"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\LiberoPOPs -v.lnk" "$INSTDIR\freepopsd.exe" "-v" "$INSTDIR\liberopopsd.exe" 0
-;  CreateShortCut "$SMPROGRAMS\FreePOPs\Manuale.lnk" "$INSTDIR\manuale.pdf" "" "$INSTDIR\manuale.pdf" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\Manual.lnk" "$INSTDIR\manual.pdf" "" "$INSTDIR\manual.pdf" 0
 ;  CreateShortCut "$SMPROGRAMS\FreePOPs\ManualeTxt.lnk" "$INSTDIR\manuale.txt" "" "$INSTDIR\manuale.txt" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Website.lnk" "http://freepops.sourceforge.net/index.html" "" "http://freepops.sourceforge.net/index.html" 0
 ;  CreateShortCut "$SMPROGRAMS\FreePOPs\FAQ.lnk" "http://freepops.sourceforge.net/faq.html" "" "http://liberopops.sourceforge.net/faq.html" 0
@@ -122,8 +123,7 @@ Section "Uninstall"
   Delete $INSTDIR\*.exe
   Delete $INSTDIR\*.dll
   Delete $INSTDIR\*.txt
-  Delete $INSTDIR\*.cfg
-  Delete $INSTDIR\manuale.pdf
+  Delete $INSTDIR\*.pdf
   ; remove shortcuts, if any.
   Delete "$SMPROGRAMS\FreePOPs\*.*"
   ; remove directories used.

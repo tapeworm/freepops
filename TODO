@@ -18,19 +18,19 @@ second release 0.0.2
 		auto-apgrade sotto win)
 	implementare il rotlog in log.c in modo che operi semre, non solo
 	in fase di avvio (win32).
+	tradurre faq
 
 first public release 0.0.1:
 	sistemare se la sessione caricata e' scaduta in libero.lua
-+++++	sistemare l'installe win (icona, messagi di manuali in italiano) 
++++++	sistemare l'installer win (icona, messagi di manuali in italiano) 
 +++++++	da vedere se e' il caso di farlo anche in ~/.config.lua(no)
 	testare gli installer
 +	provare il macosx
 	sito (flatnuke?) in inglese magari con la pagina in it
 	icone, logo, skin flatnuke?
 +++++++	aprire un progetto nuovo su sf(fatto) e fare il CVS
-	testare il tutto per un paio di giorni
+++	testare il tutto per un paio di giorni
 +++++++	scrivere/tradurre un manuale in inglese possibilmente
-	tradurre faq
 +++++++	fare un liberopops -> freepops howto in it
 +++++++	fare in modo che http e browser.lua sia sincronizzati nel proxy.
 		ora http usa set_proxy in http_init nel main mentre

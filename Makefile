@@ -25,7 +25,7 @@ help:
 	$(H)make all
 	
 
-all : modules src
+all : modules src doc/manual.ps doc/manual.pdf
 
 clean: 
 	$(H)make -C src clean CONFIG=$$PWD/config || true
@@ -46,12 +46,14 @@ install: all
 	$(H)mkdir -p $(PREFIX)
 	$(H)mkdir -p $(PREFIX)bin
 	$(H)mkdir -p $(PREFIX)share/freepops/lua/
+	$(H)mkdir -p $(PREFIX)share/doc/freepops/
 	$(H)mkdir -p $(PREFIX)share/man/man1/
 	$(H)mkdir -p $(DESTDIR)/etc/freepops
 	$(H)cp src/freepopsd$(EXECSUFFIX) $(PREFIX)bin
 	$(H)cp src/lua/*.lua modules/include/*.lua config.lua \
 		$(PREFIX)share/freepops/lua/
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
+	$(H)cp doc/manual.ps  $(PREFIX)share/doc/freepops/
 	$(H)cp config.lua $(DESTDIR)/etc/freepops/
 
 tgz-dist: 
@@ -80,6 +82,12 @@ modules: config
 src: config
 	$(H)make -C src all CONFIG=$$PWD/config PREFIX=$(PREFIX)
 
+doc/manual.ps:doc/manual.lyx
+	cd doc; lyx -e ps manual.lyx
+
+doc/manual.pdf:doc/manual.ps
+	cd doc; ps2pdf manual.ps
+	
 
 config:
 	$(H)echo

@@ -12,8 +12,8 @@ PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.org/download.php?file=yahoo.lua"
-PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=yahoo.lua"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells (at) despammed (.) com",

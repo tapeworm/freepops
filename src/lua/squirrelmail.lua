@@ -12,8 +12,8 @@ PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "SquirrelMail"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.org/download.php?file=squirrelmail.lua"
-PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=squirrelmail.lua"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Eddi De Pieri"}
 PLUGIN_AUTHORS_CONTACTS = {"dpeddi (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@..."}

@@ -11,8 +11,8 @@ PLUGIN_VERSION = "---put version here---"
 PLUGIN_NAME = "---put name here---"
 PLUGIN_REQUIRE_VERSION = "---fill---"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sf.net"
-PLUGIN_HOMEPAGE = "http://freepops.sf.net/download.php?file=skeleton.lua"
+PLUGIN_URL = "http://freepops.sourceforge.net"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/download.php?file=skeleton.lua"
 PLUGIN_AUTHORS_NAMES = {"---fill--- "}
 PLUGIN_AUTHORS_CONTACTS = {"---fill---"}
 PLUGIN_DOMAINS = {"@..."}

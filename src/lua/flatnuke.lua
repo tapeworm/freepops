@@ -27,8 +27,8 @@ PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "flatnuke"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.org/download.php?file=kernel.lua"
-PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=kernel.lua"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
 PLUGIN_AUTHORS_CONTACTS = {"simone_vellei (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@flatnuke","@..."}

@@ -12,8 +12,8 @@ PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "Tre"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.org/download.php?file=tre.lua"
-PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=tre.lua"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Eddi De Pieri"}
 PLUGIN_AUTHORS_CONTACTS = {"dpeddi (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@tre.it"} 

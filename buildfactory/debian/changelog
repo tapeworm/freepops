@@ -2,7 +2,7 @@ freepops (0.0.21-1) unstable; urgency=low
 
   * some fixes and some improvements to the crypto lua bindings
 
- -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sun, 31 Oct 2004 18:25:52 +0100
+ -- Enrico Tassi <tassi@garfield>  Sun, 14 Nov 2004 17:25:45 +0100
 
 freepops (0.0.20-1) unstable; urgency=low
 

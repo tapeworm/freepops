@@ -40,7 +40,7 @@ Valid targets in this case are:
   dist-gen	- Gentoo Linux .ebuild
   dist-slack	- Slackware .tgz
   dist-tgz	- Source .tar.gz
-  dist-obsd	- 
+  dist-obsd	- OpenBSD
 
 Enjoy!
 

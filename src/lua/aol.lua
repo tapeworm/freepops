@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -17,8 +17,13 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {
 "@aol.com","@aol.com.ar","@aol.fr","@aol.com.mx","@aol.com.au","@aol.de",
-"@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com"} 
-PLUGIN_PARAMETERS = {}
+"@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com", 
+"netscape.com"} 
+PLUGIN_PARAMETERS = 
+	{name="folder", description={
+		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
+		en=[[The folder you want to interact with. Default is New (AOL)/Inbox (Netscape), other values are for AOL: Old, Sent, Saved, Spam and Deleted and Netscape: Sent, Trash, Draft.]]}
+	}
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
@@ -30,15 +35,13 @@ and your real password as the password.]]
 }
 
 
-
 -- TODO
--- - Netscape mail support
 -- - User defined folder
 --
 
 -- Domains supported:  aol.com, aol.com.ar, aol.fr, aol.com.mx, aol.com.au,
 --                     aol.de, aol.com.pr, aol.com.br, jp.aol.com, aol.co.uk,
---                     aol.ca, aola.com
+--                     aol.ca, aola.com, netscape.com
 
 -- ************************************************************************** --
 --  Global Strings
@@ -47,7 +50,7 @@ and your real password as the password.]]
 local globals = {
   -- Server URL
   --
-  strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?siteId=atlasaol&authLev=2&seamless=novl&siteState=",
+  strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?siteId=%s&authLev=2&seamless=novl&siteState=",
 
   -- Login strings
   --
@@ -60,7 +63,7 @@ local globals = {
 
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem
   --
-  strRetLoginGoodLogin = '(URL=/msglist)',
+  strRetLoginGoodLogin = '(function reLocate)',
   strRetLoginSessionNotExpired = "(mail session has expired)",
   
   -- Regular expression to extract the mail server
@@ -87,22 +90,33 @@ local globals = {
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
   strInbox = "SU5CT1g=",
-  strSpam = "U3BhbQ==",
-  strOldbox = "UkVBRA==",
-  strTrash = "U2F2ZWQ=",
-  strSent = "T1VUQk9Y",
+  strSpamAOL = "U3BhbQ==",
+  strOldboxAOL = "UkVBRA==",
+  strTrashAOL = "U2F2ZWQ=",
+  strSentAOL = "T1VUQk9Y",
+  
+  strTrashNetscape = "VHJhc2g=",
+  strSentNetscape = "U2VudA==",
+  strDraftNetscape = "RHJhZnQ=",
 
   strInboxPat = "([Nn]ew)",
   strOldboxPat = "([Oo]ld)",
   strSpamPat = "([Ss]pam)",
   strSentPat = "([Ss]ent)",
-  strTrashPat = "([Dd]eleted)",
+  strDeletedPat = "([Dd]eleted)",
+  strTrashPat = "([Tt]rash)",
+  strDraftPat = "([Dd]raft)",
 
   -- Command URLS
   --
   strCmdMsgList = "http://%s/msglist.adp?folder=%s&start=1",
   strCmdDelete = "http://%s/msglist.adp?folder=%s&start=1&cmd=deletemsgs&cmdnum=%s", --&msguid=X",
   strCmdMsgView = "http://%s/attachment/%s/%s/",
+
+  -- Site IDs
+  --
+  strAOLID = "atlasaol",
+  strNetscapeID = "nscpenusmail",
 }
 
 -- ************************************************************************** --
@@ -118,6 +132,7 @@ internalState = {
   strMailServer = nil,
   strDomain = nil,
   strMBox = nil,
+  strSiteId = "",
 }
 
 -- ************************************************************************** --
@@ -166,7 +181,7 @@ function loginAOL()
   local username = internalState.strUser
   local password = internalState.strPassword
   local domain = internalState.strDomain
-  local url = globals.strLoginUrl
+  local url = string.format(globals.strLoginUrl, internalState.strSiteId)
   local xml = globals.strFolderQry
   local browser = internalState.browser
 	
@@ -407,6 +422,14 @@ function user(pstate, username)
   internalState.strDomain = domain
   internalState.strUser = user
 
+  -- Set the site id
+  -- 
+  if domain == "netscape.com" then
+    internalState.strSiteId = globals.strNetscapeID
+  else
+    internalState.strSiteId = globals.strAOLID
+  end
+
   -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
@@ -417,19 +440,35 @@ function user(pstate, username)
 
   local _, _, start = string.find(mbox, globals.strSpamPat)
   if start ~= nil then
-    internalState.strMBox = globals.strSpam
+    internalState.strMBox = globals.strSpamAOL
     return POPSERVER_ERR_OK
   end
 
   _, _, start = string.find(mbox, globals.strSentPat)
   if start ~= nil then
-    internalState.strMBox = globals.strSent
+    if internalState.strSiteId == globals.strAOLID then
+      internalState.strMBox = globals.strSentAOL
+    else
+      internalState.strMBox = globals.strSentNetscape
+    end
+    return POPSERVER_ERR_OK
+  end
+
+  _, _, start = string.find(mbox, globals.strDeletedPat)
+  if start ~= nil then
+    internalState.strMBox = globals.strTrashAOL
     return POPSERVER_ERR_OK
   end
 
   _, _, start = string.find(mbox, globals.strTrashPat)
   if start ~= nil then
-    internalState.strMBox = globals.strTrash
+    internalState.strMBox = globals.strTrashNetscape
+    return POPSERVER_ERR_OK
+  end
+
+  _, _, start = string.find(mbox, globals.strDraftPat)
+  if start ~= nil then
+    internalState.strMBox = globals.strDraftNetscape
     return POPSERVER_ERR_OK
   end
 

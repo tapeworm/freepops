@@ -338,7 +338,7 @@ function Private.send_alternative(body,body_html,send_cb)
 	local boundary = Private.randomize_boundary()
 	local rc = nil
 	
-	rc = send_cb("MIME-Version: 1.0 (produced by FreePOPS/MIMER)\r\n"..
+	rc = send_cb("MIME-Version: 1.0 (produced by FreePOPs/MIMER)\r\n"..
 		"Content-Type: Multipart/alternative; "..
 			"boundary=\""..boundary.."\"\r\n"..
 		"\r\n")
@@ -622,4 +622,22 @@ function mimer.remove_lines_in_proper_mail_header(s,p)
 	return table.concat(result)
 end
 
+---
+-- Transforms a classical callback f(s,len) to a mimer compliant callback.
+--@param f function a function that takes s,len and returns len,error.
+--@return function a callback that returns non nil to stop (instead of 
+--                 0,"" or nil,"").
+function mimer.callback_mangler(f) 
+	return function(s)
+		local b,err = f(s,string.len(s))
+		if b == 0 or b == nil then
+			if b == nil then
+				log.error_print(err or "bad callback?")
+			end
+			return true
+		else
+			return nil
+		end
+	end
+end
 

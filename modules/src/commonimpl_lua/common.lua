@@ -232,4 +232,26 @@ function common.top(b,uri,key,tot_bytes,lines,data,truncate)
 	return POPSERVER_ERR_OK
 end
 
+---
+--This is to create the global argument for top_cb.
+--Remember that if size is nil the truncate parameter to top_cb must be true.
+--@param lines number the number of line we want.
+--@param size number the size in byte of the mail, can be nil.
+--@return table the global argument from common.top_cb.
+function common.new_global_for_top(lines,size)
+	if size = nil then
+		return {lines=math.max(lines-1,0),
+			lines_requested=math.max(lines-1,0),
+			bytes = 0,
+			a = stringhack.new()}
+	else
+		return {lines=math.max(lines-1,0),
+			lines_requested=math.max(lines-1,0),
+			bytes = 0,
+			from=0,
+			to=0,
+			total_bytes=size,
+			a = stringhack.new()}
+	end
+end
 

@@ -337,8 +337,14 @@ freepops.load_module_for = function (mailaddress,loadonly)
 		end
 		return nil --ERR
 	else
+		--print("ARGS:")
+		--table.foreach(args,print)
+		--print("PARSED ARGS:")
+		--table.foreach(freepops.get_args(mailaddress),print)
+		
 		local marg = freepops.table_overwrite(args,
 			freepops.get_args(mailaddress))
+		
 		freepops.MODULE_ARGS = marg
 		if freepops.dofile(module) ~= nil then 
 			return 0 -- OK

@@ -87,8 +87,18 @@ freepops.MODULES_MAP["netscape.net"]    = {name="aol.lua"}
 -- squirrelmail
 freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}
 
--- tre
+-- tre.it
 freepops.MODULES_MAP["tre.it"]		= {name="tre.lua"}
+
+-- supereva.it
+freepops.MODULES_MAP["@supereva.it"]	= {name="supereva.lua"}
+freepops.MODULES_MAP["@freemail.it"]	= {name="supereva.lua"}
+freepops.MODULES_MAP["@freeweb.org"]	= {name="supereva.lua"}
+freepops.MODULES_MAP["@mybox.it"]	= {name="supereva.lua"}
+freepops.MODULES_MAP["@superdada.com"]	= {name="supereva.lua"}
+freepops.MODULES_MAP["@cicciociccio.com"]= {name="supereva.lua"}
+freepops.MODULES_MAP["@mp4.it"]		= {name="supereva.lua"}
+freepops.MODULES_MAP["@dadacasa.com"]	= {name="supereva.lua"}
 
 -- popforward plugin
 --freepops.MODULES_MAP["something.xx"] 	= {

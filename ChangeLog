@@ -1,3 +1,5 @@
+- new functrions in mimer and common modules to better support supereva
+- added supereva.lua to official plugins
 - fixed gmail.lua STAT issue (thanks to kzero22)
 - fixed debian init script to remove pid file
 - changed web links in the manual to www.freepops.org

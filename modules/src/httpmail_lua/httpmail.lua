@@ -154,6 +154,14 @@ function httpmail.get(b,uri,extraheader)
 end
 
 ---
+-- Avoids wrong entities.
+-- @param s string the ugly XML.
+-- @return string the cleaned XML.
+function httpmail.clean_entities(s)
+	return (string.gsub(s,"&([^;][^;][^;][^;][^;][^;][^;])","&amp;%1"))
+end
+
+---
 -- Pipes a dav resource, works as the pipe_uri method of the browser object.
 function httpmail.pipe(b,uri,cb,extraheader)
 	return b:pipe_uri(uri,cb,extraheader)
@@ -194,7 +202,8 @@ function httpmail.login(b,uri,username,password,authbasic)
 		httpmail.R_folder_root_xml,httpmail.R_folder_root_header)
 	if ans ~= nil then
 		local answer,msg,_,_ = 
-			xml2table.xml2table(ans,httpmail.Txml_convmap,
+			xml2table.xml2table(httpmail.clean_entities(ans),
+				httpmail.Txml_convmap,
 				httpmail.default_charset)
 		
 		if answer == nil then
@@ -222,7 +231,8 @@ function httpmail.folderlist(b,uri)
 		httpmail.R_folder_list_xml,httpmail.R_folder_list_header)
 	if ans ~= nil then
 		local answer,msg,_,_ = 
-			xml2table.xml2table(ans,httpmail.Txml_convmap,
+			xml2table.xml2table(httpmail.clean_entities(ans),
+				httpmail.Txml_convmap,
 				httpmail.default_charset)
 	
 		if answer == nil then
@@ -262,7 +272,8 @@ function httpmail.stat(b,uri)
 		httpmail.R_folder_content_xml,httpmail.R_folder_content_header)
 	if ans ~= nil then
 		local answer,msg,_,_ = 
-			xml2table.xml2table(ans,httpmail.Txml_convmap,
+			xml2table.xml2table(httpmail.clean_entities(ans),
+				httpmail.Txml_convmap,
 				httpmail.default_charset)
 		if answer == nil then
 			return answer,msg

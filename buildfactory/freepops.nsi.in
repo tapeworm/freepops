@@ -106,10 +106,10 @@ SectionEnd
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\FreePOPs"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\FreePOPs\LiberoPOPs -v.lnk" "$INSTDIR\freepopsd.exe" "-v" "$INSTDIR\liberopopsd.exe" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs -v.lnk" "$INSTDIR\freepopsd.exe" "-v" "$INSTDIR\freepopsd.exe" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Manual.lnk" "$INSTDIR\manual.pdf" "" "$INSTDIR\manual.pdf" 0
 ;  CreateShortCut "$SMPROGRAMS\FreePOPs\ManualeTxt.lnk" "$INSTDIR\manuale.txt" "" "$INSTDIR\manuale.txt" 0
-  CreateShortCut "$SMPROGRAMS\FreePOPs\Website.lnk" "http://freepops.sourceforge.net/index.html" "" "http://freepops.sourceforge.net/index.html" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\Website.lnk" "http://freepops.sourceforge.net/index.html" "" "http://freepops.sourceforge.net/" 0
 ;  CreateShortCut "$SMPROGRAMS\FreePOPs\FAQ.lnk" "http://freepops.sourceforge.net/faq.html" "" "http://liberopops.sourceforge.net/faq.html" 0
 SectionEnd
 

@@ -5,14 +5,9 @@
 --  Written by Russell Schwager <russells@despammed.com>
 -- ************************************************************************** --
 
--- TODOs
---
--- - Support HTTPS logins
--- - Fix problem with getting multiple pages of messages
-
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "yahoo.com"
 
 -- ************************************************************************** --
@@ -54,8 +49,8 @@ local globals = {
 
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLineLitPattern = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*</td>[.*]{td}[.*]{/td}.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
-  strMsgLineAbsPattern = "O<O>O<O>O<X>O<O>O<O>O<O>[O]{O}[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
+  strMsgLineLitPattern = ".*<tr>.*<td>.*<input>.*</td>.*{td}[.*]{img}[.*]{img}[.*]{/td}[.*]<td>.*</td>[.*]{td}[.*]{img}[.*]{/td}.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
+  strMsgLineAbsPattern = "O<O>O<O>O<X>O<O>O{O}[O]{O}[O]{O}[O]{O}[O]<O>O<O>[O]{O}[O]{O}[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
@@ -69,7 +64,7 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s",
+  strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date",
   strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&Nhead=f&toc=1&MsgId=%s&bodyPart=%s",
   strCmdDelete = "%sym/ShowFolder?box=%s&DEL=Delete", -- &Mid=%s&.crumb=%s
   strCmdEmptyTrash = "%sym/ShowFolder?ET=1&.crumb=%s&reset=1", -- &box=Inbox

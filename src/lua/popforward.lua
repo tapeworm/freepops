@@ -11,7 +11,7 @@
 -- WARNING        the bindings for psock in lua are really poor       WARNING --
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.0.1"
+PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "POPforward"
 
 -- ************************************************************************** --
@@ -20,6 +20,10 @@ PLUGIN_NAME = "POPforward"
 
 pf_state = {
 	socket = nil,
+	pipe = nil,
+	pipe_limit = 0,
+	listed = false,
+	stat_done = false,
 }
 
 -- Is called to initialize the module
@@ -44,7 +48,7 @@ function single_line(cmd,f)
 		return POPSERVER_ERR_NETWORK 
 	end
 
-	local l = pf_state.socket:recv()
+	local l = pf_state.socket:recv() or "-ERR network error"
 	if not (string.find(l,"^+OK")) then 
 		log.error_print(l)
 		return POPSERVER_ERR_UNKNOWN 
@@ -59,7 +63,7 @@ end
 
 function do_pipe(pdata)
 	return function(s)
-	local l,err,time = nil,nil,nil
+	local l = nil
 	
 	while l ~= "." do
 		l = pf_state.socket:recv()
@@ -95,20 +99,60 @@ function do_repeat(f)
 	end
 end
 
+local function pipe_split(s)
+	if type(s) == "table" then
+		return s
+	elseif type(s) == "nil" then
+		return nil
+	else
+		local t = {}
+		for x in string.gfind(s,"([^ ]+)") do
+			table.insert(t,x)
+		end
+		return t
+	end
+end
 
 -- Must save the mailbox name
 function user(pstate,username)
-	local l,err,time = nil,nil,nil
-	pf_state.socket = psock.connect(freepops.MODULE_ARGS.host,
-		freepops.MODULE_ARGS.port)
+
+	pf_state.pipe = pipe_split(freepops.MODULE_ARGS.pipe)
+	pf_state.pipe_limit = freepops.MODULE_ARGS.pipe_limit or 0
+	pf_state.pipe_limit = tonumber(pf_state.pipe_limit)
+
+	-- sanity checks
+	if freepops.MODULE_ARGS.host == nil then
+		log.error_print("host must be non null")
+		return POPSERVER_ERR_AUTH
+	end
+	
+	local _,_,host,port=string.find(freepops.MODULE_ARGS.host,"(.*):(%d+)")
+	if host == nil then
+		host = freepops.MODULE_ARGS.host
+	end
+	if port ~= nil and freepops.MODULE_ARGS.port ~= nil then
+		log.error_print("you should use host:port or set "..
+			"explicity the port, but not both")
+		return POPSERVER_ERR_AUTH
+	end
+	if port == nil and freepops.MODULE_ARGS.port == nil then
+		log.error_print("you should use host:port or set "..
+			"explicity the port")
+		return POPSERVER_ERR_AUTH
+	end
+	port = port or freepops.MODULE_ARGS.port
+
+	--here we are
+	pf_state.socket = psock.connect(host,port)
 	if not pf_state.socket then
 		log.error_print("unable to connect")
 		return POPSERVER_ERR_NETWORK
 	end
 	
+	local l = nil
 	l = pf_state.socket:recv()
 	if not l then
-		log.error_print(err)
+		log.error_print("Error receiving the welcome")
 		return POPSERVER_ERR_NETWORK
 	end
 	
@@ -132,6 +176,15 @@ function quit_update(pstate)
 	return quit(pstate)
 end
 
+
+local function ensure_stat(pstate)
+	if pf_state.stat_done then
+		return POPSERVER_ERR_OK
+	end
+
+	return stat(pstate)
+end
+
 -- Fill the number of messages and their size
 function stat(pstate)
 	local f = function(l)
@@ -144,11 +197,16 @@ function stat(pstate)
 		return POPSERVER_ERR_UNKNOWN
 	end
 
+	pf_state.stat_done = true
+	
 	return single_line("STAT\r\n",f)
 end
 
 -- Fill msg uidl field
 function uidl(pstate,msg)
+	local rc = ensure_stat(pstate) 
+	if rc ~= POPSERVER_ERR_OK then return rc end
+	
 	local f = function(l)
 		for n,u in string.gfind(l,"+OK (%d+) (%d+)") do
 			set_mailmessage_uidl(pstate,n,u)
@@ -162,6 +220,9 @@ end
 
 -- Fill all messages uidl field
 function uidl_all(pstate)
+	local rc = ensure_stat(pstate) 
+	if rc ~= POPSERVER_ERR_OK then return rc end
+
 	local f = do_repeat(function(l)
 		for n,u in string.gfind(l,"(%d+) (%d+)") do
 			set_mailmessage_uidl(pstate,n,u)
@@ -174,6 +235,9 @@ end
 
 -- Fill msg size
 function list(pstate,msg)
+	local rc = ensure_stat(pstate) 
+	if rc ~= POPSERVER_ERR_OK then return rc end
+
 	local f = function(l)
 		for n,u in string.gfind(l,"+OK (%d+) (%d+)") do
 			set_mailmessage_size(pstate,n,u)
@@ -185,19 +249,35 @@ function list(pstate,msg)
 	return single_line("LIST "..msg,f)
 end
 
+local function ensure_list_all(pstate)
+	if pf_state.listed then
+		return POPSERVER_ERR_OK
+	end
+
+	return list_all(pstate)
+end
+
 -- Fill all messages size
 function list_all(pstate)
+	local rc = ensure_stat(pstate) 
+	if rc ~= POPSERVER_ERR_OK then return rc end
+
 	local f = do_repeat(function(l)
 		for n,u in string.gfind(l,"(%d+) (%d+)") do
 			set_mailmessage_size(pstate,n,u)
 		end
 		end)
 
+	pf_state.listed = true
+		
 	return single_line("LIST",f)
 end
 
 -- Unflag each message merked for deletion
 function rset(pstate)
+	local rc = ensure_stat(pstate) 
+	if rc ~= POPSERVER_ERR_OK then return rc end
+
 	return single_line("RSET",nil)
 end
 
@@ -220,7 +300,37 @@ end
 -- Get message msg, must call 
 -- popserver_callback to send the data
 function retr(pstate,msg,pdata)
-	return single_line("RETR "..msg,do_pipe(pdata))
+	if pf_state.pipe ~= nil then
+		if pf_state.pipe_limit ~= 0 then
+			ensure_list_all(pstate)
+		end
+		local size = get_mailmessage_size(pstate,msg)
+		if pf_state.pipe_limit == 0 or size < pf_state.pipe_limit then
+			local m = {}
+			local f = do_repeat(function(l)
+				table.insert(m,l)
+			end)
+			local rc = single_line("RETR "..msg,f)
+			if rc ~= POPSERVER_ERR_OK then
+				-- fixme
+			end
+			m = table.concat(m,"\r\n") .. "\r\n"
+			local r,w = io.dpopen(unpack(pf_state.pipe))
+			if r == nil or w == nil then
+				--fixme
+			end
+			w:write(m)
+			w:close()
+			m = r:read("*a")
+			r:close()
+			popserver_callback(m,pdata)
+			return POPSERVER_ERR_OK
+		else
+			return single_line("RETR "..msg,do_pipe(pdata))
+		end
+	else
+		return single_line("RETR "..msg,do_pipe(pdata))
+	end
 end
 
 -- EOF

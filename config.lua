@@ -76,7 +76,13 @@ freepops.MODULES_MAP["tre.it"]		= {name="tre.lua"}
 -- popforward plugin
 --freepops.MODULES_MAP["something.xx"] 	= {
 --	name="popforward.lua",
---	args={port=110,host="in.virgilio.it",realusername="abcdef"}
+--	args={
+--		port=110,
+--		host="in.virgilio.it",
+--		realusername="abcdef",
+--		pipe={"/usr/bin/spamc","-t","5"}, -- "/usr/bin/spamc -t 5",
+--		pipe_limit=0, -- 0 unlimited, numer of octects of bigger piped
+--	}
 --}
 
 -- kernel.org Changelog plugin

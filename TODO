@@ -32,5 +32,6 @@ for next version or later:
 		- listed by plugin name
 	create the -dev ML
 	add a collaborative web page to publish plugins
+	popserver timeouts to avoid stupid DOS leaving inactive connections open
 
 - eof -

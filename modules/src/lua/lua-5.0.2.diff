@@ -344,7 +344,7 @@ diff -ruN lua-5.0.2-old/src/lib/loadlib.c lua-5.0.2-new/src/lib/loadlib.c
 +
 +	for (i=0;i < narg;i++) {
 +		argv[i] = luaL_checkstring(l,i+1);
-+		fprintf(stderr,"getting %s",argv[i]);
++		//fprintf(stderr,"getting %s",argv[i]);
 +	}
 +	argv[i] = NULL;
 +	
@@ -379,7 +379,7 @@ diff -ruN lua-5.0.2-old/src/lib/loadlib.c lua-5.0.2-new/src/lib/loadlib.c
 +			if (rc == -1) {
 +				luaL_error(l,strerror(errno));
 +			}
-+			fprintf(stderr,"starting %s...\n",argv[0]);
++			//fprintf(stderr,"starting %s...\n",argv[0]);
 +			rc = execv(argv[0],(char* const*)argv);
 +			if (rc == -1) {
 +				luaL_error(l,strerror(errno));

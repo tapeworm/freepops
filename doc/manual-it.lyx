@@ -2144,7 +2144,7 @@ C:
 
 
 \begin_inset ERT
-status Collapsed
+status Open
 
 \layout Standard
 
@@ -2201,7 +2201,7 @@ pass(p,
 \begin_inset Quotes erd
 \end_inset 
 
-linux@kernel.org
+gpl
 \begin_inset Quotes erd
 \end_inset 
 

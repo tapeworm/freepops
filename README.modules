@@ -69,26 +69,25 @@
  
  C modules must be documented with doxygen.
  
- A .pkg file must be documented in the luadoc way. The embedded lua code
- must be commented on the fly, while C code must be commented using
- //--- instead of --- and //-- for --.
-
+ A .lua file must be documented in the luadoc way.
+ 
  Example of a commented lua file. Note that . at the end of line are important.
- Here we prepend // as in .pkg files. In pure lua files no //.
 
- //---
- //-- description of the file, required in pkg files
+ <begin>
+ ---
+ -- description of the file, required in pkg files
 
- //---
- //-- function brief.
- //-- function long
- //-- @param name type description,remember name can't be n.
- //-- @return type description
+ ---
+ -- function brief.
+ -- function long
+ -- @param name type description,remember name can't be n.
+ -- @return type description
  function prototype or defined value
+ <end>
 
- An handmade binding can't be documented via the .pkg, so you have to add
+ An handmade binding can't be documented via the .lua, so you have to add
  a .luadoc file. This file a lua documented file containing only the
- functions prototypes and theyr documentation.
+ functions prototypes and their documentation.
 
 ** COPYING
 

@@ -43,6 +43,7 @@ spell-it:
 	@echo Generating the PDF manuals
 	@latex $<
 	@latex $<
+	@latex $<
 
 xml:
 	@DIR=`date +%s`;\

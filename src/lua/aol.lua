@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.6"
+PLUGIN_VERSION = "0.0.7"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -49,8 +49,8 @@ and your real password as the password.]]
 
 local globals = {
   -- Server URL
-  --
-  strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?siteId=%s&authLev=2&seamless=novl&siteState=",
+  -- 
+  strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?seamless=novl&sitedomain=beta.webmail.aol.com&lang=en&locale=us&authLev=2&siteState=",
 
   -- Login strings
   --
@@ -59,11 +59,11 @@ local globals = {
 
   -- Logout
   --
-  strLogout = "http://my.screenname.aol.com/_cqr/logout/mcLogout.tmpl?siteId=aolcomnewprod",
+  strLogout = "http://%s/logout.aspx",
 
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem
   --
-  strRetLoginGoodLogin = '(function reLocate)',
+  strRetLoginGoodLogin = 'gTargetHost = "([^"]+)"';
   strRetLoginSessionNotExpired = "(mail session has expired)",
   
   -- Regular expression to extract the mail server
@@ -87,17 +87,22 @@ local globals = {
   strLoginPostUrlPattern2='[Tt][Yy][Pp][Ee]="[Hh][Ii][Dd][Dd][Ee][Nn]" [Nn][Aa][Mm][Ee]="([^"]*)" [Vv][Aa][Ll][Uu][Ee]="([^"]*)"',
   strLoginPostUrlPattern3='[Nn][Aa][Mm][Ee]="[^"]*" [Mm][Ee][Tt][Hh][Oo][Dd]="POST" [Aa][Cc][Tt][Ii][Oo][Nn]="([^"]*)"',
   
+  -- Extract the AOL internal id for the user
+  --
+  strUserIdPattern = "uid:([^&]+)&",
+
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLineIDPattern = 'NAME="msguid" VALUE="([^"]+)"',
+  strMsgLinePattern = 'new parent%.MessageInfo%("([^"]+)",[^,]+,"[^,]+",[^,]+,([^,]+),',
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
-  strInbox = "SU5CT1g=",
-  strSpamAOL = "U3BhbQ==",
-  strOldboxAOL = "UkVBRA==",
-  strTrashAOL = "U2F2ZWQ=",
-  strSentAOL = "T1VUQk9Y",
+  strInbox = "New%20Mail", 
+  strSpamAOL = "Spam",
+  strOldboxAOL = "Old%20Mail",
+  strTrashAOL = "Recently%20Deleted",
+  strSentAOL = "Sent%20Mail",
+  StrSavedAOL = "Saved%20Mail",
   
   strTrashNetscape = "VHJhc2g=",
   strSentNetscape = "U2VudA==",
@@ -110,12 +115,17 @@ local globals = {
   strDeletedPat = "([Dd]eleted)",
   strTrashPat = "([Tt]rash)",
   strDraftPat = "([Dd]raft)",
+  strSavedPat = "([Ss]aved)",
+
+  -- Base part of a custom folder name
+  --
+  strCustomFolderBase = "Saved%2F",
 
   -- Command URLS
   --
-  strCmdMsgList = "http://%s/msglist.adp?folder=%s&start=1",
-  strCmdDelete = "http://%s/msglist.adp?folder=%s&start=1&cmd=deletemsgs", --&msguid=X",
-  strCmdMsgView = "http://%s/attachment/%s/%s/",
+  strCmdMsgList = "http://%s//GetMessageList.aspx?user=%s&page=%d&folder=%s&previousFolder=&stateToken=&newMailToken=&version=_SRV_1_0_0_11984_",
+  strCmdDelete = "http://%s/rpc_messages.aspx?folder=%s&action=delete&user=%s&version=_SRV_1_0_0_11984_", --&uid=X",
+  strCmdMsgView = "http://%s/rfc822.aspx?user=%s&folder=%s&uid=%s",
 
   -- Site IDs
   --
@@ -137,6 +147,7 @@ internalState = {
   strDomain = nil,
   strMBox = nil,
   strSiteId = "",
+  strUserId = nil,
 }
 
 -- ************************************************************************** --
@@ -227,6 +238,13 @@ function loginAOL()
   end
   body, err = browser:get_uri(url)
 
+  -- Shouldn't happen but you never know
+  --
+  if body == nil then
+    log.error_print(globals.strLoginFailed)
+    return POPSERVER_ERR_NETWORK
+  end
+
   -- We are now at the signin page.  Let's pull out the action of the signin form and
   -- all the hidden variables.  When done, we'll post the data along with the user and password.
   -- 
@@ -260,29 +278,14 @@ function loginAOL()
     end
   end
 
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern3)
-  local postdata = nil
-  local name, value  
-  for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
-    if postdata ~= nil then
-      postdata = postdata .. "&" .. name .. "=" .. value  
-    else
-      postdata = name .. "=" .. value 
-    end
-  end
+  -- Need to redirect
+  --
+  _, _, url = string.find(body, "checkErrorAndSubmitForm%([^,]+, [^,]+, '([^']+)'")
   if url == nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH  
-  end  
-
-  body, err = browser:post_uri(url, postdata)
-
-  -- Shouldn't happen but you never know
-  --
-  if body == nil then
-    log.error_print(globals.strLoginFailed)
-    return POPSERVER_ERR_AUTH
   end
+  body, err = browser:get_uri(url)
 
   -- We should be logged in now! Let's check and make sure.
   --
@@ -294,11 +297,24 @@ function loginAOL()
   
   -- Save the mail server
   --
-  internalState.strMailServer = browser:wherearewe()
+  internalState.strMailServer = str
 
   -- DEBUG Message
   --
   log.dbg("AOL/Netscape Server: " .. internalState.strMailServer .. "\n")
+
+  -- Get UserID from cookie
+  --
+  local cookie = browser:get_cookie('Auth')
+  if cookie == nil then 
+    log.error_print("Unable to determine AOL internal user id.  The plugin needs to be updated.")
+  else
+    _, _, internalState.strUserId = string.find(cookie.value, globals.strUserIdPattern)
+    if internalState.strUserId == nil then 
+      log.error_print("Unable to determine AOL internal user id.  The plugin needs to be updated.")
+    end
+  end
+
   
   -- Note that we have logged in successfully
   --
@@ -328,8 +344,7 @@ function downloadMsg(pstate, msg, nLines, data)
   --
   local browser = internalState.browser
   local uidl = get_mailmessage_uidl(pstate, msg)
-  
-  local url = string.format(globals.strCmdMsgView, internalState.strMailServer,
+  local url = string.format(globals.strCmdMsgView, internalState.strMailServer, internalState.strUserId,
     internalState.strMBox, uidl);
 
   -- Debug Message
@@ -382,19 +397,6 @@ function downloadMsg_cb(cbInfo, data)
       return 0, nil
     end
   
-    -- Clean up the end of line and other things.  In the HTML portion of a message
-    -- AOL encodes it with quoted-printable.  Let's fix the easy stuff here.  This will
-    -- probably need to be looked at again.  I am sure it will cause issues in the non-HTML
-    -- portions of the message.
-    --
-    body = string.gsub(body, "(Content%-Transfer%-Encoding:) quoted%-printable", "%1 7bit")
-    body = string.gsub(body, "=\r\n", "")
-    body = string.gsub(body, "=\n", "")
-    body = string.gsub(body, "=\r", "")
-    body = string.gsub(body, "=[Aa]0", "\n")
-    body = string.gsub(body, "=20", " ")
-    body = string.gsub(body, "=3[dD]", "=")
-
     -- Perform our "TOP" actions
     --
     if (cbInfo.nLinesRequested ~= -2) then
@@ -498,14 +500,15 @@ function user(pstate, username)
     return POPSERVER_ERR_OK
   end
 
-  -- TODO - set the other mailbox here and find it
-  -- when we log in.
-  -- 
+  _, _, start = string.find(mbox, globals.strSavedPat)
+  if start ~= nil then
+    internalState.strMBox = globals.strSavedAOL
+    return POPSERVER_ERR_OK
+  end
 
-  -- Defaulting to the inbox
-  --
-  log.say("Unable to figure out the mailbox specified.  Defaulting to the Inbox.\n")
-  internalState.strMBox = globals.strInbox
+  -- It's a custom folder
+  -- 
+  internalState.strMBox = globals.strCustomFolderBase .. mbox
   return POPSERVER_ERR_OK
 end
 
@@ -586,21 +589,19 @@ function quit_update(pstate)
   local dcnt = 0
 
   local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer, 
-    internalState.strMBox)
+    internalState.strMBox, internalState.strUserId)
   local baseUrl = cmdUrl
 
   -- Cycle through the messages and see if we need to delete any of them
   -- 
   for i = 1, cnt do
     if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
-      cmdUrl = cmdUrl .. "&msguid=" .. get_mailmessage_uidl(pstate, i) 
+      cmdUrl = cmdUrl .. "&uid=" .. get_mailmessage_uidl(pstate, i) 
       dcnt = dcnt + 1
 
       -- Send out in a batch of 5
       --
       if math.mod(dcnt, 5) == 0 then
-        local cmdCookie = browser:get_cookie('COMMAND')
-        cmdUrl = cmdUrl .. "&cmdnum=" .. (cmdCookie.value or "")
         log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
         local body, err = browser:get_uri(cmdUrl)
         if not body or err then
@@ -618,8 +619,6 @@ function quit_update(pstate)
   -- Send whatever is left over
   --
   if dcnt > 0 and dcnt < 5 then
-    local cmdCookie = browser:get_cookie('COMMAND')
-    cmdUrl = cmdUrl .. "&cmdnum=" .. (cmdCookie.value or "")
     log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
     local body, err = browser:get_uri(cmdUrl)
     if not body or err then
@@ -629,7 +628,8 @@ function quit_update(pstate)
 
   -- Log out
   --
-  browser:get_uri(globals.strLogout)
+  cmdUrl = string.format(globals.strLogout, internalState.strMailServer)
+  browser:get_uri(cmdUrl)
 
   -- AOL acts retarded if we save the session.  We'll remove it and
   -- force the browser to log out.
@@ -656,8 +656,8 @@ function stat(pstate)
   -- 
   local browser = internalState.browser
   local nMsgs = 0
-  local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-    internalState.strMBox);
+  local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer, internalState.strUserId,
+    1, internalState.strMBox);
   local baseUrl = cmdUrl
 
   -- Debug Message
@@ -671,17 +671,13 @@ function stat(pstate)
   -- Local function to process the list of messages, getting id's and sizes
   --
   local function funcProcess(body)
-    -- Cycle through the items and store the msg id.  AOL doesn't list the size
-    -- We'll just return the same value for every message.
-    for uidl in string.gfind(body, globals.strMsgLineIDPattern) do
-      -- Hard Code the size.
-      --
-      local size = 4096
-
+    -- Cycle through the items and store the msg id and size.  
+    ---
+    for uidl, size in string.gfind(body, globals.strMsgLinePattern) do
       -- Save the information
       --
       nMsgs = nMsgs + 1
-      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", (hard coded) Size: " .. size)
+      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
       set_popstate_nummesg(pstate, nMsgs)
       set_mailmessage_size(pstate, nMsgs, size)
       set_mailmessage_uidl(pstate, nMsgs, uidl)

@@ -55,10 +55,11 @@ return 1;
 static int lua_psock_send(lua_State* L) {
 struct sock_state_t* tmp = check_sockstate(L);
 const char* data = luaL_checkstring(L,2);
+int rc;
 
 L_checknarg(L,2,"send wants 'data'");
 
-int rc = sock_send(tmp,(char*)data);
+rc = sock_send(tmp,(char*)data);
 
 lua_pushnumber(L,rc);
 
@@ -68,10 +69,11 @@ return 1;
 static int lua_psock_recv(lua_State* L) {
 struct sock_state_t* tmp = check_sockstate(L);	
 char b[BUFSIZE]="";
+int rc;
 
 L_checknarg(L,2,"recv wants no arguments");
 
-int rc = sock_receive(tmp,b,BUFSIZE);
+rc = sock_receive(tmp,b,BUFSIZE);
 
 if(rc < 0) 
 	lua_pushnil(L);

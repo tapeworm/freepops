@@ -2,7 +2,7 @@ Source: freepops
 Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@users.sourceforge.net>
-Build-Depends: debhelper (>= 4.0.0), libexpat1-dev, libcurl-ssl-dev | libcurl2-dev | libcurl-dev | libcurl3-dev, latex2html
+Build-Depends: debhelper (>= 4.0.0), libexpat1-dev, libcurl-dev | libcurl3-dev | libcurl-ssl-dev | libcurl2-dev , tetex-extra, flex, bison, libreadline4-dev, gs-common
 Standards-Version: 3.6.1.0
 
 Package: freepops

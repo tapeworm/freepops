@@ -21,11 +21,11 @@ html: macro.tex manual.tex manual-it.tex
 	@rm -rf html-manual/;mkdir html-manual/
 	@latex2html -t "FreePOPs Manual"\
 		-dir html-manual $(LATEX_HTML) manual.tex \
-		2>log.log >log.log
+		2>log.log >log.log || true
 	@rm -rf html-manual-it/;mkdir html-manual-it/
 	@latex2html -t "Manuale di FreePOPs"\
 		-dir html-manual-it $(LATEX_HTML) manual-it.tex \
-		2>log.log >log.log
+		2>log.log >log.log || true
 
 spell:
 	@aspell -t -c manual.tex

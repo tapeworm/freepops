@@ -19,6 +19,11 @@ win32:
 	freepops-setup.xpm
 	freepops-remove.xpm
 	freepopsd.vbs
+	README.FPM.en.txt
+	README.FPM.it.txt
+	SERVICE.en.txt
+	SERVICE.it.txt
+	win/*
 
 osx:
 	freepops.psmp

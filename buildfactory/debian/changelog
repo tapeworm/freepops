@@ -1,3 +1,9 @@
+freepops (0.0.19-1) unstable; urgency=low
+
+  * win32 stuff plus plugin fixes
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Wed,  6 Oct 2004 16:00:15 +0200
+
 freepops (0.0.18-1) unstable; urgency=low
 
   * some fixes

@@ -1,4 +1,5 @@
-MK_TEMPLATE=	base64 \
+MK_TEMPLATE=	luabind \
+		base64 \
 		dictionary \
 		list \
 		log \

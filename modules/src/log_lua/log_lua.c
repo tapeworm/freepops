@@ -19,24 +19,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "luabind.h"
+
 #include "log.h"
 #define LOG_ZONE "LUA_LOG"
-
-static void L_error(lua_State* L, char* msg, ...){
-char buffer[1024];
-va_list ap;
-	
-va_start(ap,msg);
-vsnprintf(buffer,1024,msg,ap);
-va_end(ap);
-
-luaL_error(L,buffer);
-}
-
-static void L_checknarg(lua_State* L,int n,char* msg){
-if( lua_gettop(L) != n )
-	L_error(L,"Stack has %d values: '%s'",lua_gettop(L),msg);
-}
 
 static char* lua_log_infos(lua_State* L){
 lua_Debug ar;

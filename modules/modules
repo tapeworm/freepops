@@ -1,5 +1,6 @@
 MODULES-Common= lua		\
 		luay		\
+		luabind 	\
 		oscompatibility	\
 		regularexp	\
 		log		\

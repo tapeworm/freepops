@@ -30,6 +30,8 @@
 
 #include <stdarg.h>
 
+#include "luabind.h"
+
 #define CURL_EASY_META_NAME "curleasy.type"
 
 /* think more if this means unicity... maybe store in the bag some pointers */
@@ -107,57 +109,6 @@
 	#define STR_SIZE (STR_LAST + 1)
 
 
-/******************************************************************************
- * DEBUG ONLY
- * 
- */ 
-#define LINE_PREFIX "L: "	
-static void L_printstack(lua_State* s)	
-{
-int i;
-
-fprintf(stderr,"%slua stack image:\n",LINE_PREFIX);
-for(i=lua_gettop(s) ; i > 0 ; i-- )
-	{
-	fprintf(stderr,"%sstack(%2d) : %s: ",LINE_PREFIX,i,
-		lua_typename(s,lua_type(s,i)));
-	switch(lua_type(s,i)){
-		case LUA_TSTRING:
-			fprintf(stderr," \"%s\"\n",lua_tostring(s,i));
-		break;
-		case LUA_TNUMBER:
-			fprintf(stderr," %5.3f\n",lua_tonumber(s,i));
-		break;
-		case LUA_TBOOLEAN:
-			fprintf(stderr," %s\n",
-				lua_toboolean(s,i)==0?"true":"false");
-		break;
-		case LUA_TNIL:
-			fprintf(stderr," nil\n");
-		break;
-		default:
-			fprintf(stderr," ??\n");
-		break;
-	}
-	}
-fprintf(stderr,"%sstack( 0) : --bottom--\n\n",LINE_PREFIX);
-}
-/******************************************************************************
- * The error function
- * 
- */ 
-static void L_error(lua_State* L, char* msg, ...){
-char buffer[1024];
-va_list ap;
-	
-va_start(ap,msg);
-vsnprintf(buffer,1024,msg,ap);
-va_end(ap);
-
-L_printstack(L);
-luaL_error(L,buffer);
-}
-
 
 /******************************************************************************
  * we need to keep with us the CURL handler plus some buffers
@@ -171,14 +122,6 @@ struct L_curl_bag {
 #if CURL_NEWER(7,9,6)
 	struct curl_httppost *post;
 #endif
-};
-/******************************************************************************
- * curl.* CONSTANTS
- *
- */ 
-struct L_const{
-	char* name;
-	/*unsigned*/ long int value;
 };
 
 /******************************************************************************
@@ -449,34 +392,15 @@ return -1;
  */ 
 static long int L_checkconst_mask(lua_State* L,
 		const struct L_const* t,const char* t_nam, int c){
-//int i,sum;
 int con;
 
 if( lua_type(L,c) != LUA_TNUMBER )
 	L_error(L,"Expecting a %s value, got nothing",t_nam);
 
+//FIXME: think a check
 con = (long int)lua_tonumber(L,c);
 
-/*
-for ( i = 0,sum = 0 ; t[i].name != NULL ; i++){
-	sum |= t[i].value;
-}
-*/
-
-/*
-fprintf(stderr,
-	"curl.AUTH_ANY %lx curl.AUTH_ANYSAFE %lx -> %lx\n",
-	 CURLAUTH_ANY,CURLAUTH_ANYSAFE,con);
-*/
-
-/* not really exaustive check */
-/*if(con <= sum)*/
-	return con;
-/*else {
-	L_error(L,"Expecting a %s orred value",t_nam);
-}*/
-	
-//return -1;
+return con;
 }
 
 /******************************************************************************
@@ -523,15 +447,6 @@ while( lua_next(L,tab_index) != 0 ){
 }
 
 return sl;
-}
-
-/******************************************************************************
- * check number of arguments
- *
- */ 
-static void L_checknarg(lua_State* L,int n,char* msg){
-if( lua_gettop(L) != n )
-	L_error(L,"Stack has %d values: '%s'",lua_gettop(L),msg);
 }
 
 /******************************************************************************
@@ -688,26 +603,6 @@ if(rc != 0) {
 lua_pop(L,2);
 
 return rc;
-}
-
-/******************************************************************************
- * CURLOPT_HTTPPOST parser
- *
- */ 
-static int L_tablesize(lua_State* L,int n){
-int i = 0;
-
-if ( !lua_istable(L,n))
-	L_error(L,"expecting a table, "
-		"not a %s",lua_typename(L,lua_type(L,-1)));
-
-lua_pushnil(L);
-while( lua_next(L,n) != 0 ){
-	i++;
-	lua_pop(L,1);
-}
-
-return i;
 }
 
 /******************************************************************************
@@ -1380,20 +1275,6 @@ static const struct luaL_reg curl_easy_m [] = {
   {NULL,NULL}
 };
 
-
-/******************************************************************************
- * expects a table on top and adds all t fields to this table
- *
- */ 
-static void L_openconst(lua_State* L,const struct L_const* t) {
-int i;
-for ( i = 0 ; t[i].name != NULL ; i++){
-	lua_pushstring(L,t[i].name);
-	lua_pushnumber(L,(lua_Number)t[i].value);
-	lua_settable(L,-3);
-}
-
-}
 
 /******************************************************************************
  * open the luacurl library

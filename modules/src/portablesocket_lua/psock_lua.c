@@ -4,6 +4,7 @@
 #include "lua.h"
 #include "lauxlib.h"
 #include "socketcommon.h"
+#include "luabind.h"
 
 #define METANAME "sockstate.type"
 #define BUFSIZE 2048
@@ -14,11 +15,6 @@ static struct sock_state_t* check_sockstate(lua_State*L)
   void* tmp = luaL_checkudata(L,1,METANAME);
   luaL_argcheck(L,tmp != NULL,1,"sockstate expected");
   return *(struct sock_state_t**)tmp;
-}
-
-static void L_checknarg(lua_State* L,int n,char* msg){
-if( lua_gettop(L) != n )
-	luaL_error(L,"Stack has %d values: '%s'",lua_gettop(L),msg);
 }
 
 static void fake_print(char*s) { }

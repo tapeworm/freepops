@@ -10,6 +10,31 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "Tin.IT"
+PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=tin.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
+PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
+PLUGIN_DOMAINS = {"tin.it","virgilio.it"}
+PLUGIN_PARAMETERS = {
+	{name = "folder", description = {
+		it = [[
+Visto che potresti aver bisogno di scaricare altre cartelle oltre alle 
+INBOX (che è quella di default) il plugin accetta il parametro folder 
+e l' unico valore attualmente testato è Spam , ma anche altre cartelle
+dovrebbero funzionare. Ecco un esempio di user name per controllare la 
+cartella Spam: foo@virgilio.it?folder=Spam]],
+		}	
+	},
+}
+PLUGIN_DESCRIPTIONS = {
+	it="Questo plugin vi per mette di leggere le mail che avete "..
+	   "in una mailbox @virgilio.it , @tin.it . Per usare questo "..
+	   "plugin dovete usare il vostro indirizzo email completo "..
+	   "come user name e la vostra password reale come password.",
+	en="This plugin is for italian users only."
+}
 
 -- ************************************************************************** --
 --  strings

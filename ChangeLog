@@ -1,3 +1,4 @@
+- added pubDate tag support to aggregator plugin
 - added gmail.lua to manual + various fixes
 - added man page to manual
 - added FAQ to manual

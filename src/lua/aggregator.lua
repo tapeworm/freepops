@@ -56,7 +56,8 @@ local rss_string = {
 	itemC = "(</item>)",
 	linkC = "<link.*>(.*)</link>",
 	titleC = "<title.*>(.*)</title>",
-	descC = "<desc.*>(.*)</desc.*>"
+	descC = "<desc.*>(.*)</desc.*>",
+	dateC = "<pubDate.*>(.*)</pubDate.*>"
 }
 
 
@@ -119,18 +120,21 @@ end
 -- Build a mail header date string
 --
 function build_date(str)
-	return(os.date("%a, %d %b %Y %H:%M:%S"))
-	
+	if(str==nil) then
+		return(os.date("%a, %d %b %Y %H:%M:%S"))
+	else
+		return(str)
+	end	
 end
 
 --------------------------------------------------------------------------------
 -- Build a mail header
 --
-function build_mail_header(title,uidl)
+function build_mail_header(title,uidl,mydate)
 	return 
 	"Message-Id: <"..uidl..">\r\n"..
 	"To: "..internal_state.name.."@"..internal_state.password.."\r\n"..
-	"Date: "..build_date(uidl).."\r\n"..
+	"Date: "..build_date(mydate).."\r\n"..
 	"Subject: "..title.."\r\n"..
 	"From: freepops@"..internal_state.password.."\r\n"..
 	"User-Agent: freepops "..PLUGIN_NAME..
@@ -172,6 +176,7 @@ function retr_or_top(pstate,msg,data,lines)
 	local _,_,title=string.find(chunk,rss_string.titleC)
 	local _,_,header=string.find(chunk,rss_string.linkC)
 	local _,_,body=string.find(chunk,rss_string.descC)
+	local _,_,mydate=string.find(chunk,rss_string.dateC)
 
 	if (body == nil) then
 		body="Not available"
@@ -188,8 +193,9 @@ function retr_or_top(pstate,msg,data,lines)
 	title=html2txt(title)
 	body=html2txt(body)
 
+
 	--build it
-	local s = build_mail_header(title,uidl) .. 
+	local s = build_mail_header(title,uidl,mydate) .. 
 		header .. "\r\n\r\n" .. 
 		"News description:\r\n"..
 		body.. "\r\n"

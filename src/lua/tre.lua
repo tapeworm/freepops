@@ -55,10 +55,7 @@ original pin code provided by three.]]
 }
 
 -- Todo:
--- Delete message
--- Clean Body -> remove 1^ e 3^ <td></td>
--- Destinatin Parsing ->usare un ciclo e leggere tutti i link <a>
--- Attachment handling	-> ok
+-- Clean lua source (Remove debug print and optimization)
 -- Empty trash after delete
 -- Rfc-ing header date
 
@@ -280,8 +277,9 @@ function mangle_body(s)
 	                "content%-disposition","mime%-version"})				
 
 		-- the webmail damages these tags
+		-- three webmail doesn't support html mail, so this simplify parsing!!!
 		s = mimer.remove_tags(s,
-			{"html","head","body","doctype","void","style"})
+			{"html","head","body","doctype","void","style","table","td","tr","img"})
 	
 		s = tre_string.html_preamble .. s .. 
 			tre_string.html_conclusion
@@ -377,10 +375,10 @@ function tre_parse_webmessage(pstate,msg)
 
 	-- extracts the attach list
 	local x = mlex.match(f,tre_string.attachE,tre_string.attachG)
-print ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-print ("DEBUG: extracts the attach list from " .. uri )
+--print ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+--print ("DEBUG: extracts the attach list from " .. uri )
 --	x:print()
-print ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+--print ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 	
 	local n = x:count()
 	local attach = {}
@@ -391,7 +389,7 @@ print ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 		url = string.gsub(url,"&amp;", "&")
 		local _,_,fname = string.find(x:get(0,i-1),'^[%s%t]*(.*)')
 		attach[mimer.html2txtplain(fname)] = "http://".. b:wherearewe() .. "/cgi-bin/" .. url
-print ("DEBUG: attacchment url " .. attach[mimer.html2txtplain(fname)] )
+--print ("DEBUG: attacchment url " .. attach[mimer.html2txtplain(fname)] )
 		table.setn(attach,table.getn(attach) + 1)
 	end
 	

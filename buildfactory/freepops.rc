@@ -87,6 +87,27 @@ restart(){
     start
 }
 
+status(){
+    if [ -s $pid ]; then
+      pidnum=`cat $pid 2>/dev/null`
+      if [ "$?" != "0" ]; then
+        echo "Can't get FreePOPs status"
+        exit 2
+      else
+        kill -0 $pidnum >/dev/null 2>&1
+        if [ "$?" = "0" ]; then
+          echo "freepopsd (pid $pidnum) is running"
+        else
+          echo "freepopsd is stopped"
+          exit 1
+        fi
+      fi
+    else
+      echo "freepopsd is stopped"
+      exit 1
+    fi
+}
+
 # See how we were called.
 
 case "$1" in
@@ -103,8 +124,12 @@ case "$1" in
     restart
     ;;
 
+  status)
+    status
+    ;;
+
   *)
-    echo $"Usage: $0 {start|stop|restart}"
+    echo $"Usage: $0 {start|stop|restart|status}"
     exit 1
 
 esac

@@ -1,3 +1,4 @@
+- added command 'status' to RPM init script
 - added Rojous patch to freepopsd.vbs to clean log files
 - fixed "no more log file names available" bug
 - added concento.it and clarence.com (thanks m_root and Olizad)

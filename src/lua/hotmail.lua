@@ -10,7 +10,7 @@
 PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "hotmail.com"
 
--- Domains supported:  hotmail.com, msn.com, webtv.com, charter.com, compaq.net, 
+-- Domains supported:  hotmail.com, msn.com, webtv.com, charter.com, compaq.net,
 --                     passport.com
 
 -- TODO

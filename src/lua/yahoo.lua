@@ -243,7 +243,7 @@ function loginYahoo()
 	
   -- DEBUG - Set the browser in verbose mode
   --
-  browser:verbose_mode()
+  -- browser:verbose_mode()
 
   if SSLEnabled then
     url = globals.strLoginHTTPs

@@ -3639,7 +3639,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-and the telnet session follows
+e la sessione di telnet
 \begin_inset ERT
 status Collapsed
 
@@ -3739,7 +3739,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-and
+e
 \begin_inset ERT
 status Collapsed
 
@@ -3810,7 +3810,7 @@ end{footnotesize}
 \end_inset 
 
 Ora abbiamo una vera e propria funzione stat che riempie la struttura dati
- popstate con le informazioni che il server POP necessita per rispondere
+ popstate con le informazioni di cui il server POP necessita per rispondere
  ad una richiesta di stat.
  poiché le richieste list, uidl, list_all e uidl_all possono essere soddisfatte
  con gli stessi dati, useremo la funzione standard fornita dal modulo common.lua.

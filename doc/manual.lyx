@@ -27,9 +27,71 @@
 \papersides 1
 \paperpagestyle fancy
 
-\layout Title
+\layout Standard
 
-FreePOPs Manual
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+thispagestyle{empty}
+\layout Standard
+
+\backslash 
+vspace*{5cm}
+\layout Standard
+
+\backslash 
+begin{flushright}
+\backslash 
+huge{FreePOPs Manual}
+\layout Standard
+
+\backslash 
+vspace{-6mm}
+\layout Standard
+
+\backslash 
+rule{15cm}{2mm}
+\layout Standard
+
+\backslash 
+vspace{5mm}
+\layout Standard
+
+\backslash 
+normalsize{Written by Enrico Tassi, Nicola Cocchiaro}
+\layout Standard
+Version $Id$
+\layout Standard
+
+\backslash 
+end{flushright}
+\layout Standard
+
+\backslash 
+vspace{
+\backslash 
+stretch{1}}
+\layout Standard
+
+\backslash 
+hspace{
+\backslash 
+stretch{1}}Document released under the GNU/FDL license.
+\backslash 
+hspace{
+\backslash 
+stretch{1}}
+\layout Standard
+
+\backslash 
+pagebreak
+\end_inset 
+
+
 \layout Standard
 
 

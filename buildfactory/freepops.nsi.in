@@ -1,7 +1,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; only nsis 2
-SetCompressor bzip2
+;SetCompressor bzip2
+SetCompressor LZMA
 SetOverwrite on
 SetCompress auto
 SetDatablockOptimize on
@@ -78,7 +79,7 @@ LicenseForceSelection radiobuttons "I like free software." "I only use proprieta
 
 ; The text to prompt the user to enter a directory
 DirText "Choose a directory to install FreePOPs:"
-DirShow show
+;DirShow show
 
 
 ; The stuff to install

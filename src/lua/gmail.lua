@@ -28,19 +28,14 @@ esportare la rubrica usando come user name username#export@gmail.com. Un
 file gmail_contacts_export.csv che pu&ograve;
 essere importato nel tuo mail client
 preferito verrà generato nella tua home (Unix) o nella directory Documenti 
-(Windows). Per usare questo plugin hai bisogno della versione di
-FreePOPs con SSL (per Windows scarica FreePOPs-X.Y.Z-SSL.exe, 
-per Unix probabilmente devi installare openssl).]],
+(Windows).]],
 	en=[[
 This is the webmail support for @gmail.com mailboxes. To use this plugin
 you have to use your full email address as the user name and your real 
 password as the password. An extensions is the #export that allows you to 
 export in csv for mat you address book. To do this you should use something
 like username#export@gmail.com and a gmail_contacts_export.csv will
-be saved in you home (Unix) or in the My Documents directory (Windows). To
-use this plugin you need the SSL version of FreePOPs (for Windows download
-the FreePOPs-X.Y.Z-SSL.exe setup file, under Unix you probably need OpenSSL
-installed).]]
+be saved in you home (Unix) or in the My Documents directory (Windows).]]
 }
 
 

@@ -359,14 +359,17 @@ function retr_cb(data)
 			end
 			
 			s = string.gsub(s,"^%s*","")
---			s = string.gsub(s,"\r\r\n","\r\n")
---			s = string.gsub(s,"\r\n\r\n","\r\n")
 			FirstBlock = false
 		else
 			if correction ~= nil then
 				 s = string.gsub(s,correction,"\r\n")
 			end
 		end
+		-- may be smarter
+		s = string.gsub(s,"\r\r\n","\r\n")
+		s = string.gsub(s,"\r\n\n","\r\n")
+		s = string.gsub(s,"\n\n","\r\n")
+		s = string.gsub(s,"\r\r","\r\n")
 		
 		s = a:dothack(s).."\0"
 		popserver_callback(s,data)
@@ -398,9 +401,6 @@ function top_cb(global,data)
 			correction = auto_learn(s)
 			
 			s = string.gsub(s,"^%s*","")
---			s = string.gsub(s,"\r\r\n","\r\n")
---			s = string.gsub(s,"\r\n\r\n","\r\n")			
-			
 			if correction ~= nil then
 				 s = string.gsub(s,correction,"\r\n")
 			end
@@ -411,7 +411,12 @@ function top_cb(global,data)
 				 s = string.gsub(s,correction,"\r\n")
 			end
 		end
-	
+		-- may be smarter 
+		s = string.gsub(s,"\r\r\n","\r\n")
+		s = string.gsub(s,"\r\n\n","\r\n")
+		s = string.gsub(s,"\n\n","\r\n")
+		s = string.gsub(s,"\r\r","\r\n")
+
 		s = global.a:tophack(s,global.lines_requested)
 		s = global.a:dothack(s).."\0"
 			

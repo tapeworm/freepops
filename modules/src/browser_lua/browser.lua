@@ -27,6 +27,12 @@
 -- (you may need to urlescape it by hand), exhed<BR/>
 -- <BR/>
 -- <B>show()</B> : Debug printing on the browser content.<BR/>
+-- <BR/>
+-- <B>whathaveweread()</B> : returns the page's url we have returned 
+-- (may differ from the requested if we got a redirect).<BR/>
+-- <BR/>
+-- <B>wherearewe()</B> :  returns the host we have contacted
+-- (may differ from the requested if we got a redirect).<BR/>
 
 
 dofile("cookie.lua")
@@ -269,7 +275,8 @@ function Private.post_uri(self,url,post,exhed)
 	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
 
 	return Hidden.continue_or_return(rc,err,gl_b,
-		Private.post_uri,self,err,post,exhed)
+		--Private.post_uri,self,err,post,exhed)
+		Private.get_uri,self,err,exhed)
 end
 
 function Private.add_cookie(self,url,c)
@@ -351,6 +358,19 @@ function Private.serialize(self,name)
 	table.insert(s,name..".cookies="..serial.serialize(nil,self.cookies))
 	table.insert(s,name..".referrer="..serial.serialize(nil,self.referrer))
 	return name .. "= browser.new();" .. table.concat(s)
+end
+
+function Private.whathaveweread(self)
+	return self.referrer
+end
+
+function Private.wherearewe(self)
+	local u = cookie.parse_url(self.referrer)
+	if u.port ~= nil then
+		return u.host..":".. u.port
+	else
+		return u.host
+	end
 end
 
 browser = {}

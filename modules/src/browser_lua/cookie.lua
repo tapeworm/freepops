@@ -351,7 +351,15 @@ function cookie.get(t,res,domain,host)
 		   l >= 0 and
 		   (domain_match("."..domain,c["domain"]) or c.host == host)
 			then
-			table.insert(r,{c=c,l=l})
+			--search if there is no othe cookie in r 
+			--with the same name
+			local dup = false
+			table.foreachi(r,function(_,v)
+				if v.c.name == c.name then dup = true end
+			end)
+			if not dup then
+				table.insert(r,{c=c,l=l})	
+			end
 		end
 	end)
 	table.sort(r,function(a,b) return a.l > b.l end)

@@ -245,7 +245,7 @@ function tin_login()
 	local pop_login = user .. "@" .. domain
 	local uri = tin_string.login
 	local post = string.format(tin_string.login_post,pop_login,password)
-	local bisquit1 = mk_cookie("CPIULOGIN",pop_login,nil,"/",".virgilio.it",nil)
+	local bisquit1 = mk_cookie("CPIULOGIN","",nil,"/",".virgilio.it",nil)
 	local txcpiu = aaa_encode(pop_login,password,curl.escape(
 		tin_string.tinsso_dxurl))
 	local txmail = aaa_encode(pop_login,password,tin_string.tinsso_wmail)
@@ -257,7 +257,7 @@ function tin_login()
 
 	local b = internal_state.b
 
---	b.curl:setopt(curl.OPT_VERBOSE,1)
+	b.curl:setopt(curl.OPT_VERBOSE,1)
 
 --	local head = b:get_head("http://communicator.virgilio.it")
 --	b:show()
@@ -272,15 +272,26 @@ function tin_login()
 --	print(body)
 --
 	local body,err = b:get_uri("http://communicator.virgilio.it/mail/webmail.asp")
-	local f = io.open("out.html","w")
-	
+local f = io.open("out.html","w")
 	f:write(body)
 	f:close()
 
+	local _,_,sid = string.find(body,'LoadFrames%(".*sid=(%w*)%&')
 
+	print("SID="..sid)
+
+	b:show()
+	
+	b.referrer = "http://phx3e.cp.virgilio.it/mail/Navigation?sid="..sid.."&userid=gareuselesinge2%40virgilio.it&seq=+Q&auth=+A&style=comm4_IT"
+	
+	local body,err = b:get_uri("http://"..b:wherearewe().."/mail/MessageList?sid="..sid.."1&userid="..curl.escape(pop_login).."&seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT")
 	
 	--body = b:get_uri("http://communicator.virgilio.it/mail/webmail.asp")
 	--print(body)
+
+f = io.open("out2.html","w")
+	f:write(body)
+	f:close()
 
 	return POPSERVER_ERR_AUTH
 	

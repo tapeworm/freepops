@@ -1,3 +1,4 @@
+26/07/2004 0.0.13 fix release
 - fixed manual (thanks er_capoccia)
 - fixed rpm /etc/init.d script (thanks domfe)
 - the win32 install no more overwrites the start menu entry (preserves the user options)

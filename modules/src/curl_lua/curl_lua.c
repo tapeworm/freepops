@@ -216,6 +216,15 @@ static const struct L_const curl_easy_ipresolve_c [] = {
   {"IPRESOLVE_V6",CURL_IPRESOLVE_V6},
   {NULL,0}
 };
+/******************************************************************************
+ * table created by hand:
+ * 
+ */
+static const struct L_const curl_easy_proxytype_c [] = {
+  {"PROXY_HTTP",CURLPROXY_HTTP},
+  {"PROXY_SOCKS5",CURLPROXY_SOCKS5},
+  {NULL,0}
+};
 
 /******************************************************************************
  * table created with this script:
@@ -788,7 +797,6 @@ switch(opt) {
 	case CURLOPT_NOSIGNAL:
 	case CURLOPT_FAILONERROR:
 	case CURLOPT_PROXYPORT:
-	case CURLOPT_PROXYTYPE:
 	case CURLOPT_HTTPPROXYTUNNEL:
 	case CURLOPT_DNS_CACHE_TIMEOUT:
 	case CURLOPT_DNS_USE_GLOBAL_CACHE:
@@ -978,6 +986,12 @@ switch(opt) {
 	  		curl_easy_ipresolve_c,"CURL_IPRESOLVE_*",3);
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
+	case CURLOPT_PROXYTYPE:{
+		long int o = L_checkconst(L,
+	  		curl_easy_proxytype_c,"CURLPROXY_*",3);
+		rc = curl_easy_setopt(c,opt,o);
+	}break;
+
 		 
 	/* slist */
 	case CURLOPT_HTTPPOST:{
@@ -1126,6 +1140,8 @@ L_openconst(L,curl_easy_form_c);
 L_openconst(L,curl_easy_ftpssl_c);
 L_openconst(L,curl_easy_closepolicy_c);
 L_openconst(L,curl_easy_ipresolve_c);
+L_openconst(L,curl_easy_proxytype_c);
+
 return 1;
 }
 

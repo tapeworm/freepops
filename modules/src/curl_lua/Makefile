@@ -11,7 +11,7 @@ OBJ=curl_lua.o
 all: $(LIBRARY)
 
 $(LIBRARY): $(CONSTANTS) $(OBJ) 
-	$(H)gcc -g3 -Wall -fPIC -c curl_lua.c $(CFLAGS)
+	$(H)$(CC) $(CFLAGS) -c curl_lua.c 
 	$(H)echo -n " linking "
 	$(H)$(AR) -r $(LIBRARY) $(OBJ)
 	$(H)$(RANLIB) $(LIBRARY)

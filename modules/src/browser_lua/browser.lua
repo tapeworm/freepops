@@ -66,6 +66,8 @@ function Private.get_uri(self,url,exhed)
 	-- go
 	local rc,err = self.curl:perform()
 
+	print("XXXXX:".. (rc or "nil") .. (err or "nil") )
+
 	-- check result
 	if rc == 0 then
 		-- save referrer
@@ -138,16 +140,22 @@ function Private.show(self)
 		print("\n")
 	end)
 	print("\treferrer:\n\t\t" .. (self.referrer or ""))
+	print("\tproxy:\n\t\t" .. (self.proxy or ""))
+	print("\tproxyauth:\n\t\t" .. (self.proxyauth or ""))
+	print("\tuseragent:\n\t\t" .. (self.useragent or ""))
 end
 
 function Private.init_curl(self)
 	self.curl = curl.easy_init()
-	self.curl:setopt(curl.OPT_USERAGENT,self.useragent or "browser.lua")
+	self.curl:setopt(curl.OPT_USERAGENT,self.useragent or 
+		"cURL/browser.lua (;;;;) FreePOPs")
 	if self.proxy ~= nil then
 		self.curl:setopt(curl.OPT_PROXY,self.proxy)
+		self.curl:setopt(curl.OPT_PROXYTYPE,curl.PROXY_HTTP)
 	end
-	if self.proxypass ~= nil then
-		self.curl:setopt(curl.OPT_PROXYUSERPWD,self.proxypass)
+	if self.proxyauth ~= nil then
+		self.curl:setopt(curl.OPT_PROXYUSERPWD,self.proxyauth)
+		self.curl:setopt(curl.OPT_PROXYAUTH,curl.AUTH_ANY)
 	end
 	-- tells the library to follow any Location:
         -- header that the server sends as part of an HTTP header
@@ -178,7 +186,7 @@ function browser.new()
 		referrer = false, --nil will break the metatable check
 		curl = false,
 		proxy = os.getenv("LUA_HTTP_PROXY"),
-		proxypass = os.getenv("LUA_HTTP_PROXYPASS"),
+		proxyauth = os.getenv("LUA_HTTP_PROXYAUTH"),
 		useragent = os.getenv("LUA_HTTP_USERAGENT"),
 	}
 
@@ -191,6 +199,8 @@ function browser.new()
 	})
 
 	b:init_curl()
+	
+	b:show()
 	
 	return b
 end

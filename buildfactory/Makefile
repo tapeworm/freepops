@@ -3,7 +3,6 @@ include $(CONFIG)
 VERSION=$(shell grep "\#define VERSION" ../config.h | cut -d \" -f 2)
 
 H=@
-#H=
 
 help:
 	$(H)echo
@@ -27,6 +26,8 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
+	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl_nossl-2.dll \
+		_win_/freepops/libcurl-2.dll
 	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/modules/include/*.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/
@@ -39,6 +40,7 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)unix2dos _win_/freepops/COPYING.txt
 	$(H)unix2dos _win_/freepops/ChangeLog.txt
 
+	echo $(STRIP) $(CC) $(RANLIB)
 	$(H)$(STRIP) _win_/freepops/*.exe _win_/freepops/*.dll
 
 	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \

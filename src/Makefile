@@ -71,7 +71,7 @@ ifeq "$(OS)" "Windows"
 	LDFLAGS= -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
-		-lregex -lm -lcurl -lmingw32 -lwsock32 -lpthread -lgdi32 -mwindows
+		-lregex -lm -lcurl_nossl -lmingw32 -lwsock32 -lpthread -lgdi32 -mwindows
 
 else
 ifeq "$(OS)" "Darwin"

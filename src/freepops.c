@@ -307,18 +307,6 @@ SAY("freepops started with loglevel %d on a %s machine.\n",verbosity,
 	((unsigned short)1 != htons(1))?"little endian":"big endian");
 }
 
-void http_init(char *u, char *p, char *a)
-{
-/*
-set_useragent(u);
-free(u);
-set_proxyaddr(p);
-free(p);
-set_proxyauth(a);
-free(a);
-*/
-}
-
 void my_putenv(const char* a, const char* b)
 {
 char * tmp = calloc(1024,sizeof(char));
@@ -399,7 +387,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		} else if (res == 'A') {
 			/* --auth */
 			if (proxyauth != NULL) {
-				usage(argv[0]);
+				//usage(argv[0]);
+				
 				exit(1);
 			}
 			proxyauth = strdup(optarg);
@@ -470,21 +459,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	
 	start_logging(logfile,verbose_output);
 	
-	//XXX libero_init_string_db(); 			XXX
-	//XXX if(useragent == NULL)			XXX
-	//XXX	useragent = get_useragent(UAFILE);	XXX
-	
-	
 	if(useragent == NULL)
-		// freed by http_init XXX
 		useragent = strdup(DEFAULT_USERAGENT);
-
 	
 	my_putenv("LUA_HTTP_USERAGENT",useragent);
 	my_putenv("LUA_HTTP_PROXY",proxy);
+	my_putenv("LUA_HTTP_PROXYAUTH",proxyauth);
 	
-	http_init(useragent, proxy, proxyauth);
-
 /*** INITIALIZATION UNIX ***/
 #if ! defined(WIN32) && ! defined(BEOS)
 	if(daemonize)

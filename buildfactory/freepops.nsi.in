@@ -87,7 +87,7 @@ Section "FreePOPs (required)"
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File "freepopsd.exe"
+  File "*.exe"
   File "*.dll"
   File "*.txt"
   File "*.vbs"

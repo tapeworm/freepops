@@ -25,6 +25,7 @@ dist-win: freepops-$(VERSION).tar.gz
 		./configure.sh win;\
 		$(MAKE) all; \
 		#$(MAKE) manual;
+	$(H)$(MAKE) -C win CONFIG=../_win_/freepops-$(VERSION)/config
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
@@ -33,6 +34,7 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/buildfactory/freepopsd.vbs \
 		_win_/freepops/
+	$(H)cp win/*.exe _win_/freepops/
 	$(H)#cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/
 	$(H)#cp _win_/freepops-$(VERSION)/doc/manual-it.pdf _win_/freepops/
 

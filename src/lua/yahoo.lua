@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5b"
+PLUGIN_VERSION = "0.1.5c"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -536,18 +536,20 @@ function downloadYahooMsg(pstate, msg, nLines, data)
 
   -- Start the download on the body
   -- 
-  local f, _ = browser:pipe_uri(bodyUrl,cb)
-  if not f then
-    -- An empty message.  Send the headers anyway
-    --
-    log.dbg("Empty message")
-  else
-    -- Just send an extra carriage return
-    --
-    log.dbg("Message Body has been processed.")
-    if (cbInfo.strBuffer ~= "\r\n") then
-      log.dbg("Message doesn't end in CRLF, adding to prevent client timeout.")
-      popserver_callback("\r\n\0", data)
+  if nLines ~= 0 then
+    local f, _ = browser:pipe_uri(bodyUrl,cb)
+    if not f then
+      -- An empty message.  Send the headers anyway
+      --
+      log.dbg("Empty message")
+    else
+      -- Just send an extra carriage return
+      --
+      log.dbg("Message Body has been processed.")
+      if (cbInfo.strBuffer ~= "\r\n") then
+        log.dbg("Message doesn't end in CRLF, adding to prevent client timeout.")
+        popserver_callback("\r\n\0", data)
+      end
     end
   end
 
@@ -606,7 +608,8 @@ function downloadMsg_cb(cbInfo, data)
       if cbInfo.strHack:check_stop(cbInfo.nLinesRequested) then
         cbInfo.nLinesReceived = -1;
         if (string.sub(body, -2, -1) ~= "\r\n") then
-          log.error_print("Does NOT end in CRLF!")
+          log.error_print("Does NOT end in CRLF, adding it!")
+          body = body .. "\r\n"
         end
       else
         cbInfo.nLinesReceived = cbInfo.nLinesRequested - 

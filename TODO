@@ -1,4 +1,4 @@
-legeng: more + means more done! (from 1 to 7)
+legend: more + means more done! (from 1 to 7, if your tab is 8)
 
 for future versions:
 	regression tests maybe with netcat or other to make it possible to run
@@ -14,6 +14,8 @@ for version 0.1.0:
 for version 0.0.14:
 ++++	aggiungi il parametro folder eventualmente ad altre webmail 
 		in cui sia facile supportarlo. (tin e libero sono OK).
+	factorize top and retr in common.lua since in the raw case they are 
+		always the same
 
 for version 0.0.13:
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 

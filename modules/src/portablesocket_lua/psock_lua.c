@@ -71,7 +71,7 @@ struct sock_state_t* tmp = check_sockstate(L);
 char b[BUFSIZE]="";
 int rc;
 
-L_checknarg(L,2,"recv wants no arguments");
+L_checknarg(L,1,"recv wants no arguments");
 
 rc = sock_receive(tmp,b,BUFSIZE);
 

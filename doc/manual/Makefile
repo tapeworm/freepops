@@ -11,7 +11,7 @@ LATEX_HTML= \
 	    -next_page_in_navigation\
 	    -previous_page_in_navigation
 
-all: pdf html
+all: xml pdf html
 	
 pdf: manual.pdf manual-it.pdf
 	@cp manual.pdf manual-it.pdf ../
@@ -39,14 +39,34 @@ spell-it:
 %.ps:%.dvi
 	@dvips -f $< > $@
 
-%.dvi:%.tex macro.tex
+%.dvi:%.tex macro.tex 
 	@echo Generating the PDF manuals
 	@latex $<
 	@latex $<
 
+xml:
+	@DIR=`date +%s`;\
+		mkdir -p /tmp/$$DIR;\
+		cd ../../;\
+		[ -e src/freepopsd ] || make all;\
+		[ -e modules/bin/luafull ] || make all;\
+		for X in src/lua/*.lua; do \
+			src/freepopsd -x $$X 1> \
+				/tmp/$$DIR/`basename $$X`.xml 2>/dev/null;\
+		done;\
+		for X in /tmp/$$DIR/*.xml; do \
+			modules/bin/luafull \
+				scripts/xml2tex.lua $$X it 1> \
+				doc/manual/`basename $$X`.it.xmltex;\
+			modules/bin/luafull \
+				scripts/xml2tex.lua $$X en 1> \
+				doc/manual/`basename $$X`.en.xmltex;\
+		done;\
+		rm -rf /tmp/$$DIR
+
 clean:
 	@rm -rf *.aux *.pdf *.dvi *.ps *.ps.gz *.log\
-		*.toc *.lof *.lot *.bbl *.blg \
+		*.toc *.lof *.lot *.bbl *.blg *.xmltex\
 		html-manual html-manual-it manual.txt manual-it.txt
 
-.PHONY: html pdf txt
+.PHONY: html pdf xml

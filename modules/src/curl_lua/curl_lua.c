@@ -445,7 +445,7 @@ return sl;
  * check number of arguments
  *
  */ 
-void L_checknarg(lua_State* L,int n,char* msg){
+static void L_checknarg(lua_State* L,int n,char* msg){
 if( lua_gettop(L) != n )
 	L_error(L,"Stack has %d values: '%s'",lua_gettop(L),msg);
 }

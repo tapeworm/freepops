@@ -16,6 +16,11 @@ static struct sock_state_t* check_sockstate(lua_State*L)
   return *(struct sock_state_t**)tmp;
 }
 
+static void L_checknarg(lua_State* L,int n,char* msg){
+if( lua_gettop(L) != n )
+	L_error(L,"Stack has %d values: '%s'",lua_gettop(L),msg);
+}
+
 static void fake_print(char*s) { }
 
 /* function: connect */
@@ -26,6 +31,8 @@ struct sock_state_t* tmp;
 const char* host;
 int port;
 
+L_checknarg(L,2,"connect wants 'host' and 'port'");
+	
 host = luaL_checkstring(L,1);
 port = luaL_checkint(L,2);
 
@@ -49,6 +56,8 @@ static int lua_psock_send(lua_State* L) {
 struct sock_state_t* tmp = check_sockstate(L);
 const char* data = luaL_checkstring(L,2);
 
+L_checknarg(L,2,"send wants 'data'");
+
 int rc = sock_send(tmp,(char*)data);
 
 lua_pushnumber(L,rc);
@@ -59,6 +68,8 @@ return 1;
 static int lua_psock_recv(lua_State* L) {
 struct sock_state_t* tmp = check_sockstate(L);	
 char b[BUFSIZE]="";
+
+L_checknarg(L,2,"recv wants no arguments");
 
 int rc = sock_receive(tmp,b,BUFSIZE);
 

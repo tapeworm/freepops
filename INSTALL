@@ -9,6 +9,7 @@ type:
 Available systems:
   linux		- to compile on a linux host
   osx		- to compile on a darwin host
+  obsd		- to compile on an OpenBSD host
   beos		- to compile on a beos host
   cygwin	- to compile on a cygwin environment
   win		- to cross-compile for win on a linux host with mingw32msvc

@@ -93,7 +93,7 @@ static int regularexp_gmatch(lua_State *L) {
 int res = 0;
 int nmatch = 0;
 int max;
-ssize_t cur=0;
+size_t cur=0;
 const char *text;
 regex_t *pr;
 regmatch_t pm[1]={{-1,-1}};

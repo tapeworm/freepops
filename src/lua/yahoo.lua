@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -17,7 +17,7 @@ PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells@despammed.com","ncocchiaro@users.sourceforge.net"}
-PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it"}
+PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
@@ -30,25 +30,24 @@ quelli corrispondenti in Italiano: InArrivo, Bozza,
 Inviati, Anti-spam, Cestino). Se avete creato delle 
 cartelle potete usarle con i loro nomi.]],
 		en = [[
-Is used to select the folder (Inbox is the default)
-you want to interact with. The folders that are available are the standard 
+Parameter is used to select the folder (Inbox is the default)
+that you wish to access. The folders that are available are the standard 
 Yahoo folders, called 
 Inbox, Draft, Sent, Bulk and 
 Trash (for yahoo.it domains you may use the same folder names or the 
 corresponding names in Italian: InArrivo, Bozza, 
-Inviati,Anti-spam, Cestino). If you created some 
-folders you can use them using their names.]]
+Inviati,Anti-spam, Cestino). For user defined folders, use their name as the value.]]
 		}	
 	},
 }
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Questo plugin vi per mette di leggere le mail che avete in una 
-mailbox @yahoo.com o @yahoo.it.
+mailbox @yahoo.com, @yahoo.ca o @yahoo.it.
 Per usare questo plugin dovete usare il vostro indirizzo email completo come
 user name e la vostra password reale come password.]],
 	en=[[
-This is the webmail support for @yahoo.com and @yahoo.it mailboxes. 
+This is the webmail support for @yahoo.com, @yahoo.ca and @yahoo.it mailboxes. 
 To use this plugin you have to use your full email address as the user 
 name and your real password as the password.]]
 }
@@ -62,14 +61,13 @@ local globals = {
   -- TODO: Define the HTTPS version
   --
   strLoginURL = "http://login.yahoo.com/config/login",   
-  strLoginPostData = ".tries=1&.src=ym&.intl=us&login=%s&passwd=%s&.persistent=y",
+  strLoginPostData = ".tries=1&.src=ym&.intl=%s&login=%s&passwd=%s&.persistent=y",
   strLoginFailed = "Login Failed - Invalid User name and password",
 
   -- Expressions to pull out of returned HTML from Yahoo corresponding to a problem
   --
-  strRetLoginBadPassword = "(Invalid Password)",
-  strRetLoginBadID = "(ID does not exist)",
-  strRetLoginSessionExpired = "(Your login session has expired)",
+  strRetLoginBadPassword = "(login_form)",
+  strRetLoginSessionExpired = "(error code:  Login)",
 
   -- Regular expression to extract the mail server
   --
@@ -86,18 +84,22 @@ local globals = {
   --
   strRegExpCrumb = "ET=1&%.crumb=([^&]*)&",
 
-  -- Pattern to determine if we have no messages
+  -- Pattern to determine if we have no messages.  If this is found, we have messages.
   --
-  strMsgListNoMsgPat = "(There are no messages in your)",
+  strMsgListNoMsgPat = "(<tbody>)",
 
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLineLitPattern = ".*<tr>.*<td>.*<input>.*</td>.*{td}[.*]{img}[.*]{img}[.*]{/td}[.*]<td>.*</td>[.*]{td}[.*]{img}[.*]{/td}.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
-  strMsgLineAbsPattern = "O<O>O<O>O<X>O<O>O{O}[O]{O}[O]{O}[O]{O}[O]<O>O<O>[O]{O}[O]{O}[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
+  strMsgLineLitPattern = ".*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
+  strMsgLineAbsPattern = "O<O>O<X>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
+
+  -- MSGID Pattern
+  -- 
+  strMsgIDPattern = 'MsgId=([^&]*)&',
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
-  strMsgListPrevPagePattern = '<a href="/(ym[^"]*)">Previous</a>',
+  strMsgListPrevPagePattern = '<a href="/(ym[^"]*previous=1[^"]*)">',
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
@@ -106,6 +108,14 @@ local globals = {
   strTrash = "Trash",
   strDraft = "Draft",
   strSent = "Sent",
+
+  -- Folder patterns -- To add standard mailbox names, add the names, separated by a '~'
+  --
+  strInboxPat = "inbox~InArrivo~inarrivo",
+  strBulkPat = "Bulk~bulk~Anti%-spam~antispam",
+  strDraftPat = "Bozza~bozza",
+  strTrashPat = "Cestino~cestino",
+  strSentPat = "Inviati~inviati",
 
   -- Command URLS
   --
@@ -118,7 +128,33 @@ local globals = {
   --
   strViewAll = "a",
   strViewUnread = "u",
-  strViewFlagged = "f"
+  strViewFlagged = "f",
+
+  -- Internation Flags
+  --
+  strYahooUs = "us",  -- US
+  strYahooIt = "it",  -- Italy
+  strYahooCa = "ca",  -- Canada
+  strYahooDk = "dk",  -- Denmark
+  strYahooDe = "de",  -- Germany
+  strYahooEs = "es",  -- Spain
+  strYahooFr = "fr",  -- France
+  strYahooNo = "no",  -- Norway
+  strYahooSe = "se",  -- Sweden
+  strYahooUk = "uk",  -- United Kingdom
+  strYahooIe = "ie",  -- Ireland
+  strYahooAu = "au",  -- Australia
+  strYahooNz = "nz",  -- New Zealand
+  strYahooCn = "cn",  -- China
+  strYahooHk = "hk",  -- Hong Kong
+  strYahooIn = "in",  -- India
+  strYahooJp = "jp",  -- Japan
+  strYahooKr = "kr",  -- Korea
+  strYahooSg = "sg",  -- Singapore
+  strYahooTw = "tw",  -- Taiwan
+  strYahooAr = "ar",  -- Argentina
+  strYahooBr = "br",  -- Brazil
+  strYahooMx = "mx",  -- Mexico
 
 }
 
@@ -135,7 +171,8 @@ internalState = {
   strMailServer = nil,
   strDomain = nil,
   strCrumb = nil,
-  strMBox = nil
+  strMBox = nil,
+  strIntFlag = nil,
 }
 
 -- ************************************************************************** --
@@ -184,8 +221,9 @@ function loginYahoo()
   local username = internalState.strUser
   local password = internalState.strPassword
   local domain = internalState.strDomain
+  local intFlag = internalState.strIntFlag
   local url = globals.strLoginURL
-  local post = string.format(globals.strLoginPostData, username, password)
+  local post = string.format(globals.strLoginPostData, intFlag, username, password)
   local browser = internalState.browser
 	
   -- DEBUG - Set the browser in verbose mode
@@ -211,14 +249,6 @@ function loginYahoo()
   local _, _, str = string.find(body, globals.strRetLoginBadPassword)
   if str ~= nil then
     log.error_print("Login Failed: Invalid Password")
-    return POPSERVER_ERR_AUTH
-  end
-
-  -- Check for invalid ID
-  --
-  _, _, str = string.find(body, globals.strRetLoginBadID)
-  if str ~= nil then
-    log.error_print("Login Failed: Invalid ID")
     return POPSERVER_ERR_AUTH
   end
 
@@ -386,7 +416,6 @@ end
 function user(pstate, username)
 	
   -- Get the user, domain, and mailbox
-  -- TODO:  mailbox - for now, just inbox
   --
   local domain = freepops.get_domain(username)
   local user = freepops.get_name(username)
@@ -394,29 +423,64 @@ function user(pstate, username)
   internalState.strDomain = domain
   internalState.strUser = user
 
-  -- Change globals according to domain
+  -- Figure out the domain specific flags
+  --
   if domain == "yahoo.it" then
-    globals.strLoginPostData = ".tries=1&.src=ym&.intl=it&login=%s&passwd=%s&.persistent=y"
-    globals.strRetLoginBadPassword = "(Password non valida)"
-    globals.strMsgListNoMsgPat = "(Non ci sono messaggi nella cartella)"
-    globals.strMsgListPrevPagePattern = '<a href="/(ym[^"]*)">Precedente</a>'
-  --  globals.strCmdMsgList = "%sym/ShowFolder?box=%s&pos=%s&view=%s&order=up&sort=date"
-  --  globals.strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&head=f&toc=1&MsgId=%s&bodyPart=%s"
+    internalState.strIntFlag = globals.strYahooIt
+  elseif domain == "yahoo.ca" then
+    internalState.strIntFlag = globals.strYahooCa
+  elseif domain == "yahoo.co.in" then
+    internalState.strIntFlag = globals.strYahooIn
+  elseif domain == "yahoo.fr" then
+    internalState.strIntFlag = globals.strYahooFr
+  elseif domain == "yahoo.de" then
+    internalState.strIntFlag = globals.strYahooDe
+  elseif domain == "yahoo.co.uk" then
+    internalState.strIntFlag = globals.strYahooUk
+  elseif domain == "yahoo.com.mx" then
+    internalState.strIntFlag = globals.strYahooMx
+  elseif domain == "yahoo.co.kr" then
+    internalState.strIntFlag = globals.strYahooKr
+  elseif domain == "yahoo.com.tw" then
+    internalState.strIntFlag = globals.strYahooTw
+  elseif domain == "yahoo.com.au" then
+    internalState.strIntFlag = globals.strYahooAu
+  elseif domain == "yahoo.no" then
+    internalState.strIntFlag = globals.strYahooNo
+  elseif domain == "yahoo.se" then
+    internalState.strIntFlag = globals.strYahooSe
+  else
+    internalState.strIntFlag = globals.strYahooUs
   end
   
-  -- Get the folder (also supports yahoo.it folders)
+  -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder or globals.strInbox
-  if mbox == "bulk" or mbox == "Bulk" or mbox == "Anti-spam" or mbox == "antispam" then
-    mbox = globals.strBulk
-  elseif mbox == "In Arrivo" or mbox == "InArrivo" or mbox == "inarrivo" then
-    mbox = globals.strInbox
-  elseif mbox == "Bozza" or mbox == "bozza" then
-    mbox = globals.strDraft
-  elseif mbox == "Cestino" or mbox == "cestino" then
-    mbox = globals.strTrash
-  elseif mbox == "Inviati" or mbox == "inviati" then
-    mbox = globals.strSent
+  if mbox ~= globals.strInbox then
+    local _, _, str = string.find(globals.strInboxPat, "(" .. mbox .. ")")
+    if str ~= nil then
+      mbox = globals.strInbox
+    else
+      _, _, str = string.find(globals.strBulkPat, "(" .. mbox .. ")")
+      if str ~= nil then
+        mbox = globals.strBulk
+      else
+        _, _, str = string.find(globals.strTrashPat, "(" .. mbox .. ")")
+        if str ~= nil then
+          mbox = globals.strTrash
+        else
+          _, _, str = string.find(globals.strSentPat, "(" .. mbox .. ")")
+          if str ~= nil then
+            mbox = globals.strSent
+          else
+            _, _, str = string.find(globals.strDraftPat, "(" .. mbox .. ")")
+            if str ~= nil then 
+              mbox = globals.strDraft
+            end
+          end
+        end
+      end
+    end
   end
   
   internalState.strMBox = mbox
@@ -588,7 +652,7 @@ function stat(pstate)
     -- Find out if there are any messages
     -- 
     local _, _, nomesg = string.find(body, globals.strMsgListNoMsgPat)
-    if (nomesg ~= nil) then
+    if (nomesg == nil) then
       return true, nil
     end
 
@@ -602,7 +666,7 @@ function stat(pstate)
 
     -- Remove out the attachment link
     --
-    subBody = string.gsub(subBody, '<a href="[^"]+"><img[^>]+></a>', "")
+    --subBody = string.gsub(subBody, '<a href="[^"]+"><img[^>]+></a>', "")
 
     -- Tokenize out the message ID and size for each item in the list
     --    
@@ -630,7 +694,7 @@ function stat(pstate)
       -- Get the message id.  It's a series of a numbers followed by
       -- an underscore repeated.  .
       --
-      _, _, uidl = string.find(uidl, 'value="([%d-_]+)"')
+      _, _, uidl = string.find(uidl, globals.strMsgIDPattern) --'value="([%d-_]+)"')
 
       local bUnique = true
       for j = 0, nMsgs do

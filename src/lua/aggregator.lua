@@ -100,15 +100,13 @@ local rss_string = {
 	item_bC = "<item",
 	item_eC = "</item>",
 	itemC = "(</item>)",
-	linkC = "<link.*>(.*)</link>",
-	link2C = "<guid.*>(.*)</guid>",
-	titleC = "<title.*>(.*)</title>",
-	title2C = "<title.*>[<]?[!]?[\[]([^\]]*).*[>]?</title>",
+	linkC = "<link[^>]*>(.*)</link>",
+	link2C = "<guid[^>]*>(.*)</guid>",
+	titleC = "<title>(.*)</title>",
 	descC = "<desc[^>]*>(.*)</desc[^>]*>",
-	desc2C = "<desc.*>[<]?[!]?[\[]([^\]]*).*[>]?</desc.*>",
 	contentC = "<content:encoded>(.*)</content:encoded>",
 	dcdateC = "<dc:date>(.*)</dc:date>",
-	dateC = "<pubDate.*>(.*)</pubDate.*>"
+	dateC = "<pubDate[^>]*>(.*)</pubDate[^>]*>"
 }
 
 -- ************************************************************************** --
@@ -241,22 +239,18 @@ function retr_or_top(pstate,msg,data,lines)
 	end
 									
 	local _,_,title=string.find(chunk,rss_string.titleC)
-	if ((title == nil) or (title == "")) then
-		 _,_,title=string.find(chunk,rss_string.title2C)
-		title=string.gsub(title,"CDATA%[","");
-	end
+	title=string.gsub(title,"<!%[CDATA%[","")
+ 	title=string.gsub(title,"%]%]>","")
+
 	local _,_,header=string.find(chunk,rss_string.linkC)
 	if ((header == nil) or (header == "")) then
 		_,_,header=string.find(chunk,rss_string.link2C)
 	end
 	
 	local _,_,body=string.find(chunk,rss_string.descC)
-	if ((body == nil) or (body == "")) then
-		_,_,body=string.find(chunk,rss_string.desc2C)
-		if(body ~= nil) then
- 			body=string.gsub(body,"CDATA%[","")
-		end
-	end
+	print ("CAZZO #"..body.."#\n")
+	body=string.gsub(body,"<!%[CDATA%[","")
+	body=string.gsub(body,"%]%]>","")
 	
 	--this is enabled in 
 	-- xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -281,7 +275,7 @@ function retr_or_top(pstate,msg,data,lines)
 		 end
 	end
 
-	if (body == nil) then
+	if ((body == nil) or (body =="") )then
 		body="Not available"
 	end
 

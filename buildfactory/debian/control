@@ -2,7 +2,7 @@ Source: freepops
 Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@users.sourceforge.net>
-Build-Depends: debhelper (>= 4.0.0), lyx, gs-common
+Build-Depends: debhelper (>= 4.0.0), libexpat1-dev, libcurl2-dev
 Standards-Version: 3.6.1.0
 
 Package: freepops

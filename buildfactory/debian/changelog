@@ -1,3 +1,9 @@
+freepops (0.0.15-1) unstable; urgency=low
+
+  * owa/httpmail , xml, Txml, fix gmail,yahoo... tre.lua,aol.lua
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sat, 21 Aug 2004 13:55:18 +0200
+
 freepops (0.0.14-1) unstable; urgency=low
 
   * fix gmail. added yahoo.com 

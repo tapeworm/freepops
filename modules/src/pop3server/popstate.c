@@ -231,8 +231,10 @@ void set_mailmessage_size(struct mail_msg_t* m,int size)
 {
 if (m == NULL)
 	ERROR_ABORT("mailmessage is NULL\n");
-if (size <= 0)
+if (size <= 0){
+	SAY("setting message size to %d\n",size);
 	ERROR_ABORT("invalid size value\n");
+}
 m->size = size;
 }
 //! sets mailmessage uidl, string will be duplicated

@@ -68,7 +68,7 @@ struct back_t
 /***  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  */
 
 /*** tokenization ***/
-HIDDEN void regexec_my(char* s,regmatch_t *p);
+HIDDEN void regexec_my(char* s,regmatch_t *p, int *bag);
 HIDDEN void regexec_myext(char* s,regmatch_t *p);
 HIDDEN list_t *tokenize_html(char* t);
 HIDDEN list_t *tokenize_exp(char* t);
@@ -134,62 +134,55 @@ HIDDEN void print_anslist(list_t *a,char* str);
  * a token is a tag, or a comment or a <script></script>
  *
  */ 
-HIDDEN void regexec_my(char* s,regmatch_t *p)
+#define MODE_SCRIPT 1
+#define MODE_PLAIN 0
+HIDDEN int scriptmatch(char* s){
+regmatch_t p;
+
+p = regfind(s,"^[ /]*[Ss][Cc][Rr][Ii][Pp][Tt]");
+
+return p.begin != -1 ? MODE_SCRIPT : MODE_PLAIN ;
+}
+
+HIDDEN void regexec_my(char* s,regmatch_t *p, int* mode)
 {
 int pos;
-int c;
+//int c;
 int dust;
+int sm = MODE_PLAIN;
 
 p->begin = -1;
 p->end = -1;
 	
-for(pos = 0 ; s[pos] != '<' && s[pos] != '\0' ; pos++);
+for(pos = 0 ; (s[pos] != '<' && (*mode == MODE_PLAIN  || (sm=scriptmatch(&s[pos+1])) )) && s[pos] != '\0' ; pos++);
 
 if(s[pos] == '\0')
 	return;
 	
 p->begin  = pos;
 
-c=0;
 dust=0;
 if(!strncmp(&s[pos],"<!--",4))
 	dust=1;
 
-/* weak, ScriPt is not matched  */
-if(!strncmp(&s[pos],"<script",7))
-	dust=2;
-if(!strncmp(&s[pos],"<SCRIPT",7))
-	dust=2;
+pos++;
+
 while(1)
 	{
 	if(s[pos] == '\0')
 		break;
-	else if(s[pos] == '<')
-		c++;
+	else if(dust == 1 && s[pos] == '>')
+		{
+		if(s[pos-1] == '-' && s[pos-2] == '-')
+			break;
+		}
 	else if(s[pos] == '>')
 		{
-		if(!dust)
-			{
-			c--;
-			if(c==0)
+		if (*mode == MODE_SCRIPT){
+			if (scriptmatch(&s[pos-6]))
 				break;
-			}
-		else
-			{
-			if(dust == 1)
-				{
-				if(s[pos-1] == '-' && s[pos-2] == '-')
-					break;
-				}
-			if(dust == 2)
-				{
-				/* weak, ScriPt is not matched  */
-				if(!strncmp(&s[pos-8],"</script>",9))
-					break;
-				if(!strncmp(&s[pos-8],"</SCRIPT>",9))
-					break;
-				}
-			}
+		} else
+			break;
 		}
 	pos++;
 	}
@@ -199,6 +192,11 @@ if(s[pos] == '\0')
 	p->begin = -1;
 	return;
 	}
+
+if ( *mode == MODE_SCRIPT)
+	*mode = MODE_PLAIN;
+if ( *mode == MODE_PLAIN)
+	*mode = sm;
 
 p->end = pos+1;
 }
@@ -243,10 +241,12 @@ int position=0;
 regmatch_t p[1];
 unsigned int len = strlen(t);
 
+int bag = MODE_PLAIN;
+
 do	{
 	p[0].begin = -1;
 	p[0].end = -1;
-	regexec_my(&t[position],p); // faster, but not so much
+	regexec_my(&t[position],p,&bag); // faster, but not so much
 	if(p[0].end != -1) 
 		{
 		int start1,start2,stop1,stop2;
@@ -389,15 +389,12 @@ s1[t1->stop]=tmp;
 
 /* uncomment for debug *
 
-if (p1.begin != -1 || (t1->tag & (TOK_OPT_TAG|TOK_OPT_STR)))
-	{
-	printf("# %d : ",(t1->tag & (TOK_OPT_TAG|TOK_OPT_STR)));
-	printf("Comparing ");
-	print_token(t,s);
-	printf(" with ");
-	print_token(t1,s1);
-	printf(" -- %s\n",p1.begin != -1 ? "OK!" : "FAILED");
-	}
+printf("# %d : ",(t1->tag & (TOK_OPT_TAG|TOK_OPT_STR)));
+printf("Comparing ");
+print_token(t,s);
+printf(" with ");
+print_token(t1,s1);
+printf(" -- %s\n",p1.begin != -1 ? "OK!" : "FAILED");
 
 **/
 

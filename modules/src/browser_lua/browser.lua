@@ -107,6 +107,7 @@ function Hidden.build_header(self,url,exhed)
 
 	-- the header
 	local head = exhed or {}
+	
 	local cook = cookie.get(self.cookies,u.path,u.host,u.host)
 	
 	if self.referrer then
@@ -249,6 +250,18 @@ function Hidden.continue_or_return(rc,err,t,f,...)
 	end
 end
 
+-- to handle local redirect
+function Hidden.mangle_location(self,loc)
+	if loc == nil then return nil end
+	if string.byte(loc,1) == string.byte("/",1) then
+		local u = cookie.parse_url(self.referrer)
+		return u.scheme .. "://" .. u.host .. ":" .. 
+			(u.port or "80") .. loc
+	else
+		return loc
+	end
+end
+
 --<==========================================================================>--
 
 function Private.get_uri(self,url,exhed)
@@ -261,7 +274,7 @@ function Private.get_uri(self,url,exhed)
 	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
 
 	return Hidden.continue_or_return(rc,err,gl_b,
-		Private.get_uri,self,err,exhed)
+		Private.get_uri,self,Hidden.mangle_location(self,err),exhed)
 end
 
 function Private.post_uri(self,url,post,exhed)
@@ -273,10 +286,10 @@ function Private.post_uri(self,url,post,exhed)
 	Hidden.build_header(self,url,exhed)
 	
 	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
-
+	
 	return Hidden.continue_or_return(rc,err,gl_b,
-		--Private.post_uri,self,err,post,exhed)
-		Private.get_uri,self,err,exhed)
+		--Private.post_uri,self,Hidden.mangle_location(self,err),post,exhed)
+		Private.get_uri,self,Hidden.mangle_location(self,err),exhed)
 end
 
 function Private.add_cookie(self,url,c)
@@ -296,7 +309,7 @@ function Private.get_head(self,url,exhed)
 	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
 
 	return Hidden.continue_or_return(rc,err,gl_h,
-		Private.get_head,self,err,exhed)
+		Private.get_head,self,Hidden.mangle_location(self,err),exhed)
 end
 
 function Private.pipe_uri(self,url,cb,exhed) 

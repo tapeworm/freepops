@@ -548,9 +548,10 @@ function stat(pstate)
 
 			local rc = libero_login()
 			if rc ~= POPSERVER_ERR_OK then
-				return nil,{
-					error="Session ended,unable to recover"
-					}
+				return nil,--{
+					--error=
+					"Session ended,unable to recover"
+					--} hope it is ok now
 			end
 			
 			popserver = internal_state.popserver

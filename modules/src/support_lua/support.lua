@@ -92,6 +92,13 @@ function support.do_retrive(b,u)
 		return b:get_uri(u)
 	end
 end
+---
+-- Returns a retrive function for do_until that post uri u,p with browser b
+function support.do_post(b,u,p)
+	return function()
+		return b:post_uri(u,p)
+	end
+end
 
 ---
 -- This is the check to make do_until exit after the first repeat

@@ -39,34 +39,31 @@ local tin_string = {
 	webmail="http://communicator.virgilio.it/mail/webmail.asp",
 	-- This is the capture to get the session ID from the login-done webpage
 	sessionC = 'LoadFrames%(".*sid=(%w*)%&',
---a.*href.*uid=[[:digit:]]+
+	-- mesage list mlex
 	statE = ".*<tr>.*<td>.*<spacer>.*</td>.*<td>.*<a>.*<img>.*<img>.*<script>.*</script>.*</a>.*</td>.*<td>.*<input>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</a>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</A>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*KB{/b}[.*]</p>.*</td>.*</tr>",
-	statG = "O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>O<O>O<O>",
-	
+	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>O<O>O<O>",
 	-- The uri for the first page with the list of messages
 	first = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
 		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT",
-	-- The capture to check if there is one more page of message list
-	next_checkC = "<a href=\"javascript:doit"..
-		"%('Act_Msgs_Page_Next',1,1%)\">.*</a>",
 	-- The uri to get the next page of messages
 	next = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
 		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT&"..
 		"start=%d&end=%d",
+	-- some stuff for the mail list browsing
+	rangeC='\n%s*rng%s*=%s*"(%d+)%-(%d+)"%s*;',
+	totalC='\n%s*var%s*totalpage%s*=%s*(%d+)%s*/%s*page%s*;',
+	stepC="\n%s*var%s*page%s*=%s*(%d+)%s*;",
 	-- The capture to understand if the session ended
-	timeoutC = "(Sessione non valida. Riconnettersi)",
+	timeoutC = "(sessione.*scaduta)", --FIXME not checked
 	-- The uri to save a message (read download the message)
-	save = "http://%s/cgi-bin/webmail.cgi/message.txt?ID=%s&"..
-		"msgID=%s&Act_V_Save=1&"..
-		"R_Folder=aW5ib3g=&Body=0&filename=message.txt",
+	save = "",
 	-- The uri to delete some messages
-	delete = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs_Del_CF_Ok=1&"..
-		"HELP_ID=inbox&SEL_ALL=0&From_Vu=1&C_Folder=SU5CT1g%%3D&"..
-		"msgID=&Msg_Read=&R_Folder=&ZONEID=&Fld_P_List=aW5ib3g%%3D&"..
-		"dummy1_List=aW5ib3g%%3D&dummy2_List=aW5ib3g%%3D&Msg_Nb=%d",
+	delete = "http://%s/mail/MessageErase",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
-	delete_next = "&Msg_Sel_%d=%s"
+	delete_post = "sid=%s&userid=%s&"..
+		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT&",
+	delete_next = "msguid=%s&"
 }
 
 tin_domains = {
@@ -399,15 +396,15 @@ function quit_update(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 
 	-- shorten names, not really important
-	local popserver = internal_state.popserver
-	local session_id = internal_state.session_id
 	local b = internal_state.b
+	local popserver = b:wherearewe()
+	local session_id = internal_state.session_id
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
 	
-	local uri = string.format(libero_string.delete,popserver,session_id,
-		get_popstate_nummesg(pstate))
+	local uri = string.format(tin_string.delete,popserver)
+	local post = string.format(tin_string.delete_post,session_id,pop_login)
 
 	-- here we need the stat, we build the uri and we check if we 
 	-- need to delete something
@@ -415,8 +412,8 @@ function quit_update(pstate)
 	
 	for i=1,get_popstate_nummesg(pstate) do
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
-			uri = uri .. string.format(libero_string.delete_next,
-				i,get_mailmessage_uidl(pstate,i))
+			post = post .. string.format(tin_string.delete_next,
+				get_mailmessage_uidl(pstate,i))
 			delete_something = true	
 		end
 	end
@@ -425,7 +422,7 @@ function quit_update(pstate)
 		-- Build the functions for do_until
 		local extract_f = function(s) return true,nil end
 		local check_f = support.check_fail
-		local retrive_f = support.retry_n(3,support.do_retrive(b,uri))
+		local retrive_f = support.retry_n(3,support.do_post(b,uri,post))
 
 		if not support.do_until(retrive_f,check_f,extract_f) then
 			log.error_print("Unable to delete messages\n")
@@ -476,15 +473,16 @@ function stat(pstate)
 		-- calls match on the page s, with the mlexpressions
 		-- statE and statG
 		local x = mlex.match(s,tin_string.statE,tin_string.statG)
-		x:print()
+	
+		--x:print()
 		
 		-- the number of results
 		local n = x:count()
 
 		if n == 0 then
 			return true,nil
-		end
-
+		end 
+		
 		-- this is not really needed since the structure 
 		-- grows automatically... maybe... don't remember now
 		local nmesg_old = get_popstate_nummesg(pstate)
@@ -499,15 +497,20 @@ function stat(pstate)
 			-- arrange message size
 			local k = nil
 			_,_,k = string.find(size,"([Kk][Bb])")
-			_,_,size = string.find(size,"(%d+)")
-			_,_,uidl = string.find(uidl,"uid=([%.%d]+)&")
-			size = tonumber(size)
-			if k ~= nil then
-				size = size * 1024
-			end
+			_,_,m = string.find(size,"([Mm][Bb])")
+			_,_,size = string.find(size,"([%.%d]+)")
+			_,_,uidl = string.find(uidl,'value="([%d]+)"')
 
 			if not uidl or not size then
 				return nil,"Unable to parse page"
+			end
+
+			-- arrange size
+			size = tonumber(size)
+			if k ~= nil then
+				size = size * 1024
+			elseif m ~= nil then
+				size = size * 1024 * 1024
 			end
 
 			-- set it
@@ -516,24 +519,25 @@ function stat(pstate)
 		end
 		
 		return true,nil
-	end
+	end 
 
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s) 
+		-- FIXME use the <form> fields instead
 		local _,_,_,to = string.find(s,
-			'\n%s*rng%s*=%s*"(%d+)%-(%d+)"%s*;')
+			tin_string.rangeC)
 		local _,_,last = string.find(s,
-			'\n%s*var%s*totalpage%s*=%s*(%d+)%s*/%s*page%s*;')
+			tin_string.totalC)
 		if last == nil or to == nil then
 			error("unable to capture last or to")
 		end
 		--print("$$\n"..s.."$$\n")
-		--print(to,last)
+		--print("-->",to,last)
 		if to < last then
 			-- change retrive behaviour
 			local _,_,step = string.find(s,
-				"\n%s*var%s*page%s*=%s*(%d+)%s*;")
+				tin_string.stepC)
 			if step == nil then
 				log.error_print("unable to capture step")
 				return true
@@ -557,7 +561,7 @@ function stat(pstate)
 		if f == nil then
 			return f,err
 		end
-
+		print("TIMEOUT:\n" .. f)
 		local _,_,c = string.find(f,tin_string.timeoutC)
 		if c ~= nil then
 			internal_state.login_done = nil

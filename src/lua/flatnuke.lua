@@ -188,9 +188,10 @@ function retr_or_top(pstate,msg,data,lines)
 	--clean it
 	header=html2txt(header) 
 	body=html2txt(body)
+	title = string.gsub(title,"\n","")
 
 	--build it
-	s = build_mail_header(title,uidl) .. 
+	local s = build_mail_header(title,uidl) .. 
 		header .. "\r\n\r\n" .. 
 		body.. "\r\n"
 
@@ -305,7 +306,7 @@ function stat(pstate)
 			local uidl = x:get (0,i-1) 
 
 			--fucking default size
-			size=1000
+			local size=1000
 			_,_,uidl = string.find(uidl,".*/(%d+)")
 
 			if not uidl or not size then

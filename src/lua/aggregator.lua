@@ -186,7 +186,7 @@ function retr_or_top(pstate,msg,data,lines)
 	body=html2txt(body)
 
 	--build it
-	s = build_mail_header(title,uidl) .. 
+	local s = build_mail_header(title,uidl) .. 
 		header .. "\r\n\r\n" .. 
 		"News description:\r\n"..
 		body.. "\r\n"
@@ -292,7 +292,7 @@ function stat(pstate)
 			end
 			
 		end
-		n=nmess	
+		local n=nmess	
 		
 		-- this is not really needed since the structure 
 		-- grows automatically... maybe... don't remember now
@@ -310,7 +310,7 @@ function stat(pstate)
 			
 			local _,_,uidl = string.find(chunk,rss_string.linkC)
 			--fucking default size
-			size=2048
+			local size=2048
 
 			if not uidl or not size then
 				return nil,"Unable to parse uidl"

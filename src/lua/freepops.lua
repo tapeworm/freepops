@@ -214,25 +214,32 @@ freepops.set_sanity_checks = function()
 	setmetatable(_G,{
 		__index = function(t,k)
 			local d = debug.getinfo(2,"lSn")or debug.getinfo(1,"lS")
-			local s = "BUG in '".. d.source ..
-				"' that uses an undefined global '" .. k .. 
-				"' at function '".. d.name .. 
-				"' line " .. d.currentline
+			local s = "\tBUG found in '".. d.source ..
+				"' at line " .. d.currentline".\n"..
+				"\tFunction '".. d.name .. 
+				"' uses an undefined global '" ..k.. "'\n"..[[
+
+	This is a sanity check added by freepops.set_sanity_checks() that
+	prevents the plugin to access undeclared globals.
+	This avoids some hard-to-detect bugs.
+	]]
 			log.say(s.."\n")
 			error(s)
 		end,
 		__newindex = function(t,k,v)
 			if k == "_" then rawset(_G,k,v) return end
 			local d = debug.getinfo(2,"lSn")or debug.getinfo(1,"lS")
-			local s = "BUG in '".. d.source ..
-				"' that sets an undefined global '" .. k .. 
-				"' at function '".. d.name .. 
-				"' line " .. d.currentline.."\n".. [[
+			local s = "\tBUG found in '".. d.source ..
+				"' at line " .. d.currentline..".\n"..
+				"\tFunction '".. d.name .. 
+				"' sets an undefined global '" .. k .. "'\n"..[[
+				
 	This is a sanity check added by freepops.set_sanity_checks() that
 	prevents the plugin to create new global variables. This means you
 	must use the 'local' keyword or declare a global table 
 	(ex. plugin_state) and use it as the global state of the plugin. 
-	This avoids some hard-to-detect bugs.]]
+	This avoids some hard-to-detect bugs.
+	]]
 			log.say(s.."\n")
 			error(s)
 		end

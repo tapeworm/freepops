@@ -128,16 +128,16 @@ function retr_or_top(pstate,msg,data,lines)
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	
 	local b = internal_state.b
-	_,_,uri=string.find(uidl,"UTC(.*)")
+	local _,_,uri=string.find(uidl,"UTC(.*)")
 	uidl=string.gsub(uidl,uri,"")
 	--yyyy-mm-dd hh:mm
 	--mm/dd/yyyy hh:mm:ss 
-	_,_,year=string.find(uidl,"(%d*)%-")
-	_,_,month=string.find(uidl,year.."%-(%d*)%-")
-	_,_,day=string.find(uidl,year.."%-"..month.."%-(%d*)")
-	_,_,hour=string.find(uidl,day.." (%d*):")
-	_,_,mins=string.find(uidl,hour..":(%d*)")
-	dd=month.."/"..day.."/"..year.." "                           
+	local _,_,year=string.find(uidl,"(%d*)%-")
+	local _,_,month=string.find(uidl,year.."%-(%d*)%-")
+	local _,_,day=string.find(uidl,year.."%-"..month.."%-(%d*)")
+	local _,_,hour=string.find(uidl,day.." (%d*):")
+	local _,_,mins=string.find(uidl,hour..":(%d*)")
+	local dd=month.."/"..day.."/"..year.." "                           
 	..hour..":"..mins..":00"
 	
 	dd=getdate.toint(dd)
@@ -153,7 +153,7 @@ function retr_or_top(pstate,msg,data,lines)
 
 	--build it
 	local _,_,title=string.find(uri,".*/(.*)")
-	s = build_mail_header(title,dd) .. 
+	local s = build_mail_header(title,dd) .. 
 		body.. "\r\n"
 
 	--hack it
@@ -270,7 +270,7 @@ function stat(pstate)
 		local nmess=0
 		local x = mlex.match(s,string_type,kernel_string.linkG)
 		
-		n=x:count()
+		local n=x:count()
 		nmess=n
 		
 		-- this is not really needed since the structure 
@@ -282,17 +282,18 @@ function stat(pstate)
 		local starts2
 		local ends2
 		for i = 1,n do
-			strtmp1=string.gsub(x:get(0,i-1),"\n","")
-			strtmp2=string.gsub(x:get(1,i-1),"a href=","")
+			local strtmp1=string.gsub(x:get(0,i-1),"\n","")
+			local strtmp2=string.gsub(x:get(1,i-1),"a href=","")
 			strtmp2=string.gsub(strtmp2,"\"","")
 			strtmp2="http://kernel.org"..strtmp2
-			strtmp=strtmp1..strtmp2
+			local strtmp=strtmp1..strtmp2
 			
 			
 			local uidl = strtmp
 			local b = internal_state.b
-			header=b:get_head(strtmp2)
-			local _,_,size=string.find(header,"Content--Length: (%d*)");
+			local header=b:get_head(strtmp2)
+			local _,_,size=string.find(header,
+				"Content--Length: (%d*)");
 
 			if not uidl or not size then
 				return nil,"Unable to parse uidl"

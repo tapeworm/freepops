@@ -1,7 +1,19 @@
 File ReadMe di FreePOPs
 
+Questo pacchetto contiene la distribuzione pre-compilata di FreePOPs per 
+sistemi Mac OS X. Per usarla, dovrebbe bastare installarla; verranno copiati 
+due file in /Library/StartupItems/FreePOPs che faranno partire automaticamente 
+FreePOPs ad ogni avvio del sistema.
+Se cio' non dovesse accadere potete copiare manualmente i file contenuti nella 
+directory "script" (presente dove avete installato FreePOPs) nel percorso detto 
+sopra; in questo caso e' necessario cambiare la riga che dice "DIR=" (nel file 
+chiamato FreePOPs) aggiungendo dopo il segno di uguaglianza la directory dove 
+FreePOPs e' installato (ad es. /Applications/FreePOPs).
+Se desiderate far partire FreePOPs solo manualmente dovrete eliminare i file 
+nella directory /Library/StartupItems/FreePOPs; aprite un Terminale, spostatevi 
+nella directory dove avete installato FreePOPs e lanciate il comando 
+./freepopsd, con le opzioni che preferite.
 
-Questo pacchetto contiene la distribuzione pre-compilata di FreePOPs per sistemi Mac OS X. Per usarla, lanciate un Terminale, spostatevi nella directory dove è installato FreePOPs e lanciate ./freepopsd, con i parametri preferiti. Vedi freepopsd -h o i manuali inclusi nella directory doc/ per una lista completa di opzioni a riga di comando.
 In caso di problemi nell'aggiornamento da versioni precedenti consigliamo di cancellare a mano la directory con la versione precedente e anche il file /Library/Receipts/FreePOPs-x.y.z.pkg (x.y.z e' la versione precedente di FreePOPs installata).
 
 Gli utenti di LiberoPOPs troveranno utile l'howto per la migrazione da LP a FP allegato.
@@ -9,9 +21,9 @@ Gli utenti di LiberoPOPs troveranno utile l'howto per la migrazione da LP a FP a
 Per favore ricordatevi di generare un log verboso con le opzioni '-w -l log.txt' se avete bisogno di chiedere aiuto agli sviluppatori o di segnalare un bug.
 Per chiedere assistenza, DOPO aver letto la documentazione inclusa, potete guardare:
 
-- Sito ufficiale su http://freepops.sourceforge.net
+- Sito ufficiale su http://www.freepops.org
 - Un tutorial per principianti su http://freepops.sourceforge.net/it/tutorial/index.shtml
-- Forum degli utenti su http://liberopops.diludovico.it/
+- Forum degli utenti su http://freepops.diludovico.it/
 - Manuali completi su:
   http://freepops.sourceforge.net/it/files/manual-it.pdf (IT version)
   http://freepops.sourceforge.net/it/files/manual.pdf    (EN version)

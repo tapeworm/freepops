@@ -21,7 +21,7 @@ FORALL=	for X in $(MODULES); do						\
 ########################################################################
 
 all: src/config
-	$(H)cd include/;ln -s ../../config.h . || true
+	$(H)cd include/;ln -s ../../config.h . 1>/dev/null 2>/dev/null|| true
 	$(H)ACTION="all";\
 	NAME="building";\
 	$(FORALL)

@@ -127,6 +127,7 @@ endif
 
 #rules ####################################################
 all: $(CDEPFILES:%.c=.%.d) $(LDEPFILES:%.pkg=.%.d) $(BINARY)
+	$(H)echo -n
 
 clean:
 	$(H)rm -f $(CDEPFILES:%.c=.%.d) $(OBJ)\
@@ -167,5 +168,5 @@ $(BINARY): $(OBJ) $(addsuffix .a,$(addprefix ../modules/lib/lib,$(LIBS)))
 	$(H)echo "$@"
 
 	
-	
+.PHONY:all	
 

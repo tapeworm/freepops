@@ -9,6 +9,7 @@ endif
 SUBDIR=$(subst .tar.gz,,$(TGZ))
 
 all: $(SUBDIR)
+	$(H)echo -n
 
 $(SUBDIR):
 	$(H)tar -xzf $(TGZ)
@@ -18,3 +19,4 @@ $(SUBDIR):
 clean:
 	$(H)rm -rf $(SUBDIR)
 
+.PHONY: all

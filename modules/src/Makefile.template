@@ -51,6 +51,7 @@ endif
 
 #rules ####################################################
 all: $(CDEPFILES:%.c=.%.d) $(LDEPFILES:%.pkg=.%.d) $(RCDEPFILES:%.rc=.%.d) $(LIBRARY) $(SHARED_TGT)
+	$(H)echo -n
 
 clean:
 	$(H)rm -f  $(CDEPFILES:%.c=.%.d) $(OBJ) \
@@ -62,7 +63,7 @@ clean:
 
 $(LIBRARY): $(OBJ) $(INTERFACE)
 	$(H)[  -z "$(OBJ)" ] || echo -n " linking "
-	$(H)[  -z "$(OBJ)" ] || $(AR) -r $(LIBRARY) $(OBJ)
+	$(H)[  -z "$(OBJ)" ] || $(AR) -r $(LIBRARY) $(OBJ) 2>/dev/null
 	$(H)[  -z "$(OBJ)" ] || $(RANLIB) $(LIBRARY)
 	$(H)[  -z "$(OBJ)" ] || echo "$(LIBRARY)"
 	$(H)cp $(INTERFACE) $(PREFIX)/include || true
@@ -71,8 +72,8 @@ $(LIBRARY): $(OBJ) $(INTERFACE)
 	$(H)cp $(LIBRARY) $(PREFIX)/lib || true
 	
 $(SHARED): $(OBJ)
-	$(CC) -shared -o $(SHARED) $(OBJ) -L $(PREFIX)/lib $(SHAREDFLAG)
-	cp $(SHARED) $(PREFIX)/lib
+	$(H)$(CC) -shared -o $(SHARED) $(OBJ) -L $(PREFIX)/lib $(SHAREDFLAG)
+	$(H)cp $(SHARED) $(PREFIX)/lib
 	
 .%.d:%.c
 	$(H)echo " building dep for $<"

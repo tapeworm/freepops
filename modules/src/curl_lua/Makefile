@@ -24,11 +24,12 @@ endif
 OBJ=curl_lua.o
 
 all: $(LIBRARY)
+	$(H)echo -n
 
-$(LIBRARY): $(CONSTANTS) $(OBJ) 
+$(LIBRARY): $(CONSTANTS) $(OBJ)
 	$(H)$(CC) $(CFLAGS) -c curl_lua.c 
 	$(H)echo -n " linking "
-	$(H)$(AR) -r $(LIBRARY) $(OBJ)
+	$(H)$(AR) -r $(LIBRARY) $(OBJ) 1>/dev/null
 	$(H)$(RANLIB) $(LIBRARY)
 	$(H)echo "$(LIBRARY)"
 	$(H)cp curl_lua.h $(PREFIX)/include

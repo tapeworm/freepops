@@ -26,6 +26,7 @@ HLDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 H=@
 
 all: $(PREFIX)/bin/luafull
+	$(H)echo -n
 	
 $(PREFIX)/bin/luafull: luafull
 	$(H)cp luafull $(PREFIX)/bin || true

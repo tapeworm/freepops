@@ -11,7 +11,7 @@ H=@
 #>----------------------------------------------------------------------------<#
 
 help:
-	$(H)ln -s buildfactory/debian . 2>/dev/null || true
+	$(H)ln -s buildfactory/debian . 1>/dev/null 2>/dev/null || true
 	$(H)echo "Targets are:"
 	$(H)echo "  all          - build it (remember to ./configure.sh first)"
 	$(H)echo "  clean        - clean the source tree"
@@ -28,6 +28,7 @@ help:
 	
 
 all : modules src 
+	$(H)echo -n
 
 clean: 
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true

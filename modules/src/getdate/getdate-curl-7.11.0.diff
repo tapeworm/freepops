@@ -1,21 +1,28 @@
 diff -ruN getdate-curl-7.11.0/Makefile getdate-curl-7.11.0-new/Makefile
 --- getdate-curl-7.11.0/Makefile	1970-01-01 01:00:00.000000000 +0100
 +++ getdate-curl-7.11.0-new/Makefile	2004-02-03 18:26:37.000000000 +0100
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,20 @@
 +include $(CONFIG)
 +H=@
 +LIBRARY=lib$(TARGET)$(STATICEXTENSION)
 +
-+all:
++all: $(LIBRARY)
++	$(H)echo -n 
++
++$(LIBRARY): getdate.y
++	$(H)echo " compiling getdate.y -> getdate.o"
 +	$(H)bison -o getdate.c -p gd_ getdate.y
 +	$(H)$(CC) $(CFLAGS) -c getdate.c
-+	$(H)$(AR) r $(LIBRARY) getdate.o
++	$(H)echo " linking $(LIBRARY)"
++	$(H)$(AR) r $(LIBRARY) getdate.o 1>/dev/null 2>/dev/null
 +	$(H)cp $(LIBRARY) $(PREFIX)/lib
 +	$(H)cp getdate.h $(PREFIX)/include
 +	$(H)rm getdate.c
 +
 +clean:
 +	$(H)rm -f *.o
++.PHONY:  all
++
 diff -ruN getdate-curl-7.11.0/getdate.h getdate-curl-7.11.0-new/getdate.h
 --- getdate-curl-7.11.0/getdate.h	2004-02-03 18:23:54.000000000 +0100
 +++ getdate-curl-7.11.0-new/getdate.h	2004-02-03 18:19:13.000000000 +0100
@@ -39,7 +46,7 @@ diff -ruN getdate-curl-7.11.0/getdate.h getdate-curl-7.11.0-new/getdate.h
 diff -ruN getdate-curl-7.11.0/getdate.y getdate-curl-7.11.0-new/getdate.y
 --- getdate-curl-7.11.0/getdate.y	2004-02-03 18:23:54.000000000 +0100
 +++ getdate-curl-7.11.0-new/getdate.y	2004-02-03 18:21:42.000000000 +0100
-@@ -11,7 +11,9 @@
+@@ -11,7 +11,10 @@
  **  This code is in the public domain and has no copyright.
  */
  
@@ -47,7 +54,8 @@ diff -ruN getdate-curl-7.11.0/getdate.y getdate-curl-7.11.0-new/getdate.y
 +#ifdef HAVE_CONFIG_H
 +#include "config.h"
 +#endif
- 
++extern void abort(void);
+
  # ifdef HAVE_ALLOCA_H
  #  include <alloca.h>
 @@ -113,44 +115,44 @@

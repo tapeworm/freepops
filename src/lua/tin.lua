@@ -199,7 +199,7 @@ function key()
 end
 
 --------------------------------------------------------------------------------
--- Login to the libero website
+-- Login to the tin website
 --
 function tin_login()
 	if internal_state.login_done then
@@ -370,7 +370,7 @@ function pass(pstate,password)
 		local c,err = loadstring(s)
 		if not c then
 			log.error_print("Unable to load saved session: "..err)
-			return libero_login()
+			return tin_login()
 		end
 		
 		-- exec the code loaded from the session tring

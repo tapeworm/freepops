@@ -42,6 +42,11 @@
 #define POPSERVER_ERR_UNKNOWN 	9
 //@}
 
+//! \name Timeout
+//@{
+#define POPSERVER_NOOP_TIMEOUT	60
+//@}
+
 /**
  * \brief These functions are called by the pop3 server
  *

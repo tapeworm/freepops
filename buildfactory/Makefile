@@ -104,38 +104,57 @@ dist-deb: freepops-$(VERSION).tar.gz
 
 	$(H)rm -rf _deb_
 
-dist-osx:
-	$(H)cd ..;./configure.sh osx || true
-	$(H)cd ..;$(MAKE) all CONFIG=./config
+dist-osx: freepops-$(VERSION).tar.gz
+	$(H)mkdir -p _osx_
+	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
+		tar -xzf freepops-$(VERSION).tar.gz -C _osx_
+	$(H)cd _osx_/freepops-$(VERSION);\
+		./configure.sh osx;\
+	$(H)cd _osx_;$(MAKE) all
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
-	$(H)cd ..;cp COPYING AUTHORS ChangeLog config.lua dist-osx/FreePOPs/
-	$(H)cd ../doc;cp LP-FP-HOWTO.txt MANUAL ../dist-osx/FreePOPs/doc/
-	$(H)cd ../src;strip freepopsd;cp freepopsd ../dist-osx/FreePOPs/src/
+	$(H)cd _osx_/freepops-$(VERSION);\
+		cp COPYING AUTHORS ChangeLog config.lua ../../../dist-osx/FreePOPs/
+	$(H)cd _osx_/freepops-$(VERSION)/doc;\
+		cp LP-FP-HOWTO.txt MANUAL ../../../../dist-osx/FreePOPs/doc/
+	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd;\
+		cp freepopsd ../../../../dist-osx/FreePOPs/src/
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
-	$(H)cd ../src/lua;cp *.lua ../../dist-osx/FreePOPs/src/lua
-	$(H)cd ../modules/include;cp *.lua ../../dist-osx/FreePOPs/modules/include
+	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
+		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua
+	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
+		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
-	$(H)cat ../CHANGELOG >> osx/Install_resources/English.lproj/ReadMe.txt
+	$(H)cat _osx_/freepops-$(VERSION)/CHANGELOG >> osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt
-	$(H)cat ../CHANGELOG >> osx/Install_resources/Italian.lproj/ReadMe.txt
+	$(H)cat _osx_/freepops-$(VERSION)/CHANGELOG >> osx/Install_resources/Italian.lproj/ReadMe.txt
+	$(H)rm -rf _osx_
 
-osx-app: Info.plist
-	$(H)cd ..;./configure.sh osx || true
-	$(H)cd ..;$(MAKE) all CONFIG=./config
+osx-app: freepops-$(VERSION).tar.gz Info.plist
+	$(H)mkdir -p _osx_
+	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
+		tar -xzf freepops-$(VERSION).tar.gz -C _osx_
+	$(H)cd _osx_/freepops-$(VERSION);\
+		./configure.sh osx;\
+	$(H)cd _osx_;$(MAKE) all
 	$(H)mkdir -p osx/FreePOPs.app/Contents/MacOS
 	$(H)mkdir -p osx/FreePOPs.app/Contents/Resources/Italian.lproj
 	$(H)mkdir -p osx/FreePOPs.app/Contents/Resources/English.lproj
 	$(H)mkdir -p osx/FreePOPs.app/Contents/Resources/SharedSupport
 	$(H)cp osx/Info.plist osx/FreePOPs.app/Contents/
-	$(H)cd ../src;strip freepopsd;cp freepopsd ../buildfactory/osx/FreePOPs.app/Contents/MacOS/
-	$(H)cd ../src/lua;cp *.lua ../../buildfactory/osx/FreePOPs.app/Contents/Resources/
-	$(H)cd ../modules/include;cp *.lua ../../buildfactory/osx/FreePOPs.app/Contents/Resources/
-	$(H)cd ../;cp *.lua buildfactory/osx/FreePOPs.app/Contents/Resources/
+	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd;\
+		cp freepopsd ../../../osx/FreePOPs.app/Contents/MacOS/
+#	$(H)cp _osx_/freepops-$(VERSION)/src/lua/*.lua osx/FreePOPs.app/Contents/Resources/
+	$(H)cp _osx_/freepops-$(VERSION)/src/lua/*.lua osx/FreePOPs.app/Contents/MacOS/
+#	$(H)cp _osx_/freepops-$(VERSION)/modules/include/*.lua osx/FreePOPs.app/Contents/Resources/
+	$(H)cp _osx_/freepops-$(VERSION)/modules/include/*.lua osx/FreePOPs.app/Contents/MacOS/
+#	$(H)cp _osx_/freepops-$(VERSION)/*.lua osx/FreePOPs.app/Contents/Resources/
+	$(H)cp _osx_/freepops-$(VERSION)/*.lua osx/FreePOPs.app/Contents/MacOS/
 	$(H)echo "APPL????" > osx/FreePOPs.app/Contents/PkgInfo
 	$(H)rm -f osx/Info.plist
+	$(H)rm -rf _osx_
 
 Info.plist:
 	$(H)echo "<?xml version="1.0" encoding="UTF-8"?>" > osx/Info.plist

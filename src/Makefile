@@ -26,11 +26,7 @@ CFLAGS+= -I. -I../modules/include $(shell curl-config --cflags)
 ifeq "$(OS)" "Windows"
 CFLAGS+= -DFREEPOPSLUA_PATH=\"lua/\"
 else
-	ifeq "$(OS)" "Darwin"
-	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)Resources/\"
-	else
-	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
-	endif
+CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
 endif
 
 ifeq "$(OS)" "Cygwin"

@@ -120,10 +120,15 @@ ifeq "$(OS)" "Cygwin"
 	LDFLAGS= -L ../modules/lib \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
 		-lwsock32 -lexpat -lgdi32   -lcygwin
-else	
+else
+ifeq "$(OS)" "BeOS"
+	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
+		-ldl -lpthread $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
+else
 	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
 		-ldl -lm -lpthread -rdynamic $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 
+endif
 endif	
 endif
 endif

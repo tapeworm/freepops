@@ -24,7 +24,7 @@
 
 #include <curl/curl.h>
 
-#if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)
+#if !(defined(WIN32) && !defined(CYGWIN)) // && !defined(BEOS)
 	#include <sys/types.h>
 	#include <sys/stat.h>
 	#include <netinet/in.h>

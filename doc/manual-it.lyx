@@ -1,0 +1,1501 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\begin_preamble
+\usepackage{graphicx}
+\end_preamble
+\language english
+\inputencoding auto
+\fontscheme bookman
+\graphics default
+\paperfontsize 12
+\spacing single 
+\papersize a4paper
+\paperpackage widemarginsa4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+
+\layout Title
+
+Manuale di FreePOPs
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+newpage
+\end_inset 
+
+
+\layout Section
+
+Introduzione
+\layout Standard
+
+FreePOPs e' un demone POP3 piu' un interprete LUA e alcune librerie extra per
+ il parsing di HTTP e HTML.
+ Il suo scopo principale e' tradurre richieste POP3 locali in azioni HTTP
+ remote per le webmail supportate, ma in realta' e' piu' flessibile di cosi':
+ per esempio esiste un plugin per leggere news da un sito web come se fossero
+ messaggi in una mailbox.
+ Si puo' facilmente estendere FreePOPs al volo, senza neanche farlo ripartire;
+ si puo' aggiungere un plugin o modificarne uno esistente semplicemente
+ cambiando uno script, dato che i plugin sono scritti in LUA e sono interpretati
+ al volo.
+\layout Subsection
+
+Situazioni d'uso
+\layout Standard
+
+FreePOPs puo' essere utile in molte situazioni, qui descriviamo le piu' ovvie:
+\layout Itemize
+
+Siete dietro un firewall che chiude la porta 110 ma volete comunque leggere
+ la posta elettronica e la webmail del vostro provider fa schifo.
+\layout Itemize
+
+Il vostro mail provider non vi permette di accedere alla mailbox con il
+ protocollo POP3 ma solo tramite il servizio di webmail.
+\layout Itemize
+
+Preferite usare la vostra mailbox invece di sfogliare le news di un qualche
+ sito.
+\layout Itemize
+
+Dovete sviluppare un server POP3 in meno di una settimana e volete che sia
+ ragionevolmente veloce e che non consumi molta memoria.
+\layout Itemize
+
+Non siete hacker del C, ma volete trarre beneficio da un frontend ad un
+ server POP3, veloce e scritto in C, ma non volete perdere un mese a scrivere
+ il backend in C.
+ LUA e' un linguaggio davvero semplice e leggero, una settimana e' abbastanza
+ per impararlo e poterlo usare in modo produttivo.
+\layout Subsection
+
+Feature
+\layout Standard
+
+FreePOPs e' l'unico software che conosciamo con queste feature:
+\layout Itemize
+
+Server POP3 compliant con RFC (non con tutte le feature, ma compliant).
+\layout Itemize
+
+Portabile (scritto in C e LUA il quale e' scritto in C, quindi tutto e'
+ scritto nel linguaggio piu' portabile del mondo).
+\layout Itemize
+
+Piccolo (in termini di risorse utilizzate) e ragionevolmente veloce.
+\layout Itemize
+
+Estremamente estendibile al volo mediante un linguaggio semplice e potente.
+\layout Itemize
+
+Piuttosto documentato.
+\layout Itemize
+
+Rilasciato sotto la licenza GNU/GPL (questo significa che FreePOPs e'
+ Software Libero).
+\layout Subsection
+
+Plugin
+\layout Standard
+
+Questi sono i plugin correntemente inclusi in FreePOPs:
+\layout Description
+
+libero.lua Questo plugin supporta in pieno la webmail di 
+\family typewriter 
+www.libero.it
+\family default 
+ per mailbox con domini come 
+\family typewriter 
+@libero.it
+\family default 
+, 
+\family typewriter 
+@iol.it
+\family default 
+, 
+\family typewriter 
+@inwind.it
+\family default 
+, 
+\family typewriter 
+@blu.it
+\family default 
+.
+\layout Description
+
+popforward.lua Questo e' un plugin usato principalmente per testare moduli
+ di FreePOPs.
+ Esso agisce come un forward POP3, semplicemente si comporta come mediatore
+ tra voi ed un vero server POP3.
+ Questo plugin ci ha permesso di testare FreePOPs senza avere alcun vero plugin
+ gia' scritto.
+ Potreste usarlo per mascherare un server POP3 con molti bug che puo' venire
+ facilmente compromesso grazie a richieste malevole.
+ Ovviamente suggeriamo di esaminare per bene questo plugin, e fare un po' di
+ hacking per prevenire richieste malevole al vostro server.
+\layout Description
+
+aggregator.lua Molti siti forniscono un backend RSS per indicizzare le loro
+ news.
+ Questo plugin fa si' che RSS si comporti come una mailbox in cui potete
+ trovare una mail per ogni news.
+\layout Description
+
+flatnuke.lua Questo e' un aggregator piu' potente per siti basati sul CMS
+ FlatNuke
+\begin_inset Foot
+collapsed false
+
+\layout Standard
+
+Vedete HTTP://flatnuke.sourceforge.net per l'homepage del progetto
+\end_inset 
+
+ , e permette il download dell'intero corpo delle news.
+\layout Section
+
+Storia
+\layout Standard
+
+FreePOPs non nasce dal nulla.
+ Un progetto simile (solo nella situazione d'uso principale) e' LiberoPOPs.
+ 
+\layout Standard
+
+L'antenato di FreePOPs e' completamente scritto in C per ragioni poco
+ interessanti.
+ LiberoPOPs supporta 
+\begin_inset Quotes eld
+\end_inset 
+
+plugin
+\begin_inset Quotes erd
+\end_inset 
+
+ ma in maniera piu' statica e complessa.
+ Il frontend al server POP3 potrebbe essere collegato ad un backend scritto in
+ C, questo significa che dovreste ricompilare e far ripartire LiberoPOPs ogni
+ volta che cambiate una riga in un plugin.
+ Un altro punto interessante e' che LiberoPOPs era stato creato dal nulla in
+ un tempo molto breve (dovete essere Italiani e usare un indirizzo di posta
+\family typewriter 
+@libero.it
+\family default 
+ per capire perche'), cio' vuol dire che era nato con molti bug e FIX-ME nel
+ codice.
+ 
+\layout Standard
+
+Il progetto LiberoPOPs ebbe un rapido successo, perche' tutti ne avevano
+ bisogno, quindi avevamo molti utenti.
+ Nella filosofia della comunita' opensource (e anche di Linux) devi rilasciare
+ il software frequentemente, e questo e' cio' che facevamo: rilasciavamo nuove
+ versioni ogni due giorni.
+ Non avevamo a che fare con utenti Unix, ne' hacker, ma per la maggior parte
+ utenti Win32.
+ Ad un certo punto capimmo che questi erano pigri/stufi di aggiornare il
+ software ogni due giorni.
+ Il brutto mondo Win insegna che il software si auto-aggiorna, si auto-installa
+ e probabilmente si auto-scrive.
+ 
+\layout Standard
+
+Cercammo di risolvere il problema tirando fuori dal motore in C la maggior
+ parte del codice che cambiava piu' spesso, ma questo era molto difficile
+ visto che il C non e' pensato per questo genere di cose.
+ Una volta che LiberoPOPs si fu stabilizzato iniziammo a pensare a come
+ risolvere meglio la cosa.
+ 
+\layout Standard
+
+Un linguaggio di scripting/interpretato sembro' una buona scelta e dopo una
+ lunga ricerca in rete e nei newsgroup universitari trovai LUA..
+ Questo non e' il luogo per dire al mondo quanto sia bello questo linguaggio
+ quindi non ne parlero' oltre qui.
+ Integrare l'interprete LUA in LiberoPOPs non fu cosi' difficile e FreePOPs
+ ne e' il risultato.
+ Ora e' davvero piu' facile scrivere/testare un plugin e (anche se non e'
+ ancora implementato) un sistema di auto-aggiornamento e' molto facile da
+ scrivere dato che non c'e' bisogno di ricompilare il nucleo C in quasi
+ nessun caso.
+\layout Section
+
+File di configurazione di FreePOPs
+\layout Standard
+
+FreePOPs doesn't really need a configuration.
+ Most users shouldn't change the configuration file.
+ In case you are a developer or a really curious user the configuration
+ file is 
+\family typewriter 
+config.lua
+\family default 
+, placed in the program directory under win32 or in 
+\family typewriter 
+/etc/freepops/
+\family default 
+ in a posix environment.
+\layout Standard
+
+Later you will learn that plugins are associated with a mail address domain,
+ and some of these plugins are aliased to other domains to make it easier
+ to fetch some news from some sites.
+ Read the plugin documentation for more info about them, and maybe send
+ as a mail with you new alias if you want it to be integrated in the next
+ FreePOPs release.
+\layout Section
+
+FreePOPs command line parameters
+\layout Standard
+
+The real FreePOPs configuration is made trough command line arguments.
+ They are described in depth in the man page in Unix environments, here
+ we present only the most useful:
+\layout Description
+
+-p\SpecialChar ~
+<port>,\SpecialChar ~
+--port\SpecialChar ~
+<port> By default FreePOPs binds on port 2000.
+ To alter this behaviour just use this switch.
+\layout Description
+
+-P\SpecialChar ~
+<host>:<port>,\SpecialChar ~
+--proxy\SpecialChar ~
+<host>:<port> To tell FreePOPs which is your HTTP
+ proxy.
+\layout Description
+
+-v,\SpecialChar ~
+--verbose,\SpecialChar ~
+-w,\SpecialChar ~
+--veryverbose This tells FreePOPs to log some interesting
+ info for bug reporting.
+\layout Description
+
+-t\SpecialChar ~
+<num>,\SpecialChar ~
+--threads\SpecialChar ~
+<num> FreePOPs is able to manage multiple connections,
+ up to num.
+ Default is 5.
+\layout Standard
+
+In posix environment like Debian GNU/Linux you can start FreePOPs at boot
+ time as a standard service.
+ In this case the command line switches are stored in 
+\family typewriter 
+/etc/default/freepops
+\family default 
+, in some rpm based systems you should find the same file as 
+\family typewriter 
+/etc/sysconfig/freepops
+\family default 
+.
+\layout Section
+
+Email client configuration
+\layout Standard
+
+To configure your email client you must change the pop3 server settings.
+ Usually you must use localhost as the pop3 host name, and 2000 as the pop3
+ port.
+ In case you install FreePOPs in another computer of your LAN, you should
+ use the host's name instead of localhost.
+ In case you changed the default port with the 
+\family typewriter 
+-p
+\family default 
+ switch you should now what you are doing.
+ You have to use a full username, for example 
+\family typewriter 
+something@libero.it
+\family default 
+ instead of only 
+\family typewriter 
+something
+\family default 
+.
+ This is because FreePOPs chooses the plugin to load looking at you username.
+ Later we will present all the plugins and their associated domains.
+\layout Section
+
+Plugins
+\layout Standard
+
+Here we give a detailed description of each plugin.
+\layout Subsection
+
+libero.lua
+\layout Standard
+
+This plugin allows you to read the mails you have in a 
+\family typewriter 
+@libero.it
+\family default 
+, 
+\family typewriter 
+@iol.it
+\family default 
+, 
+\family typewriter 
+@inwind.it
+\family default 
+ and 
+\family typewriter 
+@blu.it 
+\family default 
+mailbox.
+ This means you can still use your favorite mail reader instead of using
+ the webmail.
+ This plugin acts as a browser that surfs you webmail account and make it
+ appear as a POP3 server.
+ For more info on this plugin you may read the LiberoPOPs (FreePOPs ancestor)
+ website at 
+\family typewriter 
+http://liberopops.sourceforge.net
+\layout Standard
+
+To use this plugin you have to use your full email address as the username
+ and your real password as the password.
+\layout Subsection
+
+popforward.lua
+\layout Standard
+
+This plugin was developed to test FreePOPs before any real plugins were
+ written.
+ It simply forwards to a real POP3 server your local requests.
+ This can be used for masquerading a buggy POP3 server, but if you think
+ you need this you should examine carefully the plugin code and add checks
+ to improve the detection/avoidance of malicious requests, since the plugins
+ was not born with security in mind.
+ 
+\layout Standard
+
+To use this plugin you have to edit the config.lua file.
+ This because we can't add all the existing POP3 server to this file :)
+ The plugin wants two arguments, the POP3 host and the port (usually 
+\family typewriter 
+110
+\family default 
+) on which the server listens.
+ This is an example of a configuration line for this plugin, in which all
+ email addresses of the 
+\family typewriter 
+@virgilio.it
+\family default 
+ domain are forwarded to 
+\family typewriter 
+in.virgilio.it:110
+\family default 
+:
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- popforward plugin 
+\layout Standard
+freepops.MODULES_MAP["virgilio.it"]     = {         
+\layout Standard
+       name="popforward.lua",         
+\layout Standard
+       args={ 
+\layout Standard
+              port=110,
+\layout Standard
+              host="in.virgilio.it"
+\layout Standard
+       } 
+\layout Standard
+} 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Subsection
+
+aggregator.lua
+\layout Standard
+
+Usually you can benefit from the W3C's RSS format when you read some website
+ news.
+ The RSS file indexes the news, providing a link to them.
+ This plugin can make you mail client see the RSS file as a mailbox from
+ which you can download each news as if it was a mail message.
+ The only limitation is that this plugin can fetch only a news summary plus
+ the news link.
+ 
+\layout Standard
+
+To use this plugin you have to use a casual username with the 
+\family typewriter 
+@aggregator
+\family default 
+ suffix (ex: 
+\family typewriter 
+foo@aggregator
+\family default 
+) and as the password the URL of the RSS file(ex: 
+\family typewriter 
+http://www.securityfocus.com/rss/vulnerabilities.xml
+\family default 
+).
+ For your commodity we added some alias for you.
+ This means you have not to search by hand the URL of the RSS file.
+ We added some domain, for example 
+\family typewriter 
+@securityfocus.com
+\family default 
+, that can be used to directly use the aggregator plugin with these website.
+ To use these alias you have to use a username in the form 
+\family typewriter 
+something@aggregatordomain
+\family default 
+ and a casual password.
+ This is the list of aliases for the aggregator plugin.
+\newline 
+
+\newline 
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="8" columns="2">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+aggregatordomain
+\end_inset 
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+freepops.rss.en
+\end_inset 
+</cell>
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://freepops.sourceforge.net/
+\family default 
+ news (English)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+freepops.rss.it
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://freepops.sourceforge.net/
+\family default 
+ news (Italian)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+flatnuke.sf.net
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://flatnuke.sourceforge.net/
+\family default 
+ news (Italian)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+ziobudda.net
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://ziobudda.net/
+\family default 
+ news (both Italian and English)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+punto-informatico.it
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://punto-informatico.it/
+\family default 
+ news (Italian)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+linuxdevices.com
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://linuxdevices.com/
+\family default 
+ news (English)
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+securityfocus.com
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://www.securityfocus.com/ 
+\family default 
+new vulnerabilities (English)
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Subsection
+
+flatnuke.lua
+\layout Standard
+
+This plugin is an aggregator plugin specialized in the websites made with
+ the FlatNuke
+\begin_inset Foot
+collapsed false
+
+\layout Standard
+
+HTTP://flatnuke.sourceforge.net
+\end_inset 
+
+ content management system, or other sites that use the same news format
+ like the FreePOPs website.
+ Since in a FlatNuke site the news are stored in plain xml files this plugin
+ is able to fetch the whole news, and not only the headings as the aggregator
+ plugin.
+ This is really useful if you don't want to surf the website to read the
+ news.
+\layout Standard
+
+To use this plugin you have to use a username with the 
+\family typewriter 
+@flatnuke
+\family default 
+ domain (ex: 
+\family typewriter 
+something@flatnuke
+\family default 
+) and a flatnuke homepage URL as the password (ex: 
+\family typewriter 
+http://flatnuke.sourceforge.net/
+\family default 
+, no need for the RSS file URL since FlatNuke puts the RSS in a fixed and
+ well known position.
+ There are some alias for FlatNuke sites, see the aggregator plugin documentatio
+n to know what this means):
+\newline 
+
+\newline 
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+aggregatordomain
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+description
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+freepops.en
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://freepops.sourceforge.net/
+\family default 
+ full news (English)
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+freepops.it
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://freepops.sourceforge.net/
+\family default 
+ full news (Italian)
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+flatnuke.it
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://flatnuke.sourceforge.net/
+\family default 
+ full news (Italian)
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Section
+
+Creating a plugin
+\layout Standard
+
+The best way of doing this is to read carefully the 
+\family typewriter 
+libero.lua
+\family default 
+ file, that is a quite simple but really commented example of web-mail plugin.
+ Then you should copy the 
+\family typewriter 
+skeleton.lua
+\family default 
+ file and start hacking on it.
+ Remember to edit 
+\family typewriter 
+config.lua
+\family default 
+ to make FreePOPs associate the right mail-addresses domains to your new
+ plugin.
+ A simpler example is 
+\family typewriter 
+flatnuke.lua
+\family default 
+ that is a web-news plugin.
+\layout Subsection
+
+The interface between the C core and a plugin
+\layout Standard
+
+As we explained before the C POP3 frontend has to be attached to a LUA backend.
+ The interface is really simple if you know the POP3 protocol.
+ Here we only summarize the meaning, but the RFC 1939 (included in the 
+\family typewriter 
+doc/
+\family default 
+ directory of the source distribution) is really short and easy to read.
+ As your intuition should suggest the POP3 client may ask the pop3 server
+ to know something about the mail that is in the mailbox and eventually
+ retrieve/delete a message.
+ And this is exactly what it does.
+\layout Standard
+
+The backend must implement all the POP3 commands (like USER, PASS, RETR,
+ DELE, QUIT, LIST, ...) and must give back to the frontend the result.
+ Let us give a simple example of a POP3 section taken from the RFC:
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+     1  S: <wait for connection on TCP port 110>
+\layout Standard
+     2  C: <open connection>
+\layout Standard
+     3  S:    +OK POP3 server 
+\layout Standard
+     4  C:    USER linux@kernel.org
+\layout Standard
+     5  S:    +OK now insert the pasword
+\layout Standard
+     6  C:    PASS gpl
+\layout Standard
+     7  S:    +OK linux's maildrop has 2 messages (320 octets)
+\layout Standard
+     8  C:    STAT
+\layout Standard
+     9  S:    +OK 1 320
+\layout Standard
+    10  C:    LIST
+\layout Standard
+    11  S:    +OK 2 messages (320 octets)
+\layout Standard
+    12  S:    1 320
+\layout Standard
+    13  S:    .
+\layout Standard
+    14  C:    RETR 1
+\layout Standard
+    15  S:    +OK 120 octets
+\layout Standard
+    16  S:    <the POP3 server sends message 1>
+\layout Standard
+    17  S:    .
+\layout Standard
+    18  C:    DELE 1
+\layout Standard
+    19  S:    +OK message 1 deleted
+\layout Standard
+    20  C:    QUIT
+\layout Standard
+    21  S:    +OK dewey POP3 server signing off (maildrop empty)
+\layout Standard
+    22  C:  <close connection>
+\layout Standard
+    23  S:  <wait for next connection>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Standard
+
+In this session the backend will be called for lines 4, 6, 8, 10, 14, 18,
+ 20 (all the 
+\family typewriter 
+C:
+\family default 
+ lines) and respectively the functions implementing the POP3 commands will
+ be called this way
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+    user(p,"linux@kernel.org")
+\layout Standard
+    pass(p,"gpl")
+\layout Standard
+    stat(p)
+\layout Standard
+    list_all(p)
+\layout Standard
+    retr(p,1)
+\layout Standard
+    dele(p,1)
+\layout Standard
+    quit_update(p)
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Standard
+
+Later I will make clear what p is.
+ I hope we'll remove it making it implicit for complete transparency.
+ It is easy to understand that there is a 1-1 mapping between POP3 commands
+ and plugin function calls.
+ You can view a plugin as the implementation of the POP3 interface.
+\layout Subsection
+
+The interface between a plugin and the C core
+\layout Standard
+
+Let us take in exam the call to 
+\family typewriter 
+pass(p,
+\begin_inset Quotes erd
+\end_inset 
+
+linux@kernel.org
+\begin_inset Quotes erd
+\end_inset 
+
+)
+\family default 
+.
+ Here the plugin should authenticate the user (if there is a sort of authenticat
+ion) and inform the C core of the result.
+ To achieve this each plugin function must return an error flag, to be more
+ accurate one of these errors:
+\newline 
+
+\layout Standard
+
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="10" columns="2">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="7cm">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+Code
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none" width="7cm">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+Meaning
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_OK
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+No error
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_NETWORK
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+An error concerning the network
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_AUTH
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+Authorization failed
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_INTERNAL
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+Internal error, please report the bug
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_NOMSG
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+The message number is out of range
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_LOCKED
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+Mailbox is locked by another session
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_EOF
+\end_inset 
+</cell>
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+End of transmission, used in the popserver_callback
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_TOOFAST
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+You are not allowed to reconnect to the server now, wait a bit and retry
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_UNKNOWN
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+No idea of what error I've encountered
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\newline 
+
+\newline 
+
+\layout Standard
+
+In our case the most appropriate error codes are 
+\family typewriter 
+POPSERVER_ERR_AUTH
+\family default 
+ and 
+\family typewriter 
+POPSERVER_ERR_OK
+\family default 
+.
+ This is a simple case, in which an error code is enough.
+ Now we analyze the more complex case of the call to 
+\family typewriter 
+list_all(p)
+\family default 
+.
+ Here we have to return an error code as before, but we have also to inform
+ the C core of the size of all messages in the mailbox.
+ Here we need the p parameter passed to each plugin function (note that
+ parameter may became implicit in the future).
+ 
+\family typewriter 
+p
+\family default 
+ stands for the data structure that the C expect us to fill calling appropriate
+ functions like 
+\family typewriter 
+set_mailmessage_size(p,num,size)
+\family default 
+ where num is the message number and size is the size in bytes.
+ Usually it is really common to put more function all together.
+ For example wen you get the message list page in a webmail you know the
+ number of the messages, their size and uidl so you can fill the p data
+ structure with all the informations for LIST, STAT, UIDL.
+ 
+\layout Standard
+
+The last case that we examine is 
+\family typewriter 
+retr(p,num,data)
+\family default 
+.
+ Since a mail message can be really big, there is no pretty way of downloading
+ the entire message without making the mail client complain about the server
+ death.
+ The solution is to use a callback.
+ Whenever the plugin has some data to send to the client he should call
+ the 
+\family typewriter 
+popserver_callback(buffer,data)
+\family default 
+.
+ 
+\family typewriter 
+data
+\family default 
+ is an opaque structure the popserver needs to accomplish its work (note
+ that this parameter may be removed for simplicity).
+ In some cases, for example if you know the message is small or you are
+ working on a fast network, you can fetch the whole message and send it,
+ but remember that this is more memory consuming.
+\layout Section
+
+Submitting a bug
+\layout Standard
+
+When you have problems, you think you found a bug, please follow strictly
+ this 
+\emph on 
+iter
+\emph default 
+:
+\layout Enumerate
+
+Update to the most recent version of FreePOPs.
+\layout Enumerate
+
+Try to reproduce the bug, if the bug is not easily reproducible we are out
+ of luck.
+ Something can still be tried: if the software crashed you could compile
+ it from the sources, install valgrind, run freepopsd with valgrind and
+ hope the error messages are interesting.
+\layout Enumerate
+
+Clean the log files
+\layout Enumerate
+
+Start FreePOPs with the -w switch
+\layout Enumerate
+
+Reproduce the bug
+\layout Enumerate
+
+Send to the developers the log, plus any other info like your system type
+ and how to reproduce this bug.
+\layout Section
+
+Authors
+\layout Standard
+
+This manual has been written by Enico Tassi 
+\family typewriter 
+<gareuselesinge@users.sourceforge.net>
+\family default 
+ and revised by Nicola Cocchiaro 
+\family typewriter 
+<ncocchiaro@users.sourceforge.net>
+\layout Subsection
+
+Developers
+\layout Standard
+
+FreePOPs is developed by:
+\layout Itemize
+
+Enico Tassi 
+\family typewriter 
+<gareuselesinge@users.sourceforge.net>
+\layout Itemize
+
+Alessio Caprari 
+\family typewriter 
+<alessiofender@users.sourceforge.net>
+\layout Itemize
+
+Nicola Cocchiaro 
+\family typewriter 
+<ncocchiaro@users.sourceforge.net>
+\layout Itemize
+
+Simone Vellei 
+\family typewriter 
+<simone_vellei@users.sourceforge.net>
+\layout Standard
+
+LiberoPOPs id developed by:
+\layout Itemize
+
+Enico Tassi 
+\family typewriter 
+<gareuselesinge@users.sourceforge.net>
+\layout Itemize
+
+Alessio Caprari 
+\family typewriter 
+<alessiofender@users.sourceforge.net>
+\layout Itemize
+
+Nicola Cocchiaro 
+\family typewriter 
+<ncocchiaro@users.sourceforge.net>
+\layout Itemize
+
+Simone Vellei 
+\family typewriter 
+<simone_vellei@users.sourceforge.net>
+\layout Itemize
+
+Giacomo Tenaglia 
+\family typewriter 
+<sonicsmith@users.sourceforge.net>
+\layout Section
+
+Thanks
+\layout Standard
+
+Special thanks goes to the users who tested the software, to the hackers
+ who made it possible to have a free and reliable development environment
+ as the Debian GNU/Linux system.
+\the_end

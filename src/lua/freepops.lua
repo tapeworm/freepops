@@ -88,6 +88,45 @@ freepops.get_args = function (mailaddress)
 	return args
 end
 
+-- extracts a list of supported domain from a plugin file
+-- (the plugin is executed in a protected environment, 
+-- no pollution but computations are done)
+function freepops.safe_extract_domains(f)
+	local env = {}
+	local meta_env = { __index = _G }
+
+	-- the hack
+	setmetatable(env,meta_env)
+	g = loadfile(f)
+	setfenv(g,env)
+	g()
+	
+	-- checks 
+	if type(env.PLUGIN_DOMAINS) ~= "table" then
+		return nil
+	end
+	local rc = table.foreachi(env.PLUGIN_DOMAINS,function(k,v)
+		if type(v) ~= "string" then
+			print("'"..tostring(v).."' is not a string")
+			return true
+		end
+		if string.byte(v) ~= string.byte("@") then
+			print("'"..v.."' does not start with @")
+			return true
+		end
+	end)
+	if rc then return nil end
+	
+	-- extract
+	local rc = {}
+	table.foreachi(env.PLUGIN_DOMAINS,function(_,v)
+		local x = string.sub(v,2,-1)
+		table.insert(rc,x)
+	end)
+	
+	return rc
+end
+
 -- to merge 2 tables (t1 wins over t)
 freepops.table_overwrite = function (t,t1)  
 	t = t or {}

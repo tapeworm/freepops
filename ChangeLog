@@ -1,3 +1,5 @@
+- added freepops.safe_extract_domains(file) to extract the domains supported
+by a plugin (should be used to implement the LUA_UNOFFICIAL auto scan)
 - added startup script to mac os x
 - improved installer on mac os x
 - fixed path issue in mac os x

@@ -680,7 +680,9 @@ while( lua_next(L,3) != 0 ){
 					L_error(L,
 					 "incomplete FORM, value missed");
 				forms[position].value = (char*)
+#ifdef __UWORD_TYPE
 					(__UWORD_TYPE) 
+#endif
 					//not sure this makes sense
 					luaL_checkint(L,7);
 			}break;

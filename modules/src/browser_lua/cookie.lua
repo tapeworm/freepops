@@ -92,7 +92,6 @@ function Private.parse_cookie(s,h)
 		t["expires-raw"] = t["expires"]
 		if tmp ~= -1 then
 			t["expires"] = tmp
-			log.error_print(t["expires"].." -> "..tmp.."\n")
 		end
 	end
 	t.timestamp = os.time()

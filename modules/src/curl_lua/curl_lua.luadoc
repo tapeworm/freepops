@@ -1,0 +1,92 @@
+---
+-- cURL bindings. read the cURL curl_easy_setopt manpage.
+-- As a convention all CURL_XXXXX and CURLXXXXX names are mapped to curl.XXXXX
+-- constants. options taking a long now take a number, options taking a string 
+-- here take a string (no need to ensure the string will be available until
+-- you call perform, the bindings do this for you). Functions to write like the
+-- curl.OPT_WRITEFUNCTION and curl.OPT_HEADERFUNCTION take a string argument and
+-- a number (the string len) must return a couple, byte,server and error message-- . if the number of byte returned is different from the string len it is 
+-- considered an error. this is an example of a callback factory: <br>
+-- <pre style="color:blue;">
+-- function build_w_cb(t)
+--         return function(s,len)
+--                   <i>stores the received data in the table t</i>
+--                 table.insert(t,s)
+--                   <i>return number_of_byte_served, error_message</i>
+--                   <i>number_of_byte_served ~= len is an error</i>
+--                 return len,nil
+--         end
+-- end
+-- </pre>
+-- This cb factory stores all the chunks received in table t. you can have the
+-- whole file back using table.concat(t). The callback for 
+-- curl.OPT_READFUNCTION takes a number, the number of the maximum amount of 
+-- data that can return. Here a simple example of an infinite stream of '#':<br>
+-- <pre style="color:blue;">
+-- function build_r_cb()
+--      return function(n)
+--              local s = string.rep("#",n)
+--                <i>return size_of_data,data</i>
+--                <i>size_of_data = 0 means end of data</i>
+--                <i>size_of_data must be <= n</i>
+--              return string.len(s),s
+--      end
+--end
+-- </pre>
+-- curl_slist are mapped to lua tables {"item1","item2",...}. For example
+-- curl.OPT_HTTPHEADER may be called in this way:<br>
+-- <pre style="color:blue;">
+-- c:setopt(curl.OPT_HTTPHEADER,{"Referer: my_home!","Dummy-field: hello"})
+-- </pre>
+-- Last important case is the curl.OPT_HTTPPOST for which a special syntax is 
+-- supported:
+-- <pre style="color:blue;">
+-- c:setopt(curl.OPT_HTTPPOST,{
+--
+--      {curl.FORM_COPYNAME,"name1",
+--       curl.FORM_COPYCONTENTS,"data1",
+--       curl.FORM_CONTENTTYPE,"Content-type: text/plain",
+--       curl.FORM_END }
+--      ,
+--      {curl.FORM_COPYNAME,"name2",
+--       curl.FORM_COPYCONTENTS,"data2",
+--       curl.FORM_CONTENTTYPE,"Content-type: text/plain",
+--       curl.FORM_END}
+-- })
+-- </pre>
+-- And now a simple example of an HTTP GET with a proxy:<br>
+-- <pre style="color:blue;">
+--gl_b = {}
+--gl_h = {}
+--
+--c = curl.easy_init() 
+--c:setopt(curl.OPT_URL,'http://tassi.web.cs.unibo.it/cgi-bin/stats.cgi')
+--c:setopt(curl.OPT_WRITEFUNCTION,build_w_cb(gl_b))
+--c:setopt(curl.OPT_HEADERFUNCTION,build_w_cb(gl_h))
+--c:setopt(curl.OPT_PROXY,"localhost:3000")
+--c:setopt(curl.OPT_PROXYUSERPWD,"ciccio:ciccio")
+--print("\n\t$$ performing... returns code,error $$\n")
+--print(c:perform())
+--print("\n\t$$ here you see the header, line per line $$\n")
+--table.foreach(gl_h,function(i,s) print(i.."= "..string.gsub(s,"\n","")) end)
+--print("\n\t$$ and here you see the data, after concatenation of "..
+--      table.getn(gl_b).." chunks $$\n")
+--print(table.concat(gl_b))
+--</pre>
+
+---
+-- Create a curl handler.
+-- @return userdata The CURL* handler object.
+function curl.easy_init() end
+
+---
+-- The setopt function.
+-- @param opt number one of curl.OPT_*.
+function setopt(opt,data) end
+
+---
+-- Starts curl.
+-- @return number,errorstring number not zero means an error.
+function perform() end
+		
+

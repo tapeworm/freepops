@@ -74,12 +74,12 @@ FreePOPs can be useful in some situations, here we give the most obvious
  ones:
 \layout Itemize
 
-You are behind a firewall that closes the 110 port but you need to read
+You are behind a firewall that closes port 110 but you need to read
  your mail and the web-mail of your mail provider sucks.
 \layout Itemize
 
-Your mail provider does not allow you to access your mailbox with POP3 protocol,
- but only through the web-mail service.
+Your mail provider does not allow you to access your mailbox with the POP3
+ protocol, but only through the web-mail service.
 \layout Itemize
 
 You prefer looking at your mailbox instead of browsing some websites news.
@@ -568,7 +568,7 @@ something@aggregatordomain
 \newline 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="11" columns="2">
+<lyxtabular version="3" rows="13" columns="2">
 <features>
 <column alignment="left" valignment="top" leftline="true" width="0">
 <column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
@@ -829,7 +829,7 @@ computer games news (English)
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row topline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -855,7 +855,7 @@ GameSpot news (English)
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row topline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 

@@ -196,14 +196,7 @@ aggregator.lua Molti siti forniscono un backend RSS per indicizzare le loro
 \layout Description
 
 flatnuke.lua Questo e' un aggregator piu' potente per siti basati sul CMS
- FlatNuke
-\layout Description
-
-kernel.lua Questo e' un plugin per tenersi aggiornati sulle ultime versioni
- del kernel Linux.
-\layout Description
-
-
+ FlatNuke, e permette il download dell'intero corpo delle news.
 \begin_inset Foot
 collapsed true
 
@@ -211,8 +204,10 @@ collapsed true
 
 Vedete HTTP://flatnuke.sourceforge.net per l'homepage del progetto
 \end_inset 
+\layout Description
 
- , e permette il download dell'intero corpo delle news.
+kernel.lua Questo e' un plugin per tenersi aggiornati sulle ultime versioni
+ del kernel Linux.
 \layout Section
 
 Storia
@@ -586,7 +581,7 @@ qualcosa@aggregatordomain
 \newline 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="11" columns="2">
+<lyxtabular version="3" rows="13" columns="2">
 <features>
 <column alignment="left" valignment="top" leftline="true" width="0">
 <column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
@@ -847,7 +842,7 @@ computer games news (Inglese)
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row topline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -873,7 +868,7 @@ GameSpot news (Inglese)
 \end_inset 
 </cell>
 </row>
-<row topline="true" bottomline="true">
+<row topline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 

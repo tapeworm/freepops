@@ -36,10 +36,11 @@ static regex_t * check_regularexp(lua_State*L)
 static int regularexp_comp(lua_State *L) {
   const char *pattern;
   int res;
+  regex_t *pr;
   
   L_checknarg(L,1,"regularexp.new wants one argument (string)");
 	  
-  regex_t *pr = (regex_t *)lua_newuserdata(L, sizeof(regex_t));
+  pr = (regex_t *)lua_newuserdata(L, sizeof(regex_t));
   pattern = luaL_checkstring(L,1);
 
   res = regcomp(pr, pattern, REG_EXTENDED);

@@ -178,6 +178,11 @@ freepops.MODULES_MAP["mozillaitalia.org"] 	= {
 	args={host="http://www.mozillaitalia.org/feed/"}
 }
 
+freepops.MODULES_MAP["linuxgazette.net"] 	= {
+	name="aggregator.lua",
+	args={host="http://linuxgazette.net/lg.rss"}
+}
+
 -- -------------------------------------------------------------------------- --
 -- 2) Policy
 --

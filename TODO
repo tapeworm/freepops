@@ -20,5 +20,3 @@ second release 0.0.2
 
 first public release 0.0.1:
 ++++++	sito pagina in it 
-	dpkg-reconfgure doesn't work cause all the hard work is in the 
-		postinstall script

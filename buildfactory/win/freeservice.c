@@ -327,9 +327,15 @@ int _tmain( int argc, TCHAR* argv[] ) {
 service_name = TEXT("FreePOPs");
 	
 if ( argc > 1 && lstrcmpi( argv[1], TEXT("install") ) == 0 ) {
+	char dummy;
 	install_service(argc - 2,&argv[2]);
+	printf("Service installed - press enter to continue.");
+	fgets(&dummy,1,stdin);
 } else if ( argc > 1 && lstrcmpi( argv[1], TEXT("uninstall") ) == 0 ) {
+	char dummy;
 	uninstall_service();
+	printf("Service removed - press enter to continue.");
+	fgets(&dummy,1,stdin);
 } else if ( argc == 1) {
 	run_service();
 } else {

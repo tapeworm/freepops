@@ -16,6 +16,7 @@ all: dist-deb dist-rpm dist-win dist-gen
 clean:
 	$(H)rm -rf _*_ freepops-[0-9\.]*.tar.gz
 	$(H)cd osx;rm -rf FreePOPs.app
+	$(H)cd win;rm -rf *.exe
 
 dist-win: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _win_/freepops

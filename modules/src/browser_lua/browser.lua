@@ -402,7 +402,15 @@ function Private.init_curl(self)
 		self.curl:setopt(curl.OPT_PROXYUSERPWD,self.proxyauth)
 		-- old cURL < 7.10.7 have no OPT_PROXYAUTH
 		if curl.OPT_PROXYAUTH ~= nil then
-			self.curl:setopt(curl.OPT_PROXYAUTH,curl.AUTH_BASIC)
+			if browser.ssl_enabled() then
+				self.curl:setopt(curl.OPT_PROXYAUTH,
+					curl.AUTH_BASIC + curl.AUTH_NTLM + 
+					curl.AUTH_GSSNEGOTIATE + 
+					curl.AUTH_DIGEST)
+			else
+				self.curl:setopt(curl.OPT_PROXYAUTH,
+					curl.AUTH_BASIC)
+			end
 		end
 	end
 	-- tells the library to follow any Location:

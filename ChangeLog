@@ -1,3 +1,5 @@
+- the win32 install no more overwrites the start menu entry (preserves the user options)
+- added to browser the NTLM and other auth type if SSL is found
 - added folder support to libero.lua
 - fixed libero.lua TOP function
 - added scripts/cvs2changelog.lua to generate changelog for the contibuted

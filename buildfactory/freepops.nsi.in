@@ -108,8 +108,10 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\FreePOPs"
   CreateDirectory "$SMPROGRAMS\FreePOPs\Debug"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  SetOverwrite off
   CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs.lnk" "$INSTDIR\freepopsd.exe" "" "$INSTDIR\freepopsd.exe" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Debug\FreePOPs -vv (verbose log).lnk" "$INSTDIR\freepopsd.exe" "-vv" "$INSTDIR\freepopsd.exe" 0
+  SetOverwrite on
   CreateShortCut "$SMPROGRAMS\FreePOPs\Manual (english).lnk" "http://freepops.sourceforge.net/it/files/manual.pdf" "" "http://freepops.sourceforge.net/" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Manuale (italiano).lnk" "http://freepops.sourceforge.net/it/files/manual-it.pdf" "" "http://freepops.sourceforge.net/" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Website.lnk" "http://freepops.sourceforge.net/index.html" "" "http://freepops.sourceforge.net/" 0

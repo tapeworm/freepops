@@ -22,4 +22,4 @@ for version 0.0.13:
 		genera molto traffico, con una stima decente.
 	freebsd port
 	add squirrel to manual
-
+	add to the manual that some proxy auth type need the SSL version

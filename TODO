@@ -1,6 +1,6 @@
 legeng: more + means more done! (from 1 to 7)
 
-next release 0.0.9
+next release 0.0.11
 	plugin (superva,freepass,hotmail,yahoo,excite,gmail)
 	give a more resistent binding for portablesocket_lua
 	servizio di autoupdate. da valutare la sicurezza di cio'.
@@ -8,10 +8,6 @@ next release 0.0.9
 	aggiustare winsystray, download di news, aggiornamento (magari essendo
 		i files dei plugin dei files di teso si riesce anche in modo 
 		decente a fare un auto-apgrade sotto win)
-	provare SSL
 	problemi in lycos(magari sistemare il mimer decentemente)
-	fattorizzare le funzioni standard dei plugin.
 	problemi login (aspetta ethereal)
-	proxy e tin
 	theyr -> their in tutti i commenti dei plugin.
-	log.say(nil) ??

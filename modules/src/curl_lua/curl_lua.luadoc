@@ -94,3 +94,13 @@ function perform() end
 -- @return string The escaped string.
 function curl.escape(s) end
 
+---
+-- version.
+-- @return string The version string.
+function curl.version() end
+
+---
+-- version informations.
+-- @return table The version struct.
+function curl.version_info() end
+

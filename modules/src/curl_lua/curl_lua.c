@@ -1253,7 +1253,7 @@ return 0;
 }
 
 /******************************************************************************
- * curl_easy_cleanup
+ * curl_escape
  *
  */ 
 static int luacurl_escape(lua_State* L) {
@@ -1272,12 +1272,83 @@ return 1;
 }
 
 /******************************************************************************
+ * curl_version
+ *
+ */ 
+static int luacurl_version(lua_State* L) {
+L_checknarg(L,0,"version wants no arguments");
+
+lua_pushstring(L,curl_version());
+
+return 1;
+}
+
+/******************************************************************************
+ * curl_version_info
+ *
+ */ 
+static int luacurl_version_info(lua_State* L) {
+curl_version_info_data *d = curl_version_info(CURLVERSION_NOW);	
+int i;
+L_checknarg(L,0,"version_info wants no arguments");
+
+lua_newtable(L);
+
+lua_pushstring(L,"version");
+lua_pushstring(L,d->version);
+lua_settable(L,-3);
+
+lua_pushstring(L,"version_num");
+lua_pushnumber(L,d->version_num);
+lua_settable(L,-3);
+
+lua_pushstring(L,"host");
+lua_pushstring(L,d->host);
+lua_settable(L,-3);
+
+lua_pushstring(L,"ssl_version");
+lua_pushstring(L,d->ssl_version);
+lua_settable(L,-3);
+
+lua_pushstring(L,"ssl_version_num");
+lua_pushnumber(L,d->ssl_version_num);
+lua_settable(L,-3);
+
+lua_pushstring(L,"features");
+lua_pushnumber(L,d->features);
+lua_settable(L,-3);
+
+lua_pushstring(L,"libz_version");
+lua_pushstring(L,d->libz_version);
+lua_settable(L,-3);
+
+lua_pushstring(L,"protocols");
+lua_newtable(L);
+for(i=0;d->protocols[i] != NULL;i++){
+	lua_pushnumber(L,i+1);
+	lua_pushstring(L,d->protocols[i]);
+	lua_settable(L,-3);
+}
+lua_pushstring(L,"n");
+lua_pushnumber(L,i);
+lua_settable(L,-3);
+
+lua_settable(L,-3);
+
+
+return 1;
+}
+
+
+/******************************************************************************
  * curl.* functions
  *
  */ 
 static const struct luaL_reg curl_f [] = {
   {"easy_init",luacurl_easy_init},
   {"escape",luacurl_escape},
+  {"version",luacurl_version},
+  {"version_info",luacurl_version_info},
   {NULL,NULL}
 };
 

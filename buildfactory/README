@@ -18,3 +18,8 @@ win32:
 	freepops.nsi.in
 	freepops-setup.xpm
 	freepops-remove.xpm
+
+osx:
+	freepops.pspm
+	README-osx.txt
+	Install_resources/*

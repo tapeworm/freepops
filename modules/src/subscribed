@@ -38,7 +38,8 @@ MK_TEMPL_CTRIB=	lua \
 		pthread \
 		luadoc \
 		getdate \
-		luaexpat 
+		luaexpat \
+		luafilesystem
 
 MK_CUSTOM=	curl_lua \
 		luafull

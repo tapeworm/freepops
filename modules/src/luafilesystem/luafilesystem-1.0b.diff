@@ -1,0 +1,154 @@
+diff -rNu luafilesystem-1.0b-old/Makefile luafilesystem-1.0b/Makefile
+--- luafilesystem-1.0b-old/Makefile	2004-11-10 15:45:23.000000000 +0100
++++ luafilesystem-1.0b/Makefile	2004-11-16 16:01:52.000000000 +0100
+@@ -1,40 +1,34 @@
+-# $Id$
++include $(CONFIG)
+ 
+-T= lfs
+-
+-include ./config
+-
+-V= 1.0b
+-DIST_DIR= luafilesystem-$V
+-TAR_FILE= $(DIST_DIR).tar.gz
+-ZIP_FILE= $(DIST_DIR).zip
+-LIBNAME= lib$T.$V$(LIB_EXT)
+-
+-SRCS= $T.c
+-OBJS= $T.o compat-5.1.o
+-
+-
+-lib: $(LIBNAME)
+-
+-$(LIBNAME): $(OBJS)
+-	$(CC) $(CFLAGS) $(LIB_OPTION) -o $(LIBNAME) $(OBJS) $(LIBS)
+-
+-compat-5.1.o: $(COMPAT_DIR)/compat-5.1.c
+-	$(CC) -c $(CFLAGS) -o $@ $(COMPAT_DIR)/compat-5.1.c
+-
+-install: $(LIBNAME)
+-	mkdir -p $(LIB_DIR)
+-	cp $(LIBNAME) $(LIB_DIR)
+-	ln -f -s $(LIB_DIR)/$(LIBNAME) $(LIB_DIR)/$T$(LIB_EXT)
++WARNS = -Wall -pedantic \
++        -Waggregate-return \
++        -Wcast-align \
++        -Wmissing-prototypes \
++        -Wstrict-prototypes \
++        -Wnested-externs \
++        -Wpointer-arith \
++        -Wshadow \
++        -Wwrite-strings
++
++
++CFLAGS += $(WARNS) -I$(PREFIX)/include -I. 
++
++LDFLAGS+= -L../lib/ -L../../lib/ 
++
++H=@
++
++all: libluafilesystem.a
++	$(H)echo -n
++
++libluafilesystem.a : lfs.c
++	$(H)echo " compiling lfs.c -> lfs.o"
++	$(H)$(CC) $(CFLAGS) -c  lfs.c 
++	$(H)echo " linking libluafilesystem.a"
++	$(H)$(AR) rc libluafilesystem.a lfs.o 1>/dev/null		
++	$(H)cp lfs.h $(PREFIX)/include
++	$(H)cp $(CPFLAGS) libluafilesystem.a $(PREFIX)/lib
+ 
+ clean:
+-	rm -f $L $(LIBNAME) $(OBJS)
++	$(H)rm -f *.a *.o
+ 
+-dist: dist_dir
+-	tar -czf $(TAR_FILE) $(DIST_DIR)
+-	zip -rq $(ZIP_FILE) $(DIST_DIR)/*
+-	rm -rf $(DIST_DIR)
+-
+-dist_dir:
+-	mkdir -p $(DIST_DIR)
+-	cp config $(SRCS) $T.h $T.def Makefile *html luafilesystem.png $(DIST_DIR)
++.PHONY: all
+diff -rNu luafilesystem-1.0b-old/config luafilesystem-1.0b/config
+--- luafilesystem-1.0b-old/config	2004-11-10 15:45:23.000000000 +0100
++++ luafilesystem-1.0b/config	1970-01-01 01:00:00.000000000 +0100
+@@ -1,23 +0,0 @@
+-# Installation directories
+-# System's libraries directory (where binary libraries are installed)
+-LIB_DIR= /usr/local/lib
+-# System's lua directory (where Lua libraries are installed)
+-LUA_DIR= /usr/local/lua
+-
+-# OS dependent
+-LIB_EXT= .dylib
+-#LIB_EXT= .so
+-LIB_OPTION= -dynamiclib #for MacOS X
+-#LIB_OPTION= -shared #for Linux
+-
+-COMPAT_DIR= .
+-
+-# Compilation directives
+-# On FreeBSD systems, the following line should be commented
+-DLLIB= -ldl
+-WARN= -O2 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings
+-INCS= -I/usr/local/include/lua5 -I$(COMPAT_DIR)
+-LIBS= -L$(LIB_DIR) -llua -llualib -lm $(DLLIB)
+-CFLAGS= $(WARN) $(INCS)
+-CC= gcc
+-
+diff -rNu luafilesystem-1.0b-old/lfs.c luafilesystem-1.0b/lfs.c
+--- luafilesystem-1.0b-old/lfs.c	2004-11-10 15:45:23.000000000 +0100
++++ luafilesystem-1.0b/lfs.c	2004-11-16 16:05:04.000000000 +0100
+@@ -32,7 +32,7 @@
+ #include <lua.h>
+ #include <lauxlib.h>
+ #include <lualib.h>
+-#include <compat-5.1.h>
++/*#include <compat-5.1.h>*/
+ 
+ #include "lfs.h"
+ 
+@@ -455,6 +455,7 @@
+ /*
+ ** Assumes the table is on top of the stack.
+ */
++/*
+ static void set_info (lua_State *L) {
+ 	lua_pushliteral (L, "_COPYRIGHT");
+ 	lua_pushliteral (L, "Copyright (C) 2004 Kepler Project");
+@@ -469,7 +470,7 @@
+ 	lua_pushliteral (L, "1.0a");
+ 	lua_settable (L, -3);
+ }
+-
++*/
+ 
+ static const struct luaL_reg fslib[] = {
+ 	{"attributes", file_info},
+@@ -485,6 +486,6 @@
+ int luaopen_lfs (lua_State *L) {
+ 	dir_create_meta (L);
+ 	luaL_openlib (L, "lfs", fslib, 0);
+-	set_info (L);
++	/*set_info (L);*/
+ 	return 1;
+ }
+diff -rNu luafilesystem-1.0b-old/lfs.h luafilesystem-1.0b/lfs.h
+--- luafilesystem-1.0b-old/lfs.h	2004-11-10 15:45:23.000000000 +0100
++++ luafilesystem-1.0b/lfs.h	2004-11-16 16:01:52.000000000 +0100
+@@ -1,3 +1,6 @@
++#ifndef LUAFILESYSTEM_H
++#define LUAFILESYSTEM_H
++
+ /* Define 'chdir' for systems that do not implement it */
+ /* $Id$ */
+ #ifdef NO_CHDIR
+@@ -8,3 +11,5 @@
+ #endif
+ 
+ int luaopen_lfs (lua_State *L);
++
++#endif

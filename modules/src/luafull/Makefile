@@ -31,7 +31,7 @@ endif
 
 ifeq "$(OS)" "Darwin"
 LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
-	-lluaexpat -lregularexp_lua \
+	-lluaexpat -lregularexp_lua -lluafilesystem \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lbase64 \
 	-lregularexp -llog -llist \
@@ -40,7 +40,7 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 else
 ifeq "$(OS)" "Darwin-static"
 LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
-	-lluaexpat -lregularexp_lua \
+	-lluaexpat -lregularexp_lua -lluafilesystem \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lbase64 \
 	-lregularexp -llog -llist \
@@ -50,7 +50,7 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 else
 ifeq "$(OS)" "Windows"
 LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
-	-lluaexpat -lregularexp_lua \
+	-lluaexpat -lregularexp_lua -lluafilesystem \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
 	-lbase64 -lcurl -llog -llist -loscompatibility \
@@ -58,14 +58,14 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 else
 ifeq "$(OS)" "BeOS"
 LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
-	-lluaexpat -lregularexp_lua \
+	-lluaexpat -lregularexp_lua -lluafilesystem \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
 	-lbase64 -lcurl -lcrypto -llog -llist -lreadline -lhistory \
 	-lbe -lsocket -lbind -lpthread -lncurses
 else
 LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
-	-lluaexpat -lregularexp_lua \
+	-lluaexpat -lregularexp_lua -lluafilesystem \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
 	-lbase64 -lcurl -lcrypto -llog -llist -lreadline -lhistory \

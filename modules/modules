@@ -33,6 +33,7 @@ MODULES-Common= lua		\
 		xmltables_lua	\
 		httpmail_lua	\
 		crypto_lua	\
+		luafilesystem 	\
 		luadoc		\
 		plugins2xml_lua	\
 		luafull

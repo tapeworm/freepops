@@ -86,6 +86,7 @@ LIBS=		crypto_lua	\
                 oscompatibility \
 		luabind		\
 		luaexpat	\
+		luafilesystem	\
                 luay            \
                 lua             \
                 lualib          

@@ -43,6 +43,7 @@ case "$1" in
 		start-stop-daemon --stop --quiet \
 			-p `dirname $DAEMON`/var/run/freepopsd.pid 
 	fi
+        [ $? -eq 0 -a -f /var/run/freepopsd.pid ] && rm /var/run/freepopsd.pid
 	echo "$NAME."
 	;;
   #reload)

@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.1.2"
+PLUGIN_VERSION = "0.2.0"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -89,7 +89,7 @@ local libero_string = {
 	login_post = "dominio=%s&"..
 		"LOGIN=%s&PASSWD=%s&choice=%s&Act_Login.x=%d&Act_Login.y=%d",		
 	-- This is the capture to get the session ID from the login-done webpage
-	sessionC = "/cgi%-bin/webmail%.cgi%?ID=([a-zA-Z0-9_%-]+)&",
+	sessionC = "/cgi%-bin/webmail%.exe%?ID=([a-zA-Z0-9_%-]+)&",
 	-- This is the mlex expression to interpret the message list page.
 	-- Read the mlex C module documentation to understand the meaning
 	--
@@ -103,7 +103,7 @@ local libero_string = {
 	-- of the message list page. Used in combination with statE
 	statG = "O<O><O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}X{O}[O]<O>O<O>",
 	-- The uri for the first page with the list of messages
-	first = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs=1&"..
+	first = "http://%s/cgi-bin/webmail.exe?ID=%s&Act_Msgs=1&"..
 		"C_Folder=%s",
 	-- The capture to check if there is one more page of message list
 	next_checkC = "<a href=\"javascript:doit"..

@@ -1,21 +1,6 @@
 
--- --------------------------- READ THIS PLEASE ----------------------------- --
--- This file is not only the RSS/RDF aggregator plugin. Is is also a well 
--- documented example of webnews plugin. 
---
--- Before reading this you should learn something about lua. The lua 
--- language is an excellen (at least in my opinion), small and easy 
--- language. You can learn something at http://www.lua.org (the main website)
--- or at http://lua-users.org/wiki/TutorialDirectory (a good and short tutorial)
---
--- Feel free to contact the author if you have problems in understanding 
--- this file
---
--- To start writing a new plugin please use skeleton.lua as the base.
--- -------------------------------------------------------------------------- --
-
 -- ************************************************************************** --
---  FreePOPs RSS/RDF aggregator xml news interface
+--  FreePOPs kernel.org changelog plugin
 --  
 --  $Id$
 --  
@@ -29,14 +14,8 @@ PLUGIN_NAME = "kernel.org Changelog viewer"
 
 -- Configuration:
 --
--- Username must be ".....@aggregator"
--- Password must be a pointer to RSS/RDF file 
--- Es. "http://flatnuke.sourceforge.net/misc/backend.rss"
--- 
+-- Username must be ".....@kernel.org"
 --
--- We take the header and body news filed to mail message body and the title to
--- mail subject.
--- 
 
 -- ************************************************************************** --
 --  strings
@@ -112,29 +91,6 @@ function get_name(s)
 end
 
 --------------------------------------------------------------------------------
--- Converts HTML news tag into text
---
-function html2txt(str)
-	str=string.gsub(str,"\n","") 
-	str=string.gsub(str,"\t","") 
-	str=string.gsub(str,"<[Tt][Rr]>","\n") 
-	str=string.gsub(str,"</[Tt][Hh]>","\t") 
-	str=string.gsub(str,"</[Tt][Dd]>","\t") 
-	str=string.gsub(str,"<[Bb][Rr]>","\n") 
-	str=string.gsub(str,"<[Uu][Ll]>","\n") 
-	str=string.gsub(str,"</[Uu][Ll]>","\n\n") 
-	str=string.gsub(str,"<[Ll][Ii]>","\n\t* ") 
-	str=string.gsub(str,"&amp;","&") 
-	str=string.gsub(str,"&agrave;","à") 
-	str=string.gsub(str,"&igrave;","ì") 
-	str=string.gsub(str,"&egrave;","è") 
-	str=string.gsub(str,"&ograve;","ò") 
-	str=string.gsub(str,"&quot;","\"") 
-
-	str=string.gsub(str,"<.->","") 
-	
-	return str
-end
 
 --------------------------------------------------------------------------------
 -- Build a mail header date string
@@ -159,10 +115,7 @@ function build_mail_header(title,uidl)
 	"MIME-Version: 1.0\r\n"..
 	"Content-Disposition: inline\r\n"..
 	"Content-Type: text/plain;   charset=\"iso-8859-1\"\r\n"..
-	-- This header cause some problems with link like [...]id=123[...]
-	-- "Content-Transfer-Encoding: quoted-printable\r\n"..
 	"\r\n"
---	"News link:\r\n"
 end
 
 --------------------------------------------------------------------------------
@@ -176,16 +129,10 @@ function retr_or_top(pstate,msg,data,lines)
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	
 	local b = internal_state.b
-	--uri=string.gsub(uidl,"-","--")
 	_,_,uri=string.find(uidl,"UTC(.*)")
 	uidl=string.gsub(uidl,uri,"")
 	--yyyy-mm-dd hh:mm
 	--mm/dd/yyyy hh:mm:ss 
-	--azzo=string.gfind(uidl,"(%d*)%-(%d*)%-(%d*)")
-	--a=azzo()
---	azzo=string.gfind(uidl,"(%d*)%-(%d*)%-(%d*)")
---	a=azzo()
-	--log.say("AZZO "..a)	
 	_,_,year=string.find(uidl,"(%d*)%-")
 	_,_,month=string.find(uidl,year.."%-(%d*)%-")
 	_,_,day=string.find(uidl,year.."%-"..month.."%-(%d*)")
@@ -193,16 +140,11 @@ function retr_or_top(pstate,msg,data,lines)
 	_,_,mins=string.find(uidl,hour..":(%d*)")
 	dd=month.."/"..day.."/"..year.." "                           
 	..hour..":"..mins..":00"
---	log.say("PRENDO "..dd.."\n")
 	
 	dd=getdate.toint(dd)
---	log.say("PRENDO "..dd.."\n")
---	b.curl:setopt(OPT_VERBOSE,1)
 	
-	--local b = browser.new()
 	local body = b:get_uri(uri)
 
-	--local s,rc = b:get_uri(uri)
 	if body == nil then
 		log.error_print("Asking for "..uri.."\n")
 		log.error_print(rc.error.."\n")
@@ -213,8 +155,6 @@ function retr_or_top(pstate,msg,data,lines)
 	--build it
 	local _,_,title=string.find(uri,".*/(.*)")
 	s = build_mail_header(title,dd) .. 
---		header .. "\r\n\r\n" .. 
---		"News description:\r\n"..
 		body.. "\r\n"
 
 	--hack it
@@ -234,7 +174,7 @@ function retr_or_top(pstate,msg,data,lines)
 end
 
 -- ************************************************************************** --
---  aggregator functions
+--  kernel.lua functions
 -- ************************************************************************** --
 
 -- Must save the mailbox name
@@ -268,7 +208,6 @@ function pass(pstate,password)
 	end
 
 	-- save the password
-	-- password is the RSS/RDF file URI 
 	if freepops.MODULE_ARGS ~= nil then
 	log.say("ARGS "..freepops.MODULE_ARGS.host)
 		if(freepops.MODULE_ARGS.host == "24") then
@@ -347,24 +286,14 @@ function stat(pstate)
 			strtmp1=string.gsub(x:get(0,i-1),"\n","")
 			strtmp2=string.gsub(x:get(1,i-1),"a href=","")
 			strtmp2=string.gsub(strtmp2,"\"","")
-			--strtmp="http://kernel.org"..strtmp
-			--strtmp2="http://zaccheo"..strtmp2
 			strtmp2="http://kernel.org"..strtmp2
 			strtmp=strtmp1..strtmp2
---			log.say("UIDL "..strtmp.."\n\n")
 			
 			
 			local uidl = strtmp
---			--fucking default size
---			size=3200			
 			local b = internal_state.b
 			header=b:get_head(strtmp2)
---			body=b:get_uri(strtmp)
---			log.say("["..body.."]")
 			local _,_,size=string.find(header,"Content--Length: (%d*)");
---			log.say("["..size.."]")
-			
---			size=3200			
 
 			if not uidl or not size then
 				return nil,"Unable to parse uidl"

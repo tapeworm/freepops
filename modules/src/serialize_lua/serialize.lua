@@ -44,19 +44,19 @@ end
 ---
 -- Serialize a table.
 -- Should be called in this way: <code>serial.serialize("t",t)</code>
--- @return the serializzation of t in the form "t=something" if name != nil,
+-- @return the serialization of t in the form "t=something" if name != nil,
 -- 		otherwise it returns only something.
--- @param name string containig the table name or nil.
+-- @param name string containing the table name or nil.
 -- @param val table that will be serialized.
 function serial.serialize(name,val)
 	local s = ""
 	if name ~= nil and type(name) ~= "number" then
-		if string.find(name,"[%-%.%%]") ~= nil then
+		if string.find(name,"^[_%a][_%w]*$") then
 			--serial.OUTPUT=serial.OUTPUT..
-			s = string.format("['%s']=",name)
+			s = string.format("%s=",name)
 		else
 			--serial.OUTPUT = serial.OUTPUT..
-			s = string.format("%s=",name)
+			s = string.format("[%q]=",name)
 		end
 	end
 	return s .. Private.serialize_val(val) .. ";"

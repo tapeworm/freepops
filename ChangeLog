@@ -1,3 +1,5 @@
+- changed string find patten in serialize.lua (thanks flabdablet)
+- fixed typos in popserver.c (ncocchiaro)
 05/03/2005 0.0.26
 - Mac OS X startup dir bug fixed (ncocchiaro)
 - : fixed inline (gareuselesinge)

@@ -470,7 +470,7 @@ else if(matches(RFC_2449_CAPA,ask)) /*** CAPA *********************/
 else
 	{
 	next=send_unsupported(s,
-		"WRONG/UKNOWN COMMAND IN AUTHORIZATION STATE",POPSTATE_LAST);	
+		"WRONG/UNKNOWN COMMAND IN AUTHORIZATION STATE",POPSTATE_LAST);	
 	}
 return next;
 }
@@ -648,7 +648,7 @@ else if(matches(RFC_1939_RSET,ask)) /*** RSET *********************/
 	
 	next=send_result_simple(s,rc,
 			POPSERVER_ERR_MSG,POPSERVER_ERR_STA,POPSERVER_ERR_NUM,
-			"MALIBOX RESTORED",POPSTATE_TRANS);
+			"MAILBOX RESTORED",POPSTATE_TRANS);
 	}
 else if(matches(RFC_NETSCAPE_XSENDER,ask)) /*** XSENDER *********************/
 	{
@@ -692,7 +692,7 @@ else if(matches(RFC_1939_DELE,ask)) /*** DELE *********************/
 else
 	{
 	next=send_unsupported(s,
-		"WRONG/UKNOWN COMMAND IN TRANSACTION STATE",POPSTATE_LAST);
+		"WRONG/UNKNOWN COMMAND IN TRANSACTION STATE",POPSTATE_LAST);
 	}
 return next;
 }

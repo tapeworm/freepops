@@ -31,7 +31,8 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lbase64 \
 	-lregularexp -llog -llist \
-	-L/sw/lib/ -lexpat -lcurl -lreadline -lhistory #-lcurses #-lncurses
+	-L/sw/lib/ -lexpat -lcurl -lcrypto -lreadline -lhistory \
+	#-lcurses #-lncurses
 else
 ifeq "$(OS)" "Windows"
 LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \

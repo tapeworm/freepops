@@ -195,7 +195,9 @@ function retr_or_top(pstate,msg,data,lines)
 	local _,_,body=string.find(chunk,rss_string.descC)
 	if ((body == nil) or (body == "")) then
 		_,_,body=string.find(chunk,rss_string.desc2C)
-		body=string.gsub(body,"CDATA%[","");
+		if(body ~= nil) then
+ 			body=string.gsub(body,"CDATA%[","")
+		end
 	end
 	local _,_,mydate=string.find(chunk,rss_string.dateC)
 

@@ -58,14 +58,18 @@ Introduction
 
 FreePOPs is a POP3 daemon plus a LUA interpreter and some extra libraries
  for HTTP and HTML parsing.
- Its main purpose is translating local POP3 requests to remote HTTP
- actions on the supported web-mails, but it is really more flexible.
+ Its main purpose is translating local POP3 requests to remote HTTP actions
+ on the supported web-mails, but it is really more flexible.
  For example there is a plugin to read news from a website as if they were
  mails in a mailbox.
  You can easily extend FreePOPs on the fly, without even restarting it.
  You can add a plugin or modify an existing one simply changing the script
  file since the plugins are written in LUA and are interpreted on the fly.
-\newline 
+\layout Subsection
+
+Usage situations
+\layout Standard
+
 FreePOPs can be useful in some situations, here we give the most obvious
  ones:
 \layout Itemize
@@ -90,7 +94,7 @@ You are not a C hacker, but you want to benefit from a fast POP3 server
  backend in C.
  LUA is a really simple and tiny language, one week is enough to learn it
  in a way that allows you to use it productively.
-\layout Section
+\layout Subsection
 
 Features
 \layout Standard
@@ -139,8 +143,8 @@ plugins
  The POP3 server frontend could be attached to a backend written in C.
  This means you have to recompile and restart LiberoPOPs each time to change
  a line in a plugin.
- Another interesting point is that LiberPOPs was created from scratch in a
- really short amount of time (you have to be Italian and use a 
+ Another interesting point is that LiberPOPs was created from scratch in
+ a really short amount of time (you have to be Italian and use a 
 \family typewriter 
 @libero.it
 \family default 
@@ -155,10 +159,8 @@ The LiberoPOPs project had a quick success, since everybody needed it.
  and this was exactly what we did.
  We used to release every 2 days.
  But we were working not with Unix users, nor hackers, mostly Win32 users.
- I've not really understood why they considered a boring task to read a
- 3 pages tutorial and a 1 page F.A.Q.
- but I've realized that they are lazy/bored of updating the software every
- 2 days.
+ Suddenly we realized that they are lazy/bored of updating the software
+ every 2 days.
  The ugly Win-world has taught them that software auto-updates, auto-install
  and even auto-codes itself probably.
  
@@ -170,11 +172,11 @@ We tried to solve this pulling out of the C engine most of the change-prone
  
 \layout Standard
 
-A scripting/interpreted embedded language seemed to me a nice choice and after
- a long search on the net and on the newsgroup of my university I found
- LUA.
- This is not the place for telling the world how good this small language is
- and I won't talk more about it here.
+A scripting/interpreted embedded language seemed to me a nice choice and
+ after a long search on the net and on the newsgroup of my university I
+ found LUA.
+ This is not the place for telling the world how good this small language
+ is and I won't talk more about it here.
  Integrating the LUA interpreter in LiberoPOPs was not so hard and FreePOPs
  is the result.
  Now it is really easier to write/test a plugin and (even if it is not implement
@@ -203,8 +205,8 @@ FreePOPs command line parameters
 \layout Standard
 
 The real FreePOPs configuration is made trough command line arguments.
- They are described in depth in the man page in Unix environments, here we
- present only the most useful:
+ They are described in depth in the man page in Unix environments, here
+ we present only the most useful:
 \layout Description
 
 -p\SpecialChar ~
@@ -257,6 +259,11 @@ To configure your email client you must change the pop3 server settings.
  port.
  In case you install FreePOPs in another computer of your LAN, you should
  use the host's name instead of localhost.
+ In case you changed the default port with the 
+\family typewriter 
+-p
+\family default 
+ switch you should now what you are doing.
 \layout Section
 
 Creating a plugin
@@ -317,7 +324,7 @@ linespread{0.5}
 \layout Standard
 
 \backslash 
-begin{small}
+begin{footnotesize}
 \layout Standard
 
 \backslash 
@@ -375,7 +382,7 @@ end{verbatim}
 \layout Standard
 
 \backslash 
-end{small}
+end{footnotesize}
 \end_inset 
 
 
@@ -401,7 +408,7 @@ linespread{0.5}
 \layout Standard
 
 \backslash 
-begin{small}
+begin{footnotesize}
 \layout Standard
 
 \backslash 
@@ -427,7 +434,7 @@ end{verbatim}
 \layout Standard
 
 \backslash 
-end{small}
+end{footnotesize}
 \end_inset 
 
 
@@ -456,58 +463,257 @@ linux@kernel.org
 )
 \family default 
 .
- Here the plugin should authenticate the user (if there is a sort of authenticati
-on) and inform the C core of the result.
+ Here the plugin should authenticate the user (if there is a sort of authenticat
+ion) and inform the C core of the result.
  To achieve this each plugin function must return an error flag, to be more
  accurate one of these errors:
-\layout Standard
-
-
-\begin_inset ERT
-status Collapsed
+\newline 
 
 \layout Standard
 
-\backslash 
-linespread{0.5}
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="10" columns="2">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="block" valignment="top" leftline="true" rightline="true" width="7cm">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
 \layout Standard
 
-\backslash 
-begin{small}
+
+\size footnotesize 
+Code
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none" width="7cm">
+\begin_inset Text
+
 \layout Standard
 
-\backslash 
-begin{verbatim}
-\layout Standard
-    POPSERVER_ERR_OK        
-\layout Standard
-    POPSERVER_ERR_SYNTAX    
-\layout Standard
-    POPSERVER_ERR_NETWORK   
-\layout Standard
-    POPSERVER_ERR_AUTH      
-\layout Standard
-    POPSERVER_ERR_INTERNAL  
-\layout Standard
-    POPSERVER_ERR_NOMSG     
-\layout Standard
-    POPSERVER_ERR_LOCKED    
-\layout Standard
-    POPSERVER_ERR_EOF       
-\layout Standard
-    POPSERVER_ERR_TOOFAST   
-\layout Standard
-    POPSERVER_ERR_UNKNOWN   
+
+\size footnotesize 
+Meaning
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
 \layout Standard
 
-\backslash 
-end{verbatim}
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_OK
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
 \layout Standard
 
-\backslash 
-end{small}
+
+\size footnotesize 
+No error
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_NETWORK
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+An error concerning the network
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_AUTH
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+Authorization failed
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_INTERNAL
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+Internal error, please report the bug
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_NOMSG
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+The message number is out of range
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_LOCKED
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+Mailbox is locked by another session
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_EOF
+\end_inset 
+</cell>
+<cell multicolumn="1" alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+End of transmission, used in the popserver_callback
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_TOOFAST
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+You are not allowed to reconnect to the server now, wait a bit and retry
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+POPSERVER_ERR_UNKNOWN
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\size footnotesize 
+No idea of what error I've encountered
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
 \end_inset 
 
+
+\newline 
+
+\newline 
 
 \layout Standard
 
@@ -527,11 +733,50 @@ list_all(p)
 \family default 
 .
  Here we have to return an error code as before, but we have also to inform
- the C core of the size of all messages in the mailbox.FIX set_mailbox_nummest
- + set_mailmessage_size...
+ the C core of the size of all messages in the mailbox.
+ Here we need the p parameter passed to each plugin function (note that
+ parameter may became implicit in the future).
+ 
+\family typewriter 
+p
+\family default 
+ stands for the data structure that the C expect us to fill calling appropriate
+ functions like 
+\family typewriter 
+set_mailmessage_size(p,num,size)
+\family default 
+ where num is the message number and size is the size in bytes.
+ Usually it is really common to put more function all together.
+ For example wen you get the message list page in a webmail you know the
+ number of the messages, their size and uidl so you can fill the p data
+ structure with all the informations for LIST, STAT, UIDL.
+ 
 \layout Standard
 
-FIX caso della retr e fine.
+The last case that we examine is 
+\family typewriter 
+retr(p,num,data)
+\family default 
+.
+ Since a mail message can be really big, there is no pretty way of downloading
+ the entire message without making the mail client complain about the server
+ death.
+ The solution is to use a callback.
+ Whenever the plugin has some data to send to the client he should call
+ the 
+\family typewriter 
+popserver_callback(buffer,data)
+\family default 
+.
+ 
+\family typewriter 
+data
+\family default 
+ is an opaque structure the popserver needs to accomplish its work (note
+ that this parameter may be removed for simplicity).
+ In some cases, for example if you know the message is small or you are
+ working on a fast network, you can fetch the whole message and send it,
+ but remember that this is more memory consuming.
 \layout Section
 
 Submitting a bug
@@ -550,9 +795,9 @@ Update to the most recent version of FreePOPs.
 
 Try to reproduce the bug, if the bug is not easily reproducible we are out
  of luck.
- Something can still be tried: if the software crashed you could compile it from
- the sources, install valgrind, run freepopsd with valgrind and hope the
- error messages are interesting.
+ Something can still be tried: if the software crashed you could compile
+ it from the sources, install valgrind, run freepopsd with valgrind and
+ hope the error messages are interesting.
 \layout Enumerate
 
 Clean the log files
@@ -573,17 +818,48 @@ Authors
 
 This manual has been written by Enico Tassi <gareuselesinge@users.sourceforge.net>
  and revised by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
-\newline 
+\layout Subsection
+
+Developers
+\layout Standard
+
 FreePOPs is developed by:
 \layout Itemize
 
 Enico Tassi <gareuselesinge@users.sourceforge.net>
+\layout Itemize
+
+Alessio Caprari <alessiofender@users.sourceforge.net>
+\layout Itemize
+
+Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+\layout Itemize
+
+Simone Vellei <simone_vellei@users.sourceforge.net>
+\layout Standard
+
+LiberoPOPs id developed by:
+\layout Itemize
+
+Enico Tassi <gareuselesinge@users.sourceforge.net>
+\layout Itemize
+
+Alessio Caprari <alessiofender@users.sourceforge.net>
+\layout Itemize
+
+Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+\layout Itemize
+
+Simone Vellei <simone_vellei@users.sourceforge.net>
+\layout Itemize
+
+Giacomo Tenaglia <sonicsmith@users.sourceforge.net>
 \layout Section
 
 Thanks
 \layout Standard
 
 Special thanks goes to the users who tested the software, to the hackers
- who made it possible to have a free and reliable devolpment environment
+ who made it possible to have a free and reliable development environment
  as the Debian GNU/Linux system.
 \the_end

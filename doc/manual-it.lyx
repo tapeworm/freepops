@@ -56,23 +56,22 @@ newpage
 Introduzione
 \layout Standard
 
-FreePOPs e' un demone POP3 piu' un interprete LUA e alcune librerie extra
+FreePOPs è un demone POP3 più un interprete LUA e alcune librerie extra
  per il parsing di HTTP e HTML.
- Il suo scopo principale e' tradurre richieste POP3 locali in azioni HTTP
- remote per le webmail supportate, ma in realta' e' piu' flessibile di cosi':
+ Il suo scopo principale è tradurre richieste POP3 locali in azioni HTTP
+ remote per le webmail supportate, ma in realta' è più flessibile di cosi':
  per esempio esiste un plugin per leggere news da un sito web come se fossero
  messaggi in una mailbox.
- Si puo' facilmente estendere FreePOPs al volo, senza neanche farlo ripartire;
- si puo' aggiungere un plugin o modificarne uno esistente semplicemente
- cambiando uno script, dato che i plugin sono scritti in LUA e sono interpretati
- al volo.
+ Si può facilmente estendere FreePOPs al volo, senza neanche farlo ripartire;
+ si può aggiungere un plugin o modificarne uno esistente semplicemente cambiando
+ uno script, dato che i plugin sono scritti in LUA e sono interpretati al
+ volo.
 \layout Subsection
 
 Situazioni d'uso
 \layout Standard
 
-FreePOPs puo' essere utile in molte situazioni, qui descriviamo le piu'
- ovvie:
+FreePOPs può essere utile in molte situazioni, qui descriviamo le più ovvie:
 \layout Itemize
 
 Siete dietro un firewall che chiude la porta 110 ma volete comunque leggere
@@ -94,21 +93,21 @@ Dovete sviluppare un server POP3 in meno di una settimana e volete che sia
 Non siete hacker del C, ma volete trarre beneficio da un frontend ad un
  server POP3, veloce e scritto in C, ma non volete perdere un mese a scrivere
  il backend in C.
- LUA e' un linguaggio davvero semplice e leggero, una settimana e' abbastanza
+ LUA è un linguaggio davvero semplice e leggero, una settimana è abbastanza
  per impararlo e poterlo usare in modo produttivo.
 \layout Subsection
 
 Feature
 \layout Standard
 
-FreePOPs e' l'unico software che conosciamo con queste feature:
+FreePOPs è l'unico software che conosciamo con queste feature:
 \layout Itemize
 
 Server POP3 compliant con RFC (non con tutte le feature, ma compliant).
 \layout Itemize
 
-Portabile (scritto in C e LUA il quale e' scritto in C, quindi tutto e'
- scritto nel linguaggio piu' portabile del mondo).
+Portabile (scritto in C e LUA il quale è scritto in C, quindi tutto è scritto
+ nel linguaggio più portabile del mondo).
 \layout Itemize
 
 Piccolo (in termini di risorse utilizzate) e ragionevolmente veloce.
@@ -120,7 +119,7 @@ Estremamente estendibile al volo mediante un linguaggio semplice e potente.
 Piuttosto documentato.
 \layout Itemize
 
-Rilasciato sotto la licenza GNU/GPL (questo significa che FreePOPs e' Software
+Rilasciato sotto la licenza GNU/GPL (questo significa che FreePOPs è Software
  Libero).
 \layout Subsection
 
@@ -174,16 +173,16 @@ mail.lycos.it
 \family default 
  per mailbox col dominio 
 \family typewriter 
-@lycos.it
+@lycos.it.
 \layout Description
 
-popforward.lua Questo e' un plugin usato principalmente per testare moduli
+popforward.lua Questo è un plugin usato principalmente per testare moduli
  di FreePOPs.
  Esso agisce come un forward POP3, semplicemente si comporta come mediatore
  tra voi ed un vero server POP3.
  Questo plugin ci ha permesso di testare FreePOPs senza avere alcun vero
  plugin gia' scritto.
- Potreste usarlo per mascherare un server POP3 con molti bug che puo' venire
+ Potreste usarlo per mascherare un server POP3 con molti bug che può venire
  facilmente compromesso grazie a richieste malevole.
  Ovviamente suggeriamo di esaminare per bene questo plugin, e fare un po'
  di hacking per prevenire richieste malevole al vostro server.
@@ -195,8 +194,8 @@ aggregator.lua Molti siti forniscono un backend RSS per indicizzare le loro
  trovare una mail per ogni news.
 \layout Description
 
-flatnuke.lua Questo e' un aggregator piu' potente per siti basati sul CMS
- FlatNuke, e permette il download dell'intero corpo delle news.
+flatnuke.lua Questo è un aggregator più potente per siti basati sul CMS FlatNuke,
+ e permette il download dell'intero corpo delle news.
 \begin_inset Foot
 collapsed true
 
@@ -208,20 +207,29 @@ Vedete HTTP://flatnuke.sourceforge.net per l'homepage del progetto
 
 \layout Description
 
-kernel.lua Questo e' un plugin per tenersi aggiornati sulle ultime versioni
+kernel.lua Questo è un plugin per tenersi aggiornati sulle ultime versioni
  del kernel Linux.
+\layout Description
+
+gmail.lua Questo plugin supporta la mailbox su 
+\family typewriter 
+gmail.google.com
+\family default 
+ per mailbox col dominio 
+\family typewriter 
+@gmail.com.
 \layout Section
 
 Storia
 \layout Standard
 
 FreePOPs non nasce dal nulla.
- Un progetto simile (solo nella situazione d'uso principale) e' LiberoPOPs.
+ Un progetto simile (solo nella situazione d'uso principale) è LiberoPOPs.
  
 \layout Standard
 
-L'antenato di FreePOPs e' completamente scritto in C per ragioni poco interessan
-ti.
+L'antenato di FreePOPs è completamente scritto in C per ragioni poco interessant
+i.
  LiberoPOPs supporta 
 \begin_inset Quotes eld
 \end_inset 
@@ -230,27 +238,27 @@ plugin
 \begin_inset Quotes erd
 \end_inset 
 
- ma in maniera piu' statica e complessa.
+ ma in maniera più statica e complessa.
  Il frontend al server POP3 potrebbe essere collegato ad un backend scritto
  in C, questo significa che dovreste ricompilare e far ripartire LiberoPOPs
  ogni volta che cambiate una riga in un plugin.
- Un altro punto interessante e' che LiberoPOPs era stato creato dal nulla
+ Un altro punto interessante è che LiberoPOPs era stato creato dal nulla
  in un tempo molto breve (dovete essere Italiani e usare un indirizzo di
- posta
+ posta 
 \family typewriter 
 @libero.it
 \family default 
- per capire perche'), cio' vuol dire che era nato con molti bug e FIX-ME
- nel codice.
+ per capire perché), ciò vuol dire che era nato con molti bug e FIX-ME nel
+ codice.
  
 \layout Standard
 
-Il progetto LiberoPOPs ebbe un rapido successo, perche' tutti ne avevano
+Il progetto LiberoPOPs ebbe un rapido successo, perché tutti ne avevano
  bisogno, quindi avevamo molti utenti.
  Nella filosofia della comunita' opensource (e anche di Linux) devi rilasciare
- il software frequentemente, e questo e' cio' che facevamo: rilasciavamo
- nuove versioni ogni due giorni.
- Non avevamo a che fare con utenti Unix, ne' hacker, ma per la maggior parte
+ il software frequentemente, e questo è ciò che facevamo: rilasciavamo nuove
+ versioni ogni due giorni.
+ Non avevamo a che fare con utenti Unix, nè hacker, ma per la maggior parte
  utenti Win32.
  Ad un certo punto capimmo che questi erano pigri/stufi di aggiornare il
  software ogni due giorni.
@@ -260,8 +268,8 @@ Il progetto LiberoPOPs ebbe un rapido successo, perche' tutti ne avevano
 \layout Standard
 
 Cercammo di risolvere il problema tirando fuori dal motore in C la maggior
- parte del codice che cambiava piu' spesso, ma questo era molto difficile
- visto che il C non e' pensato per questo genere di cose.
+ parte del codice che cambiava più spesso, ma questo era molto difficile
+ visto che il C non è pensato per questo genere di cose.
  Una volta che LiberoPOPs si fu stabilizzato iniziammo a pensare a come
  risolvere meglio la cosa.
  
@@ -269,14 +277,13 @@ Cercammo di risolvere il problema tirando fuori dal motore in C la maggior
 
 Un linguaggio di scripting/interpretato sembro' una buona scelta e dopo
  una lunga ricerca in rete e nei newsgroup universitari trovai LUA..
- Questo non e' il luogo per dire al mondo quanto sia bello questo linguaggio
+ Questo non è il luogo per dire al mondo quanto sia bello questo linguaggio
  quindi non ne parlero' oltre qui.
  Integrare l'interprete LUA in LiberoPOPs non fu cosi' difficile e FreePOPs
- ne e' il risultato.
- Ora e' davvero piu' facile scrivere/testare un plugin e (anche se non e'
- ancora implementato) un sistema di auto-aggiornamento e' molto facile da
- scrivere dato che non c'e' bisogno di ricompilare il nucleo C in quasi
- nessun caso.
+ ne è il risultato.
+ Ora è davvero più facile scrivere/testare un plugin e (anche se non è ancora
+ implementato) un sistema di auto-aggiornamento è molto facile da scrivere
+ dato che non c'è bisogno di ricompilare il nucleo C in quasi nessun caso.
 \layout Section
 
 File di configurazione di FreePOPs
@@ -284,7 +291,7 @@ File di configurazione di FreePOPs
 
 FreePOPs non ha bisogno di una vera configurazione.
  La maggior parte degli utenti non dovrebbe modificare il file di configurazione.
- Se siete sviluppatori o utenti curiosi il file di configurazione e' 
+ Se siete sviluppatori o utenti curiosi il file di configurazione è 
 \family typewriter 
 config.lua
 \family default 
@@ -295,9 +302,9 @@ config.lua
  in ambiente posix.
 \layout Standard
 
-Piu' avanti vedremo come i plugin sono associati al dominio di un indirizzo
+più avanti vedremo come i plugin sono associati al dominio di un indirizzo
   di posta, e alcuni di questi plugin hanno alias per altri domini per rendere
-  piu' facile la raccolta di news da alcuni siti.
+  più facile la raccolta di news da alcuni siti.
  Leggete la documentazione dei plugin per maggiori informazioni su di essi,
  e  magari inviate una mail con il vostro nuovo alias se volete che venga
   integrato nella prossima versione di FreePOPs.
@@ -309,7 +316,7 @@ config.lua
 \family default 
  ha una sezione policy.
  In questa sezione potete escludere o accettare classi di indirizzi mail.
- Questo puo' essere utile ad amministratori di rete.
+ Questo può essere utile ad amministratori di rete.
 \layout Section
 
 Parametri a riga di comando di FreePOPs
@@ -317,8 +324,7 @@ Parametri a riga di comando di FreePOPs
 
 La vera configurazione di FreePOPs viene impostata tramite argomenti a riga
   di comando.
- Questi sono descritti in dettaglio nelle pagine del man in  ambienti Unix,
- qui presentiamo solo i piu' utili:
+ Questi sono descritti in dettaglio nelle pagine del man in  ambienti Unix:
 \layout Description
 
 -p\SpecialChar ~
@@ -328,11 +334,149 @@ La vera configurazione di FreePOPs viene impostata tramite argomenti a riga
  Per modificare questo comportamento basta usare questo switch.
 \layout Description
 
+-t\SpecialChar ~
+<num>,\SpecialChar ~
+--threads\SpecialChar ~
+<num> FreePOPs può gestire connessioni multiple, fino a
+ 
+\emph on 
+num
+\emph default 
+.
+ Il default è 5.
+\layout Description
+
+-b\SpecialChar ~
+
+\series bold 
+addr,
+\series default 
+\SpecialChar ~
+
+\series bold 
+--bind
+\series default 
+\SpecialChar ~
+
+\series bold 
+addr
+\series default 
+ Per fare bind su 
+\emph on 
+addr
+\emph default 
+ invece che INADDR_ANY (0.0.0.0).
+ 
+\emph on 
+addr
+\emph default 
+ deve essere una stringa contenente un indirizzo IPv4 nel formato 
+\begin_inset Quotes eld
+\end_inset 
+
+ddd.ddd.ddd.ddd
+\begin_inset Quotes erd
+\end_inset 
+
+, o un nome host.
+\layout Description
+
+-l\SpecialChar ~
+
+\series bold 
+logfacility,
+\series default 
+\SpecialChar ~
+
+\series bold 
+--logmode
+\series default 
+\SpecialChar ~
+
+\series bold 
+logfacility
+\series default 
+ Può essere usato per specificare il tipo di logging.
+ 
+\emph on 
+logfacility
+\emph default 
+ può essere 
+\begin_inset Quotes eld
+\end_inset 
+
+stdout
+\begin_inset Quotes erd
+\end_inset 
+
+ per standard output (il default), 
+\begin_inset Quotes eld
+\end_inset 
+
+syslog
+\begin_inset Quotes erd
+\end_inset 
+
+ per usare un demone di logging o un nome di file valido per avere un log
+ su file.
+\layout Description
+
+-d,\SpecialChar ~
+
+\series bold 
+--daemonize
+\series default 
+ Sposta il processo in background rilasciando la tty.
+\layout Description
+
 -P\SpecialChar ~
 <host>:<port>,\SpecialChar ~
 --proxy\SpecialChar ~
-<host>:<port> Per dire a FreePOPs quale e' il vostro
+<host>:<port> Per dire a FreePOPs quale è il vostro
  proxy HTTP.
+ Se 
+\emph on 
+port
+\emph default 
+ non è impostato viene usata la porta 8080 di default.
+\layout Description
+
+-A\SpecialChar ~
+<username>:<password>,\SpecialChar ~
+--auth\SpecialChar ~
+<username>:<password> Si usa per proxy con
+ autenticazione, per specificare nome utente e password.
+ Va usato con 
+\emph on 
+-P
+\emph default 
+ o la sua forma estesa.
+\layout Description
+
+-u\SpecialChar ~
+name,\SpecialChar ~
+--useragent\SpecialChar ~
+name Imposta lo useragent da usare nelle connessioni HTTP.
+ Il default è 
+\begin_inset Quotes eld
+\end_inset 
+
+Firefox/0.8
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Description
+
+-s\SpecialChar ~
+user.group,\SpecialChar ~
+--suid\SpecialChar ~
+user.group Lascia i privilegi di root dopo il bind.
+ Se lanciato da utente normale non serve questa opzione.
+\layout Description
+
+-h,\SpecialChar ~
+--help Stampa un messaggio di aiuto.
 \layout Description
 
 -v,\SpecialChar ~
@@ -340,14 +484,6 @@ La vera configurazione di FreePOPs viene impostata tramite argomenti a riga
 -w,\SpecialChar ~
 --veryverbose Questo dice a FreePOPs di loggare alcune informazi
 oni utili per  riportare bug.
-\layout Description
-
--t\SpecialChar ~
-<num>,\SpecialChar ~
---threads\SpecialChar ~
-<num> FreePOPs puo' gestire connessioni multiple, fino
- a num.
- Il default e' 5.
 \layout Standard
 
 In ambienti posix come Debian GNU/Linux potete avviare FreePOPs al boot
@@ -388,9 +524,9 @@ qualcosa@libero.it
 qualcosa
 \family default 
 .
- Questo e' perche' FreePOPs sceglie il plugin da caricare guardando al nome
+ Questo è perché FreePOPs sceglie il plugin da caricare guardando al nome
  utente che deve quindi contenere tutte le informazioni.
- Piu' sotto presentiamo tutti i plugin e i loro domini associati.
+ più sotto presentiamo tutti i plugin e i loro domini associati.
 \layout Section
 
 Plugin
@@ -419,12 +555,12 @@ Questo plugin vi permette di leggere le mail che avete in una mailbox
 @blu.it
 \family default 
 .
- Cio' significa che potete ancora usare il vostro mail reader preferito
- invece di usare la webmail.
+ ciò significa che potete ancora usare il vostro mail reader preferito invece
+ di usare la webmail.
  Questo plugin agisce come un browser che sfoglia il vostro account webmail
  e lo fa apparire come un server POP3.
  Per maggiori informazioni su questo plugin potete guardare il sito web
- di LiberoPOPs (antenato di FreePOPs) a
+ di LiberoPOPs (antenato di FreePOPs) su 
 \family typewriter 
 http://liberopops.sourceforge.net
 \layout Standard
@@ -464,26 +600,26 @@ Questo plugin vi permette di leggere le mail che avete in una mailbox
 popforward.lua
 \layout Standard
 
-Questo plugin e' stato sviluppato per testare FreePOPs prima che fossero
+Questo plugin è stato sviluppato per testare FreePOPs prima che fossero
  scritti altri veri plugin.
  Esso semplicemente inoltra richieste locali verso un vero server POP3.
- Puo' essere usato per mascherare un server POP3 che ha dei bug, ma se pensate
+ può essere usato per mascherare un server POP3 che ha dei bug, ma se pensate
  di averne bisogno dovreste esaminare attentamente il codice del plugin
  e aggiungere controlli per migliorare il rilevamento/la prevenzione di
- richieste malevole, dato che il plugin stesso non e' nato con in mente
- la sicurezza.
+ richieste malevole, dato che il plugin stesso non è nato con in mente la
+ sicurezza.
  
 \layout Standard
 
 Per usare questo plugin dovete modificare il file config.lua.
- Questo perche' non possiamo aggiungere tutti i server POP3 esistenti al
+ Questo perché non possiamo aggiungere tutti i server POP3 esistenti al
  file :) Il plugin richiede due argomenti, l'host POP3 e la porta (di solito
  
 \family typewriter 
 110
 \family default 
-) su cui il server e' in ascolto.
- Questo e' un esempio di una riga di configurazione per questo plugin, in
+) su cui il server è in ascolto.
+ Questo è un esempio di una riga di configurazione per questo plugin, in
  cui ogni indirizzo email del dominio 
 \family typewriter 
 @virgilio.it
@@ -543,10 +679,10 @@ aggregator.lua
 Solitamente potete trarre beneficio dal formato RSS del W3C quando leggete
  news da qualche sito web.
  Il file RSS indicizza le news, fornendo un link verso di esse.
- Questo plugin puo' far si' che il vostro client di posta veda il file RSS
+ Questo plugin può far si' che il vostro client di posta veda il file RSS
  come una mailbox da cui potete scaricare ogni news come se fosse una mail.
- L'unica limitazione e' che questo plugin puo' prelevare solo un sunto delle
- news piu' il link alle news.
+ L'unica limitazione è che questo plugin può prelevare solo un sunto delle
+ news più il link alle news.
  
 \layout Standard
 
@@ -577,7 +713,7 @@ http://www.securityfocus.com/rss/vulnerabilities.xml
 qualcosa@aggregatordomain
 \family default 
  e una password a caso.
- Questa e' la lista di alias per il plugin aggregator.
+ Questa è la lista di alias per il plugin aggregator.
 \newline 
 
 \newline 
@@ -932,7 +1068,7 @@ news (Inglese)
 flatnuke.lua
 \layout Standard
 
-Questo plugin e' un plugin aggregator specializzato nei siti web fatti con
+Questo plugin è un plugin aggregator specializzato nei siti web fatti con
  il CMS FlatNuke
 \begin_inset Foot
 collapsed true
@@ -944,10 +1080,10 @@ HTTP://flatnuke.sourceforge.net
 
  , o altri siti che usano lo stesso formato delle news come il sito di FreePOPs.
  Dato che in un sito FlatNuke le news sono memorizzate in semplici file
- xml questo plugin e' in grado di prelevare tutte le news, non solo le intestazi
-oni come il plugin aggregator.
- Cio' e' molto utile se non vuoi sfogliare l'intero sito web per leggere
- le news.
+ xml questo plugin è in grado di prelevare tutte le news, non solo le intestazio
+ni come il plugin aggregator.
+ ciò è molto utile se non vuoi sfogliare l'intero sito web per leggere le
+ news.
 \layout Standard
 
 Per usare questo plugin dovete avere un nome utente con il dominio 
@@ -962,7 +1098,7 @@ qualcosa@flatnuke
 \family typewriter 
 http://flatnuke.sourceforge.net/
 \family default 
-, non c'e' bisogno di URL di file RSS visto che FlatNuke mette gli RSS in
+, non c'è bisogno di URL di file RSS visto che FlatNuke mette gli RSS in
  una posizione nota e fissata.
  Ci sono alcuni alias per siti FlatNuke, vedi la documentazione del plugin
  aggregator per sapere cosa significa):
@@ -1086,10 +1222,10 @@ http://flatnuke.sourceforge.net/
 kernel.lua
 \layout Standard
 
-Questo e' un plugin specializzato per tenersi aggiornati sulle ultime versioni
+Questo è un plugin specializzato per tenersi aggiornati sulle ultime versioni
  del kernel Linux.
  La pagina ufficiale che pubblica la lista delle versioni correnti del kernel
- Linux e' 
+ Linux è 
 \family typewriter 
 http://kernel.org
 \family default 
@@ -1097,7 +1233,7 @@ http://kernel.org
  Esiste un metodo comune, per i progetti sviluppati in sistemi GNU, per
  aggiornare l'utente sulle modifiche effettuate nelle nuove versioni di
  un programma.
- In ogni pacchetto e' infatti presente il file 
+ In ogni pacchetto è infatti presente il file 
 \family typewriter 
 ChangeLog
 \family default 
@@ -1113,7 +1249,7 @@ ChangeLog
 ChangeLog
 \family default 
 , puoi utilizzare questo plugin.
- Sara' sufficiente inserire come nome utente 
+ sarà sufficiente inserire come nome utente 
 \family typewriter 
 qualcosa@kernel.org
 \family default 
@@ -1134,22 +1270,34 @@ qualcosa@kernel.org.26
 ChangeLog
 \family default 
  dell'ultima versione del ramo 2.4 e del 2.6.
- Come password e' possibile inserire una qualsiasi stringa casuale.
+ Come password è possibile inserire una qualsiasi stringa casuale.
  
+\layout Subsection
+
+gmail.lua
+\layout Standard
+
+Questo plugin vi permette di leggere le mail che avete in una mailbox 
+\family typewriter 
+@gmail.com
+\family default 
+.
+ Per usare questo plugin dovete usare il vostro indirizzo email completo
+ come username e la vostra password reale come password.
 \layout Section
 
 Creare un plugin
 \layout Standard
 
-Seguono due sezioni, la prima e' una panoramica veloce su cosa un plugin
- deve fare, la seconda e' un tutorial piu' dettagliato.
+Seguono due sezioni, la prima è una panoramica veloce su cosa un plugin
+ deve fare, la seconda è un tutorial più dettagliato.
  Prima di procedere oltre suggeriamo di leggere un po' di documentazione
  alla  base della scrittura dei plugin:
 \layout Enumerate
 
 Dato che i plugin sono scritti in LUA dovete leggere almeno il tutorial
  LUA (HTTP://lua-users.org/wiki/LuaTutorial); molte grazie a chi l'ha scritto.
- LUA e' un linguaggio di scripting piuttosto semplice, facile da imparare,
+ LUA è un linguaggio di scripting piuttosto semplice, facile da imparare,
   e facile da leggere.
  Se siete interessati a questo linguaggio dovreste leggere IL libro su LUA
  (
@@ -1161,18 +1309,18 @@ Programming in LUA
 \end_inset 
 
  di Roberto Ierusalimschy HTTP://www.inf.puc-rio.br/~roberto/book/).
- E' davvero un buon libro, credetemi.
+ è davvero un buon libro, credetemi.
 \layout Enumerate
 
-Visto che dobbiamo implementare un backend POP3 dovreste sapere cos'e' il
+Visto che dobbiamo implementare un backend POP3 dovreste sapere cos'è il
  POP3.
- La RFC 1939 e' inclusa nella directory doc/ del pacchetto dei sorgenti
- di FreePOPs, ma potete prelevarla anche dalla rete HTTP://www.ietf.org/rfc/rfc193
-9.txt.
+ La RFC 1939 è inclusa nella directory doc/ del pacchetto dei sorgenti di
+ FreePOPs, ma potete prelevarla anche dalla rete HTTP://www.ietf.org/rfc/rfc1939.tx
+t.
 \layout Enumerate
 
-Leggete attentamente questo tutorial, e' lontano dall'essere ben fatto ma
- e' meglio di niente.
+Leggete attentamente questo tutorial, è lontano dall'essere ben fatto ma
+ è meglio di niente.
 \layout Enumerate
 
 Il sito web contiene, nella sezione doc, un bel po' di documentazione sui
@@ -1182,7 +1330,7 @@ Il sito web contiene, nella sezione doc, un bel po' di documentazione sui
 \layout Enumerate
 
 Dopo aver creato un prototipo, dovreste leggere un plugin completo.
- Il plugin libero.lua e' davvero ben commentato, iniziate pure da li'.
+ Il plugin libero.lua è davvero ben commentato, iniziate pure da li'.
 \layout Enumerate
 
 Ricordate che questo software ha un forum ufficiale (HTTP://freepops.diludovico.it
@@ -1192,17 +1340,17 @@ Ricordate che questo software ha un forum ufficiale (HTTP://freepops.diludovico.
 Panoramica sui plugin
 \layout Standard
 
-Un plugin e' essenzialmente un backend per un server POP3.
+Un plugin è essenzialmente un backend per un server POP3.
  I plugin sono scritti in LUA
 \begin_inset Foot
 collapsed true
 
 \layout Standard
 
-Il sito web del linguaggio e' HTTP://www.lua.org
+Il sito web del linguaggio è HTTP://www.lua.org
 \end_inset 
 
- mentre il server POP3 e' scritto in C.
+ mentre il server POP3 è scritto in C.
  Qui esamineremo l'interfaccia tra il nucleo C e i plugin LUA.
 \layout Subsection
 
@@ -1211,17 +1359,17 @@ L'interfaccia tra il nucleo C ed un plugin
 
 Come abbiamo spiegato prima il frontend POP3 in C deve essere collegato
  ad un backend in LUA.
- L'interfaccia e' molto semplice se conoscete il protocollo POP3.
+ L'interfaccia è molto semplice se conoscete il protocollo POP3.
  Qui riassumiamo brevemente il significato, ma la RFC 1939 (inclusa nella
   directory 
 \family typewriter 
 doc/
 \family default 
- della distribuzione dei sorgenti) e' molto breve e facile da leggere.
- Come il vostro intuito dovrebbe suggerirvi il client POP3 puo' richiedere
+ della distribuzione dei sorgenti) è molto breve e facile da leggere.
+ Come il vostro intuito dovrebbe suggerirvi il client POP3 può richiedere
  che il server POP3 conosca qualcosa delle mail che sono nella mailbox e
  prima o poi prelevare/cancellare dei messaggi.
- E questo e' esattamente cio' che fa.
+ E questo è esattamente ciò che fa.
 \layout Standard
 
 Il backend deve implementare tutti i comandi POP3 (come USER, PASS, RETR,
@@ -1304,8 +1452,8 @@ end{footnotesize}
 
 \layout Standard
 
-In questa sessione il backend verra' chiamato per le righe 4, 6, 8, 10,
- 14, 18, 20 (tutte le righe 
+In questa sessione il backend verrà chiamato per le righe 4, 6, 8, 10, 14,
+ 18, 20 (tutte le righe 
 \family typewriter 
 C:
 \family default 
@@ -1356,9 +1504,9 @@ end{footnotesize}
 
 \layout Standard
 
-Piu' tardi chiariremo cos'e' p.
+più tardi chiariremo cos'è p.
  Speriamo di toglierlo e renderlo implicito per completa trasparenza.
- E' facile capire che c'e' un mapping 1-1 tra i comandi POP3 e le chiamate
+ è facile capire che c'è un mapping 1-1 tra i comandi POP3 e le chiamate
  a funzione del plugin.
  Potete vedere un plugin come l'implementazione dell'interfaccia POP3.
 \layout Subsection
@@ -1379,10 +1527,10 @@ linux@kernel.org
 )
 \family default 
 .
- Qui il plugin dovrebbe autenticare l'utente (se c'e' un qualche tipo di
+ Qui il plugin dovrebbe autenticare l'utente (se c'è un qualche tipo di
  autenticazione) e informare il nucleo C del risultato.
  Per ottenere questo ogni funzione dei plugin deve restituire un flag di
- errore, per essere piu' precisi uno di questi errori:
+ errore, per essere più precisi uno di questi errori:
 \newline 
 
 \layout Standard
@@ -1526,7 +1674,7 @@ POPSERVER_ERR_NOMSG
 
 
 \size footnotesize 
-Il numero del messaggio e' fuori range
+Il numero del messaggio è fuori range
 \end_inset 
 </cell>
 </row>
@@ -1595,7 +1743,7 @@ POPSERVER_ERR_TOOFAST
 
 
 \size footnotesize 
-Non e' possibile riconnettersi al server ora, attendere e riprovare
+Non è possibile riconnettersi al server ora, attendere e riprovare
 \end_inset 
 </cell>
 </row>
@@ -1633,7 +1781,7 @@ Non ho idea di che errore ho trovato
 
 \layout Standard
 
-Nel nostro caso i codici d'errore piu' appropriati sono 
+Nel nostro caso i codici d'errore più appropriati sono 
 \family typewriter 
 POPSERVER_ERR_AUTH
 \family default 
@@ -1642,8 +1790,8 @@ POPSERVER_ERR_AUTH
 POPSERVER_ERR_OK
 \family default 
 .
- Questo e' un caso semplice, in cui un codice d'errore e' abbastanza.
- Ora analizziamo il caso piu' complesso della chiamata a 
+ Questo è un caso semplice, in cui un codice d'errore è abbastanza.
+ Ora analizziamo il caso più complesso della chiamata a 
 \family typewriter 
 list_all(p)
 \family default 
@@ -1661,8 +1809,8 @@ p
 \family typewriter 
 set_mailmessage_size(p,num,size)
 \family default 
- dove num e' il numero del messaggio e size e' la grandezza in byte.
- Solitamente e' molto comune mettere insieme piu' funzioni.
+ dove num è il numero del messaggio e size è la grandezza in byte.
+ Solitamente è molto comune mettere insieme più funzioni.
  Per esempio quando guardate la pagina di una webmail con la lista di messaggi
  conoscete il numero dei messaggi, la loro grandezza e lo UIDL cosi' che
  potete riempire la struttura dati p con tutte le informazioni per LIST,
@@ -1670,15 +1818,15 @@ set_mailmessage_size(p,num,size)
  
 \layout Standard
 
-L'ultimo caso che esaminiamo e' 
+L'ultimo caso che esaminiamo è 
 \family typewriter 
 retr(p,num,data)
 \family default 
 .
- Poiche' un messaggio di posta puo' essere molto grande, non e' un modo
- elegante di scaricare l'intero messaggio senza far si' che il client di
- posta si lamenti per la morte del server.
- La soluzione e' usare un callback.
+ poiché un messaggio di posta può essere molto grande, non è un modo elegante
+ di scaricare l'intero messaggio senza far si' che il client di posta si
+ lamenti per la morte del server.
+ La soluzione è usare un callback.
  Ogni volta che un plugin ha dei dati da mandare al client dovrebbe chiamare
  la 
 \family typewriter 
@@ -1689,11 +1837,11 @@ popserver_callback(buffer,data)
 \family typewriter 
 data
 \family default 
- e' una struttura opaca che il popserver necessita per compiere il suo lavoro
+ è una struttura opaca che il popserver necessita per compiere il suo lavoro
  (notate che questo parametro potra' venire rimosso per semplicita').
- In alcuni casi, per esempio se sapete che il messaggio e' piccolo o state
+ In alcuni casi, per esempio se sapete che il messaggio è piccolo o state
  lavorando su una rete veloce, potete prelevare l'intero messaggio e mandarlo,
- ma ricordate che questo consuma piu' memoria.
+ ma ricordate che questo consuma più memoria.
 \layout Subsection
 
 L'arte di scrivere plugin (tutorial sui plugin)
@@ -1701,14 +1849,14 @@ L'arte di scrivere plugin (tutorial sui plugin)
 
 In questa sezione scriveremo un plugin passo passo, esaminando ogni dettaglio
  importante.
- Non scriveremo un vero e completo plugin poiche' puo' diventare un po'
- difficile da seguire, ma creeremo una webmail ad-hoc per i nostri scopi.
+ Non scriveremo un vero e completo plugin poiché può diventare un po' difficile
+ da seguire, ma creeremo una webmail ad-hoc per i nostri scopi.
 \layout Subsubsection
 
 (step 1) Lo scheletro
 \layout Standard
 
-La prima cosa che faremo sara' copiare il file 
+La prima cosa che faremo sarà copiare il file 
 \family typewriter 
 skeleton.lua
 \family default 
@@ -1716,7 +1864,7 @@ skeleton.lua
 \family typewriter 
 foo.lua
 \family default 
- (perche' scriveremo il plugin per la webmail 
+ (perché scriveremo il plugin per la webmail 
 \emph on 
 foo.xx
 \emph default 
@@ -1781,14 +1929,13 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
- Ora abbiamo un plugin vuoto, ma non e' abbastanza per iniziare a farci
- hacking.
+ Ora abbiamo un plugin vuoto, ma non è abbastanza per iniziare a farci hacking.
  Dobbiamo aprire il file 
 \family typewriter 
 config.lua
 \family default 
  (nella distribuzione win32 si trova nella directory principale, mentre
- nella distribuzione Unix e' in 
+ nella distribuzione Unix è in 
 \family typewriter 
 /etc/freepops/
 \family default 
@@ -1871,7 +2018,7 @@ end{footnotesize}
 \end_inset 
 
  Ora la funzione user fallisce sempre, restituendo un errore di autenticazione.
- Dovrete ora lanciare FreePOPs (se e' gia' in esecuzione non e' necessario
+ Dovrete ora lanciare FreePOPs (se è gia' in esecuzione non è necessario
  farlo ripartire) e lanciare telnet (sotto win32 dovreste aprire un prompt
  DOS, sotto Unix avrete una shell) e digitate 
 \family typewriter 
@@ -1940,7 +2087,7 @@ stderr.txt
 (step 2) Il login
 \layout Standard
 
-La procedura di login e' la prima cosa da fare.
+La procedura di login è la prima cosa da fare.
  Il protocollo POP3 ha due comandi per il login, 
 \emph on 
 user
@@ -1951,7 +2098,7 @@ pass
 \emph default 
 .
  Prima il client esegue uno user, poi dice al server la password.
- Come abbiamo gia' visto nella panoramica questo significa che prima verra'
+ Come abbiamo gia' visto nella panoramica questo significa che prima verrà
  eseguito user() e poi
 \family typewriter 
 \emph on 
@@ -1960,7 +2107,7 @@ pass
 pass()
 \family default 
 .
- Questo e' un esempio di login:
+ Questo è un esempio di login:
 \begin_inset ERT
 status Collapsed
 
@@ -2062,9 +2209,9 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-il plugin e' stato modificato un po' per memorizzare i dati dell'utente
- e stampare delle informazioni di debug.
- Questo e' il plugin che ha dato questo output:
+il plugin è stato modificato un po' per memorizzare i dati dell'utente e
+ stampare delle informazioni di debug.
+ Questo è il plugin che ha dato questo output:
 \begin_inset ERT
 status Collapsed
 
@@ -2259,7 +2406,7 @@ HTTP://localhost:3000/
 HTTP://webmail.foo.xx/login.php
 \family default 
 ).
- Questo e' cio' che il browser invia:
+ Questo è ciò che il browser invia:
 \begin_inset ERT
 status Collapsed
 
@@ -2311,7 +2458,7 @@ end{footnotesize}
 
  Non ci interessa la prima parte (l'header HTTP, visto che il modulo browser
  se ne occupera'), bensi' l'ultima, i dati inviati.
- Poiche' i campi del form erano username e password, i dati inviati sono
+ poiché i campi del form erano username e password, i dati inviati sono
 \family typewriter 
 
 \newline 
@@ -2319,7 +2466,7 @@ username=test%40.foo.xx&password=hello
 \family default 
 .
  Ora vogliamo riprodurre la stessa richiesta HTTP con il nostro plugin.
- Questo e' il semplice codice che fara' proprio quello.
+ Questo è il semplice codice che fara' proprio quello.
 \begin_inset ERT
 status Collapsed
 
@@ -2414,7 +2561,7 @@ post_data
 string.format
 \family default 
  (una funzione simile a printf).
- E questa e' la richiesta risultante
+ E questa è la richiesta risultante
 \begin_inset ERT
 status Collapsed
 
@@ -2458,20 +2605,20 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-questo e' essenzialmente come lo volevamo fare (dovremmo fare url-encode
+questo è essenzialmente come lo volevamo fare (dovremmo fare url-encode
  dei post data con 
 \family typewriter 
 curl.escape()
 \family default 
 ).
- Abbiamo salvato l'oggetto browser sulla tabella globale, perche' vogliamo
+ Abbiamo salvato l'oggetto browser sulla tabella globale, perché vogliamo
  usare lo stesso browser tutte le volte.
 \layout Standard
 
 Ora che abbiamo fatto login, vogliamo controllare la pagina risultante,
  e magari estrarre un ID di sessione che useremo poi.
- Questo e' il codice per estrarre l'ID di sessione e la pagina HTML che
- abbiamo ricevuto in risposta alla richiesta di login
+ Questo è il codice per estrarre l'ID di sessione e la pagina HTML che abbiamo
+ ricevuto in risposta alla richiesta di login
 \begin_inset ERT
 status Collapsed
 
@@ -2525,7 +2672,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
- e questa e' la pagina web restituita.
+ e questa è la pagina web restituita.
 \newline 
 
 \begin_inset Graphics
@@ -2596,9 +2743,9 @@ session_id=(%w+)
 )
 \family default 
 .
- Questa e' una funzione molto importante nella libreria LUA e, anche se
- e' descritta nel tutorial LUA su HTTP://lua-users.org, parleremo un po'
- di capture anche qui.
+ Questa è una funzione molto importante nella libreria LUA e, anche se è
+ descritta nel tutorial LUA su HTTP://lua-users.org, parleremo un po' di
+ capture anche qui.
  Guardiamo i sorgenti della pagina.
  Ci interessa la riga
 \emph on 
@@ -2616,7 +2763,7 @@ session_id=(%w+)
 
 \emph default 
 che contiene il session_id che vogliamo catturare.
- La nostra espressione e' 
+ La nostra espressione è 
 \family typewriter 
 \emph on 
 session_id=(%w+)
@@ -2626,7 +2773,7 @@ session_id=(%w+)
 \family typewriter 
 session_id=
 \family default 
- e poi continuano con uno o piu' caratteri alfanumerici.
+ e poi continuano con uno o più caratteri alfanumerici.
  Siccome abbiamo scritto 
 \family typewriter 
 %w+
@@ -2638,15 +2785,15 @@ session_id=
 \family typewriter 
 _
 \family default 
-) mentre il terzo e' la stringa catturata (nel nostro caso 
+) mentre il terzo è la stringa catturata (nel nostro caso 
 \family typewriter 
 ABCD1234
 \family default 
 ).
- Il tutorial LUA su lua-users e' molto ben fatto e su HTTP://sf.net/projects/lua-
-users potete trovare il LUA short reference che e' un riassunto di tutte
- le funzioni standard LUA ed e' anche un gran bel documento (mille grazie
- a Enrico Colombini).
+ Il tutorial LUA su lua-users è molto ben fatto e su HTTP://sf.net/projects/lua-u
+sers potete trovare il LUA short reference che è un riassunto di tutte le
+ funzioni standard LUA ed è anche un gran bel documento (mille grazie a
+ Enrico Colombini).
  Se vi piace molto LUA dovreste comprare IL libro su LUA chiamato 
 \emph on 
 
@@ -2670,13 +2817,13 @@ Ora dovremo implementare la funzione
 stat()
 \family default 
 .
- La stat e' probabilmente la funzione piu' importante.
+ La stat è probabilmente la funzione più importante.
  Essa deve prelevare la lista dei messaggi nella webmail, il loro UIDL e
  la loro grandezza.
  Nel nostro esempio useremo il modulo mlex per tirare fuori le informazioni
  importanti dalla pagina, ma potete usare il modulo per le stringhe di LUA
  per fare la stessa cosa con i capture.
- Questa e' la nostra pagina inbox
+ Questa è la nostra pagina inbox
 \newline 
 
 \begin_inset Graphics
@@ -2689,7 +2836,7 @@ stat()
 
 \layout Standard
 
-e questo e' il corpo HTML (solo i primi due messaggi sono riportati)
+e questo è il corpo HTML (solo i primi due messaggi sono riportati)
 \begin_inset ERT
 status Collapsed
 
@@ -2770,8 +2917,8 @@ get_uri()
  (ricordate che la URI per l'inbox era nella pagina di login).
  Come vedete i messaggi sono in una tabella, e tale tabella ha la stessa
  struttura per ogni messaggio.
- Proprio questo e' il posto in cui usare mlex.
- Semplicemente, prendete tutto cio' che c'e' tra 
+ Proprio questo è il posto in cui usare mlex.
+ Semplicemente, prendete tutto ciò che c'è tra 
 \family typewriter 
 <tr>
 \family default 
@@ -2827,7 +2974,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-Questa espressione e' usata per fare match con la riga della tabella che
+Questa espressione è usata per fare match con la riga della tabella che
  contiene informazioni sul messaggio.
  Ora copiate e incollate a parte la riga e sostituite ogni spazio e ogni
  tag con O (la lettera, non la cifra 0) o X.
@@ -2864,8 +3011,8 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-Mentre la prima espressione verra' usata per fare match con la riga della
- tabella, questa verra' usata per estrarre i campi importanti.
+Mentre la prima espressione verrà usata per fare match con la riga della
+ tabella, questa verrà usata per estrarre i campi importanti.
  Questo codice lancia mlex sull'HTML e riempie la struttura dati popstate
  con i dati catturati.
 \begin_inset ERT
@@ -2967,7 +3114,7 @@ Il risultato di
 \family typewriter 
 x:print()
 \family default 
- e' il seguente
+ è il seguente
 \begin_inset ERT
 status Collapsed
 
@@ -3062,7 +3209,7 @@ quit()
 \family typewriter 
 <b>
 \family default 
- e' opzionale (potete notare che solo il primo messaggio e' in grassetto).
+ è opzionale (potete notare che solo il primo messaggio è in grassetto).
  Quindi cambiamo le espressioni in
 \begin_inset ERT
 status Collapsed
@@ -3131,7 +3278,7 @@ Ora il comando stat risponde con
 \family typewriter 
 +OK 4 45056
 \family default 
- e la stampa di debug e' 
+ e la stampa di debug è 
 \begin_inset ERT
 status Collapsed
 
@@ -3168,9 +3315,9 @@ end{footnotesize}
 Ora abbiamo una vera e propria funzione stat che riempie la struttura dati
  popstate con le informazioni che il server POP necessita per rispondere
  ad una richiesta di stat.
- Poiche' le richieste list, uidl, list_all e uidl_all possono essere soddisfatte
+ poiché le richieste list, uidl, list_all e uidl_all possono essere soddisfatte
  con gli stessi dati, useremo la funzione standard fornita dal modulo common.lua.
- Esso verra' spiegato nel prossimo passo, ma dobbiamo aggiungere due righe
+ Esso verrà spiegato nel prossimo passo, ma dobbiamo aggiungere due righe
  importanti alla funzione
 \family typewriter 
 stat()
@@ -3220,10 +3367,10 @@ end{footnotesize}
 
 \layout Standard
 
-La funzione piu' importante e' pronta, ma dobbiamo fare delle precisazioni.
- Primo, mlex e' molto comodo a volte, ma potreste trovare piu' utile la
- libreria per le stringhe di LUA o la libreria regualerexp (espressioni
- regolari estese posix) per raggiungere lo stesso scopo.
+La funzione più importante è pronta, ma dobbiamo fare delle precisazioni.
+ Primo, mlex è molto comodo a volte, ma potreste trovare più utile la libreria
+ per le stringhe di LUA o la libreria regualerexp (espressioni regolari
+ estese posix) per raggiungere lo stesso scopo.
  Secondo, questa implementazione si ferma alla prima pagina di inbox.
  Dovreste visitare tutte le pagine di inbox, forse usando la funzione 
 \family typewriter 
@@ -3235,7 +3382,7 @@ support.lua
 \family default 
  (che descriveremo brevemente alla fine di questo tutorial).
  Terzo, non facciamo nessun controllo degli errori.
- Per esempio la variabile file puo' essere nil e dobbiamo controllare queste
+ Per esempio la variabile file può essere nil e dobbiamo controllare queste
  cose per fare un buon plugin.
 \layout Subsubsection
 
@@ -3247,7 +3394,7 @@ Il modulo comune ci da' alcune funzioni precotte che dipendono solo da una
 \family typewriter 
 stat()
 \family default 
- ben implementata (una stat che puo' essere chiamata piu' di una volta).
+ ben implementata (una stat che può essere chiamata più di una volta).
  Ecco la nostra implementazione di queste funzioni
 \begin_inset ERT
 status Collapsed
@@ -3391,12 +3538,12 @@ end{footnotesize}
 (step 5) Cancellazione dei messaggi
 \layout Standard
 
-La cancellazione di un messaggio e' solitamente un normale POST e un esempio
+La cancellazione di un messaggio è solitamente un normale POST e un esempio
  di 
 \family typewriter 
 post_data
 \family default 
- e' 
+ è 
 \family typewriter 
 session_id=ABCD1234&check_124=on&check_126=on
 \family default 
@@ -3487,35 +3634,35 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-Considerate che facciamo il POST solo se almeno un messaggio e' segnato
- per la cancellazione.
- Un'altra cosa importante da tenere a mente e' che fare un solo POST per
- tutti i messaggi e' meglio che farne uno per ognuno.
+Considerate che facciamo il POST solo se almeno un messaggio è segnato per
+ la cancellazione.
+ Un'altra cosa importante da tenere a mente è che fare un solo POST per
+ tutti i messaggi è meglio che farne uno per ognuno.
  Quando possibile dovreste ridurre il numero di richieste HTTP al massimo
- dato che e' qui che portiamo FreePOPs da lepre a tartaruga.
+ dato che è qui che portiamo FreePOPs da lepre a tartaruga.
 \layout Subsubsection
 
 (step 6) Scaricare messaggi
 \layout Standard
 
-Potrete chiedervi perche' parliamo di questo argomento solo al punto 6,
- d'altronde avere la posta e' probabilmente cio' che volete da un plugin.
+Potrete chiedervi perché parliamo di questo argomento solo al punto 6, d'altrond
+e avere la posta è probabilmente ciò che volete da un plugin.
  Implementare la funzione 
 \family typewriter 
 retr()
 \family default 
- e' di solito facile.
+ è di solito facile.
  Dipende in realta' dalla webmail, ma qui parleremo del caso semplice, mentre
  alla fine del tutorial vedrete come gestire webmail complesse.
- Il caso base e' quello in cui la webmail ha un pulsante per salvare i messaggi,
- e il messaggio salvato e' un file di testo semplice che contiene sia l'header
+ Il caso base è quello in cui la webmail ha un pulsante per salvare i messaggi,
+ e il messaggio salvato è un file di testo semplice che contiene sia l'header
  che il corpo del messaggio.
- Ci sono solo due questioni interessanti in questo caso, e cioe' quelle
- relativa ai messaggi grandi al punto.
+ Ci sono solo due questioni interessanti in questo caso, e cioè quelle relativa
+ ai messaggi grandi al punto.
 \layout Standard
 
 I messaggi grandi causano timeout.
- Si', il modo piu' semplice di scaricare un messaggio e' chiamare 
+ Si', il modo più semplice di scaricare un messaggio è chiamare 
 \family typewriter 
 b:get_uri()
 \family default 
@@ -3536,7 +3683,7 @@ popserver_callback()
 b:pipe_uri()
 \family default 
  che chiama un callback ogni volta che ha dei dati freschi.
- Il codice seguente e' la funzione di callback factory, che crea un nuovo
+ Il codice seguente è la funzione di callback factory, che crea un nuovo
  callback da passare al metodo 
 \family typewriter 
 pipe_uri
@@ -3595,9 +3742,9 @@ Qui potete vedere che il callback usa
 \family typewriter 
 popserver_callback()
 \family default 
- per passare dati al client di posta, ma prima di fare cio' manipola i dati
+ per passare dati al client di posta, ma prima di fare ciò manipola i dati
  con lo stringhack.
- Ma questa e' la seconda questione interessante.
+ Ma questa è la seconda questione interessante.
 \layout Standard
 
 Il protocollo POP3 deve terminare la risposta al comando retr con una riga
@@ -3618,8 +3765,8 @@ n
 \end_inset 
 
 .
- Ma che succede se una riga, dentro il corpo della mail, e' un semplice
- punto? Dobbiamo cambiarlo in 
+ Ma che succede se una riga, dentro il corpo della mail, è un semplice punto?
+ Dobbiamo cambiarlo in 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -3636,7 +3783,7 @@ n
 \end_inset 
 
 .
- Non e' cosi' difficile, una 
+ Non è cosi' difficile, una 
 \family typewriter 
 string.gsub(s,
 \begin_inset Quotes erd
@@ -3672,11 +3819,11 @@ n
 
 )
 \family default 
- e' tutto cio' che ci serve...
+ è tutto ciò che ci serve...
  ma non nel caso dei callback.
- Il callback di invio verra' chiamato con dati freschi, e piu' di una volta
- se la mail e' grande.
- E se il pattern cercato e' troncato tra due chiamate il metodo 
+ Il callback di invio verrà chiamato con dati freschi, e più di una volta
+ se la mail è grande.
+ E se il pattern cercato è troncato tra due chiamate il metodo 
 \family typewriter 
 string.gsub()
 \family default 
@@ -3686,8 +3833,8 @@ string.gsub()
 \family typewriter 
 a
 \family default 
- vive fintantoche' la funzione di callback viene chiamata (vedi il tutorial
- LUA) e terra' a mente che il pattern cercato puo' essere troncato.
+ vive fintantochè la funzione di callback viene chiamata (vedi il tutorial
+ LUA) e terra' a mente che il pattern cercato può essere troncato.
 \layout Standard
 
 Infine, il codice della 
@@ -3784,8 +3931,8 @@ Per fare un buon plugin ci vuole un sacco di testing.
  Dovreste cercare beta tester presso il forum di FreePOPs (HTTP://freepops.diludo
 vico.it) e chiedere agli autori del software di includerlo nella distribuzione
  principale.
- Dovreste anche leggere il contratto della webmail, controllare se c'e'
- qualcosa come 
+ Dovreste anche leggere il contratto della webmail, controllare se c'è qualcosa
+ come 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -3808,7 +3955,7 @@ Ci sono un sacco di cose che abbiamo tralasciato.
 
 La\SpecialChar ~
 multi-page\SpecialChar ~
-stat e' la vera buona implementazione per 
+stat è la vera buona implementazione per 
 \family typewriter 
 stat()
 \family default 
@@ -3816,7 +3963,7 @@ stat()
  Abbiamo detto sopra che la nostra implementazione elenca solo i messaggi
  nella prima pagina.
  Il codice per il parsing e l'estrazione di informazioni interessanti da
- una pagina e' gia' scritto, ci serve solo una funzione che controlli se
+ una pagina è gia' scritto, ci serve solo una funzione che controlli se
  siamo all'ultima pagina e se no cambi il valore di una variabile 
 \family typewriter 
 uri
@@ -3826,9 +3973,9 @@ uri
 \family typewriter 
 uri
 \family default 
- in questione sara' usata dalla funzione di prelevamento.
+ in questione sarà usata dalla funzione di prelevamento.
  In questo caso dovreste usare il modulo di supporto con il ciclo do_until.
- Questo e' un semplice esempio di 
+ Questo è un semplice esempio di 
 \family typewriter 
 do_until()
 \family default 
@@ -4042,14 +4189,14 @@ Le uniche cose strane sono la funzione di prelevamento e quel che serve
  per salvare la sessione.
  Dato che le webmail a volte fanno timeout dovreste controllare se la pagina
  prelevata sia valida o no, ed eventualmente ritentare il login.
- Il salvataggio della sessione e' la prossima questione.
+ Il salvataggio della sessione è la prossima questione.
 \layout Description
 
 Salvare\SpecialChar ~
 la\SpecialChar ~
-sessione e' il modo per rendere FreePOPs davvero simile ad un browser.
- Cio' significa che la prossima volta che controllate la posta FreePOPs
- ricarichera' semplicemente la pagina inbox senza rifare il login.
+sessione è il modo per rendere FreePOPs davvero simile ad un browser.
+ ciò significa che la prossima volta che controllate la posta FreePOPs ricariche
+ra' semplicemente la pagina inbox senza rifare il login.
  Per fare questo avete bisogno di una funzione 
 \family typewriter 
 key()
@@ -4167,7 +4314,7 @@ quit_update()
 pass()
 \family default 
 .
- Questa e' la nuova struttura 
+ Questa è la nuova struttura 
 \family typewriter 
 pass()
 \family default 
@@ -4281,7 +4428,7 @@ dove
 \family typewriter 
 foo_login()
 \family default 
- e' la vecchia funzione 
+ è la vecchia funzione 
 \family typewriter 
 pass()
 \family default 
@@ -4294,7 +4441,7 @@ session.unlock(key())
 \family typewriter 
 quit()
 \family default 
-, perche' dovrete rilasciare la sessione in caso di fallimento (e  
+, perché dovrete rilasciare la sessione in caso di fallimento (e  
 \family typewriter 
 quit()
 \family default 
@@ -4345,7 +4492,7 @@ end{footnotesize}
 
 La\SpecialChar ~
 funzione\SpecialChar ~
-top() e' piuttosto complessa.
+top() è piuttosto complessa.
  Non la descriveremo in modo completo, ma suggeriamo di guardare il plugin
   
 \family typewriter 
@@ -4377,9 +4524,9 @@ top()
 \layout Description
 
 Il\SpecialChar ~
-javascript e' l'inferno delle webmail.
+javascript è l'inferno delle webmail.
  I Javascript possono fare qualsiasi cosa e dovrete leggerli per emulare
- cio' che fanno.
+ ciò che fanno.
  Per esempio potrebbero aggiungere alcuni cookie (e dovrete fare lo stesso
  a mano con 
 \family typewriter 
@@ -4420,17 +4567,17 @@ La\SpecialChar ~
 forza\SpecialChar ~
 bruta si chiama ethereal.
  A volte le cose non funzionano nel modo giusto e l'unico modo per fare
- debug e' attivare curl debugging per vedere cosa fa FreePOPs (
+ debug è attivare curl debugging per vedere cosa fa FreePOPs (
 \family typewriter 
 b.curl:setopt(curl.OPT_VERBOSE,1)
 \family default 
-) e sniffare cio' che fa un vero browser.
+) e sniffare ciò che fa un vero browser.
 \layout Description
 
 Il\SpecialChar ~
 modo\SpecialChar ~
 open\SpecialChar ~
-source e' il modo migliore di avere software di buona qualita'
+source è il modo migliore di avere software di buona qualita'
  Questo significa che dovrete rilasciare molto spesso il vostro plugin nella
  fase di sviluppo e interagire molto con i vostri tester.
  Fidatevi, funziona, o leggete 
@@ -4450,15 +4597,15 @@ The cathedral and the bazaar
 
 Il\SpecialChar ~
 modulo\SpecialChar ~
-mimer e' molto beta mentre scriviamo queste righe, ma e' cio' di
- cui avete bisogno se siete nel caso sfortunato di una webmail che non ha
- un pulsante per salvare i messaggi.
+mimer è molto beta mentre scriviamo queste righe, ma è ciò di cui
+ avete bisogno se siete nel caso sfortunato di una webmail che non ha un
+ pulsante per salvare i messaggi.
  Il plugin 
 \family typewriter 
 lycos.lua
 \family default 
- e' un esempio di cosa puo' fare.
- La principale funzione interessante e' 
+ è un esempio di cosa può fare.
+ La principale funzione interessante è 
 \family typewriter 
 mimer.pipe_msg()
 \family default 
@@ -4478,12 +4625,12 @@ iter
 :
 \layout Enumerate
 
-Aggiornate alla versione piu' recente di FreePOPs.
+Aggiornate alla versione più recente di FreePOPs.
 \layout Enumerate
 
-Cercate di riprodurre il bug, se questo non e' facilmente riproducibile
- siamo sfortunati.
- Si puo' ancora tentare qualcosa, se il software e' andato in crash potreste
+Cercate di riprodurre il bug, se questo non è facilmente riproducibile siamo
+ sfortunati.
+ Si può ancora tentare qualcosa, se il software è andato in crash potreste
  compilarlo dai sorgenti, installare valgrind, lanciare freepopsd con valgrind
  e sperare che i messaggi d'errore siano interessanti.
 \layout Enumerate
@@ -4497,14 +4644,162 @@ Lanciate FreePOPs con lo switch -w
 Riproducete il bug
 \layout Enumerate
 
-Inviate agli sviluppatori il log, piu' ogni altra informazione utile come
+Inviate agli sviluppatori il log, più ogni altra informazione utile come
  che tipo di sistema avete e come riprodurre il bug.
+\layout Section
+
+FAQ
+\layout Subsection*
+
+Come si configura FreePOPs?
+\layout Standard
+
+FreePOPs non si configura, basta cambiare le impostazioni del vostro client
+ di posta come spiegato nel tutorial.
+ Ricordate di impostare localhost come server pop, 2000 come porta (o un'altra
+ che hai scelto all'esecuzione di FreePOPs) e di usare come nome utente
+ il vostro indirizzo di posta completo.
+\layout Standard
+
+Se avete dei problemi, leggete pure i nostri tutorial.
+ Se continuate ad avere problemi, potete iscrivervi al forum (molto frequentato)
+ e descrivere il vostro problema.
+\layout Subsection*
+
+FreePOPs si paga?
+\layout Standard
+
+FreePOPs è free software, è e rimarrà libero.
+ Lo potete scaricare gratuitamente dal sito, ma se i quattro amici che l'hanno
+ creato vi stanno a cuore potete sempre inviargli una birretta chiedendo
+ il loro indirizzo via mail, o una piccola donazione (effettuabile sul sito
+ di SourceForge).
+\layout Subsection*
+
+Ho installato e configurato correttamente FreePOPs, ma non riesco comunque
+ ad inviare messaggi, come posso fare?
+\layout Standard
+
+FreePOPs serve solo per ricevere la posta elettronica.
+ Per inviare messaggi dovete continuare ad utilizzare il server SMTP del
+ provider con il quale vi collegate.
+ In questo modo non avrete nessun problema nell'invio di email.
+ Per sapere a quale server SMTP fare riferimento guardate il sito web del
+ vostro provider o chiamate il supporto tecnico.
+\layout Subsection*
+
+Perderò la mia mail? Il programma è beta!
+\layout Standard
+
+Nessuno garantisce il software che produce, e nessuno si assume responsabilità,
+ tanto meno se il software non lo pagate.
+ A noi pare abbastanza sicuro, ma non possiamo garantire niente.
+ Inoltre nessuno garantisce che il vostro client di mail funzioni bene,
+ quindi se usavate quello...
+\layout Subsection*
+
+Posso fare qualcosa per aiutare il progetto?
+\layout Standard
+
+Certo, i sorgenti sono disponibili.
+ Mandateci pure patch e segnalate i problemi che incontrate.
+\layout Standard
+
+Se il programma vi piace particolarmente potete anche contribuire con una
+ piccola donazione.
+\layout Standard
+
+Quando volete segnalare un problema, assicuratevi prima che si verifichi
+ anche nell'ultima versione rilasciata del programma (se non è quella che
+ state usando).
+ Consigliamo di disinstallare una vecchia versione prima di installarne
+ una nuova.
+ Inoltre ricordatevi di includere:
+\layout Itemize
+
+il numero della versione di FreePOPs che vi ha dato il problema
+\layout Itemize
+
+il sistema operativo su cui il problema si è presentato
+\layout Itemize
+
+il nome del client di posta che usi e se possibile il numero di versione
+\layout Itemize
+
+cosa più importante, il log di FreePOPs generato con l'opzione -vv o -w
+ (guardate sotto se non sapete dove si trova e/o come aggiungere parametri
+ alla riga di comando), controllando che non vi siano riportati dati personali
+ che non volete rendere noti ad altri (gli autori del programma).
+ Ma non preoccupatevi, la password non è mai scritta nei log se non come
+ una sequenza di nove (9) asterischi (indipendentemente dalla sua reale
+ lunghezza).
+\layout Subsection*
+
+Dove si trova il log di FreePOPs?
+\layout Standard
+
+La posizione del log di FreePOPs dipende dal sistema operativo in cui il
+ programma viene eseguito.
+ Su Linux, il log si trova in /var/log/freepops per default, o dove avete
+ specificato con l'opzione -l.
+ Su Windows, il log (file log.txt) si trova nella cartella dove avete installato
+ FreePOPs o nel percorso da voi specificato se avete eseguito FreePOPs con
+ il parametro -l.
+\layout Standard
+
+Prima di inviare il log assicuratevi che esso sia stato generato con l'opzione
+ -vv (o -w) che sta per "log verboso".
+ Questi parametri da riga di comando producono un log molto più dettagliato
+ che ci permette di identificare più facilmente i problemi.
+ Se necessario, cancellate il file di log esistente e riavviate FreePOPs
+ aggiungendo uno di tali parametri alla riga di comando (guardate sotto):
+ avrete così un log "pulito" che contiene solo la sessione fallita (se l'errore
+ è riproducibile).
+ 
+\layout Subsection*
+
+Come cambio i parametri della riga di comando di FreePOPs?
+\layout Standard
+
+Su sistemi basati su Unix vi basta aggiungere i parametri che volete al
+ comando che usate per lanciare FreePOPs (forse da uno script).
+\layout Standard
+
+Sui vari Windows avete due possibilità: aprire la finestra delle proprietà
+ del collegamento a FreePOPs nel menu Avvio e aggiungere i parametri al
+ suo interno; oppure lanciare FreePOPs manualmente da una finestra DOS con
+ i parametri che volete.
+\layout Subsection*
+
+Il mio "Antivirus" di fiducia dice che in FreePOPs c'è un virus, che devo
+ fare?
+\layout Standard
+
+Smettere di usare quell'antivirus :-) A parte gli scherzi, FreePOPs NON
+ contiene virus, cavalli di troia, worm, formule per riti demoniaci, piani
+ segreti per il dominio del mondo né altro del genere.
+ I sorgenti sono disponibili a tutti (il programma è rilasciato sotto Licenza
+ GNU GPL) e pensare di nascondere codice malevolo alla luce del sole sarebbe
+ quantomeno folle.
+ Pertanto un qualsiasi antivirus che rilevi problemi di questo tipo ha problemi
+ di accuratezza, eufemisticamente parlando.
+\layout Standard
+
+Vero è che scaricare un eseguibile pre-compilato da una qualche fonte sconosciut
+a è come andare in cerca di guai.
+ I pacchetti pre-compilati che trovate sulle pagine ufficiali del progetto
+ provengono dai sorgenti che tutti possono vedere.
+ Ciò che trovate su siti vari di software gratuito o che scaricate tramite
+ sistemi di file sharing peer-to-peer, non possono chiaramente offrire alcuna
+ garanzia di sicurezza.
+ Per cui usate un po' di buon senso.
+ 
 \layout Section
 
 Autori
 \layout Standard
 
-Questo manuale e' stato scritto da Enrico Tassi 
+Questo manuale è stato scritto da Enrico Tassi 
 \family typewriter 
 <gareuselesinge@users.sourceforge.net>
 \family default 
@@ -4516,7 +4811,7 @@ Questo manuale e' stato scritto da Enrico Tassi
 Sviluppatori
 \layout Standard
 
-FreePOPs e' sviluppato da:
+FreePOPs è sviluppato da:
 \layout Itemize
 
 Enico Tassi 
@@ -4539,7 +4834,17 @@ Simone Vellei
 <simone_vellei@users.sourceforge.net>
 \layout Standard
 
-LiberoPOPs e' sviluppato da:
+Gmail.lua è sviluppato da:
+\layout Itemize
+
+Rami Kattan <
+\family typewriter 
+rkattan@gmail.com
+\family default 
+> HTTP://www.kattanweb.com
+\layout Standard
+
+LiberoPOPs è sviluppato da:
 \layout Itemize
 
 Enico Tassi 

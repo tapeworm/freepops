@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH FREEPOPSD 1 "November  3, 2003"
+.TH FREEPOPSD 1 "July 6, 2004"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -42,18 +42,18 @@ Allows max simultneous connections. Default is 5.
 \fB \-b \fRaddr, \fB\-\-bind \fRaddr
 Binds over addr instead INADDR_ANY (0.0.0.0). addr must be a character string 
 containing an IPv4 network address in the dotted-quad format, 
-"ddd.ddd.ddd.ddd" or an host name.
+"ddd.ddd.ddd.ddd" or a host name.
 .TP
 .\"\fB \-c \fRconfigfile, \fB\-\-config \fRconfigfile
 .\"Use configfile as configuration file for the libero webmail. This option overrides configurations specified in default files.
 .\".TP
 \fB \-l \fIlogfacility, \fB\-\-logmode \fIlogfacility
 Can be used to specify the logging facility. \fIlogfacility\fR can be "stdout" 
-to stdout (the default), "syslog" to use the logging daemon or 
+for stdout (the default), "syslog" to use the logging daemon or 
 a valid filename to log to this file.
 .TP
 \fB \-d\fR, \fB\-\-daemonize
-Moves the process to backgroud releasing the tty
+Moves the process to background releasing the tty
 .TP
 \fB \-P \fRproxyaddress:proxyport, \fB\-\-proxy \fRproxyaddress:proxyport
 You can specify the http proxy name and port separated by :. 
@@ -64,13 +64,13 @@ http_proxy, PROXY and proxy. If the proxy needs authentication
 you have to use the \fB\-A\fR switch.
 If you specify \fB\-P \-\fR, you will force direct connections to the web,
 without using any proxy server, despite enviromental variable settings.
-.\".TP
-.\"\fB \-A \fRusername:password, \fB\-\-auth \fRusername:password
-.\"This switches on the basic authentication method. Must be used with the 
-.\"\fB\-P\fR switch or one of its alternative forms.
+.TP
+\fB \-A \fRusername:password, \fB\-\-auth \fRusername:password
+This switches on the basic authentication method. Must be used with the 
+\fB\-P\fR switch or one of its alternative forms.
 .TP
 \fB \-u \fRname, \fB\-\-useragent \fRname
-Use this useragent in http connections. The default is "LiberoPOPs/VERSION".
+Use this useragent in http connections. The default is "Firefox/0.8".
 A valid example is mozilla's "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.5) Gecko/20031024 Debian/1.5-2".
 .TP
 \fB \-s \fRuser.group, \fB\-\-suid \fRuser.group

@@ -74,8 +74,8 @@ FreePOPs can be useful in some situations, here we give the most obvious
  ones:
 \layout Itemize
 
-You are behind a firewall that closes port 110 but you need to read
- your mail and the web-mail of your mail provider sucks.
+You are behind a firewall that closes port 110 but you need to read your
+ mail and the web-mail of your mail provider sucks.
 \layout Itemize
 
 Your mail provider does not allow you to access your mailbox with the POP3
@@ -206,6 +206,17 @@ See HTTP://flatnuke.sourceforge.net for the project homepage
 
 kernel.lua This is a plugin to monitor the news about the Linux kernel through
  ChangeLogs.
+\layout Description
+
+gmail.lua This plugin supports the 
+\family typewriter 
+gmail.google.com
+\family default 
+ webmail for mailboxes with 
+\family typewriter 
+@gmail.com
+\family default 
+ domains.
 \layout Section
 
 History
@@ -309,8 +320,7 @@ FreePOPs command line parameters
 \layout Standard
 
 The real FreePOPs configuration is made trough command line arguments.
- They are described in depth in the man page in Unix environments, here
- we present only the most useful:
+ They are described in depth in the man page in Unix environments:
 \layout Description
 
 -p\SpecialChar ~
@@ -320,11 +330,131 @@ The real FreePOPs configuration is made trough command line arguments.
  To alter this behaviour just use this switch.
 \layout Description
 
+-t\SpecialChar ~
+<num>,\SpecialChar ~
+--threads\SpecialChar ~
+<num> FreePOPs is able to manage multiple connections,
+ up to 
+\emph on 
+num
+\emph default 
+.
+ Default is 5.
+\layout Description
+
+-b\SpecialChar ~
+addr,\SpecialChar ~
+--bind\SpecialChar ~
+addr Binds over 
+\emph on 
+addr
+\emph default 
+ instead INADDR_ANY (0.0.0.0).
+ 
+\emph on 
+addr
+\emph default 
+ must be a character string containing an IPv4 network address in the dotted-qua
+d format, 
+\begin_inset Quotes eld
+\end_inset 
+
+ddd.ddd.ddd.ddd
+\begin_inset Quotes erd
+\end_inset 
+
+ or a host name.
+\layout Description
+
+-l\SpecialChar ~
+logfacility,\SpecialChar ~
+--logmode\SpecialChar ~
+logfacility Can be used to specify the logging facility.
+ 
+\emph on 
+logfacility
+\emph default 
+ can be 
+\begin_inset Quotes eld
+\end_inset 
+
+stdout
+\begin_inset Quotes erd
+\end_inset 
+
+ for stdout (the default), 
+\begin_inset Quotes eld
+\end_inset 
+
+syslog
+\begin_inset Quotes erd
+\end_inset 
+
+ to use the logging daemon or a valid filename to log to this file.
+\layout Description
+
+-d,\SpecialChar ~
+--daemonize Moves the process to background releasing the tty.
+\layout Description
+
 -P\SpecialChar ~
 <host>:<port>,\SpecialChar ~
 --proxy\SpecialChar ~
 <host>:<port> To tell FreePOPs which is your HTTP
  proxy.
+ If 
+\emph on 
+port
+\emph default 
+ is not set then the default 8080 is used.
+\layout Description
+
+-A\SpecialChar ~
+<username>:<password>,\SpecialChar ~
+--auth\SpecialChar ~
+<username>:<password> For proxies with basic
+ authentication, to specify username and password.
+ Must be used with 
+\emph on 
+-P
+\emph default 
+ or its long form.
+\layout Description
+
+-u\SpecialChar ~
+name,\SpecialChar ~
+--useragent\SpecialChar ~
+name Use this useragent in http connections.
+ The default is 
+\begin_inset Quotes eld
+\end_inset 
+
+Firefox/0.8
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ A valid example is mozilla's 
+\begin_inset Quotes eld
+\end_inset 
+
+Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.5) Gecko/20031024 Debian/1.5-2
+\begin_inset Quotes erd
+\end_inset 
+
+.
+\layout Description
+
+-s\SpecialChar ~
+user.group,\SpecialChar ~
+--suid\SpecialChar ~
+user.group This option is used to make freepopsd drop root
+ privileges after binding.
+ If you run it as a normal user there is no need to use this option.
+\layout Description
+
+-h,\SpecialChar ~
+--help Prints the usage message.
 \layout Description
 
 -v,\SpecialChar ~
@@ -332,14 +462,6 @@ The real FreePOPs configuration is made trough command line arguments.
 -w,\SpecialChar ~
 --veryverbose This tells FreePOPs to log some interesting
  info for bug reporting.
-\layout Description
-
--t\SpecialChar ~
-<num>,\SpecialChar ~
---threads\SpecialChar ~
-<num> FreePOPs is able to manage multiple connections,
- up to num.
- Default is 5.
 \layout Standard
 
 In posix environments like Debian GNU/Linux you can start FreePOPs at boot
@@ -1092,6 +1214,18 @@ something@kernel.org.26
 \family default 
  for a specific tree.
  Password is not used, type a random string.
+\layout Subsection
+
+gmail.lua
+\layout Standard
+
+This is the webmail support for 
+\family typewriter 
+@gmail.com
+\family default 
+ mailboxes.
+ To use this plugin you have to use your full email address as the username
+ and your real password as the password.
 \layout Section
 
 Creating a plugin
@@ -1132,8 +1266,8 @@ Read carefully this tutorial, it is hardly a good tutorial, but is better
 
 The website contains, in the doc section, a quite good documentation of
  the sources.
- You should keep a web browser open at the LUA modules documentation page while
- writing a plugin.
+ You should keep a web browser open at the LUA modules documentation page
+ while writing a plugin.
 \layout Enumerate
 
 After creating a prototype, you should read a full featured plugin.
@@ -2109,7 +2243,8 @@ foo_globals
 \family typewriter 
 pass()
 \family default 
- function likewise stores the password in the global table and prints some stuff.
+ function likewise stores the password in the global table and prints some
+ stuff.
  The 
 \family typewriter 
 quit()
@@ -2208,8 +2343,8 @@ POST
 \family typewriter 
 HTTP://localhost:3000/
 \family default 
- the form contents (I used a local address for comfort, but it
- should be something like 
+ the form contents (I used a local address for comfort, but it should be
+ something like 
 \family typewriter 
 HTTP://webmail.foo.xx/login.php
 \family default 
@@ -3478,11 +3613,11 @@ b:get_uri()
 popserver_callback()
 \family default 
 .
- But think that a 5MB mail, downloaded with a 640Kbps DSL connection, at full
- 80KBps speed, takes 64 seconds to download.
+ But think that a 5MB mail, downloaded with a 640Kbps DSL connection, at
+ full 80KBps speed, takes 64 seconds to download.
  This means your plugin will not send any data to the mail client for more
- than one minute and this will make the mail client to disconnect from FreePOPs 
- thinking the POP3 server is dead.
+ than one minute and this will make the mail client to disconnect from FreePOPs
+  thinking the POP3 server is dead.
  So we must send the data to the mail client as soon as we can.
  For this we have the 
 \family typewriter 
@@ -4319,11 +4454,10 @@ Range:
 \end_inset 
 
  HTTP request field, or the 
-\family typewriter
+\family typewriter 
 tin.lua
-\family default
- plugin if the server needs to be interrupted
- in a bad way.
+\family default 
+ plugin if the server needs to be interrupted in a bad way.
  Remember that the 
 \family typewriter 
 top()
@@ -4456,6 +4590,116 @@ Send to the developers the log, plus any other info like your system type
  and how to reproduce this bug.
 \layout Section
 
+FAQ
+\layout Subsection*
+
+How do I configure FreePOPs?
+\layout Standard
+
+You don't need to configure FreePOPs, you just have to change your mail
+ client settings as described in the tutorial.
+ Remember to set the POP3 server address to localhost, the server port to
+ 2000 and to set the username to your full email address.
+\layout Standard
+
+If you continue having problems after reading the manual and the tutorial
+ you can post to the forum (usually in italian, but feel free to post in
+ english).
+\layout Subsection*
+
+How much does it cost?
+\layout Standard
+
+FreePOPs is free software.
+ You can download and use it for free.
+\layout Subsection*
+
+I've installed FreePOPs and properly configured my mail client, but I'm
+ unable to send mail...?
+\layout Standard
+
+FreePOPs helps you only in receiving messages.
+ To send mail you have to use the SMTP server of your network provider.
+ If you don't know what SMTP to use, see your ISP website or call their
+ tech support.
+\layout Subsection*
+
+This software is in beta stage..
+ will I lose my mail?
+\layout Standard
+
+Nobody guarantees the software they write, even if you pay it a lot...
+\layout Subsection*
+
+How can I help the project?
+\layout Standard
+
+Use the source Luke...
+ Sources are freely available, feel free to send us patches and bug reports.
+\layout Standard
+
+If you want, you can donate to the project via Sourceforge and Paypal.
+\layout Standard
+
+When you want to bugreport, check that you are using the latest version
+ and don't forget to include:
+\layout Itemize
+
+FreePOPs's version number
+\layout Itemize
+
+The operating system you are running
+\layout Itemize
+
+Your mail client name and its version number
+\layout Itemize
+
+Most importantly THE LOG, generated with the -w option.
+ Make sure that it doesn't contain any sensitive info you wouldn't like
+ to disclose.
+\layout Subsection*
+
+Where is the log?
+\layout Standard
+
+It depends on the system you are using.
+ On a GNU/Linux system it is probably in /var/log/freepops.
+ On a Windows system the file log.txt is in the same folder of the FreePOPs
+ executable
+\layout Standard
+
+Before sending the log make sure that it doesn't contain sensitive info
+ you wouldn't like to disclose.
+ Check that you have created the log by starting FreePOPs with the -w switch.
+ We suggest you erase the log file, start FreePOPs with the switch and recreate
+ the problem.
+\layout Subsection*
+
+How do I change FreePOPs's command line switches?
+\layout Standard
+
+On a Unix system you should know how to do this, just add the switches to
+ the command you use to run FreePOPs (maybe from a script).
+\layout Standard
+
+On a Windows system you have to open with a right click the properties of
+ the FreePOPs link in the Start menu and add the switches in the command
+ line there.
+\layout Subsection*
+
+My "Antivirus" says FreePOPs is a virus!
+\layout Standard
+
+Stop using that mad antivirus :-) FreePOPs is Free Software, the source
+ code is available on the website...
+ this means we have nothing to hide.
+\layout Standard
+
+We suggest you download FreePOPs from the official site.
+ The binaries distributed on the official website come from the freely available
+ source code, downloading FreePOPs from any other source may mean trouble.
+\layout Section
+
 Authors
 \layout Standard
 
@@ -4492,6 +4736,16 @@ Nicola Cocchiaro
 Simone Vellei 
 \family typewriter 
 <simone_vellei@users.sourceforge.net>
+\layout Standard
+
+Gmail.lua is developed by:
+\layout Itemize
+
+Rami Kattan <
+\family typewriter 
+rkattan@gmail.com
+\family default 
+> HTTP://www.kattanweb.com
 \layout Standard
 
 LiberoPOPs is developed by:

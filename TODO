@@ -23,6 +23,10 @@ for next version or later:
 	http://freepops.diludovico.it/index.php?showtopic=1296&st=0&#entry7332
 	fix cookie for _secure
 	fix gmail exportation
+	fix tin multipage
+	http://freepops.diludovico.it/index.php?showtopic=1382
+	bindings for psock : http://freepops.diludovico.it/index.php?showtopic=1386&st=0&#entry7968
+	TOP 1 9999 in gmail
 	fix gmail 695 tonumber(nil)
 
 - eof -

@@ -195,7 +195,9 @@ function user(pstate,username)
 	port = port or freepops.MODULE_ARGS.port
 
 	--here we are
-	pf_state.socket = psock.connect(host,port)
+	pf_state.socket = psock.connect(host,port,psock.NONE)
+	--for debugging
+	--pf_state.socket = psock.connect(host,port,psock.ALL)
 	if not pf_state.socket then
 		log.error_print("unable to connect")
 		return POPSERVER_ERR_NETWORK

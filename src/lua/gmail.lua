@@ -10,7 +10,7 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.39"
 PLUGIN_NAME = "GMail.com"
-PLUGIN_REQUIRE_VERSION = "0.0.15"
+PLUGIN_REQUIRE_VERSION = "0.0.16"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=gmail.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
@@ -800,12 +800,14 @@ function retr(pstate,msg,data)
 
 		-- tell the browser to pipe the uri using cb
 		local f,rc = b:pipe_uri(uri,cb)
-
+		
 		if not f then
 			log.error_print("Asking for "..uri.."\n")
 			log.error_print(rc.."\n")
 			return POPSERVER_ERR_NETWORK
 		else
+			popserver_callback("\r\n",data)
+			
 -- TODO: after sending the message to the client, we need to set it as read
 --       already done, but check if all is ok....
 			uri = string.format(gmail_string.msg_mark, folder)

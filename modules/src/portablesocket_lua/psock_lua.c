@@ -24,6 +24,16 @@
 #define METANAME "sockstate.type"
 #define BUFSIZE 2048
 
+#define DBG_NONE (0<<0)
+#define DBG_SEND (1<<0)
+#define DBG_RECV (1<<1)
+#define DBG_INFO (1<<2)
+#define DBG_ALL (DBG_INFO|DBG_RECV|DBG_SEND)
+
+#define DBG(a) ((a) & (debug_opt))
+
+static int debug_opt = DBG_NONE;
+
 // returns and checks a stringhack from the stack
 static struct sock_state_t* check_sockstate(lua_State*L)
 {
@@ -32,7 +42,18 @@ static struct sock_state_t* check_sockstate(lua_State*L)
   return *(struct sock_state_t**)tmp;
 }
 
-static void fake_print(char*s) { }
+static void fake_print(char*s) { 
+	if (!strncmp(s,SOCK_ERROR,strlen(SOCK_ERROR))) {
+		fprintf(stderr,"%s",s);
+	} else if (DBG(DBG_INFO) && !strncmp(s,SOCK_INFO,strlen(SOCK_INFO))) {
+		fprintf(stderr,"%s",s);
+	} else if (DBG(DBG_SEND) && !strncmp(s,SOCK_SENT,strlen(SOCK_SENT))) {
+		fprintf(stderr,"%s",s);
+	} else if (DBG(DBG_RECV) && 
+		!strncmp(s,SOCK_RECEIVED,strlen(SOCK_RECEIVED))) {
+		fprintf(stderr,"%s",s);
+	}
+}
 
 /* function: connect */
 static int lua_psock_connect(lua_State* L)
@@ -41,11 +62,13 @@ struct sock_state_t** s;
 struct sock_state_t* tmp;
 const char* host;
 int port;
+int flag;
 
-L_checknarg(L,2,"connect wants 'host' and 'port'");
+L_checknarg(L,3,"connect wants 'host', 'port' and 'flag'");
 	
 host = luaL_checkstring(L,1);
 port = luaL_checkint(L,2);
+flag = luaL_optint(L,3,0);
 
 tmp = sock_connect((char*)host,port,BUFSIZE*2,fake_print);
 
@@ -59,6 +82,8 @@ luaL_getmetatable(L,METANAME);
 lua_setmetatable(L,-2);
 
 *s = tmp;
+
+debug_opt = flag;
 
 return 1;
 }
@@ -107,6 +132,15 @@ static const struct luaL_reg psock_f [] = {
   {NULL,NULL}
 };
 
+static const struct L_const psock_c [] = {
+  {"SEND",DBG_SEND},
+  {"RECV",DBG_RECV},
+  {"ALL",DBG_ALL},
+  {"INFO",DBG_INFO},
+  {"NONE",DBG_NONE},
+  {NULL,0}
+};
+
 static const struct luaL_reg psock_m [] = {
   {"send",lua_psock_send},
   {"recv",lua_psock_recv},
@@ -128,6 +162,7 @@ lua_settable(L,-3);
 
 luaL_openlib(L,NULL,psock_m,0);
 luaL_openlib(L,"psock",psock_f,0);
+L_openconst(L,psock_c);
 	
 return 1;
 }

@@ -1,0 +1,337 @@
+Art. Chiave Unica
+
+1.1 Telecom Italia Media S.p.A. ("Tin.it"), con sede in Via Cristoforo Colombo n.142 - 00147 Roma, e Matrix S.p.A. ("Virgilio"), con sede in C.so Garibaldi n.99 - 20121 Milano, hanno dato vita all'iniziativa Chiave Unica, volta a fornire a tutti gli interessati i propri servizi Internet.
+1.2 Con la Chiave Unica si può entrare nel mondo dei servizi di Tin.it e Virgilio utilizzando sempre ed unicamente l'indirizzo ("user-ID") e la password della casella di posta elettronica dell'abbonamento ad Internet di Tin.it (di seguito "Contratto di Abbonamento"). Nel caso in cui l'abbonamento di Tin.it preveda più caselle di posta elettronica, la Chiave Unica è composta dall'indirizzo e password della casella di posta "principale".
+1.3 L'utilizzo dei servizi di Chiave Unica, meglio individuati al successivo art.3, è consentito esclusivamente ad un utente abbonato ad uno dei servizi di accesso ad Internet - gratuito o a pagamento - di Tin.it (di seguito "Cliente"), che abbia accettato:
+a) le qui presenti "Condizioni Generali di adesione a Chiave Unica" (di seguito "Condizioni Generali");
+b) le condizioni di contratto che regolano il singolo servizio di Chiave Unica, laddove previste.
+1.4 Il Cliente prende atto che l'adesione al contratto di abbonamento gratuito ad Internet di Tin.it è subordinata all'accettazione delle presenti Condizioni Generali, alle quali è funzionalmente collegato.
+1.5 E' consentita la registrazione solamente agli utenti che abbiano la maggiore età e che siano residenti nel territorio italiano.
+
+
+Art. Funzionamento di Chiave Unica
+
+2.1 Chiave Unica è dotata di un meccanismo di riconoscimento automatico del Cliente in fase di utilizzo dei Servizi, tramite cookie (c.d. "Single Sign On").
+Il Single Sign On prevede che un Cliente che abbia già inserito la propria user-ID e password di posta per entrare in Chiave Unica ed utilizzare uno dei servizi a sua disposizione - tra quelli di cui al successivo art.3 - non debba re-inserirla per poter passare da un servizio ad un altro purché:
+a) si tratti di servizi per i quali il Cliente si sia già registrato ai sensi del successivo art.3.2;
+b) il Cliente passi da un servizio ad un altro senza chiudere il browser di navigazione (es. Netscape, Explorer).
+2.2 Il Cliente che desideri inibire il sistema di riconoscimento automatico potrà farlo, in qualunque momento, avvalendosi degli appositi strumenti a sua disposizione (es. logout).
+2.3 Le disposizioni di cui al presente articolo sono derogabili dalle condizioni generali di contratto dei singoli servizi a cui il Cliente si sia registrato.
+
+Art. Servizi di Chiave Unica
+
+3.1 Aderendo a Chiave Unica, i Clienti possono usufruire dei seguenti servizi:
+* Community (es. profili, blog, clip art, chat, forum, instant messenger C6);
+* Finanza;
+* Newsletter.
+3.2 L'adesione ai suddetti servizi (di seguito "Servizi") ed il loro utilizzo è subordinato alla preventiva registrazione a ciascuno di essi con relativa accettazione delle condizioni di contratto che, di volta in volta, li regolano.
+La registrazione ai singoli Servizi può avvenire previo inserimento della user-ID e password di posta elettronica del Contratto di Abbonamento.
+3.3 L'utilizzo di alcuni Servizi può richiedere la definizione di parametri specifici (c.d. preferenze di servizio, ad es. i titoli di portfolio ecc.) che verranno richiesti al Cliente in una fase successiva a quella di registrazione.
+3.4 I Servizi di Chiave Unica non sono attualmente usufruibili dalle e-mail secondarie.
+
+
+Art. Comunicazione dati
+
+4.1 Accettando le presenti Condizioni Generali, il Cliente prende atto ed accetta che i dati personali da lui stesso forniti a Tin.it con l'adesione al contratto di abbonamento ad Internet (di seguito "Dati personali") saranno comunicati a Matrix S.p.A. ai fini dell'erogazione dei Servizi di propria competenza. I suddetti Dati personali verranno trattati da Matrix S.p.A., in qualità di co-titolare, per il perseguimento delle medesime finalità per le quali sono stati raccolti e con le modalità e le procedure necessarie per la corretta fornitura dei Servizi desiderati e richiesti. In assenza di tale accettazione, i Dati personali inseriti non potranno essere registrati e non sarà possibile per Tin.it e Matrix S.p.A. erogare i Servizi di Chiave Unica richiesti dal Cliente stesso.
+
+
+Art. Collegamenti funzionali
+
+5.1 Il Cliente prende atto ed accetta espressamente che i singoli Servizi sono collegati funzionalmente al Contratto di Abbonamento da egli stesso indicato in fase di registrazione a ciascuno di essi, come specificato al precedente art.3, comma 3.2.
+Pertanto, nell'ipotesi in cui il suddetto Contratto di Abbonamento venga meno, per qualsivoglia causa o ragione, verranno meno automaticamente anche tutti i Servizi che al Contratto di Abbonamento sono connessi.
+
+
+Art. Variazioni contrattuali
+
+6.1 Tin.it e Virgilio si impegnano a dare notizia al Cliente, via e.mail (alla casella di posta elettronica assegnata al Cliente con il Contratto di Abbonamento), delle eventuali modifiche apportate alle presenti Condizioni Generali, che comportino effetti riduttivi e/o peggiorativi per il Cliente con indicazione della data di efficacia delle modifiche stesse. Tale data dovrà essere successiva di almeno 15 gg. rispetto a quella della comunicazione di Tin.it e Virgilio.
+6.2 Qualora il Cliente non ritenga di accettare le modifiche comunicate avrà facoltà di recedere dalle presenti Condizioni Generali mediante comunicazione scritta (via e.mail alla casella di posta elettronica chiaveunica@tin.it o a mezzo lettera indirizzata alla Casella Postale 10797, 00144 Roma Eur), inviata almeno 7 gg. prima della data di efficacia delle modifiche.
+6.3 Il recesso dalle presenti Condizioni Generali e, quindi, da Chiave Unica comporterà la cessazione dei Servizi ad essa connessi, ivi compreso il contratto di abbonamento gratuito ad Internet di Tin.it in quanto funzionalmente collegato.
+	  
+Il presente contratto si compone delle seguenti parti:
+A. Condizioni di fornitura
+B. Condizioni generali di Contratto
+
+A. Condizioni di fornitura
+· Accesso ad Internet tramite Rete Telefonica Generale Commutata (PSTN) o tramite rete ISDN, senza limiti di tempo;
+· Servizio di posta elettronica: 1 casella di posta elettronica da 8 MB ("Casella e.mail"). Ogni messaggio potrà avere dimensione massima di 3 MB;
+· 50 MB di Spazio Web
+
+
+Dati del Cliente
+Ai fini dell'adesione al presente Servizio, il Cliente fornisce a Telecom Italia Media S.p.A. i propri dati personali.
+Telecom Italia Media S.p.A. si riserva la facoltà di non attivare o di sospendere il servizio in qualsiasi momento qualora i dati forniti risultassero errati o non esistenti. 
+
+Modalità di recesso
+Ai sensi del D.Lgs.185/99, il Cliente ha diritto di recedere dal presente Contratto, senza alcuna penalità, entro 10 giorni lavorativi decorrenti dal giorno della conclusione del Contratto stesso.
+Il diritto di recesso di cui sopra potrà essere esercitato solo ed esclusivamente dai Clienti che concludano il Contratto attraverso una o più tecniche di comunicazione a distanza mediante l'invio di comunicazione scritta a: 
+Telecom Italia Media S.p.A. (di seguito "Tin.it"), Via C. Colombo 142, 00147 Roma - numero fax: 070/506831 (la comunicazione scritta dovrà essere effettuata a mezzo raccomandata A/R o tramite telegramma, telex o facsimile a patto che venga confermata entro 48 ore da raccomandata A/R.).
+Il Servizio di assistenza viene fornito tramite Help Desk dalle 8.00 alle 24.00 sette giorni su sette.
+L'utilizzo del Servizio necessita di una connessione telefonica attraverso la numerazione 70X dedicata ad Internet il cui costo è quello praticato dal titolare della numerazione stessa come riportato sul sito ufficiale di Tin.it.
+
+B. Condizioni generali di contratto
+ART.1 CONDIZIONI DI FORNITURA
+1.1 Le condizioni di fornitura costituiscono parte integrante e sostanziale del presente Contratto.
+
+ART.2 OGGETTO
+Oggetto del presente Contratto è l'abbonamento al Servizio. Il Servizio è reso da Tin.it secondo la disponibilità e le condizioni di congestione della propria rete. Il Cliente prende pertanto atto che la continuità del servizio e qualità dello stesso dipende dalle sopra richiamate condizioni tecniche.
+
+ART.3 UTILIZZO DEL SERVIZIO
+3.1 Il Cliente potrà utilizzare il Servizio per un singolo accesso, non potranno essere effettuati più collegamenti contemporanei. Il sistema connesso a Tin.it non potrà in nessun caso avere funzioni di raccolta di più utenti con l'utilizzo da parte loro dei servizi Tin.it.
+3.2 Il Cliente prende atto ed accetta espressamente che:
+3.2.1 la gestione dello Spazio Web, tramite ftp (file transfer program), sarà possibile solo attraverso l'accesso ad Internet, effettuato utilizzando la numerazione indicata da Tin.it sul proprio sito;
+3.2.2 lo Spazio Web, a sua disposizione, potrà essere utilizzato per la creazione di pagine personali, non come strumento per la semplice archiviazione di file (non visualizzabili o raggiungibili dallo Spazio Web);
+3.2.3 è a cura e spese del Cliente la creazione di copie personali di backup dei contenuti immessi nello Spazio Web;
+3.2.4 non è ammesso far accedere allo Spazio Web, anche solo per alcune sezioni, un numero limitato di utenti (es. tramite password);
+3.2.5 non è consentito inserire nello Spazio Web banner pubblicitari che non appartengano al circuito ufficiale Virgilio/Tin.it o a circuiti ufficiali di scambio banner;
+3.2.6 non è consentito inserire nello Spazio Web file eseguibili (es. .exe, .com, .bat etc.);
+3.2.7 lo Spazio Web sarà caratterizzato da una toolbar pubblicitaria, amministrata da Tin.it, che non potrà essere rimossa.
+3.3 Tin.it si riserva altresì la facoltà di adottare ogni opportuna misura tecnica che non consenta la continuazione dell'accesso, eventualmente anche temporaneamente, al Cliente e/o di recedere dal Servizio ai sensi di quanto previsto dal successivo art.11 e/o di risolvere lo stesso ai sensi dell'art. 1456 c.c. secondo quanto previsto al successivo art.12, qualora riscontri che con la linea telefonica utilizzata dal Cliente per effettuare l'accesso ad Internet sia stato generato dal Cliente stesso o da terzi, un collegamento durante il quale si siano verificati uno o più episodi di spamming o altre tipologie di abuso in rete, eventualmente anche a sua insaputa o senza il suo consenso.
+Il Cliente - nel dichiarare di avere la legittima disponibilità dell'utilizzo della linea telefonica attraverso la quale accede alla rete anche nell'ipotesi in cui questi non sia intestatario di tale linea - esonera da ogni responsabilità Tin.it, impegnandosi a manlevarla, da ogni richiesta di danno, qualora Tin.it, nell'esercizio delle facoltà e dei diritti sopraindicati, non consenta e/o interrompa l'accesso da parte di terzi, diversi dal Cliente stesso, alla rete tramite la linea telefonica da cui si è generato uno o più episodi di spamming o altra tipologia di abuso in rete.
+
+ART.4 RISERVATEZZA
+4.1 L'accesso ai servizi di Tin.it è consentito mediante un codice di identificazione Cliente (User-ID) e una parola chiave (password). Il Cliente è tenuto a conservare la password nella massima riservatezza e con la massima diligenza. Egli sarà pertanto responsabile di qualsiasi danno arrecato a  Tin.it e/o a terzi in dipendenza della mancata osservanza di quanto sopra.
+4.2 il Cliente si impegna a notificare immediatamente e comunque per iscritto a Tin.it l'eventuale furto, smarrimento o perdita della password.
+
+ART.5 DOCUMENTAZIONE
+5.1 Il Cliente prende atto e accetta l'esistenza del registro elettronico del funzionamento dei servizi di Tin.it ("Log"), generato e conservato a cura di Telecom Italia Media S.p.A. Il contenuto del Log, ha il carattere della riservatezza assoluta e potrà essere esibito su richiesta delle Autorità competenti.
+
+ART.6 GARANZIE E LIMITAZIONI DI RESPONSABILITA'
+6.1 Il Cliente garantisce l'originalità di ogni informazione, programma, dato (d'ora in poi "Materiale") immesso tramite il proprio codice di identificazione e/o password, sotto qualunque forma (testo, grafica, immagine, suono, foto, filmato ecc.), all'interno dello Spazio Web o, più genericamente, negli spazi web messi a disposizione da Tin.it con il presente Servizio, nonché nei meta-tag, nelle aree pubbliche, nei Newsgroup e/o in Rete.
+6.2 Eventuale materiale protetto da copyright può essere immesso nelle suddette aree solo qualora il Cliente abbia acquisito, dal titolare del diritto d'autore, i connessi diritti di utilizzazione, quindi solo con il permesso scritto del titolare del diritto e con l'obbligo di citare la fonte e l'esistenza del premesso. Il materiale fotografico o video di terzi o riproducente il ritratto di terzi può essere utilizzato solo qualora il Cliente abbia acquisito il consenso dall'autore e del soggetto ritratto. In relazione alla disponibilità di tali diritti e consensi il Cliente si assume ogni responsabilità esonerando completamente Tin.it.
+Il Cliente assume la piena responsabilità circa l'esattezza e veridicità del Materiale immesso, in nome e/o per conto proprio o di terzi, e assicura che lo stesso è nella sua legittima disponibilità, non è contrario a norme imperative e non viola alcun segno distintivo, diritto di proprietà intellettuale, industriale o altro diritto di terzi derivante dalle norme giuridiche vigenti o dalle consuetudini o dagli usi. In ogni caso il Materiale immesso non deve presentare forme e/o contenuti di carattere pedo-pornografico, pornografico, osceno, blasfemo o diffamatorio.6.3 Il Cliente conviene e concorda che il Materiale, da lui reso accessibile pubblicamente o trasmesso privatamente, rientra nella sua sola ed esclusiva responsabilità. In nessun caso e per nessuna ragione Tin.it, potrà essere ritenuta responsabile per il contenuto del suddetto Materiale nonché, a mero titolo esemplificativo, per eventuali errori e/o omissioni presenti nel Materiale stesso, o per eventuali danni occorsi in conseguenza dell'utilizzo del Materiale, ricevuto, inviato via e.mail o in altro modo trasmesso o diffuso tramite il Servizio. Il Cliente prende inoltre atto del fatto che è vietato servirsi o dar modo ad altri di fare uso del Servizio in particolare per:
+6.3.1 rendere disponibile, pubblicare, inviare via e-mail o in altro modo trasmettere o diffondere pubblicità, materiale promozionale, "Junk mail", "spam", catene di S. Antonio, piramidi, o qualsiasi altra forma di sollecitazione non richieste e indesiderate, con eccezione per quelle aree (come le shopping room) che sono specificamente dedicate a queste finalità;
+6.3.2 falsificare la propria identità;
+6.3.3 arrecare danno, in qualsivoglia modo, a minori di età;
+6.3.4 rendere disponibile, inviare via e.mail o in altro modo trasmettere o diffondere qualsivoglia materiale che contenga virus o altri codici, file o programmi creati per interrompere, distruggere o limitare il funzionamento dei software, degli hardware o degli impianti di telecomunicazioni di terzi;
+6.3.5 interferire, interrompere o manomettere i Servizi, i server o i network collegati con i Servizi, agire in contrasto con qualsivoglia requisito, procedura o regola dei network collegati con i Servizi;
+6.3.6 effettuare della corrispondenza contro la morale e l'ordine pubblico o con lo scopo di recare molestia alla quiete pubblica o privata, di recare offesa, o danno diretto o indiretto a chiunque;
+6.3.7 intercettare, impedire, interrompere illecitamente comunicazioni informatiche o telematiche o rivelarne il contenuto;
+6.3.8 violare, sottrarre o sopprimere la corrispondenza informatica o telematica tra terzi;
+6.3.9 comunicare in rete in modo offensivo, ingiurioso o diffamatorio;
+6.3.10 violare la privacy degli altri utenti della rete;
+6.3.11 contravvenire in modo diretto o indiretto alle vigenti leggi dello Stato italiano o di qualunque altro Stato.
+6.4 In caso di violazione di una delle disposizioni di cui alle presenti condizioni generali, Tin.it avrà la facoltà di rimuovere il Materiale immesso senza alcun obbligo di preavviso e di risolvere il presente Contratto.
+6.5 Il Cliente è consapevole che la navigazione, il caricamento e/o lo scaricamento di eventuali programmi, files informazioni dalla Rete è sotto la propria responsabilità.
+6.6 Il Cliente prende atto ed accetta che ove Tin.it verifichi l'esistenza di uno o più episodi di spamming o altre tipologie di abuso in rete aventi comunque origine dalla linea telefonica di cui è intestatario il Cliente e/o che questi utilizzi per collegarsi alla rete, Tin.it avrà facoltà di adottare ogni opportuna misura tecnica che non consenta la continuazione dell'accesso e/o recedere dallo stesso ai sensi del successivo art.10 e/o di risolverlo ai sensi dell'art. 1456 c.c. secondo quanto previsto al successivo art.11.
+6.7 Il Cliente prende atto ed accetta altresì che analoghe facoltà a quelle previste al precedente punto 6.6 spetteranno a Tin.it nel caso in cui il Cliente stesso, prescindendo dagli episodi di spamming, non renda identificabile, con qualsiasi mezzo tecnico, il numero della linea telefonica da questi utilizzata per collegarsi alla rete.
+6.8 Il Cliente manleva sostanzialmente e processualmente  Tin.it, mantenendola indenne da ogni perdita, danno, responsabilità, costo, spese, incluse anche spese legali, derivante da ogni violazione delle clausole sub. art.6.1, .6.2, 6.3, 6.4, , 6.6.
+6.9 Fermo restando quanto previsto all'art.2 del Contratto Tin.it non risponderà altresì di ritardi, cattivo funzionamento, sospensione e/o interruzione - né verso il Cliente né verso soggetti direttamente o indirettamente connessi al Cliente stesso - nell'erogazione del Servizio causati da:
+6.9.1 forza maggiore o caso fortuito; 
+6.9.2 manomissione o interventi illeciti ad opera di terzi su servizi o apparecchiature utilizzate da Tin.it;
+6.9.3 manomissioni o interventi sugli apparati di connessione, che rientrano in disponibilità del Cliente, effettuati da quest'ultimo o da terzi non autorizzati;
+6.9.4 errata utilizzazione del Servizio da parte del Cliente;
+6.9.5 malfunzionamento degli apparati di connessione utilizzati dal Cliente.
+6.10 Il Cliente accetta altresì che Tin.it potrà sospendere la fornitura del Servizio per garantire gli interventi di manutenzione ordinaria e straordinaria e che lamentata disponibilità del Servizio causato da un'interruzione parziale o totale del servizio di accesso fornito da altro operatore di telecomunicazioni.
+6.11 Il Cliente riconosce e concorda che Tin.it avrà il diritto di memorizzare il Materiale nonché rivelarlo a terzi ove ciò sia richiesto dalla legge o dall'Autorità o sia necessario per:
+6.11.1	adempiere a procedure legali;
+6.11.2	applicare le presenti condizioni generali;
+6.11.3	replicare alle contestazioni secondo cui il Materiale viola diritti di terzi;
+6.11.4	proteggere i diritti, le proprietà o i requisiti di sicurezza di Tin.it e dei suoi utenti.
+6.12 Il Cliente prende atto ed accetta che:
+6.12.1 i messaggi di posta elettronica inviati alla Sua Casella e.mail risiederanno sui server Tin.it e saranno consultabili on line, tramite Webmail, per 60 giorni dalla data di ricezione sui server Tin.it;
+6.12.2 i messaggi di posta elettronica depositati nella cartella "cestino", accessibile da Webmail, risiederanno sui server Tin.it e saranno consultabili on line per 7 giorni dalla data di ricezione sui server stessi.
+Alla scadenza dei suddetti termini, i messaggi verranno automaticamente soppressi.
+6.13 Il Cliente, con la sottoscrizione del presente Contratto, manleva sin d'ora Tin.it da ogni responsabilità e/o da ogni eventuale pretesa risarcitoria propria e/o di terzi derivante dalla soppressione dei messaggi e.mail e/o degli allegati indirizzati alla sua Casella e.mail, anche nel caso in cui sia ascrivibile a caso fortuito o a forza maggiore.
+
+ART.7 DIRITTI DI PROPRIETA' INTELLETTUALE
+7.1 Il Cliente riconosce che il Servizio e tutti i software con esso erogati ("Software") contengono informazioni riservate e sono protetti dalle leggi in materia di proprietà intellettuale e/o industriale. Fatta eccezione per il caso in cui sia espressamente autorizzato da Tin.it, il Cliente si impegna a non modificare o disporre in qualsiasi modo (sia a titolo gratuito sia a titolo oneroso) e a non distribuire, diffondere o creare lavori basati, integralmente o parzialmente, sul Servizio o sui Software.
+7.2 Resta in ogni caso inteso che il Cliente non può (né consentire che terzi lo facciano) sublicenziare, noleggiare, vendere, distribuire, mettere in circolazione, a disposizione, trasformare anche solo in parte, decodificare, decompilare, disassemblare, modificare, tradurre il Software, effettuare operazioni di reverse engineering e comunque riprodurre, copiare, usare o disporre del Software, o di sue parti, in ogni altro modo che non sia qui espressamente consentito o consentito da norme inderogabili di legge. Inoltre il Cliente non è autorizzato a creare lavori derivati da o in qualsiasi modo tentare di scoprire qualunque codice sorgente, o sviluppare prodotti o applicazioni software basate sul Software o che facciano in qualsiasi modo uso dello stesso.
+
+ART.8 GARANZIE
+8.1 Il Cliente riconosce e dichiara espressamente che:
+a) il Servizio e i Software sono forniti "COME SONO" e "COME DISPONIBILI". E' espressamente esclusa qualsivoglia garanzia da parte di Tin.it, inclusa a mero titolo di esempio qualsiasi garanzia di commerciabilità, idoneità per scopi particolari o di qualità del Servizio.
+b) Tin.it non garantisce (i) che il Servizio e/o i Software soddisferanno le esigenze del Cliente, (ii) che il Servizio e/o i Software verranno forniti senza interruzioni, con puntualità, in modo sicuro o esente da errori, (iii) l'aspettativa del Cliente che i risultati ottenuti dall'utilizzo del Servizio e/o dei Software siano veritieri e affidabili (iv) che la qualità dei prodotti, servizi, informazioni o altri materiali acquisiti o ottenuti per il tramite del Servizio e/o dei Software possano soddisfare le esigenze del Cliente, né che (v) eventuali errori nei Software vengano corretti.
+c) Qualsiasi contenuto scaricato o altrimenti ottenuto dal o per il tramite del Servizio e/o dei Software è ottenuto a sola ed esclusiva discrezione e a esclusivo rischio del Cliente e che il Cliente è il solo ed esclusivo responsabile per ogni danno al proprio computer o per la perdita di dati derivante dall'aver scaricato tali contenuti o dall'avere utilizzato il Servizio e/o i Software.
+
+ART.9 LIMITAZIONI DI RESPONSABILITA'
+9.1 Il Cliente riconosce e concorda che Tin.it non sarà in alcun caso responsabile per eventuali danni di qualsiasi specie e natura risultanti da: (i) non utilizzo o scorretto utilizzo del Servizio e/o dei Software; (ii) costo di approvvigionamento di beni e/o servizi sostitutivi rispetto ai beni e/o servizi acquistati o ottenuti tramite il Servizio; (iii) accesso non autorizzato o alterazione delle trasmissioni o dei dati del Cliente; (iv) dichiarazioni o comportamenti di qualunque terzo soggetto. Nulla di quanto previsto nel presente contratto avrà l'effetto di limitare o escludere la responsabilità di Tin.it in caso di danni derivanti da dolo o colpa grave.
+
+ART.10 VARIAZIONE DEL SERVIZIO
+10.1 Tin.it si impegna a dare notizia, anche via e-mail, al Cliente delle eventuali modifiche tecnico/economiche/prestazionali apportate al Servizio che abbiano effetti riduttivi o peggiorativi, con indicazione della data di efficacia delle modifiche stesse. Tale data dovrà essere successiva di almeno 30 gg. rispetto a quella della comunicazione di Tin.it.
+
+ART.11 RECESSO
+11.1 Durante il periodo di validità del presente Contratto, il Cliente e Tin.it avranno facoltà di recedere dal presente contratto in uno dei seguenti casi:
+11.1.1	in qualunque momento
+11.1.2 qualora il Cliente non acceda ad Internet utilizzando la propria User-ID e password, assegnata con il presente Servizio, per un periodo di tempo superiore a 90 giorni consecutivi. 
+11.2 Il recesso potrà essere esercitato con 15 gg. di preavviso nelle modalità descritte al successivo art.14 "Comunicazioni".
+
+
+ART.12 CLAUSOLA RISOLUTIVA ESPRESSA
+12.1. Tin.it si riserva la facoltà di risolvere di diritto il presente Contratto, ai sensi e per gli effetti di cui all'art.1456 c.c., mediante comunicazione scritta inviata anche via e-mail in caso di inadempimento di anche una soltanto delle obbligazioni contenute nell'art.3 "UTILIZZO DEL SERVIZIO", nell'art.4 "RISERVATEZZA", nell'art.6 "GARANZIE E LIMITAZIONE DI RESPONSABILITA'", nell'art.7 "DIRITTI DI PROPRIETA' INTELLETTUALE". E' fatto salvo, in ogni caso, il diritto al risarcimento dei danni eventualmente subiti.
+
+ART.13 DURATA 
+13.1 L'abbonamento, al Servizio, decorrente dal giorno di attivazione, è a tempo indeterminato.
+
+ART.14 COMUNICAZIONI
+14.1 Le comunicazioni relative al presente Contratto potranno essere inviate dalle parti ai seguenti indirizzi:
+·	Per  Tin.it: Casella Postale 10797, 00144 Roma Eur o casella di posta elettronica mailto:tinitfree@tin.it. In quest'ultimo caso, le comunicazioni dovranno pervenire unicamente dalla Casella e.mail  dell Cliente;
+·	per il Cliente: indirizzo di residenza/sede legale o recapito alternativo indicato nelle Condizioni di fornitura o alla Casella e.mail del Cliente.
+14.2 Il Cliente è tenuto a comunicare tempestivamente a Tin.it ogni variazione della propria residenza o domicilio.
+
+ART.15 FORO COMPETENTE
+15.1 Per qualsiasi controversia inerente il presente Contratto, è competente in via esclusiva il Foro di Roma.
+Nel caso in cui il Cliente sia una persona fisica, che agisce per scopi estranei all'attività imprenditoriale o professionale eventualmente svolta, competente è il Foro della località indicata dal Cliente stesso come propria residenza o domicilio, se ubicata nel territorio dello Stato italiano.
+
+ART.16 RINVIO A NORME DI LEGGE
+16.1 Per quanto non previsto dal presente Contratto saranno applicabili le norme di legge italiane vigenti.
+
+ART.17 LEGGE 675/96
+17.1 I dati personali forniti dal Cliente a Telecom Italia Media S.p.A. sono tutelati dalla Legge 675/96, recante disposizioni a tutela delle persone e degli altri soggetti rispetto al trattamento dei dati personali (Il presente articolo sarà dettagliato in base al tipo di consenso prestato dal Cliente in fase di registrazione).
+
+
+      
+--------------------------------------------------------------------------------
+
+      Art.1. APPLICAZIONE DELLE CONDIZIONI
+
+Il presente contratto regola l¿utilizzo dei servizi di "Communicator Tin.it" (qui di seguito per brevità "Communicator" o "Servizi Communicator") offerti da Telecom Italia Media S.p.A., con sede in Roma, Via Cristoforo Colombo n.142 (di seguito "Tin.it"), ai propri abbonati al servizio di accesso gratuito ad Internet "Tin.it free" (di seguito "Tin.it Free").
+1)	I Servizi Communicator vengono erogati agli abbonati che si siano previamente registrati on line accettando le qui presenti condizioni contrattuali.
+
+
+Art.2. MODALITÀ DI REGISTRAZIONE
+
+La registrazione a Communicator avviene on line previo inserimento dell¿indirizzo di posta elettronica ("Casella e.mail") e della relativa password assegnati al Cliente con il Tin.it Free e conseguente accettazione delle presenti "Condizioni Generali di adesione a Communicator" (di seguito "Contratto di Adesione"). Cliccando on line su "Accetto" il Cliente dichiara di aver attentamente letto ed espressamente accettato le presenti Condizioni di Adesione.
+In difetto di quanto sopra, la registrazione non va a buon fine e non è possibile accedere a Communicator.
+
+
+Art.3. COMPOSIZIONE DEL PACCHETTO DI SERVIZI COMMUNICATOR
+
+Registrandosi a Communicator il Cliente potrà usufruire dei seguenti servizi:
+-	Mail (WebMail);
+-	Rubrica;
+-	Disco remoto;
+-	Foto album.
+
+
+I Servizi Communicator sono assoggettati alle presenti Condizioni di Adesione ed alle condizioni particolari previste per ciascuno di essi come riportate qui di seguito.
+
+Il servizio Mail (WebMail): consente, tramite una qualsiasi connessione ad Internet, la consultazione della propria Casella e.mail, con rubrica integrata e varie opzioni attivabili dal Cliente, quali la gestione dei messaggi in cartelle, la lettura di account di posta esterni, il filtraggio dei messaggi in arrivo (ad esempio per mittenti indesiderati) e altre eventuali opzioni/preferenze di volta in volta offerte da Tin.it.
+Tin.it dichiara ed il Cliente accetta che i messaggi inviati alla sua Casella e.mail, dopo essere stati letti on line, tramite WebMail - quindi non scaricati sul proprio personal computer - e "cestinati" con l¿apposito tasto sulla toolbar, rimangano conservati nella cartella "Cestino", sui server di Tin.it, per un periodo di tempo non superiore a 7 gg, al termine del quale verranno soppressi.
+
+
+Il servizio Rubrica: consente di mantenere l¿elenco dei contatti personali in una rubrica unica ed integrata con gli altri Servizi di Communicator. Tin.it dichiara ed il Cliente accetta che il numero massimo di contatti che e¿ possibile inserire in Rubrica è pari a 10.
+
+
+Il servizio Disco remoto: consente di archiviare file sul web, con possibilità di organizzarli in cartelle e gestirli via web con accesso da qualsiasi connessione ad Internet tramite autenticazione a Communicator. Il Cliente prende atto ed accetta espressamente che i suddetti file saranno resi pubblici su web.
+
+
+Il servizio Foto album: offre la possibilità di archiviare ritratti, foto o, più in generale, immagini sul web, con possibilità di organizzarli in album personali. Il Cliente prende atto ed accetta espressamente che i ritratti, le fotografie e/o le immagini inserite in fotoalbum saranno rese pubbliche su web. Il Cliente si assume ogni responsabilità in ordine alla tutela del diritto al ritratto da parte di terzi che appaiano nelle fotografie o immagini pubblicate e alla tutela dei diritti dell¿autore. Il Cliente si assume, inoltre, ogni responsabilità in ordine al contenuto delle fotografie ed immagini. Il Cliente prende atto ed accetta espressamente che il suo fotoalbum, con il materiale in esso contenuto, potrà essere utilizzato dalla redazione per eventuali iniziative editoriali e/o concorsi senza per questo aver nulla a pretendere.
+
+Tin.it dichiara ed il Cliente accetta che il limite massimo di spazio web a sua disposizione per i servizi di Disco remoto e Foto album è pari complessivamente a 25 MB.
+
+Tin.it dichiara ed il Cliente accetta che per l¿utilizzo dei Servizi Communicator sono a suo esclusivo carico i costi relativi al traffico registrato dall¿operatore di telefonia fissa o mobile.
+
+I Servizi Communicator sono dotati del meccanismo di riconoscimento automatico del mondo "Chiave Unica" denominato "Single sign on", il quale prevede che un Cliente che abbia già inserito l¿indirizzo e la password di posta elettronica del proprio Tin.it Free per entrare nel mondo Chiave Unica non debba re-inserirli per poter passare a Communicator o viceversa, purché non abbia chiuso il browser di navigazione (es. Netscape, Explorer).
+Il Cliente che desideri inibire il sistema di riconoscimento automatico potrà farlo, in qualunque momento, avvalendosi degli appositi strumenti a sua disposizione (es. logout).
+
+
+Art.4. - COLLEGAMENTI FUNZIONALI
+
+Il presente contratto dei Servizi Communicator è funzionalmente collegato al contratto di accesso ad Internet "Tin.it Free", pertanto nell¿ipotesi in cui il "Tin.it Free" venga meno, per qualsivoglia causa o ragione, verranno meno automaticamente anche le presenti Condizioni di Adesione e cesseranno automaticamente tutti i Servizi Communicator ad esso connessi.
+
+
+Art.5. - GARANZIE E RESPONSABILITA¿ DEL CLIENTE
+
+Il Cliente garantisce l'originalità di ogni informazione, programma, dato (d'ora in poi "Contenuti" o singolarmente "Contenuto") immesso tramite i Servizi Communicator, sotto qualunque forma (testo, grafica, immagine, suono, foto, filmato ecc.) in Disco remoto, Foto Album o, più in generale, nel meta-tag, nelle aree pubbliche o in Rete.
+Eventuali Contenuti protetti da copyright di terzi possono essere utilizzati solo qualora il Cliente abbia acquisito, dal titolare del diritto d'autore, i connessi diritti di utilizzazione, quindi solo con il permesso scritto del titolare del diritto e con l'obbligo di citare la fonte e l'esistenza del premesso. Il materiale fotografico o video di terzi o riproducente il ritratto di terzi può essere utilizzato solo qualora il Cliente abbia acquisito il consenso dall¿autore e del soggetto ritratto. In relazione alla disponibilità di tali diritti e consensi il Cliente si assume ogni responsabilità esonerando completamente Tin.it.
+Il Cliente assume, inoltre, la piena responsabilità circa l'esattezza e veridicità dei Contenuti immessi, in nome e/o per conto proprio o di terzi, e assicura che gli stessi sono nella sua legittima disponibilità, non sono contrari a norme imperative e non violano alcun segno distintivo, diritto di proprietà intellettuale, industriale, diritto di immagine o altro diritto di terzi derivante dalle norme giuridiche vigenti o dalle consuetudini o dagli usi. In ogni caso i Contenuti immessi non devono presentare forme e/o contenuti di carattere pedo-pornografico, pornografico, osceno, blasfemo o diffamatorio.
+Il Cliente conviene e concorda che i Contenuti, sia accessibili pubblicamente sia trasmessi privatamente, rientrano della sola ed esclusiva responsabilità del Cliente. In nessun caso e per nessuna ragione Tin.it, potrà essere ritenuta responsabile per i Contenuti inclusi nonché, a mero titolo esemplificativo, per eventuali errori e/o omissioni nei Contenuti, o per eventuali danni occorsi in conseguenza dell¿utilizzo di Contenuti, ricevuti, inviati via e.mail o in altro modo trasmessi o diffusi tramite i Servizi Communicator. Il Cliente si impegna a non utilizzare i Servizi Communicator per:
+a.	rendere disponibile, pubblicare, inviare per posta elettronica o in altro modo trasmettere o diffondere Contenuti che siano illeciti, dannosi, minatori, abusivi, molesti, diffamatori e/o calunniosi, volgari, osceni, lesivi della privacy altrui, razzisti, classisti o comunque reprensibili;
+b.	arrecare danno, in qualsivoglia modo, a minori di età;
+c.	falsificare la propria identità;
+d.	creare intestazioni o in altro modo manipolare segni distintivi o indicazioni al fine di contraffare l¿origine di un Contenuto trasmesso o diffuso tramite i Servizi Communicator;
+e.	rendere disponibile, pubblicare, inviare via e-mail o in altro modo trasmettere o diffondere un Contenuto che non abbia il diritto di trasmettere o diffondere in forza di una previsione di legge, di contratto ovvero a causa di un rapporto fiduciario (per esempio informazioni riservate, informazioni confidenziali apprese in forza di un rapporto di lavoro o protette da un patto di riservatezza);
+f.	rendere disponibile, pubblicare, inviare via e-mail o in altro modo trasmettere o diffondere un Contenuto che comporti la violazione di brevetti, marchi, segreti, diritti di autore o altri diritti di proprietà industriale e/o intellettuale di terzi soggetti;
+g.	rendere disponibile, pubblicare, inviare via e-mail o in altro modo trasmettere o diffondere pubblicità, materiale promozionale, "Junk mail", "spam", catene di S. Antonio, piramidi, o qualsiasi altra forma di sollecitazione non autorizzate o non richieste, con eccezione per quelle aree (come le shopping room) che sono specificamente dedicate a queste finalità;
+h.	rendere disponibile inviare via e.mail o in altro modo trasmettere o diffondere qualsivoglia materiale che contenga virus o altri codici, file o programmi creati per interrompere, distruggere o limitare il funzionamento dei software, degli hardware o degli impianti di telecomunicazioni di terzi;
+i.	interferire, interrompere o manomettere i Servizi Communicator, i server o i network collegati con i Servizi Communicator, agire in contrasto con qualsivoglia requisito, procedura o regola dei network collegati con i Servizi Communicator;
+j.	incoraggiare i terzi a mettere in atto una condotta illecita e/o criminosa passibile di responsabilità penale o civile;
+k.	intercettare, impedire, interrompere illecitamente comunicazioni informatiche o telematiche o rivelarne il contenuto;
+l.	violare, sottrarre o sopprimere la corrispondenza informatica o telematica tra terzi;
+m.	violare la privacy degli altri utenti della rete;
+n.	contravvenire in modo diretto o indiretto alle vigenti leggi dello Stato italiano o di qualunque altro Stato.
+
+Fatto salvo quanto previsto sopra, Tin.it si riserva il diritto di rimuovere qualsiasi Contenuto che costituisca violazione delle presenti Condizioni di Adesione o che comunque Tin.it ritenga a propria discrezione contrario al buon gusto, e ciò senza che il Cliente possa lamentare o pretendere alcunché. Il Cliente si impegna a valutare compiutamente ed autonomamente e a supportare tutti i rischi associati all¿utilizzo dei Contenuti, incluso l¿eventuale affidamento da lui riposto sulla veridicità, completezza o utilità dei Contenuti stessi. In caso di violazione delle disposizioni di cui al presente articolo, Tin.it avrà facoltà di rimuovere i Contenuti immessi, disabilitare l¿accesso ai Servizi Communicator, temporaneamente o definitivamente, e/o sospendere questi ultimi senza bisogno di preavviso e/o risolvere il presente Contratto di Adesione, fatto salvo il risarcimento dei danni subiti.
+
+Il Cliente riconosce e concorda che Tin.it ha il diritto di memorizzare i Contenuti nonché rivelarli a terzi ove ciò sia richiesto dalla legge o dall¿Autorità o sia necessario per:
+(a)	adempiere a procedure legali;
+(b)	applicare le Condizioni di Adesione;
+(c)	replicare alle contestazioni secondo cui i Contenuti violano diritti di terzi;
+(d)	proteggere i diritti, le proprietà o i requisiti di sicurezza di Tin.it e dei suoi utenti.
+
+Art.6. - DIRITTI DI PROPRIETA¿ INTELLETTUALE
+
+Il Cliente riconosce che i Servizi Communicator e tutti i software necessari utilizzati in connessione con i servizi stessi ("Software") contengono informazioni riservate e sono protetti dalle leggi in materia di proprietà intellettuale e/o industriale. Il Cliente, inoltre, conviene e concorda che i Contenuti riportati nelle inserzioni pubblicitarie o le informazioni presentate al Cliente stesso dai Servizi Communicator o dagli inserzionisti sono protette dalle norme in materia di diritti d¿autore, marchi, brevetti o altri diritti di proprietà intellettuale e/o industriale. Fatta eccezione per il caso in cui sia espressamente autorizzato da Tin.it o dagli inserzionisti, il Cliente si impegna a non modificare o disporre in qualsiasi modo (sia a titolo gratuito sia a titolo oneroso) e a non distribuire, diffondere o creare lavori basati, integralmente o parzialmente, sui Servizi Communicator o sui Software.
+Resta in ogni caso inteso che il Cliente non può (né consentire che terzi lo facciano) sublicenziare, noleggiare, vendere, distribuire, metter in circolazione, a disposizione, trasformare anche solo in parte, decodificare, decompilare, disassemblare, modificare, tradurre il Software, effettuare operazioni di riverse engineering e comunque riprodurre, copiare, usare o disporre del Software, o di sue parti, in ogni altro modo che non sia qui espressamente consentito o consentito da norme inderogabili di legge. Inoltre il Cliente non è autorizzato a creare lavori derivati da o in qualsiasi modo tentare di scoprire qualunque codice sorgente, o sviluppare prodotti o applicazioni software basate sul Software o che facciano in qualsiasi modo uso dello stesso.
+Il Cliente accetta che Tin.it potrà sospendere la fornitura dei Servizi Communicator per garantire gli interventi di manutenzione ordinaria e straordinaria e che la stessa non sarà in alcun modo responsabile nei confronti del Cliente per la mancata disponibilità dei Servizi Communicator causata da un¿interruzione parziale o totale del servizio di accesso fornito da altro operatore di telecomunicazioni.
+Tin.it non presta e non riconosce alcun tipo di garanzia, esplicita o implicita, e non formula alcuna promessa di qualità, buon funzionamento, di idoneità per un fine od un risultato particolare dei Servizi Communicator. In nessun caso Tin.it sarà responsabile per i danni diretti o indiretti (inclusi anche il danno emergente o il lucro cessante, i danni per interruzione dell¿attività, perdita di informazioni o dati ed altre perdite economiche) derivati al Cliente ovvero a terzi dall¿uso o mancato uso dei Servizi Communicator.
+
+Art.7. - FILE DI LOG
+
+Il Cliente prende atto e accetta l'esistenza di un registro elettronico del funzionamento dei Servizi Communicator offerti da Tin.it ("Log"), generato e conservato a cura di Telecom Italia Media S.p.A. Il contenuto del Log ha il carattere della riservatezza assoluta e potrà essere esibito su richiesta delle Autorità competenti.
+
+Art.8. - CLAUSOLA DI MANLEVA
+
+Il Cliente dichiara e garantisce di voler tenere indenne e manlevare Tin.it, nonché i soggetti a essa collegati o da essa controllati, da qualsiasi obbligo risarcitorio, che possa originarsi a loro carico in relazione all¿utilizzo di Communicator fatto dal Cliente.
+
+
+Art.9. - DIVIETO DI CESSIONE O DI SFRUTTAMENTO COMMERCIALE DEI SERVIZI COMMUNICATOR
+
+Il Cliente sia impegna a non riprodurre, duplicare, copiare, vendere, rivendere e comunque a non sfruttare a fini commerciali i Servizi Communicator o una qualunque loro parte, nonché l¿utilizzo o l¿accesso a Communicator.
+
+
+Art.10. - GARANZIE
+
+Il Cliente prende atto ed accetta espressamente che:
+a.	I Servizi Communicator sono forniti "COME SONO" e "COME DISPONIBILI". E¿ espressamente esclusa qualsivoglia garanzia da parte di Tin.it, inclusa a mero titolo di esempio qualsiasi garanzia di commerciabilità, idoneità per scopi particolari o di qualità di Communicator.
+b.	Tin.it non garantisce (i) che i Servizi Communicator soddisferanno le esigenze del Cliente, (ii) che i Servizi Communicator verranno forniti senza interruzioni, con puntualità, in modo sicuro o esente da errori, (iii) l¿aspettativa del Cliente che i risultati ottenuti dall¿utilizzo dei Servizi Communicator siano veritieri e affidabili (iv) che la qualità dei prodotti, servizi, informazioni o altri materiali acquisiti o ottenuti per il tramite dei Servizi Communicator possa soddisfare le esigenze del Cliente, né che (v) eventuali errori nei Software vengano corretti.
+c.	Qualsiasi contenuto scaricato o altrimenti ottenuto dal o per il tramite di Communicator è ottenuto a sola ed esclusiva discrezione e a esclusivo rischio del Cliente e che il Cliente è il solo ed esclusivo responsabile per ogni danno al proprio computer o per la perdita di dati derivante dall¿aver scaricato tali contenuti o dall¿avere utilizzato i Servizi Communicator.
+d.	Nessun avviso, consiglio, consulenza o informazione, sia scritti sia orali, forniti al Cliente da Tin.it o ottenuti da o per il tramite di Communicator, comporteranno alcuna garanzia che non sia espressamente statuita dalla presenti Condizioni di Adesione.
+
+
+Art.11. - LIMITAZIONI DI RESPONSABILITA¿
+
+Il Cliente riconosce e concorda che Tin.it non sarà in alcun caso responsabile per eventuali danni di qualsiasi specie e natura risultanti da: (i) non utilizzo o scorretto utilizzo di Communicator; (ii) costo di approvvigionamento di beni e/o servizi sostitutivi rispetto ai beni e/o servizi acquistati o ottenuti tramite Communicator; (iii) accesso non autorizzato o alterazione delle trasmissioni o dei dati del Cliente; (iv) dichiarazioni o comportamenti di qualunque terzo soggetto; nulla di quanto previsto nel presente Contratto di Adesione avrà l¿effetto di limitare o escludere la responsabilità di Tin.it in caso di danni derivanti da dolo o colpa grave.
+
+
+Art.12. - DURATA E CESSAZIONE
+
+Il presente Contratto di Adesione è a tempo indeterminato. Fatto salvo il diritto di recesso ex D.Lgs. 185/99 e la risoluzione per inadempimento, Tin.it e il Cliente hanno facoltà di recedere dal presente Contratto di Adesione in qualunque momento fatto salvo l'obbligo di darne comunicazione a mezzo lettera o e.mail (come specificato al successivo art.16 "Comunicazioni") con 15 gg. di preavviso rispetto alla data di efficacia. In ogni caso di cessazione del presente Contratto di Adesione, il Cliente è tenuto ad interrompere immediatamente l¿utilizzo dei Servizi Communicator e Tin.it è autorizzata a disconnettere il Cliente, senza ulteriore avviso e senza che questi possa lamentare o pretendere alcunché.
+
+
+Art.13. - DIRITTO DI RECESSO
+
+Il presente Contratto di Adesione è sottoposto alla disciplina del D.Lgs.22.5.1999 n.185; pertanto, è riconosciuto al Cliente il diritto di recedere dal presente contratto, senza alcuna penalità, entro 10 giorni lavorativi decorrenti dal giorno di accettazione delle presenti Condizioni di Adesione, mediante l'invio di comunicazione scritta all'indirizzo di seguito riportato (a mezzo raccomandata A/R o tramite telegramma, telex o facsimile a patto che venga confermata entro 48 ore da raccomandata A/R): Telecom Italia Media S.p.A., Via C. Colombo 142, 00147 Roma - numero di fax 070/506831.
+
+
+Art.14. - MODIFICA DELLE CONDIZIONI DI ADESIONE E/O DEI SERVIZI COMMUNICATOR
+
+Tin.it si riserva il diritto di modificare le presenti Condizioni di Adesione e/o i Servizi Communicator in qualsiasi momento, in tutto o in parte, con preavviso scritto ¿ anche via e.mail - di almeno 15 giorni. Qualora il Cliente non ritenga di accettare le modifiche comunicate avrà facoltà di recedere dal presente Contratto di Adesione mediante comunicazione scritta (via e.mail alla casella di posta elettronica customercare@tin.it o a mezzo lettera indirizzata alla Casella Postale 10797, 00144 Roma Eur), inviata a Tin.it almeno 7 giorni prima della data di efficacia delle modifiche.
+Il recesso dal presente Contratto di Adesione e, quindi, da Communicator comporterà la cessazione di tutti i Servizi Communicator ad esso connessi. Il mancato recesso o la mancata ottemperanza alla menzionata procedura comporterà l¿accettazione delle modifiche da parte del Cliente.
+
+
+Art.15. - CESSIONE
+
+Il Cliente prende atto che né il presente Contratto di Adesione, né parte di esso, né i diritti che ne derivano, possono essere ceduti a terzi senza il preventivo consenso scritto di Tin.it. Il Cliente acconsente a che Tin.it ceda il presente Contratto di Adesione ad altra società sua controllata o controllante.
+
+
+Art.16. - COMUNICAZIONI
+
+Le comunicazioni relative al presente Contratto di Adesione potranno essere inviate dalle parti ai seguenti indirizzi con le seguenti modalità, ove non diversamente stabilito:
+-	per Tin.it: Casella Postale 10797, 00144 Roma Eur o casella di posta elettronica tinitfree@tin.it. In quest¿ultimo caso, le comunicazioni dovranno pervenire dalla Casella e.mail del Tin.it Free, come specificato al precedente art.2 "Modalità di registrazione";
+-	per il Cliente: indirizzo di residenza/sede legale o recapito alternativo indicato nel Tin.it Free o la Casella e.mail del Tin.it Free.
+
+
+Art.17. - CLAUSOLA RISOLUTIVA ESPRESSA
+
+Tin.it si riserva la facoltà di risolvere di diritto il presente Contratto di Adesione, ai sensi e per gli effetti di cui all'articolo 1456 c.c., a mezzo lettera o e.mail inviata al Cliente, in caso di inadempimento di anche una soltanto delle obbligazioni contenute nell¿art.5 "Garanzie e responsabilità del Cliente", nell¿art.6 "Diritti di proprietà intellettuale", nell¿art.9 "Divieto di cessione o di sfruttamento commerciale dei Servizi Communicator".
+E¿ fatto salvo il diritto di Tin.it al risarcimento dei danni eventualmente subiti.
+
+
+Art.18. - LEGGE APPLICABILE E FORO COMPETENTE
+
+Le presenti Condizioni di Adesione sono regolate dalla Legge italiana.
+Per qualsiasi controversia inerente il presente Contratto di Adesione, è competente in via esclusiva il Foro di Roma.
+Nel caso in cui il Cliente sia una persona fisica, che agisce per scopi estranei all¿attività imprenditoriale o professionale eventualmente svolta, competente è il Foro della località indicata dall¿Cliente stesso come propria residenza o domicilio, se ubicata nel territorio dello Stato italiano.
+
+         

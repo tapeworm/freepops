@@ -1,3 +1,4 @@
+- fixed gmail.lua STAT issue (thanks to kzero22)
 - fixed debian init script to remove pid file
 - changed web links in the manual to www.freepops.org
 - fixed dependencies to build debian package

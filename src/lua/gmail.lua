@@ -118,7 +118,8 @@ local gmail_string = {
 	homepage="http://gmail.google.com/gmail",
 	view_email="http://gmail.google.com/gmail?view=om&th=%s&zx=%s",
 	-- message list (regexp)
-	email_stat = ',%["(%w-)",(%d),(%d),".-","([^"]-)",.-%d%]\n',
+	-- email_stat = ',%["(%w-)",(%d),(%d),".-","([^"]-)",.-%d%]\n',
+	email_stat = ',%["(%w-)",(%d),(%d),"(.-)"%]\n',
 	-- next 2 lines: link to view a message in html format,
 	-- and regexp to extract sub messages.
 	view_email_thread="http://gmail.google.com/gmail?"..

@@ -1,3 +1,4 @@
+- fixed stupid fetchmail top bug
 - log used to write liberopopsd :)
 - fixed "-" in the username
 - proxy AUTH issue workaround (not able to make CURLAUTH_ANY work)

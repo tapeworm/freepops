@@ -299,6 +299,8 @@ function top_cb(global,data)
 		s =  global.a:dothack(s).."\0"
 			
 		popserver_callback(s,data)
+	
+		global.bytes = global.bytes + len
 
 		-- check if we need to stop (in top only)
 		if global.a:check_stop(global.lines_requested) then
@@ -685,6 +687,9 @@ function top(pstate,msg,lines,data)
 		lines = lines, 
 		-- the original amount of lines requested
 		lines_requested = lines, 
+		-- how many bytes we have received
+		bytes = 0,
+		total_bytes = get_mailmessage_size(pstate,msg),
 		-- the stringhack (must survive the callback, since the 
 		-- callback doesn't know when it must be destroyed)
 		a = stringhack.new(),
@@ -715,7 +720,7 @@ function top(pstate,msg,lines,data)
 	end
 	-- global.lines = -1 means we are done!
 	local check_f = function(_)
-		return global.lines < 0
+		return global.lines < 0 or global.bytes >= global.total_bytes
 	end
 	-- nothing to do
 	local action_f = function(_)

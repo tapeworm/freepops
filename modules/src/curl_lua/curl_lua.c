@@ -135,7 +135,7 @@ struct L_curl_bag {
  */ 
 struct L_const{
 	char* name;
-	int value;
+	unsigned long int value;
 };
 
 /******************************************************************************

@@ -54,11 +54,11 @@ your phone number formatted as 393921234567@three.com.XX and as password the usi
 original pin code provided by three.]]
 }
 
-
 -- Todo:
--- Delete message -> ok
+-- Delete message
+-- Clean Body -> remove 1^ e 3^ <td></td>
+-- Destinatin Parsing ->usare un ciclo e leggere tutti i link <a>
 -- Attachment handling	-> ok
--- Select folder using params 
 -- Empty trash after delete
 -- Rfc-ing header date
 
@@ -94,12 +94,12 @@ local tre_string = {
 	timeoutC = '(FIXME)',
 	-- The uri to save a message (read download the message)
 	save = 'http://webmail.%s/cgi-bin/inbox.cgi?do=viewmessage%d&folder=%s',
-
-	body_begin= '<td%swidth="542"%salign="left"%sclass="bodyText">',
-	body_end= '<br/></td>',
-
-	headerE = '.*<tr>.*<td><img></td>.*<td>.*</td>[.*]{!--}.*<td>[.*]{a}.*{.*a}[.*]</td>.*',
-	headerG = 'O<O>O<O><O><O>O<O>X<O>[O]{O}O<O>[O]{O}X{O}[O]<O>O',
+	bodyC= '(<tr%swidth="572">.*<td%swidth="542"%salign="left"%sclass="bodyText">(.*)</td>.*</tr>)',
+--	headerE = '.*<tr>.*<td><img></td>.*<td>.*</td>[.*]{!--}.*<td>[.*]{a}.*{.*a}[.*]</td>.*',
+--	headerG = 'O<O>O<O><O><O>O<O>X<O>[O]{O}O<O>[O]{O}X{O}[O]<O>O',
+--- se <a></a> nei campi a/cc/bcc compiaono pi volte si imputtana il parser
+	headerE = '.*<tr>.*<td><img></td>.*<td>.*</td>[.*]{!--}.*<td>.*</td>.*',
+	headerG = 'O<O>O<O><O><O>O<O>X<O>[O]{O}O<O>X<O>O',
 
 	-- The uri to delete some messages
 	delete = "http://webmail.%s/cgi-bin/viewmsg.cgi",
@@ -305,21 +305,36 @@ function tre_parse_webmessage(pstate,msg)
 	-- body handling: build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	local uri = string.format(tre_string.save,internal_state.domain,uidl,internal_state.folder)
-
+	-- print ( "DEBUG uri: " .. uri )
+	
 	-- get the main mail page
 	local f,rc = b:get_uri(uri)
 
 	-- extract the body
-	local from,to = string.find(f,tre_string.body_begin)
-	local from1,to1 = string.find(f,tre_string.body_end)
+--	local from,to = string.find(f,tre_string.bodyC)
+	local _,_,body = string.find(f,tre_string.bodyC)
+--	local from1,to1 = string.find(f,tre_string.bodyC)
 
-	--print ( from .. " " .. to .. " " .. from1 .. " " .. to1)
+--	print ( from .. " " .. to .. " " .. from1 .. " " .. to1)
 
-	local body = string.sub(f,to+1,from1-1)
+--	local body = string.sub(f,to+1,from-1)
+--print ("BODY" .. body)
+--print ("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+
+	local subst = 1
+
+        while subst > 0 do
+--print ( "DEBUG: " .. subst )
+	    f,subst = string.gsub(f,"<[aA] href=\"[^\"]+\" [a-z]+='[^']+' [a-z]+='[^']+' [a-z]+='[^']+'>([^<]*)<[/]*a>","%1")
+	end	
 
 	-- generate the headers
 	local x = mlex.match(f,tre_string.headerE,tre_string.headerG)
-	--x:print()
+--print ("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
+--print ("F" .. f)
+--print ( "STAMPO IL RISULTATO DELL'MLEX" )
+--	x:print()
+--print ("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")
 
 	local hfrom
 	local hto
@@ -329,10 +344,14 @@ function tre_parse_webmessage(pstate,msg)
 	local n = x:count()
 
 	for i = 1,n do
-		--print("addo " .. i .. " fino a " .. n)
+--		print("addo " .. i .. " fino a " .. n)
 		local _,_,k = string.find(x:get(0,i-1),'([A-Za-z]+):.*')
+
+--print ("DEBUG:" .. k)
+
 		local _,_,v = string.find(mimer.html2txtplain(x:get(1,i-1)),'^[%s%t]*(.*)')
 
+--print ("DEBUG:" .. x:get(1,i-1))
 		if k == "Da" then
 		    hfrom = v
 		end
@@ -352,13 +371,16 @@ function tre_parse_webmessage(pstate,msg)
 
 
 	-- attach handling: build the uri
-	local uri = string.format(tre_string.attach,internal_state.domain,uidl,internal_state.folder)
+	local uri = string.format(tre_string.attach,internal_state.domain,internal_state.folder,uidl)
 	-- get the main attach page
 	local f,rc = b:get_uri(uri)
 
 	-- extracts the attach list
 	local x = mlex.match(f,tre_string.attachE,tre_string.attachG)
-	--x:print()
+print ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+print ("DEBUG: extracts the attach list from " .. uri )
+--	x:print()
+print ("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 	
 	local n = x:count()
 	local attach = {}
@@ -369,6 +391,7 @@ function tre_parse_webmessage(pstate,msg)
 		url = string.gsub(url,"&amp;", "&")
 		local _,_,fname = string.find(x:get(0,i-1),'^[%s%t]*(.*)')
 		attach[mimer.html2txtplain(fname)] = "http://".. b:wherearewe() .. "/cgi-bin/" .. url
+print ("DEBUG: attacchment url " .. attach[mimer.html2txtplain(fname)] )
 		table.setn(attach,table.getn(attach) + 1)
 	end
 	
@@ -579,7 +602,7 @@ function stat(pstate)
 		    return true
 --                    error("unable to capture last or to")
                 end
-		print ( "DEBUG: " .. from .. " " .. to .. " " .. last )
+--		print ( "DEBUG: " .. from .. " " .. to .. " " .. last )
 
 		if tonumber(to) < tonumber(last) then
 			uri = string.format(tre_string.next,internal_state.domain,to,internal_state.folder)

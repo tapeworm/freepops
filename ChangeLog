@@ -1,3 +1,4 @@
+- fixed debian builds and debs, now hopefully conforming to debian policy
 25/12/2004 0.0.23
 - updated kernel.lua plugin
 - es: *** empty log message *** (lisar314)

@@ -1,5 +1,28 @@
-all: manual.pdf manual-it.pdf
+LATEX_HTML= \
+	    -split +1\
+	    -show_section_numbers\
+	    -html_version 3.2\
+	    -scalable_fonts\
+	    -local_icons\
+	    -antialias\
+	    -antialias_text\
+	    -top_navigation\
+	    -bottom_navigation\
+	    -next_page_in_navigation\
+	    -previous_page_in_navigation
+
+all: pdf html
+	
+pdf: manual.pdf manual-it.pdf
 	cp manual.pdf manual-it.pdf ../
+
+html: macro.tex manual.tex manual-it.tex
+	rm -rf html-manual/;mkdir html-manual/
+	latex2html -t "FreePOPs Manual"\
+		-dir html-manual $(LATEX_HTML) manual.tex
+	rm -rf html-manual-it/;mkdir html-manual-it/
+	latex2html -t "Manuale di FreePOPs"\
+		-dir html-manual-it $(LATEX_HTML) manual-it.tex
 
 spell:
 	aspell -t -c manual.tex
@@ -11,11 +34,15 @@ spell-it:
 	ps2pdf $< $@
 
 %.ps:%.dvi
-	dvips $< -o $@
+	dvips -f $< > $@
 
 %.dvi:%.tex macro.tex
 	latex $<
 	latex $<
 
 clean:
-	rm -f *.aux *.pdf *.dvi *.ps *.ps.gz *.log *.toc *.lof *.lot *.bbl *.blg
+	rm -rf *.aux *.pdf *.dvi *.ps *.ps.gz *.log\
+		*.toc *.lof *.lot *.bbl *.blg \
+		html-manual html-manual-it manua.txt manual-it.txt
+
+.PHONY: html pdf txt

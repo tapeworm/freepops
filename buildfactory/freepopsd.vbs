@@ -1,13 +1,21 @@
+'FreePOPS & Mail v. 1.1 12/10/2004
 
 Option Explicit
 
 Function GetDefaultMailClientPath(sh)
-  Dim key,temp
+  Dim key,temp,splitted
   key = "HKCR\mailto\shell\open\command\"
-  temp = Split(sh.RegRead (key),"""")
+  temp = sh.RegRead (key)
+  splitted = Split(temp,"""")
   'Debug Istr
-  'wScript.echo MailClientPath = Sh.RegRead (key)
-  GetDefaultMailClientPath = temp(1)
+  'wScript.echo "MailClientPath = " & Sh.RegRead (key)
+  If UBound(splitted) > 0 Then  
+    GetDefaultMailClientPath = splitted(1)
+  Else
+    splitted = Split(temp," ")
+    GetDefaultMailClientPath = splitted(0)
+    'wScript.echo "MailClientPath = " & splitted(0)
+  End If
 End Function
 
 Function GetMailProcessName(mailClientPath)

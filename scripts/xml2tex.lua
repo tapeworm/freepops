@@ -79,6 +79,7 @@ multilang["parameters"].en = "Parameters"
 
 function E(s)
 	s = string.gsub(s,"_","\\_")
+	s = string.gsub(s,"#","$\\sharp$")
 	s = string.gsub(s,"&egrave;","\\`e")
 	s = string.gsub(s,"&agrave;","\\`a")
 	s = string.gsub(s,"&ograve;","\\`o")

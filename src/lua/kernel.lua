@@ -10,6 +10,43 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "kernel.org Changelog viewer"
+PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=kernel.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
+PLUGIN_AUTHORS_CONTACTS = {"simone_vellei@users.sourceforge.net"}
+PLUGIN_DOMAINS = {"@kernel.org","@kernel.org.24","@kernel.org.26"}
+PLUGIN_PARAMETERS = {}
+PLUGIN_DESCRIPTIONS = {
+	it=[[
+Questo &egrave; un plugin specializzato per tenersi
+aggiornati sulle ultime versioni
+del kernel Linux. La pagina ufficiale che pubblica la lista delle versioni
+correnti del kernel Linux è http://kernel.org. Esiste un metodo comune,
+per i progetti sviluppati in sistemi GNU, per aggiornare l' utente 
+sulle modifiche effettuate nelle nuove versioni di un programma. 
+In ogni pacchetto &egrave; infatti presente il file ChangeLog che descrive le 
+novità apportate dagli autori. Anche
+il kernel Linux ha un ChangeLog per ogni versione nuova. Se desideri essere
+aggior nato sulle novit&agrave; apportate nelle versioni del kernel e,
+quindi, visionare il
+ChangeLog, puoi utilizzare questo plugin. Sar&agrave; sufficiente 
+inserire come nome
+utente qualcosa@kernel.org per essere aggiornato, tramite ChangeLog, su
+ogni nuova versione, oppure qualcosa@kernel.org.24 o qualcosa@kernel.org.26
+per visualizzare nella propria mailbox, rispettivamente, i ChangeLog
+dell'ultima versione del ramo 2.4 e del 2.6. Come password &egrave;
+possibile inserire una qualsiasi stringa casuale.]],
+	en=[[
+This plugin helps in staying up to date with the Linux kernel
+releases. http://kernel.org
+is the official page with the Linux kernel releases, each with its ChangeLog.
+You should use something@kernel.org to receive news about every tree, 
+something@kernel.24 or something@kernel.org.26 for a specific tree. 
+Password is not used, type a random string.]]
+}
+
 
 -- Configuration:
 --

@@ -25,6 +25,43 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "flatnuke"
+PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=kernel.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
+PLUGIN_AUTHORS_CONTACTS = {"simone_vellei@users.sourceforge.net"}
+PLUGIN_DOMAINS = {"@flatnuke","..."}
+PLUGIN_PARAMETERS = {}
+PLUGIN_DESCRIPTIONS = {
+	it=[[
+Questo plugin &egrave; un plugin aggregator specializzato nei 
+siti web fatti con il CMS
+FlatNuke , o altri siti che usano lo stesso for mato delle news 
+come il sito di
+FreePOPs. Dato che in un sito FlatNuke le news sono memorizzate in semplici
+file XML questo plugin &egrave; in grado di prelevare tutte le news, 
+non solo le intestazioni come il plugin aggregator. 
+Ci&ograve; &egrave; molto utile se non vuoi sfogliare l' intero
+sito web per leggere le news.
+Per usare questo plugin dovete avere un nome utente con il dominio @flatnuke
+(es.: qualcosa@flatnuke) e l'URL di una homepage flatnuke come password
+(es.: http://flatnuke.sourceforge.net/, non c'è bisogno di URL di file RSS
+visto che FlatNuke mette gli RSS in una posizione nota e fissata.]],
+	en=[[
+This plugin is an aggregator plugin specialized in the websites made with the
+FlatNuke content management system, or other sites that use the same news
+format like the FreePOPs website. Since in a FlatNuke site the news are stored
+in plain XML files this plugin is able to fetch the whole news, and not only the
+headings as the aggregator plugin does. This is really useful if you don't want
+to surf the website to read the news.
+To use this plugin you have to use a user name with the @flatnuke domain
+(ex: something@flatnuke) and a flatnuke homepage URL as the password
+(ex: http://flatnuke.sourceforge.net/, no need for the RSS file URL since
+FlatNuke puts the RSS in a fixed and well known position.]]
+}
+
+
 
 -- Configuration:
 --

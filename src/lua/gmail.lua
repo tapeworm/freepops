@@ -10,6 +10,39 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.35"
 PLUGIN_NAME = "GMail.com"
+PLUGIN_REQUIRE_VERSION = "0.0.15"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=gmail.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Rami Kattan"}
+PLUGIN_AUTHORS_CONTACTS = {"rkattan at gmail (single dot) com"}
+PLUGIN_DOMAINS = {"@gmail.com"}
+PLUGIN_PARAMETERS = {}
+PLUGIN_DESCRIPTIONS = {
+	it=[[
+Questo plugin vi per mette di leggere le mail che avete in una 
+mailbox @gmail.com.
+Per usare questo plugin dovete usare il vostro indirizzo email completo come
+user name e la vostra password reale come password. E' anche possibile 
+esportare la rubrica usando come user name username#export@gmail.com. Un
+file gmail_contacts_export.csv che pu&ograve;
+essere importato nel tuo mail client
+preferito verrà generato nella tua home (Unix) o nella directory Documenti 
+(Windows). Per usare questo plugin hai bisogno della versione di
+FreePOPs con SSL (per Windows scarica FreePOPs-X.Y.Z-SSL.exe, 
+per Unix probabilmente devi installare openssl).]],
+	en=[[
+This is the webmail support for @gmail.com mailboxes. To use this plugin
+you have to use your full email address as the user name and your real 
+password as the password. An extensions is the #export that allows you to 
+export in csv for mat you address book. To do this you should use something
+like username#export@gmail.com and a gmail_contacts_export.csv will
+be saved in you home (Unix) or in the My Documents directory (Windows). To
+use this plugin you need the SSL version of FreePOPs (for Windows download
+the FreePOPs-X.Y.Z-SSL.exe setup file, under Unix you probably need OpenSSL
+installed).]]
+}
+
 
 -- ************************************************************************** --
 --  strings

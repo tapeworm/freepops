@@ -20,7 +20,6 @@ for next version or later:
 	add proxy section in config.lua e integrate win-IE settings 
 		discovery code from LiberoPOPs
 	link the rss feed in the homepage
-	fix in owa that Host and Cookie is repeated 3 times
 	create the -dev ML
 	curl_info
 	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/programmersguide/shell_int/shell_int_programming/taskbar.asp
@@ -28,5 +27,6 @@ for next version or later:
 	http://freepops.diludovico.it/index.php?showtopic=1190&st=0&#entry6678
 	fix gmail first block bug
 	http://freepops.diludovico.it/index.php?showtopic=1208&st=0&#entry6771
-
+	http://freepops.diludovico.it/index.php?showtopic=1208&st=0&#entry6916
+	http://www.openbeer.it/docs/bypassare_isaproxy.html
 - eof -

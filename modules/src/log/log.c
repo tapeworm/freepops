@@ -114,7 +114,9 @@ int log_rotate(char *logfile)
 		// creates backup file
 		copy_file(logfile, freefile);
 		free(freefile);
-		unlink(logfile);
+		if(fd != NULL)
+			fclose(fd);
+		remove(logfile);
 	}
 
 	if(reopen)

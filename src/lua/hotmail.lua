@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -342,7 +342,11 @@ function downloadMsg(pstate, msg, nLines, data)
 
     -- Lines Received - Not really used for anything
     --
-    nLinesReceived = 0
+    nLinesReceived = 0,
+
+    -- Buffer
+    --
+    strBuffer = ""
   }
 	
   -- Define the callback
@@ -369,6 +373,15 @@ function downloadMsg_cb(cbInfo, data)
     --
     if (cbInfo.nLinesRequested ~= -2 and cbInfo.nLinesReceived == -1) then
       return 0, nil
+    end
+
+    -- Update the buffer
+    --
+    body = cbInfo.strBuffer .. body
+    cbInfo.strBuffer = ""
+    while (string.len(body) > 4 and string.find(string.sub(body, -4), "(&)") ~= nil) do
+      cbInfo.strBuffer = string.sub(body, -4) .. cbInfo.strBuffer
+      body = string.sub(body, 1, -5)
     end
   
     -- The only parts we care about are within <pre>..</pre>

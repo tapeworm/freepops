@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.7"
+PLUGIN_VERSION = "0.0.8"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -40,7 +40,18 @@ corresponding names in Italian: InArrivo, Bozza,
 Inviati,Anti-spam, Cestino). For user defined folders, use their name as the value.]]
 		}	
 	},
+	{name = "view", description = {
+		en = [[ Parameter is used when getting the list of messages to 
+pull.  It determines what messages to be pulled.  Possible values are ALL, UNREAD and FLAG.]]
+		}
+	},
+	{name = "markunread", description = {
+		en = [[ Parameter is used to have the plugin mark all messages that it
+pulls as unread.  If the value is 1, the behavior is turned on.]]
+		}
+	},
 }
+
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Questo plugin vi per mette di leggere le mail che avete in una 
@@ -81,6 +92,10 @@ local globals = {
   -- Get the mail server for Yahoo
   --
   strRegExpMailServer = '<a href="(http://[^"]*)ym/',
+  
+  -- Redirect site on login
+  --
+  strRegExpMetarefresh  = 'window.location.replace%("([^"]*)"',
 
   -- Get the html corresponding only to the message list
   --
@@ -255,12 +270,12 @@ function loginYahoo()
   local body, err = browser:get_uri(globals.strLoginPage)
   
   if body ~= nil then
-    _,_,challengeCode = string.find(body, globals.strLoginChallenge)
+    _, _, challengeCode = string.find(body, globals.strLoginChallenge)
   end
 
   if challengeCode ~= nil then
     password = crypto.bin2hex(crypto.md5(password))
-    password = crypto.bin2hex(crypto.md5(password..challengeCode))
+    password = crypto.bin2hex(crypto.md5(password .. challengeCode))
     post = string.format(globals.strLoginPostDataMD5, intFlag, username,
                          password, challengeCode)
   else -- if we didn't get the challenge code, then login in cleartext
@@ -301,6 +316,15 @@ function loginYahoo()
     log.dbg("Yahoo Mail Server: " .. str .. "\n")
   end
 
+  -- If we are using HTTPS, we need to look for the meta-refresh link
+  -- returned by the login response and go to it.
+  if (challengeCode ~= nil) then
+    _, _, str = string.find(body, globals.strRegExpMetarefresh)
+    if (str ~= nil) then
+      body, err = browser:get_uri(str)
+    end
+  end
+  
   -- Extract the crumb - This is needed for deletion of items
   --
   _, _, str = string.find(body, globals.strRegExpCrumb)

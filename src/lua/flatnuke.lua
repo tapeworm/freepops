@@ -162,7 +162,7 @@ function retr_or_top(pstate,msg,data,lines)
 	local b = internal_state.b
 	
 	-- build the uri
-	local uri = "http://"..internal_state.password.."/news/"..uidl..".xml"
+	local uri = internal_state.password.."/news/"..uidl..".xml"
 	
 	-- tell the browser to get the uri
 	local s,rc = b:get_uri(uri)
@@ -236,7 +236,12 @@ function pass(pstate,password)
 
 	-- save the password
 	-- password is the flatnuke URI basename
-	internal_state.password = password
+
+	if freepops.MODULE_ARGS ~= nil then
+		internal_state.password = freepops.MODULE_ARGS.host
+	else
+		internal_state.password = password
+	end
 
 	-- build the uri
 	local user = internal_state.name
@@ -277,7 +282,8 @@ function stat(pstate)
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri = "http://"..internal_state.password.."/misc/backend.rss"
+	local uri = internal_state.password.."/misc/backend.rss"
+	log.dbg("URI -"..uri.."-\n")
 	
 	-- uses mlex to extract all the messages uidl and size
 	local function action_f (s) 

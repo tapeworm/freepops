@@ -23,6 +23,11 @@ freepops.MODULES_MAP["virgilio.it"] 	= {name="popforward.lua",
 					  }
 
 -- flatnuke news plugin
+freepops.MODULES_MAP["freepops.it"] 	= {name="flatnuke.lua",
+						args={host="http://freepops.sf.net/it"}}
+freepops.MODULES_MAP["freepops.en"] 	= {name="flatnuke.lua",
+						args={host="http://freepops.sourceforge.net/en"}}
+
 freepops.MODULES_MAP["flatnuke"] 	= {name="flatnuke.lua"}
 -- rss backended news plugin
 freepops.MODULES_MAP["aggregator"] 	= {name="aggregator.lua"}

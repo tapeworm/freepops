@@ -15,7 +15,8 @@ PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=hotmail.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
-PLUGIN_DOMAINS = {"@hotmail.com","@msn.com","@webtv.com","@charter.com",
+PLUGIN_DOMAINS = {"@hotmail.com","@hotmail.co.uk","@hotmail.co.jp",
+	"@hotmail.de","@msn.com","@webtv.com","@charter.com",
 	"@compaq.net","@passport.com"}
 PLUGIN_PARAMETERS = {
 	{name="folder", description={

@@ -6,10 +6,12 @@ for future versions:
 	plugin (superva,freepass,hotmail,yahoo,excite)
 	problemi in lycos utf8 (magari sistemare il mimer decentemente)
 	problemi login tin(aspetta ethereal)
+	porting pocketpc
 
 for version 0.1.0:
 	on the fly generation of ps in /doc from jpg
 	win32 service interface (evaluate if it is easy and not so intrusive)
+	utf8 - mimer - lycos
 
 for version 0.0.14:
 ++++	aggiungi il parametro folder eventualmente ad altre webmail 
@@ -20,3 +22,4 @@ for version 0.0.14:
 	freebsd port
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
+	http://liberopops.diludovico.it/index.php?showtopic=859&st=0&#entry4412

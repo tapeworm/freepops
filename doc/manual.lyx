@@ -760,6 +760,10 @@ proxy
 \family default 
 .
  
+\layout Standard
+
+The current implementation supports some proxy authentucation nethods, and
+ some of them require the SSL version of FreePOPs.
 \layout Subsection
 
 Spam/AV tutorial

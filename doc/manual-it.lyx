@@ -797,6 +797,10 @@ proxy
 \family default 
 .
  
+\layout Standard
+
+L'implementazione corrente supporta vari metodi di autenticazione, ma per
+ alcuni e' necessaria la versione SSL di FreePOPs.
 \layout Subsection
 
 Spam/AV tutorial

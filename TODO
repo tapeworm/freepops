@@ -16,10 +16,7 @@ for version 0.0.14:
 		in cui sia facile supportarlo. (tin e libero sono OK).
 	factorize top and retr in common.lua since in the raw case they are 
 		always the same
-
-for version 0.0.13:
+	add squirrel to manual
+	freebsd port
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
-	freebsd port
-	add squirrel to manual
-	add to the manual that some proxy auth type need the SSL version

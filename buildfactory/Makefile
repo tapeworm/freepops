@@ -104,8 +104,10 @@ dist-deb: freepops-$(VERSION).tar.gz
 	$(H)cd ../dist-deb/freepops/; \
 		echo -e "freepops optional mail\nfreepops-doc optional mail" \
 			> overridefile
-	$(H)cd ../dist-deb/freepops/;dpkg-scanpackages . overridefile > Packages
-	$(H)cd ../dist-deb/freepops/;dpkg-scansources . overridefile > Sources
+	$(H)cd ../dist-deb/freepops/;\
+		dpkg-scanpackages . overridefile > Packages
+	$(H)cd ../dist-deb/freepops/;\
+		dpkg-scansources . overridefile > Sources
 	$(H)cd ../dist-deb/freepops/;gzip -f Packages Sources
 
 	$(H)rm -rf _deb_

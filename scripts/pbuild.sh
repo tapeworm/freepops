@@ -58,13 +58,13 @@ done
 }
 
 function prepare_dsc(){
-dpkg-source -b freepops-*
+#dpkg-source -b freepops-*
 }
 
 function prepare_tgz(){
-make realclean
+make realclean || true
 ./configure.sh linux
-make -C buildfactory -C dist-deb 
+make -C buildfactory dist-deb
 cp dist-deb/freepops/* $1
 }
 

@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.1"
+PLUGIN_VERSION = "0.1.2"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -448,7 +448,6 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     else
       cmdUrl = string.format(globals.strCmdUnread, internalState.strMailServer,
         internalState.strMBox, uidl, str);
-log.dbg(cmdUrl)
       browser:get_uri(cmdUrl) -- We don't care about the results.
     end
   end
@@ -469,7 +468,7 @@ function downloadMsg_cb(cbInfo, data)
   
     -- Clean up the end of line
     --
-    body = string.gsub(body, "\n", "\r\n")
+    body = string.gsub(body, "([^\r])\n", "%1\r\n")
 
     -- Perform our "TOP" actions
     --

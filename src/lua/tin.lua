@@ -102,22 +102,6 @@ function check_range(pstate,msg)
 end
 
 --------------------------------------------------------------------------------
--- Extracts the domain name of a mailaddress
---
-function get_domain(s)
-	local _,_,d = string.find(s,"[^@]+@([_%.%w%d]+)")
-	return d
-end
-
---------------------------------------------------------------------------------
--- Extracts the account name of a mailaddress
---
-function get_name(s)
-	local _,_,d = string.find(s,"([^@]+)@[_%.%w%d]+")
-	return d
-end
-
---------------------------------------------------------------------------------
 -- checks domain validity
 --
 function check_domain(s)
@@ -342,8 +326,8 @@ end
 function user(pstate,username)
 	
 	-- extract and check domain
-	local domain = get_domain(username)
-	local name = get_name(username)
+	local domain = freepops.get_domain(username)
+	local name = freepops.get_name(username)
 
 	-- check if the domain is valid
 	if not check_domain(domain) then

@@ -1,3 +1,4 @@
+- all webmail now share the same get_name and get_domain functions
 - fixed stupid fetchmail top bug
 - log used to write liberopopsd :)
 - fixed "-" in the username

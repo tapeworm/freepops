@@ -1,3 +1,7 @@
+- added gmail.lua to manual + various fixes
+- added man page to manual
+- added FAQ to manual
+- fixed man page
 - fixed old bug in popstate.c in wrong index check in array acess
 - fixed bug introduced in fixing the fix for popserver rfc compliace
 - added kerneltrap.org and linux.kerneltrap.org aggregator domains

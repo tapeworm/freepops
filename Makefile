@@ -101,8 +101,10 @@ tgz-dist:
 		find $$BASE -name CVS -exec rm -fr \{\} \; 2>/dev/null;\
 		echo "removing non-free doc files (like RFCs and contracts)";\
 		cd $$BASE;\
-		ls doc/rfc/rfc*.txt | sed "s/.txt//g" | \
-			sed "s?doc/rfc/rfc??g"> doc/RFCs.txt;\
+		for X in doc/rfc/rfc*.txt; do \
+			echo http://www.ietf.org/rfc/`basename $$X` >> \
+			doc/RFCs.txt;\
+		done; \
 		rm -rf doc/rfc/;\
 		rm -rf doc/contracts/;\
 		cd ..;\

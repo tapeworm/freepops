@@ -8,23 +8,78 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.36"
+PLUGIN_VERSION = "0.0.37"
 PLUGIN_NAME = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.org/download.php?file=gmail.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Rami Kattan"}
-PLUGIN_AUTHORS_CONTACTS = {"rkattan at gmail (single dot) com"}
+PLUGIN_AUTHORS_CONTACTS = {"rkattan{at}gmail.com"}
 PLUGIN_DOMAINS = {"@gmail.com"}
-PLUGIN_PARAMETERS = {}
+PLUGIN_PARAMETERS = {
+	{name = "folder", description = {
+		it = [[
+Serve per selezionare la cartella (inbox &egrave; quella di default)
+su cui operare. 
+Le cartelle standard disponibili sono inbox, starred, sent, all, spam, trash.
+Questo &egrave; un esempio di uno user name per leggere la 
+cartella starred:
+foo@gmail.com?folder=starred
+
+Se hai creato delle label, puoi accedervi usando il parametro label=nome
+]],
+		en = [[
+Used for selecting the folder to operate on (inbox is the default one).
+The standard folders are: inbox, starred, sent, all, spam, trash.
+Here is an example of a username to get the email from the starred folder:
+foo@gmail.com?folder=starred
+
+If you created personalized labels in gmail, you can access them using
+the label parameter label=name.]],
+		}	
+	},
+	{name = "label", description = {
+		it = [[
+Serve per selezionare la label su cui operare. 
+Questo &egrave; un esempio di uno user name per leggere la 
+cartella personalizzata Amici:
+foo@gmail.com?label=amici
+]],
+		en = [[
+Used for selecting the labels to operate on.
+Here is an example of a username to get the email from the label Friends:
+foo@gmail.com?label=Friends
+
+If you created personalized labels in gmail, you can access them using
+the label parameter label=name.]],
+		}	
+	},
+	{name = "act", description = {
+		it = [[
+Valori possibili:
+- export: esporta la rubrica di gmail in un
+file gmail_contacts_export.csv verrà generato nella tua home (Unix)
+o nella directory Documenti 
+(Windows), che pu&ograve; essere importato nel tuo mail client preferito
+]],
+		en = [[
+Possible values:
+- export: Exports your gmail contacts into a file called 
+gmail_contacts_export.csv that will be saved in you home (Unix)
+or in the My Documents directory (Windows), that can be imported 
+into your email client.
+]],
+		}
+	},
+}
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Questo plugin vi per mette di leggere le mail che avete in una 
 mailbox @gmail.com.
 Per usare questo plugin dovete usare il vostro indirizzo email completo come
 user name e la vostra password reale come password. E' anche possibile 
-esportare la rubrica usando come user name username#export@gmail.com. Un
+esportare la rubrica usando come user name username@gmail.com?act=export. Un
 file gmail_contacts_export.csv che pu&ograve;
 essere importato nel tuo mail client
 preferito verrà generato nella tua home (Unix) o nella directory Documenti 
@@ -32,9 +87,10 @@ preferito verrà generato nella tua home (Unix) o nella directory Documenti
 	en=[[
 This is the webmail support for @gmail.com mailboxes. To use this plugin
 you have to use your full email address as the user name and your real 
-password as the password. An extensions is the #export that allows you to 
-export in csv for mat you address book. To do this you should use something
-like username#export@gmail.com and a gmail_contacts_export.csv will
+password as the password. It is also possible to export your contacts
+in csv format that can be imported into your email client.
+To do this you should use something like username@gmail.com?act=export
+and a file called gmail_contacts_export.csv will
 be saved in you home (Unix) or in the My Documents directory (Windows).]]
 }
 
@@ -64,7 +120,7 @@ local gmail_string = {
 	-- next 2 lines: link to view a message in html format,
 	-- and regexp to extract sub messages.
 	view_email_thread="http://gmail.google.com/gmail?"..
-		"view=cv&search=inbox&th=%s&zx=%s",
+		"view=cv&search=%s&th=%s&zx=%s",
 	email_stat_sub = 
 		'\nD%(%["mi",%d+,%d+,"(%w-)",(%d+),.-,".-","(.-)".-%]\n%);',
 	-- This is the capture to get the session ID from the login-done webpage
@@ -75,9 +131,8 @@ local gmail_string = {
 	next_checkC = '\nD%(%["ts",(%d+),(%d+),(%d+),%d.-%]\n%);',
 	next = "http://gmail.google.com/gmail?"..
 		"search=%s&view=tl&start=%s&init=1&zx=%s",
-	-- view labels/folders=../gmail?search=cat&cat=%s&view=tl&start=0&zx=%s
 	msg_mark = "http://gmail.google.com/gmail?search=inbox&view=tl&start=0",
-	-- The peace of uri you must append to delete to choose the messages 
+	-- The piece of uri you must append to delete to choose the messages 
 	-- to delete
 	msg_mark_post = "act=%s&at=%s",
 	msg_mark_next = "&t=%s"
@@ -95,6 +150,7 @@ internal_state = {
 	name = nil,
 	password = nil,
 	cmds = nil,
+	folder = nil,
 	b = nil,
 	cookie_val = nil,
 	cookie_sid = nil,
@@ -230,9 +286,7 @@ function gmail_login()
 	end
 	--print(f)
 	local _,_,uri = string.find(f,'(CheckCookie[^%"]*)"')
-	--print(uri,b:wherearewe(),b:whathaveweread())
 	uri = "http://" .. b:wherearewe() .. "/accounts/" .. uri
-	--b:show()
 	
 	--local retrive_f = support.retry_n(
 	--		3,support.do_retrive(internal_state.b,uri))		
@@ -250,24 +304,6 @@ function gmail_login()
 	-- get the cookie value
 	internal_state.cookie_sid = (b:get_cookie("SID")).value
 	internal_state.cookie_val = (b:get_cookie("GV")).value
-	--table.foreach(b:get_cookie("SID"),function(a,b)
-	--		if a == "value" then
-	--			internal_state.cookie_sid = b
-	--		end
-	--	end)
-
-	-- XXX FIXME XXX
-	-- here the browser has already a SID cookie!
-	-- isn't it a mistake?
-	local AuthCookie1 = mk_cookie(
-		"SID",internal_state.cookie_sid,nil,"/",".google.com",nil)
-	--local AuthCookie2 = mk_cookie(
-	--	"GV",internal_state.cookie_val,nil,"/",".google.com",nil)
-
-	b:add_cookie(gmail_string.homepage,AuthCookie1)
-	--b:add_cookie(gmail_string.homepage,AuthCookie2)
-
---	uri = gmail_string.login_checkcookie
 
 	-- save all the computed data
 	internal_state.login_done = true
@@ -286,7 +322,7 @@ function retr_cb(data)
 	local FirstBlock = true
 	
 	return function(s,len)
---		s = string.gsub(s,"\n","\r\n")
+		s = string.gsub(s,"\n","\r\n")
 		s = a:dothack(s).."\0"
 -- without the above string end of stream is: 00 00 00 0a 0a 2e 0d 0a
 		-- \r = 13 = 0d                        \n \n .  \r \n
@@ -329,7 +365,7 @@ function top_cb(global,data)
 			FirstBlock = false
 		end	
 		s = global.a:tophack(s,global.lines_requested)
---		s = string.gsub(s,"\n","\r\n")
+		s = string.gsub(s,"\n","\r\n")
 		s = global.a:dothack(s).."\0"
 			
 		popserver_callback(s,data)
@@ -360,18 +396,15 @@ end
 -- Must save the mailbox name
 function user(pstate,username)
 	local name = freepops.get_name(username)
+	local folder = ""
 
-	local st,_,name,cmds = string.find(name, "([^#]*)[#]?(.*)")
-
-	-- If user puts username as account#[box_name]@gmail.com
-	-- FreePOPs will download messages from that box, default is inbox
-	-- tested with "inbox" (normal inbox) and "all" (archive emails)
-	-- still bugs using other boxes, to be fixed and made better later.
 	internal_state.name = name
-	if cmds == nil or cmds == "" then
-		cmds = "inbox"
+	folder = freepops.MODULE_ARGS.folder or "inbox"
+	if freepops.MODULE_ARGS.label then
+		folder = "cat&cat=" .. freepops.MODULE_ARGS.label
 	end
-	internal_state.cmds = cmds
+	internal_state.folder = folder
+	internal_state.cmds = freepops.MODULE_ARGS.act or ""
 
 	return POPSERVER_ERR_OK
 end
@@ -437,12 +470,6 @@ function quit_update(pstate)
 
 	local b = internal_state.b
 
-	local box = internal_state.cmds
---	if box == "import" then
---		log.say("Importing address book now\n")
---		ImportContacts()
---	end
-
 	local Gmail_at = internal_state.gmail_at
 
 	local uri = gmail_string.msg_mark
@@ -498,15 +525,15 @@ function stat(pstate)
 
 	-- shorten names, not really important
 	local b = internal_state.b
-	local box = internal_state.cmds
-	if box == "export" then
+	local action = internal_state.cmds
+	local folder = internal_state.folder
+	if action == "export" then
 		ExportContacts()
-		box = "inbox"
 	end
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri=string.format(gmail_string.first,box,RandNum())
+	local uri=string.format(gmail_string.first,folder,RandNum())
 
 	-- The action for do_until
 	--
@@ -539,7 +566,7 @@ function stat(pstate)
 				parentUIDL = sUIDL
 				uri = string.format(
 					gmail_string.view_email_thread,
-					parentUIDL, RandNum())
+					folder, parentUIDL, RandNum())
 				body,err=b:get_uri(uri)
 				en2=0
 				_,en2,sUIDL,iStarred,sSender=string.find(body,
@@ -601,7 +628,7 @@ function stat(pstate)
 		if tonumber(iStart)+tonumber(iShow) < tonumber(iTotal) then
 		-- TODO: furthur tests with more than 2 pages of emails
 			-- change retrive behaviour
-			uri=string.format(gmail_string.next,box,
+			uri=string.format(gmail_string.next,folder,
 				iStart+iShow,RandNum())
 			-- continue the loop
 			return false
@@ -632,11 +659,6 @@ function stat(pstate)
 
 	-- store in internal_state GMAIL_AT.value
 	internal_state.gmail_at=(b:get_cookie("GMAIL_AT")).value
-	--table.foreach(b:get_cookie("GMAIL_AT"),function(a,b)
-	--		if a == "value" then
-	--			internal_state.gmail_at = b
-	--		end
-	--	end)
 
 	-- save the computed values
 	internal_state["stat_done"] = true
@@ -853,29 +875,6 @@ function ExportContacts()
 		end
 	end
 	io.close()
-end
-
--- -------------------------------------------------------------------------- --
--- Import from file contacts_import.csv to your gmail account.
--- Not needed now, as google added this function to the web.
--- Still experimental...
-function ImportContacts()
-	local b = internal_state.b
-
-	local name,email,notes
-	local body,err,post
-	local uri = "http://gmail.google.com/gmail?view=address&act=a"
-	local single_contact = '([^,]*),([^,]*),(.*)'
-
-	local myFile = io.open("contacts_import.csv","r")
-	for line in myFile:lines() do
-		_,_,name,email,note = string.find(line,single_contact)
-		post = string.format("at=%s&name=%s&email=%s&notes=%s&ac=Add+"..
-				"Contact&operation=Edit",
-				internal_state.gmail_at, name, email, notes)
-		body,err = b:post_uri(uri,post)
-	end
-	myFile:close()
 end
 
 -- -------------------------------------------------------------------------- --

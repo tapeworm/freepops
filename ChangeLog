@@ -1,3 +1,4 @@
+- new mimer attach_it implementation (no HEAD request required)
 - supereva to the manual
 - fixed gmail login in case of failure
 - implemented the fallback of HEAD to GET,Range:bytes=0-1

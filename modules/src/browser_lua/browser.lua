@@ -22,7 +22,12 @@
 -- on error, "" on end of transmission. 
 -- It also return an error if one.<BR>
 -- See
--- libero.lua for an example on how to use the callback.<BR>
+-- libero.lua for an example on how to use the callback.<BR/>
+-- <BR/>
+-- <B>pipe_uri_with_header(self,url,cb_h,cb_b,exhed)</B> :
+-- As pipe uri, but uses cb_h for the header and cb_b fpor the body.<BR/>
+-- Since the browser module doesn't know the result of the GET it 
+-- will not follow redirects. The mimer module uses this.<BR/>
 -- <BR/>
 -- <B>post_uri(uri,post,exhed)</B> : returns string,err and takes the uri in 
 -- "http://" form, the post data in "name=val&..." form 
@@ -258,7 +263,7 @@ end
 
 -- starts curl!
 function Hidden.perform(self,url,gl_h,gl_b)
-	-- the callbacks
+	-- the callback for the body
 	if type(gl_b) == "table" then
 		self.curl:setopt(curl.OPT_WRITEFUNCTION,Hidden.build_w_cb(gl_b))
 	elseif type(gl_b) == "function" then
@@ -267,14 +272,28 @@ function Hidden.perform(self,url,gl_h,gl_b)
 		error("Hidden.perform must be called with table/function gl_b"..
 			", but is called with a "..type(gl_b))		
 	end
-	self.curl:setopt(curl.OPT_HEADERFUNCTION,Hidden.build_w_cb(gl_h))
+	-- the callback for the header
+	if type(gl_h) == "table" then
+		self.curl:setopt(
+			curl.OPT_HEADERFUNCTION,Hidden.build_w_cb(gl_h))
+	elseif type(gl_h) == "function" then
+		self.curl:setopt(curl.OPT_HEADERFUNCTION,gl_h)
+	else
+		error("Hidden.perform must be called with table/function gl_h"..
+			", but is called with a "..type(gl_h))		
+	end
 
 	local rc,err = self.curl:perform()
 
 	-- check result
 	if rc == 0 then
-		Hidden.cookie_and_referer(self,url,gl_h)
-		return Hidden.parse_header(self,gl_h)
+		if type(gl_h) == "function" then
+			-- we haven *not* the header!
+			return rc,err
+		else
+			Hidden.cookie_and_referer(self,url,gl_h)
+			return Hidden.parse_header(self,gl_h)
+		end
 	else
 		return nil,err
 	end
@@ -423,7 +442,7 @@ function Private.get_head(self,url,exhed,fallback)
 end
 
 function Private.pipe_uri(self,url,cb,exhed) 
-	local gl_b,gl_h = {},{}
+	local gl_h = {}
 	
 	self.curl:setopt(curl.OPT_HTTPGET,1)
 	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
@@ -433,6 +452,15 @@ function Private.pipe_uri(self,url,cb,exhed)
 
 	return Hidden.continue_or_return(rc,err,{""},
 		Private.pipe_uri,self,err,exhed)
+end
+
+function Private.pipe_uri_with_header(self,url,cb_h,cb_b,exhed) 
+	
+	self.curl:setopt(curl.OPT_HTTPGET,1)
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
+	
+	Hidden.build_header(self,url,exhed)
+	return Hidden.perform(self,url,cb_h,cb_b)
 end
 
 function Private.show(self)

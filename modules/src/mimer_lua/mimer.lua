@@ -146,6 +146,7 @@ Private.html_tags_plain = {
 }
 
 
+-- ------------------------------------------------------------------------- --
 Private.boundary_chars=
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
 
@@ -162,6 +163,7 @@ function Private.randomize_boundary()
 	return table.concat(t)
 end
 
+-- ------------------------------------------------------------------------- --
 function Private.needs_encoding(content_type)
 	if content_type ~= "text/plain" and
 	   content_type ~= "text/html" then
@@ -171,6 +173,7 @@ function Private.needs_encoding(content_type)
 	end
 end
 
+-- ------------------------------------------------------------------------- --
 function Private.content_transfer_encoding_of(content_type)
 	if not Private.needs_encoding(content_type) then
 		return "Content-Transfer-Encoding: quoted-printable\r\n"
@@ -179,6 +182,7 @@ function Private.content_transfer_encoding_of(content_type)
 	end
 end
 
+-- ------------------------------------------------------------------------- --
 Private.base64wrap = 45
 
 function Private.base64_io_slave(cb)
@@ -206,11 +210,13 @@ function Private.base64_io_slave(cb)
 	end
 end
 
+-- ------------------------------------------------------------------------- --
 Private.qpewrap=73
 Private.eq = string.byte("=",1)
 Private.lf = string.byte("\n",1)
 Private.cr = string.byte("\r",1)
 
+-- ------------------------------------------------------------------------- --
 ---
 -- Encodes the message for mail transfer.
 -- must be
@@ -230,6 +236,7 @@ function mimer.quoted_printable_encode(s)
 	return table.concat(out)
 end
 
+-- ------------------------------------------------------------------------- --
 function Private.qpr_eval_expansion(s)
 	local count = 0
 	local to = 0
@@ -267,6 +274,8 @@ function Private.qpr_eval_expansion(s)
 	return false,false,string.len(s)
 end
 
+-- ------------------------------------------------------------------------- --
+-- a callback that implements the "quoted printable" encoding
 function Private.quoted_printable_io_slave(cb)
 	local buffer = ""
 	return function(s,len)
@@ -300,7 +309,93 @@ function Private.quoted_printable_io_slave(cb)
 
 end
 
+-- ------------------------------------------------------------------------- --
+-- wrapper for the NEW and OLD implementation
 function Private.attach_it(browser,boundary,send_cb)
+	-- switch here between the old and tested implementation and
+	-- the new and more efficient hack
+	return Private.attach_it_new(browser,boundary,send_cb)
+	--return Private.attach_it_old(browser,boundary,send_cb)
+end
+
+-- ------------------------------------------------------------------------- --
+-- This is the NEW implementation. 
+-- 
+-- PRO:  + only one HTTP request, the header callback sets content_type and the
+--         body callback chooses on the fly the io slave.
+--       + no mere HEAD (sometimes not supported by CGIs)
+--       + acts as a browser
+-- CONS: - the code is harder
+--       - worse HTTP header parsing, no error detection. May find the 
+--         404 HTML page attached in your mail if the URL is wrong
+--       - more cpu intense, one check and a function call more than before
+--       
+function Private.attach_it_new(browser,boundary,send_cb)	
+	return function(k,uri)
+		
+		-- the 2 callbacks and the shared variable content_type
+		local cb_h,cb_b = nil,nil
+		local content_type = nil
+		
+		-- the header parser, simply sets the content_type variable
+		cb_h = function(h,len)
+			-- FIXME, may be an incorrect URL and not a 200 HTTP
+			
+			-- try to extract the content type
+			local _,_,x = string.find(h or "",
+		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")
+			if x ~= nil then
+				content_type = x
+			end
+			return len
+		end
+		
+		-- a static variable for the callback that contains the real
+		-- io slave callback
+		local real_cb = nil
+		cb_b = function(s,len)
+			-- the first time we choos the encoding depending on 
+			-- the content_type shared variable set by the cb_h
+			if real_cb == nil then
+				content_type = content_type or 
+					"application/octet-stream"
+				if Private.needs_encoding(content_type) then
+					real_cb = Private.
+					  base64_io_slave(send_cb)
+				else
+					real_cb = Private.
+					  quoted_printable_io_slave(send_cb)
+				end
+				-- we send the mime header
+				send_cb("--"..boundary.."\r\n"..
+					"Content-Type: "..content_type.."\r\n"..
+					"Content-Disposition: attachment; "..
+					"filename=\""..k.."\"\r\n"..
+					Private.content_transfer_encoding_of(
+						content_type)..
+					"\r\n")
+			end
+			-- we simply use the real io slave
+			return real_cb(s,len)
+		end
+	
+		-- do the work
+		browser:pipe_uri_with_header(uri,cb_h,cb_b)
+
+		-- flush last bytes
+		cb_b("",0)
+	end
+end
+
+-- ------------------------------------------------------------------------- --
+-- this is the OLD implementation
+--
+-- PRO:  + safe and tested
+--       + less cpu intensive
+-- CONS: - more HTTP requests than a real browser
+--       - if HEAD is not supported a GET is done
+--       
+function Private.attach_it_old(browser,boundary,send_cb)	
 	return function(k,uri)
 
 		local h,err = browser:get_head(uri,{},true)
@@ -332,6 +427,7 @@ function Private.attach_it(browser,boundary,send_cb)
 	end
 end
 
+-- ------------------------------------------------------------------------- --
 function Private.send_alternative(body,body_html,send_cb)
 	local boundary = Private.randomize_boundary()
 	local rc = nil
@@ -361,11 +457,13 @@ end
 
 
 
+-- ------------------------------------------------------------------------- --
 function Private.token_of(c)
 	local _,_,x,y = string.find(c,"^%s*([/!]?)%s*(%a+)%s*")
 	return (x or "") .. (y or "")
 end
 
+-- ------------------------------------------------------------------------- --
 function Private.html2txt(s,base_uri,html_coded,html_tags,all)
 	s = string.gsub(s,"&(%a-);",function(c)
 		c = string.lower(c)

@@ -13,12 +13,14 @@ PLUGIN_NAME = "SquirrelMail"
 
 -- Tested with debian woody + apache (not ssl) + squirrelmail 1.2.6-1.3
 -- To get this plugin working you have to add size to "Options/Index Order" 
--- as last column
+-- 	 as last column
+-- To avoid to get INBOX.Trash wasting space of your account you should change:
+-- 	"Options/Folder Preferences/Trash Folder" -> "Do not use Trash"
 
 -- To do: Automatic recognition of squirrelmail version
 -- 	  Automatic recognition of record position (size/object/etc) in list
 -- 	  Directly downloading of raw message in newest version of Squirrel
---	  Delete message
+--        Testing with other squirrelmail versions
 
 -- ************************************************************************** --
 --  strings
@@ -58,16 +60,16 @@ local squirrelmail_string = {
 	save = 'http://%s%s/src/read_body.php?mailbox=INBOX&passed_id=%d&startMessage=1&show_more=0',
 	save_header = 'http://%s%s/src/read_body.php?mailbox=INBOX&passed_id=%d&startMessage=1&show_more=0&view_hdr=1',
 	-- The uri to delete some messages
-	delete = "http://%s/Europe/Bin/Mail/Features/FolderContent/actionFolderContent.jsp",
-	delete_post = "ACTION=3&FOLDERID=7&",
+	delete = "http://%s%s/src/delete_message.php",
+	delete_post = "mailbox=INBOX&sort=6&startMessage=1&",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
-	delete_next = "CHECK_%d=1&",
+	delete_next = "message=%d&",
 	attachE = '.*<TR><TD>.*</TD><TD><A>.*</A>.*</TD><TD><SMALL><b>.*<small>.*</small></b>.*</small></TD><TD><SMALL>.*</SMALL></TD><TD><SMALL>[.*]{b}[.*]{b}[.*]</SMALL></TD><TD><SMALL>.*<a>.*</a>[.*]{a}[.*]{a}[.*]</SMALL></TD></TR>.*',
 	attachG = 'O<O><O>O<O><O><X>X<O>O<O><O><O><O>O<O>O<O><O>O<O><O><O><O>O<O><O><O><O>[O]{O}[O]{O}[O]<O><O><O><O>O<O>O<O>[O]{O}[O]{O}[O]<O><O><O>O',	
-	attach_begin = '<TABLE%s+WIDTH="100%%"%s+CELLSPACING=0%s+CELLPADDING=2%s+BORDER=0%s+BGCOLOR="#A8A8A8"><TR>\n<TH%s+ALIGN="left"%s+BGCOLOR="#ABABAB"><B>\nAttachments:</B></TH></TR><TR><TD>\n<TABLE%s+CELLSPACING=0%s+CELLPADDING=1%s+BORDER=0>',
+	attach_begin = '<TABLE%s+WIDTH="100%%"%s+CELLSPACING=0%s+CELLPADDING=2%s+BORDER=0%s+BGCOLOR="#.*"><TR>\n<TH%s+ALIGN="left"%s+BGCOLOR=".*"><B>\nAttachments:</B></TH></TR><TR><TD>\n<TABLE%s+CELLSPACING=0%s+CELLPADDING=1%s+BORDER=0>',
 	attach_end = '</TABLE></TD></TR></TABLE></TD></TR></TABLE>',
-	body_begin = '<TABLE%s+CELLSPACING=0%s+WIDTH="97%%"%s+BORDER=0%s+ALIGN=CENTER%s+CELLPADDING=0>%s+<TR><TD%s+BGCOLOR="#DEDFDF"%s+WIDTH="100%%">\n<BR>',
+	body_begin = '<TABLE%s+CELLSPACING=0%s+WIDTH="97%%"%s+BORDER=0%s+ALIGN=CENTER%s+CELLPADDING=0>%s+<TR><TD%s+BGCOLOR=".*"%s+WIDTH="100%%">\n<BR>',
 	body_end = '<CENTER><SMALL><A%s+HREF="../src/download.php%?absolute_dl=true&amp;passed_id=%d+&amp;passed_ent_id=%d+&amp;mailbox=INBOX&amp;showHeaders=1">Download%s+this%s+as%s+a%s+file</A></SMALL></CENTER>',
 	    
 	head_begin= "<table.*width='99%%'.*cellpadding='2'.*cellspacing='0'.*border='0'align=center>\n",
@@ -280,11 +282,11 @@ function squirrelmail_parse_webmessage(pstate,msg)
 	local attach = ""
 	local body = ""
 	if to1 ~= nil then
-print ("normale")
+--print ("normale")
 	   body = string.sub(f,to+1,from1-1)
   	   attach = string.sub(f,from1+1,-1)
 	else
-print ("non c'e' body")
+--print ("non c'e' body")
 	   body = ""
 	   attach = string.sub(f,to+1,-1)
 	end
@@ -293,17 +295,17 @@ print ("non c'e' body")
 
 	-- extracts the attach list
 	local x = mlex.match(attach,squirrelmail_string.attachE,squirrelmail_string.attachG)
-	x:print()
+	--x:print()
 	
 	local n = x:count()
 	local attach = {}
 	
 	for i = 1,n do
-		print("addo fino a " .. n)
+		--print("addo fino a " .. n)
 		local _,_,url = string.find(x:get(0,n-1),'HREF="..([^"]*)"')
 		url = string.gsub(url,"&amp;", "&")
 		attach[x:get(1,i-1)] = "http://" .. b:wherearewe() .. squirrelmail_string.partial_path .. url
-		print (attach[x:get(1,i-1)] .. " ------ " ..  "http://" .. b:wherearewe() .. squirrelmail_string.partial_path .. url)
+		--print (attach[x:get(1,i-1)] .. " ------ " ..  "http://" .. b:wherearewe() .. squirrelmail_string.partial_path .. url)
 		table.setn(attach,table.getn(attach) + 1)
 	end
 	

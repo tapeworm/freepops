@@ -14,7 +14,6 @@ for next version or later:
 ++++	add the folder parameter eventually to all webmail s
 +++	factorize top and retr in common.lua since in the raw case they are 
 		always the same (done in libero and tin and owa)
-	add squirrel to manual
 	add a note in the manual that if you leve messages on server
 		there is alot of network traffic
 	http://liberopops.diludovico.it/index.php?showtopic=890&st=0&#entry4594
@@ -33,5 +32,7 @@ for next version or later:
 	create the -dev ML
 	add a collaborative web page to publish plugins
 	popserver timeouts to avoid stupid DOS leaving inactive connections open
+	in the first part of the manual the plugin list is done by hand and 
+		taken from the xml.
 
 - eof -

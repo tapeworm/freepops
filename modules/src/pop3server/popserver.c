@@ -404,7 +404,7 @@ char ask[RFC_1939_MAXLINELEN];
 enum states_e next;
 int rc=0;
 
-sock_receive(s,ask,RFC_1939_MAXLINELEN);
+sock_receive_with_timeout(s,ask,RFC_1939_MAXLINELEN,60);
 if(sock_error_occurred(s))
 	return POPSTATE_AUTH;
 
@@ -489,7 +489,7 @@ char ask[RFC_1939_MAXLINELEN];
 enum states_e next=POPSTATE_ERR;
 int rc=0;
 
-sock_receive(s,ask,RFC_1939_MAXLINELEN);
+sock_receive_with_timeout(s,ask,RFC_1939_MAXLINELEN,60);
 if(sock_error_occurred(s))
 	return POPSTATE_TRANS;
 

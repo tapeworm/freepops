@@ -1,3 +1,6 @@
+- now the popserver disconnects after 60 seconds of client inactivity (this is
+RFC compliant, even if the rfc says we should wait more maybe, and the NOP
+pop3 command is used to avoid timeouts.
 - added --fpat to force proxy auth method
 - some stuff that may fix win32 shutdown problems
 - fixed dothack bug

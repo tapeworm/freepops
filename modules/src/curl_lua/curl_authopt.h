@@ -1,0 +1,7 @@
+{"AUTH_NONE",        0},
+{"AUTH_BASIC",       (1<<0)},
+{"AUTH_DIGEST",      (1<<1)},
+{"AUTH_GSSNEGOTIATE",(1<<2)},
+{"AUTH_NTLM",        (1<<3)},
+{"AUTH_ANY",~0},
+{"AUTH_ANYSAFE",(~CURLAUTH_BASIC)},

@@ -147,6 +147,11 @@ end
 
 function Private.init_curl(self)
 	self.curl = curl.easy_init()
+
+	-- to debug
+	--self.curl:setopt(curl.OPT_VERBOSE,1)
+	
+	-- go!
 	self.curl:setopt(curl.OPT_USERAGENT,self.useragent or 
 		"cURL/browser.lua (;;;;) FreePOPs")
 	if self.proxy ~= nil then

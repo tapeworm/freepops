@@ -37,8 +37,11 @@ for next version or later:
 	lycos.com
 	http://freepops.diludovico.it/index.php?showtopic=1428
 	http://freepops.diludovico.it/index.php?showtopic=1484
-	socket on port 2000 should be opened with REUSEADDR option (dead freepops issue on http://freepops.diludovico.it/index.php?showtopic=1481)
+	to avoid some CLOSE_WAIT we should shutdown al sockets, but first kill
+		all threads since the may access the already closed socket..
 	windows installer might ask if FP should run at startup and place a shortcut in Startup if the answer is yes
 	write on website "How to receive FP news"
+	x user pid file
+	fix lua path on osx
 
 - eof -

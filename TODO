@@ -10,5 +10,3 @@ next release 0.0.5
 		decente a fare un auto-apgrade sotto win)
 	tradurre donfaq
 	provare SSL
-	remove tolua++ doing by hand bindings for getdate,pop3server,log
-		(read 20K less of binary...)

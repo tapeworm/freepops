@@ -323,7 +323,7 @@ function Private.attach_it(browser,boundary,send_cb)
 		if Private.needs_encoding(x) then
 			cb = Private.base64_io_slave(send_cb)
 		else
-			cb = quoted_printable_io_slave(cb)
+			cb = Private.quoted_printable_io_slave(cb)
 		end
 	
 		-- do the work

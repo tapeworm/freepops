@@ -20,10 +20,8 @@ set -e
 case "$1" in
     remove|upgrade|deconfigure)
 
-	/etc/init.d/freepops stop || true
+	invoke-rc.d freepops stop || true
 	echo
-
-	rm -f /usr/share/freepops/libero.cfg.old
 
 	# Source debconf library.
 	#. /usr/share/debconf/confmodule

@@ -1,0 +1,2687 @@
+%% LyX 1.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[12pt,english]{article}
+\usepackage{bookman}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{a4wide}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{array}
+\usepackage{graphicx}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+
+
+\usepackage{babel}
+\makeatother
+
+\include{macro}
+
+\begin{document}
+\thispagestyle{empty}
+
+\vspace*{5cm}
+
+\begin{flushright}\huge{FreePOPs Manual}
+
+\vspace{-6mm}
+
+\rule{15cm}{2mm}
+
+\vspace{2mm}
+
+\normalsize{Written by Enrico Tassi, Nicola Cocchiaro}
+
+\vspace{1cm}
+
+$Date$
+
+$Revision$
+
+\end{flushright}
+
+\vspace{\stretch{1}}
+
+\hspace{\stretch{1}}Document released under the GNU/FDL license.\hspace{\stretch{1}}
+
+\pagebreak
+
+\tableofcontents{}
+
+\newpage
+
+
+\section{Introduction}
+
+FreePOPs is a POP3 daemon plus a LUA interpreter and some extra libraries
+for HTTP and HTML parsing. Its main purpose is translating local POP3
+requests to remote HTTP actions on the supported web-mails, but it
+is really more flexible: for example there is a plugin to read news
+from a website as if they were mails in a mailbox. You can easily
+extend FreePOPs on the fly, without even restarting it; you can add
+a plugin or modify an existing one simply changing the script file
+since the plugins are written in LUA and are interpreted on the fly.
+
+
+\subsection{Usage situations}
+
+FreePOPs can be useful in some situations, here we give the most obvious
+ones:
+
+\begin{itemize}
+\item You are behind a firewall that closes port 110 but you need to read
+your mail and the web-mail of your mail provider sucks.
+\item Your mail provider does not allow you to access your mailbox with
+the POP3 protocol, but only through the web-mail service.
+\item You prefer looking at your mailbox instead of browsing some websites
+news.
+\item You have to develop a POP3 server in less than a week and you want
+it to be reasonably fast and not so memory consuming.
+\item You are not a C hacker, but you want to benefit from a fast POP3 server
+frontend written in C and you want not to waste a month in writing
+the backend in C. LUA is a really simple and tiny language, one week
+is enough to learn it in a way that allows you to use it productively.
+\end{itemize}
+
+\subsection{Features}
+
+FreePOPs is the only software I know with these features:
+
+\begin{itemize}
+\item POP3 server RFC compliant (not full featured but compliant).
+\item Portable (written in C and LUA that is written in C, so everything
+is written in the most portable language around the world).
+\item Small (in the sense of resources usage) and reasonably fast.
+\item Extremely extensible on the fly using a simple and powerful language.
+\item Pretty documented.
+\item Released under the GNU/GPL license (this means FreePOPs is Free Software).
+\end{itemize}
+
+\subsection{Plugins}
+
+These are the plugins currently included in FreePOPs:
+
+\begin{description}
+\item [libero.lua]This plugin fully supports the \texttt{www.libero.it}
+webmail for mailboxes with domains like \texttt{@libero.it}, \texttt{@iol.it},
+\texttt{@inwind.it}, \texttt{@blu.it}.
+\item [tin.lua]This plugin fully supports the \texttt{communicator.virgilio.it}
+webmail for mailboxes with domains like \texttt{@tin.it}, \texttt{@virgilio.it}.
+\item [lycos.lua]This plugin supports the \texttt{mail.lycos.it} webmail
+for mailboxes with \texttt{@lycos.it} domains.
+\item [popforward.lua]This is a plugin mainly used for testing some FreePOPs
+modules. It acts as a POP3 forward, it simply works as a man in the
+middle of you and a real POP3 server. This allowed us to test FreePOPs
+without having any real plugin already written. You may consider using
+it to masquerade a really buggy POP3 server that can be easily compromised
+trough malicious requests. Obviously we suggest you to examine properly
+this plugin, and hack on it to prevent malicious requests to your
+server.
+\item [aggregator.lua]Many sites provide an RSS backend for indexing their
+news. This plugin makes this RSS behave as a mailbox in which you
+can find a mail for each news.
+\item [flatnuke.lua]This is a more powerful aggregator for FlatNuke-based%
+\footnote{See HTTP://flatnuke.sourceforge.net for the project homepage%
+} websites, and allows the download of the whole news body.
+\item [kernel.lua]This is a plugin to monitor the news about the Linux
+kernel through ChangeLogs.
+\item [gmail.lua]This plugin supports the \texttt{gmail.google.com} webmail
+for mailboxes with \texttt{@gmail.com} domains.
+\end{description}
+
+\section{History}
+
+FreePOPs was not born from scratch. A similar project (only in the
+main usage situation) is LiberoPOPs. 
+
+The ancestor of FreePOPs is completely written in C for some uninteresting
+reasons. LiberoPOPs supports {}``plugins'' but in a more static
+and complex way. The POP3 server frontend could be attached to a backend
+written in C, this means you have to recompile and restart LiberoPOPs
+each time to change a line in a plugin. Another interesting point
+is that LiberPOPs was created from scratch in a really short time
+(you have to be Italian and use a \texttt{@libero.it} mail address
+to understand why), this means it was born with a lot of bugs and
+FIX-ME in the code. 
+
+The LiberoPOPs project had a quick success, because everybody needed
+it, and this means we had a lot of users. In the opensource (and also
+Linux) philosophy you have to release frequently and this was exactly
+what we did: we used to release every two days. We were working not
+with Unix users, nor hackers, but mostly with Win32 users. Suddenly
+we realized that they were lazy/bored of updating the software every
+2 days. The ugly Win-world has taught them that software auto-updates,
+auto-install and even auto-codes probably. 
+
+We tried to solve this pulling out of the C engine most of the change-prone
+code, but this was really hard since C is not thought to do this.
+After LiberoPOPs had stabilized we started to think how to solve this. 
+
+A scripting/interpreted embedded language seemed to me a nice choice
+and after a long search on the net and on the newsgroup of my university
+I found LUA.. This is not the place for telling the world how good
+this small language is and I won't talk more about it here. Integrating
+the LUA interpreter in LiberoPOPs was not so hard and FreePOPs is
+the result. Now it is really easier to write/test a plugin and (even
+if it is not implemented yet) an auto-update facility is really easy
+to code since there is no need to recompile the C core in most cases.
+
+
+\section{FreePOPs configuration file}
+
+FreePOPs doesn't really need a configuration. Most users shouldn't
+change the configuration file. In case you are a developer or a really
+curious user the configuration file is \texttt{config.lua}, placed
+in the program directory under win32 or in \texttt{/etc/freepops/}
+in a posix environment.
+
+Later you will learn that plugins are associated with a mail address
+domain, and some of these plugins are aliased to other domains to
+make it easier to fetch some news from some sites. Read the plugin
+documentation for more info about them, and maybe send as a mail with
+your new alias if you want it to be integrated in the next FreePOPs
+release.
+
+Since version 0.0.11 the \texttt{config.lua} file has a policy section.
+In this section you can ban or allow classes of mail addresses. This
+may be useful to network administrators.
+
+
+\section{FreePOPs command line parameters}
+
+The real FreePOPs configuration is made trough command line arguments.
+They are described in depth in the man page in Unix environments and
+below. Keep in mind that in normal usage situations it's not necessary
+to use any of these, but if you have special needs it's useful to
+use the following list as reference:
+
+\begin{description}
+\item [-p~<port>,~--port~<port>]By default FreePOPs binds on port 2000.
+To alter this behaviour just use this switch.
+\item [-t~<num>,~--threads~<num>]FreePOPs is able to manage multiple
+connections, up to \emph{num}. Default is 5.
+\item [-b~addr,~--bind~addr]Binds over \emph{addr} instead INADDR\_ANY
+(0.0.0.0). \emph{addr} must be a character string containing an IPv4
+network address in the dotted-quad format, {}``ddd.ddd.ddd.ddd''
+or a host name.
+\item [-l~logfacility,~--logmode~logfacility]Can be used to specify
+the logging facility. \emph{logfacility} can be {}``stdout'' for
+stdout (the default), {}``syslog'' to use the logging daemon or
+a valid filename to log to this file.
+\item [-d,~--daemonize]Moves the process to background releasing the tty.
+\item [-P~<host>:<port>,~--proxy~<host>:<port>]To tell FreePOPs which
+is your HTTP proxy. If \emph{port} is not set then the default 8080
+is used.
+\item [-A~<username>:<password>,~--auth~<username>:<password>]For proxies
+with basic authentication, to specify username and password. Must
+be used with \emph{-P} or its long form.
+\item [-u~name,~--useragent~name]Use this useragent in http connections.
+The default is {}``Firefox/0.8''. A valid example is mozilla's {}``Mozilla/5.0
+(X11; U; Linux i686; en-US; rv:1.5) Gecko/20031024 Debian/1.5-2''.
+\item [-s~user.group,~--suid~user.group]This option is used to make
+freepopsd drop root privileges after binding. If you run it as a normal
+user there is no need to use this option.
+\item [-h,~--help]Prints the usage message.
+\item [-v,~--verbose,~-w,~--veryverbose]This tells FreePOPs to log some
+interesting info for bug reporting.
+\end{description}
+In posix environments like Debian GNU/Linux you can start FreePOPs
+at boot time as a standard service. In this case the command line
+switches are stored in \texttt{/etc/default/freepops}, in some rpm
+based systems you should find the same file as \texttt{/etc/sysconfig/freepops}.
+
+
+\section{Email client configuration}
+
+To configure your email client you must change the pop3 server settings.
+Usually you must use localhost as the pop3 host name, and 2000 as
+the pop3 port. In case you install FreePOPs in another computer of
+your LAN, you should use the host's name instead of localhost, while
+in case you changed the default port with the \texttt{-p} switch you
+will have to use that same port in your email client. You always have
+to use a full email address as username, for example \texttt{something@libero.it}
+instead of only \texttt{something}. This is because FreePOPs chooses
+the plugin to load by looking at your username. Later we will present
+all the plugins and their associated domains, and how to create an
+on-the-fly binding between a mail address and a domain.
+
+
+\subsection{Outlook Express tutorial}
+
+Here's a tutorial for configuring Outlook Express in a Windows environment.
+Other mail clients should be configured similarly.
+
+\begin{itemize}
+\item From the tools menu choose the \textbf{Account...} item
+(see \imageref{main})
+\end{itemize}
+\myincludegraphics{main}{!htp}{scale=0.8}
+
+\begin{itemize}
+\item Select your account and click on \textbf{Properties} (see
+\imageref{settings})
+\end{itemize}
+\myincludegraphics{settings}{!htp}{scale=0.8}
+
+\begin{itemize}
+\item In the Server tab type in \textbf{Incoming mail} the name of the computer
+where you started FreePOPs, usually \emph{localhost}. The \textbf{Account
+name} must be your complete email address, followed by the domain
+name your email belongs to, for example \texttt{username@domain.com}
+(see \imageref{server}).
+\end{itemize}
+\myincludegraphics{server}{!htp}{scale=0.8}
+
+\begin{itemize}
+\item In the \textbf{Advanced settings} tab type in \textbf{Incoming mail}
+the port number, that is \emph{2000} if you accepted our settings.
+\textbf{\emph{De-select}} \emph{This server requires a secure connection
+(SSL)} (see \imageref{advanced}).
+\end{itemize}
+\myincludegraphics{advanced}{!htp}{scale=0.8}
+
+\subsection{Proxy tutorial}
+
+FreePOPs is able to use HTTP proxy servers. If you don't know what
+they are or if there's no proxy in your local network then you may
+skip this page, as the operations described herein will be useless
+to you.
+
+In order to use a HTTP proxy, FreePOPs supports the \texttt{-P} option,
+or the equivalent long version \texttt{-{}-proxy}, to specify the
+address and port of the proxy separated by : (colon), for example
+\texttt{-P proxy.localnet.org:8080} or \texttt{-P 192.168.1.1} are
+valid choices. If no port number is specified then \texttt{8080} will
+be used as a default value.
+
+If authentication is necessary in order to use a proxy, use also the
+\texttt{-A username:password} option.
+
+Remember that the values specified with the \texttt{-P} option have
+precedence over any other value obtained by the operating system in
+use.
+
+In POSIX environments it's possible to use a proxy also using some
+environment variables.
+
+The environment variables that will be used are, in order of precedence,
+\texttt{HTTP\_PROXY}, \texttt{http\_proxy}, \texttt{PROXY} and \texttt{proxy}. 
+
+The current implementation supports some proxy authentucation nethods,
+and some of them require the SSL version of FreePOPs.
+
+
+\subsection{Spam/AV tutorial}
+
+Serveral Windows users, in collaboration with the LiberoPOPs team
+have created a tutorial for antispam and antivurus software. This
+tutorial is for FreePOPs too.
+
+
+\subsubsection{Norton AntiVirus, version 2002 and up}
+
+It is necessary to have FreePOPs listen on port 110 by means of the
+\texttt{-p} option and then set your email client so that it receives
+mail on port 110. To change FreePOPs options, read the FAQ {}``How
+do I change FreePOPs's command line switches?'' question. 
+
+
+\subsubsection{Avast! Antivirus}
+
+In your email client, change the username like this: \texttt{email@address\#localhost:2000}
+Inside the email client options, set the POP3 server port number to
+110, instead of what explained in the previous tutorials. 
+
+
+\subsubsection{AVG Pro 7 Antivirus}
+
+In your email client, modify the POP3 port number to 5300, leave unmodified
+the username and server (\texttt{email@address} and \texttt{localhost}).
+In AVG, enter \char`\"{}Properties > Servers > Create a POP3 mail
+server (server type)\char`\"{}, in connection set Fixed host: 127.0.0.1:2000
+and Local port: 5300 
+
+
+\subsubsection{SpamHilator}
+
+Configure your email client with the following parameters: POP3 server
+(incoming mail): localhost POP3 server port: 110 Username: \texttt{localhost\&email@address\&2000} 
+
+
+\subsubsection{Mailshield Desktop}
+
+In Mailshield Desktop, choose \char`\"{}Edit mail account\char`\"{},
+choosing the account you want to modify. In \char`\"{}Account name\char`\"{}
+and \char`\"{}Email address\char`\"{} type your complete email address.
+Then choose \char`\"{}Access\char`\"{}, in \char`\"{}type of Email
+server\char`\"{} use \char`\"{}POP3 mail account\char`\"{}, while
+in \char`\"{}incoming mail server\char`\"{} type 127.0.0.1. It may
+be useful to select the option \char`\"{}Use relaxed timeouts with
+this email server\char`\"{}. 
+
+
+\subsubsection{K9}
+
+Set up your email client to use 9999 as POP3 server port. Leave localhost
+as server name. Then use \texttt{localhost/2000/email@address} as
+username. 
+
+
+\subsubsection{SpamTerminator}
+
+Configure your email client with the following parameters: POP3 server
+(incoming mail): localhost POP3 server port: 8110 Username: \texttt{email@address\#localhos}t
+Then start FreePOPs with the option \texttt{-p} 110. 
+
+
+\subsubsection{SpamPal}
+
+Configure your email client with the following parameters: POP3 server
+(incoming mail): localhost POP3 server port: 110 Username: \texttt{email@address@localhost:2000}
+
+
+\subsection{LAN tutorial }
+
+
+\subsubsection*{How to use FreePOPs as a server in a computer network (Windows-oriented
+tutorial).}
+
+A LAN is composed of 2 computers (or more, but from 2 to 100 it is
+the same). We'll call \emph{Sola} the server and \emph{Cucco} the
+client. FreePOPs will start on \emph{Sola} with these options: \\
+\texttt{freepopsd.exe -b 0.0.0.0 -p 110} \texttt{}~\\
+that means that FreePOPs will bind on 0.0.0.0 (all network interfaces,
+offering the service to all) at port 110, the default POP3 port. Now
+we configure the mail client on Cucco, setting the POP3 server to
+\emph{Sola} and the server port to \emph{110}. Now, consider \emph{Sola}
+has a monitor too and we want to read some mail from here. We have
+to set the server to \emph{localhost} and the port to \emph{110}.
+
+By default under Windows FreePOPs binds on \texttt{127.0.0.1} offering
+the service only to the local computer, so the \texttt{-b} switch
+is really important here.
+
+
+\section{Plugins}
+
+Here we give a detailed description of each plugin, but before starting
+we explain the general way of passing special arguments to plugins
+(see the specific plugin description for a detailed description of
+the accepted parameters).
+
+
+\subsection{Parameters}
+
+Each plugin can receive parameters passed as an addon to username.
+The following username is for the \texttt{popforward.lua} plugin:\\
+\texttt{gareuselesinge@mydomain.xx?host=pop.mydomain.xx\&port=110}\\
+Since you may use some antispam proxy or other program that may handle
+your username and may dislike the \texttt{?} character you may use
+a space instead of it. Any other character, following \texttt{?},
+may be escaped for convenience with \texttt{\%XXX} where \texttt{XXX}
+are the numbers reported in the Appendix.
+
+Another way of hacking with the username is the on-the-fly domain-plugin
+binding. You may find useful to say: {}``I want to use plugin X for
+domain Y without changing the config.lua file''. In this case you
+have to use the plugin name (for example \texttt{popforward.lua)}
+as the domain name an probably you will have to pass some arguments
+to the plugin using the procedure previously described. This is an
+example:\\
+\texttt{gareuselesinge@popforward.lua?host=pop.mymailsite.xx\&port=110}\\
+Remember that in the case of the use of on-the-fly bindings there
+will be no default arguments, thus \texttt{port=110} can't be omitted
+as in the previous example.
+
+
+\subsection{libero.lua}
+
+This plugin allows you to read the mails you have in a \texttt{@libero.it},
+\texttt{@iol.it}, \texttt{@inwind.it} and \texttt{@blu.it} mailbox.
+This means you can still use your favorite mail reader instead of
+using the webmail. This plugin acts as a browser that surfs your webmail
+account and make it appear as a POP3 server. For more info on this
+plugin you may read the LiberoPOPs (FreePOPs ancestor) website at
+\texttt{http://liberopops.sourceforge.net}
+
+To use this plugin you have to use your full email address as the
+username and your real password as the password. This plugin accepts
+the following parameters:
+
+\begin{description}
+\item [folder]is used to select the folder (\texttt{inbox} is the default)
+you want to interact with. The folders that are available are called
+\texttt{draft}, \texttt{inbox}, \texttt{outbox}, \texttt{trash}. If
+you created some folders you can use them using theyr names. If your
+folder is not at toplevel you have to use the \texttt{/} to separate
+it from the parent. This is an example of a username for reading the
+\texttt{son} folder, a subfolder of the \texttt{father} one:\\
+\texttt{foo@libero.it?folder=father/son}
+\end{description}
+
+\subsection{tin.lua}
+
+This is the webmail support for \texttt{@virgilio.it} and \texttt{@tin.it}
+mailboxes. To use this plugin you have to use your full email address
+as the username and your real password as the password. Since you
+may need to inspect other folders than \texttt{INBOX}, you can pass
+the folder parameter to the plugin. The only tested folder is \texttt{Spam},
+but other forlder may work. This is an example of a username for the
+\texttt{Spam} folder (the default folder is the \texttt{INBOX} one):\\
+\texttt{foo@virgilio.it?folder=Spam }
+
+
+\subsection{lycos.lua}
+
+This is the webmail support for \texttt{@lycos.it} mailboxes. To use
+this plugin you have to use your full email address as the username
+and your real password as the password.
+
+
+\subsection{popforward.lua}
+
+This plugin was developed to test FreePOPs before any real plugins
+were written. It simply forwards to a real POP3 server your local
+requests. This can be used for masquerading a buggy POP3 server, but
+if you think you need this you should examine carefully the plugin
+code and add checks to improve the detection/avoidance of malicious
+requests, since the plugins was not born with security in mind. 
+
+To use this plugin you have to edit the config.lua file. This because
+we can't add all the existing POP3 server to this file :) The plugin
+wants two arguments, the POP3 host and the port (usually \texttt{110})
+on which the server listens. This is an example of a configuration
+line for this plugin, in which all email addresses of the \texttt{@virgilio.it}
+domain are forwarded to \texttt{in.virgilio.it:110}:\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- popforward plugin 
+
+freepops.MODULES_MAP["virgilio.it"]     = {         
+
+       name="popforward.lua",         
+
+       args={ 
+
+              port=110,
+
+              host="in.virgilio.it"
+
+       } 
+
+} 
+
+\end{verbatim}
+
+\end{footnotesize}You can reach the same result using the passing argument method described
+in the first paragraph of this chapter. These are the accepted arguments:
+
+\begin{description}
+\item [host]The pop3 server you want to connect to
+\item [port]The pop3 server port, usually 110
+\item [realusername]If you bind this plugin on the fly you probably need
+to specify the real username here, since the username you specified
+contains the plugin name and is probably invalid.
+\end{description}
+
+\subsection{aggregator.lua}
+
+Usually you can benefit from the W3C's RSS format when you read some
+website news. The RSS file indexes the news, providing a link to them.
+This plugin can make your mail client see the RSS file as a mailbox
+from which you can download each news as if it was a mail message.
+The only limitation is that this plugin can fetch only a news summary
+plus the news link. 
+
+To use this plugin you have to use a casual username with the \texttt{@aggregator}
+suffix (ex: \texttt{foo@aggregator}) and as the password the URL of
+the RSS file(ex: \texttt{http://www.securityfocus.com/rss/vulnerabilities.xml}).
+For your commodity we added some alias for you. This means you have
+not to search by hand the URL of the RSS file. We added some domain,
+for example \texttt{@securityfocus.com}, that can be used to directly
+use the aggregator plugin with these website. To use these alias you
+have to use a username in the form \texttt{something@aggregatordomain}
+and a casual password. This is the list of aliases for the aggregator
+plugin.\\
+\\
+\begin{tabular}{|l|l|}
+\hline 
+\texttt{\footnotesize aggregatordomain}&
+{\footnotesize description}\tabularnewline
+\hline
+\hline 
+\texttt{\footnotesize freepops.rss.en}&
+\multicolumn{1}{l|}{\texttt{\footnotesize http://freepops.sourceforge.net/} {\footnotesize news
+(English)}}\tabularnewline
+\hline 
+\texttt{\footnotesize freepops.rss.it}&
+\texttt{\footnotesize http://freepops.sourceforge.net/} {\footnotesize news
+(Italian)}\tabularnewline
+\hline 
+\texttt{\footnotesize flatnuke.sf.net}&
+\texttt{\footnotesize http://flatnuke.sourceforge.net/} {\footnotesize news
+(Italian)}\tabularnewline
+\hline 
+\texttt{\footnotesize ziobudda.net}&
+\texttt{\footnotesize http://ziobudda.net/} {\footnotesize news (both
+Italian and English)}\tabularnewline
+\hline 
+\texttt{\footnotesize punto-informatico.it}&
+\texttt{\footnotesize http://punto-informatico.it/} {\footnotesize news
+(Italian)}\tabularnewline
+\hline 
+\texttt{\footnotesize linuxdevices.com}&
+\texttt{\footnotesize http://linuxdevices.com/} {\footnotesize news
+(English)}\tabularnewline
+\hline 
+\texttt{\footnotesize gaim.sf.net}&
+\texttt{\footnotesize http://gaim.sourceforge.net/} {\footnotesize news
+(English)}\tabularnewline
+\hline 
+\texttt{\footnotesize securityfocus.com}&
+\texttt{\footnotesize http://www.securityfocus.com/} {\footnotesize new
+vulnerabilities (English)}\tabularnewline
+\hline 
+\texttt{\footnotesize games.gamespot.com}&
+\texttt{\footnotesize http://www.gamespot.com/} {\footnotesize computer
+games news (English)}\tabularnewline
+\hline 
+\texttt{\footnotesize news.gamespot.com}&
+\texttt{\footnotesize http://www.gamespot.com/} {\footnotesize GameSpot
+news (English)}\tabularnewline
+\hline 
+\texttt{\footnotesize kerneltrap.org}&
+\texttt{\footnotesize http://kerneltrap.org} {\footnotesize news (English)}\tabularnewline
+\hline 
+\texttt{\footnotesize mozillaitalia.org}&
+\texttt{\footnotesize http://www.mozillaitalia.org} {\footnotesize news
+(Italian)}\tabularnewline
+\hline 
+\texttt{\footnotesize linux.kerneltrap.org}&
+\texttt{\footnotesize http://linux.kerneltrap.org} {\footnotesize news
+(English)}\tabularnewline
+\hline
+\end{tabular}
+
+
+\subsection{flatnuke.lua}
+
+This plugin is an aggregator plugin specialized in the websites made
+with the FlatNuke%
+\footnote{HTTP://flatnuke.sourceforge.net%
+} content management system, or other sites that use the same news
+format like the FreePOPs website. Since in a FlatNuke site the news
+are stored in plain xml files this plugin is able to fetch the whole
+news, and not only the headings as the aggregator plugin does. This
+is really useful if you don't want to surf the website to read the
+news.
+
+To use this plugin you have to use a username with the \texttt{@flatnuke}
+domain (ex: \texttt{something@flatnuke}) and a flatnuke homepage URL
+as the password (ex: \texttt{http://flatnuke.sourceforge.net/}, no
+need for the RSS file URL since FlatNuke puts the RSS in a fixed and
+well known position. There are some alias for FlatNuke sites, see
+the aggregator plugin documentation to know what this means):\\
+\\
+\begin{tabular}{|l|l|}
+\hline 
+\texttt{\footnotesize aggregatordomain}&
+{\footnotesize description}\tabularnewline
+\hline
+\hline 
+\texttt{\footnotesize freepops.en}&
+\texttt{\footnotesize http://freepops.sourceforge.net/} {\footnotesize full
+news (English)}\tabularnewline
+\hline 
+\texttt{\footnotesize freepops.it}&
+\texttt{\footnotesize http://freepops.sourceforge.net/} {\footnotesize full
+news (Italian)}\tabularnewline
+\hline 
+\texttt{\footnotesize flatnuke.it}&
+\texttt{\footnotesize http://flatnuke.sourceforge.net/} {\footnotesize full
+news (Italian)}\tabularnewline
+\hline
+\end{tabular}
+
+
+\subsection{kernel.lua}
+
+This plugin helps in staying up to date with the Linux kernel releases.
+\texttt{http://kernel.org} is the official page with the Linux kernel
+releases, each with its ChangeLog. You should use \texttt{something@kernel.org}
+to receive news about every tree, \texttt{something@kernel.org.24}
+or \texttt{something@kernel.org.26} for a specific tree. Password
+is not used, type a random string.
+
+
+\subsection{gmail.lua}
+
+This is the webmail support for \texttt{@gmail.com} mailboxes. To
+use this plugin you have to use your full email address as the username
+and your real password as the password. An extensions is the \texttt{\#export}
+that allows you to export in csv format you address book. To do this
+you should use something like \texttt{username\#export@gmail.com}
+and a \texttt{gmail\_contacts\_export.csv} will be saved in you home
+(Unix) or in the My Documents directory (Windows). To use this plugin
+you need the SSL version of FreePOPs (for Windows download the FreePOPs-X.Y.Z-SSL.exe
+setup file, under Unix you probably need openssl installed).
+
+
+\section{Creating a plugin}
+
+Two sections follow, the first is a quick overview of what a plugin
+has to do, the latter is a more detailed tutorial. Before proceeding
+I suggest you read some stuff that is at the base of plugin writing:
+
+\begin{enumerate}
+\item Since plugins are written in LUA you must read at least the LUA tutorial
+(HTTP://lua-users.org/wiki/LuaTutorial); many thanks to the guys who
+wrote it. LUA is a quite simple scripting language, easy to learn,
+and easy to read. If you are interested in this language you should
+read THE book about LUA ({}``Programming in Lua'' by Roberto Ierusalimschy
+HTTP://www.inf.puc-rio.br/\textasciitilde{}roberto/book/). It is a
+really good book, believe me. Today I've seen that the book is completely
+available online here. HTTP://www.lua.org/pil/
+\item Since we have to implement a POP3 backend you should know what POP3
+is. The rfc is number 1939 and is included in the doc/ directory of
+the source package of FreePOPs, but you can fetch it from the net
+HTTP://www.ietf.org/rfc/rfc1939.txt.
+\item Read carefully this tutorial, it is hardly a good tutorial, but is
+better than nothing.
+\item The website contains, in the doc section, a quite good documentation
+of the sources. You should keep a web browser open at the LUA modules
+documentation page while writing a plugin.
+\item After creating a prototype, you should read a full featured plugin.
+The libero.lua plugin is really well commented, you may start there.
+\item Remember that this software has an official forum (HTTP://freepops.diludovico.it)
+and some authors you may ask for help.
+\item FreePOPs is licensed under the GNU/GPL license, therefore any and
+all software that makes use of its code must be released under the
+same license. This includes plugins. For more information read the
+enclosed \texttt{COPYING} file or see the license text at HTTP://www.gnu.org/licenses/gpl.html.
+\end{enumerate}
+
+\subsection{Plugins overview}
+
+A plugin is essentially a backend for a POP3 server. The plugins are
+written in LUA%
+\footnote{The language website is HTTP://www.lua.org%
+} while the POP3 server is written in C. Here we examine the interfaces
+between The C core and the LUA plugins.
+
+
+\subsubsection{The interface between the C core and a plugin}
+
+As we explained before the C POP3 frontend has to be attached to a
+LUA backend. The interface is really simple if you know the POP3 protocol.
+Here we only summarize the meaning, but the RFC 1939 (included in
+the \texttt{doc/} directory of the source distribution) is really
+short and easy to read. As your intuition should suggest the POP3
+client may ask the pop3 server to know something about the mail that
+is in the mailbox and eventually retrieve/delete a message. And this
+is exactly what it does.
+
+The backend must implement all the POP3 commands (like USER, PASS,
+RETR, DELE, QUIT, LIST, ...) and must give back to the frontend the
+result. Let us give a simple example of a POP3 session taken from
+the RFC:
+
+\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+     1  S: <wait for connection on TCP port 110>
+
+     2  C: <open connection>
+
+     3  S:    +OK POP3 server 
+
+     4  C:    USER linux@kernel.org
+
+     5  S:    +OK now insert the pasword
+
+     6  C:    PASS gpl
+
+     7  S:    +OK linux's maildrop has 2 messages (320 octets)
+
+     8  C:    STAT
+
+     9  S:    +OK 1 320
+
+    10  C:    LIST
+
+    11  S:    +OK 2 messages (320 octets)
+
+    12  S:    1 320
+
+    13  S:    .
+
+    14  C:    RETR 1
+
+    15  S:    +OK 120 octets
+
+    16  S:    <the POP3 server sends message 1>
+
+    17  S:    .
+
+    18  C:    DELE 1
+
+    19  S:    +OK message 1 deleted
+
+    20  C:    QUIT
+
+    21  S:    +OK dewey POP3 server signing off (maildrop empty)
+
+    22  C:  <close connection>
+
+    23  S:  <wait for next connection>
+
+\end{verbatim}
+
+\end{footnotesize}
+
+In this session the backend will be called for lines 4, 6, 8, 10,
+14, 18, 20 (all the \texttt{C:} lines) and respectively the functions
+implementing the POP3 commands will be called this way
+
+\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+    user(p,"linux@kernel.org")
+
+    pass(p,"gpl")
+
+    stat(p)
+
+    list_all(p)
+
+    retr(p,1)
+
+    dele(p,1)
+
+    quit_update(p)
+
+\end{verbatim}
+
+\end{footnotesize}
+
+Later I will make clear what p is. I hope we'll remove it making it
+implicit for complete transparency. It is easy to understand that
+there is a 1-1 mapping between POP3 commands and plugin function calls.
+You can view a plugin as the implementation of the POP3 interface.
+
+
+\subsubsection{The interface between a plugin and the C core}
+
+Let us take in exam the call to \texttt{pass(p,''gpl'')}. Here the
+plugin should authenticate the user (if there is a sort of authentication)
+and inform the C core of the result. To achieve this each plugin function
+must return an error flag, to be more accurate one of these errors:\\
+
+
+\begin{tabular}{|l|p{7cm}|}
+\hline 
+{\footnotesize Code}&
+{\footnotesize Meaning}\tabularnewline
+\hline
+\hline 
+\texttt{\footnotesize POPSERVER\_ERR\_OK}&
+{\footnotesize No error}\tabularnewline
+\hline 
+\texttt{\footnotesize POPSERVER\_ERR\_NETWORK}&
+{\footnotesize An error concerning the network}\tabularnewline
+\hline 
+\texttt{\footnotesize POPSERVER\_ERR\_AUTH}&
+{\footnotesize Authorization failed}\tabularnewline
+\hline 
+\texttt{\footnotesize POPSERVER\_ERR\_INTERNAL}&
+{\footnotesize Internal error, please report the bug}\tabularnewline
+\hline 
+\texttt{\footnotesize POPSERVER\_ERR\_NOMSG}&
+{\footnotesize The message number is out of range}\tabularnewline
+\hline 
+\texttt{\footnotesize POPSERVER\_ERR\_LOCKED}&
+{\footnotesize Mailbox is locked by another session}\tabularnewline
+\hline 
+\texttt{\footnotesize POPSERVER\_ERR\_EOF}&
+\multicolumn{1}{l|}{{\footnotesize End of transmission, used in the popserver\_callback}}\tabularnewline
+\hline 
+\texttt{\footnotesize POPSERVER\_ERR\_TOOFAST}&
+{\footnotesize You are not allowed to reconnect to the server now,
+wait a bit and retry}\tabularnewline
+\hline 
+\texttt{\footnotesize POPSERVER\_ERR\_UNKNOWN}&
+{\footnotesize No idea of what error I've encountered}\tabularnewline
+\hline
+\end{tabular}\\
+\\
+
+
+In our case the most appropriate error codes are \texttt{POPSERVER\_ERR\_AUTH}
+and \texttt{POPSERVER\_ERR\_OK}. This is a simple case, in which an
+error code is enough. Now we analyze the more complex case of the
+call to \texttt{list\_all(p)}. Here we have to return an error code
+as before, but we also have to inform the C core of the size of all
+messages in the mailbox. We need the p parameter passed to each plugin
+function (note that that parameter may became implicit in the future).
+\texttt{p} stands for the data structure that the C core expects us
+to fill calling appropriate functions like \texttt{set\_mailmessage\_size(p,num,size)}
+where num is the message number and size is the size in bytes. Usually
+it is really common to put more functions all together. For example
+when you get the message list page in a webmail you know the number
+of the messages, their size and uidl so you can fill the p data structure
+with all the informations for LIST, STAT, UIDL. 
+
+The last case that we examine is \texttt{retr(p,num,data)}. Since
+a mail message can be really big, there is no pretty way of downloading
+the entire message without making the mail client complain about the
+server death. The solution is to use a callback. Whenever the plugin
+has some data to send to the client he should call the \texttt{popserver\_callback(buffer,data)}.
+\texttt{data} is an opaque structure the popserver needs to accomplish
+its work (note that this parameter may be removed for simplicity).
+In some cases, for example if you know the message is small or you
+are working on a fast network, you can fetch the whole message and
+send it, but remember that this is more memory consuming.
+
+
+\subsection{The art of writing a plugin (plugins tutorial)}
+
+In this section we will write a plugin step by step, examining each
+important detail. We will not write a real and complete plugin since
+it may be a bit hard to follow but we will create an ad-hoc webmail
+for our purposes.
+
+
+\subsubsection{(step 1) The skeleton}
+
+The first thing we will do is copy the \texttt{skeleton.lua} file
+to \texttt{foo.lua} (since we will write the plugin for the \emph{foo.xx}
+webmail, \emph{xx} stands for a real domain, but I don't want to mention
+any websites here...). Now with your best editor (I suggest vim under
+Unix and scintilla for win32, since they support syntax highlights
+for LUA, but any other text editor is OK) open \texttt{foo.lua} and
+change the first few lines adding the plugin name, version, your name,
+your email and a short comment in the proper places.\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- ************************************************************************** -- 
+
+--  FreePOPs @--put here domain-- webmail interface 
+
+--  
+
+--  $Id$ 
+
+--  
+
+--  Released under the GNU/GPL license 
+
+--  Written by --put Name here-- <--put email here--> 
+
+-- ************************************************************************** --
+
+
+
+PLUGIN_VERSION = "--put version here--" 
+
+PLUGIN_NAME = "--put name here--" 
+
+\end{verbatim}
+
+\end{footnotesize} Now we have an empty plugin, but it is not enough to start hacking
+on it. We need to open the \texttt{config.lua} file (in the win32
+distribution it is placed in the main directory, while in the Unix
+distribution it is in \texttt{/etc/freepops/}; other copies of this
+file may be included in the distributions, but they are backup copies)
+and add a line like this\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- foo plugin 
+
+freepops.MODULES_MAP["foo.xx"]      = {name="foo.lua"} 
+
+\end{verbatim}
+
+\end{footnotesize} at the beginning of the file. Before ending the first step you should
+try if the plugin is correctly activated by FreePOPs when needed.
+To do this we have to add few lines to \texttt{foo.lua}, in particular
+we have to add an error return value to \texttt{user()}.\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Must save the mailbox name 
+
+function user(pstate,username)   
+
+        return POPSERVER_ERR_AUTH 
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize} Now the user function always fails, returning an authentication error.
+Now you have to start FreePOPs (if it is already running you don't
+have to restart it) and start telnet (under win32 you should open
+a DOS prompt, under Unix you have the shell) and type \texttt{telnet
+localhost 2000} and then type \texttt{user test@foo.xx}.\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+tassi@garfield:~$ telnet localhost 2000 
+
+Trying 127.0.0.1... 
+
+Connected to garfield. 
+
+Escape character is '^]'. 
+
++OK FreePOPs/0.0.10 pop3 server ready 
+
+user test@foo.xx 
+
+-ERR AUTH FAILED 
+
+Connection closed by foreign host. 
+
+\end{verbatim}
+
+\end{footnotesize} The server responds closing the connection and printing an authorization
+failed message (thats OK, since the \texttt{user()} function of our
+plugin returns this error). In the standard error file (the console
+under Unix, the file \texttt{stderr.txt} under Windows) the error
+messages get printed, don't mind them now.
+
+
+\subsubsection{(step 2) The login}
+
+The login procedure is the first thing we have to do. The POP3 protocol
+has 2 commands for login, \emph{user} and \emph{pass}. First the client
+does a user, then it tells the server the password. As we have already
+seen in the overview this means that first \texttt{user()} and then
+\texttt{\emph{}}\texttt{pass()} will be called. This is a sample login:\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+tassi@garfield:~$ telnet localhost 2000 
+
+Trying 127.0.0.1... 
+
+Connected to garfield. 
+
+Escape character is '^]'. 
+
++OK FreePOPs/0.0.10 pop3 server ready 
+
+user test@foo.xx 
+
++OK PLEASE ENTER PASSWORD 
+
+pass hello 
+
+-ERR AUTH FAILED 
+
+\end{verbatim}
+
+\end{footnotesize} If you start FreePOPs with the \texttt{-w} switch you should read
+this on standard error/standard output:\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+freepops started with loglevel 2 on a little endian machine. 
+
+Cannot create pid file "/var/run/freepopsd.pid" 
+
+DBG(popserver.c, 162): [5118] ?? Ip address 0.0.0.0 real port 2000
+
+DBG(popserver.c, 162): [5118] ?? Ip address 127.0.0.1 real port 2000
+
+DBG(popserver.c, 162): [5118] -> +OK FreePOPs/0.0.10 pop3 server ready
+
+DBG(popserver.c, 162): [5118] <- user test@foo.xx
+
+DBG(log_lua.c,  83): (@src/lua/foo.lua, 37) : FreePOPs plugin 'Foo web mail' version '0.0.1' started!
+
+*** the user wants to login as 'test@foo.xx' 
+
+DBG(popserver.c, 162): [5118] -> +OK PLEASE ENTER PASSWORD
+
+DBG(popserver.c, 157): [5118] <- PASS ********* 
+
+*** the user inserted 'hello' as the password for 'test@foo.xx' 
+
+DBG(popserver.c, 162): [5118] -> -ERR AUTH FAILED
+
+AUTH FAILED 
+
+DBG(threads.c,  81): thread 0 will die 
+
+\end{verbatim}
+
+\end{footnotesize}and the plugin has been changed a bit to store the user login and
+print some debug info. This is the plugin that gave this output:\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+foo_globals= {  
+
+       username="nothing",
+
+       password="nothing" 
+
+} 
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Must save the mailbox name 
+
+function user(pstate,username)   
+
+        foo_globals.username = username
+
+        print("*** the user wants to login as '"..username.."'")
+
+        return POPSERVER_ERR_OK
+
+end 
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Must login 
+
+function pass(pstate,password)
+
+        foo_globals.password = password
+
+        print("*** the user inserted '"..password..
+
+            "' as the password for '"..foo_globals.username.."'")
+
+        return POPSERVER_ERR_AUTH end 
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Must quit without updating 
+
+function quit(pstate)      
+
+        return POPSERVER_ERR_OK 
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}Here we have some important news. First the \texttt{foo\_globals}
+table that will contain all the globals (values that should be available
+to successive function calls) we need. So far we have the username
+and password there. The \texttt{user()} function now stores the passed
+username in the \texttt{foo\_globals} table and prints something on
+standard output. The \texttt{pass()} function likewise stores the
+password in the global table and prints some stuff. The \texttt{quit()}
+function simply returns \texttt{POPSERVER\_ERR\_OK} to make FreePOPs
+happy.
+
+Now that we know how FreePOPs will act during the login we have to
+implement the login in the webmail, but first uncomment the few lines
+in the \texttt{init()} function (that is called when the plugin is
+started), that loads the \texttt{browser.lua} module (the module we
+will use to login in the webmail). Here is the webmail login page
+viewed with Mozilla and the source of the page (you can see it with
+Mozilla with Ctrl-U, \imageref{login}).
+
+\myincludegraphics{login}{!htp}{scale=0.8}
+
+\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+<html> 
+
+<head> 
+
+<title>foo.xx webmail login</title> 
+
+</head> 
+
+<body style="background-color : grey; color : white"> 
+
+<h1>Webmail login</h1>
+
+<form name="webmail" method="post" action="http://localhost:3000/"> 
+
+login: <input type="text" size="10" name="username"> <br> 
+
+password: <input type="password" size="10" name="password"> <br> 
+
+<input type="submit" value="login"> 
+
+</form> 
+
+</body> 
+
+</html>
+
+\end{verbatim}
+
+\end{footnotesize}Here we have 2 input fields, one called username and one called password.
+When the user clicks login the web browser will \texttt{POST} to \texttt{HTTP://localhost:3000/}
+the form contents (I used a local address for comfort, but it should
+be something like \texttt{HTTP://webmail.foo.xx/login.php}). This
+is what the browser sends:\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+POST / HTTP/1.1 
+
+Host: localhost:3000 
+
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6) Gecko/20040614 Firefox/0.8 Accept: */*
+
+Accept-Language: en-us,en;q=0.5 
+
+Accept-Encoding: gzip,deflate 
+
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7 
+
+Keep-Alive: 300 
+
+Connection: keep-alive 
+
+Content-Type: application/x-www-form-urlencoded 
+
+Content-Length: 37
+
+
+
+username=test%40foo.xx&password=hello 
+
+\end{verbatim}
+
+\end{footnotesize} We are not interested in the first part (the HTTP header, since the
+browser module will take care of it) but in the last part, the posted
+data. Since the fields of the form were username and password, the
+posted data is\texttt{}~\\
+\texttt{username=test\%40foo.xx\&password=hello}. Now we want to reproduce
+the same HTTP request with our plugin. This is the simple code that
+will do just that.\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Must login 
+
+function pass(pstate,password)
+
+       foo_globals.password = password
+
+        
+
+       print("*** the user inserted '"..password..
+
+            "' as the password for '"..foo_globals.username.."'") 
+
+
+
+       -- create a new browser
+
+       local b = browser.new()
+
+
+
+       -- store the browser object in globals  
+
+       foo_globals.browser = b
+
+
+
+       -- create the data to post      
+
+       local post_data = string.format("username=%s&password=%s",
+
+               foo_globals.username,foo_globals.password)
+
+       -- the uri to post to   
+
+       local post_uri = "http://localhost:3000/"
+
+
+
+       -- post it      
+
+       local file,err = nil, nil       
+
+  
+
+       file,err = b:post_uri(post_uri,post_data)
+
+       
+
+       print("we received this webpage: ".. file)      
+
+       return POPSERVER_ERR_AUTH 
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize} First we create a browser object, then we build the \texttt{post\_uri}
+and \texttt{post\_data} using a simple \texttt{string.format} (printf-like
+function). And this is the resulting request\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+POST / HTTP/1.1 
+
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6) Gecko/20040322 Firefox/0.8
+
+Pragma: no-cache 
+
+Accept: */* 
+
+Host: localhost 
+
+Content-Length: 35 
+
+Content-Type: application/x-www-form-urlencoded
+
+
+
+username=test@foo.xx&password=hello 
+
+\end{verbatim}
+
+\end{footnotesize}that is essentially the same (we should url-encode the post data with
+\texttt{curl.escape()}) we wanted to do. We saved the browser object
+to the global table, since we want to use the same browser all the
+time.
+
+Now that we have logged in, we want to check the resulting page, and
+maybe extract a session ID that will be used later. This is the code
+to extract the session id and the HTML page we have received in response
+to the login request\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim} 
+
+        ... the same as before here ...
+
+     
+
+        print("we received this webpage: ".. file)
+
+        
+
+        -- search the session ID        
+
+        local _,_,id = string.find(file,"session_id=(%w+)")
+
+
+
+        if id == nil then               
+
+               return POPSERVER_ERR_AUTH
+
+        end
+
+
+
+        foo_globals.session_id = id
+
+        return POPSERVER_ERR_OK
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize} and \imageref{logindone} is the returned web page.\\
+\myincludegraphics{logindone}{!htp}{scale=0.8}\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+<html> 
+
+<head> 
+
+<title>foo.xx webmail</title> 
+
+</head> 
+
+<body style="background-color : grey; color : white"> 
+
+<h1>Webmail - test@foo.xx</h1> 
+
+Login done! click here to view the inbox folder. 
+
+<a href="http://localhost:3000/inbox.php?session_id=ABCD1234">inbox</a> 
+
+</body> 
+
+</html>
+
+\end{verbatim}
+
+\end{footnotesize} Note that we extracted the session ID string using \\
+\texttt{string.find(file,''session\_id=(\%w+)'')}. This is a really
+important function in the lua library and, even if it is described
+in the lua tutorial at HTTP://lua-users.org, we will talk a bit about
+captures here. Look at the page source. We are interested in the line
+\emph{}\\
+\texttt{<a href=\char`\"{}HTTP://localhost:3000/inbox.php?session\_id=ABCD1234\char`\"{}>inbox</a>}
+\emph{}\\
+that contains the session\_id we want to capture. Our expression is
+\texttt{\emph{session\_id=(\%w+)}} that means we want to match all
+the strings that start with \texttt{session\_id=} and than continue
+with one or more alphanumerical character. Since we wrote \texttt{\%w+}
+in round brackets, we mean to capture the content of brackets (the
+alphanumerical part). So string.find will return 3 values, the first
+two are ignored (assigned to the dummy variable \texttt{\_}) while
+the third is the captured string (in our case \texttt{ABCD1234}).
+The LUA tutorial at lua-users is quite good and at HTTP://sf.net/projects/lua-users
+you can find the LUA short reference that is a summary of all standard
+lua functions and is a really good piece of paper (so many thanks
+to Enrico Colombini). If you really like LUA you should buy THE book
+about LUA called \emph{{}``Programming in Lua''} by Roberto Ierusalimschy
+(consider it the K\&R for LUA).
+
+
+\subsubsection{(step 3) Getting the list of messages}
+
+Now we have to implement the \texttt{stat()} function. The stat is
+probably the most important function. It must retrieve the list of
+messages in the webmail and their UIDL and size. In our example we
+will use the mlex module to grab the important info from the page,
+but you can use the string LUA module to do the same with captures.
+This is our inbox page (see \imageref{inbox})\\
+\myincludegraphics{inbox}{!htp}{scale=0.8}
+
+and this is the HTML body (only the first 2 messages are reported)\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+<h1>test@foo.xx - inbox (1/2)</h1> 
+
+<form name="inbox" method="post" action="/delete.php"> 
+
+<input type="hidden" name="session_id" value="ABCD1234"> 
+
+<table> 
+
+<tr><th>From</th><th>subject</th><th>size</th><th>date</th></tr> 
+
+<tr>        
+
+  <td><b>friend1@foo1.xx</b></td>         
+
+  <td><b><a href="/read.php?session_id=ABCD1234&uidl=123">ok!</a></b></td>
+
+  <td><b>20KB</b></td>
+
+  <td><b>today</b></td>   
+
+  <td><input type="checkbox" name="check_123"></td>
+
+</tr> 
+
+<tr>    
+
+  <td>friend2@foo2.xx</td>        
+
+  <td><a href="/read.php?session_id=ABCD1234&uidl=124">Re: hi!</a></td>  
+
+  <td>12KB</td>   
+
+  <td>yesterday</td>      
+
+  <td><input type="checkbox" name="check_124"></td> 
+
+</tr>
+
+</table> 
+
+<input type="submit" value="delete marked"> 
+
+</form> 
+
+<a href="/inbox.php?session_id=ABCD1234&page=2">go to next page</a> 
+
+</body> 
+
+\end{verbatim}
+
+\end{footnotesize}We have retrieved the HTML using the browser and the \texttt{get\_uri()}
+method (remember the URI for the inbox was in the login page). As
+you can see the messages are in a table and this table has the same
+structure for each message. This is the place in which you may use
+mlex. Just take all the stuff between \texttt{<tr>} and \texttt{</tr>}
+of a message row and delete all but the tags name. Then replace every
+empty space (we call space the string between two tags) with a {}``\texttt{.{*}}''.
+This is what we have obtained (it should be all in the same line,
+here is wrapped for lack of space) from the first message.\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+.*<tr>.*<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*<a>.*</a>.*</b>.*</td>.*
+
+<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*</b>.*</td>.*
+
+<td>.*<input>.*</td>.*</tr>
+
+\end{verbatim}
+
+\end{footnotesize}This expression is used to match the table row containing info about
+the message. Now cut and paste the line and replace every space and
+every tag with O (the letter, not the digit 0) or X. Put an X in the
+interesting fields (in our example the size and the input tag, that
+contains the message uidl).\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O
+
+<O>O<O>X<O>O<O>O<O>O<O>O<O>O<O>O
+
+<O>O<X>O<O>O<O>
+
+\end{verbatim}
+
+\end{footnotesize}While the first expression will be used to match the table row, this
+one will be used to extract the important fields. This is the code
+that starts mlex on the HTML and fills the popstate data structure
+with the captured data.\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Fill the number of messages and their size 
+
+function stat(pstate)
+
+      local file,err = nil, nil
+
+      local b = foo_globals.browser
+
+      file,err = b:get_uri("http://localhost:3000/inbox.php?session_id="..
+
+              foo_globals.session_id)
+
+      local e = ".*<tr>.*<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*<a>"..               
+
+              ".*</a>.*</b>.*</td>.*<td>.*<b>.*</b>.*</td>.*<td>.*"..                
+
+              "<b>.*</b>.*</td>.*<td>.*<input>.*</td>.*</tr>"         
+
+      local g = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O"..              
+
+              "<O>O<O>X<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>"
+
+      local x = mlex.match(file,e,g) 
+
+      --debug print   
+
+      x:print()
+
+
+
+      set_popstate_nummesg(pstate,x:count())
+
+      for i=1,x:count() do            
+
+              local _,_,size = string.find(x:get(0,i-1),"(%d+)")
+
+              local _,_,size_mult_k = string.find(x:get(0,i-1),"([Kk][Bb])")                        local _,_,size_mult_m = string.find(x:get(0,i-1),"([Mm][Bb])")
+
+              local _,_,uidl = string.find(x:get(1,i-1),"check_(%d+)")
+
+           
+
+              if size_mult_k ~= nil then
+
+                     size = size * 1024
+
+              end             
+
+              if size_mult_m ~= nil then
+
+                     size = size * 1024 * 1024
+
+              end             
+
+     
+
+              set_mailmessage_size(pstate,i,size)                     
+
+              set_mailmessage_uidl(pstate,i,uidl)
+
+      end
+
+ 
+
+      return POPSERVER_ERR_OK
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}The result of \texttt{x:print()} is the following\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+{'20KB','input type="checkbox" name="check_123"'}
+
+\end{verbatim}
+
+\end{footnotesize}and the telnet session follows\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
++OK FreePOPs/0.0.11 pop3 server ready 
+
+user test@foo.xx 
+
++OK PLEASE ENTER PASSWORD 
+
+pass secret 
+
++OK ACCESS ALLOWED 
+
+stat 
+
++OK 1 20480 
+
+quit 
+
++OK BYE BYE, UPDATING 
+
+\end{verbatim}
+
+\end{footnotesize}We have not listed here how we added the dummy \texttt{return} \texttt{POPSERVER\_ERR\_OK}
+line to the \texttt{quit()} function. The source code listed before
+uses mlex to extract the two interesting strings, then parses them
+searching for the size and the size multiplier and the uidl. Then
+sets the mail message attributes. But here you can see that we just
+matched the first message. To match the other messages we have to
+inform the mlex module that the \texttt{<b>} tag is optional (you
+can see that only the first message is in bold). So we change the
+expressions to\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+.*<tr>.*<td>[.*]{b}.*{/b}[.*]</td>.*<td>[.*]{b}.*<a>.*</a>.*{/b}[.*]</td>.*
+
+<td>[.*]{b}.*{/b}[.*]</td>.*<td>[.*]{b}.*{/b}[.*]</td>.*
+
+<td>.*<input>.*</td>.*</tr>
+
+\end{verbatim}
+
+\end{footnotesize}and\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+O<O>O<O>[O]{O}O{O}[O]<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O
+
+<O>[O]{O}X{O}[O]<O>O<O>[O]{O}O{O}[O]<O>O
+
+<O>O<X>O<O>O<O>
+
+\end{verbatim}
+
+\end{footnotesize}Now the stat command responds with \texttt{+OK 4 45056} and the debug
+print is \linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+{'20KB','input type="checkbox" name="check_123"'} 
+
+{'12KB','input type="checkbox" name="check_124"'} 
+
+{'10KB','input type="checkbox" name="check_125"'} 
+
+{'2KB','input type="checkbox" name="check_126"'}
+
+\end{verbatim}
+
+\end{footnotesize}Now we have a proper function stat that fill the popstate data structure
+with the info the popserver needs to respond to a stat request. Since
+the list, uidl, list\_all and uidl\_all requests can be satisfied
+with the same data we will use the standard function provided by the
+common.lua module. It will be explained in the next step, but we have
+to add 2 important lines to the  \texttt{stat()} function, to avoid
+a double call.\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+function stat(pstate) 
+
+       if foo_globals.stat_done == true then return POPSERVER_ERR_OK end
+
+
+
+       ... the same code here ...
+
+
+
+       foo_globals.stat_done = true
+
+       return POPSERVER_ERR_OK
+
+end
+
+\end{verbatim}
+
+\end{footnotesize}
+
+The most important function is done, but a lot of notes must be written
+here. First, mlex is really comfortable sometimes, but you may find
+more helpful using the lua string library or the regularexp library
+(posix extended regular expressions) to reach the same point. Second,
+this implementation stops at the first inbox page. You should visit
+all the inbox pages maybe using the \texttt{do\_until()} function
+in the \texttt{support.lua} library (that will be briefly described
+at the end of this tutorial). Third we make no error checking. For
+example the file variable may be nil and we must check these things
+to make a good plugin.
+
+
+\subsubsection{(step 4) The common functions}
+
+The common module gives us some pre-cooked functions that depend only
+on a well implemented \texttt{stat()} (I mean a stat than can be called
+more than once). This is our implementation of these functions \linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Fill msg uidl field 
+
+function uidl(pstate,msg) return common.uidl(pstate,msg) end 
+
+
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Fill all messages uidl field 
+
+function uidl_all(pstate) return common.uidl_all(pstate) end 
+
+
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Fill msg size 
+
+function list(pstate,msg) return common.list(pstate,msg) end 
+
+
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Fill all messages size 
+
+function list_all(pstate) return common.list_all(pstate) end 
+
+
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Unflag each message merked for deletion 
+
+function rset(pstate) return common.rset(pstate) end
+
+
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Mark msg for deletion 
+
+function dele(pstate,msg) return common.dele(pstate,msg) end 
+
+
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Do nothing 
+
+function noop(pstate) return common.noop(pstate) end 
+
+
+
+\end{verbatim}
+
+\end{footnotesize}but first add the common module loading code to your \texttt{init()}
+function\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+        ... the same code ..
+
+
+
+        -- the common module    
+
+        if freepops.dofile("common.lua") == nil then
+
+                  return POPSERVER_ERR_UNKNOWN    
+
+        end 
+
+
+
+        -- checks on globals    
+
+        freepops.set_sanity_checks()    
+
+
+
+        return POPSERVER_ERR_OK 
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}
+
+
+\subsubsection{(step 5) Deleting messages}
+
+Deleting messages is usually a normal post and an example of the \texttt{post\_data}
+is \texttt{session\_id=ABCD1234\&check\_124=on\&check\_126=on}. The
+code follows\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Update the mailbox status and quit 
+
+function quit_update(pstate)
+
+      -- we need the stat
+
+      local st = stat(pstate)
+
+      if st ~= POPSERVER_ERR_OK then return st end
+
+         
+
+      -- shorten names, not really important  
+
+      local b = foo_globals.b         
+
+      local post_uri = b:wherearewe() .. "/delete.php"        
+
+      local session_id = foo_globals.session_id       
+
+      local post_data = "session_id=" .. session_id .. "&"
+
+    
+
+      -- here we need the stat, we build the uri and we check if we   
+
+      -- need to delete something     
+
+    
+
+      local delete_something = false; 
+
+      for i=1,get_popstate_nummesg(pstate) do                 
+
+             if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then                                            post_data = post_data .. "check_" .. 
+
+                        get_mailmessage_uidl(pstate,i).. "=on&"                             
+
+                    delete_something = true                 
+
+             end     
+
+      end
+
+    
+
+      if delete_something then                
+
+             b:post_uri(post_uri,post_data)  
+
+      end
+
+    
+
+      return POPSERVER_ERR_OK 
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}Consider we do the post only if at least one message is marked for
+deletion. Another important think to keep in mind is that making only
+one post for all messages is better than making a single post for
+each message. When it is possible you should reduce the number of
+HTTP requests as much as you can since it is here we move FreePOPs
+from a rabbit to a tortoise.
+
+
+\subsubsection{(step 6) Downloading messages}
+
+You may ask why I talk about this only at point 6, while having the
+mail is probably what you want from a plugin. Implementing the \texttt{retr()}
+function is usually simple. It really depends on the webmail, but
+here we will talk of the simple case, while at the end of the tutorial
+you will see how to deal with complex webmails. The simple case is
+the one in which the webmail has a save message button. And the saved
+message is a plain text file containing both the header and the body
+of the message. There are only two interesting points in this case,
+firstly big messages, secondly the dot issue.
+
+Big messages are a cause of timeout. Yes, the most simple way of downloading
+a message is calling \texttt{b:get\_uri()} and store the message in
+a variable, and then send it to the mail client with \texttt{popserver\_callback()}.
+But think that a 5MB mail, downloaded with a 640Kbps DSL connection,
+at full 80KBps speed, takes 64 seconds to download. This means your
+plugin will not send any data to the mail client for more than one
+minute and this will make the mail client to disconnect from FreePOPs
+ thinking the POP3 server is dead. So we must send the data to the
+mail client as soon as we can. For this we have the \texttt{b:pipe\_uri()}
+function that calls a callback whenever it has some fresh data. The
+following code is the callback factory function, that creates a new
+callback to pass to the \texttt{pipe\_uri} browser method.\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-------------------------------------------------------------------------------- 
+
+-- The callback factory for retr 
+
+-- 
+
+function retr_cb(data)
+
+        local a = stringhack.new() 
+
+        return function(s,len)
+
+                s = a:dothack(s).."\0"          
+
+                popserver_callback(s,data)              
+
+                return len,nil
+
+        end
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}Here you see that the callback simply uses \texttt{popserver\_callback()}
+to pass the data to the mail client, but before doing this it mangles
+the data with the stringhack. But this is the second interesting point.
+
+The POP3 protocol should end the retr command answer with a line that
+contains only 3 bytes, {}``\texttt{.\textbackslash{}r\textbackslash{}n}''.
+But what if a line, inside the mail body, is a simple point? We have
+to escape it to {}``\texttt{..\textbackslash{}r\textbackslash{}n}''.
+This is not so hard, a \texttt{string.gsub(s,''\textbackslash{}r\textbackslash{}n.\textbackslash{}r\textbackslash{}n'',''\textbackslash{}r\textbackslash{}n..\textbackslash{}r\textbackslash{}n'')}
+is all we need... but not in the case of callbacks. The send callback
+will be called with some fresh data, and called more than once if
+the mail is big. And if the searched pattern is truncated between
+two calls the \texttt{string.gsub()} method will fail. This is why
+the stringhack module helps us. The \texttt{a} object lives as long
+as the callback function will be called (see the closure page of the
+lua tutorial) and will keep in mind that the searched pattern may
+be truncated.
+
+Finally the \texttt{retr()} code\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Get message msg, must call  
+
+-- popserver_callback to send the data 
+
+function retr(pstate,msg,pdata)          
+
+        -- we need the stat
+
+        local st = stat(pstate)
+
+        if st ~= POPSERVER_ERR_OK then return st end 
+
+    
+
+        -- the callback
+
+        local cb = retr_cb(data) 
+
+     
+
+        -- some local stuff
+
+       local session_id = foo_globals.session_id
+
+       local b = internal_state.b
+
+       local uri = b:wherearewe() .. "/download.php?session_id="..session_id..
+
+                "&message="..get_mailmessage_uidl(pstate,msg) 
+
+
+
+        -- tell the browser to pipe the uri using cb
+
+        local f,rc = b:pipe_uri(uri,cb)
+
+        if not f then
+
+                log.error_print("Asking for "..uri.."\n")
+
+                log.error_print(rc.."\n")
+
+                return POPSERVER_ERR_NETWORK
+
+        end
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}
+
+
+\subsubsection{(step 7) Test it}
+
+Making a good plugin needs a lot of testing. You should ask for betha
+testers at the FreePOPs forum (HTTP://freepops.diludovico.it) and
+ask the software authors to include it in the main distribution. You
+should also read the webmail contract, check if there is something
+like {}``\emph{I'll never use webmail->pop3 server to read my mail}''
+and send a copy to the authors of the software.
+
+
+\subsubsection{(step 8) The so mentioned last part of the tutorial}
+
+There are a lot of things we have omitted here.
+
+\begin{description}
+\item [The~multi-page~stat]is the real good implementation for \texttt{stat()}.
+We mentioned before that our implementation lists only the messages
+in the first page. The code for parsing and extracting interesting
+info from a page is already written, we simply need a function that
+checks if we are in the last page and if not it changes the value
+of a \texttt{uri} variable. The \texttt{uri} variable will be used
+by the fetch function. In this case you should use the support module
+with the do\_until cycle. This is a simple example of \texttt{do\_until()}
+\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- -------------------------------------------------------------------------- -- 
+
+-- Fill the number of messages and their size 
+
+function stat(pstate)
+
+        ... some code as before ...
+
+
+
+        -- this string will contain the uri to get. it may be updated by        
+
+        -- the check_f function, see later      
+
+        local uri = string.format(libero_string.first,popserver,session_id)
+
+
+
+        -- The action for do_until      
+
+        --      
+
+        -- uses mlex to extract all the messages uidl and size  
+
+        local function action_f (s)
+
+                 -- calls match on the page s, with the mlexpressions
+
+                 -- statE and statG              
+
+                 local x = mlex.match(s,e,g)                 
+
+               
+
+                 -- the number of results                
+
+                 local n = x:count()
+
+                
+
+                 if n == 0 then return true,nil end
+
+ 
+
+                 -- this is not really needed since the structure                
+
+                 -- grows automatically... maybe... don't remember now 
+
+                 local nmesg_old = get_popstate_nummesg(pstate)
+
+                 local nmesg = nmesg_old + n 
+
+                 set_popstate_nummesg(pstate,nmesg)
+
+      
+
+                 -- gets all the results and puts them in the popstate structure                              for i = 1,n do                        
+
+                         ... some code as before ...
+
+ 
+
+                         set_mailmessage_size(pstate,i+nmesg_old,size)                     
+
+                         set_mailmessage_uidl(pstate,i+nmesg_old,uidl)           
+
+                 end     
+
+                
+
+                 return true,nil         
+
+        end
+
+        
+
+        -- check must control if we are not in the last page and        
+
+        -- eventually change uri to tell retrive_f the next page to retrive     
+
+        local function check_f (s)              
+
+                 local tmp1,tmp2 = string.find(s,next_check)              
+
+                 if tmp1 ~= nil then                     
+
+                          -- change retrive behaviour                     
+
+                          uri = "--build the uri for the next page--"
+
+
+
+                          -- continue the loop
+
+                          return false       
+
+                 else
+
+                          return true
+
+                 end
+
+        end
+
+
+
+        -- this is simple and uri-dependent
+
+        local function retrive_f ()
+
+                 local f,err = b:get_uri(uri)
+
+                 if f == nil then 
+
+                         return f,err
+
+                 end
+
+      
+
+                 local _,_,c = string.find(f,"--timeout string--")
+
+                 if c ~= nil then
+
+                         internal_state.login_done = nil                                
+
+                         session.remove(key())
+
+                         local rc = libero_login()                       
+
+                         if rc ~= POPSERVER_ERR_OK then                          
+
+                                 return nil,"Session ended,unable to recover"                                         end             
+
+                        
+
+                         uri = "--uri for the first page--"      
+
+                         return b:get_uri(uri)           
+
+                  end     
+
+               
+
+                  return f,err    
+
+        end
+
+
+
+        -- initialize the data structure
+
+        set_popstate_nummesg(pstate,0)
+
+ 
+
+        -- do it        
+
+        if not support.do_until(retrive_f,check_f,action_f) then
+
+                  log.error_print("Stat failed\n")
+
+                  session.remove(key())           
+
+                  return POPSERVER_ERR_UNKNOWN    
+
+        end
+
+        
+
+        -- save the computed values     
+
+        internal_state["stat_done"] = true 
+
+        return POPSERVER_ERR_OK 
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}The only strange things are the retrieve function and the session
+saving stuff. Since webmail sometimes timeout you should check if
+the retrieved page is valid or not, and eventually retry the login.
+The session saving is the next issue.
+\item [Saving~the~session]is the way to make FreePOPs really similar
+to a browser. This means the next time you check the mail FreePOPs
+will simply reload the inbox page and won't login again. To do this
+you need a \texttt{key()} function that gives a unique ID for each
+session\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-------------------------------------------------------------------------------- 
+
+-- The key used to store session info 
+
+-- 
+
+-- This key must be unique for all webmails, since the session pool is one  
+
+-- for all the webmails 
+
+-- 
+
+function key()
+
+        return foo_globals.username .. foo_globals.password
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}and a \texttt{foo\_globals} serialization function\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-------------------------------------------------------------------------------- 
+
+-- Serialize the internal state 
+
+-- 
+
+-- serial.serialize is not enough powerful to correcly serialize the  
+
+-- internal state. The field b is the problem. b is an object. This means 
+
+-- that it is a table (and no problem for this) that has some field that are 
+
+-- pointers to functions. this is the problem. there is no easy way for the  
+
+-- serial module to know how to serialize this. so we call b:serialize  
+
+-- method by hand hacking a bit on names 
+
+-- 
+
+function serialize_state()   
+
+        internal_state.stat_done = false; 
+
+        return serial.serialize("foo_globals",foo_globals) ..            
+
+                internal_state.b:serialize("foo_globals.b") 
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}Now you have to tell FreePOPs to save the state in the \texttt{quit\_update()}
+function and load it back in the \texttt{pass()} one. This is the
+new \texttt{pass()} structure\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+function pass(pstate,password)  
+
+        -- save the password
+
+        internal_state.password = password
+
+
+
+        -- eventually load session
+
+        local s = session.load_lock(key())
+
+
+
+        -- check if loaded properly
+
+        if s ~= nil then
+
+                 -- "\a" means locked
+
+                 if s == "\a" then
+
+                          log.say("Session for "..internal_state.name..
+
+                              " is already locked\n")
+
+                          return POPSERVER_ERR_LOCKED
+
+                 end 
+
+     
+
+                 -- load the session
+
+                 local c,err = loadstring(s)
+
+                 if not c then
+
+                          log.error_print("Unable to load saved session: "..err)
+
+                          return foo_login()
+
+                 end     
+
+       
+
+                 -- exec the code loaded from the session string
+
+                 c()
+
+
+
+                log.say("Session loaded for " .. internal_state.name .. "@" ..
+
+                         internal_state.domain ..
+
+                         "(" .. internal_state.session_id .. ")\n")      
+
+
+
+                return POPSERVER_ERR_OK
+
+        else
+
+                -- call the login procedure
+
+                return foo_login()
+
+        end
+
+end 
+
+\end{verbatim}
+
+\end{footnotesize}where \texttt{foo\_login()} is the old \texttt{pass()} function with
+minor changes. Don't forget to call \texttt{session.unlock(key())}
+in the \texttt{quit()} function, since you have to release the session
+in case of failure (and \texttt{quit()} is called here) and to save
+the session in \texttt{quit\_update()}\linespread{0.5}
+
+\begin{footnotesize}
+
+\begin{verbatim}
+
+-- save fails if it is already saved  
+
+session.save(key(),serialize_state(),session.OVERWRITE)
+
+-- unlock is useless if it have just been saved, but if we save
+
+-- without overwriting the session must be unlocked manually
+
+-- since it would fail instead overwriting
+
+session.unlock(key()) 
+
+\end{verbatim}
+
+\end{footnotesize}
+\item [The~top()~function]is a complex thing. I won't describe it in
+a complete way, but I suggest you to look at the \texttt{libero.lua}
+plugin if the web server that sends you the message source supports
+the {}``\texttt{Range:}'' HTTP request field, or the \texttt{tin.lua}
+plugin if the server needs to be interrupted in a bad way. Remember
+that the \texttt{top()} needs someone that counts the lines and here
+we have again the stringhack module that counts and may purge some
+lines.
+\item [The~javascript]is the hell of webmails. Javascripts can do anything
+and you have to read them to emulate what they do. For example they
+may add some cookies (and you'll have to do this by hand with the
+\texttt{b:add\_cookie()} as in tin.lua) or they may change some form
+fields (like in the \texttt{libero.lua} login load balancing code).
+\item [The~cookies]are sweet enough for us, since the browser module will
+handle them for us.
+\item [The~standard~files]are really system dependent. Under Windows
+you'll have to constantly look at the \texttt{stderr.txt} and \texttt{stdout.txt},
+while under Unix you will just have to start it with the \texttt{-w}
+switch and look at the console.
+\item [The~brute~force]is called Ethereal. Sometimes things don't work
+in the right way and the only way to debug them is to activate curl
+debugging to see what FreePOPs does (\texttt{b.curl:setopt(curl.OPT\_VERBOSE,1)})
+and sniff what a real browser does with a tool like Ethereal.
+\item [The~open~source~way]is the best way of having a good quality
+piece of software. This means you'll have to release really often
+your plugin in the development phase and interact much with your testers.
+Trust me it works, or read {}``\emph{The cathedral and the bazaar}''
+by Eric Raymond.
+\item [The~mimer~module]is really beta at the time of this tutorial,
+but is what you need if you are in the unlucky case of a webmail that
+has no save message button. The \texttt{lycos.lua} plugin is an example
+of what it can do. The main interesting function is \texttt{mimer.pipe\_msg()}
+that takes a message header, a text body (in html o plain text format)
+and some attachments URIs, that are downloaded on the fly, composed
+into a proper mail message and piped to the mail client.
+\item [Parameters~to~modules]may be passed from the \texttt{config.lua}
+file or on the fly using \texttt{user@domain?param1=value1\&...\&paramN=valueN}
+as described in the plugins chapter. For the plugin writer there is
+no difference between the two passing mechanisms. The parameters are
+available to the plugin in the table \texttt{freepops.MODULE\_ARGS}.
+\end{description}
+
+\section{Submitting a bug}
+
+When you have problems or you think you have found a bug, please follow
+strictly this \emph{iter}:
+
+\begin{enumerate}
+\item Update to the most recent version of FreePOPs.
+\item Try to reproduce the bug, if the bug is not easily reproducible we
+are out of luck. Something can still be tried: if the software crashed
+you could compile it from the sources, install valgrind, run freepopsd
+with valgrind and hope the error messages are interesting.
+\item Clean the log files
+\item Start FreePOPs with the -w switch
+\item Reproduce the bug
+\item Send to the developers the log, plus any other info like your system
+type and how to reproduce this bug.
+\end{enumerate}
+
+\section{FAQ}
+
+
+\subsection*{How do I configure FreePOPs?}
+
+In normal use conditions you don't need to configure FreePOPs, you
+just have to change your mail client settings as described in the
+tutorial. For other use cases we provided specific tutorials. Remember
+to set the POP3 server address to \emph{localhost} (if you've installed
+FreePOPs on the same computer where you read your mail, otherwise
+use the IP address of the computer where FreePOPs is installed), the
+server port to \emph{2000} (or whatever you chose if you ran FreePOPs
+with the \texttt{-p} option) and to set the username to your full
+email address (in the form \texttt{username@webmail.domain}).
+
+If you continue having problems after reading the manual and the tutorial
+you can post on the forum at HTTP://freepops.diludovico.it (usually
+in Italian, but feel free to post in English).
+
+
+\subsection*{How much does it cost?}
+
+FreePOPs is Free Software, Free as in Freedom \emph{and} {}``Free
+as in Free Beer''. You can download it, use it, and modify it freely
+but if you care about the four friends who made it you may send them
+a beer asking for their address via email, or a small donation (through
+the project website on SourceForge).
+
+
+\subsection*{I've installed FreePOPs and properly configured my mail client, but
+I'm unable to send mail...?}
+
+FreePOPs helps you only in receiving messages. To send mail you have
+to use the SMTP server of your network provider. If you don't know
+what SMTP to use, see your ISP website or call their tech support.
+
+
+\subsection*{This software is in beta stage.. will I lose my mail?}
+
+Nobody guarantees the software they write, even if you pay it a lot.
+It looks safe enough to us, but we can't guarantee anything (no software
+is really safe and secure). Besides no one guarantees your mail client
+works well, so if you're using that...
+
+
+\subsection*{How can I help the project?}
+
+Use the source Luke... Sources are freely available, feel free to
+send us patches and bug reports.
+
+If you want, you can donate to the project via Sourceforge and Paypal.
+
+When you want to report a bug, check that you are using the latest
+version (we advise you uninstall an old version before installing
+a new one) and don't forget to include:
+
+\begin{itemize}
+\item The version number of your copy of FreePOPs
+\item The operating system you are running
+\item Your mail client name and its version number
+\item Most importantly the log of FreePOPs, generated with the \textbf{-w}
+option (read further if you don't know how to add command line parameters).
+Make sure that the log doesn't contain any sensitive info you wouldn't
+like to disclose (to the authors). But don't worry, your password
+is never recorded in the log, it's substituted by a sequence of nine
+(9) asterisks, no matter what is its real length.
+\end{itemize}
+
+\subsection*{Where is the log?}
+
+It depends on the system you are using. On a GNU/Linux system it is
+probably in \emph{/var/log/freepops} or wherever you specified with
+the \texttt{-l} option. On a Windows system the file log.txt is in
+the same folder of the FreePOPs executable or wherever you specified
+with the \texttt{-l} option.
+
+Before sending the log make sure that it was generated with the \textbf{-vv}
+or \textbf{-w} option (see below). These parameters generate a {}``verbose
+log'' that makes it much easier for us to discover problems. We suggest
+you erase the log file, start FreePOPs with the switch and recreate
+the problem. Also make sure that it doesn't contain sensitive info
+you wouldn't like to disclose.
+
+
+\subsection*{How do I change FreePOPs's command line switches?}
+
+On a Unix system you should know how to do this, just add the switches
+to the command you use to run FreePOPs (maybe from a script).
+
+On a Windows system you have two options: you may open the properties
+of the FreePOPs link in the Start -> Programs -> FreePOPs menu (right
+click on the link then select {}``Properties...'') and add the switches
+in the command line in the {}``Destination'' box there (after X:\textbackslash{}Something\textbackslash{}freepopsd.exe);
+or, run FreePOPs manually from a DOS window with the options you like
+(again, after the name of the executable).
+
+The command line parameters you need depend on your specific needs.
+Read the appropriate section of the manual to know what all available
+parameters are, or run \texttt{freepopsd -h} (also \texttt{man freepopsd}
+on Unix).
+
+\begin{itemize}
+\item Unix example: \texttt{/usr/bin/freepopsd -P proxy:port -A user:pass
+-w -l logfile.txt}
+\item Windows example: \texttt{C:\textbackslash{}Programs\textbackslash{}FreePOPs\textbackslash{}freepopsd.exe
+-w}
+\end{itemize}
+
+\subsection*{My {}``Antivirus'' says FreePOPs is a virus!}
+
+Stop using that crazy antivirus :-) Seriously, FreePOPs does not contain
+viruses, trojan horses, worms, arcane formulae for deamonic rites,
+secret plans for taking over the world or anything like all that.
+If you don't believe us, the source code is available to everyone
+(the program is released under the GNU GPL license) and thinking you
+could hide malicious code in plain sunlight would be crazy. Therefore
+any antivirus software that detects this kind of problems has accuracy
+problems of its own, to say the least.
+
+It sure is true that downloading a pre-compiled binary from an unknown
+source is like asking for trouble. Pre-compiled binary packages you
+find on the official website (HTTP://freepops.sf.net) come from the
+source code that everyone can get. What you find on free (as in {}``free
+beer'') software websites or you download through peer-to-peer file
+sharing systems can't obviously guarantee any kind of safety. So use
+some common sense.
+
+
+\section{Authors}
+
+This manual has been written by Enico Tassi \texttt{<gareuselesinge@users.sourceforge.net>}
+and revised and translated by Nicola Cocchiaro \texttt{<ncocchiaro@users.sourceforge.net>}
+
+
+\subsection{Developers}
+
+FreePOPs is developed by:
+
+\begin{itemize}
+\item Enico Tassi \texttt{<gareuselesinge@users.sourceforge.net>}
+\item Alessio Caprari \texttt{<alessiofender@users.sourceforge.net>}
+\item Nicola Cocchiaro \texttt{<ncocchiaro@users.sourceforge.net>}
+\item Simone Vellei \texttt{<simone\_vellei@users.sourceforge.net>}
+\end{itemize}
+Gmail.lua is developed by:
+
+\begin{itemize}
+\item Rami Kattan <\texttt{rkattan@gmail.com}> \\
+HTTP://www.kattanweb.com/rami
+\end{itemize}
+LiberoPOPs is developed by:
+
+\begin{itemize}
+\item Enico Tassi \texttt{<gareuselesinge@users.sourceforge.net>}
+\item Alessio Caprari \texttt{<alessiofender@users.sourceforge.net>}
+\item Nicola Cocchiaro \texttt{<ncocchiaro@users.sourceforge.net>}
+\item Simone Vellei \texttt{<simone\_vellei@users.sourceforge.net>}
+\item Giacomo Tenaglia \texttt{<sonicsmith@users.sourceforge.net>}
+\end{itemize}
+
+\section{Thanks}
+
+Special thanks go to the users who tested the software, to the hackers
+who made it possible to have a free and reliable development environment
+as the Debian GNU/Linux system.
+
+
+\section*{Appendix}
+
+Since the ASCII table is really common, we have not included one here.
+You may ask google. The only thing that may sound strange is that
+we use always 3 digits, even for numbers smaller than 100.
+\end{document}

@@ -40,6 +40,7 @@ clean:
 		doc/manual-it.ps doc/manual-it.pdf
 distclean: clean
 	$(H)rm -fr dist-*
+	$(H)$(MAKE) -C doc/manual clean
 
 realclean: distclean
 	$(H)rm -f config
@@ -109,15 +110,8 @@ src: config
 	$(H)echo "building freepopsd"
 	$(H)$(MAKE) -C src all CONFIG=$(PWD)/config PREFIX=$(PREFIX)
 
-doc/manual.pdf: doc/manual.lyx
-	cd doc;	\
-		lyx -e ps manual.lyx;\
-		ps2pdf manual.ps || true
-		
-doc/manual-it.pdf: doc/manual-it.lyx
-	cd doc;	\
-		lyx -e ps manual-it.lyx;\
-		ps2pdf manual-it.ps || true
+doc/manual.pdf doc/manual-it.pdf:
+	$(H)$(MAKE) -C doc/manual/
 
 config:
 	$(H)echo

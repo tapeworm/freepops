@@ -76,6 +76,7 @@ cp -a /lib/libnss_files* lib/
 cp -a /lib/libpthread* lib/
 cp -a /lib/libresolv* lib/
 cp -a /usr/lib/libdb3* usr/lib/
+cp -a /usr/lib/libexpat* usr/lib/
 
 #copy misc
 cp /etc/resolv.conf etc/

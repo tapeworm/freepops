@@ -24,7 +24,6 @@ for next version or later:
 		discovery code from LiberoPOPs
 	link the rss feed in the homepage
 	fix in owa that Host and Cookie is repeated 3 times.
-+	add a description to each plugin describing 
 	create a xslt to generate the XHTML for the homepage,
 		would be nice to have many views:
 		- listed by domain
@@ -32,8 +31,5 @@ for next version or later:
 	create the -dev ML
 	add a collaborative web page to publish plugins
 	popserver timeouts to avoid stupid DOS leaving inactive connections open
-	in the first part of the manual the plugin list is done by hand and 
-		taken from the xml.
-	update jail for expat
 
 - eof -

@@ -58,10 +58,10 @@ Introduction
 
 FreePOPs is a POP3 daemon plus a LUA interpreter and some extra libraries
  for HTTP and HTML parsing.
- It's main purpose is of translating local POP3 requests to remote HTTP
- actions on the supported web-mails, but is really more flexible.
+ Its main purpose is translating local POP3 requests to remote HTTP
+ actions on the supported web-mails, but it is really more flexible.
  For example there is a plugin to read news from a website as if they were
- mails in mailbox.
+ mails in a mailbox.
  You can easily extend FreePOPs on the fly, without even restarting it.
  You can add a plugin or modify an existing one simply changing the script
  file since the plugins are written in LUA and are interpreted on the fly.
@@ -71,14 +71,14 @@ FreePOPs can be useful in some situations, here we give the most obvious
 \layout Itemize
 
 You are behind a firewall that closes the 110 port but you need to read
- your mail and the web-mail of you mail provider sucks.
+ your mail and the web-mail of your mail provider sucks.
 \layout Itemize
 
 Your mail provider does not allow you to access your mailbox with POP3 protocol,
- but only by the web-mail service.
+ but only through the web-mail service.
 \layout Itemize
 
-You prefer looking at your mailbox instead of a browsing some websites news.
+You prefer looking at your mailbox instead of browsing some websites news.
 \layout Itemize
 
 You have to develop a pop3 server in less than a week and you want it to
@@ -89,7 +89,7 @@ You are not a C hacker, but you want to benefit from a fast POP3 server
  frontend written in C and you want not to loose a month in writing the
  backend in C.
  LUA is a really simple and tiny language, one week is enough to learn it
- in way that allows you to use it productively.
+ in a way that allows you to use it productively.
 \layout Section
 
 Features
@@ -139,7 +139,7 @@ plugins
  The POP3 server frontend could be attached to a backend written in C.
  This means you have to recompile and restart LiberoPOPs each time to change
  a line in a plugin.
- Another interesting point is that LiberPOPs was created from scratch in
+ Another interesting point is that LiberPOPs was created from scratch in a
  really short amount of time (you have to be Italian and use a 
 \family typewriter 
 @libero.it
@@ -157,27 +157,27 @@ The LiberoPOPs project had a quick success, since everybody needed it.
  But we were working not with Unix users, nor hackers, mostly Win32 users.
  I've not really understood why they considered a boring task to read a
  3 pages tutorial and a 1 page F.A.Q.
- but I've realized that the are lazy/bored of updating the software every
+ but I've realized that they are lazy/bored of updating the software every
  2 days.
  The ugly Win-world has taught them that software auto-updates, auto-install
- and even auto-code-itself probably.
+ and even auto-codes itself probably.
  
 \layout Standard
 
-We tried to solve this pulling out of the C engine the most of the change-prone
+We tried to solve this pulling out of the C engine most of the change-prone
  code, but this was really hard since C is not thought to do this.
  After LiberoPOPs had stabilized we started to think how to solve this.
  
 \layout Standard
 
-A scripting/interpreted embedded language seemed me a nice choice and after
+A scripting/interpreted embedded language seemed to me a nice choice and after
  a long search on the net and on the newsgroup of my university I found
  LUA.
- This is not the place for telling the world how good is this small language
- and I'll not talk more about it here.
+ This is not the place for telling the world how good this small language is
+ and I won't talk more about it here.
  Integrating the LUA interpreter in LiberoPOPs was not so hard and FreePOPs
  is the result.
- Now it is really easyer to write/test a plugin and (even if it is not implement
+ Now it is really easier to write/test a plugin and (even if it is not implement
 ed yet) an auto-update facility is really easy to code since there is no
  need to recompile the C core in most cases.
 \layout Section
@@ -186,7 +186,7 @@ FreePOPs configuration file
 \layout Standard
 
 FreePOPs doesn't really need a configuration.
- All the users shouldn't change the configuration file.
+ Most users shouldn't change the configuration file.
  In case you are a developer or a really curious user the configuration
  file is 
 \family typewriter 
@@ -203,8 +203,8 @@ FreePOPs command line parameters
 \layout Standard
 
 The real FreePOPs configuration is made trough command line arguments.
- They are described in deep in the man page in Unix environments, here we
- present only the more useful:
+ They are described in depth in the man page in Unix environments, here we
+ present only the most useful:
 \layout Description
 
 -p\SpecialChar ~
@@ -217,7 +217,7 @@ The real FreePOPs configuration is made trough command line arguments.
 -P\SpecialChar ~
 <host>:<port>,\SpecialChar ~
 --proxy\SpecialChar ~
-<host>:<port> To tell FreePOPs which is you HTTP
+<host>:<port> To tell FreePOPs which is your HTTP
  proxy.
 \layout Description
 
@@ -255,7 +255,7 @@ Email client configuration
 To configure your email client you must change the pop3 server settings.
  Usually you must use localhost as the pop3 host name, and 2000 as the pop3
  port.
- In case you install FreePOPs in another computer of you LAN, you should
+ In case you install FreePOPs in another computer of your LAN, you should
  use the host's name instead of localhost.
 \layout Section
 
@@ -276,7 +276,7 @@ skeleton.lua
 \family typewriter 
 config.lua
 \family default 
- to make FreePOPs associate the rights mail-addresses domains to your new
+ to make FreePOPs associate the right mail-addresses domains to your new
  plugin.
  A simpler example is 
 \family typewriter 
@@ -290,14 +290,14 @@ The interface between the C core and a plugin
 
 As we explained before the C POP3 frontend has to be attached to a LUA backend.
  The interface is really simple if you know the POP3 protocol.
- Here We only resume the meaning, but the RFC 1939 (included in the 
+ Here we only summarize the meaning, but the RFC 1939 (included in the 
 \family typewriter 
 doc/
 \family default 
  directory of the source distribution) is really short and easy to read.
- As your intution shuld suggest the POP3 client may ask the pop3 server
+ As your intuition should suggest the POP3 client may ask the pop3 server
  to know something about the mail that is in the mailbox and eventually
- retrive/delete a message.
+ retrieve/delete a message.
  And this is exactly what it does.
 \layout Standard
 
@@ -387,7 +387,7 @@ In this session the backend will be called for lines 4, 6, 8, 10, 14, 18,
 C:
 \family default 
  lines) and respectively the functions implementing the POP3 commands will
- be called in this way
+ be called this way
 \layout Standard
 
 
@@ -433,14 +433,14 @@ end{small}
 
 \layout Standard
 
-Later will clear what is p.
- I hope we'll remove it makinng it implicit for complete transparency.
+Later I will make clear what p is.
+ I hope we'll remove it making it implicit for complete transparency.
  It is easy to understand that there is a 1-1 mapping between POP3 commands
  and plugin function calls.
  You can view a plugin as the implementation of the POP3 interface.
 \layout Subsection
 
-The interface betwee a plugin and the C core
+The interface between a plugin and the C core
 \layout Standard
 
 Let us take in exam the call to 
@@ -456,7 +456,7 @@ linux@kernel.org
 )
 \family default 
 .
- Here the plugin should autenticate the user (if there is a sort of authenticati
+ Here the plugin should authenticate the user (if there is a sort of authenticati
 on) and inform the C core of the result.
  To achieve this each plugin function must return an error flag, to be more
  accurate one of these errors:
@@ -520,8 +520,8 @@ POPSERVER_ERR_AUTH
 POPSERVER_ERR_OK
 \family default 
 .
- This is a simple case, in wich an error code is enough.
- Now we analize the more complex case of the call to 
+ This is a simple case, in which an error code is enough.
+ Now we analyze the more complex case of the call to 
 \family typewriter 
 list_all(p)
 \family default 
@@ -550,7 +550,7 @@ Update to the most recent version of FreePOPs.
 
 Try to reproduce the bug, if the bug is not easily reproducible we are out
  of luck.
- Some can still be tried: if the software crashed you could compile it from
+ Something can still be tried: if the software crashed you could compile it from
  the sources, install valgrind, run freepopsd with valgrind and hope the
  error messages are interesting.
 \layout Enumerate
@@ -572,7 +572,7 @@ Authors
 \layout Standard
 
 This manual has been written by Enico Tassi <gareuselesinge@users.sourceforge.net>
- and revised by ...
+ and revised by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
 \newline 
 FreePOPs is developed by:
 \layout Itemize

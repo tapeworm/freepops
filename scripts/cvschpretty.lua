@@ -25,5 +25,5 @@ table.foreach(comments,function(k,v)
 	end
 	filename = string.sub(filename,0,-3)
 	k = string.gsub(k,"  "," ")
-	print("- " .. filename .. ": " .. k)
+	print("- " .. filename .. ":" .. k)
 end)

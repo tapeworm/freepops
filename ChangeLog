@@ -1,3 +1,5 @@
+- added close_ch.sh script to automatically build the ChageLog from
+contributors
 - fixed manual for --no-icon (thanks pegasus)
 - win moved to curl 7.12.1 (should fix some proxy bugs and close some TODO)
 - netscape.com -> netscape.net in config.lua

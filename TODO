@@ -8,3 +8,5 @@ next release 0.0.13
 	edit categorization in SF (add openbsd)
 	gmail saves exported addressbook to My Documents (fix manual)
 	spam tin	
+	aggiungi nel manuale che se uno lascia i messaggi usl server si 
+		genera molto traffico, con una stima decente.

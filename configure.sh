@@ -57,7 +57,7 @@ LDFLAGS="$LDFLAGS -framework Carbon"
 set_fbsd() {
 set_default
 OS=FreeBSD
-CFLAGS="$CFLAGS -DMACOSX"
+CFLAGS="$CFLAGS -DMACOSX -DFREEBSD"
 MAKE=gmake
 }
 

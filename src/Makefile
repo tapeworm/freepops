@@ -101,6 +101,11 @@ ifeq "$(OS)" "OpenBSD"
 	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
 		$(CURL_LD_FLAGS)
 else
+ifeq "$(OS)" "FreeBSD"
+        LIBSTOLINK+= getopt     
+        LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
+                $(CURL_LD_FLAGS)
+else
 ifeq "$(OS)" "Cygwin"
 	LDFLAGS= -L ../modules/lib \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
@@ -110,6 +115,7 @@ else
 		-ldl -lm -lpthread -rdynamic $(CURL_LD_FLAGS)
 
 endif	
+endif
 endif
 endif
 endif	

@@ -41,3 +41,6 @@ Valid targets in this case are:
   dist-obsd	- 
 
 Enjoy!
+
+--
+note: on some systems you should use gmake instead of make.

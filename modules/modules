@@ -43,6 +43,9 @@ MODULES-Darwin-post=
 MODULES-OpenBSD-pre=getopt
 MODULES-OpenBSD-post=
 
+MODULES-FreeBSD-pre=getopt
+MODULES-FreeBSD-post=
+
 MODULES-Cygwin-pre=regex 
 MODULES-Cygwin-post=
 

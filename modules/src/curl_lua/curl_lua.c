@@ -609,7 +609,7 @@ return rc;
  * CURLOPT_HTTPPOST parser
  *
  */ 
-#if CURL_NEWER(7,9,6)
+#if CURL_NEWER(7,9,8)
 static CURLcode L_httppost(CURL* c,CURLoption opt,lua_State* L){
 /* we assume we hve stack: || c | opt | table 
  *
@@ -1033,7 +1033,7 @@ switch(opt) {
 #endif
 		 
 	/* slist */
-#if CURL_NEWER(7,9,6)			    
+#if CURL_NEWER(7,9,8)			    
 	case CURLOPT_HTTPPOST:{
 		rc = L_httppost(c,opt,L);	      
 	}break;

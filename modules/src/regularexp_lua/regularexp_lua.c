@@ -15,6 +15,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef FREEBSD
+   #include <sys/types.h>
+#endif
 #include <regex.h>
 
 #include "lua.h"

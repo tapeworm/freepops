@@ -1,7 +1,7 @@
 diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 --- lua-5.0.2-old/Makefile	Fri Mar 12 02:50:55 2004
 +++ lua-5.0.2-new/Makefile	Sat Jul 10 10:08:02 2004
-@@ -1,102 +1,108 @@
+@@ -1,102 +1,114 @@
 -# makefile for Lua hierarchy
 -# see INSTALL for installation instructions
 -# see config for customization instructions
@@ -125,7 +125,11 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +  ifeq "$(OS)" "Cygwin"
 +	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm
 +  else
++    ifeq "$(OS)" "BeOS"
++	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -ldl
++    else
 +	LDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++    endif
 +  endif
 +endif
 +HCFLAGS += -I../../include -I../include -I. -I.. -DUSE_POPEN=1
@@ -138,7 +142,11 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +   ifeq "$(OS)" "Cygwin"
 + 	HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm
 +   else
-+ 	HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++     ifeq "$(OS)" "BeOS"
++ 	  HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -ldl
++     else
++ 	  HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++     endif
 +   endif
 + endif
 +endif

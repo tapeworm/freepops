@@ -562,7 +562,7 @@ function browser.new()
 	b:init_curl()
 	
 	-- see what we have done
-	b:show()
+	--b:show()
 	
 	return b
 end

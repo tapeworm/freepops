@@ -268,14 +268,19 @@ end
 --
 function top_cb(global,data)
 	local purge = false
-	
+	local FirstBlock = true
 	return function(s,len)
 --		print("GOT:",len)
 		if purge == true then
 			--print("purging: "..string.len(s))
 			return len,nil
 		end
-			
+		if FirstBlock then
+			s = string.gsub(s,"^%s*","")
+			s = string.gsub(s,"\r\r\n","\r\n")
+--			s = string.gsub(s,"\r\n\r\n","\r\n")
+			FirstBlock = false
+		end	
 		s = global.a:tophack(s,global.lines_requested)
 		s = string.gsub(s,"\n","\r\n")
 		s = global.a:dothack(s).."\0"

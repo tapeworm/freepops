@@ -308,6 +308,8 @@ function Private.get_head(self,url,exhed)
 	
 	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
 
+	self.curl:setopt(curl.OPT_NOBODY,0)
+
 	return Hidden.continue_or_return(rc,err,gl_h,
 		Private.get_head,self,Hidden.mangle_location(self,err),exhed)
 end

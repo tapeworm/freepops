@@ -267,13 +267,13 @@ function loginYahoo()
   --
   -- browser:verbose_mode()
 
-  if internalState.bNoSSL == true then
-    SSLEnabled = false
-  end
-
   if SSLEnabled then
     url = globals.strLoginHTTPs
     browser:ssl_init_stuff()
+  end
+
+  if internalState.bNoSSL == true then
+    SSLEnabled = false
   end
 
   -- Login to Yahoo

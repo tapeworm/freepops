@@ -313,8 +313,14 @@ if(rc == POPSERVER_ERR_OK)
 	int size;
 	char* ans;
 	const char *uidl;
-	
-	uidl = get_mailmessage_uidl(get_popstate_mailmessage(p,msg-1));
+	struct mail_msg_t*m = NULL;
+		
+	m=get_popstate_mailmessage(p,msg-1);
+	if(m == NULL) {
+		*buffer = NULL;
+		return POPSERVER_ERR_NOMSG;
+	}
+	uidl = get_mailmessage_uidl(m);
 	size = B(msg) + 1 + strlen(uidl) + 1;
 	ans = malloc(size);
 	MALLOC_CHECK(ans);
@@ -351,8 +357,15 @@ if(rc == POPSERVER_ERR_OK)
 	int size;
 	char* ans;
 	int size_mesg;
-	
-	size_mesg = get_mailmessage_size(get_popstate_mailmessage(p,msg-1));
+	struct mail_msg_t*m = NULL;
+		
+	m=get_popstate_mailmessage(p,msg-1);
+	if(m == NULL) {
+		*buffer = NULL;
+		return POPSERVER_ERR_NOMSG;
+	}
+		
+	size_mesg = get_mailmessage_size(m);
 	size = B(msg) + 1 + B(size_mesg) + 1;
 	ans = malloc(size);
 	MALLOC_CHECK(ans);

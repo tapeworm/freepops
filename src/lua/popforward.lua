@@ -131,7 +131,7 @@ function quit_update(pstate)
 	return quit(pstate)
 end
 
--- Fill the number of messages and theyr size
+-- Fill the number of messages and their size
 function stat(pstate)
 	local f = function(l)
 		for n,s in string.gfind(l,"+OK (%d+) (%d+)") do

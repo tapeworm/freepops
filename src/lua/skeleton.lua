@@ -65,7 +65,7 @@ end
 function quit_update(pstate)
 end
 -- -------------------------------------------------------------------------- --
--- Fill the number of messages and theyr size
+-- Fill the number of messages and their size
 function stat(pstate)
 end
 -- -------------------------------------------------------------------------- --

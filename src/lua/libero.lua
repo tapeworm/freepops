@@ -34,7 +34,7 @@ PLUGIN_NAME = "Libero.IT"
 -- this are the webmail-dependent strings
 --
 -- Some of them are incomplete, in the sense that are used as string.format()
--- (read sprintf) arguments, so theyr %s and %d are filled properly
+-- (read sprintf) arguments, so their %s and %d are filled properly
 -- 
 -- C, E, G are postfix respectively to Captures (lua string pcre-style 
 -- expressions), mlex expressions, mlex get expressions.
@@ -430,7 +430,7 @@ function quit_update(pstate)
 end
 
 -- -------------------------------------------------------------------------- --
--- Fill the number of messages and theyr size
+-- Fill the number of messages and their size
 function stat(pstate)
 
 	-- check if already called

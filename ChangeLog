@@ -1,3 +1,4 @@
+- fixed bug in engine.c (thanks to ramik)
 - added fflush to luay
 - fixed bug in lycos (thanks to Francesco)
 27/06/2004 0.0.9 fix release

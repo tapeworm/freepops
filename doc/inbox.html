@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>foo.xx webmail- inbox</title>
+<style content="text/css">
+table {
+background-color : lightgrey;
+margin-bottom: 2px;
+}
+th {
+background-color : white;
+color: grey;
+}
+td {
+color : black;
+padding: 5 5 5 5 ;
+}
+
+</style>
+</head>
+<body>
+<h1>test@foo.xx - inbox (1/2)</h1>
+<form name="inbox" method="post" action="/delete.php">
+<input type="hidden" name="session_id" value="ABCD1234">
+<table>
+<tr><th>From</th><th>subject</th><th>size</th><th>date</th></tr>
+<tr>
+	<td><b>friend1@foo1.xx</b></td>
+	<td><b><a href="/read.php?session_id=ABCD1234&uidl=123">ok!</a></b></td>
+	<td><b>20KB</b></td>
+	<td><b>today</b></td>
+	<td><input type="checkbox" name="check_123"></td>
+</tr>
+<tr>
+	<td>friend2@foo2.xx</td>
+	<td><a href="/read.php?session_id=ABCD1234&uidl=124">Re: hi!</a></td>
+	<td>12KB</td>
+	<td>yesterday</td>
+	<td><input type="checkbox" name="check_124"></td>
+</tr>
+<tr>
+	<td>friend1@foo2.xx</td>
+	<td><a href="/read.php?session_id=ABCD1234&uidl=125">Re: hi2!</a></td>
+	<td>10KB</td>
+	<td>yesterday</td>
+	<td><input type="checkbox" name="check_125"></td>
+</tr>
+<tr>
+	<td>friend2@foo1.xx</td>
+	<td><a href="/read.php?session_id=ABCD1234&uidl=126">Tonight</a></td>
+	<td>2KB</td>
+	<td>yesterday</td>
+	<td><input type="checkbox" name="check_126"></td>
+</tr>
+</table>
+<input type="submit" value="delete marked">
+</form>
+<a href="/inbox.php?session_id=ABCD1234&page=2">go to next page</a>
+</body>
+</html>

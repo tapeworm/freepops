@@ -1581,13 +1581,31 @@ In this section we will write a plugin step by step examining each important
 (step 1) the skeleton
 \layout Standard
 
-The first thing we will do is to copy the skeleton.lua file to foo.lua (since
- we will write the plugin for the foo.xx webmail, xx stands for a real domain,
- bu I don't want to mention any websites here...).
+The first thing we will do is to copy the 
+\emph on 
+skeleton.lua
+\emph default 
+ file to 
+\emph on 
+foo.lua
+\emph default 
+ (since we will write the plugin for the 
+\emph on 
+foo.xx
+\emph default 
+ webmail, 
+\emph on 
+xx
+\emph default 
+ stands for a real domain, bu I don't want to mention any websites here...).
  Now with your best editor (I suggest vim under unix and scintilla for win32,
  since they support syntax hilights for LUA, but any other text editor is
- ok) open foo.lua and change the first few lines adding the plugin name,
- version, your name, your email and a short comment in the proper places.
+ ok) open 
+\emph on 
+foo.lua
+\emph default 
+ and change the first few lines adding the plugin name, version, your name,
+ your email and a short comment in the proper places.
 \begin_inset ERT
 status Collapsed
 
@@ -1636,9 +1654,16 @@ end{footnotesize}
 \end_inset 
 
  Now we have an empty plugin, but it is not enough to start hacking on it.
- We need to open the config.lua file (in the win32 distribution it is placed
- in the main directory, while in the unix distribution it is in /etc/freepops/;
- other copies of this file may be included in the distributions, but they
+ We need to open the 
+\emph on 
+config.lua
+\emph default 
+ file (in the win32 distribution it is placed in the main directory, while
+ in the unix distribution it is in 
+\emph on 
+/etc/freepops/
+\emph default 
+; other copies of this file may be included in the distributions, but they
  are backup copies) and add a line like this
 \begin_inset ERT
 status Collapsed
@@ -1672,8 +1697,15 @@ end{footnotesize}
  at the beginning of the file.
  Before ending the first step you should try if the plugin is correctly
  activated by frepops when needed.
- To do this we have to add few lines to foo.lua, in partcular we have to
- add an error return value to user().
+ To do this we have to add few lines to 
+\emph on 
+foo.lua
+\emph default 
+, in partcular we have to add an error return value to 
+\emph on 
+user()
+\emph default 
+.
 \begin_inset ERT
 status Collapsed
 
@@ -1712,8 +1744,15 @@ end{footnotesize}
  Now the user function always fails, returning an authentication error.
  Now you have to start FreePOPs (if it is already running you don't have
  to reastart it) and start telnet (under win32 you should open a DOS prompt,
- under unix you have the shell) and type telnet localhost 2000 and then
- type user test@foo.xx.
+ under unix you have the shell) and type 
+\emph on 
+telnet localhost 2000
+\emph default 
+ and then type 
+\emph on 
+user test@foo.xx
+\emph default 
+.
 \begin_inset ERT
 status Collapsed
 
@@ -1756,8 +1795,11 @@ end{footnotesize}
 \end_inset 
 
  The server respond closing the connection and printing an authorization
- failed message (thats ok, sice the user() function of our plugin returns
- this error).
+ failed message (thats ok, sice the 
+\emph on 
+user()
+\emph default 
+ function of our plugin returns this error).
  In the standard error file (the console under unix, the file stderr.txt)
  are printd error mesage, don't care about them now.
 \layout Subsubsection
@@ -1766,10 +1808,25 @@ end{footnotesize}
 \layout Standard
 
 The login procedure is the first thing we have to do.
- The POP3 protol has 2 commands for login, user and pass.
+ The POP3 protol has 2 commands for login, 
+\emph on 
+user
+\emph default 
+ and 
+\emph on 
+pass
+\emph default 
+.
  First the client does a user, that it tells the server the password.
- As we have already seen in the overview this means that first user() and
- the pass() will be called.
+ As we have already seen in the overview this means that first 
+\emph on 
+user()
+\emph default 
+ and the 
+\emph on 
+pass()
+\emph default 
+ will be called.
  This is a sample login:
 \begin_inset ERT
 status Collapsed
@@ -1945,19 +2002,47 @@ end{footnotesize}
 
 .
  Here we have some important news.
- First the foo_globals table that will contain all the globals (values that
- shoud be available to successive function calls) we need.
+ First the 
+\emph on 
+foo_globals
+\emph default 
+ table that will contain all the globals (values that shoud be available
+ to successive function calls) we need.
  Since now we have the username and the password here.
- The user() function now stores the passed username in the foo_globals table
- and prints something on standard output.
- The pass() function now stores the password in the global table and prints
- some stuff.
- The quit() simply returns POPSERVER_ERR_OK to make FreePOPs happy.
+ The 
+\emph on 
+user()
+\emph default 
+ function now stores the passed username in the 
+\emph on 
+foo_globals
+\emph default 
+ table and prints something on standard output.
+ The 
+\emph on 
+pass()
+\emph default 
+ function now stores the password in the global table and prints some stuff.
+ The 
+\emph on 
+quit()
+\emph default 
+ simply returns 
+\emph on 
+POPSERVER_ERR_OK
+\emph default 
+ to make FreePOPs happy.
 \layout Standard
 
 Now that we know how FreePOPs will act during the login we have to implemt
- the login in the webmail, but first decomment the few lines in the init()
- function (that is called when the plugin is started) that loads the browser
+ the login in the webmail, but first decomment the few lines in the 
+\emph on 
+init()
+\emph default 
+ function (that is called when the plugin is started) that loads the 
+\emph on 
+browser.lua
+\emph default 
  module (the module we will use to login in the webmail).
  Here there is the webmail login page viewed with mozilla and the source
  of the fage (with mozilla is Ctrl-U).
@@ -1966,7 +2051,7 @@ Now that we know how FreePOPs will act during the login we have to implemt
 
 \begin_inset Graphics
 	filename login.eps
-	display none
+	lyxscale 50
 	scale 80
 	keepAspectRatio
 
@@ -2028,7 +2113,14 @@ end{footnotesize}
 \end_inset 
 
 Here we have 2 input fields, one called username and one called password.
- When the user clicks login the web browser will POST to http://localhost:3000/
+ When the user clicks login the web browser will 
+\emph on 
+POST
+\emph default 
+ to 
+\emph on 
+http://localhost:3000/
+\emph default 
  the form contents (I used a local address because of comodity, but is should
  be something like http://webmail.foo.xx/login.php).
  This is what the browser sends:
@@ -2084,7 +2176,11 @@ end{footnotesize}
  We are not interested in the first part (the HTTP header, since the broser
  module will take care of this) but in the last part, the posted data.
  Since the fields of the form were username and password, the posted data
- is username=test%40foo.xx&password=hello.
+ is 
+\emph on 
+username=test%40foo.xx&password=hello
+\emph default 
+.
  Now we want to reproduce the same HTTP request with our plugin.
  This is the simple code that will do this.
 \begin_inset ERT
@@ -2168,8 +2264,19 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
- First we create a browser object, than we build the post_uri and post_data
- using a simple string.format (printf like function).
+ First we create a browser object, than we build the 
+\emph on 
+post_uri
+\emph default 
+ and 
+\emph on 
+post_data
+\emph default 
+ using a simple 
+\emph on 
+string.format
+\emph default 
+ (printf like function).
  And this is the resulting request
 \begin_inset ERT
 status Collapsed
@@ -2214,8 +2321,11 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-that is essentially the same (we should url-encode the post data with curl.escape
-()) we wanted to do.
+that is essentially the same (we should url-encode the post data with 
+\emph on 
+curl.escape()
+\emph default 
+) we wanted to do.
  We saved the browser object to the global table, since we want to use thesame
  browser all the time.
 \layout Standard
@@ -2223,7 +2333,7 @@ that is essentially the same (we should url-encode the post data with curl.escap
 Now that we have logged in, we want to check the resulting page, and maybe
  extract a session ID that will be used later.
  This is the code to extract the session id and the html page we have received
- in response to the login request.
+ in response to the login request
 \begin_inset ERT
 status Collapsed
 
@@ -2238,7 +2348,11 @@ begin{footnotesize}
 \layout Standard
 
 \backslash 
-begin{verbatim}        
+begin{verbatim} 
+\layout Standard
+        ... the same as before here ...
+\layout Standard
+     
 \layout Standard
         print("we received this webpage: ".. file)
 \layout Standard
@@ -2269,6 +2383,16 @@ end{verbatim}
 
 \backslash 
 end{footnotesize}
+\end_inset 
+
+ and this is the returned web page.
+\newline 
+
+\begin_inset Graphics
+	filename logindone.eps
+	lyxscale 50
+	scale 80
+
 \end_inset 
 
 
@@ -2302,7 +2426,7 @@ begin{verbatim}
 \layout Standard
 Login done! click here to view the inbox folder. 
 \layout Standard
-<a href="htp://localhost:3000/inbox.php?session_id=ABCD1234">inbox</a> 
+<a href="http://localhost:3000/inbox.php?session_id=ABCD1234">inbox</a> 
 \layout Standard
 </body> 
 \layout Standard
@@ -2317,8 +2441,328 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
+ Note that we extracted the session ID string using 
+\emph on 
+string.find(file,
+\begin_inset Quotes erd
+\end_inset 
+
+session_id=(%w+)
+\begin_inset Quotes erd
+\end_inset 
+
+)
+\emph default 
+.
+ This is a really important function in the lua library and, even if it
+ is described in the lua tutorial at http://lua-user.org, we will talk a
+ bit on captures here.
+ Look at the page source.
+ We are interested in the line 
+\emph on 
+
+\newline 
+<a href="htp://localhost:3000/inbox.php?session_id=ABCD1234">inbox</a>
+\emph default 
+ 
+\emph on 
+
+\newline 
+
+\emph default 
+that contains the session_id we want to capture.
+ Our expression is 
+\emph on 
+
+\begin_inset Quotes eld
+\end_inset 
+
+session_id=(%w+)
+\begin_inset Quotes erd
+\end_inset 
+
+
+\emph default 
+ that means we want to match all the strings that start with 
+\begin_inset Quotes eld
+\end_inset 
+
+session_id=
+\begin_inset Quotes erd
+\end_inset 
+
+ and than continue with one or more alphanumirical character.
+ Since we wrote %w+ in roud brackets, we mean to capture the content of
+ brackets (the alphanumerical part).
+ So string.find will return 3 values, the firs two are ignored (assigned
+ to the dummy variable _) while the third is the captured string (in our
+ case 
+\begin_inset Quotes eld
+\end_inset 
+
+ABCD1234
+\begin_inset Quotes erd
+\end_inset 
+
+).
+ The LUA tutorial at lua-users is quite good and at http://sf.net/projects/lua-us
+ers you can find the LUA short reference that is a summary of all standard
+ lua funcions and is a really good piece of paper (so many thanks to Enrico
+ Colombini).
+ If you really like LUA you should buy THE book about LUA called 
+\emph on 
+Programming in Lua
+\emph default 
+ by Roberto Ierusalimschy (consider it the K&R for LUA).
+\layout Subsubsection
+
+(step 3) getting the list of messages
+\layout Standard
+
+Now we have to implement the stat() function.
+ The stat is probably the most important function.
+ It must retrive the list of messages in the webmail and their UIDL and
+ size.In our example we will use the mlex module to grab the important infos
+ from the page, but you can use the string LUA module to do the same with
+ captures.
+ This is our inbox page
+\newline 
+
+\begin_inset Graphics
+	filename inbox.eps
+	lyxscale 50
+	scale 80
+
+\end_inset 
+
 
 \layout Standard
+
+and this is the html body (only the first 2 messages are reported)
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+<h1>test@foo.xx - inbox (1/2)</h1> 
+\layout Standard
+<form name="inbox" method="post" action="/delete.php"> 
+\layout Standard
+<input type="hidden" name="session_id" value="ABCD1234"> 
+\layout Standard
+<table> 
+\layout Standard
+<tr><th>From</th><th>subject</th><th>size</th><th>date</th></tr> 
+\layout Standard
+<tr>        
+\layout Standard
+  <td><b>friend1@foo1.xx</b></td>         
+\layout Standard
+  <td><b><a href="/read.php?session_id=ABCD1234&uidl=123">ok!</a></b></td>
+\layout Standard
+  <td><b>20KB</b></td>
+\layout Standard
+  <td><b>today</b></td>   
+\layout Standard
+  <td><input type="checkbox" name="check_123"></td>
+\layout Standard
+</tr> 
+\layout Standard
+<tr>    
+\layout Standard
+  <td>friend2@foo2.xx</td>        
+\layout Standard
+  <td><a href="/read.php?session_id=ABCD1234&uidl=124">Re: hi!</a></td>  
+\layout Standard
+  <td>12KB</td>   
+\layout Standard
+  <td>yesterday</td>      
+\layout Standard
+  <td><input type="checkbox" name="check_124"></td> 
+\layout Standard
+</tr>
+\layout Standard
+</table> 
+\layout Standard
+<input type="submit" value="delete marked"> 
+\layout Standard
+</form> 
+\layout Standard
+<a href="/inbox.php?session_id=ABCD1234&page=2">go to next page</a> 
+\layout Standard
+</body> 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+We have retrived the html using the broeser and the get_uri method (remember
+ the uri for the inbox was in the login page).
+ As you can see the messages are in table and this table as the same structure
+ for each message.
+ This is the place in which you may use mlex.
+ Just take all thestuff betwee <tr> and </tr> of a message row and delete
+ all but the tags name.than replace every empty space (we call space the
+ string between two tags) with a 
+\begin_inset Quotes eld
+\end_inset 
+
+.*
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ This is what you have obtained (it should be all in the same line, here
+ is wrapped for lack ok space) from the first message.
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+.*<tr>.*<td>.*<b>.*</b>.*</td>.*
+\layout Standard
+<td>.*<b>.*<a>.*</a>.*</b>.*</td>.*
+\layout Standard
+<td>.*<b>.*</b>.*</td>.*
+\layout Standard
+<td>.*<b>.*</b>.*</td>.*
+\layout Standard
+<td>.*<input>.*</td>.*</tr>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+This expression is used to match the table row containig info about the
+ massage.
+ Now cut and paste the line and replace avery space and every tag with O
+ (the letter, not he 0) or X.
+ Put an X in the interesting fields (in our example the size and the input
+ tag, that contains the message uidl).
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+O<O>O<O>O<O>O<O>O<O>O
+\layout Standard
+<O>O<O>O<O>O<O>O<O>O<O>O
+\layout Standard
+<O>O<O>X<O>O<O>O
+\layout Standard
+<O>O<O>O<O>O<O>O
+\layout Standard
+<O>O<X>O<O>O<O>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+While the first expression will be use to match the table row, this one
+ will be used to extract the important fields.
+ This is the code that starts mlex on the html and fills the popstate data
+ structure with the captured data.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
 
 
 \begin_inset ERT

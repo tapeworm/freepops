@@ -105,6 +105,19 @@ end
 -- -------------------------------------------------------------------------- --
 -- Fill the number of messages and their size
 function stat(pstate)
+	local file,err = nil, nil
+	local b = foo_globals.browser
+	file,err = b:get_uri("http://localhost:3000/inbox.php?session_id="..
+		foo_globals.session_id)
+
+	local e = "*<tr>.*<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*<a>"..
+		".*</a>.*</b>.*</td>.*<td>.*<b>.*</b>.*</td>.*<td>.*"..
+		"<b>.*</b>.*</td>.*<td>.*<input>.*</td>.*</tr>"
+	local g = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O"..
+		"<O>O<O>X<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>"
+	local x = mlex.match(file,e,g)
+
+
 end
 -- -------------------------------------------------------------------------- --
 -- Fill msg uidl field

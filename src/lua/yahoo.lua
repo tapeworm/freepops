@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.4"
+PLUGIN_VERSION = "0.1.5"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -18,7 +18,7 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells (at) despammed (.) com",
          "ncocchiaro (at) users (.) sourceforge (.) net"}
-PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca"}
+PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca", "@rocketmail.com"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
@@ -230,6 +230,7 @@ internalState = {
   bNoSSL = false,
   bEmptyTrash = false,
   bEmptyBulk = false,
+  msgids = {}
 }
 
 -- ************************************************************************** --
@@ -248,6 +249,7 @@ internalState = {
 --
 
 -- Set to true to enable Raw Logging
+--
 local ENABLE_LOGRAW = false
 
 -- The platform dependent End Of Line string
@@ -286,7 +288,9 @@ end
 --
 function fixCRLF( data )
   local str = data
+
   -- temporarily convert proper ending to \n
+  --
   str = string.gsub(str, "\r\n", "\n")
   str = string.gsub(str, "\r", "\n") -- should we worry about embedded \r?
   str = string.gsub(str, "\n", "\r\n")
@@ -349,6 +353,13 @@ function loginYahoo()
   local browser = internalState.browser
   local post
   local challengeCode
+
+  -- Handle rocketmail
+  --
+  if (domain == "rocketmail.com") then
+    domain = "yahoo.com"
+    username = username .. ".rm"
+  end
 	
   -- DEBUG - Set the browser in verbose mode
   --
@@ -497,6 +508,10 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     --
     strHack = stringhack.new(),
 
+    -- String buffer
+    --
+    strBuffer = "",
+
     -- Lines requested (-2 means no limited)
     --
     nLinesRequested = nLines,
@@ -521,12 +536,14 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     -- An empty message.  Send the headers anyway
     --
     log.dbg("Empty message")
---    popserver_callback(headers, data)
   else
     -- Just send an extra carriage return
     --
-    log.dbg("There is a message body")
---    popserver_callback("\r\n\0", data)
+    log.dbg("Message Body has been processed.")
+    if (cbInfo.strBuffer ~= "\r\n") then
+      log.dbg("Message doesn't end in CRLF, adding to prevent client timeout.")
+      popserver_callback("\r\n\0", data)
+    end
   end
 
   -- Do we need to mark the message as unread?
@@ -572,6 +589,7 @@ function downloadMsg_cb(cbInfo, data)
     -- Clean up the end of line
     --
     body = fixCRLF(body)
+    cbInfo.strBuffer = string.sub(body, -2, -1)
 
     -- Perform our "TOP" actions
     --
@@ -584,7 +602,6 @@ function downloadMsg_cb(cbInfo, data)
         cbInfo.nLinesReceived = -1;
         if (string.sub(body, -2, -1) ~= "\r\n") then
           log.error_print("Does NOT end in CRLF!")
---          body = body .. "\r\n"
         end
       else
         cbInfo.nLinesReceived = cbInfo.nLinesRequested - 
@@ -820,7 +837,9 @@ function quit_update(pstate)
   -- 
   for i = 1, cnt do
     if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
-      cmdUrl = cmdUrl .. "&Mid=" .. get_mailmessage_uidl(pstate, i)
+      local uidl = get_mailmessage_uidl(pstate, i)
+      local msgid = internalState.msgids[uidl]
+      cmdUrl = cmdUrl .. "&Mid=" .. msgid
       dcnt = dcnt + 1
 
       -- Send out in a batch of 5
@@ -963,7 +982,7 @@ function stat(pstate)
     -- Cycle through the items and store the msg id and size
     --
     for i = 1, cnt do
-      local uidl = items:get(0, i - 1) 
+      local msgid = items:get(0, i - 1)
       local size = items:get(1, i - 1)
 
       if not uidl or not size then
@@ -972,13 +991,14 @@ function stat(pstate)
       end
 
       -- Get the message id.  It's a series of a numbers followed by
-      -- an underscore repeated.  .
+      -- an underscore repeated.  
       --
-      _, _, uidl = string.find(uidl, globals.strMsgIDPattern) --'value="([%d-_]+)"')
+      _, _, msgid = string.find(msgid, globals.strMsgIDPattern) --'value="([%d-_]+)"')
+      local uidl = string.gsub(msgid, "_[^_]-_[^_]-_", "_000_000_", 1);
 
       local bUnique = true
       for j = 0, nMsgs do
-        if knownIDs[j + 1] == uidl then
+        if knownIDs[j + 1] == msgid then
           bUnique = false
           break
         end        
@@ -1003,8 +1023,9 @@ function stat(pstate)
         set_popstate_nummesg(pstate, nMsgs)
         set_mailmessage_size(pstate, nMsgs, size)
         set_mailmessage_uidl(pstate, nMsgs, uidl)
-        knownIDs[nMsgs] = uidl
-      end
+        knownIDs[nMsgs] = msgid
+        internalState.msgids[uidl] = msgid
+       end
     end
 		
     return true, nil

@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.2"
+PLUGIN_VERSION = "0.1.3"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -46,7 +46,7 @@ Inviati,Anti-spam, Cestino). For user defined folders, use their name as the val
 		it = [[ Il parametro viene usato al momento dello scaricamento 
 dei messaggi. Esso determina quali messaggi scaricare, valori possibili sono ALL, UNREAD e FLAG.]],
 		en = [[ Parameter is used when getting the list of messages to 
-pull.  It determines what messages to be pulled.  Possible values are ALL, UNREAD and FLAG.]]
+pull.  It determines what messages to be pulled.  Possible values are All, Unread and Flag.]]
 		}
 	},
 	{name = "markunread", description = {
@@ -65,7 +65,18 @@ evitare SSL.]],
 HTTP and not HTTPS with SSL.  If the value is 1, the SSL is not used.]]
 		}
 	},
-
+	{name = "emptytrash", description = {
+		en = [[
+Parameter is used to force the plugin to empty the trash when it is done
+pulling messages.  Set the value to 1.]]
+		}	
+	},
+	{name = "emptybulk", description = {
+		en = [[
+Parameter is used to force the plugin to empty the bulk when it is done
+pulling messages.  Set the value to 1.]]
+		}	
+	},
 }
 
 PLUGIN_DESCRIPTIONS = {
@@ -107,7 +118,8 @@ local globals = {
 
   -- Get the mail server for Yahoo
   --
-  strRegExpMailServer = '<a href="(http://[^"]*)ym/',
+  --strRegExpMailServer = '<a href="(http://[^"]*)ym/',
+  strRegExpMailServer = '(http://[^/]+/)ym/',
   
   -- Redirect site on login
   --
@@ -161,7 +173,8 @@ local globals = {
   strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&Nhead=f&toc=1&MsgId=%s&bodyPart=%s",
   strCmdMsgWebView = "%sym/ShowLetter?box=%s&MsgId=%s",
   strCmdDelete = "%sym/ShowFolder?box=%s&DEL=Delete", -- &Mid=%s&.crumb=%s
-  strCmdEmptyTrash = "%sym/ShowFolder?ET=1&.crumb=%s&reset=1", -- &box=Inbox
+  strCmdEmptyTrash = "%sym/ShowFolder?ET=1&.crumb=%s&reset=1", 
+  strCmdEmptyBulk = "%sym/ShowFolder?EB=1&.crumb=%s&reset=1", 
   strCmdUnread = "%sym/ShowLetter?box=%s&MsgId=%s&.crumb=%s&UNR=1",
 
   -- Emails to list - These define the filter on the messages to grab
@@ -220,6 +233,8 @@ internalState = {
   strView = nil,
   bMarkMsgAsUnread = false,
   bNoSSL = false,
+  bEmptyTrash = false,
+  bEmptyBulk = false,
 }
 
 -- ************************************************************************** --
@@ -247,7 +262,8 @@ end
 function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
-         (internalState.strMBox or "")
+         (internalState.strMBox or "") .. "~" ..
+         (internalState.strView or "")
 end
 
 -- Issue the command to login to Yahoo
@@ -618,6 +634,24 @@ function user(pstate, username)
     internalState.bNoSSL = true
   end
 
+  -- If the flag emptyTrash is set to 1 ,
+  -- the trash will be emptied on 'quit'
+  --
+  val = (freepops.MODULE_ARGS or {}).emptytrash or 0
+  if val == "1" then
+    log.dbg("Yahoo: Trash folder will be emptied on exit.")
+    internalState.bEmptyTrash = true
+  end
+
+  -- If the flag emptyBulk is set to 1 ,
+  -- the trash will be emptied on 'quit'
+  --
+  val = (freepops.MODULE_ARGS or {}).emptybulk or 0
+  if val == "1" then
+    log.dbg("Yahoo: Bulk folder will be emptied on exit.")
+    internalState.bEmptyBulk = true
+  end
+
   return POPSERVER_ERR_OK
 end
 
@@ -735,6 +769,42 @@ function quit_update(pstate)
       log.error_print("Unable to delete messages.\n")
     end
   end
+
+  -- Empty the trash
+  --
+  if internalState.bEmptyTrash then
+    if internalState.strCrumb ~= '' then
+      cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer,internalState.strCrumb)
+      log.dbg("Sending Empty Trash URL: ".. cmdUrl .."\n")
+      local body, err = browser:get_uri(cmdUrl)
+      if not body or err then
+        log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
+      end
+    else
+      log.error_print("Cannot empty trash - crumb not found\n")
+    end
+  end
+
+  -- Empty the bulk folder
+  --
+  if internalState.bEmptyBulk then
+    if internalState.strCrumb ~= '' then
+      cmdUrl = string.format(globals.strCmdEmptyBulk, internalState.strMailServer,internalState.strCrumb)
+      log.dbg("Sending Empty Bulk URL: ".. cmdUrl .."\n")
+      local body, err = browser:get_uri(cmdUrl)
+      if not body or err then
+        log.error_print("Error when trying to empty the bulk with url: ".. cmdUrl .."\n")
+      end
+    else
+      log.error_print("Cannot empty bulk - crumb not found\n")
+    end
+  end
+
+  -- Just "touch" the folder msg list page to update the status indicator of Yahoo
+  --
+  cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
+    internalState.strMBox, 0, internalState.strView);
+  browser:get_uri(cmdUrl)
 
   -- Save and then Free up the session
   --

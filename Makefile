@@ -57,6 +57,7 @@ install: all
 	$(H)mkdir -p $(PREFIX)
 	$(H)mkdir -p $(PREFIX)bin
 	$(H)mkdir -p $(PREFIX)share/freepops/lua/
+	$(H)mkdir -p $(PREFIX)share/freepops/lua_unofficial/
 	$(H)mkdir -p $(PREFIX)share/doc/freepops/
 	$(H)mkdir -p $(PREFIX)share/man/man1/
 	$(H)mkdir -p $(DESTDIR)/etc/freepops

@@ -246,6 +246,16 @@ freepops.MODULES_PREFIX = {
 	"./src/lua/",
 	"./modules/include/",
 	"./modules/lib/"}
+	
+-- Really interesting for the geek user.
+-- These paths are searched for unofficial plugins
+freepops.MODULES_PREFIX_UNOFFICIAL = {
+	os.getenv("FREEPOPSLUA_PATH_UNOFFICIAL") or "./",
+	"./src/lua_unofficial",
+	--os.getenv("FREEPOPSLUA_USER_UNOFFICIAL") or "./"
+	}
+
+
 
 --<==========================================================================>--
 

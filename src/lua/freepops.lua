@@ -97,7 +97,11 @@ function freepops.safe_extract_domains(f)
 
 	-- the hack
 	setmetatable(env,meta_env)
-	g = loadfile(f)
+	local g, err = loadfile(f)
+	if g  == nil then
+		log.dbg(err)
+		return nil
+	end
 	setfenv(g,env)
 	g()
 	
@@ -127,6 +131,37 @@ function freepops.safe_extract_domains(f)
 	return rc
 end
 
+--searches if an unofficial plugin handles this domain
+function freepops.search_domain_in_unofficial(domain)
+	local function is_in_table(x,t)
+		if t == nil then return false end
+		return table.foreachi(t,function(_,v)
+			if v == x then return true end
+		end) or false
+	end
+	return table.foreach(freepops.MODULES_PREFIX_UNOFFICIAL,function(_,v)
+		local it = nil
+		local p_dir = function() it = lfs.dir(v) end
+		local rc,err = pcall(p_dir)
+		if not rc then 
+			log.dbg(err)
+			return
+		end
+		for f in it do
+			if string.upper(string.sub(f,-3,-1)) == "LUA" then
+				local h = 
+					freepops.safe_extract_domains(v.."/"..f)
+				if is_in_table(domain,h) then
+					log.dbg("Using unofficial '"..
+						v.."/"..f.."'")
+					return v.."/"..f
+				end
+			end
+		end	
+	end)
+end
+
+
 -- to merge 2 tables (t1 wins over t)
 freepops.table_overwrite = function (t,t1)  
 	t = t or {}
@@ -143,7 +178,12 @@ freepops.choose_module = function (d)
 	if freepops.MODULES_MAP[d] == nil then 
 		local _,_,x = string.find(d,"^(%w+%.lua)$")
 		if x == nil then
-			return nil,nil
+			local unoff = freepops.search_domain_in_unofficial(d)
+			if unoff then
+				return unoff,{}
+			else
+				return nil,nil
+			end
 		end
 		return x,{}
 	end	
@@ -164,7 +204,12 @@ freepops.dofile = function (file)
 			return nil -- continue looping
 		end
 	end
-	table.foreach(freepops.MODULES_PREFIX,try_do)
+
+	-- first check for absolute path
+	try_do(0,"")
+	if not got then
+		table.foreach(freepops.MODULES_PREFIX,try_do)
+	end
 	if not got then
 		log.error_print(string.format("Unable to find '%s'\n",file))
 		log.error_print(string.format("Path is '%s'\n",

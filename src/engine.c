@@ -117,6 +117,10 @@ int bootstrap(struct popstate_t*p,lua_State* l,char* username,int loadonly){
 int rc = POPSERVER_ERR_UNKNOWN;
 
 #define FREEPOPSLUA_FILE "freepops.lua"
+putenv("FREEPOPSLUA_PATH_UNOFFICIAL="FREEPOPSLUA_PATH_UNOFFICIAL);
+
+//FIXME 
+//putenv("FREEPOPSLUA_USER_UNOFFICIAL="FREEPOPSLUA_USER_UNOFFICIAL);
 
 //open freepops module
 rc = luaL_loadfile(l,FREEPOPSLUA_PATH FREEPOPSLUA_FILE);
@@ -154,9 +158,10 @@ if (rc != 0)
 		putenv("FREEPOPSLUA_PATH=./");
 		}
 	putenv("FREEPOPSLUA_PATH=src/lua/");
-	}
-else
+} else	{
 	putenv("FREEPOPSLUA_PATH="FREEPOPSLUA_PATH);
+}
+
 
 rc = lua_pcall(l, 0, LUA_MULTRET, 0);
 if (rc != 0)
@@ -178,7 +183,7 @@ if ( rc != 0)
 	}
 luay_emptystack(l);
 
-luabox_addtobox(l,LUABOX_FREEPOPS ^ LUABOX_LOG);
+luabox_addtobox(l,LUABOX_FREEPOPS ^ (LUABOX_LOG & LUABOX_LUAFILESYSTEM));
 
 //init lua module
 luay_call(l,"p|d","init",p,&rc);
@@ -197,7 +202,7 @@ int rc = POPSERVER_ERR_UNKNOWN;
 struct popstate_other_t * tmp = malloc(sizeof(struct popstate_other_t));	
 
 MALLOC_CHECK(tmp);
-tmp->l=luabox_genbox(LUABOX_STANDARD|LUABOX_LOG);
+tmp->l=luabox_genbox(LUABOX_STANDARD|LUABOX_LOG|LUABOX_LUAFILESYSTEM);
 new_popstate_other(p,assign,tmp);
 
 rc = bootstrap(p,tmp->l,username,0);

@@ -71,9 +71,10 @@ void luabox_addtobox(lua_State* box,unsigned long stuff){
     long int i;
     for ( i = 0 ; i < LUABOX_LAST ; i++) {
         int j = 1<<i;
-        if (j & stuff)
+        if (j & stuff) {
             opening_functions[i](box);
+	    luay_emptystack(box);	
+	}
     }
-    luay_emptystack(box);
 }
 

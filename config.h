@@ -27,6 +27,7 @@
 	#define DEFAULT_USERAGENT \
 		"Mozilla/5.0 (; U; Win32; en-US; rv:1.6)"\
 		" Gecko/20040322 Firefox/0.8"
+	//#define FREEPOPSLUA_USER_UNOFFICIAL "lua_unofficial"
 #endif
 
 // beos
@@ -36,6 +37,7 @@
 	#define DEFAULT_USERAGENT \
 		"Mozilla/5.0 (X11; U; BeOS; en-US; rv:1.6)"\
 		" Gecko/20040322 Firefox/0.8"
+	//#define FREEPOPSLUA_USER_UNOFFICIAL "lua_unofficial"
 #endif
 
 #ifdef MACOSX
@@ -44,6 +46,7 @@
 	#define DEFAULT_USERAGENT \
 		"Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O;"\
 		" en-US; rv:1.6) Gecko/20040113"
+	//#define FREEPOPSLUA_USER_UNOFFICIAL "lua_unofficial"
 #endif
 		
 // unix
@@ -53,6 +56,8 @@
 	#define DEFAULT_USERAGENT \
 		"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6)"\
 		" Gecko/20040322 Firefox/0.8"
+	//#define FREEPOPSLUA_USER_UNOFFICIAL "%s/.freepops/lua_unofficial"
+	
 #endif
 
 

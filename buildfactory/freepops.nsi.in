@@ -129,9 +129,9 @@ Section "Start Menu Shortcuts"
   SetOverwrite on
 
   ; service
-  CreateShortCut "$SMPROGRAMS\FreePOPs\Service\en-manual.lnk" \
+  CreateShortCut "$SMPROGRAMS\FreePOPs\Service\Manual (english).lnk" \
   	"$INSTDIR\SERVICE.txt" "" "$INSTDIR\SERVICE.txt" 0
-  CreateShortCut "$SMPROGRAMS\FreePOPs\Service\it-manual.lnk" \
+  CreateShortCut "$SMPROGRAMS\FreePOPs\Service\Manuale (italiano).lnk" \
   	"$INSTDIR\SERVICE.txt" "" "$INSTDIR\SERVICE.txt" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Service\Uninstall service.lnk" \
   	"$INSTDIR\freepopsservice.exe" "uninstall" "$INSTDIR\uninstall.exe" 0
@@ -155,11 +155,11 @@ Section "Start Menu Shortcuts"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Scripts\FreePOPs & Mail.lnk" \
   	"$INSTDIR\freepopsd.vbs" "" "$INSTDIR\freepopsd.vbs" 0
   CreateShortCut \
-  	"$SMPROGRAMS\FreePOPs\Scripts\FreePOPs & Mail - en-manual.lnk" \
+  	"$SMPROGRAMS\FreePOPs\Scripts\FreePOPs & Mail - Manual (english).lnk" \
 	"$INSTDIR\README.FPM.en.txt" "" "$INSTDIR\README.FPM.en.txt" 0
   CreateShortCut \
-  	"$SMPROGRAMS\FreePOPs\Scripts\FreePOPs & Mail - it-manual.lnk" \
-	"$INSTDIR\README.FPM.en.txt" "" "$INSTDIR\README.FPM.it.txt" 0
+  	"$SMPROGRAMS\FreePOPs\Scripts\FreePOPs & Mail - Manuale (italiano).lnk"\
+	"$INSTDIR\README.FPM.it.txt" "" "$INSTDIR\README.FPM.it.txt" 0
 
   ; doc + remove
   CreateShortCut "$SMPROGRAMS\FreePOPs\Uninstall.lnk" \

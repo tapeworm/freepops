@@ -47,6 +47,10 @@ dist-win: freepops-$(VERSION).tar.gz
 
 	$(H)unix2dos _win_/freepops/COPYING.txt
 	$(H)unix2dos _win_/freepops/ChangeLog.txt
+	$(H)unix2dos _win_/freepops/README.FPM.*.txt
+	$(H)unix2dos _win_/freepops/SERVICE.*.txt
+
+
 
 	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \
 		_win_/freepops/freepops.nsi

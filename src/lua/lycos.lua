@@ -27,24 +27,29 @@ local lycos_string = {
 	-- The uri the browser uses when you click the "login" button
 	login = "http://login.lycos.it/lsu/lsu_login.php",
 	login_post= "membername=%s&password=%s&product=email&"..
-		"service=lycos&redirect=http://mail.lycos.it/&target_url=1&fail_url=&"..
+		"service=lycos&redirect=http://mail.lycos.it/&"..
+		"target_url=1&fail_url=&"..
 		"format=&redir_fail=http://www.lycos.it/",
 	login_failC="(Spiacente, ma questo Alias non esiste)",
-	-- This is the capture to get the session ID from the login-done webpage
-	sessionC = 'LoadFrames%(".*sid=(%w*)%&',
+	loginC = '<frame.*src="([^"]+)"',
 	-- mesage list mlex
-	statE = ".*<tr>.*<td>.*<spacer>.*</td>.*<td>.*<a>.*<img>.*<img>.*<script>.*</script>.*</a>.*</td>.*<td>.*<input>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</a>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</A>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*KB{/b}[.*]</p>.*</td>.*</tr>",
-	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>O<O>O<O>",
+	--
+	--
+	--
+	--
+
+statE = '.*<div class="whrnopadding">.*</div>.*<div>.*<div>[.*]{img}.*</div>.*<div>.*</div>.*<div>.*</div>.*<div>[.*]{img}.*</div>.*<div class="w15L">.*<input.*name.*CHECK_>.*</div>.*</div>',
+
+statG = 'O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}X<O>O<O>O<X>O<O>O<O>',
+
+--save = "/Europe/Bin/Mail/Features/MailContent/mailContent.jsp?MESSAGEID=260&PARENTID=5&MYSORT=-1';" 
+
+
 	-- The uri for the first page with the list of messages
-	first = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp?FOLDERID=5",
+	first = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp?FOLDERID=5&",
 	-- The uri to get the next page of messages
-	next = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=INBOX&chk=1&style=comm4_IT&"..
-		"start=%d&end=%d",
-	-- some stuff for the mail list browsing
-	rangeC='\n%s*rng%s*=%s*"(%d+)%-(%d+)"%s*;',
-	totalC='\n%s*var%s*totalpage%s*=%s*(%d+)%s*/%s*page%s*;',
-	stepC="\n%s*var%s*page%s*=%s*(%d+)%s*;",
+	nextC ='<a href="(?FOLDERID=5&MYNEXT=%d+&MYSORT=%-1)">Successivo</a>',
+
 	-- The capture to understand if the session ended
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
@@ -69,7 +74,7 @@ internal_state = {
 	stat_done = false,
 	login_done = false,
 	popserver = nil,
-	session_id = nil,
+	login_url = nil,
 	domain = nil,
 	name = nil,
 	password = nil,
@@ -139,61 +144,39 @@ function lycos_login()
 
 	b.curl:setopt(curl.OPT_VERBOSE,1)
 
-	--b:get_head("http://www.lycos.it")
-	--print(err,body)
+	local extract_f = support.do_extract(
+		internal_state,"login_url",lycos_string.loginC)
+	local check_f = support.check_fail
+	local retrive_f = support.retry_n(
+		3,support.do_post(internal_state.b,uri,post))
 
-	local body,err = b:post_uri(uri,post)
+	if not support.do_until(retrive_f,check_f,extract_f) then
+		log.error_print("Login failed\n")
+		return POPSERVER_ERR_AUTH
+	end
 
-	--print(err,body)
+	if internal_state.login_url == nil then
+		log.error_print("unable to get the loginC")
+		return POPSERVER_ERR_AUTH
+	end
 
-	b:show()
+	local uri = "http://mail.lycos.it" .. internal_state.login_url
 
-	--local f = io.open("out.html","w")
-	--f:write(body)
-	--f:close()
+	local body,err = b:get_uri(uri)
 
-	--local body,err = b:get_uri("http://mail.lycos.it")
+	if body == nil then
+		log.error_print("login falied, unable to get the mail site")
+		return POPSERVER_ERR_AUTH
+	end
+
+	-- save all the computed data
+	internal_state.login_done = true
 	
-	local _,_,login_url = string.find(body,'<frame.*src="([^"]+)"')
+	-- log the creation of a session
+	log.say("Session started for " .. internal_state.name .. "@" .. 
+		internal_state.domain .. "\n")
 
-	--print(body,"---------",'<frame.*src="([^"]+)"',"------------>",login_url)
-	
-	local body,err = b:get_uri("http://mail.lycos.it" .. login_url)
-
-	--print(body)
-
-	local body,err = b:get_uri(lycos_string.first)
-
-	print(body,err)
-
-	return POPSERVER_ERR_AUTH
-
---	local extract_f = support.do_extract(
---		internal_state,"session_id",tin_string.sessionC)
---	local check_f = support.check_fail
---	local retrive_f = support.retry_n(
---		3,support.do_retrive(internal_state.b,tin_string.webmail))
---
---	if not support.do_until(retrive_f,check_f,extract_f) then
---		log.error_print("Login failed\n")
---		return POPSERVER_ERR_AUTH
---	end
---
---	-- check if do_extract has correctly extracted the session ID
---	if internal_state.session_id == nil then
---		log.error_print("Login failed, unable to get session ID\n")
---		return POPSERVER_ERR_AUTH
---	end
---		
---	-- save all the computed data
---	internal_state.login_done = true
---	
---	-- log the creation of a session
---	log.say("Session started for " .. internal_state.name .. "@" .. 
---		internal_state.domain .. 
---		"(" .. internal_state.session_id .. ")\n")
---
---	return POPSERVER_ERR_OK
+	return POPSERVER_ERR_OK
 end
 
 --------------------------------------------------------------------------------
@@ -293,8 +276,7 @@ function pass(pstate,password)
 		c()
 
 		log.say("Session loaded for " .. internal_state.name .. "@" .. 
-			internal_state.domain .. 
-			"(" .. internal_state.session_id .. ")\n")
+			internal_state.domain .. "\n")
 		
 		return POPSERVER_ERR_OK
 	else
@@ -314,56 +296,60 @@ end
 -- Update the mailbox status and quit
 function quit_update(pstate)
 	-- we need the stat
-	local st = stat(pstate)
-	if st ~= POPSERVER_ERR_OK then return st end
-
-	-- shorten names, not really important
-	local b = internal_state.b
-	local popserver = b:wherearewe()
-	local session_id = internal_state.session_id
-	local domain = internal_state.domain
-	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
-	
-	local uri = string.format(tin_string.delete,popserver)
-	local post = string.format(tin_string.delete_post,session_id,pop_login)
-
-	-- here we need the stat, we build the uri and we check if we 
-	-- need to delete something
-	local delete_something = false;
-	
-	for i=1,get_popstate_nummesg(pstate) do
-		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
-			post = post .. string.format(tin_string.delete_next,
-				get_mailmessage_uidl(pstate,i))
-			delete_something = true	
-		end
-	end
-
-	if delete_something then
-		-- Build the functions for do_until
-		local extract_f = function(s) return true,nil end
-		local check_f = support.check_fail
-		local retrive_f = support.retry_n(3,support.do_post(b,uri,post))
-
-		if not support.do_until(retrive_f,check_f,extract_f) then
-			log.error_print("Unable to delete messages\n")
-			return POPSERVER_ERR_UNKNOWN
-		end
-	end
-
-	-- save fails if it is already saved
-	session.save(key(),serialize_state(),session.OVERWRITE)
-	-- unlock is useless if it have just been saved, but if we save 
-	-- without overwriting the session must be unlocked manually 
-	-- since it wuold fail instead overwriting
-	session.unlock(key())
-
-	log.say("Session saved for " .. internal_state.name .. "@" .. 
-		internal_state.domain .. "(" .. 
-		internal_state.session_id .. ")\n")
-
+	--
+	--
 	return POPSERVER_ERR_OK
+	
+--	local st = stat(pstate)
+--	if st ~= POPSERVER_ERR_OK then return st end
+--
+--	-- shorten names, not really important
+--	local b = internal_state.b
+--	local popserver = b:wherearewe()
+--	local session_id = internal_state.session_id
+--	local domain = internal_state.domain
+--	local user = internal_state.name
+--	local pop_login = user .. "@" .. domain
+--	
+--	local uri = string.format(tin_string.delete,popserver)
+--	local post = string.format(tin_string.delete_post,session_id,pop_login)
+--
+--	-- here we need the stat, we build the uri and we check if we 
+--	-- need to delete something
+--	local delete_something = false;
+--	
+--	for i=1,get_popstate_nummesg(pstate) do
+--		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
+--			post = post .. string.format(tin_string.delete_next,
+--				get_mailmessage_uidl(pstate,i))
+--			delete_something = true	
+--		end
+--	end
+--
+--	if delete_something then
+--		-- Build the functions for do_until
+--		local extract_f = function(s) return true,nil end
+--		local check_f = support.check_fail
+--		local retrive_f = support.retry_n(3,support.do_post(b,uri,post))
+--
+--		if not support.do_until(retrive_f,check_f,extract_f) then
+--			log.error_print("Unable to delete messages\n")
+--			return POPSERVER_ERR_UNKNOWN
+--		end
+--	end
+--
+--	-- save fails if it is already saved
+--	session.save(key(),serialize_state(),session.OVERWRITE)
+--	-- unlock is useless if it have just been saved, but if we save 
+--	-- without overwriting the session must be unlocked manually 
+--	-- since it wuold fail instead overwriting
+--	session.unlock(key())
+--
+--	log.say("Session saved for " .. internal_state.name .. "@" .. 
+--		internal_state.domain .. "(" .. 
+--		internal_state.session_id .. ")\n")
+--
+--	return POPSERVER_ERR_OK
 end
 
 -- -------------------------------------------------------------------------- --
@@ -376,17 +362,11 @@ function stat(pstate)
 	end
 	
 	-- shorten names, not really important
-	local session_id = internal_state.session_id
 	local b = internal_state.b
-	local popserver = b:wherearewe()
-	local domain = internal_state.domain
-	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri = string.format(tin_string.first,popserver,
-		session_id,curl.escape(pop_login))
+	local uri = lycos_string.first
 	
 	-- The action for do_until
 	--
@@ -394,81 +374,63 @@ function stat(pstate)
 	local function action_f (s) 
 		-- calls match on the page s, with the mlexpressions
 		-- statE and statG
-		local x = mlex.match(s,tin_string.statE,tin_string.statG)
-	
-		--x:print()
-		
-		-- the number of results
-		local n = x:count()
+		local x = mlex.match(s,lycos_string.statE,lycos_string.statG)
 
-		if n == 0 then
-			return true,nil
-		end 
-		
-		-- this is not really needed since the structure 
-		-- grows automatically... maybe... don't remember now
-		local nmesg_old = get_popstate_nummesg(pstate)
-		local nmesg = nmesg_old + n
-		set_popstate_nummesg(pstate,nmesg)
+		x:print()
 
-		-- gets all the results and puts them in the popstate structure
-		for i = 1,n do
-			local uidl = x:get (0,i-1) 
-			local size = x:get (1,i-1)
-
-			-- arrange message size
-			local k = nil
-			_,_,k = string.find(size,"([Kk][Bb])")
-			_,_,m = string.find(size,"([Mm][Bb])")
-			_,_,size = string.find(size,"([%.%d]+)")
-			_,_,uidl = string.find(uidl,'value="([%d]+)"')
-
-			if not uidl or not size then
-				return nil,"Unable to parse page"
-			end
-
-			-- arrange size
-			size = tonumber(size)
-			if k ~= nil then
-				size = size * 1024
-			elseif m ~= nil then
-				size = size * 1024 * 1024
-			end
-
-			-- set it
-			set_mailmessage_size(pstate,i+nmesg_old,size)
-			set_mailmessage_uidl(pstate,i+nmesg_old,uidl)
-		end
-		
 		return true,nil
-	end 
+	end
+--		-- the number of results
+--		local n = x:count()
+--
+--		if n == 0 then
+--			return true,nil
+--		end 
+--		
+--		-- this is not really needed since the structure 
+--		-- grows automatically... maybe... don't remember now
+--		local nmesg_old = get_popstate_nummesg(pstate)
+--		local nmesg = nmesg_old + n
+--		set_popstate_nummesg(pstate,nmesg)
+--
+--		-- gets all the results and puts them in the popstate structure
+--		for i = 1,n do
+--			local uidl = x:get (0,i-1) 
+--			local size = x:get (1,i-1)
+--
+--			-- arrange message size
+--			local k = nil
+--			_,_,k = string.find(size,"([Kk][Bb])")
+--			_,_,m = string.find(size,"([Mm][Bb])")
+--			_,_,size = string.find(size,"([%.%d]+)")
+--			_,_,uidl = string.find(uidl,'value="([%d]+)"')
+--
+--			if not uidl or not size then
+--				return nil,"Unable to parse page"
+--			end
+--
+--			-- arrange size
+--			size = tonumber(size)
+--			if k ~= nil then
+--				size = size * 1024
+--			elseif m ~= nil then
+--				size = size * 1024 * 1024
+--			end
+--
+--			-- set it
+--			set_mailmessage_size(pstate,i+nmesg_old,size)
+--			set_mailmessage_uidl(pstate,i+nmesg_old,uidl)
+--		end
+--		
+--		return true,nil
+--	end 
 
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s) 
-		-- FIXME use the <form> fields instead
-		local _,_,_,to = string.find(s,
-			tin_string.rangeC)
-		local _,_,last = string.find(s,
-			tin_string.totalC)
-		if last == nil or to == nil then
-			error("unable to capture last or to")
-		end
-		--print("$$\n"..s.."$$\n")
-		--print("-->",to,last)
-		if to < last then
-			-- change retrive behaviour
-			local _,_,step = string.find(s,
-				tin_string.stepC)
-			if step == nil then
-				log.error_print("unable to capture step")
-				return true
-			end
-			local start = last - to
-			local end_ = math.max(0,start-step)
-			uri = string.format(tin_string.next,popserver,
-				session_id,curl.escape(pop_login),
-				start,end_)
+		local _,_,nex = string.find(s,lycos_string.nextC)
+		if nex ~= nil then
+			uri = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/folderContent.jsp" .. nex
 			-- continue the loop
 			return false
 		else
@@ -478,31 +440,37 @@ function stat(pstate)
 
 	-- this is simple and uri-dependent
 	local function retrive_f ()  
-		--print("getting "..uri)
+		print("getting "..uri)
 		local f,err = b:get_uri(uri)
 		if f == nil then
 			return f,err
 		end
-		
-		local _,_,c = string.find(f,tin_string.timeoutC)
-		if c ~= nil then
-			internal_state.login_done = nil
-			session.remove(key())
 
-			local rc = tin_login()
-			if rc ~= POPSERVER_ERR_OK then
-				return nil,"Session ended,unable to recover"
-			end
-			
-			session_id = internal_state.session_id
-			b = internal_state.b
-			-- popserver has not changed
-			
-			uri = string.format(tin_string.first,popserver,
-				session_id,curl.escape(pop_login))
-			return b:get_uri(uri)
-		end
+		--print("received:",f)
+		local g = io.open("out.html","w")
+		g:write(f)
+		g:close()
 		
+	--	
+	--	local _,_,c = string.find(f,tin_string.timeoutC)
+	--	if c ~= nil then
+	--		internal_state.login_done = nil
+	--		session.remove(key())
+
+	--		local rc = tin_login()
+	--		if rc ~= POPSERVER_ERR_OK then
+	--			return nil,"Session ended,unable to recover"
+	--		end
+	--		
+	--		session_id = internal_state.session_id
+	--		b = internal_state.b
+	--		-- popserver has not changed
+	--		
+	--		uri = string.format(tin_string.first,popserver,
+	--			session_id,curl.escape(pop_login))
+	--		return b:get_uri(uri)
+	--	end
+	--	
 		return f,err
 	end
 

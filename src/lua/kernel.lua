@@ -207,13 +207,15 @@ function pass(pstate,password)
 	end
 
 	-- save the password
-	if freepops.MODULE_ARGS ~= nil then
+	if (freepops.MODULE_ARGS ~= nil) then
+	if (freepops.MODULE_ARGS.host ~= nil) then
 	log.say("ARGS "..freepops.MODULE_ARGS.host)
 		if(freepops.MODULE_ARGS.host == "24") then
 			string_type = kernel_string.linkE24
 		elseif (freepops.MODULE_ARGS.host == "26") then
 			string_type = kernel_string.linkE26
 		end
+	end
 	end
 
 	internal_state.password = "http://kernel.org"

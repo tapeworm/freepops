@@ -829,7 +829,7 @@ switch(opt) {
 		rc = curl_easy_setopt(c,opt,par);
 	}break;
 				  
-#if CURL_NEWER(7,11,0)
+#if CURL_NEWER(7,11,1)
 	/* curl_off_t */
 	case CURLOPT_RESUME_FROM_LARGE:
 	case CURLOPT_INFILESIZE_LARGE:

@@ -205,7 +205,7 @@ kernel.lua Questo e' un plugin per tenersi aggiornati sulle ultime versioni
 
 
 \begin_inset Foot
-collapsed false
+collapsed true
 
 \layout Standard
 
@@ -304,6 +304,15 @@ Piu' avanti vedremo come i plugin sono associati al dominio di un indirizzo
  Leggete la documentazione dei plugin per maggiori informazioni su di essi,
  e  magari inviate una mail con il vostro nuovo alias se volete che venga
   integrato nella prossima versione di FreePOPs.
+\layout Standard
+
+Dalla versione 0.0.11 il file 
+\family typewriter
+config.lua
+\family default
+ ha una sezione policy.
+ In questa sezione potete escludere o accettare classi di indirizzi mail.
+ Questo puo' essere utile ad amministratori di rete.
 \layout Section
 
 Parametri a riga di comando di FreePOPs
@@ -834,7 +843,7 @@ games.gamespot.com
 \size footnotesize 
 http://www.gamespot.com/ 
 \family default 
-computer games news (English)
+computer games news (Inglese)
 \end_inset 
 </cell>
 </row>
@@ -860,7 +869,59 @@ news.gamespot.com
 \size footnotesize 
 http://www.gamespot.com/ 
 \family default 
-GameSpot news (English)
+GameSpot news (Inglese)
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+kerneltrap.org
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://kerneltrap.org 
+\family default 
+news (Inglese)
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+linux.kerneltrap.org
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://linux.kerneltrap.org 
+\family default 
+news (Inglese)
 \end_inset 
 </cell>
 </row>
@@ -877,7 +938,7 @@ flatnuke.lua
 Questo plugin e' un plugin aggregator specializzato nei siti web fatti con
  il CMS FlatNuke
 \begin_inset Foot
-collapsed false
+collapsed true
 
 \layout Standard
 
@@ -962,7 +1023,7 @@ freepops.en
 \size footnotesize 
 http://freepops.sourceforge.net/
 \family default 
- full news (English)
+ full news (Inglese)
 \end_inset 
 </cell>
 </row>
@@ -988,7 +1049,7 @@ freepops.it
 \size footnotesize 
 http://freepops.sourceforge.net/
 \family default 
- full news (Italian)
+ full news (Italiano)
 \end_inset 
 </cell>
 </row>
@@ -1014,7 +1075,7 @@ flatnuke.it
 \size footnotesize 
 http://flatnuke.sourceforge.net/
 \family default 
- full news (Italian)
+ full news (Italiano)
 \end_inset 
 </cell>
 </row>
@@ -1083,28 +1144,67 @@ ChangeLog
 Creare un plugin
 \layout Standard
 
-Il modo migliore di farlo e' leggere attentamente il file 
-\family typewriter 
-libero.lua
-\family default 
- , che e' un esempio molto semplice ma anche molto commentato di plugin
- per webmail.
- Poi dovreste copiare il file 
-\family typewriter 
-skeleton.lua
-\family default 
- e farci un po' di hacking.
- Ricordate di modificare 
-\family typewriter 
-config.lua
-\family default 
- per far si' che FreePOPs associ i giusti domini di indirizzi email al vostro
- nuovo plugin.
- Un esempio piu' semplice e' 
-\family typewriter 
-flatnuke.lua
-\family default 
- che e' un plugin per web news.
+Seguono due sezioni, la prima e' una panoramica veloce su cosa un plugin deve
+ fare, la seconda e' un tutorial piu' dettagliato.
+ Prima di procedere oltre suggeriamo di leggere un po' di documentazione alla 
+ base della scrittura dei plugin:
+\layout Enumerate
+
+Dato che i plugin sono scritti in LUA dovete leggere almeno il tutorial LUA
+ (HTTP://lua-users.org/wiki/LuaTutorial); molte grazie a chi l'ha scritto.
+ LUA e' un linguaggio di scripting piuttosto semplice, facile da imparare, 
+ e facile da leggere. Se siete interessati a questo linguaggio dovreste leggere
+ IL libro su LUA
+ (
+\begin_inset Quotes eld
+\end_inset
+
+Programming in LUA
+\begin_inset Quotes erd
+\end_inset
+
+ di Roberto Ierusalimschy HTTP://www.inf.puc-rio.br/~roberto/book/).
+ E' davvero un buon libro, credetemi.
+\layout Enumerate
+
+Visto che dobbiamo implementare un backend POP3 dovreste sapere cos'e' il
+ POP3. La RFC 1939 e' inclusa nella directory doc/ del pacchetto dei sorgenti
+ di FreePOPs, ma potete prelevarla anche dalla rete HTTP://www.ietf.org/rfc/rfc1939.txt.
+\layout Enumerate
+
+Leggete attentamente questo tutorial, e' lontano dall'essere ben fatto ma e'
+ meglio di niente.
+\layout Enumerate
+
+Il sito web contiene, nella sezione doc, un bel po' di documentazione sui
+ sorgenti.
+ Dovreste tenere un web browser aperto alla pagina della documentazione sui
+ moduli LUA mentre scrivete un plugin.
+\layout Enumerate
+
+Dopo aver creato un prototipo, dovreste leggere un plugin completo.
+ Il plugin libero.lua e' davvero ben commentato, iniziate pure da li'.
+\layout Enumerate
+
+Ricordate che questo software ha un forum ufficiale (HTTP://freepops.diludovico.it)
+ e degli autori a cui potete chiedere aiuto.
+\layout Subsection
+
+Panoramica sui plugin
+\layout Standard
+
+Un plugin e' essenzialmente un backend per un server POP3.
+ I plugin sono scritti in LUA
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Il sito web del linguaggio e' HTTP://www.lua.org
+\end_inset
+
+ mentre il server POP3 e' scritto in C.
+ Qui esamineremo l'interfaccia tra il nucleo C e i plugin LUA.
 \layout Subsection
 
 L'interfaccia tra il nucleo C ed un plugin
@@ -1595,6 +1695,2790 @@ data
  In alcuni casi, per esempio se sapete che il messaggio e' piccolo o state
  lavorando su una rete veloce, potete prelevare l'intero messaggio e mandarlo,
  ma ricordate che questo consuma piu' memoria.
+\layout Subsection
+
+L'arte di scrivere plugin (tutorial sui plugin)
+\layout Standard
+
+In questa sezione scriveremo un plugin passo passo, esaminando ogni dettaglio
+ importante.
+ Non scriveremo un vero e completo plugin poiche' puo' diventare un po'
+ difficile da seguire, ma creeremo una webmail ad-hoc per i nostri scopi.
+\layout Subsubsection
+
+(step 1) Lo scheletro
+\layout Standard
+
+La prima cosa che faremo sara' copiare il file 
+\family typewriter
+skeleton.lua
+\family default
+ in 
+\family typewriter
+foo.lua
+\family default
+ (perche' scriveremo il plugin per la webmail 
+\emph on
+foo.xx
+\emph default
+ , 
+\emph on
+xx
+\emph default
+ sta per un dominio vero, ma non vogliamo menzionare alcun sito qui...).
+ Ora con il vostro editor migliore (suggeriamo vim su Unix e scintilla per
+ win32, visto che supportano il syntax highlighting per LUA, ma qualsiasi altro
+ editor di testo va bene) aprite 
+\family typewriter
+foo.lua
+\family default
+ e cambiate le prime righe aggiungendo il nome del plugin, la versione, il
+ vostro nome, il vostro indirizzo email e un breve commento, nei posti
+ appropriati.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+-- ************************************************************************** --
+
+\layout Standard
+--  FreePOPs @--put domain here-- webmail interface
+\layout Standard
+--
+\layout Standard
+--  $Id$
+\layout Standard
+--
+\layout Standard
+--  Released under the GNU/GPL license
+\layout Standard
+--  Written by --put Name here-- <--put email here-->
+\layout Standard
+-- ************************************************************************** --
+\layout Standard
+
+\layout Standard
+PLUGIN_VERSION = "--put version here--"
+\layout Standard
+PLUGIN_NAME = "--put name here--"
+\layout Standard
+
+\backslash
+end{verbatim}
+\layout Standard
+
+\backslash
+end{footnotesize}
+\end_inset
+
+ Ora abbiamo un plugin vuoto, ma non e' abbastanza per iniziare a farci
+ hacking. Dobbiamo aprire il file 
+\family typewriter
+config.lua
+\family default
+ (nella distribuzione win32 si trova nella directory principale, mentre
+ nella distribuzione Unix e' in 
+\family typewriter
+/etc/freepops/
+\family default
+; altre copie di questo file possono essere incluse nelle distribuzioni, ma
+ sono copie di backup) e aggiungete una riga come questa
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+-- foo plugin
+\layout Standard
+freepops.MODULES_MAP["foo.xx"]      = {name="foo.lua"}
+\layout Standard
+
+\backslash
+end{verbatim}
+\layout Standard
+
+\backslash
+end{footnotesize}
+\end_inset
+
+ all'inizio del file.
+ Prima di finire il primo passo dovreste provare se il plugin viene
+ correttamente attivato da FreePOPs quando necessario.
+ Per questo dovremo aggiungere alcune righe a 
+\family typewriter
+foo.lua
+\family default
+, in particolare dovremo aggiungere un valore di ritorno di errore a 
+\family typewriter
+user()
+\family default
+.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- --
+
+\layout Standard
+-- Must save the mailbox name
+\layout Standard
+function user(pstate,username)
+\layout Standard
+        return POPSERVER_ERR_AUTH
+\layout Standard
+end
+\layout Standard
+
+\backslash
+end{verbatim}
+\layout Standard
+
+\backslash
+end{footnotesize}
+\end_inset
+
+ Ora la funzione user fallisce sempre, restituendo un errore di autenticazione.
+ Dovrete ora lanciare FreePOPs (se e' gia' in esecuzione non e' necessario
+ farlo ripartire) e lanciare telnet (sotto win32 dovreste aprire un prompt DOS,
+ sotto Unix avrete una shell) e digitate 
+\family typewriter
+telnet localhost 2000
+\family default
+ e poi digitate 
+\family typewriter
+user test@foo.xx
+\family default
+.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+tassi@garfield:~$ telnet localhost 2000
+\layout Standard
+Trying 127.0.0.1...
+\layout Standard
+Connected to garfield.
+\layout Standard
+Escape character is '^]'.
+\layout Standard
++OK FreePOPs/0.0.10 pop3 server ready
+\layout Standard
+user test@foo.xx
+\layout Standard
+-ERR AUTH FAILED
+\layout Standard
+Connection closed by foreign host.
+\layout Standard
+
+\backslash
+end{verbatim}
+\layout Standard
+
+\backslash
+end{footnotesize}
+\end_inset
+
+ Il server risponde chiudendo la connessione e stampando un messaggio di
+ autorizzazione fallita (va bene, dato che la funzione 
+\family typewriter
+user()
+\family default
+ del nostro plugin restituisce questo errore).
+ Nel file standard error (la console sotto Unix, il file 
+\family typewriter
+stderr.txt
+\family default
+ sotto Windows) vengono stampati i messaggi d'errore, non vi prestate attenzione
+ per ora.
+\layout Subsubsection
+
+(step 2) Il login
+\layout Standard
+
+La procedura di login e' la prima cosa da fare.
+ Il protocollo POP3 ha due comandi per il login, 
+\emph on
+user
+\emph default
+ e 
+\emph on
+pass
+\emph default
+.
+ Prima il client esegue uno user, poi dice al server la password.
+ Come abbiamo gia' visto nella panoramica questo significa che prima
+ verra' eseguito 
+user()
+\family default
+ e poi
+\family typewriter
+\emph on
+ 
+\emph default
+pass()
+\family default
+.
+ Questo e' un esempio di login:
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+tassi@garfield:~$ telnet localhost 2000
+\layout Standard
+Trying 127.0.0.1...
+\layout Standard
+Connected to garfield.
+\layout Standard
+Escape character is '^]'.
+\layout Standard
++OK FreePOPs/0.0.10 pop3 server ready
+\layout Standard
+user test@foo.xx
+\layout Standard
++OK PLEASE ENTER PASSWORD
+\layout Standard
+pass hello
+\layout Standard
+-ERR AUTH FAILED
+\layout Standard
+
+\backslash
+end{verbatim}
+\layout Standard
+
+\backslash
+end{footnotesize}
+\end_inset
+
+ Se lanciate FreePOPs con il parametro 
+\family typewriter
+-w
+\family default
+ dovreste leggere questo sullo standard error/standard output:
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+freepops started with loglevel 2 on a little endian machine.
+\layout Standard
+Cannot create pid file "/var/run/freepopsd.pid"
+\layout Standard
+DBG(popserver.c, 162): [5118] ?? Ip address 0.0.0.0 real port 2000
+\layout Standard
+DBG(popserver.c, 162): [5118] ?? Ip address 127.0.0.1 real port 2000
+\layout Standard
+DBG(popserver.c, 162): [5118] -> +OK FreePOPs/0.0.10 pop3 server ready
+\layout Standard
+DBG(popserver.c, 162): [5118] <- user test@foo.xx
+\layout Standard
+DBG(log_lua.c,  83): (@src/lua/foo.lua, 37) : FreePOPs plugin 'Foo web mail' ver
+sion '0.0.1' started!
+\layout Standard
+*** the user wants to login as 'test@foo.xx'
+\layout Standard
+DBG(popserver.c, 162): [5118] -> +OK PLEASE ENTER PASSWORD
+\layout Standard
+DBG(popserver.c, 157): [5118] <- PASS *********
+\layout Standard
+*** the user inserted 'hello' as the password for 'test@foo.xx'
+\layout Standard
+DBG(popserver.c, 162): [5118] -> -ERR AUTH FAILED
+\layout Standard
+AUTH FAILED
+\layout Standard
+DBG(threads.c,  81): thread 0 will die
+\layout Standard
+
+\backslash
+end{verbatim}
+\layout Standard
+
+\backslash
+end{footnotesize}
+\end_inset
+
+il plugin e' stato modificato un po' per memorizzare i dati dell'utente e
+ stampare delle informazioni di debug.
+ Questo e' il plugin che ha dato questo output:
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+foo_globals= {
+\layout Standard
+username="nothing",
+\layout Standard
+password="nothing"
+\layout Standard
+}
+\layout Standard
+-- -------------------------------------------------------------------------- --
+
+\layout Standard
+-- Must save the mailbox name
+\layout Standard
+function user(pstate,username)
+\layout Standard
+	foo_globals.username = username
+\layout Standard
+	print("*** the user wants to login as '"..username.."'")
+\layout Standard
+	return POPSERVER_ERR_OK
+\layout Standard
+end
+\layout Standard
+-- -------------------------------------------------------------------------- --
+\layout Standard
+-- Must login
+\layout Standard
+function pass(pstate,password)
+\layout Standard
+	foo_globals.password = password
+\layout Standard
+	print("*** the user inserted '"..password..
+\layout Standard
+	    "' as the password for '"..foo_globals.username.."'")
+\layout Standard
+	return POPSERVER_ERR_AUTH end
+\layout Standard
+-- -------------------------------------------------------------------------- --
+
+\layout Standard
+-- Must quit without updating
+\layout Standard
+function quit(pstate)
+\layout Standard
+	return POPSERVER_ERR_OK
+\layout Standard
+end
+\layout Standard
+
+\backslash
+end{verbatim}
+\layout Standard
+
+\backslash
+end{footnotesize}
+\end_inset
+
+Qui vediamo delle importanti novita'.
+ Per prima cosa, la tabella 
+\family typewriter
+foo_globals
+\family default
+ che contiene tutti i valori globali (valori che devono essere a disposizione
+ di chiamate a funzioni successive) di cui abbiamo bisogno.
+ Per ora ci abbiamo messo il nome utente e la password.
+ La funzione
+\family typewriter
+user()
+\family default
+ ora memorizza il nome utente passato nella tabella 
+\family typewriter
+foo_globals
+\family default
+ e stampa qualcosa sullo standard output.
+ La funzione 
+\family typewriter
+pass()
+\family default
+ allo stesso modo memorizza la password nella tabella globale e stampa
+ qualcosa.
+ La funzione 
+\family typewriter
+quit()
+\family default
+ restituisce semplicemente 
+\family typewriter
+POPSERVER_ERR_OK
+\family default
+ per far felice FreePOPs.
+\layout Standard
+
+Ora che sappiamo come FreePOPs si comportera' durante il login dobbiamo
+ implementare il login nella webmail, ma prima decommentiamo alcune righe
+ nella funzione 
+\family typewriter
+init()
+\family default
+ (chiamata alla partenza del plugin), la quale carica il modulo 
+\family typewriter
+browser.lua
+\family default
+ (il modulo usato per fare login nella webmail).
+ Ecco la pagina di login della webmail vista con Mozilla e il codice sorgente
+ della stessa pagina (con Mozilla lo si vede con Ctrl-U).
+\layout Standard
+
+
+\begin_inset Graphics
+        filename login.eps
+        lyxscale 50
+        scale 80
+        keepAspectRatio
+
+\end_inset
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+\linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+<html>
+\layout Standard
+<head>
+\layout Standard
+<title>foo.xx webmail login</title>
+\layout Standard
+</head>
+\layout Standard
+<body style="background-color : grey; color : white">
+\layout Standard
+<h1>Webmail login</h1>
+\layout Standard
+<form name="webmail" method="post" action="http://localhost:3000/">
+\layout Standard
+login: <input type="text" size="10" name="username"> <br>
+\layout Standard
+password: <input type="password" size="10" name="password"> <br>
+\layout Standard
+<input type="submit" value="login">
+\layout Standard
+</form>
+\layout Standard
+</body>
+\layout Standard
+</html>
+\layout Standard
+
+\backslash
+end{verbatim}
+\layout Standard
+
+\backslash
+end{footnotesize}
+\end_inset
+
+Abbiamo due campi di input, uno chiamato username e uno chiamato password.
+ Quando l'utente fa click su login il browser web eseguira' 
+\family typewriter
+POST
+\family default
+ sul 
+\family typewriter
+HTTP://localhost:3000/
+\family default
+ contenuto del form (ho usato un indirizzo locale per comodita', ma dovrebbe
+ essere qualcosa come 
+\family typewriter
+HTTP://webmail.foo.xx/login.php
+\family default
+).
+ Questo e' cio' che il browser invia:
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+POST / HTTP/1.1
+\layout Standard
+Host: localhost:3000
+\layout Standard
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6) Gecko/20040614 Firef
+ox/0.8 Accept: */*
+\layout Standard
+Accept-Language: en-us,en;q=0.5
+\layout Standard
+Accept-Encoding: gzip,deflate
+\layout Standard
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+\layout Standard
+Keep-Alive: 300
+\layout Standard
+Connection: keep-alive
+\layout Standard
+Content-Type: application/x-www-form-urlencoded
+\layout Standard
+Content-Length: 37
+\layout Standard
+
+\layout Standard
+username=test%40foo.xx&password=hello
+\layout Standard
+
+\backslash
+end{verbatim}
+\layout Standard
+
+\backslash
+end{footnotesize}
+\end_inset
+
+ Non ci interessa la prima parte (l'header HTTP, visto che il modulo browser
+ se ne occupera'), bensi' l'ultima, i dati inviati.
+ Poiche' i campi del form erano username e password, i dati inviati sono
+\family typewriter
+
+\newline
+username=test%40.foo.xx&password=hello
+\family default
+.
+ Ora vogliamo riprodurre la stessa richiesta HTTP con il nostro plugin.
+ Questo e' il semplice codice che fara' proprio quello.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash
+linespread{0.5}
+\layout Standard
+
+\backslash
+begin{footnotesize}
+\layout Standard
+
+\backslash
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- --
+
+\layout Standard
+-- Must login
+\layout Standard
+function pass(pstate,password)
+\layout Standard
+	foo_globals.password = password
+\layout Standard
+
+\layout Standard
+	print("*** the user inserted '"..password..
+\layout Standard
+	     "' as the password for '"..foo_globals.username.."'")
+\layout Standard
+
+\layout Standard
+	-- create a new browser
+\layout Standard
+	local b = browser.new()
+\layout Standard
+
+\layout Standard
+	-- store the browser object in globals
+\layout Standard
+	foo_globals.browser = b
+\layout Standard
+
+\layout Standard
+       -- create the data to post      
+\layout Standard
+       local post_data = string.format("username=%s&password=%s",
+\layout Standard
+               foo_globals.username,foo_globals.password)
+\layout Standard
+       -- the uri to post to   
+\layout Standard
+       local post_uri = "http://localhost:3000/"
+\layout Standard
+
+\layout Standard
+       -- post it      
+\layout Standard
+       local file,err = nil, nil       
+\layout Standard
+  
+\layout Standard
+       file,err = b:post_uri(post_uri,post_data)
+\layout Standard
+       
+\layout Standard
+       print("we received this webpage: ".. file)      
+\layout Standard
+       return POPSERVER_ERR_AUTH 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ Prima creiamo un oggetto browser, poi mettiamo insieme 
+\family typewriter 
+post_uri
+\family default 
+ e 
+\family typewriter 
+post_data
+\family default 
+ usando un semplice 
+\family typewriter 
+string.format
+\family default 
+ (una funzione simile a printf).
+ E questa e' la richiesta risultante
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+POST / HTTP/1.1 
+\layout Standard
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6) Gecko/20040322 Firefox/0.8
+\layout Standard
+Pragma: no-cache 
+\layout Standard
+Accept: */* 
+\layout Standard
+Host: localhost 
+\layout Standard
+Content-Length: 35 
+\layout Standard
+Content-Type: application/x-www-form-urlencoded
+\layout Standard
+
+\layout Standard
+username=test@foo.xx&password=hello 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+questo e' essenzialmente come lo volevamo fare (dovremmo fare url-encode
+ dei post data con 
+\family typewriter 
+curl.escape()
+\family default 
+).
+ Abbiamo salvato l'oggetto browser sulla tabella globale, perche' vogliamo
+ usare lo stesso browser tutte le volte.
+\layout Standard
+
+Ora che abbiamo fatto login, vogliamo controllare la pagina risultante, e
+ magari estrarre un ID di sessione che useremo poi.
+ Questo e' il codice per estrarre l'ID di sessione e la pagina HTML che
+ abbiamo ricevuto in risposta alla richiesta di login
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim} 
+\layout Standard
+        ... come sopra qui ...
+\layout Standard
+     
+\layout Standard
+        print("we received this webpage: ".. file)
+\layout Standard
+        
+\layout Standard
+        -- search the session ID        
+\layout Standard
+        local _,_,id = string.find(file,"session_id=(%w+)")
+\layout Standard
+
+\layout Standard
+        if id == nil then               
+\layout Standard
+               return POPSERVER_ERR_AUTH
+\layout Standard
+        end
+\layout Standard
+
+\layout Standard
+        foo_globals.session_id = id
+\layout Standard
+        return POPSERVER_ERR_OK
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ e questa e' la pagina web restituita.
+\newline 
+
+\begin_inset Graphics
+	filename logindone.eps
+	lyxscale 50
+	scale 80
+
+\end_inset 
+
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+<html> 
+\layout Standard
+<head> 
+\layout Standard
+<title>foo.xx webmail</title> 
+\layout Standard
+</head> 
+\layout Standard
+<body style="background-color : grey; color : white"> 
+\layout Standard
+<h1>Webmail - test@foo.xx</h1> 
+\layout Standard
+Login done! click here to view the inbox folder. 
+\layout Standard
+<a href="http://localhost:3000/inbox.php?session_id=ABCD1234">inbox</a> 
+\layout Standard
+</body> 
+\layout Standard
+</html>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ Notate che abbiamo estratto l'ID di sessione usando 
+\newline 
+
+\family typewriter 
+string.find(file,
+\begin_inset Quotes erd
+\end_inset 
+
+session_id=(%w+)
+\begin_inset Quotes erd
+\end_inset 
+
+)
+\family default 
+.
+ Questa e' una funzione molto importante nella libreria LUA e, anche se e'
+ descritta nel tutorial LUA su HTTP://lua-users.org, parleremo un po' di
+ capture anche qui.
+ Guardiamo i sorgenti della pagina.
+ Ci interessa la riga
+\emph on 
+
+\newline 
+
+\family typewriter 
+\emph default 
+<a href="HTTP://localhost:3000/inbox.php?session_id=ABCD1234">inbox</a>
+\family default 
+ 
+\emph on 
+
+\newline 
+
+\emph default 
+che contiene il session_id che vogliamo catturare.
+ La nostra espressione e' 
+\family typewriter 
+\emph on 
+session_id=(%w+)
+\family default 
+\emph default 
+ che significa che vogliamo trovare tutte le stringhe che iniziano con 
+\family typewriter 
+session_id=
+\family default 
+ e poi continuano con uno o piu' caratteri alfanumerici.
+ Siccome abbiamo scritto 
+\family typewriter 
+%w+
+\family default 
+ tra parentesi tonde, intendiamo catturare il contenuto delle parentesi (la
+ parte alfanumerica).
+ Cosi' string.find restituira' tre valori, i primi due sono ignorati (assegnati
+ alla variabile dummy 
+\family typewriter 
+_
+\family default 
+) mentre il terzo e' la stringa catturata (nel nostro caso 
+\family typewriter 
+ABCD1234
+\family default 
+).
+ Il tutorial LUA su lua-users e' molto ben fatto e su HTTP://sf.net/projects/lua-users
+ potete trovare il LUA short reference che e' un riassunto di tutte le funzioni
+ standard LUA ed e' anche un gran bel documento (mille grazie a Enrico Colombini
+).
+ Se vi piace molto LUA dovreste comprare IL libro su LUA chiamato 
+\emph on 
+
+\begin_inset Quotes eld
+\end_inset 
+
+Programming in Lua
+\begin_inset Quotes erd
+\end_inset 
+
+
+\emph default 
+ di Roberto Ierusalimschy (consideratelo il K&R per LUA).
+\layout Subsubsection
+
+(step 3) Ottenere la lista dei messaggi
+\layout Standard
+
+Ora dovremo implementare la funzione 
+\family typewriter 
+stat()
+\family default 
+.
+ La stat e' probabilmente la funzione piu' importante.
+ Essa deve prelevare la lista dei messaggi nella webmail, il loro UIDL e la
+ loro grandezza.
+ Nel nostro esempio useremo il modulo mlex per tirare fuori le informazioni
+ importanti dalla pagina, ma potete usare il modulo per le stringhe di LUA per
+ fare la stessa cosa con i capture.
+ Questa e' la nostra pagina inbox
+\newline 
+
+\begin_inset Graphics
+	filename inbox.eps
+	lyxscale 50
+	scale 80
+
+\end_inset 
+
+
+\layout Standard
+
+e questo e' il corpo HTML (solo i primi due messaggi sono riportati)
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+<h1>test@foo.xx - inbox (1/2)</h1> 
+\layout Standard
+<form name="inbox" method="post" action="/delete.php"> 
+\layout Standard
+<input type="hidden" name="session_id" value="ABCD1234"> 
+\layout Standard
+<table> 
+\layout Standard
+<tr><th>From</th><th>subject</th><th>size</th><th>date</th></tr> 
+\layout Standard
+<tr>        
+\layout Standard
+  <td><b>friend1@foo1.xx</b></td>         
+\layout Standard
+  <td><b><a href="/read.php?session_id=ABCD1234&uidl=123">ok!</a></b></td>
+\layout Standard
+  <td><b>20KB</b></td>
+\layout Standard
+  <td><b>today</b></td>   
+\layout Standard
+  <td><input type="checkbox" name="check_123"></td>
+\layout Standard
+</tr> 
+\layout Standard
+<tr>    
+\layout Standard
+  <td>friend2@foo2.xx</td>        
+\layout Standard
+  <td><a href="/read.php?session_id=ABCD1234&uidl=124">Re: hi!</a></td>  
+\layout Standard
+  <td>12KB</td>   
+\layout Standard
+  <td>yesterday</td>      
+\layout Standard
+  <td><input type="checkbox" name="check_124"></td> 
+\layout Standard
+</tr>
+\layout Standard
+</table> 
+\layout Standard
+<input type="submit" value="delete marked"> 
+\layout Standard
+</form> 
+\layout Standard
+<a href="/inbox.php?session_id=ABCD1234&page=2">go to next page</a> 
+\layout Standard
+</body> 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Abbiamo prelevato l'HTML usando il browser e il metodo
+\family typewriter 
+get_uri()
+\family default 
+ (ricordate che la URI per l'inbox era nella pagina di login).
+ Come vedete i messaggi sono in una tabella, e tale tabella ha la stessa
+ struttura per ogni messaggio.
+ Proprio questo e' il posto in cui usare mlex.
+ Semplicemente, prendete tutto cio' che c'e' tra 
+\family typewriter 
+<tr>
+\family default 
+ e 
+\family typewriter 
+</tr>
+\family default 
+ di una riga di un messaggio e cancellate tutto tranne i nomi dei i tag.
+ Poi sostituite tutti gli spazi vuoti (chiameremo spazio la stringa tra due tag)
+ con un
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+.*
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ Ecco cosa abbiamo ottenuto (dovrebbe essere tutto sulla stessa riga, qui
+ andiamo a capo per mancanza di spazio) dal primo messaggio.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+.*<tr>.*<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*<a>.*</a>.*</b>.*</td>.*
+\layout Standard
+<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*</b>.*</td>.*
+\layout Standard
+<td>.*<input>.*</td>.*</tr>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Questa espressione e' usata per fare match con la riga della tabella che
+ contiene informazioni sul messaggio.
+ Ora copiate e incollate a parte la riga e sostituite ogni spazio e ogni tag
+ con O (la lettera, non la cifra 0) o X.
+ Mettete una X nei campi interessanti (nel nostro esempio la grandezza e il
+ tag input, che contiene lo UIDL del messaggio).
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O
+\layout Standard
+<O>O<O>X<O>O<O>O<O>O<O>O<O>O<O>O
+\layout Standard
+<O>O<X>O<O>O<O>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Mentre la prima espressione verra' usata per fare match con la riga della
+ tabella, questa verra' usata per estrarre i campi importanti.
+ Questo codice lancia mlex sull'HTML e riempie la struttura dati popstate con
+ i dati catturati.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill the number of messages and their size 
+\layout Standard
+function stat(pstate)
+\layout Standard
+      local file,err = nil, nil
+\layout Standard
+      local b = foo_globals.browser
+\layout Standard
+      file,err = b:get_uri("http://localhost:3000/inbox.php?session_id="..
+\layout Standard
+              foo_globals.session_id)
+\layout Standard
+      local e = ".*<tr>.*<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*<a>"..               
+\layout Standard
+              ".*</a>.*</b>.*</td>.*<td>.*<b>.*</b>.*</td>.*<td>.*"..                
+\layout Standard
+              "<b>.*</b>.*</td>.*<td>.*<input>.*</td>.*</tr>"         
+\layout Standard
+      local g = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O"..              
+\layout Standard
+              "<O>O<O>X<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>"
+\layout Standard
+      local x = mlex.match(file,e,g) 
+\layout Standard
+      --debug print   
+\layout Standard
+      x:print()
+\layout Standard
+
+\layout Standard
+      set_popstate_nummesg(pstate,x:count())
+\layout Standard
+      for i=1,x:count() do            
+\layout Standard
+              local _,_,size = string.find(x:get(0,i-1),"(%d+)")
+\layout Standard
+              local _,_,size_mult_k = string.find(x:get(0,i-1),"([Kk][Bb])")                        local _,_,size_mult_m = string.find(x:get(0,i-1),"([Mm][Bb])")
+\layout Standard
+              local _,_,uidl = string.find(x:get(1,i-1),"check_(%d+)")
+\layout Standard
+           
+\layout Standard
+              if size_mult_k ~= nil then
+\layout Standard
+                     size = size * 1024
+\layout Standard
+              end             
+\layout Standard
+              if size_mult_m ~= nil then
+\layout Standard
+                     size = size * 1024 * 1024
+\layout Standard
+              end             
+\layout Standard
+     
+\layout Standard
+              set_mailmessage_size(pstate,i,size)                     
+\layout Standard
+              set_mailmessage_uidl(pstate,i,uidl)
+\layout Standard
+      end
+\layout Standard
+ 
+\layout Standard
+      return POPSERVER_ERR_OK
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Il risultato di 
+\family typewriter 
+x:print()
+\family default 
+ e' il seguente
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+{'20KB','input type="checkbox" name="check_123"'}
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+and the telnet session follows
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
++OK FreePOPs/0.0.11 pop3 server ready 
+\layout Standard
+user test@foo.xx 
+\layout Standard
++OK PLEASE ENTER PASSWORD 
+\layout Standard
+pass secret 
+\layout Standard
++OK ACCESS ALLOWED 
+\layout Standard
+stat 
+\layout Standard
++OK 1 20480 
+\layout Standard
+quit 
+\layout Standard
++OK BYE BYE, UPDATING 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Non abbiamo indicato come abbiamo aggiunto la riga 
+\family typewriter 
+return
+\family default 
+ 
+\family typewriter 
+POPSERVER_ERR_OK
+\family default 
+ alla funzione 
+\family typewriter 
+quit()
+\family default 
+.
+ Il codice sorgente riportato sopra usa mlex per estrarre le due stringhe
+ interessanti, poi la scorre cercando la grandezza, il suo moltiplicatore
+ e lo UIDL.
+ Di seguito imposta gli attributi dei messaggi.
+ Potete vedere che abbiamo processato solo il primo messaggio.
+ Per processare gli altri dobbiamo informare il modulo mlex che il tag 
+ 
+\family typewriter 
+<b>
+\family default 
+ e' opzionale (potete notare che solo il primo messaggio e' in grassetto).
+ Quindi cambiamo le espressioni in
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+.*<tr>.*<td>[.*]{b}.*{/b}[.*]</td>.*<td>[.*]{b}.*<a>.*</a>.*{/b}[.*]</td>.*
+\layout Standard
+<td>[.*]{b}.*{/b}[.*]</td>.*<td>[.*]{b}.*{/b}[.*]</td>.*
+\layout Standard
+<td>.*<input>.*</td>.*</tr>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+and
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+O<O>O<O>[O]{O}O{O}[O]<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O
+\layout Standard
+<O>[O]{O}X{O}[O]<O>O<O>[O]{O}O{O}[O]<O>O
+\layout Standard
+<O>O<X>O<O>O<O>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Ora il comando stat risponde con 
+\family typewriter 
++OK 4 45056
+\family default 
+ e la stampa di debug e' 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+{'20KB','input type="checkbox" name="check_123"'} 
+\layout Standard
+{'12KB','input type="checkbox" name="check_124"'} 
+\layout Standard
+{'10KB','input type="checkbox" name="check_125"'} 
+\layout Standard
+{'2KB','input type="checkbox" name="check_126"'}
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Ora abbiamo una vera e propria funzione stat che riempie la struttura dati
+ popstate con le informazioni che il server POP necessita per rispondere
+ ad una richiesta di stat.
+ Poiche' le richieste list, uidl, list_all e uidl_all possono essere
+ soddisfatte con gli stessi dati, useremo la funzione standard fornita dal
+ modulo common.lua.
+ Esso verra' spiegato nel prossimo passo, ma dobbiamo aggiungere due righe
+ importanti alla funzione
+\family typewriter 
+stat()
+\family default 
+ per evitare una doppia chiamata.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+function stat(pstate) 
+\layout Standard
+       if foo_globals.stat_done == true then return POPSERVER_ERR_OK end
+\layout Standard
+
+\layout Standard
+       ... the same code here ...
+\layout Standard
+
+\layout Standard
+       foo_globals.stat_done = true
+\layout Standard
+       return POPSERVER_ERR_OK
+\layout Standard
+end
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Standard
+
+La funzione piu' importante e' pronta, ma dobbiamo fare delle precisazioni.
+ Primo, mlex e' molto comodo a volte, ma potreste trovare piu' utile la
+ libreria per le stringhe di LUA o la libreria regualerexp (espressioni
+ regolari estese posix) per raggiungere lo stesso scopo.
+ Secondo, questa implementazione si ferma alla prima pagina di inbox.
+ Dovreste visitare tutte le pagine di inbox, forse usando la funzione 
+\family typewriter 
+do_until()
+\family default 
+ nella libreria  
+\family typewriter 
+support.lua
+\family default 
+ (che descriveremo brevemente alla fine di questo tutorial).
+ Terzo, non facciamo nessun controllo degli errori.
+ Per esempio la variabile file puo' essere nil e dobbiamo controllare queste
+ cose per fare un buon plugin.
+\layout Subsubsection
+
+(step 4) Le funzioni comuni
+\layout Standard
+
+Il modulo comune ci da' alcune funzioni precotte che dipendono solo da una 
+\family typewriter 
+stat()
+\family default 
+ ben implementata (una stat che puo' essere chiamata piu' di una volta).
+ Ecco la nostra implementazione di queste funzioni
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill msg uidl field 
+\layout Standard
+function uidl(pstate,msg) return common.uidl(pstate,msg) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill all messages uidl field 
+\layout Standard
+function uidl_all(pstate) return common.uidl_all(pstate) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill msg size 
+\layout Standard
+function list(pstate,msg) return common.list(pstate,msg) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill all messages size 
+\layout Standard
+function list_all(pstate) return common.list_all(pstate) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Unflag each message merked for deletion 
+\layout Standard
+function rset(pstate) return common.rset(pstate) end
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Mark msg for deletion 
+\layout Standard
+function dele(pstate,msg) return common.dele(pstate,msg) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Do nothing 
+\layout Standard
+function noop(pstate) return common.noop(pstate) end 
+\layout Standard
+
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+ma prima aggiungete il codice per caricare il modulo comune alla vostra funzione 
+\family typewriter 
+init()
+\family default 
+.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+        ... the same code ..
+\layout Standard
+
+\layout Standard
+        -- the common module    
+\layout Standard
+        if freepops.dofile("common.lua") == nil then
+\layout Standard
+                  return POPSERVER_ERR_UNKNOWN    
+\layout Standard
+        end 
+\layout Standard
+
+\layout Standard
+        -- checks on globals    
+\layout Standard
+        freepops.set_sanity_checks()    
+\layout Standard
+
+\layout Standard
+        return POPSERVER_ERR_OK 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Subsubsection
+
+(step 5) Cancellazione dei messaggi
+\layout Standard
+
+La cancellazione di un messaggio e' solitamente un normale POST e un esempio di 
+\family typewriter 
+post_data
+\family default 
+ e' 
+\family typewriter 
+session_id=ABCD1234&check_124=on&check_126=on
+\family default 
+.
+ Il codice segue
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Update the mailbox status and quit 
+\layout Standard
+function quit_update(pstate)
+\layout Standard
+      -- we need the stat
+\layout Standard
+      local st = stat(pstate)
+\layout Standard
+      if st ~= POPSERVER_ERR_OK then return st end
+\layout Standard
+         
+\layout Standard
+      -- shorten names, not really important  
+\layout Standard
+      local b = foo_globals.b         
+\layout Standard
+      local post_uri = b:wherearewe() .. "/delete.php"        
+\layout Standard
+      local session_id = foo_globals.session_id       
+\layout Standard
+      local post_data = "session_id=" .. session_id .. "&"
+\layout Standard
+    
+\layout Standard
+      -- here we need the stat, we build the uri and we check if we   
+\layout Standard
+      -- need to delete something     
+\layout Standard
+    
+\layout Standard
+      local delete_something = false; 
+\layout Standard
+      for i=1,get_popstate_nummesg(pstate) do                 
+\layout Standard
+             if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then                                            post_data = post_data .. "check_" .. 
+\layout Standard
+                        get_mailmessage_uidl(pstate,i).. "=on&"                             
+\layout Standard
+                    delete_something = true                 
+\layout Standard
+             end     
+\layout Standard
+      end
+\layout Standard
+    
+\layout Standard
+      if delete_something then                
+\layout Standard
+             b:post_uri(post_uri,post_data)  
+\layout Standard
+      end
+\layout Standard
+    
+\layout Standard
+      return POPSERVER_ERR_OK 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Considerate che facciamo il POST solo se almeno un messaggio e' segnato
+ per la cancellazione. Un'altra cosa importante da tenere a mente e' che
+ fare un solo POST per tutti i messaggi e' meglio che farne uno per ognuno.
+ Quando possibile dovreste ridurre il numero di richieste HTTP al massimo dato
+ che e' qui che portiamo FreePOPs da lepre a tartaruga.
+\layout Subsubsection
+
+(step 6) Scaricare messaggi
+\layout Standard
+
+Potrete chiedervi perche' parliamo di questo argomento solo al punto 6,
+ d'altronde avere la posta e' probabilmente cio' che volete da un plugin.
+ Implementare la funzione 
+\family typewriter 
+retr()
+\family default 
+ e' di solito facile.
+ Dipende in realta' dalla webmail, ma qui parleremo del caso semplice,
+ mentre alla fine del tutorial vedrete come gestire webmail complesse.
+ Il caso base e' quello in cui la webmail ha un pulsante per salvare
+ i messaggi, e il messaggio salvato e' un file di testo semplice che
+ contiene sia l'header che il corpo del messaggio.
+ Ci sono solo due questioni interessanti in questo caso, e cioe' quelle
+ relativa ai messaggi grandi al punto.
+\layout Standard
+
+I messaggi grandi causano timeout.
+ Si', il modo piu' semplice di scaricare un messaggio e' chiamare 
+\family typewriter 
+b:get_uri()
+\family default 
+ e memorizzare il messaggio in una variabile, poi mandarlo al client di posta
+ con 
+\family typewriter 
+popserver_callback()
+\family default 
+.
+ Ma pensate che una mail da 5MB, scaricata con una connessione DSL da 640Kbps,
+ alla piena velocita' di 80KBps, impiega 64 secondi di download.
+ Questo significa che il vostro plugin non mandera' dati al client di posta
+ per oltre un minuto, facendo si' che il client si disconnetta da FreePOPS
+ pensando che il server POP3 sia morto.
+ Per cui, dobbiamo mandare dati al client di posta appena possibile.
+ Per questo abbiamo la funzione 
+\family typewriter 
+b:pipe_uri()
+\family default 
+ che chiama un callback ogni volta che ha dei dati freschi.
+ Il codice seguente e' la funzione di callback factory, che crea un nuovo
+ callback da passare al metodo 
+\family typewriter 
+pipe_uri
+\family default 
+ del browser.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-------------------------------------------------------------------------------- 
+\layout Standard
+-- The callback factory for retr 
+\layout Standard
+-- 
+\layout Standard
+function retr_cb(data)
+\layout Standard
+        local a = stringhack.new() 
+\layout Standard
+        return function(s,len)
+\layout Standard
+                s = a:dothack(s).."
+\backslash 
+0"          
+\layout Standard
+                popserver_callback(s,data)              
+\layout Standard
+                return len,nil
+\layout Standard
+        end
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Qui potete vedere che il callback usa 
+\family typewriter 
+popserver_callback()
+\family default 
+ per passare dati al client di posta, ma prima di fare cio' manipola i dati
+ con lo stringhack.
+ Ma questa e' la seconda questione interessante.
+\layout Standard
+
+Il protocollo POP3 deve terminare la risposta al comando retr con una riga
+ che contiene solo tre byte, 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+.
+\backslash 
+r
+\backslash 
+n
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ Ma che succede se una riga, dentro il corpo della mail, e' un semplice punto?
+ Dobbiamo cambiarlo in 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+..
+\backslash 
+r
+\backslash 
+n
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ Non e' cosi' difficile, una 
+\family typewriter 
+string.gsub(s,
+\begin_inset Quotes erd
+\end_inset 
+
+
+\backslash 
+r
+\backslash 
+n.
+\backslash 
+r
+\backslash 
+n
+\begin_inset Quotes erd
+\end_inset 
+
+,
+\begin_inset Quotes erd
+\end_inset 
+
+
+\backslash 
+r
+\backslash 
+n..
+\backslash 
+r
+\backslash 
+n
+\begin_inset Quotes erd
+\end_inset 
+
+)
+\family default 
+ e' tutto cio' che ci serve...
+ ma non nel caso dei callback.
+ Il callback di invio verra' chiamato con dati freschi, e piu' di una volta
+ se la mail e' grande.
+ E se il pattern cercato e' troncato tra due chiamate il metodo 
+\family typewriter 
+string.gsub()
+\family default 
+ fallira'.
+ Per questo il modulo stringhack ci viene incontro.
+ L'oggetto 
+\family typewriter 
+a
+\family default 
+ vive fintantoche' la funzione di callback viene chiamata (vedi il tutorial LUA)
+ e terra' a mente che il pattern cercato puo' essere troncato.
+\layout Standard
+
+Infine, il codice della 
+\family typewriter 
+retr()
+\family default 
+.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Get message msg, must call  
+\layout Standard
+-- popserver_callback to send the data 
+\layout Standard
+function retr(pstate,msg,pdata)          
+\layout Standard
+        -- we need the stat
+\layout Standard
+        local st = stat(pstate)
+\layout Standard
+        if st ~= POPSERVER_ERR_OK then return st end 
+\layout Standard
+    
+\layout Standard
+        -- the callback
+\layout Standard
+        local cb = retr_cb(data) 
+\layout Standard
+     
+\layout Standard
+        -- some local stuff
+\layout Standard
+       local session_id = foo_globals.session_id
+\layout Standard
+       local b = internal_state.b
+\layout Standard
+       local uri = b:wherearewe() .. "/download.php?session_id="..session_id..
+\layout Standard
+                "&message="..get_mailmessage_uidl(pstate,msg) 
+\layout Standard
+
+\layout Standard
+        -- tell the browser to pipe the uri using cb
+\layout Standard
+        local f,rc = b:pipe_uri(uri,cb)
+\layout Standard
+        if not f then
+\layout Standard
+                log.error_print("Asking for "..uri.."
+\backslash 
+n")
+\layout Standard
+                log.error_print(rc.."
+\backslash 
+n")
+\layout Standard
+                return POPSERVER_ERR_NETWORK
+\layout Standard
+        end
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Subsubsection
+
+(step 7) Test
+\layout Standard
+
+Per fare un buon plugin ci vuole un sacco di testing.
+ Dovreste cercare beta tester presso il forum di FreePOPs
+ (HTTP://freepops.diludovico.it) e chiedere agli autori del software di
+ includerlo nella distribuzione principale.
+ Dovreste anche leggere il contratto della webmail, controllare se c'e'
+ qualcosa come 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\emph on 
+Non usero' mai un server webmail->pop3 per leggere la mia posta
+\emph default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+ e inviare una copia agli autori del software.
+\layout Subsubsection
+
+(step 8) La tanto anticipata parte finale del tutorial
+\layout Standard
+
+Ci sono un sacco di cose che abbiamo tralasciato.
+\layout Description
+
+La\SpecialChar ~
+multi-page\SpecialChar ~
+stat e' la vera buona implementazione per 
+\family typewriter 
+stat()
+\family default 
+.
+ Abbiamo detto sopra che la nostra implementazione elenca solo i messaggi
+ nella prima pagina.
+ Il codice per il parsing e l'estrazione di informazioni interessanti da una
+ pagina e' gia' scritto, ci serve solo una funzione che controlli se siamo
+ all'ultima pagina e se no cambi il valore di una variabile 
+\family typewriter 
+uri
+\family default 
+.
+ La variabile  
+\family typewriter 
+uri
+\family default 
+ in questione sara' usata dalla funzione di prelevamento.
+ In questo caso dovreste usare il modulo di supporto con il ciclo do_until.
+ Questo e' un semplice esempio di 
+\family typewriter 
+do_until()
+\family default 
+ 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill the number of messages and their size 
+\layout Standard
+function stat(pstate)
+\layout Standard
+        ... some code as before ...
+\layout Standard
+
+\layout Standard
+        -- this string will contain the uri to get. it may be updated by        
+\layout Standard
+        -- the check_f function, see later      
+\layout Standard
+        local uri = string.format(libero_string.first,popserver,session_id)
+\layout Standard
+
+\layout Standard
+        -- The action for do_until      
+\layout Standard
+        --      
+\layout Standard
+        -- uses mlex to extract all the messages uidl and size  
+\layout Standard
+        local function action_f (s)
+\layout Standard
+                 -- calls match on the page s, with the mlexpressions
+\layout Standard
+                 -- statE and statG              
+\layout Standard
+                 local x = mlex.match(s,e,g)                 
+\layout Standard
+               
+\layout Standard
+                 -- the number of results                
+\layout Standard
+                 local n = x:count()
+\layout Standard
+                
+\layout Standard
+                 if n == 0 then return true,nil end
+\layout Standard
+ 
+\layout Standard
+                 -- this is not really needed since the structure                
+\layout Standard
+                 -- grows automatically... maybe... don't remember now 
+\layout Standard
+                 local nmesg_old = get_popstate_nummesg(pstate)
+\layout Standard
+                 local nmesg = nmesg_old + n 
+\layout Standard
+                 set_popstate_nummesg(pstate,nmesg)
+\layout Standard
+      
+\layout Standard
+                 -- gets all the results and puts them in the popstate structure                              for i = 1,n do                        
+\layout Standard
+                         ... some code as before ...
+\layout Standard
+ 
+\layout Standard
+                         set_mailmessage_size(pstate,i+nmesg_old,size)                     
+\layout Standard
+                         set_mailmessage_uidl(pstate,i+nmesg_old,uidl)           
+\layout Standard
+                 end     
+\layout Standard
+                
+\layout Standard
+                 return true,nil         
+\layout Standard
+        end
+\layout Standard
+        
+\layout Standard
+        -- check must control if we are not in the last page and        
+\layout Standard
+        -- eventually change uri to tell retrive_f the next page to retrive     
+\layout Standard
+        local function check_f (s)              
+\layout Standard
+                 local tmp1,tmp2 = string.find(s,next_check)              
+\layout Standard
+                 if tmp1 ~= nil then                     
+\layout Standard
+                          -- change retrive behaviour                     
+\layout Standard
+                          uri = "--build the uri for the next page--"
+\layout Standard
+
+\layout Standard
+                          -- continue the loop
+\layout Standard
+                          return false       
+\layout Standard
+                 else
+\layout Standard
+                          return true
+\layout Standard
+                 end
+\layout Standard
+        end
+\layout Standard
+
+\layout Standard
+        -- this is simple and uri-dependent
+\layout Standard
+        local function retrive_f ()
+\layout Standard
+                 local f,err = b:get_uri(uri)
+\layout Standard
+                 if f == nil then 
+\layout Standard
+                         return f,err
+\layout Standard
+                 end
+\layout Standard
+      
+\layout Standard
+                 local _,_,c = string.find(f,"--timeout string--")
+\layout Standard
+                 if c ~= nil then
+\layout Standard
+                         internal_state.login_done = nil                                
+\layout Standard
+                         session.remove(key())
+\layout Standard
+                         local rc = libero_login()                       
+\layout Standard
+                         if rc ~= POPSERVER_ERR_OK then                          
+\layout Standard
+                                 return nil,"Session ended,unable to recover"                                         end             
+\layout Standard
+                        
+\layout Standard
+                         uri = "--uri for the first page--"      
+\layout Standard
+                         return b:get_uri(uri)           
+\layout Standard
+                  end     
+\layout Standard
+               
+\layout Standard
+                  return f,err    
+\layout Standard
+        end
+\layout Standard
+
+\layout Standard
+        -- initialize the data structure
+\layout Standard
+        set_popstate_nummesg(pstate,0)
+\layout Standard
+ 
+\layout Standard
+        -- do it        
+\layout Standard
+        if not support.do_until(retrive_f,check_f,action_f) then
+\layout Standard
+                  log.error_print("Stat failed
+\backslash 
+n")
+\layout Standard
+                  session.remove(key())           
+\layout Standard
+                  return POPSERVER_ERR_UNKNOWN    
+\layout Standard
+        end
+\layout Standard
+        
+\layout Standard
+        -- save the computed values     
+\layout Standard
+        internal_state["stat_done"] = true 
+\layout Standard
+        return POPSERVER_ERR_OK 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Le uniche cose strane sono la funzione di prelevamento e quel che serve per
+ salvare la sessione.
+ Dato che le webmail a volte fanno timeout dovreste controllare se la pagina
+ prelevata sia valida o no, ed eventualmente ritentare il login.
+ Il salvataggio della sessione e' la prossima questione.
+\layout Description
+
+Salvare\SpecialChar ~
+la\SpecialChar ~
+sessione e' il modo per rendere FreePOPs davvero simile ad un browser.
+ Cio' significa che la prossima volta che controllate la posta FreePOPs
+ ricarichera' semplicemente la pagina inbox senza rifare il login.
+ Per fare questo avete bisogno di una funzione 
+\family typewriter 
+key()
+\family default 
+ che crea un ID unico per ogni sessione
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-------------------------------------------------------------------------------- 
+\layout Standard
+-- The key used to store session info 
+\layout Standard
+-- 
+\layout Standard
+-- This key must be unique for all webmails, since the session pool is one  
+\layout Standard
+-- for all the webmails 
+\layout Standard
+-- 
+\layout Standard
+function key()
+\layout Standard
+        return foo_globals.username .. foo_globals.password
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+e una funzione di serializzazione  
+\family typewriter 
+foo_globals
+\family default 
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-------------------------------------------------------------------------------- 
+\layout Standard
+-- Serialize the internal state 
+\layout Standard
+-- 
+\layout Standard
+-- serial.serialize is not enough powerful to correcly serialize the  
+\layout Standard
+-- internal state. The field b is the problem. b is an object. This means 
+\layout Standard
+-- that it is a table (and no problem for this) that has some field that are 
+\layout Standard
+-- pointers to functions. this is the problem. there is no easy way for the  
+\layout Standard
+-- serial module to know how to serialize this. so we call b:serialize  
+\layout Standard
+-- method by hand hacking a bit on names 
+\layout Standard
+-- 
+\layout Standard
+function serialize_state()   
+\layout Standard
+        internal_state.stat_done = false; 
+\layout Standard
+        return serial.serialize("foo_globals",foo_globals) ..            
+\layout Standard
+                internal_state.b:serialize("foo_globals.b") 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Ora dovete dire a FreePOPs di salvare lo stato nella funzione 
+\family typewriter 
+quit_update()
+\family default 
+ e caricarlo nella 
+\family typewriter 
+pass()
+\family default 
+.
+ Questa e' la nuova struttura 
+\family typewriter 
+pass()
+\family default 
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+function pass(pstate,password)  
+\layout Standard
+        -- save the password
+\layout Standard
+        internal_state.password = password
+\layout Standard
+
+\layout Standard
+        -- eventually load session
+\layout Standard
+        local s = session.load_lock(key())
+\layout Standard
+
+\layout Standard
+        -- check if loaded properly
+\layout Standard
+        if s ~= nil then
+\layout Standard
+                 -- "
+\backslash 
+a" means locked
+\layout Standard
+                 if s == "
+\backslash 
+a" then
+\layout Standard
+                          log.say("Session for "..internal_state.name..
+\layout Standard
+                              " is already locked
+\backslash 
+n")
+\layout Standard
+                          return POPSERVER_ERR_LOCKED
+\layout Standard
+                 end 
+\layout Standard
+     
+\layout Standard
+                 -- load the session
+\layout Standard
+                 local c,err = loadstring(s)
+\layout Standard
+                 if not c then
+\layout Standard
+                          log.error_print("Unable to load saved session: "..err)
+\layout Standard
+                          return foo_login()
+\layout Standard
+                 end     
+\layout Standard
+       
+\layout Standard
+                 -- exec the code loaded from the session string
+\layout Standard
+                 c()
+\layout Standard
+
+\layout Standard
+                log.say("Session loaded for " .. internal_state.name .. "@" ..
+\layout Standard
+                         internal_state.domain ..
+\layout Standard
+                         "(" .. internal_state.session_id .. ")
+\backslash 
+n")      
+\layout Standard
+
+\layout Standard
+                return POPSERVER_ERR_OK
+\layout Standard
+        else
+\layout Standard
+                -- call the login procedure
+\layout Standard
+                return foo_login()
+\layout Standard
+        end
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+dove 
+\family typewriter 
+foo_login()
+\family default 
+ e' la vecchia funzione 
+\family typewriter 
+pass()
+\family default 
+ con cambiamenti minori.
+ Non dimenticate di chiamare 
+\family typewriter 
+session.unlock(key())
+\family default 
+ nella funzione 
+\family typewriter 
+quit()
+\family default 
+, perche' dovrete rilasciare la sessione in caso di fallimento (e  
+\family typewriter 
+quit()
+\family default 
+ viene chiamata qui) e salvare la sessione in 
+\family typewriter 
+quit_update()
+\family default 
+
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- save fails if it is already saved  
+\layout Standard
+session.save(key(),serialize_state(),session.OVERWRITE)
+\layout Standard
+-- unlock is useless if it have just been saved, but if we save
+\layout Standard
+-- without overwriting the session must be unlocked manually
+\layout Standard
+-- since it would fail instead overwriting
+\layout Standard
+session.unlock(key()) 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Description
+
+La\SpecialChar ~
+funzione\SpecialChar ~
+top() e' piuttosto complessa.
+ Non la descriveremo in modo completo, ma suggeriamo di guardare il plugin 
+ 
+\family typewriter 
+libero.lua
+\family default 
+ se il server web che vi manda i messaggi supporta il campo
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\family typewriter 
+Range:
+\family default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+ nelle richieste HTTP, o il plugin
+ HTTP request field, o il plugin 
+\family typewriter
+tin.lua
+\family default
+ se il server deve essere interrotto in malo modo.
+ Ricordate che la 
+\family typewriter 
+top()
+\family default 
+ ha bisogno che qualcuno conti le righe e qui abbiamo di nuovo il modulo
+ stringhack, che conta ed eventualmente elimina delle righe.
+\layout Description
+
+Il\SpecialChar ~
+javascript e' l'inferno delle webmail.
+ I Javascript possono fare qualsiasi cosa e dovrete leggerli per emulare
+ cio' che fanno.
+ Per esempio potrebbero aggiungere alcuni cookie (e dovrete fare lo stesso
+ a mano con 
+\family typewriter 
+ b:add_cookie()
+\family default 
+ come in tin.lua) oppure possono cambiare alcuni campi di form (come nel codice 
+ di bilanciamento del carico in  
+\family typewriter 
+libero.lua
+\family default 
+).
+\layout Description
+
+I\SpecialChar ~
+cookie sono abbastanza appetibili per noi, visto che il modulo browser se ne
+ occupa al posto nostro.
+\layout Description
+
+I\SpecialChar ~
+file\SpecialChar ~
+standard sono decisamente dipendenti dal sistema.
+ Sotto Windows dovrete costantemente guardare 
+\family typewriter 
+stderr.txt
+\family default 
+ e 
+\family typewriter 
+stdout.txt
+\family default 
+, mentre sotto Unix dovrete solo lanciare FreePOPs con il parametro 
+\family typewriter 
+-w
+\family default 
+ e guardare la console.
+\layout Description
+
+La\SpecialChar ~
+forza\SpecialChar ~
+bruta si chiama ethereal.
+ A volte le cose non funzionano nel modo giusto e l'unico modo per fare debug
+ e' attivare curl debugging per vedere cosa fa FreePOPs (
+\family typewriter 
+b.curl:setopt(curl.OPT_VERBOSE,1)
+\family default 
+) e sniffare cio' che fa un vero browser.
+\layout Description
+
+Il\SpecialChar ~
+modo\SpecialChar ~
+open\SpecialChar ~
+source e' il modo migliore di avere software di buona qualita'
+ Questo significa che dovrete rilasciare molto spesso il vostro plugin nella
+ fase di sviluppo e interagire molto con i vostri tester.
+ Fidatevi, funziona, o leggete 
+\begin_inset Quotes eld
+\end_inset 
+
+
+\emph on 
+The cathedral and the bazaar
+\emph default 
+
+\begin_inset Quotes erd
+\end_inset 
+
+ di Eric Raymond.
+\layout Description
+
+Il\SpecialChar ~
+modulo\SpecialChar ~
+mimer e' molto beta mentre scriviamo queste righe, ma e' cio' di cui avete
+ bisogno se siete nel caso sfortunato di una webmail che non ha un pulsante
+ per salvare i messaggi.
+ Il plugin 
+\family typewriter 
+lycos.lua
+\family default 
+ e' un esempio di cosa puo' fare.
+ La principale funzione interessante e' 
+\family typewriter 
+mimer.pipe_msg()
+\family default 
+ che prende un header di messaggio, il testo del corpo (in html o testo
+ semplice) e gli URI di alcuni attachment, scaricati al volo, composti in una
+ vera e propria mail che viene inoltrata al client di posta.
 \layout Section
 
 Segnalare un bug
@@ -1638,7 +4522,7 @@ Questo manuale e' stato scritto da Enrico Tassi
 \family typewriter 
 <gareuselesinge@users.sourceforge.net>
 \family default 
- and rivisto e tradotto da Nicola Cocchiaro 
+ e rivisto e tradotto da Nicola Cocchiaro 
 \family typewriter 
 <ncocchiaro@users.sourceforge.net>
 \layout Subsection

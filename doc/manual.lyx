@@ -194,7 +194,7 @@ aggregator.lua Many sites provide an RSS backend for indexing their news.
 
 flatnuke.lua This is a more powerful aggregator for FlatNuke-based
 \begin_inset Foot
-collapsed false
+collapsed true
 
 \layout Standard
 
@@ -855,6 +855,58 @@ GameSpot news (English)
 \end_inset 
 </cell>
 </row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+kerneltrap.org
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://kerneltrap.org 
+\family default 
+news (Inglese)
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+linux.kerneltrap.org
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://linux.kerneltrap.org 
+\family default 
+news (Inglese)
+\end_inset 
+</cell>
+</row>
 </lyxtabular>
 
 \end_inset 
@@ -1047,12 +1099,12 @@ Creating a plugin
 
 Two sections follow, the first is a quick overview of what a plugin has
  to do, the latter is a more detailed tutorial.
- Before proceding I suggest you to read some stuff that is at the base of
+ Before proceeding I suggest you read some stuff that is at the base of
  plugin writing:
 \layout Enumerate
 
-Since plugins are written in LUA you must read at least the lua tutorial
- (HTTP://lua-users.org/wiki/LuaTutorial), many thanks to the guys who wrote
+Since plugins are written in LUA you must read at least the LUA tutorial
+ (HTTP://lua-users.org/wiki/LuaTutorial); many thanks to the guys who wrote
  it.
  LUA is a quite simple scripting language, easy to learn, and easy to read.
  If you are interested in this language you should read THE book about LUA
@@ -1065,7 +1117,7 @@ Programming in Lua
 \end_inset 
 
  by Roberto Ierusalimschy HTTP://www.inf.puc-rio.br/~roberto/book/).
- It is a really good book, belive me.
+ It is a really good book, believe me.
 \layout Enumerate
 
 Since we have to implement a POP3 backend you should know what POP3 is.
@@ -1074,18 +1126,18 @@ Since we have to implement a POP3 backend you should know what POP3 is.
 c1939.txt.
 \layout Enumerate
 
-Read carefully this tutorial, it is fairly a good tutorial, but is better
- than nothig.
+Read carefully this tutorial, it is hardly a good tutorial, but is better
+ than nothing.
 \layout Enumerate
 
 The website contains, in the doc section, a quite good documentation of
  the sources.
- You should keep a web browser at the LUA modules documentation page while
+ You should keep a web browser open at the LUA modules documentation page while
  writing a plugin.
 \layout Enumerate
 
 After creating a prototype, you should read a full featured plugin.
- The libero.lua plugin is really well commented, start from it.
+ The libero.lua plugin is really well commented, you may start there.
 \layout Enumerate
 
 Remember that this software has an official forum (HTTP://freepops.diludovico.it)
@@ -1549,16 +1601,16 @@ POPSERVER_ERR_OK
 list_all(p)
 \family default 
 .
- Here we have to return an error code as before, but we have also to inform
+ Here we have to return an error code as before, but we also have to inform
  the C core of the size of all messages in the mailbox.
- Here we need the p parameter passed to each plugin function (note that
+ We need the p parameter passed to each plugin function (note that that
  parameter may became implicit in the future).
  
 \family typewriter 
 p
 \family default 
- stands for the data structure that the C expect us to fill calling appropriate
- functions like 
+ stands for the data structure that the C core expects us to fill calling
+ appropriate functions like 
 \family typewriter 
 set_mailmessage_size(p,num,size)
 \family default 
@@ -1599,13 +1651,13 @@ data
 The art of writing a plugin (plugins tutorial)
 \layout Standard
 
-In this section we will write a plugin step by step examining each important
+In this section we will write a plugin step by step, examining each important
  detail.
  We will not write a real and complete plugin since it may be a bit hard
  to follow but we will create an ad-hoc webmail for our purposes.
 \layout Subsubsection
 
-(step 1) the skeleton
+(step 1) The skeleton
 \layout Standard
 
 The first thing we will do is copy the 
@@ -1624,7 +1676,7 @@ foo.xx
 \emph on 
 xx
 \emph default 
- stands for a real domain, bu I don't want to mention any websites here...).
+ stands for a real domain, but I don't want to mention any websites here...).
  Now with your best editor (I suggest vim under Unix and scintilla for win32,
  since they support syntax highlights for LUA, but any other text editor
  is OK) open 
@@ -1821,7 +1873,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
- The server respond closing the connection and printing an authorization
+ The server responds closing the connection and printing an authorization
  failed message (thats OK, since the 
 \family typewriter 
 user()
@@ -1831,10 +1883,10 @@ user()
 \family typewriter 
 stderr.txt
 \family default 
- under Windows) are printed error messages, don't care about them now.
+ under Windows) the error messages get printed, don't mind them now.
 \layout Subsubsection
 
-(step 2) the login
+(step 2) The login
 \layout Standard
 
 The login procedure is the first thing we have to do.
@@ -1852,7 +1904,7 @@ pass
 \family typewriter 
 user()
 \family default 
- and the
+ and then
 \family typewriter 
 \emph on 
  
@@ -1908,7 +1960,7 @@ end{footnotesize}
 \family typewriter 
 -w
 \family default 
- switch you should read this on standard error/standard output
+ switch you should read this on standard error/standard output:
 \begin_inset ERT
 status Collapsed
 
@@ -2057,12 +2109,12 @@ foo_globals
 \family typewriter 
 pass()
 \family default 
- function now stores the password in the global table and prints some stuff.
+ function likewise stores the password in the global table and prints some stuff.
  The 
 \family typewriter 
 quit()
 \family default 
- simply returns 
+ function simply returns 
 \family typewriter 
 POPSERVER_ERR_OK
 \family default 
@@ -2074,13 +2126,13 @@ Now that we know how FreePOPs will act during the login we have to implement
 \family typewriter 
 init()
 \family default 
- function (that is called when the plugin is started) that loads the 
+ function (that is called when the plugin is started), that loads the 
 \family typewriter 
 browser.lua
 \family default 
  module (the module we will use to login in the webmail).
  Here is the webmail login page viewed with Mozilla and the source of the
- page (with Mozilla it is Ctrl-U).
+ page (you can see it with Mozilla with Ctrl-U).
 \layout Standard
 
 
@@ -2156,7 +2208,7 @@ POST
 \family typewriter 
 HTTP://localhost:3000/
 \family default 
- the form contents (I used a local address because of commodity, but it
+ the form contents (I used a local address for comfort, but it
  should be something like 
 \family typewriter 
 HTTP://webmail.foo.xx/login.php
@@ -2213,7 +2265,7 @@ end{footnotesize}
 \end_inset 
 
  We are not interested in the first part (the HTTP header, since the browser
- module will take care of this) but in the last part, the posted data.
+ module will take care of it) but in the last part, the posted data.
  Since the fields of the form were username and password, the posted data
  is
 \family typewriter 
@@ -2305,7 +2357,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
- First we create a browser object, than we build the 
+ First we create a browser object, then we build the 
 \family typewriter 
 post_uri
 \family default 
@@ -2500,7 +2552,7 @@ session_id=(%w+)
 \family default 
 .
  This is a really important function in the lua library and, even if it
- is described in the lua tutorial at HTTP://lua-user.org, we will talk a
+ is described in the lua tutorial at HTTP://lua-users.org, we will talk a
  bit about captures here.
  Look at the page source.
  We are interested in the line 
@@ -2536,7 +2588,7 @@ session_id=
 \family default 
  in round brackets, we mean to capture the content of brackets (the alphanumeric
 al part).
- So string.find will return 3 values, the firs two are ignored (assigned
+ So string.find will return 3 values, the first two are ignored (assigned
  to the dummy variable 
 \family typewriter 
 _
@@ -2565,7 +2617,7 @@ Programming in Lua
  by Roberto Ierusalimschy (consider it the K&R for LUA).
 \layout Subsubsection
 
-(step 3) getting the list of messages
+(step 3) Getting the list of messages
 \layout Standard
 
 Now we have to implement the 
@@ -2869,7 +2921,7 @@ The result of
 \family typewriter 
 x:print()
 \family default 
- is this one
+ is the following
 \begin_inset ERT
 status Collapsed
 
@@ -2965,7 +3017,7 @@ quit()
 <b>
 \family default 
  tag is optional (you can see that only the first message is in bold).
- so we change the expressions to
+ So we change the expressions to
 \begin_inset ERT
 status Collapsed
 
@@ -3073,12 +3125,11 @@ Now we have a proper function stat that fill the popstate data structure
  the same data we will use the standard function provided by the common.lua
  module.
  It will be explained in the next step, but we have to add 2 important lines
- to the stat function.
- They avoid a double call to the 
+ to the  
 \family typewriter 
 stat()
 \family default 
- function.
+ function, to avoid a double call.
 \begin_inset ERT
 status Collapsed
 
@@ -3143,7 +3194,7 @@ support.lua
  to make a good plugin.
 \layout Subsubsection
 
-(step 4) the common functions
+(step 4) The common functions
 \layout Standard
 
 The common module gives us some pre-cooked functions that depend only on
@@ -3291,7 +3342,7 @@ end{footnotesize}
 
 \layout Subsubsection
 
-(step 5) deleting messages
+(step 5) Deleting messages
 \layout Standard
 
 Deleting messages is usually a normal post and an example of the 
@@ -3396,7 +3447,7 @@ Consider we do the post only if at least one message is marked for deletion.
  as you can since it is here we move FreePOPs from a rabbit to a tortoise.
 \layout Subsubsection
 
-(step 6) downloading messages
+(step 6) Downloading messages
 \layout Standard
 
 You may ask why I talk about this only at point 6, while having the mail
@@ -3412,8 +3463,8 @@ retr()
  The simple case is the one in which the webmail has a save message button.
  And the saved message is a plain text file containing both the header and
  the body of the message.
- There are only two interesting points in this case, first big messages,
- last the dot issue.
+ There are only two interesting points in this case, firstly big messages,
+ secondly the dot issue.
 \layout Standard
 
 Big messages are a cause of timeout.
@@ -3421,18 +3472,17 @@ Big messages are a cause of timeout.
 \family typewriter 
 b:get_uri()
 \family default 
- and store the message in a variable, and the send it to the mail client
+ and store the message in a variable, and then send it to the mail client
  with 
 \family typewriter 
 popserver_callback()
 \family default 
 .
- But think of a 5MB mail, downloaded with a 640Kb DSL connection, at full
- 80KB speed, it takes 64 seconds to download.
+ But think that a 5MB mail, downloaded with a 640Kbps DSL connection, at full
+ 80KBps speed, takes 64 seconds to download.
  This means your plugin will not send any data to the mail client for more
- than one minute.
- And this will make the mail client to disconnect from FreePOPs thinking
- the POP3 server is dead.
+ than one minute and this will make the mail client to disconnect from FreePOPs 
+ thinking the POP3 server is dead.
  So we must send the data to the mail client as soon as we can.
  For this we have the 
 \family typewriter 
@@ -3463,7 +3513,7 @@ begin{verbatim}
 \layout Standard
 -------------------------------------------------------------------------------- 
 \layout Standard
--- The callbach factory for retr 
+-- The callback factory for retr 
 \layout Standard
 -- 
 \layout Standard
@@ -3578,7 +3628,7 @@ n
  is all we need...
  but not in the case of callbacks.
  The send callback will be called with some fresh data, and called more
- than one time if the mail is big.
+ than once if the mail is big.
  And if the searched pattern is truncated between two calls the 
 \family typewriter 
 string.gsub()
@@ -3681,7 +3731,7 @@ end{footnotesize}
 
 \layout Subsubsection
 
-(step 7) test it
+(step 7) Test it
 \layout Standard
 
 Making a good plugin needs a lot of testing.
@@ -3703,7 +3753,7 @@ I'll never use webmail->pop3 server to read my mail
  and send a copy to the authors of the software.
 \layout Subsubsection
 
-(step 8) the so mentioned last part of the tutorial
+(step 8) The so mentioned last part of the tutorial
 \layout Standard
 
 There are a lot of things we have omitted here.
@@ -3952,12 +4002,12 @@ Saving\SpecialChar ~
 the\SpecialChar ~
 session is the way to make FreePOPs really similar to a browser.
  This means the next time you check the mail FreePOPs will simply reload
- the inbox page and doesn't login again.
+ the inbox page and won't login again.
  To do this you need a 
 \family typewriter 
 key()
 \family default 
- function that gives a unique id for each session
+ function that gives a unique ID for each session
 \begin_inset ERT
 status Collapsed
 
@@ -4250,7 +4300,7 @@ end{footnotesize}
 The\SpecialChar ~
 top()\SpecialChar ~
 function is a complex thing.
- I'll not describe it in a complete way, but I suggest you to look at the
+ I won't describe it in a complete way, but I suggest you to look at the
  
 \family typewriter 
 libero.lua
@@ -4268,19 +4318,23 @@ Range:
 \begin_inset Quotes erd
 \end_inset 
 
- HTTP request field, or the tin.lua plugin if the server needs to be interrupted
+ HTTP request field, or the 
+\family typewriter
+tin.lua
+\family default
+ plugin if the server needs to be interrupted
  in a bad way.
  Remember that the 
 \family typewriter 
 top()
 \family default 
- need someone that counts the lines and here we have again the stringhack
- module that counts and eventually purges some lines.
+ needs someone that counts the lines and here we have again the stringhack
+ module that counts and may purge some lines.
 \layout Description
 
 The\SpecialChar ~
 javascript is the hell of webmails.
- Javascript can do anything and you have to read them to emulate what they
+ Javascripts can do anything and you have to read them to emulate what they
  do.
  For example they may add some cookies (and you'll have to do this by hand
  with the
@@ -4331,7 +4385,7 @@ b.curl:setopt(curl.OPT_VERBOSE,1)
 The\SpecialChar ~
 open\SpecialChar ~
 source\SpecialChar ~
-way is the best way of having a good quality peace of software.
+way is the best way of having a good quality piece of software.
  This means you'll have to release really often your plugin in the development
  phase and interact much with your testers.
  Trust me it works, or read 

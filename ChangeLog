@@ -1,3 +1,4 @@
+- httpmail now uses iso-8859-1 instead of utf8 since Windows-1252 is 8 bit
 - added support for charset encoding in aggregator.lua
 - added support for content tag in aggregator.lua
 - added suport for host=hostname:post to popforward.lua

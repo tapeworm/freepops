@@ -259,9 +259,13 @@ function xml2table.xml2table(s,m,force_encoding)
 				'encoding="'..force_encoding..'"')
 		end
 	end       
-	local ok, msg, line, col = p:parse(s)
+	local ok, msg, line, col, pos = p:parse(s)
 	if not ok then
-		return nil,msg,line,col
+		return nil,msg.." line="..line.." col="..col.." pos="..pos..
+			" '"..string.sub(s,
+				math.max(pos-20,0),
+				math.min(pos+20,string.len(s)))..
+			"...'"
 	end
 	if m ~= nil then
 		Private.map_namespaces(tab.root,m)	

@@ -19,8 +19,13 @@ httpmail.debug = false
 httpmail.Txml_convmap = {
 	["DAV:"]="D",
 	["urn:schemas:httpmail:"]="hm",
-	["urn:schemas:mailheader:"]="h"
+	["urn:schemas:mailheader:"]="h",
+	["http://schemas.microsoft.com/hotmail/"]="m",
+	["urn:schemas:contacts:"]="c",
+	["urn:schemas:calendar:"]="cal"
 }
+
+httpmail.default_charset = "iso-8859-1"
 
 ---
 -- This should list props for inbox and the root of folders.
@@ -189,7 +194,8 @@ function httpmail.login(b,uri,username,password,authbasic)
 		httpmail.R_folder_root_xml,httpmail.R_folder_root_header)
 	if ans ~= nil then
 		local answer,msg,_,_ = 
-			xml2table.xml2table(ans,httpmail.Txml_convmap,"UTF-8")
+			xml2table.xml2table(ans,httpmail.Txml_convmap,
+				httpmail.default_charset)
 		
 		if answer == nil then
 			return answer,msg
@@ -216,7 +222,8 @@ function httpmail.folderlist(b,uri)
 		httpmail.R_folder_list_xml,httpmail.R_folder_list_header)
 	if ans ~= nil then
 		local answer,msg,_,_ = 
-			xml2table.xml2table(ans,httpmail.Txml_convmap,"UTF-8")
+			xml2table.xml2table(ans,httpmail.Txml_convmap,
+				httpmail.default_charset)
 	
 		if answer == nil then
 			return answer,msg
@@ -255,7 +262,8 @@ function httpmail.stat(b,uri)
 		httpmail.R_folder_content_xml,httpmail.R_folder_content_header)
 	if ans ~= nil then
 		local answer,msg,_,_ = 
-			xml2table.xml2table(ans,httpmail.Txml_convmap,"UTF-8")
+			xml2table.xml2table(ans,httpmail.Txml_convmap,
+				httpmail.default_charset)
 		if answer == nil then
 			return answer,msg
 		end

@@ -77,6 +77,8 @@ cp -a /lib/libpthread* lib/
 cp -a /lib/libresolv* lib/
 cp -a /usr/lib/libdb3* usr/lib/
 cp -a /usr/lib/libexpat* usr/lib/
+# for sid,sarge
+cp -a /usr/lib/libidn* || true
 
 #copy misc
 cp /etc/resolv.conf etc/

@@ -57,7 +57,6 @@ original pin code provided by three.]]
 -- Todo:
 -- Clean lua source (Remove debug print and optimization)
 -- Empty trash after delete
--- Rfc-ing header date
 
 -- ************************************************************************** --
 --  strings
@@ -143,16 +142,33 @@ internal_state = {}
 --  Helpers functions
 -- ************************************************************************** --
 
+---------------------------------------------------------------------------------- Build a mail header date string
+--
+function build_date(str)
+        if(str==nil) then
+            return(os.date("%a, %d %b %Y %H:%M:%S"))
+        else
+	    -- 22/12/2004  21:10 (wrong format)
+	    -- parse date with gsub
+	    local temp
+	    str=string.gsub(str,"[0-9]+/[0-9]+/[0-9]+ [0-9]+:[0-9]+","%2/%1/%3 %4:%5:00")
+	    temp = getdate.toint( str )
+	    print("seconds from 0:0 1/1/1970 della data " .. str .. " : " .. temp )
+            return(os.date("%a, %d %b %Y %H:%M:%S",temp))
+	end
+end
+
 --------------------------------------------------------------------------------
 -- Build a mail header
 --
 function build_mail_header(hfrom,hto,hcc,hdate,hsubject,uidl)
+-- Corrected way of date formatting! "16 Jan 2003 16:35:49 -0000"
         return
         "Message-Id: <"..uidl..">\r\n"..
         "From: "..hfrom.."\r\n"..
         "To: "..hto.."\r\n"..
         "Cc: "..hcc.."\r\n"..
-        "Date: "..hdate.."\r\n"..
+        "Date: "..build_date(hdate).."\r\n"..
         "Subject: "..hsubject.."\r\n"..
         "User-Agent: freepops "..PLUGIN_NAME..
         " plugin "..PLUGIN_VERSION.."\r\n"

@@ -388,7 +388,10 @@ FreePOPs command line parameters
 \layout Standard
 
 The real FreePOPs configuration is made trough command line arguments.
- They are described in depth in the man page in Unix environments:
+ They are described in depth in the man page in Unix environments and below.
+ Keep in mind that in normal usage situations it's not necessary to use
+ any of these, but if you have special needs it's useful to use the following
+ list as reference:
 \layout Description
 
 -p\SpecialChar ~
@@ -570,6 +573,192 @@ something
  This is because FreePOPs chooses the plugin to load by looking at your
  username.
  Later we will present all the plugins and their associated domains.
+\layout Subsection
+
+Outlook Express tutorial
+\layout Standard
+
+Here's a tutorial for configuring Outlook Express in a Windows environment.
+ Other mail clients should be configured similarly.
+\layout Enumerate
+
+From the tools menu choose the 
+\series bold 
+Account...
+
+\series default 
+ item
+\layout Standard
+
+
+\begin_inset Graphics
+	filename main.ps
+	lyxscale 50
+	scale 80
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Enumerate
+
+Select your account and click on 
+\series bold 
+Properties
+\layout Standard
+
+
+\begin_inset Graphics
+	filename settings.ps
+	lyxscale 50
+	scale 80
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Enumerate
+
+In the Server tab type in 
+\series bold 
+Incoming mail
+\series default 
+ the name of the computer where you started FreePOPs, usually 
+\emph on 
+localhost
+\emph default 
+.
+ The 
+\series bold 
+Account name
+\series default 
+ must be your complete email address, followed by the domain name your email
+ belongs to, for example 
+\family typewriter 
+username@domain.com
+\family default 
+.
+\layout Standard
+
+
+\begin_inset Graphics
+	filename server.ps
+	lyxscale 50
+	scale 80
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Enumerate
+
+In the 
+\series bold 
+Advanced settings
+\series default 
+ tab type in 
+\series bold 
+Incoming mail
+\series default 
+ the port number, that is 
+\emph on 
+2000
+\emph default 
+ if you accepted our settings.
+ 
+\series bold 
+\emph on 
+De-select 
+\series default 
+This server requires a secure connection (SSL)
+\emph default 
+.
+\layout Standard
+
+
+\begin_inset Graphics
+	filename advanced.ps
+	lyxscale 50
+	scale 80
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Subsection
+
+Proxy tutorial
+\layout Standard
+
+FreePOPs is able to use HTTP proxy servers.
+ If you don't know what they are or if there's no proxy in your local network
+ then you may skip this page, as the operations described herein will be
+ useless to you.
+\layout Standard
+
+In order to use a HTTP proxy, FreePOPs supports the 
+\family typewriter 
+-P
+\family default 
+ option, or the equivalent long version 
+\family typewriter 
+--proxy
+\family default 
+, to specify the address and port of the proxy separated by : (colon), for
+ example 
+\family typewriter 
+-P proxy.localnet.org:8080
+\family default 
+ or
+\family typewriter 
+ -P 192.168.1.1
+\family default 
+ are valid choices.
+ If no port number is specified then 
+\family typewriter 
+8080
+\family default 
+ will be used as a default value.
+\layout Standard
+
+If authentication is necessary in order to use a proxy, use also the 
+\family typewriter 
+-A username:password
+\family default 
+ option.
+\layout Standard
+
+Remember that the values specified with the 
+\family typewriter 
+-P
+\family default 
+ option have precedence over any other value obtained by the operating system
+ in use.
+\layout Standard
+
+In POSIX environments it's possible to use a proxy also using some environment
+ variables.
+\layout Standard
+
+The environment variables that will be used are, in order of precedence,
+ 
+\family typewriter 
+HTTP_PROXY
+\family default 
+, 
+\family typewriter 
+http_proxy
+\family default 
+, 
+\family typewriter 
+PROXY
+\family default 
+ and 
+\family typewriter 
+proxy
+\family default 
+.
+ 
 \layout Section
 
 Plugins

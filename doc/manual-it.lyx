@@ -370,7 +370,7 @@ config.lua
  in ambiente posix.
 \layout Standard
 
-più avanti vedremo come i plugin sono associati al dominio di un indirizzo
+Più avanti vedremo come i plugin sono associati al dominio di un indirizzo
   di posta, e alcuni di questi plugin hanno alias per altri domini per rendere
   più facile la raccolta di news da alcuni siti.
  Leggete la documentazione dei plugin per maggiori informazioni su di essi,
@@ -392,7 +392,11 @@ Parametri a riga di comando di FreePOPs
 
 La vera configurazione di FreePOPs viene impostata tramite argomenti a riga
   di comando.
- Questi sono descritti in dettaglio nelle pagine del man in  ambienti Unix:
+ Questi sono descritti in dettaglio nelle pagine del man in  ambienti Unix
+ e qui di seguito.
+ Tenete presente che in condizioni d'uso normali non serve specificare niente
+ per usare FreePOPs, ma in caso di esigenze specifiche è bene fare riferimento
+ a questo elenco:
 \layout Description
 
 -p\SpecialChar ~
@@ -573,8 +577,15 @@ Configurazione del client email
 
 Per configurare il client email dovete cambiare le impostazioni del server
  POP3.
- Solitamente dovrete usare localhost come nome del server POP3 e 2000 come
- porta.
+ Solitamente dovrete usare 
+\emph on 
+localhost
+\emph default 
+ come nome del server POP3 e 
+\emph on 
+2000
+\emph default 
+ come porta.
  Nel caso in cui installiate FreePOPs in un altro computer della vostra
  LAN, dovreste usare il nome di quell'host invece di localhost, mentre nel
  caso in cui abbiate cambiato la porta di default con lo switch 
@@ -595,6 +606,196 @@ qualcosa
  Questo è perché FreePOPs sceglie il plugin da caricare guardando al nome
  utente che deve quindi contenere tutte le informazioni.
  più sotto presentiamo tutti i plugin e i loro domini associati.
+\layout Subsection
+
+Tutorial per Outlook Express
+\layout Standard
+
+Mostriamo qui come configurare Outlook Express in ambienti Windows per l'uso
+ con FreePOPs.
+ Altri client si configurano più o meno allo stesso modo.
+\layout Enumerate
+
+Dal menu 
+\series bold 
+Strumenti
+\series default 
+ seleziona la voce 
+\series bold 
+Account...
+\layout Standard
+
+
+\begin_inset Graphics
+	filename main.ps
+	lyxscale 50
+	scale 80
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Enumerate
+
+Seleziona il tuo account e clicca su 
+\series bold 
+Proprietà
+\layout Standard
+
+
+\begin_inset Graphics
+	filename settings.ps
+	lyxscale 50
+	scale 80
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Enumerate
+
+Nella linguetta 
+\series bold 
+Server
+\series default 
+ metti in 
+\series bold 
+Posta in arrivo
+\series default 
+ il nome del computer su cui hai eseguito FreePOPs, solitamente 
+\emph on 
+localhost
+\emph default 
+.
+ Il 
+\series bold 
+Nome account
+\series default 
+ deve essere il tuo indirizzo di mail completo, seguito dal dominio al quale
+ appartiene la tua email, ad esempio 
+\family typewriter 
+nomeutente@dominio.it
+\family default 
+.
+\layout Standard
+
+
+\begin_inset Graphics
+	filename server.ps
+	lyxscale 50
+	scale 80
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Enumerate
+
+Nella linguetta 
+\series bold 
+Impostazioni avanzate
+\series default 
+ metti in 
+\series bold 
+Posta in arrivo
+\series default 
+ il numero di porta, che è 
+\emph on 
+2000
+\emph default 
+ se hai seguito le nostre impostazioni.
+ 
+\series bold 
+Deseleziona
+\series default 
+ 
+\emph on 
+Il server necessita di una connessione protetta (SSL)
+\emph default 
+.
+\layout Standard
+
+
+\begin_inset Graphics
+	filename advanced.ps
+	lyxscale 50
+	scale 80
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout Subsection
+
+Tutorial per usare un server Proxy
+\layout Standard
+
+FreePOPs è in grado di utilizzare proxy HTTP.
+ Se non sapete cosa siano oppure se nella vostra rete locale non ce n'è
+ uno allora potete saltare questa sezione in quanto le operazioni qui descrite
+ saranno per voi superflue.
+\layout Standard
+
+Per utilizzare un proxy HTTP, FreePOPs supporta l'opzione 
+\family typewriter 
+-P
+\family default 
+, o l'equivalente opzione lunga 
+\family typewriter 
+--proxy
+\family default 
+, per specificare indirizzo e porta del proxy separati da : (due punti),
+ ad esempio 
+\family typewriter 
+-P proxy.localnet.org:8080
+\family default 
+ oppure 
+\family typewriter 
+-P 192.168.1.1
+\family default 
+ sono esempi validi.
+ Se non è specificato alcun numero di porta allora sarà utilizzato 
+\family typewriter 
+8080
+\family default 
+ come valore di default.
+\layout Standard
+
+Se per utilizzare il proxy è necessaria un'autenticazione, usate anche l'opzione
+ 
+\family typewriter 
+-A nomeutente:password
+\family default 
+.
+\layout Standard
+
+Ricordatevi che i valori specificati con l'opzione -P hanno la precedenza
+ su qualsiasi altro valore ottenuto dal sistema operativo utilizzato.
+\layout Standard
+
+In ambienti POSIX è possibile impostare l'utilizzo di un proxy anche attraverso
+ opportune variabili d'ambiente.
+\layout Standard
+
+Le variabili d'ambiente che saranno utilizzate sono, in ordine di precedenza,
+ 
+\family typewriter 
+HTTP_PROXY
+\family default 
+, 
+\family typewriter 
+http_proxy
+\family default 
+, 
+\family typewriter 
+PROXY
+\family default 
+ e 
+\family typewriter 
+proxy
+\family default 
+.
+ 
 \layout Section
 
 Plugin
@@ -4939,8 +5140,8 @@ man freepopsd
  su Unix).
 \layout Itemize
 
-Esempio Unix: /usr/bin/freepopsd -P proxyhost:porta -A proxyusername:proxypasswo
-rd -w -l logfile.txt
+Esempio Unix: /usr/bin/freepopsd -P proxyhost:porta -A username:password
+ -w -l logfile.txt
 \layout Itemize
 
 Esempio Windows: C:

@@ -248,7 +248,7 @@ function cookie.merge(t2,t1)
 		local match = 0
 		table.foreach(t2,function(_,c2)
 			if c["name"] == c2["name"] and
-			   c["host"] == c2["host"] then
+			   c["domain"] == c2["domain"] then
 				table.foreach(c,function(n,_)
 					c2[n] = c[n] or c2[n] -- fix shit
 				end)

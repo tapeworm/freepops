@@ -356,8 +356,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	address.s_addr = htonl(BINDADDRESS);
 	logfile = strdup(LOGFILE); //means stdout
-
-	system("echo $PWD");
 	
 /*** ARGUMENTS PARSING ***/
 	while (

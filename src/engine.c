@@ -317,8 +317,8 @@ return rc;
 int freepops_uidl(struct popstate_t*p,int msg,char **buffer)
 {
 int rc = POPSERVER_ERR_UNKNOWN;
-*buffer = NULL;
 struct mail_msg_t *m = get_popstate_mailmessage(p,msg);
+*buffer = NULL;
 if (m != NULL && get_mailmessage_flag(m,MAILMESSAGE_DELETE))
 	return POPSERVER_ERR_NOMSG;
 

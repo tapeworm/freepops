@@ -40,8 +40,8 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)unix2dos _win_/freepops/COPYING.txt
 	$(H)unix2dos _win_/freepops/ChangeLog.txt
 
-	echo $(STRIP) $(CC) $(RANLIB)
-	$(H)$(STRIP) _win_/freepops/*.exe _win_/freepops/*.dll
+	$(H)/usr/local/cross-tools/i386-mingw32msvc/bin/strip \
+		_win_/freepops/*.exe _win_/freepops/*.dll
 
 	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \
 		_win_/freepops/freepops.nsi

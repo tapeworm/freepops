@@ -54,7 +54,7 @@ local tin_string = {
 	totalC='\n%s*var%s*totalpage%s*=%s*(%d+)%s*/%s*page%s*;',
 	stepC="\n%s*var%s*page%s*=%s*(%d+)%s*;",
 	-- The capture to understand if the session ended
-	timeoutC = "(sessione.*scaduta)", --FIXME not checked
+	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
 	save = "",
 	-- The uri to delete some messages
@@ -561,13 +561,13 @@ function stat(pstate)
 		if f == nil then
 			return f,err
 		end
-		print("TIMEOUT:\n" .. f)
+		
 		local _,_,c = string.find(f,tin_string.timeoutC)
 		if c ~= nil then
 			internal_state.login_done = nil
 			session.remove(key())
 
-			local rc = libero_login()
+			local rc = tin_login()
 			if rc ~= POPSERVER_ERR_OK then
 				return nil,"Session ended,unable to recover"
 			end

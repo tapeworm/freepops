@@ -27,5 +27,6 @@ for next version or later:
 	create the -dev ML
 	add a collaborative web page to publish plugins
 	popserver timeouts to avoid stupid DOS leaving inactive connections open
+	curl_info
 
 - eof -

@@ -16,11 +16,15 @@ freepops.MODULES_MAP["iol.it"] 		= {name="libero.lua"}
 freepops.MODULES_MAP["inwind.it"] 	= {name="libero.lua"}
 freepops.MODULES_MAP["blu.it"] 		= {name="libero.lua"}
 
+-- tin
+freepops.MODULES_MAP["virgilio.it"]	= {name="tin.lua"}
+freepops.MODULES_MAP["tin.it"]		= {name="tin.lua"}
+
 -- popforward plugin
-freepops.MODULES_MAP["virgilio.it"] 	= {
-	name="popforward.lua",
-	args={port=110,host="in.virgilio.it"}
-}
+--freepops.MODULES_MAP["virgilio.it"] 	= {
+--	name="popforward.lua",
+--	args={port=110,host="in.virgilio.it"}
+--}
 
 -- flatnuke news plugin
 freepops.MODULES_MAP["flatnuke"] 	= {

@@ -1232,6 +1232,24 @@ lua_rawset(L,LUA_REGISTRYINDEX);
 return 0;
 }
 
+/******************************************************************************
+ * curl_easy_cleanup
+ *
+ */ 
+static int luacurl_encode(lua_State* L) {
+const char* data = luaL_checkstring(L,1);
+size_t len = lua_strlen(L,1);
+char * tmp;
+L_checknarg(L,1,"encode wants 1 argument (string)");
+
+tmp = curl_escape(data,len);
+
+lua_pushstring(L,tmp);
+
+curl_free(tmp);
+	
+return 1;
+}
 
 /******************************************************************************
  * curl.* functions
@@ -1239,6 +1257,7 @@ return 0;
  */ 
 static const struct luaL_reg curl_f [] = {
   {"easy_init",luacurl_easy_init},
+  {"encode",luacurl_encode},
   {NULL,NULL}
 };
 

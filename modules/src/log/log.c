@@ -224,8 +224,8 @@ int logit(char* zone, char *str, ...)
 	rc = vsnprintf(strtmp, MAX_LOG_STRING, str, args);
 	va_end(args);
 
-	if (rc == MAX_LOG_STRING - 1 && strtmp[rc-1] != '\n')
-		strtmp[rc-1] = '\n';
+	if (rc >= MAX_LOG_STRING - 1 && strtmp[MAX_LOG_STRING-2] != '\n')
+		strtmp[MAX_LOG_STRING-2] = '\n';
 
 	if(syslogmode){
 		/* +1 is for \0 */

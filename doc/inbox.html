@@ -1,3 +1,7 @@
+HTTP/1.1 200 Ok!
+Content-type: text/html
+Connection: close
+
 <html>
 <head>
 <title>foo.xx webmail- inbox</title>
@@ -19,7 +23,7 @@ padding: 5 5 5 5 ;
 </head>
 <body>
 <h1>test@foo.xx - inbox (1/2)</h1>
-<form name="inbox" method="post" action="/delete.php">
+<form name="inbox" method="post" action="http://localhost:3000/delete.php">
 <input type="hidden" name="session_id" value="ABCD1234">
 <table>
 <tr><th>From</th><th>subject</th><th>size</th><th>date</th></tr>

@@ -1069,13 +1069,13 @@ Plugins overview
 A plugin is essentially a backend for a POP3 server.
  The plugins are written in LUA
 \begin_inset Foot
-collapsed true
+collapsed false
 
 \layout Standard
 
-The language website is http://www.lua.org
+The language website is HTTP://www.lua.org
 \newline 
-See http://www.lua-user.org for a tutorial.
+See HTTP://www.lua-user.org for a tutorial.
 \end_inset 
 
  while the POP3 server is written in C.
@@ -1598,9 +1598,9 @@ foo.xx
 xx
 \emph default 
  stands for a real domain, bu I don't want to mention any websites here...).
- Now with your best editor (I suggest vim under unix and scintilla for win32,
- since they support syntax hilights for LUA, but any other text editor is
- ok) open 
+ Now with your best editor (I suggest vim under Unix and scintilla for win32,
+ since they support syntax highlights for LUA, but any other text editor
+ is OK) open 
 \emph on 
 foo.lua
 \emph default 
@@ -1659,7 +1659,7 @@ end{footnotesize}
 config.lua
 \emph default 
  file (in the win32 distribution it is placed in the main directory, while
- in the unix distribution it is in 
+ in the Unix distribution it is in 
 \emph on 
 /etc/freepops/
 \emph default 
@@ -1696,12 +1696,12 @@ end{footnotesize}
 
  at the beginning of the file.
  Before ending the first step you should try if the plugin is correctly
- activated by frepops when needed.
+ activated by FreePOPs when needed.
  To do this we have to add few lines to 
 \emph on 
 foo.lua
 \emph default 
-, in partcular we have to add an error return value to 
+, in particular we have to add an error return value to 
 \emph on 
 user()
 \emph default 
@@ -1743,8 +1743,8 @@ end{footnotesize}
 
  Now the user function always fails, returning an authentication error.
  Now you have to start FreePOPs (if it is already running you don't have
- to reastart it) and start telnet (under win32 you should open a DOS prompt,
- under unix you have the shell) and type 
+ to restart it) and start telnet (under win32 you should open a DOS prompt,
+ under Unix you have the shell) and type 
 \emph on 
 telnet localhost 2000
 \emph default 
@@ -1795,20 +1795,20 @@ end{footnotesize}
 \end_inset 
 
  The server respond closing the connection and printing an authorization
- failed message (thats ok, sice the 
+ failed message (thats OK, since the 
 \emph on 
 user()
 \emph default 
  function of our plugin returns this error).
- In the standard error file (the console under unix, the file stderr.txt)
- are printd error mesage, don't care about them now.
+ In the standard error file (the console under Unix, the file stderr.txt)
+ are printed error messages, don't care about them now.
 \layout Subsubsection
 
 (step 2) the login
 \layout Standard
 
 The login procedure is the first thing we have to do.
- The POP3 protol has 2 commands for login, 
+ The POP3 protocol has 2 commands for login, 
 \emph on 
 user
 \emph default 
@@ -1871,7 +1871,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
- If you start FreePOPs with the -w switch you sould read this on standard
+ If you start FreePOPs with the -w switch you should read this on standard
  error/standard output
 \begin_inset ERT
 status Collapsed
@@ -1927,7 +1927,7 @@ end{footnotesize}
 \end_inset 
 
 and the plugin has been changed a bit to store the user login and print
- some debug infos.
+ some debug info.
  This is the plugin that gave this output:
 \begin_inset ERT
 status Collapsed
@@ -2006,7 +2006,7 @@ end{footnotesize}
 \emph on 
 foo_globals
 \emph default 
- table that will contain all the globals (values that shoud be available
+ table that will contain all the globals (values that should be available
  to successive function calls) we need.
  Since now we have the username and the password here.
  The 
@@ -2034,8 +2034,8 @@ POPSERVER_ERR_OK
  to make FreePOPs happy.
 \layout Standard
 
-Now that we know how FreePOPs will act during the login we have to implemt
- the login in the webmail, but first decomment the few lines in the 
+Now that we know how FreePOPs will act during the login we have to implement
+ the login in the webmail, but first uncomment the few lines in the 
 \emph on 
 init()
 \emph default 
@@ -2045,7 +2045,7 @@ browser.lua
 \emph default 
  module (the module we will use to login in the webmail).
  Here there is the webmail login page viewed with mozilla and the source
- of the fage (with mozilla is Ctrl-U).
+ of the page (with mozilla is Ctrl-U).
 \layout Standard
 
 
@@ -2119,10 +2119,10 @@ POST
 \emph default 
  to 
 \emph on 
-http://localhost:3000/
+HTTP://localhost:3000/
 \emph default 
- the form contents (I used a local address because of comodity, but is should
- be something like http://webmail.foo.xx/login.php).
+ the form contents (I used a local address because of commodity, but is
+ should be something like HTTP://webmail.foo.xx/login.php).
  This is what the browser sends:
 \begin_inset ERT
 status Collapsed
@@ -2173,7 +2173,7 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
- We are not interested in the first part (the HTTP header, since the broser
+ We are not interested in the first part (the HTTP header, since the browser
  module will take care of this) but in the last part, the posted data.
  Since the fields of the form were username and password, the posted data
  is 
@@ -2326,14 +2326,14 @@ that is essentially the same (we should url-encode the post data with
 curl.escape()
 \emph default 
 ) we wanted to do.
- We saved the browser object to the global table, since we want to use thesame
- browser all the time.
+ We saved the browser object to the global table, since we want to use the
+ same browser all the time.
 \layout Standard
 
 Now that we have logged in, we want to check the resulting page, and maybe
  extract a session ID that will be used later.
- This is the code to extract the session id and the html page we have received
- in response to the login request
+ This is the code to extract the session id and the HTML page we havrounde
+ received in response to the login request
 \begin_inset ERT
 status Collapsed
 
@@ -2367,6 +2367,8 @@ begin{verbatim}
         if id == nil then               
 \layout Standard
                return POPSERVER_ERR_AUTH
+\layout Standard
+        end
 \layout Standard
 
 \layout Standard
@@ -2455,14 +2457,14 @@ session_id=(%w+)
 \emph default 
 .
  This is a really important function in the lua library and, even if it
- is described in the lua tutorial at http://lua-user.org, we will talk a
+ is described in the lua tutorial at HTTP://lua-user.org, we will talk a
  bit on captures here.
  Look at the page source.
  We are interested in the line 
 \emph on 
 
 \newline 
-<a href="htp://localhost:3000/inbox.php?session_id=ABCD1234">inbox</a>
+<a href="HTTP://localhost:3000/inbox.php?session_id=ABCD1234">inbox</a>
 \emph default 
  
 \emph on 
@@ -2491,8 +2493,8 @@ session_id=
 \begin_inset Quotes erd
 \end_inset 
 
- and than continue with one or more alphanumirical character.
- Since we wrote %w+ in roud brackets, we mean to capture the content of
+ and than continue with one or more alphanumerical character.
+ Since we wrote %w+ in round brackets, we mean to capture the content of
  brackets (the alphanumerical part).
  So string.find will return 3 values, the firs two are ignored (assigned
  to the dummy variable _) while the third is the captured string (in our
@@ -2505,9 +2507,9 @@ ABCD1234
 \end_inset 
 
 ).
- The LUA tutorial at lua-users is quite good and at http://sf.net/projects/lua-us
+ The LUA tutorial at lua-users is quite good and at HTTP://sf.net/projects/lua-us
 ers you can find the LUA short reference that is a summary of all standard
- lua funcions and is a really good piece of paper (so many thanks to Enrico
+ lua functions and is a really good piece of paper (so many thanks to Enrico
  Colombini).
  If you really like LUA you should buy THE book about LUA called 
 \emph on 
@@ -2521,8 +2523,8 @@ Programming in Lua
 
 Now we have to implement the stat() function.
  The stat is probably the most important function.
- It must retrive the list of messages in the webmail and their UIDL and
- size.In our example we will use the mlex module to grab the important infos
+ It must retrieve the list of messages in the webmail and their UIDL and
+ size.In our example we will use the mlex module to grab the important info
  from the page, but you can use the string LUA module to do the same with
  captures.
  This is our inbox page
@@ -2538,7 +2540,7 @@ Now we have to implement the stat() function.
 
 \layout Standard
 
-and this is the html body (only the first 2 messages are reported)
+and this is the HTML body (only the first 2 messages are reported)
 \begin_inset ERT
 status Collapsed
 
@@ -2612,12 +2614,12 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-We have retrived the html using the broeser and the get_uri method (remember
+We have retrieved the HTML using the browser and the get_uri method (remember
  the uri for the inbox was in the login page).
  As you can see the messages are in table and this table as the same structure
  for each message.
  This is the place in which you may use mlex.
- Just take all thestuff betwee <tr> and </tr> of a message row and delete
+ Just take all the stuff between <tr> and </tr> of a message row and delete
  all but the tags name.than replace every empty space (we call space the
  string between two tags) with a 
 \begin_inset Quotes eld
@@ -2629,9 +2631,9 @@ We have retrived the html using the broeser and the get_uri method (remember
 
 .
  This is what you have obtained (it should be all in the same line, here
- is wrapped for lack ok space) from the first message.
+ is wrapped for lack OK space) from the first message.
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -2646,13 +2648,9 @@ begin{footnotesize}
 \backslash 
 begin{verbatim}
 \layout Standard
-.*<tr>.*<td>.*<b>.*</b>.*</td>.*
+.*<tr>.*<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*<a>.*</a>.*</b>.*</td>.*
 \layout Standard
-<td>.*<b>.*<a>.*</a>.*</b>.*</td>.*
-\layout Standard
-<td>.*<b>.*</b>.*</td>.*
-\layout Standard
-<td>.*<b>.*</b>.*</td>.*
+<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*</b>.*</td>.*
 \layout Standard
 <td>.*<input>.*</td>.*</tr>
 \layout Standard
@@ -2665,9 +2663,9 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-This expression is used to match the table row containig info about the
+This expression is used to match the table row containing info about the
  massage.
- Now cut and paste the line and replace avery space and every tag with O
+ Now cut and paste the line and replace every space and every tag with O
  (the letter, not he 0) or X.
  Put an X in the interesting fields (in our example the size and the input
  tag, that contains the message uidl).
@@ -2687,13 +2685,9 @@ begin{footnotesize}
 \backslash 
 begin{verbatim}
 \layout Standard
-O<O>O<O>O<O>O<O>O<O>O
+O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O
 \layout Standard
-<O>O<O>O<O>O<O>O<O>O<O>O
-\layout Standard
-<O>O<O>X<O>O<O>O
-\layout Standard
-<O>O<O>O<O>O<O>O
+<O>O<O>X<O>O<O>O<O>O<O>O<O>O<O>O
 \layout Standard
 <O>O<X>O<O>O<O>
 \layout Standard
@@ -2708,7 +2702,7 @@ end{footnotesize}
 
 While the first expression will be use to match the table row, this one
  will be used to extract the important fields.
- This is the code that starts mlex on the html and fills the popstate data
+ This is the code that starts mlex on the HTML and fills the popstate data
  structure with the captured data.
 \begin_inset ERT
 status Collapsed
@@ -2726,6 +2720,76 @@ begin{footnotesize}
 \backslash 
 begin{verbatim}
 \layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill the number of messages and their size 
+\layout Standard
+function stat(pstate)
+\layout Standard
+      local file,err = nil, nil
+\layout Standard
+      local b = foo_globals.browser
+\layout Standard
+      file,err = b:get_uri("http://localhost:3000/inbox.php?session_id="..
+\layout Standard
+              foo_globals.session_id)
+\layout Standard
+      local e = ".*<tr>.*<td>.*<b>.*</b>.*</td>.*<td>.*<b>.*<a>"..               
+\layout Standard
+              ".*</a>.*</b>.*</td>.*<td>.*<b>.*</b>.*</td>.*<td>.*"..                
+\layout Standard
+              "<b>.*</b>.*</td>.*<td>.*<input>.*</td>.*</tr>"         
+\layout Standard
+      local g = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O"..              
+\layout Standard
+              "<O>O<O>X<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>"
+\layout Standard
+      local x = mlex.match(file,e,g) 
+\layout Standard
+      --debug print   
+\layout Standard
+      x:print()
+\layout Standard
+
+\layout Standard
+      set_popstate_nummesg(pstate,x:count())
+\layout Standard
+      for i=1,x:count() do            
+\layout Standard
+              local _,_,size = string.find(x:get(0,i-1),"(%d+)")
+\layout Standard
+              local _,_,size_mult_k = string.find(x:get(0,i-1),"([Kk][Bb])")                        local _,_,size_mult_m = string.find(x:get(0,i-1),"([Mm][Bb])")
+\layout Standard
+              local _,_,uidl = string.find(x:get(1,i-1),"check_(%d+)")
+\layout Standard
+           
+\layout Standard
+              if size_mult_k ~= nil then
+\layout Standard
+                     size = size * 1024
+\layout Standard
+              end             
+\layout Standard
+              if size_mult_m ~= nil then
+\layout Standard
+                     size = size * 1024 * 1024
+\layout Standard
+              end             
+\layout Standard
+     
+\layout Standard
+              set_mailmessage_size(pstate,i,size)                     
+\layout Standard
+              set_mailmessage_uidl(pstate,i,uidl)
+\layout Standard
+      end
+\layout Standard
+ 
+\layout Standard
+      return POPSERVER_ERR_OK
+\layout Standard
+end 
+\layout Standard
 
 \backslash 
 end{verbatim}
@@ -2735,10 +2799,11 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-
-\layout Standard
-
-
+The result of 
+\emph on 
+x:print()
+\emph default 
+ is this one
 \begin_inset ERT
 status Collapsed
 
@@ -2755,6 +2820,8 @@ begin{footnotesize}
 \backslash 
 begin{verbatim}
 \layout Standard
+{'20KB','input type="checkbox" name="check_123"'}
+\layout Standard
 
 \backslash 
 end{verbatim}
@@ -2763,6 +2830,461 @@ end{verbatim}
 \backslash 
 end{footnotesize}
 \end_inset 
+
+and the telnet session follows
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
++OK FreePOPs/0.0.11 pop3 server ready 
+\layout Standard
+user test@foo.xx 
+\layout Standard
++OK PLEASE ENTER PASSWORD 
+\layout Standard
+pass secret 
+\layout Standard
++OK ACCESS ALLOWED 
+\layout Standard
+stat 
+\layout Standard
++OK 1 20480 
+\layout Standard
+quit 
+\layout Standard
++OK BYE BYE, UPDATING 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+We have not listed here we added the dummy return POPSERVER_ERR_OK line
+ to the quit() function.
+ The source code listed before uses mlex to extract the two interesting
+ strings, then parses them searching for the size and the size multiplier
+ and the uidl.
+ Then sets the mailmessage attributes.
+ But here you can see that we just matched the first message.
+ To match the other messages we have to inform the mlex module that the
+ <b> tag is optional (you can see that only the first message is in bold).
+ so we change the expressions to
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+.*<tr>.*<td>[.*]{b}.*{/b}[.*]</td>.*<td>[.*]{b}.*<a>.*</a>.*{/b}[.*]</td>.*
+\layout Standard
+<td>[.*]{b}.*{/b}[.*]</td>.*<td>[.*]{b}.*{/b}[.*]</td>.*
+\layout Standard
+<td>.*<input>.*</td>.*</tr>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+and
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+O<O>O<O>[O]{O}O{O}[O]<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O
+\layout Standard
+<O>[O]{O}X{O}[O]<O>O<O>[O]{O}O{O}[O]<O>O
+\layout Standard
+<O>O<X>O<O>O<O>
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Now the stat command respond with +OK 4 45056 and the debug print is 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+{'20KB','input type="checkbox" name="check_123"'} 
+\layout Standard
+{'12KB','input type="checkbox" name="check_124"'} 
+\layout Standard
+{'10KB','input type="checkbox" name="check_125"'} 
+\layout Standard
+{'2KB','input type="checkbox" name="check_126"'}
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+Now we have a proper function stat that fill the pstate data structure with
+ the info the popserver needs to respond to a stat request.
+ Since the list, uidl, list_all and uidl_all requests can be satisfied with
+ the same data we will use the standard function provided by the common.lua
+ module.
+ It will be explained in the next step, but we have to add 2 important lines
+ to the stat function.
+ They avoid a double call to the stat() function.
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+function stat(pstate) 
+\layout Standard
+       if foo_globals.stat_done == true then return POPSERVER_ERR_OK end
+\layout Standard
+
+\layout Standard
+       ... the same code here ...
+\layout Standard
+
+\layout Standard
+       foo_globals.stat_done = true
+\layout Standard
+       return POPSERVER_ERR_OK
+\layout Standard
+end
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Standard
+
+The most important function is done, but a lot of notes must be written
+ here.
+ First mlex is a really comfortable sometimes, but you may find more helpful
+ using lua string library or the regularexp library (posix extended regular
+ expressions) to reach the same point.
+ Second this implementation stops at the first inbox page.
+ You should visit all the inbox pages maybe using the do_until function
+ in the support library (that will be briefly described at the end of this
+ tutorial).
+ Third we make no error checking.
+ For example the file variable may be nil and we must check these things
+ to make a good plugin.
+\layout Subsubsection
+
+(step 4) the common functions
+\layout Standard
+
+The common module give us some already cooked functions that depends only
+ on a well implemented stat() (I mean a stat than can be called more than
+ once).
+ This is the our implementation of our functions 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill msg uidl field 
+\layout Standard
+function uidl(pstate,msg) return common.uidl(pstate,msg) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill all messages uidl field 
+\layout Standard
+function uidl_all(pstate) return common.uidl_all(pstate) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill msg size 
+\layout Standard
+function list(pstate,msg) return common.list(pstate,msg) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Fill all messages size 
+\layout Standard
+function list_all(pstate) return common.list_all(pstate) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Unflag each message merked for deletion 
+\layout Standard
+function rset(pstate) return common.rset(pstate) end
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Mark msg for deletion 
+\layout Standard
+function dele(pstate,msg) return common.dele(pstate,msg) end 
+\layout Standard
+
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Do nothing 
+\layout Standard
+function noop(pstate) return common.noop(pstate) end 
+\layout Standard
+
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+but first add the common module loading code to your init() function
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+        ... the same code ..
+\layout Standard
+
+\layout Standard
+        -- the common module    
+\layout Standard
+        if freepops.dofile("common.lua") == nil then
+\layout Standard
+                  return POPSERVER_ERR_UNKNOWN    
+\layout Standard
+        end 
+\layout Standard
+
+\layout Standard
+        -- checks on globals    
+\layout Standard
+        freepops.set_sanity_checks()    
+\layout Standard
+
+\layout Standard
+        return POPSERVER_ERR_OK 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Subsubsection
+
+(step 5) deleting messages
+\layout Standard
+
+Deleting messages is usually a normal post and an example of the post_data
+ is session_id=ABCD1234&check_124=on&check_126=on.
+ The code follows
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+linespread{0.5}
+\layout Standard
+
+\backslash 
+begin{footnotesize}
+\layout Standard
+
+\backslash 
+begin{verbatim}
+\layout Standard
+-- -------------------------------------------------------------------------- -- 
+\layout Standard
+-- Update the mailbox status and quit 
+\layout Standard
+function quit_update(pstate)
+\layout Standard
+      -- we need the stat
+\layout Standard
+      local st = stat(pstate)
+\layout Standard
+      if st ~= POPSERVER_ERR_OK then return st end
+\layout Standard
+         
+\layout Standard
+      -- shorten names, not really important  
+\layout Standard
+      local b = foo_globals.b         
+\layout Standard
+      local post_uri = b:wherearewe() .. "/delete.php"        
+\layout Standard
+      local session_id = foo_globals.session_id       
+\layout Standard
+      local post_data = "session_id=" .. session_id .. "&"
+\layout Standard
+    
+\layout Standard
+      -- here we need the stat, we build the uri and we check if we   
+\layout Standard
+      -- need to delete something     
+\layout Standard
+    
+\layout Standard
+      local delete_something = false; 
+\layout Standard
+      for i=1,get_popstate_nummesg(pstate) do                 
+\layout Standard
+             if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then                                            post_data = post_data .. "check_" .. 
+\layout Standard
+                        get_mailmessage_uidl(pstate,i).. "=on&"                             
+\layout Standard
+                    delete_something = true                 
+\layout Standard
+             end     
+\layout Standard
+      end
+\layout Standard
+    
+\layout Standard
+      if delete_something then                
+\layout Standard
+             b:post_uri(post_uri,post_data)  
+\layout Standard
+      end
+\layout Standard
+    
+\layout Standard
+      return POPSERVER_ERR_OK 
+\layout Standard
+end 
+\layout Standard
+
+\backslash 
+end{verbatim}
+\layout Standard
+
+\backslash 
+end{footnotesize}
+\end_inset 
+
+
+\layout Subsubsection
+
+(step 6) downloading messages
+\layout Standard
 
 
 \begin_inset ERT

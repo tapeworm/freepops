@@ -65,7 +65,6 @@ For next version or later (in random order, lucky first)
    all threads since the may access the already closed socket..
  * write on website "How to receive FP news"
  * x user pid file
- * eventually implement per user lua_unofficial directory
 
     <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             This is the end of the longest TODO list of the planet      

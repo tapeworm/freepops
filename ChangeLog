@@ -1,3 +1,18 @@
+18/11/2004 0.0.21
+- yahoo.lua: tweaked the status update process (russell822)
+- es: *** empty log message *** (lisar314)
+- aol.lua: Fix for new UI (russell822)
+- README.FPM.en.txt, README.FPM.it.txt, freepopsd.vbs: Versione 1.4 di FreePOPs & Mailv. 1.4 Corretti bug minori. (p3g4sus)
+- hotmail.lua: another try for the old mailbox format (russell822)
+- hotmail.lua: Some tweaks to make it more language independent and emptytrash (russell822)
+- README.FPM.en.txt, README.FPM.it.txt: Readme v. 1.6:Aggiunta la sezione dei requisiti che aiuta a risolvere il runtime error 800A01B0 (p3g4sus)
+- yahoo.lua: doc in it e yahoo.es (ncocchiaro)
+- README.FPM.en.txt, README.FPM.it.txt: Applicate Misure antispam sui readme (p3g4sus)
+- gmail.lua: corretta descrizione del plugin in it e en (ncocchiaro)
+- es: fixed rss (gareuselesinge)
+- yahoo.lua: added emptying bulk and junk folder, updated some patterns, fixed problem with yahoo new mail indicator. (russell822)
+- hotmail.lua: Added support for the new folder format (russell822)
+- gmail.lua, yahoo.lua: fix (gareuselesinge)
 - added luafilesystem bindings (from http://keplerproject.org)
 - added lua_unofficial directory scanning for unofficial plugins
 - added freepops.safe_extract_domains(file) to extract the domains supported

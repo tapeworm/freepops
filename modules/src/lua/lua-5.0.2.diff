@@ -301,3 +301,129 @@ diff -ruN lua-5.0.2-old/src/lib/loadlib.c lua-5.0.2-new/src/lib/loadlib.c
   if (lib!=NULL)
   {
    lua_CFunction f=(lua_CFunction) dlsym(lib,init);
+--- lua-5.0.2-old/src/lib/liolib.c	2003-10-01 15:16:49.000000000 +0200
++++ lua-5.0.2-new/src/lib/liolib.c	2004-08-26 11:42:11.000000000 +0200
+@@ -46,6 +46,10 @@
+ 
+ #ifndef USE_POPEN
+ #define USE_POPEN	0
++#else
++#include <sys/types.h>
++#include <unistd.h>
++#include <sys/wait.h>
+ #endif
+ 
+ 
+@@ -208,6 +212,104 @@
+ #endif
+ }
+ 
++static int io_dpopen(lua_State*l){
++#if !USE_POPEN
++  luaL_error(L, "`dpopen' not supported");
++  return 0;
++#else
++	#define READ	0
++	#define WRITE	1
++	int in[2],out[2];
++	int narg = lua_gettop(l);
++	const char ** argv = NULL;
++	int i,rc;
++	pid_t pid;
++	FILE **pf_r,**pf_w;
++
++
++	if (narg < 1) {
++		luaL_error(l,"create wants at least one argument");
++	}
++	
++	argv = calloc(narg+1,sizeof(char*));
++	if (argv == NULL){
++		luaL_error(l,"Unable to alloc.");
++	}
++
++	for (i=0;i < narg;i++) {
++		argv[i] = luaL_checkstring(l,i+1);
++		fprintf(stderr,"getting %s",argv[i]);
++	}
++	argv[i] = NULL;
++	
++	rc = pipe(out);
++	if (rc == -1) {
++		luaL_error(l,strerror(errno));
++	}
++	rc = pipe(in);
++	if (rc == -1) {
++		luaL_error(l,strerror(errno));
++	}
++
++	pid = fork();
++	if (pid == 0) {
++		// son
++		pid = fork();
++		if (pid == 0) {
++			// grandson, inherited by init, no Zombie
++			rc = dup2(out[READ],STDIN_FILENO);
++			if (rc == -1) {
++				luaL_error(l,strerror(errno));
++			}
++			rc = dup2(in[WRITE],STDOUT_FILENO);
++			if (rc == -1) {
++				luaL_error(l,strerror(errno));
++			}
++			rc = close(in[READ]);
++			if (rc == -1) {
++				luaL_error(l,strerror(errno));
++			}
++			rc = close(out[WRITE]);
++			if (rc == -1) {
++				luaL_error(l,strerror(errno));
++			}
++			fprintf(stderr,"starting %s...\n",argv[0]);
++			rc = execv(argv[0],(char* const*)argv);
++			if (rc == -1) {
++				luaL_error(l,strerror(errno));
++			}
++			luaL_error(l,"dead code");
++		} else {
++			_exit(0);
++		}
++	} else {
++		if (pid == -1) {
++			luaL_error(l,strerror(errno));
++		}
++		waitpid(pid,NULL,0); //wait the son
++	}
++	pf_r = newfile(l);
++	pf_w = newfile(l);
++
++	rc = close(out[READ]);
++	if (rc == -1) {
++		luaL_error(l,strerror(errno));
++	}
++	rc = close(in[WRITE]);
++	if (rc == -1) {
++		luaL_error(l,strerror(errno));
++	}
++	
++	*pf_r = fdopen(in[READ],"r");
++	*pf_w = fdopen(out[WRITE],"w");
++
++	free(argv);
++	
++	return 2;
++#endif
++}
++
++
+ 
+ static int io_tmpfile (lua_State *L) {
+   FILE **pf = newfile(L);
+@@ -497,6 +599,7 @@
+   {"flush", io_flush},
+   {"open", io_open},
+   {"popen", io_popen},
++  {"dpopen", io_dpopen},
+   {"read", io_read},
+   {"tmpfile", io_tmpfile},
+   {"type", io_type},

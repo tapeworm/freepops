@@ -179,7 +179,7 @@ function owa_login()
 	internal_state.b = browser.new()
 	
 	local b = internal_state.b
-	b:verbose_mode()
+	--b:verbose_mode()
 	
 	local uri,err = httpmail.login(b,
 		internal_state.login_site,

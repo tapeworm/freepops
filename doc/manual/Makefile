@@ -11,7 +11,7 @@ LATEX_HTML= \
 	    -next_page_in_navigation\
 	    -previous_page_in_navigation
 
-all: xml pdf html
+all: pdf html
 	
 pdf: manual.pdf manual-it.pdf
 	@cp manual.pdf manual-it.pdf ../
@@ -39,7 +39,7 @@ spell-it:
 %.ps:%.dvi
 	@dvips -f $< > $@
 
-%.dvi:%.tex macro.tex 
+%.dvi:%.tex macro.tex xml
 	@echo Generating the PDF manuals
 	@latex $<
 	@latex $<

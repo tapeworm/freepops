@@ -47,12 +47,15 @@ PLUGIN_DOMAINS = {"libero.it","inwind.it","aol.it","blu.it"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
-Serve per selezionare la cartella (inbox è quella di default) su cui operare. 
+Serve per selezionare la cartella (inbox &egrave; quella di default)
+su cui operare. 
 Le cartelle standard disponibili sono draft, inbox, outbox, trash.
 Se hai creato delle cartelle dalla webmail allora puoi accedervi usando il
-loro nome. Se la cartella non è al livello principale puoi accederci usando 
-una / per separala dalla cartella padre. Questo è un esempio di uno
-user name per leggere la cartella son, che è una sotto cartella della cartella
+loro nome. Se la cartella non &egrave; al livello principale
+puoi accederci usando 
+una / per separala dalla cartella padre. Questo &egrave; un esempio di uno
+user name per leggere la cartella son, che &egrave;
+una sotto cartella della cartella
 father: foo@libero.it?folder=father/son]],
 		}	
 	},
@@ -60,7 +63,8 @@ father: foo@libero.it?folder=father/son]],
 
 -- map from lang to strings, like {it="bla bla bla", en = "bla bla bla"}
 PLUGIN_DESCRIPTIONS = {
-	it="Questo plugin è per gli account di posta del portale libero.it. "..
+	it="Questo plugin &egrave; per gli account di "..
+	   "posta del portale libero.it. "..
 	   "Utilizzare lo username completo di dominio e l'usuale password. ",
 	en="This plugin is for italian users only."
 }

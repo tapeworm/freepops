@@ -25,6 +25,51 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "RSS/RDF aggregator"
+PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/download.php?file=aggregator.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
+PLUGIN_AUTHORS_CONTACTS = {"simone_vellei@users.sourceforge.net"}
+PLUGIN_DOMAINS = {"@aggrefator","..."}
+PLUGIN_PARAMETERS = {}
+PLUGIN_DESCRIPTIONS = {
+	it= [[
+Solitamente potete trarre beneficio dal for mato RSS del W3C quando leggete
+news da qualche sito web. Il file RSS indicizza le news, fornendo un 
+link verso di esse. Questo plugin pu&ograve; far s&igrave; che il vostro 
+client di posta veda il file RSS come una mailbox da cui potete 
+scaricare ogni news come se fosse una mail. L'unica limitazione 
+&egrave; che questo plugin pu&ograve; prelevare solo un sunto delle news
+pi&ugrave; il link alle news. 
+Per usare questo plugin dovete usare un nome utente casuale con il 
+suffisso @aggregator (es.: foo@aggregator) e come password l'URL del file RSS
+(es.: http://www.securityfocus.com/rss/vulnerabilities.xml). Per 
+comodit&agrave; abbiamo aggiunto per voi alcuni alias. 
+Questo significa che non dovrete cercare a mano l'URL del file RSS. 
+Abbiamo aggiunto alcuni domini, per esempio 
+@securityfocus.com, che possono essere usati per sfruttare direttamente
+il plugin aggregator con questi siti web. Per usare questi alias dovrete usare
+un nome utente nella for ma qualcosa@aggregatordomain e una password a
+caso.]],
+	en= [[
+Usually you can benefit from the W3C's RSS for mat when you read some 
+website news. The RSS file indexes the news, 
+providing a link to them. This plugin
+can make your mail client see the RSS file as a mailbox from which you can
+download each news as if it was a mail message. The only limitation is that
+this plugin can fetch only a news summary plus the news link.
+To use this plugin you have to use a casual user name with the @aggregator
+suffix (ex: foo@aggregator) and as the password the URL of the RSS file(ex:
+http://www.securityfocus.com/rss/vulnerabilities.xml). For your 
+commodity we added some alias for you. This means you have not to search by
+hand the URL of the RSS file. We added some domain, 
+for example @securityfocus.com,
+that can be used to directly use the aggregator plugin with these website. To
+use these alias you have to use a user name in the form 
+something@aggregatordomain
+and a casual password.]],
+}
 
 -- Configuration:
 --

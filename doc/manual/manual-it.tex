@@ -503,131 +503,11 @@ come nell'esempio precedente.
 
 
 \input{libero.lua.xml.it.xmltex}
-
-%\subsection{libero.lua}
-%
-%Questo plugin vi permette di leggere le mail che avete in una mailbox
-%\texttt{@libero.it}, \texttt{@iol.it}, \texttt{@inwind.it} e \texttt{@blu.it}.
-%ciò significa che potete ancora usare il vostro mail reader preferito
-%invece di usare la webmail. Questo plugin agisce come un browser che
-%sfoglia il vostro account webmail e lo fa apparire come un server
-%POP3. Per maggiori informazioni su questo plugin potete guardare il
-%sito web di LiberoPOPs (antenato di FreePOPs) su \texttt{http://liberopops.sourceforge.net}
-%
-%Per usare questo plugin dovete usare il vostro indirizzo email completo
-%come username e la vostra password reale come password. Questo plugin
-%accetta i seguenti parametri:
-%
-%\begin{description}
-%\item [folder]serve per selezionare la cartella (\texttt{inbox} è quella
-%di default) su cui operare. Le cartelle standard disponibili sono
-%\texttt{draft}, \texttt{inbox}, \texttt{outbox}, \texttt{trash}. Se
-%hai creato delle cartelle dalla webmail allora puoi accedervi usando
-%il loro nome. Se la cartella non è al livello principale puoi accederci
-%usando una \texttt{/} per separala dalla cartella padre. Questo e'
-%un esempio di uno username per leggere la cartella \texttt{son}, che
-%è una sotto cartella della cartella \texttt{father}:\\
-%\texttt{foo@libero.it?folder=father/son}
-%\end{description}
-
-\subsection{tin.lua }
-
-Questo plugin vi permette di leggere le mail che avete in una mailbox
-\texttt{@virgilio.it}, \texttt{@tin.it}. Per usare questo plugin dovete
-usare il vostro indirizzo email completo come username e la vostra
-password reale come password. Visto che potresti aver bisogno di scaricare
-altre cartelle oltre alle \texttt{INBOX} (che è quella di default)
-il plugin accetta il parametro \texttt{folder} e l' unico valore attualmente
-testato è \texttt{Spam}, ma anche altre cartelle dovrebbero funzionare.
-Ecco un esempio di username per controllare la cartella \texttt{Spam}:\\
-\texttt{foo@virgilio.it?folder=Spam }
-
-
-\subsection{owa.lua}
-
-Questo plugin vi permette di leggere le mail che avete in una mailbox
-\texttt{@lycos.it}, 
-\texttt{@lycos.co.uk},
-\texttt{@lycos.ch},
-\texttt{@lycos.de},
-\texttt{@lycos.es},
-\texttt{@spray.se},
-\texttt{@lycos.at} e
-\texttt{@lycos.nl}. Per usare questo plugin dovete usare il vostro
-indirizzo email completo come username e la vostra password reale
-come password. Supporta il parametro folder (NON TESTATO).
-
-
-\subsection{popforward.lua}
-
-Questo plugin è stato sviluppato per testare FreePOPs prima che fossero
-scritti altri veri plugin. Esso semplicemente inoltra richieste locali
-verso un vero server POP3. può essere usato per mascherare un server
-POP3 che ha dei bug, ma se pensate di averne bisogno dovreste esaminare
-attentamente il codice del plugin e aggiungere controlli per migliorare
-il rilevamento/la prevenzione di richieste malevole, dato che il plugin
-stesso non è nato con in mente la sicurezza. 
-
-Per usare questo plugin dovete modificare il file config.lua. Questo
-perché non possiamo aggiungere tutti i server POP3 esistenti al file
-:) Il plugin richiede due argomenti, l' host POP3 e la porta (di solito
-\texttt{110}) su cui il server è in ascolto. Questo è un esempio di
-una riga di configurazione per questo plugin, in cui ogni indirizzo
-email del dominio \texttt{@virgilio.it} sono inoltrati a \texttt{in.virgilio.it:110}:\linespread{0.5}
-
-\begin{footnotesize}
-
-\begin{verbatim}
-
--- popforward plugin 
-
-freepops.MODULES_MAP["virgilio.it"]     = {         
-
-       name="popforward.lua",         
-
-       args={ 
-
-              port=110,
-
-              host="in.virgilio.it"
-
-       } 
-
-} 
-
-\end{verbatim}
-
-\end{footnotesize}Potete ottenere gli stessi risultati usando il metodo di passaggio
-degli argomenti descritto nel primo paragrafo di questo capitolo.
-Questi sono gli argomenti accettati:
-
-\begin{description}
-\item [host]Il server pop3 a cui vi volete collegare
-\item [port]La porta del server pop3, di solito 110
-\item [realusername]Se fate bind di questo plugin al volo probabilmente
-dovrete specificare il vero username qui, visto che lo username specificato
-contiene il nome del plugin e sarà quindi non valido.
-\end{description}
-
-\subsection{aggregator.lua}
-
-Solitamente potete trarre beneficio dal formato RSS del W3C quando
-leggete news da qualche sito web. Il file RSS indicizza le news, fornendo
-un link verso di esse. Questo plugin può far si' che il vostro client
-di posta veda il file RSS come una mailbox da cui potete scaricare
-ogni news come se fosse una mail. L' unica limitazione è che questo
-plugin può prelevare solo un sunto delle news più il link alle news. 
-
-Per usare questo plugin dovete usare un nome utente casuale con il
-suffisso \texttt{@aggregator} (es.: \texttt{foo@aggregator}) e come
-password l'URL del file RSS (es.: \texttt{http://www.securityfocus.com/rss/vulnerabilities.xml}).
-Per comodità abbiamo aggiunto per voi alcuni alias. Questo significa
-che non dovrete cercare a mano l'URL del file RSS. Abbiamo aggiunto
-alcuni domini, per esempio \texttt{@securityfocus.com}, che possono
-essere usati per sfruttare direttamente il plugin aggregator con questi
-siti web. Per usare questi alias dovrete usare un nome utente nella
-forma \texttt{qualcosa@aggregatordomain} e una password a caso. Questa
-è la lista di alias per il plugin aggregator.\\
+\input{tin.lua.xml.it.xmltex}
+\input{owa.lua.xml.it.xmltex}
+\input{popforward.lua.xml.it.xmltex}
+\input{aggregator.lua.xml.it.xmltex}
+Questa è la lista di alias per il plugin aggregator.\\
 \\
 \begin{tabular}{|l|l|}
 \hline 
@@ -694,22 +574,8 @@ news (Inglese)}\tabularnewline
 
 
 \subsection{flatnuke.lua}
-
-Questo plugin è un plugin aggregator specializzato nei siti web fatti
-con il CMS FlatNuke%
-\footnote{HTTP://flatnuke.sourceforge.net%
-} , o altri siti che usano lo stesso formato delle news come il sito
-di FreePOPs. Dato che in un sito FlatNuke le news sono memorizzate
-in semplici file XML questo plugin è in grado di prelevare tutte le
-news, non solo le intestazioni come il plugin aggregator. ciò è molto
-utile se non vuoi sfogliare l' intero sito web per leggere le news.
-
-Per usare questo plugin dovete avere un nome utente con il dominio
-\texttt{@flatnuke} (es.: \texttt{qualcosa@flatnuke}) e l'URL di una
-homepage flatnuke come password (es.: \texttt{http://flatnuke.sourceforge.net/},
-non c'è bisogno di URL di file RSS visto che FlatNuke mette gli RSS
-in una posizione nota e fissata. Ci sono alcuni alias per siti FlatNuke,
-vedi la documentazione del plugin aggregator per sapere cosa significa):\\
+Ci sono alcuni alias per siti FlatNuke,
+vedi la documentazione del plugin aggregator per sapere cosa significa:\\
 \\
 \begin{tabular}{|l|l|}
 \hline 

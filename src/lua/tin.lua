@@ -21,8 +21,8 @@ PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
 Visto che potresti aver bisogno di scaricare altre cartelle oltre alle 
-INBOX (che è quella di default) il plugin accetta il parametro folder 
-e l' unico valore attualmente testato è Spam , ma anche altre cartelle
+INBOX (che &egrave; quella di default) il plugin accetta il parametro folder 
+e l' unico valore attualmente testato &egrave; Spam , ma anche altre cartelle
 dovrebbero funzionare. Ecco un esempio di user name per controllare la 
 cartella Spam: foo@virgilio.it?folder=Spam]],
 		}	

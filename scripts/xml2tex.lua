@@ -77,15 +77,31 @@ multilang["parameters"] = {}
 multilang["parameters"].it = "Parametri"
 multilang["parameters"].en = "Parameters"
 
+function E(s)
+	s = string.gsub(s,"_","\\_")
+	s = string.gsub(s,"&egrave;","\\`e")
+	s = string.gsub(s,"&agrave;","\\`a")
+	s = string.gsub(s,"&ograve;","\\`o")
+	s = string.gsub(s,"&ugrave;","\\`u")
+	s = string.gsub(s,"&igrave;","\\`i")
+	s = string.gsub(s,"&apos;","`")
+	s = string.gsub(s,"&quote;","``")
+	return s
+end
+
 s = ""
-s = s .. "\\subsection{"..plugin_name.."}\n"
+s = s .. "\\subsection{"..E(plugin_name).."}\n"
 s = s .. "\\begin{description}\n"
-s = s .. "\\item["..multilang["name"][lang]..":]"..t.name._content.."\n"
-s = s .. "\\item["..multilang["version"][lang]..":]"..t.version._content.."\n"
-s = s .. "\\item["..multilang["requires"][lang]..":]FreePOPs "..t.require_version._content.."\n"
-s = s .. "\\item["..multilang["license"][lang]..":]"..t.license._content.."\n"
-s = s .. "\\item["..multilang["url"][lang]..":]"..t.url._content.."\n"
-s = s .. "\\item["..multilang["homepage"][lang]..":]"..t.homepage._content.."\n"
+s = s .. "\\item["..multilang["name"][lang]..":]"..E(t.name._content).."\n"
+s = s .. "\\item["..multilang["version"][lang]..":]"..
+	E(t.version._content).."\n"
+s = s .. "\\item["..multilang["requires"][lang]..":]FreePOPs "..
+	E(t.require_version._content).."\n"
+s = s .. "\\item["..multilang["license"][lang]..":]"..
+	E(t.license._content).."\n"
+s = s .. "\\item["..multilang["url"][lang]..":]"..E(t.url._content).."\n"
+s = s .. "\\item["..multilang["homepage"][lang]..":]"..
+	E(t.homepage._content).."\n"
 --------
 if table.getn(t.authors) > 2 then
 	s = s .. "\\item["..multilang["authors"][lang]..":]"
@@ -93,7 +109,7 @@ else
 	s = s .. "\\item["..multilang["author"][lang]..":]"
 end
 xml2table.forach_son(t.authors,"author",function(k)
-	s = s .. k.name._content.." <"..k.contact._content..">, "
+	s = s .. E(k.name._content).." <"..E(k.contact._content)..">, "
 end)
 if string.sub(s,-2,-1) == ", " then
 	s = string.sub(s,1,-3) .. "\n"
@@ -105,7 +121,7 @@ else
 	s = s .. "\\item["..multilang["domain"][lang]..":]"
 end
 xml2table.forach_son(t.domains,"domain",function(k)
-	s = s .. k._content..", "
+	s = s .. E(k._content)..", "
 end)
 if string.sub(s,-2,-1) == ", " then
 	s = string.sub(s,1,-3) .. "\n"
@@ -114,35 +130,23 @@ end
 s = s .. "\\item["..multilang["description"][lang]..":]"
 xml2table.forach_son(t.descriptions,"description",function(k)
 		if k.lang == lang then
-			s = s .. k._content.."\n"
+			s = s .. E(k._content).."\n"
 			return true
 		end
 	end)
 ------
-if table.getn(t.domains) > 2 then
-	s = s .. "\\item["..multilang["domains"][lang]..":]"
-else
-	s = s .. "\\item["..multilang["domain"][lang]..":]"
-end
-xml2table.forach_son(t.domains,"domain",function(k)
-	s = s .. k._content..", "
-end)
-if string.sub(s,-2,-1) == ", " then
-	s = string.sub(s,1,-3) .. "\n"
-end
---
 if table.getn(t.parameters) > 0 then
 	if table.getn(t.parameters) > 1 then
 		s = s .. "\\item["..multilang["parameters"][lang]..":]\n"	
 	else	
 		s = s .. "\\item["..multilang["parameter"][lang]..":]\n"	
 	end
-	s = s .."  \\begin{description}\n"
+	s = s .."\\hspace{\\stretch{1}}  \\begin{description}\n"
 	xml2table.forach_son(t.parameters,"parameter",function(k)
-		s = s .."    \\item["..k.name.."]"
+		s = s .."    \\item["..E(k.name).."]"
 		xml2table.forach_son(k.descriptions,"description",function(k)
 			if k.lang == lang then
-				s = s .. k._content.."\n"
+				s = s .. E(k._content).."\n"
 				return true
 			end
 		end)

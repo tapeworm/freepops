@@ -23,7 +23,6 @@ for next version or later:
 	link the rss feed in the homepage
 	fix in owa that Host and Cookie is repeated 3 times
 	create the -dev ML
-	popserver timeouts to avoid stupid DOS leaving inactive connections open
 	curl_info
 
 - eof -

@@ -24,6 +24,7 @@ freepops.MODULES_MAP["virgilio.it"] 	= {name="popforward.lua",
 
 -- flatnuke news plugin
 freepops.MODULES_MAP["flatnuke"] 	= {name="flatnuke.lua"}
+freepops.MODULES_MAP["aggregator"] 	= {name="aggregator.lua"}
 
 -- -------------------------------------------------------------------------- --
 -- Customize here the paths for .lua and .so files

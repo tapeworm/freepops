@@ -303,14 +303,16 @@ diff -ruN lua-5.0.2-old/src/lib/loadlib.c lua-5.0.2-new/src/lib/loadlib.c
    lua_CFunction f=(lua_CFunction) dlsym(lib,init);
 --- lua-5.0.2-old/src/lib/liolib.c	2003-10-01 15:16:49.000000000 +0200
 +++ lua-5.0.2-new/src/lib/liolib.c	2004-08-26 11:42:11.000000000 +0200
-@@ -46,6 +46,10 @@
+@@ -46,6 +46,12 @@
  
  #ifndef USE_POPEN
  #define USE_POPEN	0
 +#else
-+#include <sys/types.h>
-+#include <unistd.h>
-+#include <sys/wait.h>
++  #if !defined(WIN32)
++    #include <sys/types.h>
++    #include <unistd.h>
++    #include <sys/wait.h>
++  #endif
  #endif
  
  
@@ -319,8 +321,8 @@ diff -ruN lua-5.0.2-old/src/lib/loadlib.c lua-5.0.2-new/src/lib/loadlib.c
  }
  
 +static int io_dpopen(lua_State*l){
-+#if !USE_POPEN
-+  luaL_error(L, "`dpopen' not supported");
++#if !defined(USE_POPEN) || defined(WIN32)
++  luaL_error(l, "`dpopen' not supported");
 +  return 0;
 +#else
 +	#define READ	0

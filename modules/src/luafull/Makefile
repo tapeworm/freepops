@@ -1,51 +1,91 @@
 include $(CONFIG)
 
-HCFLAGS += -I$(PREFIX)/include -I. -DUSE_POPEN=1 \
+
+ifeq "$(OS)" "Windows"
+CFLAGS += -I$(PREFIX)/include -I. \
+	-DUSE_DLOPEN=1
+else
+CFLAGS += -I$(PREFIX)/include -I. -DUSE_POPEN=1 \
 	-DUSE_DLOPEN=1 -DUSE_READLINE=1 -DLUA_USERCONFIG=\"saconfig.c\"
-HLDFLAGS += -L$(PREFIX)/lib
+endif
+
+
+LDFLAGS += -L$(PREFIX)/lib
 ifeq "$(OS)" "FreeBSD"
-	HLDFLAGS+= -llua-host -llualib-host -lm
+	LDFLAGS+= -llua -llualib -lm
 else
  ifeq "$(OS)" "OpenBSD"
- 	HLDFLAGS+= -llua-host -llualib-host -lm
+ 	LDFLAGS+= -llua -llualib -lm
  else
    ifeq "$(OS)" "Cygwin"
- 	HLDFLAGS+= -llua-host -llualib-host -lm
+ 	LDFLAGS+= -llua -llualib -lm
    else
- 	HLDFLAGS+= -llua-host -llualib-host -lm -ldl
+ 	LDFLAGS+= -llua -llualib -lm -ldl
    endif
  endif
 endif
 
 ifeq "$(OS)" "Darwin"
-HLDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
+LDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluaexpat -lregularexp_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lbase64 \
 	-lregularexp -llog -llist \
 	-L/sw/lib/ -lexpat -lcurl -lreadline -lhistory #-lcurses #-lncurses
 else
-HLDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
+ifeq "$(OS)" "Windows"
+LDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
+	-lluaexpat -lregularexp_lua \
+	-lbase64_lua -lstringhack_lua -lcurl_lua \
+	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
+	-lbase64 -lcurl -llog -llist -loscompatibility \
+	-lpthread -lregex -lwsock32
+else
+LDFLAGS+= -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluaexpat -lregularexp_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
 	-lbase64 -lcurl -llog -llist -lreadline -lhistory -lcurses -lncurses
 endif
+endif
 
+ifeq "$(OS)" "Windows"
+	BINARIZE=echo -en \
+		"\\043\\041/bin/sh\nwine $(PREFIX)/bin/luafull.exe \\044\\100">\
+		luafull;\
+		chmod a+x luafull
+	BINARY=luafull.exe
+	INST=cp luafull* $(PREFIX)/bin || true;\
+	     ln -s $(PREFIX)/lib/libpthread.dll $(PREFIX)/bin/;\
+	     ln -s $(PREFIX)/lib/libpthread.dll $(PREFIX)/..;\
+	     ln -s /usr/local/cross-tools/i386-mingw32msvc/bin/expat.dll \
+	     	$(PREFIX)/bin/;\
+ 	     ln -s /usr/local/cross-tools/i386-mingw32msvc/bin/expat.dll \
+	     	$(PREFIX)/..;\
+	     ln -s /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl-3.dll \
+	       $(PREFIX)/bin/;\
+	     ln -s /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl-3.dll \
+	       $(PREFIX)/..
+else
+	BINARIZE=
+	BINARY=luafull
+	INST=cp luafull $(PREFIX)/bin || true
+endif
 H=@
 
 all: $(PREFIX)/bin/luafull
 	$(H)echo -n
 	
 $(PREFIX)/bin/luafull: luafull
-	$(H)cp luafull $(PREFIX)/bin || true
+	$(H)$(INST)
 	
 luafull:
 	$(H)echo -n ' building luafull... '
 	$(H)[ -f ../../lib/liblua-host.a ] && \
 		( $(RANLIB) ../../lib/liblua-host.a; \
 		  $(RANLIB) ../../lib/liblualib-host.a )
-	$(H)$(HCC) $(HCFLAGS) -o luafull lua.c $(HLDFLAGS) || true
+	$(H)$(CC) $(CFLAGS) -o $(BINARY) lua.c $(LDFLAGS) || true
+	$(H)$(BINARIZE)
 	$(H)echo "done."
 
 clean:

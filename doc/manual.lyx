@@ -5222,7 +5222,7 @@ config.lua
 \family default 
  file or on the fly using 
 \family typewriter 
-user@domain?pama1=value1&...&paramN=valueN
+user@domain?param1=value1&...&paramN=valueN
 \family default 
  as described in the plugins chapter.
  For the plugin writer there is no difference between the two passing mechanisms.

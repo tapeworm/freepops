@@ -5308,7 +5308,7 @@ config.lua
 \family default 
  o al volo usando 
 \family typewriter 
-user@domain?pama1=value1&...&paramN=valueN
+user@domain?param1=value1&...&paramN=valueN
 \family default 
  come descritto nel capitolo sui plugin.
  Per l'autore di plugin non c'è differenza tra i due metodi.

@@ -584,6 +584,7 @@ if (lua_type(L,-2) != LUA_TNUMBER)
 		"first one is not a number");
 
 rc = (size_t)lua_tonumber(L,-2);
+/*
 if( rc != dimension  ) {
 	if ( lua_type(L,-1) == LUA_TSTRING)
 		L_error(L,"write_cb returned %d that is not the expected %d"
@@ -592,7 +593,7 @@ if( rc != dimension  ) {
 		L_error(L,"write_cb returned %d that is not the expected %d"
 		 ", no error message",rc,dimension);
 }
-
+*/
 lua_pop(L,2);
 
 return rc;
@@ -626,6 +627,7 @@ if (lua_type(L,-2) != LUA_TNUMBER)
 		"first one is not a number");
 
 rc = (size_t)lua_tonumber(L,-2);
+/*
 if( rc != dimension  ) {
 	if ( lua_type(L,-1) == LUA_TSTRING)
 		L_error(L,"head_cb returned %d that is not the expected %d"
@@ -634,7 +636,7 @@ if( rc != dimension  ) {
 		L_error(L,"head_cb returned %d that is not the expected %d"
 		 ", no error message",rc,dimension);
 }
-
+*/
 lua_pop(L,2);
 
 return rc;
@@ -668,6 +670,7 @@ if (lua_type(L,-2) != LUA_TNUMBER)
 		"first one is not a number");
 
 rc = (size_t)lua_tonumber(L,-2);
+
 if(rc != 0) {
 	/* we have data to send */
 	if ( rc > dimension )

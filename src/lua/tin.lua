@@ -306,10 +306,10 @@ function top_cb(global,data)
 
 		-- check if we need to stop (in top only)
 		if global.a:check_stop(global.lines_requested) then
-			--print("TOP more than needed")
 			purge = true
 			global.lines = -1
-			return len,nil
+			-- trucate it!
+			return 0,nil
 		else
 			global.lines = global.lines_requested - 
 				global.a:current_lines()
@@ -767,10 +767,13 @@ function top(pstate,msg,lines,data)
 	end
 
 	-- go!
+	support.do_until(retrive_f,check_f,action_f)
 	if not support.do_until(retrive_f,check_f,action_f) then
-		log.error_print("Top failed\n")
-		session.remove(key())
-		return POPSERVER_ERR_UNKNOWN
+		if global.lines ~= -1 then
+			log.error_print("Top failed\n")
+			session.remove(key())
+			return POPSERVER_ERR_UNKNOWN
+		end
 	end
 
 	return POPSERVER_ERR_OK

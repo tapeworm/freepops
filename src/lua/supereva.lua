@@ -13,7 +13,7 @@ PLUGIN_VERSION = "0.0.6"
 PLUGIN_NAME = "Supereva web mail"
 PLUGIN_REQUIRE_VERSION = "0.0.20"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=supereva.lua"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=supereva.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net"
 PLUGIN_AUTHORS_NAMES = {"Andrea Dalle Molle","Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"Tund3r (at) fastwebnet (dot) it",

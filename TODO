@@ -11,3 +11,5 @@ next release 0.0.6
 	provare SSL
 	add the header to each source file
 	document KERNEL.LUA, LYCOS.LUA
+	fix cleaning header in lycos... some residuate of a multilyne mime 
+		header may remain

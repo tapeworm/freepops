@@ -367,7 +367,7 @@ function user(pstate, username)
   local mbox = (freepops.MODULE_ARGS or {}).folder or globals.strInbox
   if mbox == "bulk" or mbox == "Bulk" or mbox == "Anti-spam" or mbox == "antispam" then
     mbox = globals.strBulk
-  elseif mbox == "InArrivo" or mbox == "inarrivo" then
+  elseif mbox == "In Arrivo" or mbox == "InArrivo" or mbox == "inarrivo" then
     mbox = globals.strInbox
   elseif mbox == "Bozza" or mbox == "bozza" then
     mbox = globals.strDraft

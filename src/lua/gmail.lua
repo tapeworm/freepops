@@ -215,7 +215,10 @@ function gmail_login()
 	--	log.error_print("Login failed\n")
 	--	return POPSERVER_ERR_AUTH
 	--end
-	
+	if f == nil then
+		log.error(e)
+		return POPSERVER_ERR_UNKNOWN
+	end
 	-- get the cookie value
 	internal_state.cookie_sid = (b:get_cookie("SID")).value
 	internal_state.cookie_val = (b:get_cookie("GV")).value

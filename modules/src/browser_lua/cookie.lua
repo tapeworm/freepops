@@ -372,8 +372,8 @@ function cookie.get(t,res,domain,host)
 	table.foreach(r,function(_,w)
 		if w.c.name ~= nil then
 			s = s .. "; " .. w.c.name .. "=" .. w.c.value 	
-		else
-			print("ask russell why he added this check")
+			--else
+			--print("ask russell why he added this check")
 		end
 	--	if w.c.domain then
 	--		s = s .. '; $Domain = "' .. w.c.domain .. '"'

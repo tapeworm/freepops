@@ -1,4 +1,5 @@
 25/12/2004 0.0.23
+- updated kernel.lua plugin
 - es: *** empty log message *** (lisar314)
 - tre.lua: Added folder parameter, now use curl for basic auth, added support for three.com.au and others (To be tested) (dpeddi)
 - hotmail.lua: added mailcom and fixed hotmail.it (gareuselesinge)

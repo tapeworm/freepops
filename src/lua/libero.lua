@@ -744,7 +744,7 @@ function init(pstate)
 	if freepops.dofile("browser.lua") == nil then 
 		return POPSERVER_ERR_UNKNOWN 
 	end
-		
+
 	return POPSERVER_ERR_OK
 end
 

@@ -140,7 +140,7 @@ luaopen_loadlib(tmp->l);
 luay_emptystack(tmp->l);
 
 //open debug libs
-tolua_log_lua_open(tmp->l);
+luaopen_log(tmp->l);
 luay_emptystack(tmp->l);
 
 #define FREEPOPSLUA_FILE "freepops.lua"

@@ -1,3 +1,4 @@
+- fixed XML generation. no more escaped entities
 - fixed out of boud RETR don't send . bug (thanks ramik for submitting)
 - fix per yahoo (ramik)
 - fix for gmail: modified dele actions for default folders, fix for message

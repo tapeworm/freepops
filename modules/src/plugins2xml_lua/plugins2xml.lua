@@ -181,7 +181,7 @@ setfenv(extractor_function,restricted_enviroment)
 
 plugins2xml.main = function(file)
 	plugins2xml.extractor_function(file)
-	print(table2xml.table2xml(plugin_Txml))
+	print(table2xml.table2xml(plugin_Txml,nil,nil,true))
 end
 
 -- since this can be loaded as plugin it must have at least the init function

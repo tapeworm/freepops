@@ -22,7 +22,12 @@ local Private = {}
 -- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
 --============================================================================--
 
-function Private.escape(s)
+function Private.escape(s,unescape)
+	
+   	--print("Parameters",s,unescape)
+	
+	if unescape == true then return s end
+	
 	return (string.gsub(s,[[([><"'&])]],function(x)
 		if x == ">" then
 			return "&gt;"
@@ -60,7 +65,7 @@ function Private.escape_ns(s,c)
 	end
 end
 
-function Private.table2xml_aux(t,oc,c,indent)
+function Private.table2xml_aux(t,oc,c,indent,unescape)
 	if t == nil then
 		return true
 	end
@@ -95,7 +100,7 @@ function Private.table2xml_aux(t,oc,c,indent)
 	-- serializing
 	if data ~= nil and name == nil and not son then
 		-- we have a pcdata field
-		oc:write(Private.escape(data))
+		oc:write(Private.escape(data,unescape))
 		return true 
 	else	
 		-- the parameter table
@@ -104,7 +109,7 @@ function Private.table2xml_aux(t,oc,c,indent)
 			if k ~= "tag_name" and type(k) ~= "number" then
 				k = Private.escape_ns(k,c)
 				table.insert(pt,' '..k..'="'..
-					Private.escape(v)..'"') 
+					Private.escape(v,unescape)..'"') 
 			end 
 		end)
 		name = Private.escape_ns(name,c)
@@ -119,7 +124,8 @@ function Private.table2xml_aux(t,oc,c,indent)
 			end
 			table.foreachi(t,function(_,v)
 				local f,err = 
-					Private.table2xml_aux(v,oc,c,indent+2)
+					Private.table2xml_aux(v,oc,c,
+						indent+2,unescape)
 				if f == nil then
 					return nil,err
 				end
@@ -145,8 +151,9 @@ table2xml = {}
 -- @param escape_namespace string ":" is the good one, 
 -- if not provided no namespacing escaping is done, read no 
 -- <tt>__</tt> are converted.
+-- @param unescape boolean true to not escape XML entities
 -- @return string an XML string.
-function table2xml.table2xml(t,escape_namespace,encoding)
+function table2xml.table2xml(t,escape_namespace,encoding,unescape)
 	fake_file = {s={}}
 	function fake_file.write(self,...)
 		table.insert(self.s,table.concat(arg))
@@ -155,9 +162,12 @@ function table2xml.table2xml(t,escape_namespace,encoding)
 		return table.concat(self.s)
 	end
 	
+	--print("Parameters",t,escape_namespace,encoding,unescape)
+	
 	fake_file:write('<?xml version="1.0" encoding="'..
 		(encoding or 'iso-8859-1')..'" ?>\n')
-	local f,err = Private.table2xml_aux(t,fake_file,escape_namespace,0)
+	local f,err = 
+		Private.table2xml_aux(t,fake_file,escape_namespace,0,unescape)
 	if f == nil then
 		print("ERROR: " .. err)
 	end

@@ -1236,11 +1236,11 @@ return 0;
  * curl_easy_cleanup
  *
  */ 
-static int luacurl_encode(lua_State* L) {
+static int luacurl_escape(lua_State* L) {
 const char* data = luaL_checkstring(L,1);
 size_t len = lua_strlen(L,1);
 char * tmp;
-L_checknarg(L,1,"encode wants 1 argument (string)");
+L_checknarg(L,1,"escape wants 1 argument (string)");
 
 tmp = curl_escape(data,len);
 
@@ -1257,7 +1257,7 @@ return 1;
  */ 
 static const struct luaL_reg curl_f [] = {
   {"easy_init",luacurl_easy_init},
-  {"encode",luacurl_encode},
+  {"escape",luacurl_escape},
   {NULL,NULL}
 };
 

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9"
+PLUGIN_VERSION = "0.0.9a"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -105,6 +105,10 @@ local globals = {
   -- Pattern used by Stat to get the next page in the list of messages
   --
   strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
+
+  -- Pattern used to detect a bad STAT page.
+  --
+  strMsgListGoodBody = 'i%.p%.attach%.gif',
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -318,7 +322,7 @@ function loginHotmail()
   if str ~= nil then
     internalState.strMBox = globals.strFolderPrefix .. 
       string.sub(internalState.strMBox, 2, -1) 
-    log.dbg("Hotmail - Using old folder names (" .. internalState.strMBox .. ")")
+    log.dbg("Hotmail - Using new folder names (" .. internalState.strMBox .. ")")
   end
 
   -- Note the time when we logged in
@@ -912,6 +916,12 @@ function stat(pstate)
         nTotMsgs = tonumber(nTotMsgs)
       end
       log.dbg("Total messages in message list: " .. nTotMsgs)
+    end
+
+    -- Make sure the page is valid
+    -- 
+    if string.find(body, globals.strMsgListGoodBody) == nil then
+      return nil, "Hotmail returned with an invalid page."
     end
 	
     return body, err

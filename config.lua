@@ -43,6 +43,8 @@ freepops.MODULES_MAP["ziobudda.net"] 	= {name="aggregator.lua",
 						args={host="http://www.ziobudda.net/headlines/head.rdf"}}
 freepops.MODULES_MAP["punto-informatico.it"] 	= {name="aggregator.lua",
 						args={host="http://punto-informatico.it/fader/pixml.txt"}}
+freepops.MODULES_MAP["linuxdevices.com"] 	= {name="aggregator.lua",
+						args={host="http://www.linuxdevices.com/backend/headlines.rdf"}}
 
 -- -------------------------------------------------------------------------- --
 -- Customize here the paths for .lua and .so files

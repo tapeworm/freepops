@@ -118,7 +118,7 @@ end
 -- Build a mail header date string
 --
 function build_date(str)
-	return(os.date("%a, %d %b %Y %H:%M:%S +0100"))
+	return(os.date("%a, %d %b %Y %H:%M:%S"))
 	
 end
 

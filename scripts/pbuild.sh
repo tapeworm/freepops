@@ -59,6 +59,7 @@ done
 
 function prepare_dsc(){
 #dpkg-source -b freepops-*
+true
 }
 
 function prepare_tgz(){

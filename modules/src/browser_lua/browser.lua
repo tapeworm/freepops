@@ -270,6 +270,12 @@ end
 -- to handle local redirect
 function Hidden.mangle_location(self,loc)
 	if loc == nil then return nil end
+	-- some shit has a not RFC compliant header
+	local x = string.find(loc,"^[Hh/]")
+	if x == nil then 
+		loc = "/" .. loc
+	end
+	-- now find where we have to go!
 	if string.byte(loc,1) == string.byte("/",1) then
 		local u = cookie.parse_url(self.referrer)
 		return u.scheme .. "://" .. u.host .. ":" .. 

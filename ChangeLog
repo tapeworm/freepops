@@ -1,5 +1,9 @@
 09/07/2004 0.0.12 fix release
 - added link tag support to aggregator plugin
+- added spam/AV tutorial to the manual
+- added some gmail fixes
+- added LAN tutorial to the manual
+- added some extra checks to browser's mangle location
 08/07/2004 0.0.11 feature/fix release (never released officially)
 - added base tutorials to manual
 - added pubDate tag support to aggregator plugin

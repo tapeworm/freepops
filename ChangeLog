@@ -1,3 +1,4 @@
+08/10/2004 0.0.19 fix release (win feature release)
 - added pegasus manual to win installer
 - finished win service with manual alinks
 - fixed aggregator.lua

@@ -74,6 +74,7 @@ freepops.MODULES_MAP["jp.aol.com"]	= {name="aol.lua"}
 freepops.MODULES_MAP["aol.com.uk"]	= {name="aol.lua"}
 freepops.MODULES_MAP["aol.ca"]		= {name="aol.lua"}
 freepops.MODULES_MAP["aola.com"]	= {name="aol.lua"}
+freepops.MODULES_MAP["netscape.com"] = {name="aol.lua"}
 
 -- squirrelmail
 freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}

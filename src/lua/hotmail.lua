@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.6"
+PLUGIN_VERSION = "0.0.6a"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -103,7 +103,7 @@ local globals = {
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
-  strNewFolderPattern = "(00000000-0000-0000-0000-000)",
+  strNewFolderPattern = "(curmbox=0)",
   strFolderPrefix = "00000000-0000-0000-0000-000",
 
   strInbox = "F000000001",
@@ -305,6 +305,7 @@ function loginHotmail()
   if str ~= nil then
     internalState.strMBox = globals.strFolderPrefix .. 
       string.sub(internalState.strMBox, 2, -1) 
+    log.dbg("Hotmail - Using old folder names (" .. internalState.strMBox .. ")")
   end
 
   -- Note that we have logged in successfully

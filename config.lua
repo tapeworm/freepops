@@ -2,6 +2,11 @@
 --<=                    FREEPOPS CONFIGURATION FILE                         =>--
 --<==========================================================================>--
 
+-- Here we have 3 sections:
+--    1) mail-address -> module binding
+--    2) accept/reject policy
+--    3) paths for .lua/.so files
+
 -- -------------------------------------------------------------------------- --
 -- Map for domains -> modules
 --
@@ -117,6 +122,35 @@ freepops.MODULES_MAP["games.gamespot.com"] 	= {
 freepops.MODULES_MAP["news.gamespot.com"] 	= {
 	name="aggregator.lua",
 	args={host="http://www.gamespot.com/misc/rss/gamespot_updates_news.xml"}
+}
+
+-- -------------------------------------------------------------------------- --
+-- Policy
+--
+-- Here you tell freepops which email addresses are accepted and which rejected
+-- Consider that if the address fits the accepted list it is accepted even if  
+-- would fit the reject list.
+--
+-- Note that the expressions should match the full line but not contain the 
+-- ^ or $ delimiters. Lua string matching facility is used and the capture 
+-- created will be "^(" .. your expression here .. ")$". nil capture means not
+-- matched.
+--
+
+
+freepops.ACCEPTED_ADDRESSES = {
+	-- empty table means that there is no address that is accepted
+	-- without looking at the rejected list
+
+	-- "example@foo.xx" -- use this to allow this particular mail address
+	-- ".*@foo.xx" -- accept everythig at the foo.xx domain
+}
+
+freepops.REJECTED_ADDRESSES = {
+	-- empty table means to allow everybody
+
+	-- "example@foo.xx" -- reject this guy
+	-- ".*@foo.xx" -- reject the full foo.xx domain
 }
 
 -- -------------------------------------------------------------------------- --

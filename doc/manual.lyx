@@ -294,6 +294,15 @@ Later you will learn that plugins are associated with a mail address domain,
  Read the plugin documentation for more info about them, and maybe send
  as a mail with your new alias if you want it to be integrated in the next
  FreePOPs release.
+\layout Standard
+
+Since version 0.0.11 the 
+\family typewriter 
+config.lua
+\family default 
+ file has a policy section.
+ In this section you can ban or allow classes of mail addresses.
+ This may be useful to network administrators.
 \layout Section
 
 FreePOPs command line parameters

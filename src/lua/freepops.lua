@@ -115,6 +115,7 @@ loadlib = freepops.loadlib
 
 -- load needed module for handling domain
 freepops.load_module_for = function (mailaddress)
+	-- helpers
 	local function err_format(dom,mail) 
 		return string.format(
 			"Unable to find a module that handles '%s' domain,"..
@@ -155,6 +156,27 @@ freepops.load_module_for = function (mailaddress)
 	*************************************************************
 ]]
 	end
+	
+	-- preventive check
+	local accept,why = freepops.match_address(mailaddress,
+		freepops.ACCEPTED_ADDRESSES)
+
+	if not accept then
+		local reject,why = freepops.match_address(mailaddress,
+			freepops.REJECTED_ADDRESSES)
+		if reject then
+			log.say("Rejecting '" .. mailaddress .. 
+				"' cause matched '" .. why .."'\n")
+			return nil -- ERR
+		end
+	else
+		log.dbg("Accepting '" .. mailaddress .. 
+			"' cause matched '" .. why .."'\n")
+	end
+
+	table.foreach(log,print)
+
+	-- the stuff
 	local domain = freepops.get_domain(mailaddress)
 	local module,args = freepops.choose_module(domain)
 	if module == nil then
@@ -262,6 +284,26 @@ function freepops.need_ssl()
 	
 		log.say(s.."\n")
 		error(s)
+	end
+end
+
+
+-- checks if the address a is matched by the strings defined in table t
+function freepops.match_address(a,t)
+	local why = ""
+	local rc = table.foreach(t,function(k,v)
+		local capt = "^(" .. v .. ")$"
+		local _,_,x = string.find(a,capt)
+		if x ~= nil then 
+			why = v
+			return true
+		end
+	end)
+	
+	if rc then 
+		return rc,why
+	else
+		return false,nil
 	end
 end
 

@@ -8,7 +8,7 @@ help:
 	$(H)echo
 	$(H)echo "here we build all the distributed packages"
 	$(H)echo
-	$(H)echo "Targets are: all dist-{osx,win,deb,rpm,gen,tgz}"
+	$(H)echo "Targets are: all dist-{osx,win,deb,rpm,gen,tgz,obsd}"
 	$(H)echo
 
 all: dist-deb dist-rpm dist-win dist-gen
@@ -22,7 +22,7 @@ dist-win: freepops-$(VERSION).tar.gz
 		tar -xzf freepops-$(VERSION).tar.gz -C _win_
 	$(H)cd _win_/freepops-$(VERSION);\
 		./configure.sh win;\
-		$(MAKE) all;
+		make all;
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
@@ -50,7 +50,7 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)xpm2wico -f freepops-remove.xpm _win_/freepops/freepops-remove.ico
 
 	$(H)cd _win_/freepops/;\
-		wine /usr/local/NSIS/$(MAKE)nsis.exe freepops.nsi
+		wine /usr/local/NSIS/makensis.exe freepops.nsi
 	
 	$(H)mkdir ../dist-win || true
 	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe ../dist-win
@@ -60,7 +60,7 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)/usr/local/cross-tools/i386-mingw32msvc/bin/strip \
 		_win_/freepops/*.exe _win_/freepops/*.dll
 	$(H)cd _win_/freepops/;\
-		wine /usr/local/NSIS/$(MAKE)nsis.exe freepops.nsi
+		wine /usr/local/NSIS/makensis.exe freepops.nsi
 	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe \
 		../dist-win/FreePOPs-$(VERSION)-SSL.exe
 	
@@ -104,7 +104,7 @@ dist-deb: freepops-$(VERSION).tar.gz
 
 dist-osx:
 	$(H)cd ..;./configure.sh osx || true
-	$(H)cd ..;$(MAKE) all CONFIG=../config
+	$(H)cd ..;make all CONFIG=../config
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
@@ -118,9 +118,17 @@ dist-osx:
 	$(H)cat ../CHANGELOG >> Install_resources/English.lproj/ReadMe.txt
 	$(H)cat ../CHANGELOG >> Install_resources/Italian.lproj/ReadMe.txt
 
+dist-obsd:
+	$(H)cd ..;./configure.sh obsd || true
+	$(H)cd ..;gmake install
+	$(H)cd openbsd;pkg_create -f CONTENTS -c COMMENT -d DESC \
+	-D DISPLAY freepops-$(VERSION)
+	$(H)gzip openbsd/freepops-$(VERSION)
+	$(H)mv openbsd/freepops-$(VERSION).gz freepops-$(VERSION).tgz
+	
 freepops-$(VERSION).tar.gz: 
 	$(H)cd ..;./configure.sh linux || true
-	$(H)$(MAKE) -C .. tgz-dist
+	$(H)make -C .. tgz-dist
 	$(H)cp ../dist-tgz/freepops-$(VERSION).tar.gz .
 	
 	

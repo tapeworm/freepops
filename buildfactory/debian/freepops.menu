@@ -1,6 +1,6 @@
-?package(freepops):needs=text section="Apps/Net"\
+?package(freepops):needs="text" section="Apps/Net"\
   title="freepopsd (start)" command="/usr/bin/freepopsd -v"\
   icon="/usr/share/pixmaps/freepops-32.xpm"
-?package(freepops):needs=text section="Apps/Net"\
+?package(freepops):needs="text" section="Apps/Net"\
   title="freepopsd (stop)" command="/usr/bin/killall freepopsd"\
   icon="/usr/share/pixmaps/freepops-32.xpm"

@@ -1,3 +1,4 @@
+- fixed libero.lua TOP function
 - added scripts/cvs2changelog.lua to generate changelog for the contibuted
 plugins
 - added folder parameter to tin.lua plugin

@@ -4,6 +4,7 @@ WHERE=/usr/local/
 PREFIX=$(DESTDIR)$(WHERE)
 VERSION=$(shell grep "\#define VERSION" config.h | cut -d \" -f 2)
 MAKEFLAGS+=--no-print-directory
+PWD=$(shell pwd)
 
 ifeq "OpenBSD" "$(shell uname)"
 	MAKE=gmake
@@ -37,9 +38,9 @@ all : modules src doc/manual.pdf doc/manual-it.pdf
 clean: 
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)echo "cleaning freepopsd"
-	$(H)$(MAKE) -C src clean CONFIG=$$PWD/config || true
-	$(H)$(MAKE) -C modules clean CONFIG=$$PWD/config || true
-	$(H)$(MAKE) -C buildfactory clean CONFIG=$$PWD/config || true
+	$(H)$(MAKE) -C src clean CONFIG=$(PWD)/config || true
+	$(H)$(MAKE) -C modules clean CONFIG=$(PWD)/config || true
+	$(H)$(MAKE) -C buildfactory clean CONFIG=$(PWD)/config || true
 	$(H)rm -f core* *-stamp dh_clean
 	$(H)rm -f doc/manual.ps doc/manual.pdf\
 		doc/manual-it.ps doc/manual-it.pdf
@@ -50,7 +51,7 @@ realclean: distclean
 	$(H)rm -f config
 	
 doc:
-	$(H)$(MAKE) -C modules doc CONFIG=$$PWD/config
+	$(H)$(MAKE) -C modules doc CONFIG=$(PWD)/config
 
 install: all
 	$(H)mkdir -p $(PREFIX)
@@ -99,17 +100,17 @@ tgz-dist:
 	
 buildfactory:
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
-	$(H)$(MAKE) -C buildfactory all CONFIG=$$PWD/config
+	$(H)$(MAKE) -C buildfactory all CONFIG=$(PWD)/config
 	
 #>----------------------------------------------------------------------------<#
 
 modules: config
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
-	$(H)$(MAKE) -C modules all CONFIG=$$PWD/config
+	$(H)$(MAKE) -C modules all CONFIG=$(PWD)/config
 	
 src: config
 	$(H)echo "building freepopsd"
-	$(H)$(MAKE) -C src all CONFIG=$$PWD/config PREFIX=$(PREFIX)
+	$(H)$(MAKE) -C src all CONFIG=$(PWD)/config PREFIX=$(PREFIX)
 
 doc/manual.pdf: doc/manual.lyx
 	cd doc;	\

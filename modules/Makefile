@@ -1,6 +1,7 @@
 include $(CONFIG)
 include modules
 
+PWD=$(shell pwd)
 
 H=@
 
@@ -12,7 +13,7 @@ FORALL=	for X in $(MODULES); do						\
 		echo "$$NAME $$X";					\
 		$(MAKE) -C src/$$X $$ACTION 				\
 			TARGET=`echo $$X | cut -d "-" -f 1` 		\
-			PREFIX=$$PWD					\
+			PREFIX=$(PWD)					\
 			CONFIG=$(CONFIG);				\
 		if test ! $$? -eq 0 ; then break; fi ;			\
 	done
@@ -37,16 +38,16 @@ clean: src/config
 doc: all
 	$(H)doxygen
 	$(H)mkdir html_lua 2> /dev/null || true
-	$(H)find src -name \*.luadoc -exec cp \{\} $$PWD/html_lua/ \;
-	$(H)cd $$PWD/html_lua/;\
+	$(H)find src -name \*.luadoc -exec cp \{\} $(PWD)/html_lua/ \;
+	$(H)cd $(PWD)/html_lua/;\
 		for X in *.luadoc ; do\
 			mv $$X `basename $$X | \
 				sed s/\.luadoc/_luadoc.lua/`;\
 		done
 	$(H)bin/luadoc  \
-		$$PWD/html_lua/*_luadoc.lua \
-		$$PWD/include/*.lua -d $$PWD/html_lua/
-	$(H)rm $$PWD/html_lua/*_luadoc.lua
+		$(PWD)/html_lua/*_luadoc.lua \
+		$(PWD)/include/*.lua -d $(PWD)/html_lua/
+	$(H)rm $(PWD)/html_lua/*_luadoc.lua
 	
 
 #########################################################################

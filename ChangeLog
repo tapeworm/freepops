@@ -1,3 +1,4 @@
+- added @unforgettable.com to mailcom (thanks tranx)
 - fixed bad &nbsp; in httpmail.lua (thanks Charlie)
 - double - in the manual are now separated by a \hspace{1mm}
 - removed rfcs and contracts from the default tarball since they are not

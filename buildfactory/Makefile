@@ -110,7 +110,7 @@ dist-osx: freepops-$(VERSION).tar.gz
 		tar -xzf freepops-$(VERSION).tar.gz -C _osx_
 	$(H)cd _osx_/freepops-$(VERSION);\
 		./configure.sh osx;\
-	$(H)cd _osx_;$(MAKE) all
+		$(MAKE) all
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
@@ -118,7 +118,7 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)cd _osx_/freepops-$(VERSION);\
 		cp COPYING AUTHORS ChangeLog config.lua ../../../dist-osx/FreePOPs/
 	$(H)cd _osx_/freepops-$(VERSION)/doc;\
-		cp LP-FP-HOWTO.txt MANUAL ../../../../dist-osx/FreePOPs/doc/
+		cp LP-FP-HOWTO.txt MANUAL.txt ../../../../dist-osx/FreePOPs/doc/
 	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd;\
 		cp freepopsd ../../../../dist-osx/FreePOPs/src/
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
@@ -127,9 +127,9 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
-	$(H)cat _osx_/freepops-$(VERSION)/CHANGELOG >> osx/Install_resources/English.lproj/ReadMe.txt
+	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt
-	$(H)cat _osx_/freepops-$(VERSION)/CHANGELOG >> osx/Install_resources/Italian.lproj/ReadMe.txt
+	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/Italian.lproj/ReadMe.txt
 	$(H)rm -rf _osx_
 
 osx-app: freepops-$(VERSION).tar.gz Info.plist

@@ -4,9 +4,10 @@ comments = {}
 
 for l in io.stdin:lines() do
 	--print("processo ", l)
-	local _,_,fname = string.find(l,"- ([%a%.]+):")	
-	local _,_,comment = string.find(l,"- [%a%.]+:(.*)")
+	local _,_,fname = string.find(l,"- ([%a%.]*):")	
+	local _,_,comment = string.find(l,"- [%a%.]*:(.*)")
 	--print("ottengo" , fname, comment)
+	--
 	if comments[comment] == nil then
 		comments[comment] = {fname}
 	else

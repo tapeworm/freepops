@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 // common
-#define VERSION 	"0.0.25"
+#define VERSION 	"0.0.26"
 #define PROGRAMNAME	"FreePOPs"
 #define PIDFILE 	"/var/run/freepopsd.pid"
 #define POP3PORT  	2000

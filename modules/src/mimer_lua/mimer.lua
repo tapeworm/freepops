@@ -342,14 +342,14 @@ function Private.send_alternative(body,body_html,send_cb)
 	if rc ~= nil then return rc end
 	
 	rc = send_cb("--"..boundary.."\r\n"..
-		"Content-Type: text/plain\r\n"..
+		"Content-Type: text/plain charset=\"iso-8859-1\"\r\n"..
 		"Content-Transfer-Encoding: quoted-printable\r\n"..
 		"\r\n"..
 		body)
 	if rc ~= nil then return rc end
 	
 	rc = send_cb("--"..boundary.."\r\n"..
-		"Content-Type: text/html\r\n"..
+		"Content-Type: text/html charset=\"iso-8859-1\"\r\n"..
 		"Content-Transfer-Encoding: quoted-printable\r\n"..
 		"\r\n"..
 		body_html)
@@ -439,7 +439,7 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 		if body_html == nil then
 			rc = send_cb("--"..boundary.."\r\n"..
 				"Content-Type: text/plain; "..
-					"charset=us-ascii\r\n"..
+					"charset=\"iso-8859-1\"\r\n"..
 				"Content-Disposition: inline\r\n" ..
 				"Content-Transfer-Encoding: "..
 					"quoted-printable\r\n"..

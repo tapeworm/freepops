@@ -53,6 +53,20 @@ freepops.MODULES_MAP["charter.com"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["compaq.net"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["passport.com"]	= {name="hotmail.lua"}
 
+-- aol
+freepops.MODULES_MAP["aol.com"]		= {name="aol.lua"}
+freepops.MODULES_MAP["aol.com.ar"]	= {name="aol.lua"}
+freepops.MODULES_MAP["aol.fr"]		= {name="aol.lua"}
+freepops.MODULES_MAP["aol.com.mx"]	= {name="aol.lua"}
+freepops.MODULES_MAP["aol.com.au"]	= {name="aol.lua"}
+freepops.MODULES_MAP["aol.de"]		= {name="aol.lua"}
+freepops.MODULES_MAP["aol.com.pr"]	= {name="aol.lua"}
+freepops.MODULES_MAP["aol.com.br"]	= {name="aol.lua"}
+freepops.MODULES_MAP["jp.aol.com"]	= {name="aol.lua"}
+freepops.MODULES_MAP["aol.com.uk"]	= {name="aol.lua"}
+freepops.MODULES_MAP["aol.ca"]		= {name="aol.lua"}
+freepops.MODULES_MAP["aola.com"]	= {name="aol.lua"}
+
 -- squirrelmail
 freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}
 

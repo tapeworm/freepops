@@ -31,13 +31,12 @@
 
 #include "luabox.h"
 
+#include "freepops.h"
+
 #include "log.h"
 #define LOG_ZONE "ENGINE"
 
 /******************************************************************************/
-
-#define B(n)           floor(MAX(log10(n),0) + 1)
-#define MAX(a,b)	(((a)<(b))?(b):(a))
 
 struct popstate_other_t {
 lua_State* l;

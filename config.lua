@@ -40,7 +40,7 @@ freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}
 -- popforward plugin
 --freepops.MODULES_MAP["something.xx"] 	= {
 --	name="popforward.lua",
---	args={port=110,host="in.virgilio.it"}
+--	args={port=110,host="in.virgilio.it",realusername="abcdef"}
 --}
 
 -- kernel.org Changelog plugin

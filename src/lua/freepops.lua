@@ -40,7 +40,7 @@ end
 
 -- function to extract the parameters part of a mailaddress
 freepops.get_args = function (mailaddress)
-	local _,_,ad = string.find(mailaddress,"[^@]+@[^?]+(?.*)")
+	local _,_,ad = string.find(mailaddress,"[^@]+@[^?%s]+([?%s].*)")
 	local args = {}
 	local function extract_arg(s)
 		local from,to = string.find(s,"=")
@@ -73,7 +73,6 @@ freepops.get_args = function (mailaddress)
 		end
 		
 		local name,val = extract_arg(param)
-		print(name,val)
 		if name ~= nil then
 			args[name] = val
 		end
@@ -99,7 +98,13 @@ end
 -- function that maps domains to modules
 freepops.choose_module = function (d)
 	if d == nil then return nil,nil end
-	if freepops.MODULES_MAP[d] == nil then return nil,nil end
+	if freepops.MODULES_MAP[d] == nil then 
+		local _,_,x = string.find(d,"^(%w*%.lua)$")
+		if x == nil then
+			return nil,nil
+		end
+		return d,{}
+	end	
 	return 	freepops.MODULES_MAP[d].name,freepops.MODULES_MAP[d].args
 end
 

@@ -31,7 +31,7 @@
 
 
 \begin_inset ERT
-status Open
+status Collapsed
 
 \layout Standard
 
@@ -572,7 +572,8 @@ something
 .
  This is because FreePOPs chooses the plugin to load by looking at your
  username.
- Later we will present all the plugins and their associated domains.
+ Later we will present all the plugins and their associated domains, and
+ how to create an on the fly binding between a mail address and a domain.
 \layout Subsection
 
 Outlook Express tutorial
@@ -956,7 +957,76 @@ By default under Windows FreePOPs binds on
 Plugins
 \layout Standard
 
-Here we give a detailed description of each plugin.
+Here we give a detailed description of each plugin, but before starting
+ we explain the general way of passin special arguments to plugins (see
+ the specific plugin description for a detailed description of the accepted
+ parameters).
+\layout Subsection
+
+Parameters
+\layout Standard
+
+Each plugin can receive parameters passed as an addon to username.
+ The following username is for the 
+\family typewriter 
+popforward.lua
+\family default 
+ plugin:
+\newline 
+
+\family typewriter 
+gareuselesinge@mydomain.xx?host=pop.mydomain.xx&port=110
+\family default 
+
+\newline 
+Since you may use some antispam proxy or other programs that may handle
+ your username and may dislike the 
+\family typewriter 
+?
+\family default 
+ character you may use a space instead of it.
+ All other character, following 
+\family typewriter 
+?
+\family default 
+, may be escaped for convenience with 
+\family typewriter 
+%XXX
+\family default 
+ where 
+\family typewriter 
+XXX
+\family default 
+ are the numbers reported in the appendix.
+\layout Standard
+
+Another way of hacking with the username is the on the fly domain-plugin
+ binding.
+ You may find usefull to say: 
+\begin_inset Quotes eld
+\end_inset 
+
+I want to use plugin X for domain Y without changing the config.lua file.
+ In this case you have to use the plugin name (for example 
+\family typewriter 
+popforward.lua
+\family default 
+ as the domain name an probably you will have to pass some arguments to
+ the plugin using the previously described procedure.
+ This is an example:
+\newline 
+
+\family typewriter 
+gareuselesinge@popforward.lua?host=pop.mymailsite.xx&port=110
+\family default 
+
+\newline 
+Remember that in the case use use on the fly bindings there will be no default
+ arguments, thus 
+\family typewriter 
+port=110
+\family default 
+ can't be omitted as in the previous example.
 \layout Subsection
 
 libero.lua
@@ -1092,7 +1162,20 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
+Yuo can reach the same result using the passing argument method described
+ in the first paragraph of this chapter.
+ these are the accepted arguments:
+\layout Description
 
+host The pop3 server you want to connect to
+\layout Description
+
+port The pop3 server port, usually 110
+\layout Description
+
+realusername If you bind this plugin on the fly you probably need to specify
+ the real username here, since the username you specifyed contains the plugin
+ name and is probably invalid.
 \layout Subsection
 
 aggregator.lua
@@ -5029,6 +5112,25 @@ mimer.pipe_msg()
  that takes a message header, a text body (in html o plain text format)
  and some attachments uris, that are downloaded on the fly, composed into
  a proper mail message and piped to the mail client.
+\layout Description
+
+Parameters\SpecialChar ~
+to\SpecialChar ~
+modules may be passed from the 
+\family typewriter 
+config.lua
+\family default 
+ file or on the fly using the 
+\family typewriter 
+user@domain?pama1=value1&...&paramN=valueN
+\family default 
+ as described in the plugins chapter.
+ For the plugin writer there is no difference between the two passing mechanisms.
+ The parameters are available to the plugin in the table 
+\family typewriter 
+freepops.MODULE_ARGS
+\family default 
+.
 \layout Section
 
 Submitting a bug

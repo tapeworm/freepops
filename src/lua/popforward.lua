@@ -112,7 +112,8 @@ function user(pstate,username)
 		return POPSERVER_ERR_NETWORK
 	end
 	
-	return single_line("USER "..username,nil)
+	return single_line("USER "..
+		freepops.MODULE_ARGS.realusername or username,nil)
 end
 
 -- Must login

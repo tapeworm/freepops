@@ -264,11 +264,14 @@ function pass(pstate,password)
 
 	-- save the password
 	-- password is the RSS/RDF file URI 
-	if freepops.MODULE_ARGS ~= nil then
-                internal_state.password = freepops.MODULE_ARGS.host
-	else
-		internal_state.password = password
+	if (freepops.MODULE_ARGS ~= nil) then
+		if freepops.MODULE_ARGS.host ~= nil then
+        	        internal_state.password = freepops.MODULE_ARGS.host
+		else
+			internal_state.password = password
+		end
 	end
+
 	
 	if(string.find(internal_state.password,"http://") == nil) then
 		 log.error_print("Not a valid URI: "..internal_state.password.."\n")

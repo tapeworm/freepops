@@ -126,8 +126,9 @@ ifeq "$(OS)" "Cygwin"
 		-lwsock32 -lexpat -lgdi32 -lz -lssl -lcrypto -lcygwin
 else
 ifeq "$(OS)" "BeOS"
-	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
-		-ldl -lpthread $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
+	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
+		-ldl -lpthread $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS) \
+		-lbe -lsocket -lbind
 else
 	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
 		-ldl -lm -lpthread -lcrypto -rdynamic \

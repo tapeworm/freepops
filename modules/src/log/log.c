@@ -194,7 +194,7 @@ int log_init(char* logfile, int sysmode)
 
 #if (defined(WIN32) && !defined(CYGWIN)) || defined(BEOS)
 	if(logfile == NULL)
-		logfile == strdup("log.txt");
+		logfile = strdup("log.txt");
 	
 	log_rotate(logfile);
 	log_file_name=(char*)strdup(logfile);

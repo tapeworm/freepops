@@ -20,7 +20,11 @@ else
    ifeq "$(OS)" "Cygwin"
  	LDFLAGS+= -llua -llualib -lm
    else
+     ifeq "$(OS)" "BeOS"
+        LDFLAGS+= -llua -llualib -ldl
+     else
  	LDFLAGS+= -llua -llualib -lm -ldl
+     endif
    endif
  endif
 endif

@@ -131,7 +131,7 @@ local gmail_string = {
 	next_checkC = '\nD%(%["ts",(%d+),(%d+),(%d+),%d.-%]\n%);',
 	next = "http://gmail.google.com/gmail?"..
 		"search=%s&view=tl&start=%s&init=1&zx=%s",
-	msg_mark = "http://gmail.google.com/gmail?search=inbox&view=tl&start=0",
+	msg_mark = "http://gmail.google.com/gmail?search=%s&view=tl&start=0",
 	-- The piece of uri you must append to delete to choose the messages 
 	-- to delete
 	msg_mark_post = "act=%s&at=%s",
@@ -265,14 +265,14 @@ function gmail_login()
 	local password = internal_state.password
 	local user = internal_state.name
 	local uri = gmail_string.login
-	local post = string.format(gmail_string.login_post,user,password)
-	
+	local post = string.format(gmail_string.login_post,user,curl.escape(password))
+
 	-- the browser must be preserved
 	internal_state.b = browser.new()
 
 	local b = internal_state.b
 
-	--b:verbose_mode()
+	-- b:verbose_mode()
 	b:ssl_init_stuff()
 
 	local extract_f = support.do_extract(
@@ -522,16 +522,23 @@ function quit_update(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 
 	local b = internal_state.b
+	local folder = internal_state.folder
 
 	local Gmail_at = internal_state.gmail_at
 
-	local uri = gmail_string.msg_mark
+	local uri = string.format(gmail_string.msg_mark, folder)
 	-- act = [rd|ur|rc_^i]
 	--        rd = mark as read
 	--        ur = mark as unread
 	--     rc_^i = move to archive
-	--
-	local post=string.format(gmail_string.msg_mark_post,"rc_^i",Gmail_at)
+	--	     tr = move to trash
+
+	local MarkAction = "rc_^i"
+	if folder=="spam" then
+		MarkAction = "tr"
+	end
+
+	local post=string.format(gmail_string.msg_mark_post,MarkAction,Gmail_at)
 
 	-- here we need the stat, we build the uri and we check if we 
 	-- need to delete something
@@ -777,6 +784,7 @@ function retr(pstate,msg,data)
 		
 		-- some local stuff
 		local b = internal_state.b
+		local folder = internal_state.folder
 
 		-- build the uri
 		local uidl = get_mailmessage_uidl(pstate,msg)
@@ -793,7 +801,7 @@ function retr(pstate,msg,data)
 		else
 -- TODO: after sending the message to the client, we need to set it as read
 --       already done, but check if all is ok....
-			uri = gmail_string.msg_mark
+			uri = string.format(gmail_string.msg_mark, folder)
 			local Gmail_at=internal_state.gmail_at
 			local post=string.format(gmail_string.msg_mark_post,
 				"rd",Gmail_at)

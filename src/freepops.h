@@ -1,20 +1,20 @@
 /******************************************************************************
  * $Id$
- * This file is part of liberopops (http://liberopops.sf.net)                 *
+ * This file is part of FreePOPs (http://freepops.sf.net)                     *
  * This file is distributed under the terms of GNU GPL license.               *
  ******************************************************************************/
 
 
 /******************************************************************************/
  /*!
-  * \file   liberopops.h
+  * \file   freepops.h
   * \brief  This file contains some general defines
   * \author Enrico Tassi <gareuselesinge@users.sourceforge.net>
   */
 /******************************************************************************/
 
 
-#ifndef LIBEROPOPS_H
+#ifndef FREEPOPS_H
 
 #include <stdio.h>
 
@@ -44,16 +44,13 @@ extern char *configfile;
 #define HIDDEN static
 
 //! the user configuration dir
-#define CONFDIR 	"/.liberopops/"
-
-//! the user config file
-#define ALT_LIBERO_CONF CONFDIR "libero.cfg"
+#define CONFDIR 	"/.freepops/"
 
 //! the share path
 #ifdef WIN32
-#define LIBEROPOPS_SHARE "./"
+#define FREEPOPS_SHARE "./"
 #else
-#define LIBEROPOPS_SHARE "/usr/share/liberopops/"
+#define FREEPOPS_SHARE "/usr/share/freepops/"
 #endif
 
 #endif

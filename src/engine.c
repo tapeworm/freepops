@@ -1,6 +1,6 @@
 /******************************************************************************
  * $Id$
- * This file is part of liberopops (http://liberopops.sf.net)                 *
+ * This file is part of FreePOPs (http://freepops.sf.net)                     *
  * This file is distributed under the terms of GNU GPL license.               *
  ******************************************************************************/
 

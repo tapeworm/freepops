@@ -605,7 +605,8 @@ qualcosa
 .
  Questo è perché FreePOPs sceglie il plugin da caricare guardando al nome
  utente che deve quindi contenere tutte le informazioni.
- più sotto presentiamo tutti i plugin e i loro domini associati.
+ Più sotto presentiamo tutti i plugin e i loro domini associati e mostriamo
+ come sia possibile creare binding al volo tra un indirizzo email e un dominio.
 \layout Subsection
 
 Tutorial per Outlook Express
@@ -1002,7 +1003,84 @@ Fondamentale per la lan è il
 Plugin
 \layout Standard
 
-Qui diamo una descrizione dettagliata di ogni plugin.
+Qui diamo una descrizione dettagliata di ogni plugin, ma prima di iniziare
+ spieghiamo la maniera generale di passare argomenti speciali ai plugin
+ (leggete la descrizione specifica di un plugin per sapere quali argomenti
+ esso accetta).
+\layout Subsection
+
+Parameters
+\layout Standard
+
+Ogni plugin può ricevere parametri passati come aggiunta allo username.
+ Lo username seguente è per il plugin
+\family typewriter 
+ popforward.lua
+\family default 
+:
+\newline 
+
+\family typewriter 
+gareuselesinge@mydomain.xx?host=pop.mydomain.xx&port=110
+\family default 
+
+\newline 
+Dato che potreste usare qualche proxy antispam o altri programmi che possono
+ maneggiare il vostro username e potrebbero non gradire il carattere 
+\family typewriter 
+?
+\family default 
+ potete usare uno spazio al suo posto.
+ Ogni altro carattere che segue 
+\family typewriter 
+?
+\family default 
+ può essere preceduto per convenienza da 
+\family typewriter 
+%XXX
+\family default 
+ dove 
+\family typewriter 
+XXX
+\family default 
+ sono i numeri riportati nell'Appendice.
+\layout Standard
+
+Un altro modo di fare hacking dello username è con i binding dominio-plugin
+ fatti al volo.
+ Potreste trovare utile dire: 
+\begin_inset Quotes eld
+\end_inset 
+
+Voglio usare il plugin X per il dominio Y senza cambiare il file config.lua
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ In questo caso dovrete usare il nome del plugin (per esempio popforward.lua)
+ come nome di dominio e probabilmente dovrete passargli alcuni argomenti
+ usando la procedura descritta prima.
+ Questo è un esempio:
+\newline 
+
+\family typewriter 
+gareuselesinge@popforward.lua?host=pop.mymailsite.xx&port=110
+\family default 
+
+\newline 
+Ricordate che in caso di uso di binding 
+\begin_inset Quotes eld
+\end_inset 
+
+al volo
+\begin_inset Quotes erd
+\end_inset 
+
+ non ci saranno argomenti di default, quindi 
+\family typewriter 
+port=110
+\family default 
+ non può essere omesso, come nell'esempio precedente.
 \layout Subsection
 
 libero.lua
@@ -1140,7 +1218,20 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
+Potete ottenere gli stessi risultati usando il metodo di passaggio degli
+ argomenti descritto nel primo paragrafo di questo capitolo.
+ Questi sono gli argomenti accettati:
+\layout Description
 
+host Il server pop3 a cui vi volete collegare
+\layout Description
+
+port La porta del server pop3, di solito 110
+\layout Description
+
+realusername Se fate bind di questo plugin al volo probabilmente dovrete
+ specificare il vero username qui, visto che lo username specificato contiene
+ il nome del plugin e sarà quindi non valido.
 \layout Subsection
 
 aggregator.lua
@@ -5109,6 +5200,26 @@ mimer.pipe_msg()
  che prende un header di messaggio, il testo del corpo (in html o testo
  semplice) e gli URI di alcuni attachment, scaricati al volo, composti in
  una vera e propria mail che viene inoltrata al client di posta.
+\layout Description
+
+Parametri\SpecialChar ~
+per\SpecialChar ~
+i\SpecialChar ~
+moduli possono venire passati dal file 
+\family typewriter 
+config.lua
+\family default 
+ o al volo usando 
+\family typewriter 
+user@domain?pama1=value1&...&paramN=valueN
+\family default 
+ come descritto nel capitolo sui plugin.
+ Per l'autore di plugin non c'è differenza tra i due metodi.
+ I parametri sono disponibili per il plugin nella tabella 
+\family typewriter 
+freepops.MODULE_ARGS
+\family default 
+.
 \layout Section
 
 Segnalare un bug
@@ -5507,4 +5618,13 @@ Ringraziamenti
 Ringraziamenti speciali vanno agli utenti che hanno testato il software,
  agli hacker che hanno reso possibile avere un ambiente di sviluppo affidabile
  e libero come il sistema Debian GNU/Linux.
+\layout Section*
+
+Appendice
+\layout Standard
+
+Poiché la tabella ASCII è molto comune, non l'abbiamo inclusa qui.
+ Potete chiedere a google.
+ L'unica cosa che può suonare strana è che usiamo sempre tre cifre, anche
+ per numeri minori di 100.
 \the_end

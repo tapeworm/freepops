@@ -573,7 +573,7 @@ something
  This is because FreePOPs chooses the plugin to load by looking at your
  username.
  Later we will present all the plugins and their associated domains, and
- how to create an on the fly binding between a mail address and a domain.
+ how to create an on-the-fly binding between a mail address and a domain.
 \layout Subsection
 
 Outlook Express tutorial
@@ -958,7 +958,7 @@ Plugins
 \layout Standard
 
 Here we give a detailed description of each plugin, but before starting
- we explain the general way of passin special arguments to plugins (see
+ we explain the general way of passing special arguments to plugins (see
  the specific plugin description for a detailed description of the accepted
  parameters).
 \layout Subsection
@@ -979,13 +979,13 @@ gareuselesinge@mydomain.xx?host=pop.mydomain.xx&port=110
 \family default 
 
 \newline 
-Since you may use some antispam proxy or other programs that may handle
- your username and may dislike the 
+Since you may use some antispam proxy or other program that may handle your
+ username and may dislike the 
 \family typewriter 
 ?
 \family default 
  character you may use a space instead of it.
- All other character, following 
+ Any other character, following 
 \family typewriter 
 ?
 \family default 
@@ -997,22 +997,26 @@ Since you may use some antispam proxy or other programs that may handle
 \family typewriter 
 XXX
 \family default 
- are the numbers reported in the appendix.
+ are the numbers reported in the Appendix.
 \layout Standard
 
-Another way of hacking with the username is the on the fly domain-plugin
+Another way of hacking with the username is the on-the-fly domain-plugin
  binding.
- You may find usefull to say: 
+ You may find useful to say: 
 \begin_inset Quotes eld
 \end_inset 
 
-I want to use plugin X for domain Y without changing the config.lua file.
+I want to use plugin X for domain Y without changing the config.lua file
+\begin_inset Quotes erd
+\end_inset 
+
+.
  In this case you have to use the plugin name (for example 
 \family typewriter 
-popforward.lua
+popforward.lua)
 \family default 
  as the domain name an probably you will have to pass some arguments to
- the plugin using the previously described procedure.
+ the plugin using the procedure previously described.
  This is an example:
 \newline 
 
@@ -1021,8 +1025,8 @@ gareuselesinge@popforward.lua?host=pop.mymailsite.xx&port=110
 \family default 
 
 \newline 
-Remember that in the case use use on the fly bindings there will be no default
- arguments, thus 
+Remember that in the case of the use of on-the-fly bindings there will be
+ no default arguments, thus 
 \family typewriter 
 port=110
 \family default 
@@ -1162,9 +1166,9 @@ end{verbatim}
 end{footnotesize}
 \end_inset 
 
-Yuo can reach the same result using the passing argument method described
+You can reach the same result using the passing argument method described
  in the first paragraph of this chapter.
- these are the accepted arguments:
+ These are the accepted arguments:
 \layout Description
 
 host The pop3 server you want to connect to
@@ -1174,7 +1178,7 @@ port The pop3 server port, usually 110
 \layout Description
 
 realusername If you bind this plugin on the fly you probably need to specify
- the real username here, since the username you specifyed contains the plugin
+ the real username here, since the username you specified contains the plugin
  name and is probably invalid.
 \layout Subsection
 
@@ -3414,7 +3418,7 @@ We have retrieved the HTML using the browser and the
 \family typewriter 
 get_uri()
 \family default 
- method (remember the uri for the inbox was in the login page).
+ method (remember the URI for the inbox was in the login page).
  As you can see the messages are in a table and this table has the same
  structure for each message.
  This is the place in which you may use mlex.
@@ -5110,7 +5114,7 @@ lycos.lua
 mimer.pipe_msg()
 \family default 
  that takes a message header, a text body (in html o plain text format)
- and some attachments uris, that are downloaded on the fly, composed into
+ and some attachments URIs, that are downloaded on the fly, composed into
  a proper mail message and piped to the mail client.
 \layout Description
 
@@ -5120,7 +5124,7 @@ modules may be passed from the
 \family typewriter 
 config.lua
 \family default 
- file or on the fly using the 
+ file or on the fly using 
 \family typewriter 
 user@domain?pama1=value1&...&paramN=valueN
 \family default 
@@ -5507,9 +5511,9 @@ Giacomo Tenaglia
 Thanks
 \layout Standard
 
-Special thanks goes to the users who tested the software, to the hackers
- who made it possible to have a free and reliable development environment
- as the Debian GNU/Linux system.
+Special thanks go to the users who tested the software, to the hackers who
+ made it possible to have a free and reliable development environment as
+ the Debian GNU/Linux system.
 \layout Section*
 
 Appendix
@@ -5517,6 +5521,6 @@ Appendix
 
 Since the ASCII table is really common, we have not included one here.
  You may ask google.
- The only thing that may oud strange is that we use always 3 digits, even
+ The only thing that may sound strange is that we use always 3 digits, even
  for numbers smaller than 100.
 \the_end

@@ -1,3 +1,4 @@
+- fixed building tgz-dist from the sources (not from CVS)
 - fixed owa.lua double stat() (thanks hetfield)
 - added owa.lua for httpmail based webmails
 - added some methods to browser to easily implement DAV

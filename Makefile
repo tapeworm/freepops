@@ -84,16 +84,19 @@ uninstall:
 
 tgz-dist: 
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
-	$(H)cd ..;\
-		tar -czf freepops.tgz freepops
-	$(H)[ -d dist-tgz ] || mkdir dist-tgz;\
-		mv ../freepops.tgz dist-tgz/
-	$(H)cd dist-tgz/;\
+	$(H)CUR=`pwd`;\
+		BASE=`basename $$CUR`;\
+		cd ..;\
+		tar -czf freepops.tgz $$BASE;\
+		cd $$BASE;\
+		[ -d dist-tgz ] || mkdir dist-tgz;\
+		mv ../freepops.tgz dist-tgz/;\
+		cd dist-tgz/;\
 		tar -xzf freepops.tgz;\
 		rm freepops.tgz;\
-		cd freepops; $(MAKE) realclean;cd ..;\
-		find freepops -name CVS -exec rm -fr \{\} \; 2>/dev/null;\
-		mv freepops freepops-$(VERSION);\
+		cd $$BASE; $(MAKE) realclean;cd ..;\
+		find $$BASE -name CVS -exec rm -fr \{\} \; 2>/dev/null;\
+		mv $$BASE freepops-$(VERSION) || true;\
 		tar -cf freepops-$(VERSION).tar freepops-$(VERSION);\
 		gzip -9 freepops-$(VERSION).tar;\
 		rm -r freepops-$(VERSION)

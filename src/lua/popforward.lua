@@ -30,7 +30,7 @@ PLUGIN_PARAMETERS = {
 		en = [[The POP3 server hostname. You can specify the port in the hostname:portnumber way.]],}	
 	},
 	{name = "port", description = {
-		it = [[Per specificare la ports dell'host a cui connettersi, se non gia' specificato in host con i :]],
+		it = [[Per specificare la porta dell'host a cui connettersi, se non gia' specificato in host con i :]],
 		en = [[To choose to server port to connect to. Use this if you have not specifyed the port in the host parameter.]],}	
 	},
 	{name = "pipe", description = {

@@ -1,4 +1,4 @@
-
+- added games.gamespot.com and news.gamespot.com aggregator domains
 - updated the website with FAQ section
 - documentation for curl_lua and psock
 - moved popforward from luasocket to psock (poor but works)

@@ -84,6 +84,16 @@ freepops.MODULES_MAP["gaim.sf.net"] 	= {
 	args={host="http://gaim.sourceforge.net/rss.php/news"}
 }
 
+freepops.MODULES_MAP["games.gamespot.com"] 	= {
+	name="aggregator.lua",
+	args={host="http://www.gamespot.com/misc/rss/gamespot_updates_all_games.xml"}
+}
+
+freepops.MODULES_MAP["news.gamespot.com"] 	= {
+	name="aggregator.lua",
+	args={host="http://www.gamespot.com/misc/rss/gamespot_updates_news.xml"}
+}
+
 -- -------------------------------------------------------------------------- --
 -- Customize here the paths for .lua and .so files
 --

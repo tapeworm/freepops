@@ -1115,6 +1115,51 @@ http://liberopops.sourceforge.net
 
 Per usare questo plugin dovete usare il vostro indirizzo email completo
  come username e la vostra password reale come password.
+ Questo plugin accetta i seguenti parametri:
+\layout Description
+
+folder serve per selezionare la cartella (
+\family typewriter 
+inbox
+\family default 
+ è quella di default) su cui operare.
+ Le cartelle standard disponibili sono 
+\family typewriter 
+draft
+\family default 
+, 
+\family typewriter 
+inbox
+\family default 
+, 
+\family typewriter 
+outbox
+\family default 
+, 
+\family typewriter 
+trash
+\family default 
+.
+ Se hai creato delle cartelle dalla webmail allora puoi accedervi usando
+ il loro nome.
+ Se la cartella non è al livello principale puoi accederci usando una 
+\family typewriter 
+/
+\family default 
+ per separala dalla cartella padre.
+ Questo e' un esempio di uno username per leggere la cartella 
+\family typewriter 
+son
+\family default 
+, che è una sottocartella della cartella 
+\family typewriter 
+father
+\family default 
+:
+\newline 
+
+\family typewriter 
+foo@libero.it?folder=father/son
 \layout Subsection
 
 tin.lua 
@@ -1303,7 +1348,7 @@ qualcosa@aggregatordomain
 \newline 
 
 \begin_inset  Tabular
-<lyxtabular version="3" rows="13" columns="2">
+<lyxtabular version="3" rows="14" columns="2">
 <features>
 <column alignment="left" valignment="top" leftline="true" width="0">
 <column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
@@ -1616,6 +1661,32 @@ news (Inglese)
 \end_inset 
 </cell>
 </row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+mozillaitalia.org
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\family typewriter 
+\size footnotesize 
+http://www.mozillaitalia.org 
+\family default 
+news (Italiano)
+\end_inset 
+</cell>
+</row>
 <row topline="true" bottomline="true">
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -1878,7 +1949,10 @@ username#export@gmail.com
 gmail_contacts_export.csv
 \family default 
  che può essere importato nel tuo mail client preferito verrà generato nella
- tua home (Unix) o nella directory di FreePOPs (Windows).
+ tua home (Unix) o nella directory Documenti (Windows).
+ Per usare questo plugin hai bisogno della versione di FreePOPs con SSL
+ (per Windows scarica FreePOPs-X.Y.Z-SSL.exe, per Unix probabilmente devi installar
+e openssl).
 \layout Section
 
 Creare un plugin

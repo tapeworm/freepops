@@ -9,11 +9,7 @@ next release 0.0.13
 	problemi login tin(aspetta ethereal)
 	on the fly generation of ps in /doc from jpg
 	edit categorization in SF (add openbsd)
-	gmail saves exported addressbook to My Documents (fix manual)
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
-	aggiungi che GMAIL vuole SSL nel manuale e nel sito
-	aggiungere nel manuale dominio mozillaitalia.org per aggregator
 ++++	aggiungi il parametro folder anche a libero (FATTO) e 
 		eventualmente altre webmail in cui sia facile supportarlo.
-	traduci 6.1

@@ -195,7 +195,7 @@ function build_mail_header(title,uidl,mydate)
 		" plugin "..PLUGIN_VERSION.."\r\n"..
 	"MIME-Version: 1.0\r\n"..
 	"Content-Disposition: inline\r\n"..
-	"Content-Type: text/plain;   charset=\""..charset.."\"\r\n"..
+	"Content-Type: text/plain; charset=\""..charset.."\"\r\n"..
 	-- This header cause some problems with link like [...]id=123[...]
 	-- "Content-Transfer-Encoding: quoted-printable\r\n"..
 	"\r\n"..
@@ -402,7 +402,7 @@ function stat(pstate)
 		rss=s
 		_,_,charset=string.find(rss,rss_string.charsetC)
 		if (charset == nil) then
-			charset = "ISO-8859-1"
+			charset = "utf-8"
 		end
 		local a=0
 		local start=0

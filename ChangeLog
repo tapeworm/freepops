@@ -1,3 +1,4 @@
+- fixed bug introduced in fixing popserver rfc compliace
 - added plugin tutorial to the manual
 - fixed bug in aggregator.lua
 - fixed bug in mimer (thanks nickshw for bugreporting)

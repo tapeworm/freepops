@@ -96,16 +96,20 @@ MALLOC_CHECK(ans);
 *ans = '\0';
 n = get_popstate_nummesg(p);
 for (ind = 0; ind < n; ind++)
-	if (get_popstate_mailmessage(p,ind) != NULL)
 	{
-	nbytes = B(ind+1) + counter(get_popstate_mailmessage(p,ind)) + 3 + 1;
-	s_ans = (char*)malloc(nbytes+1);
-	MALLOC_CHECK(s_ans);
-	printer(s_ans, nbytes, ind+1, get_popstate_mailmessage(p,ind));
-	ans = (char*)realloc(ans, strlen(ans)+nbytes+1);
-	MALLOC_CHECK(ans);
-	strcat(ans, s_ans);
-	free(s_ans);
+	struct mail_msg_t *m = get_popstate_mailmessage(p,ind);
+	if (m != NULL && !get_mailmessage_flag(m,MAILMESSAGE_DELETE)) 
+		{
+		nbytes = B(ind+1) + 
+			counter(get_popstate_mailmessage(p,ind)) + 3 + 1;
+		s_ans = (char*)malloc(nbytes+1);
+		MALLOC_CHECK(s_ans);
+		printer(s_ans, nbytes, ind+1, get_popstate_mailmessage(p,ind));
+		ans = (char*)realloc(ans, strlen(ans)+nbytes+1);
+		MALLOC_CHECK(ans);
+		strcat(ans, s_ans);
+		free(s_ans);
+		}
 	}
 /* remove trailing \r\n */
 if(strlen(ans)>1) // what if the string is empty
@@ -269,6 +273,9 @@ return rc;
 int freepops_top(struct popstate_t*p,long int msg,long int lines,void *data)
 {
 int rc = POPSERVER_ERR_UNKNOWN;
+struct mail_msg_t *m = get_popstate_mailmessage(p,msg);
+if (m != NULL && get_mailmessage_flag(m,MAILMESSAGE_DELETE))
+	return POPSERVER_ERR_NOMSG;
 
 luay_call(CAST(get_popstate_other(p))->l,"pddp|d","top",p,msg,lines,data,&rc);
 
@@ -278,6 +285,9 @@ return rc;
 int freepops_retr(struct popstate_t*p,int msg,void* data)
 {
 int rc = POPSERVER_ERR_UNKNOWN;
+struct mail_msg_t *m = get_popstate_mailmessage(p,msg);
+if (m != NULL && get_mailmessage_flag(m,MAILMESSAGE_DELETE))
+	return POPSERVER_ERR_NOMSG;
 
 luay_call(CAST(get_popstate_other(p))->l,"pdp|d","retr",p,msg,data,&rc);
 
@@ -308,6 +318,9 @@ int freepops_uidl(struct popstate_t*p,int msg,char **buffer)
 {
 int rc = POPSERVER_ERR_UNKNOWN;
 *buffer = NULL;
+struct mail_msg_t *m = get_popstate_mailmessage(p,msg);
+if (m != NULL && get_mailmessage_flag(m,MAILMESSAGE_DELETE))
+	return POPSERVER_ERR_NOMSG;
 
 luay_call(CAST(get_popstate_other(p))->l,"pd|d","uidl",p,msg,&rc);
 
@@ -352,6 +365,9 @@ return rc;
 int freepops_list(struct popstate_t*p,int msg,char **buffer)
 {
 int rc = POPSERVER_ERR_UNKNOWN;
+struct mail_msg_t *m = get_popstate_mailmessage(p,msg);
+if (m != NULL && get_mailmessage_flag(m,MAILMESSAGE_DELETE))
+	return POPSERVER_ERR_NOMSG;
 
 luay_call(CAST(get_popstate_other(p))->l,"pd|d","list",p,msg,&rc);
 

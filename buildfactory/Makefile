@@ -107,7 +107,7 @@ deb-preamble: freepops-$(VERSION).tar.gz
 		cp -r buildfactory/debian .
 
 dist-deb-real: 
-	$(H)cd _deb_/freepops-$(VERSION);\	
+	$(H)cd _deb_/freepops-$(VERSION);\
 		./configure.sh linux;\
 		dpkg-buildpackage -rfakeroot -us -uc
 	$(H)mkdir -p ../dist-deb/freepops || true

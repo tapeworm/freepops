@@ -1,3 +1,4 @@
+- fixed file descriptor leak in log.c (log_rotate)
 22/06/2004 0.0.8 fix release
 - now lycos deletes messages from the trash
 - doc to kernel.lua

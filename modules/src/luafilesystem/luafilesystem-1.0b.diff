@@ -149,3 +149,21 @@ diff -rNu luafilesystem-1.0b-old/lfs.h luafilesystem-1.0b/lfs.h
 +#define LUAFILESYSTEM_H
  int luaopen_lfs (lua_State *L);
 +#endif
+diff -ruN luafilesystem-1.0b-old/lfs.c luafilesystem-1.0b/lfs.c
+--- luafilesystem-1.0b-old/lfs.c	2004-11-10 15:45:23.000000000 +0100
++++ luafilesystem-1.0b/lfs.c	2004-11-20 10:53:43.000000000 +0100
+@@ -353,6 +353,14 @@
+  #define S_ISCHR(mode)  (0)
+  #define S_ISBLK(mode)  (0)
+ #endif
++
++#ifdef BEOS
++ #define S_ISSOCK(mode)  (0)
++ #define S_ISFIFO(mode)  (0)
++ #define S_ISCHR(mode)  (0)
++ #define S_ISBLK(mode)  (0)
++#endif
++
+ /*
+ ** Convert the inode protection mode to a string.
+ */

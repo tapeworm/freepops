@@ -230,7 +230,7 @@ function gmail_login()
 
 	local f,e = b:post_uri(uri,post)
 	if f == nil then
-		log.error(e)
+		log.error_print(e)
 		return POPSERVER_ERR_UNKNOWN
 	end
 	--print(f)

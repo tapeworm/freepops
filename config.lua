@@ -90,7 +90,7 @@ freepops.MODULES_MAP["tre.it"]		= {name="tre.lua"}
 --		host="in.virgilio.it",
 --		realusername="abcdef",
 --		pipe={"/usr/bin/spamc","-t","5"}, -- "/usr/bin/spamc -t 5",
---		pipe_limit=0, -- 0 unlimited, numer of octects of bigger piped
+--		pipe_limit=0, -- 0 unlimited, numer of octects of biggest piped
 --	}
 --}
 

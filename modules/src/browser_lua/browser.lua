@@ -273,7 +273,11 @@ function Hidden.mangle_location(self,loc)
 	-- some shit has a not RFC compliant header
 	local x = string.find(loc,"^[Hh/]")
 	if x == nil then 
-		loc = "/" .. loc
+		-- ok, this cookie is rotten
+		-- we have to add the whole "http://host/path/"
+		local u = cookie.parse_url(self.referrer)
+                local _,_,part_path = string.find(u.path or "/", "(.*/)")
+                loc = (part_path or "/") .. loc
 	end
 	-- now find where we have to go!
 	if string.byte(loc,1) == string.byte("/",1) then

@@ -17,7 +17,7 @@ pdf: manual.pdf manual-it.pdf
 	@cp manual.pdf manual-it.pdf ../
 
 html: macro.tex manual.tex manual-it.tex
-	@echo generating the hml manuals
+	@echo Generating the HTML manuals
 	@rm -rf html-manual/;mkdir html-manual/
 	@latex2html -t "FreePOPs Manual"\
 		-dir html-manual $(LATEX_HTML) manual.tex \
@@ -40,7 +40,7 @@ spell-it:
 	@dvips -f $< > $@
 
 %.dvi:%.tex macro.tex
-	@echo generating the pdf manuals
+	@echo Generating the PDF manuals
 	@latex $<
 	@latex $<
 

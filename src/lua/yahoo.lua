@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.6"
+PLUGIN_VERSION = "0.0.7"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -83,7 +83,7 @@ local globals = {
 
   -- Get the crumb value that is needed for deleting messages and emptying the trash
   --
-  strRegExpCrumb = "ET=1&%.crumb=([^&]*)&",
+  strRegExpCrumb = "=1&%.crumb=([^&]*)&",
 
   -- Pattern to determine if we have no messages.  If this is found, we have messages.
   --

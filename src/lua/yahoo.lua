@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.5"
+PLUGIN_VERSION = "0.0.6"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -17,7 +17,7 @@ PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells (at) despammed (.) com",
-	 "ncocchiaro (at) users (.) sourceforge (.) net"}
+         "ncocchiaro (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
@@ -124,6 +124,7 @@ local globals = {
   strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&Nhead=f&toc=1&MsgId=%s&bodyPart=%s",
   strCmdDelete = "%sym/ShowFolder?box=%s&DEL=Delete", -- &Mid=%s&.crumb=%s
   strCmdEmptyTrash = "%sym/ShowFolder?ET=1&.crumb=%s&reset=1", -- &box=Inbox
+  strCmdUnread = "%sym/ShowLetter?box=%s&MsgId=%s&.crumb=%s&UNR=1",
 
   -- Emails to list - These define the filter on the messages to grab
   --
@@ -179,6 +180,7 @@ internalState = {
   strMBox = nil,
   strIntFlag = nil,
   strView = nil,
+  bMarkMsgAsUnread = false,
 }
 
 -- ************************************************************************** --
@@ -369,6 +371,14 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     popserver_callback("\r\n\0", data)
   end
 
+  -- Do we need to mark the message as unread?
+  --
+  if internalState.bMarkMsgAsUnread == true then
+    local cmdUrl = string.format(globals.strCmdUnread, internalState.strMailServer,
+      internalState.strMBox, uidl, internalState.strCrumb);
+    browser:get(cmdUrl) -- We don't care about the results.
+  end
+
   return POPSERVER_ERR_OK
 end
 
@@ -510,6 +520,14 @@ function user(pstate, username)
     end
   end
 
+  -- If the flag markunread=1 is set, then we will mark all messages
+  -- that we pull as unread when done.
+  --
+  local val = (freepops.MODULE_ARGS or {}).markunread or 0
+  if val == 1 then
+    interalState.bMarkMsgAsUnread = true
+  end
+
   return POPSERVER_ERR_OK
 end
 
@@ -534,8 +552,7 @@ function pass(pstate, password)
     --
   
     -- Check to see if it is locked
-    -- Why "\a"? 
-    -- "\a" is the bell!!
+    -- Why "\a"?
     --
     if sessID == "\a" then
       log.dbg("Error: Session locked - Account: " .. internalState.strUser .. 

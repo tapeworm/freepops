@@ -18,7 +18,8 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells (at) despammed (.) com",
          "ncocchiaro (at) users (.) sourceforge (.) net"}
-PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca"}
+PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca",
+	"@yahoo.com.ar","@yahoo.co.in","@yahoo.co.tw","@yahoo.co.uk"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[

@@ -70,8 +70,8 @@ dist-rpm: freepops-$(VERSION).tar.gz
 	
 dist-gen:
 	mkdir -p ../dist-gen || true
-	@cp freepopsd.ebuild.gz \
-		../dist-gen/freepopsd-$(VERSION).ebuild.gz
+	@cp freepops.ebuild.gz \
+		../dist-gen/freepops-$(VERSION).ebuild.gz
 
 dist-deb: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _deb_/freepops

@@ -20,6 +20,7 @@ Private.html_coded = {
 	["lt"]     = '<',
 	["gt"]     = '>',
 	["nbsp"]   = " ",
+	["iuml"]   = "I",
 }
 
 Private.html_tags = {

@@ -107,7 +107,7 @@ SectionEnd
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\FreePOPs"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs (no log).lnk" "$INSTDIR\freepopsd.exe" "$INSTDIR\freepopsd.exe" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs (no log).lnk" "$INSTDIR\freepopsd.exe" "" "$INSTDIR\freepopsd.exe" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs -vv (verbose log).lnk" "$INSTDIR\freepopsd.exe" "-vv" "$INSTDIR\freepopsd.exe" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Manual (english).lnk" "$INSTDIR\manual.pdf" "" "$INSTDIR\manual.pdf" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Manuale (italiano).lnk" "$INSTDIR\manual-it.pdf" "" "$INSTDIR\manual-it.pdf" 0

@@ -24,6 +24,8 @@
 #include "log.h"
 #define LOG_ZONE "LOG"
 
+#define HIDDEN static
+
 /******************************************************************************/
 
 HIDDEN int verbose_output = 0;
@@ -209,7 +211,7 @@ int logit(char* zone, char *str, ...)
 {
 	char *logstr = NULL;
 	char *strtmp = NULL;
-	int logstr_len;
+	int logstr_len,rc;
 	va_list args;
 
 	//fprintf(fd,"start\n");
@@ -219,8 +221,11 @@ int logit(char* zone, char *str, ...)
 	memset(strtmp, '\0', MAX_LOG_STRING);
 
 	va_start(args, str);
-	vsnprintf(strtmp, MAX_LOG_STRING, str, args);
+	rc = vsnprintf(strtmp, MAX_LOG_STRING, str, args);
 	va_end(args);
+
+	if (rc == MAX_LOG_STRING - 1 && strtmp[rc-1] != '\n')
+		strtmp[rc-1] = '\n';
 
 	if(syslogmode){
 		/* +1 is for \0 */

@@ -87,10 +87,11 @@ EXCLUDELIBS=	serialize_lua \
 		
 LIBSTOLINK=$(filter-out $(EXCLUDELIBS),$(LIBS))
 
+LDFLAGS=$(FORCE_LINK)
 		
 ifeq "$(OS)" "Windows"
 	#LIBS+= pthread winsystray regex 
-	LDFLAGS= -L ../modules/lib \
+	LDFLAGS+= -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
 		-lregex -lm -lcurl -lmingw32 -lwsock32 \
@@ -98,13 +99,13 @@ ifeq "$(OS)" "Windows"
 
 else
 ifeq "$(OS)" "Darwin"
-	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
+	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
 		-lgetopt -lm \
 	 	-lpthread -L/usr/lib -L/sw/lib -lexpat -lcurl \
 		-lcrypto -ldl -lssl -lcrypto -lz 
 else
 ifeq "$(OS)" "Darwin-static"
-	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
+	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
 		-lgetopt -lm \
 	 	-lpthread -L/usr/lib /usr/local/lib/libexpat.a \
 		/usr/local/lib/libcurl.a /usr/local/lib/libdl.a \
@@ -112,25 +113,25 @@ ifeq "$(OS)" "Darwin-static"
 else
 ifeq "$(OS)" "OpenBSD"
 	LIBSTOLINK+= getopt
-	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
+	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
 		$(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 else
 ifeq "$(OS)" "FreeBSD"
         LIBSTOLINK+= getopt     
-        LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
+        LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
                 $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 else
 ifeq "$(OS)" "Cygwin"
-	LDFLAGS= -L ../modules/lib \
+	LDFLAGS+= -L ../modules/lib \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
 		-lwsock32 -lexpat -lgdi32 -lz -lssl -lcrypto -lcygwin
 else
 ifeq "$(OS)" "BeOS"
-	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
+	LDFLAGS+=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
 		-ldl -lpthread $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS) \
 		-lbe -lsocket -lbind
 else
-	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
+	LDFLAGS+=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
 		-ldl -lm -lpthread -lcrypto -rdynamic \
 		$(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 

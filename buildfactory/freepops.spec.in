@@ -21,7 +21,7 @@ local pop3 requests to remote http requests to suppoerted webmails.
 ./configure.sh linux
 
 %build
-make all WHERE=/usr/
+make all WHERE=/usr/ FORCE_LINK="-L /tmp/freepops-expat/expat/.libs/"
 
 %install
 mkdir -p ${RPM_BUILD_ROOT}/usr/bin/

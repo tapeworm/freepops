@@ -108,11 +108,12 @@ buildfactory:
 
 modules: config
 	$(H)ln -s buildfactory/debian . 2>/dev/null || true
-	$(H)$(MAKE) -C modules all CONFIG=$(PWD)/config
+	$(H)$(MAKE) -C modules all CONFIG="$(PWD)/config"
 	
 src: config
 	$(H)echo "building freepopsd"
-	$(H)$(MAKE) -C src all CONFIG=$(PWD)/config PREFIX=$(PREFIX)
+	$(H)$(MAKE) -C src all CONFIG="$(PWD)/config" PREFIX="$(PREFIX)" \
+		FORCE_LINK="$(FORCE_LINK)"
 
 doc/manual.pdf doc/manual-it.pdf: doc/manual/manual.tex doc/manual/manual-it.tex
 	$(H)$(MAKE) -C doc/manual/

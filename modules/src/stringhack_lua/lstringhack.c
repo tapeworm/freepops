@@ -121,8 +121,8 @@ if(p != -1)
 			char * rc = calloc(strlen(buff)+ 2,sizeof(char));
 
 			memcpy(rc,&("\n.."[4-d]),d);
-
-			strcat(&rc[d-1],&buff[d-2]);
+			
+			strcpy(&rc[d-1],&buff[d-2]);
 			
 			//free(buff);
 			buff = (const char*)rc;
@@ -148,14 +148,16 @@ n = regfind_count(buff,"\r\n\\.\r",1);
 if(n>0)
 	{
 	int i,o;
-	rc = calloc(strlen(buff) + 1 + n,sizeof(char));
+	int len = strlen(buff);
+	int n1=n; //DELETE ME!!!!
+	rc = calloc(len + 1 + n,sizeof(char));
 	for(i=0,o=0;n>0;i++,o++)
 		{
 		//printf("!!comparing %s!!\n",&buff[i]);
 		if(!strncmp(&buff[i],"\r\n.\r",4))
 			{
 			memcpy(&rc[o],"\r\n..\r",5);
-			o+=5-1;
+			o+=5-2;
 			i+=4-2;
 			n--;
 			//printf("!!GOT!!\n");
@@ -166,9 +168,11 @@ if(n>0)
 			}
 		}
 	
-	if(i<strlen(buff))
+	if( i < len)
 		{
-		strcat(&rc[o],&buff[i]);
+		//printf("i=%d, o=%d, len_buff=%d, lenrc=%d\n",
+		//	i,o, strlen(&buff[i]), len + 1 + n1);
+		strcpy(&rc[o],&buff[i]);
 		}
 	
 	//free(buff);

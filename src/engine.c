@@ -273,7 +273,7 @@ return rc;
 int freepops_top(struct popstate_t*p,long int msg,long int lines,void *data)
 {
 int rc = POPSERVER_ERR_UNKNOWN;
-struct mail_msg_t *m = get_popstate_mailmessage(p,msg);
+struct mail_msg_t *m = get_popstate_mailmessage(p,msg-1);
 if (m != NULL && get_mailmessage_flag(m,MAILMESSAGE_DELETE))
 	return POPSERVER_ERR_NOMSG;
 
@@ -285,7 +285,7 @@ return rc;
 int freepops_retr(struct popstate_t*p,int msg,void* data)
 {
 int rc = POPSERVER_ERR_UNKNOWN;
-struct mail_msg_t *m = get_popstate_mailmessage(p,msg);
+struct mail_msg_t *m = get_popstate_mailmessage(p,msg-1);
 if (m != NULL && get_mailmessage_flag(m,MAILMESSAGE_DELETE))
 	return POPSERVER_ERR_NOMSG;
 
@@ -317,7 +317,7 @@ return rc;
 int freepops_uidl(struct popstate_t*p,int msg,char **buffer)
 {
 int rc = POPSERVER_ERR_UNKNOWN;
-struct mail_msg_t *m = get_popstate_mailmessage(p,msg);
+struct mail_msg_t *m = get_popstate_mailmessage(p,msg-1);
 *buffer = NULL;
 if (m != NULL && get_mailmessage_flag(m,MAILMESSAGE_DELETE))
 	return POPSERVER_ERR_NOMSG;
@@ -365,7 +365,7 @@ return rc;
 int freepops_list(struct popstate_t*p,int msg,char **buffer)
 {
 int rc = POPSERVER_ERR_UNKNOWN;
-struct mail_msg_t *m = get_popstate_mailmessage(p,msg);
+struct mail_msg_t *m = get_popstate_mailmessage(p,msg-1);
 if (m != NULL && get_mailmessage_flag(m,MAILMESSAGE_DELETE))
 	return POPSERVER_ERR_NOMSG;
 

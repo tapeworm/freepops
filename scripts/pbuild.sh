@@ -8,6 +8,7 @@ if [ -z "$TODO" ]; then TODO="woody sarge sid"; fi
 BASE_DIR=../packages/
 PBUILD=/usr/sbin/pbuilder
 
+### shit hack ###
 function curl_map(){
 if [ "$1" = "woody" ]; then
 	CURL="-ssl"
@@ -18,7 +19,9 @@ elif [ "$1" = "sid" ]; then
 fi
 }
 
+### build a base for pbuilder ###
 function build_base(){
+
 echo -e "Building base for $1"
 echo -e "You need a line like this in your /etc/sudoers:"
 echo -e "\nusername   ALL = NOPASSWD: /usr/sbin/pbuilder\n"
@@ -34,6 +37,7 @@ sudo $PBUILD update \
 	--extrapackages "tetex-extra libcurl$CURL-dev libcurl$CURL libexpat1-dev bison flex debhelper libreadline4-dev libreadline4 gs-common libssl-dev"
 } 
 
+### error message ###
 function inform_cvs(){
 echo -e "In order to properly build deb for all debian distros you must"
 echo -e "have the pbuilder and sudo packages installed and the packages"
@@ -48,7 +52,7 @@ echo -e "not by hand."
 exit 1
 }
 
-
+### check if the bases are there and build them if not ###
 function check_bases(){
 [ -d $BASE_DIR ] || inform_cvs
 for X in $TODO; do
@@ -57,14 +61,19 @@ done
 
 }
 
-function prepare_tgz(){
+### create the .dsc ###
+function prepare_dsc(){
+
 make realclean || true
+rm config || true
 ./configure.sh linux
-make -C buildfactory dist-deb
+make -C buildfactory debian-dsc-$2
 cp dist-deb/freepops/* $1
 }
 
+### call pbuild ###
 function build(){
+
 rm -rf $2/$BASE_DIR/freepops-$1
 mkdir $2/$BASE_DIR/freepops-$1
 sudo $PBUILD update \
@@ -75,14 +84,20 @@ sudo $PBUILD build \
 	--debbuildopts "-us -uc" freepops*.dsc
 }
 
-check_bases
-D=`pwd`
-TMP=`mktemp -d`
-prepare_tgz $TMP
-cd $TMP
-#prepare_dsc
+### main ###
+
+(check_bases) 2>> log.debian.bases.err 1>> log.debian.bases.out
 for X in $TODO; do
-	build $X $D			
+	D=`pwd`
+	TMP=`mktemp -d`
+	echo -e "\n *** preparing .dsc ($X) ***\n"
+	prepare_dsc $TMP $X
+	cd $TMP
+	echo -e "\n *** building ($X) ***\n"
+	build $X $D
+	cd $D
+	echo -e "\n *** cleaning ($X) ***\n"
+	rm -rf $TMP
 done
-cd $D
-rm -rf $TMP
+	
+#eof

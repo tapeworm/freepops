@@ -86,15 +86,28 @@ dist-gen:
 	mkdir -p ../dist-gen || true
 	@cp freepops.ebuild.gz \
 		../dist-gen/freepops-$(VERSION).ebuild.gz
+	
+dist-deb-hackwoody:
+	$(H)cd _deb_/freepops-$(VERSION);\
+		cp buildfactory/debian-woody/* debian/
 
-dist-deb: freepops-$(VERSION).tar.gz
+dist-deb-woody: deb-preamble dist-deb-hackwoody dist-deb-real
+dist-deb-sarge:	dist-deb
+dist-deb-sid: dist-deb
+	
+dist-deb: deb-preamble dist-deb-real
+
+deb-preamble: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _deb_
 	$(H)[ -d _deb_/freepops-$(VERSION) ] || \
 		tar -xzf freepops-$(VERSION).tar.gz -C _deb_
 	$(H)cp freepops-$(VERSION).tar.gz \
 		_deb_/freepops_$(VERSION).orig.tar.gz
 	$(H)cd _deb_/freepops-$(VERSION);\
-		cp -r buildfactory/debian .;\
+		cp -r buildfactory/debian .
+
+dist-deb-real: 
+	$(H)cd _deb_/freepops-$(VERSION);\	
 		./configure.sh linux;\
 		dpkg-buildpackage -rfakeroot -us -uc
 	$(H)mkdir -p ../dist-deb/freepops || true
@@ -111,6 +124,19 @@ dist-deb: freepops-$(VERSION).tar.gz
 	$(H)cd ../dist-deb/freepops/;gzip -f Packages Sources
 
 	$(H)rm -rf _deb_
+
+debian-dsc-woody: deb-preamble dist-deb-hackwoody debian-dsc-real
+debian-dsc-sarge: debian-dsc
+debian-dsc-sid: debian-dsc
+
+debian-dsc: deb-preamble debian-dsc-real
+
+debian-dsc-real:
+	$(H)mkdir -p ../dist-deb/freepops || true
+	$(H)cd _deb_/;\
+		dpkg-source -b freepops-$(VERSION)
+	$(H)cp _deb_/*.tar.gz _deb_/*.dsc \
+		_deb_/*.diff.gz ../dist-deb/freepops
 
 dist-slack: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _slack_

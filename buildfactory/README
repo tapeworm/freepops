@@ -2,6 +2,8 @@ Files for distros.
 
 debian:
 	create_jail.sh
+	debian/*
+	debian-woody/*
 
 gentoo:
 	freepopsd.ebuild.gz

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.5"
+PLUGIN_VERSION = "0.0.6"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -35,9 +35,9 @@ PLUGIN_DESCRIPTIONS = {
 Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
 nome utente e la vostra vera password come password.]],
 	en=[[
-To use
-this plugin you have to use your full email address as the username
-and your real password as the password.]]
+To use this plugin you have to use your full email address as the username
+and your real password as the password.  For support, please post a question to
+the forum instead of emailing the author(s).]]
 }
 
 
@@ -82,7 +82,7 @@ local globals = {
 
   -- Get the crumb value that is needed for every command
   --
-  strRegExpCrumb = 'curmbox=F000000001&a=([^&]*)&f',
+  strRegExpCrumb = '&a=([^"&]*)[&"]',
 
   -- Image server pattern
   --
@@ -103,11 +103,14 @@ local globals = {
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
+  strNewFolderPattern = "(00000000-0000-0000-0000-000)",
+  strFolderPrefix = "00000000-0000-0000-0000-000",
+
   strInbox = "F000000001",
-  strJunk = "F000000005",
+  strJunk =  "F000000005",
   strTrash = "F000000004",
   strDraft = "F000000003",
-  strSent = "F000000002",
+  strSent =  "F000000002",
 
   strInboxPat = "([iI]nbox)",
   strJunkPat = "([Jj]unk)",
@@ -294,6 +297,14 @@ function loginHotmail()
   else
     internalState.strImgServer = internalState.strMailServer
     log.dbg("Couldn't figure out the image server.  Using the mail server as a default.")
+  end
+
+  -- See if we are using the new folder id's
+  --
+  _, _, str = string.find(body, globals.strNewFolderPattern)
+  if str ~= nil then
+    internalState.strMBox = globals.strFolderPrefix .. 
+      string.sub(internalState.strMBox, 2, -1) 
   end
 
   -- Note that we have logged in successfully

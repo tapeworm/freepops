@@ -34,6 +34,9 @@ freepops.MODULES_MAP["lycos.it"]	= {name="lycos.lua"}
 -- gmail
 freepops.MODULES_MAP["gmail.com"]	= {name="gmail.lua"}
 
+-- squirrelmail
+freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}
+
 -- popforward plugin
 --freepops.MODULES_MAP["virgilio.it"] 	= {
 --	name="popforward.lua",

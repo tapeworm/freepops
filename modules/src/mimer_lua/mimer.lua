@@ -49,22 +49,21 @@ function Private.base64_io_slave(cb)
 	local buffer = ""
 	return function(s,len)
 		
-		print("HO " .. len .. " BYTES")
-		
 		buffer = buffer .. s
 		
+		local todo_table = {}
 		while string.len(buffer) >= Private.base64wrap do
 			local chunk = string.sub(buffer,1,Private.base64wrap)
-			--FIXME don't call the callback fr each line
-			cb(base64.encode(chunk).."\0")
-			cb("\r\n")
+			table.insert(todo_table,base64.encode(chunk).."\r\n")
 			buffer = string.sub(buffer,Private.base64wrap + 1,-1)
+		end
+		if table.getn(todo_table) > 0 then
+			cb(table.concat(todo_table))
 		end
 
 		if len == 0 then
 			--empty the buffer
-			cb(base64.encode(buffer).."\0")
-			cb("\r\n")
+			cb(base64.encode(buffer).."\r\n")
 			buffer = ""
 		end
 
@@ -74,6 +73,7 @@ end
 
 function Private.attach_it(browser,boundary,send_cb)
 	return function(k,uri)
+		print("GETTING HEAD "..uri)
 		local h,err = browser:get_head(uri)
 
 		--print(h)
@@ -98,10 +98,11 @@ function Private.attach_it(browser,boundary,send_cb)
 				return len
 			end
 		end
-		print("---------"..uri)
-		print(browser:pipe_uri(uri,cb))
-		print("---------")
-		
+	
+		-- do the work
+		browser:pipe_uri(uri,cb)
+
+		-- flush last bytes
 		cb("",0)
 	end
 end

@@ -45,6 +45,7 @@ local lycos_string = {
 	timeoutC = '(FIXME)',
 	-- The uri to save a message (read download the message)
 	save = "http://mail.lycos.it/Europe/Bin/Mail/Features/MailContent/mailContent.jsp?MESSAGEID=%d&PARENTID=5&MYSORT=-1",
+	save_header = "http://mail.lycos.it/Europe/Bin/Mail/Features/MailContent/headerContent.jsp?MESSAGEID=%d",
 	-- The uri to delete some messages
 	delete = "http://mail.lycos.it/Europe/Bin/Mail/Features/FolderContent/actionFolderContent.jsp",
 	delete_post = "ACTION=3&",
@@ -131,7 +132,7 @@ function lycos_login()
 
 	local b = internal_state.b
 
-	b.curl:setopt(curl.OPT_VERBOSE,1)
+--	b.curl:setopt(curl.OPT_VERBOSE,1)
 
 	local extract_f = support.do_extract(
 		internal_state,"login_url",lycos_string.loginC)
@@ -535,24 +536,69 @@ function retr(pstate,msg,data)
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	local uri = string.format(lycos_string.save,uidl)
+	local urih = string.format(lycos_string.save_header,uidl)
 	
-	-- tell the browser to pipe the uri using cb
-	--local f,rc = b:pipe_uri(uri,cb)
+	local f,rc = b:get_uri(uri,cb)
+	
+	local from,to = string.find(f,'</div>%s+</div>%s+<div style="overflow%-x:auto;padding%-bottom:25px;" class="whitecontent"><P>')
 
-	--if not f then
-	--	log.error_print("Asking for "..uri.."\n")
-	--	log.error_print(rc.."\n")
-	--	return POPSERVER_ERR_NETWORK
-	--end
-	--
-	--local f,err = b:get_uri(uri)
-	--popserver_callback(f.."\0" , data)
+	print(from,to)
 
---	mimer.pipe_msg(
---		"headers\r\n","body",
---		{["attila.png"]="http://attila/images/attila.png"},
---		b,
---		function(s)popserver_callback(s,data)end)
+	local f1 = string.sub(f,to+1,-1)
+
+	local from1,to1 = string.find(f1,'\n</P>\n%s+</div>\n')
+
+	print(from1,to1)
+
+	local body = string.sub(f1,1,from1-1)
+
+	local attach = string.sub(f1,from1,-1)
+
+	print(body)
+
+	local f,rc = b:get_uri(urih,cb)
+	
+	local from,to = string.find(f,'<div style="text%-align:left;" class="whitecontent">')
+	local f1 = string.sub(f,to+1,-1)
+	
+	local from1,to1 = string.find(f1,'</div>')
+
+	local head = string.sub(f1,1,from1-1)
+
+	print(from,to,from1,to1)
+
+	local function html2txt(s)
+		s = string.gsub(s,"&nbsp;"," ")
+		s = string.gsub(s,"&quot;",'"')
+		s = string.gsub(s,"</?[Bb][Rr]>",'\n')
+		s = string.gsub(s,"</?[Bb]>",'')
+		s = string.gsub(s,"&gt;",'>')
+		s = string.gsub(s,"&lt;",'<')
+		s = string.gsub(s,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*[^\n]*\n","")
+		s = string.gsub(s,"[Mm][Ii][Mm][Ee]%-[Vv][Ee][Rr][Ss][Ii][Oo][Nn]%s*:%s*[^\n]*\n","")
+		s = string.gsub(s,"\n\n","\n")
+		s = string.gsub(s,"\n\n","\n")
+		s = string.gsub(s,"\n","\r\n")
+		return s
+	end
+
+	head = html2txt(head)
+	
+local x = mlex.match(attach,'.*<div class="listNA">.*<script>.*</script>.*<div class="w250L">.*<a title="Download">.*<script>.*</script>.*</a>.*</div>.*<div class="w150L">.*<a>.*</a>.*</div>.*<div class="breaker">.*</div>',
+"O<O>O<O>O<O>O<O>O<X>O<O>O<O>X<O>O<O>O<O>O<O>O<O><O>O<O>O<O>")
+	x:print()
+	print(head)
+	
+	local n = x:count()
+	local attach = {}
+
+	for i = 1,n do
+		local _,_,url = string.find(x:get(0,n-1),'href="([^"]*)"')
+		attach[x:get(1,n-1)] = "http://mail.lycos.it" .. url
+	end
+
+	mimer.pipe_msg(
+		head,body,attach,b,function(s)popserver_callback(s,data)end)
 
 	return POPSERVER_ERR_OK
 end

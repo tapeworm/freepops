@@ -187,22 +187,38 @@ function gmail_login()
 
 	local b = internal_state.b
 
---	b:verbose_mode()
+	--b:verbose_mode()
 	b:ssl_init_stuff()
 
 	local extract_f = support.do_extract(
 			internal_state,"cookie_val",gmail_string.cookieVal)
 	local check_f = support.check_fail
-	local retrive_f = support.retry_n(
-			3,support.do_post(internal_state.b,uri,post))
+	
 
-	if not support.do_until(retrive_f,check_f,extract_f) then
-		log.error_print("Login failed\n")
-		return POPSERVER_ERR_AUTH
+	local f,e = b:post_uri(uri,post)
+	if f == nil then
+		log.error(e)
+		return POPSERVER_ERR_UNKNOWN
 	end
+	--print(f)
+	local _,_,uri = string.find(f,'(CheckCookie[^%"]*)"')
+	--print(uri,b:wherearewe(),b:whathaveweread())
+	uri = "http://" .. b:wherearewe() .. "/accounts/" .. uri
+	--b:show()
+	
+	--local retrive_f = support.retry_n(
+	--		3,support.do_retrive(internal_state.b,uri))		
+			
+	local f,e = b:get_uri(uri)
+			
+	--if not support.do_until(retrive_f,check_f,extract_f) then
+	--	log.error_print("Login failed\n")
+	--	return POPSERVER_ERR_AUTH
+	--end
 	
 	-- get the cookie value
 	internal_state.cookie_sid = (b:get_cookie("SID")).value
+	internal_state.cookie_val = (b:get_cookie("GV")).value
 	--table.foreach(b:get_cookie("SID"),function(a,b)
 	--		if a == "value" then
 	--			internal_state.cookie_sid = b
@@ -214,11 +230,11 @@ function gmail_login()
 	-- isn't it a mistake?
 	local AuthCookie1 = mk_cookie(
 		"SID",internal_state.cookie_sid,nil,"/",".google.com",nil)
-	local AuthCookie2 = mk_cookie(
-		"GV",internal_state.cookie_val,nil,"/",".google.com",nil)
+	--local AuthCookie2 = mk_cookie(
+	--	"GV",internal_state.cookie_val,nil,"/",".google.com",nil)
 
 	b:add_cookie(gmail_string.homepage,AuthCookie1)
-	b:add_cookie(gmail_string.homepage,AuthCookie2)
+	--b:add_cookie(gmail_string.homepage,AuthCookie2)
 
 --	uri = gmail_string.login_checkcookie
 

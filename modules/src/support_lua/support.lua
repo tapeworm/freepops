@@ -124,11 +124,15 @@ function support.do_extract(t,field,exp)
 	--the real code
 	return function (s)
 		if s == nil then
-			return nil,"Unable to capture "..exp
+			return nil,"Unable to capture "..exp..
+				" the data was nil"
 		end
 		local _,_,r = string.find(s,exp)
 		if not r then
-			return nil,"Unable to capture "..exp
+			print("Unable to capture "..exp..
+				" the data was " ..s)
+			return nil,"Unable to capture "..exp..
+				" the data is printd on stdout"
 		else
 			t[field] = r	
 			return true,nil

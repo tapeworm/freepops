@@ -338,7 +338,9 @@ end
 -- returns the needed cookie for the domain...
 -- returns the string
 function cookie.get(t,res,domain,host)
-	--print("cookie.get("..(res or"nil")..(domain or"nil")..(host or"nil"))
+	--print("cookie.get(res='"..(res or"nil").. 
+	--	"', domain='" ..(domain or"nil").. 
+	--	"', host='" ..(host or"nil").."')")
 	local function domain_match(a,b)
 		local x,_ = string.find(a,b)
 		--print("Find: '"..a.."' '"..b.."' = "..tostring(x ~= nil))

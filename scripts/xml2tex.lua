@@ -1,7 +1,7 @@
 dofile "modules/include/xml2table.lua"
 
 if table.getn(arg) <= 1 then
-	print("usage: "..arg[0].." file.xml lang")
+	print("usage: "..arg[0].." file.xml lang [brief]")
 	os.exit(1)
 end
 
@@ -35,6 +35,8 @@ if string.len(arg[2]) ~= 2 then
 	print("lang must be a 2 chars string")
 	os.exit(1)
 end
+
+brief = arg[3]
 
 multilang = {}
 multilang["author"] = {}
@@ -76,6 +78,9 @@ multilang["parameter"].en = "Parameter"
 multilang["parameters"] = {}
 multilang["parameters"].it = "Parametri"
 multilang["parameters"].en = "Parameters"
+multilang["tpl"] = {}
+multilang["tpl"].it = "Questo plugin supporta i seguenti domini: "
+multilang["tpl"].en = "This plugin supports these domains: "
 
 function E(s)
 	s = string.gsub(s,"_","\\_")
@@ -90,6 +95,20 @@ function E(s)
 	return s
 end
 
+if brief then
+-- BRIEF -------------------------------------
+s = ""
+s = s .. "\\item["..E(plugin_name).." ("..E(t.name._content)..
+	")]:\\\\\n"..multilang["tpl"][lang]
+xml2table.forach_son(t.domains,"domain",function(k)
+	s = s .. E(k._content)..", "
+end)
+if string.sub(s,-2,-1) == ", " then
+	s = string.sub(s,1,-3) .. "\n"
+end
+
+else
+-- COMPLETE ----------------------------------
 s = ""
 s = s .. "\\subsection{"..E(plugin_name).."}\n"
 s = s .. "\\begin{description}\n"
@@ -155,5 +174,6 @@ if table.getn(t.parameters) > 0 then
 	s = s .."  \\end{description}\n"
 end
 s = s .. "\\end{description}\n"
+end
 
 print(s)

@@ -113,56 +113,19 @@ potente.
 Questi sono i plugin correntemente inclusi in FreePOPs:
 
 \begin{description}
-\item [libero.lua]Questo plugin supporta in pieno la webmail di \texttt{www.libero.it}
-per mailbox con domini come \texttt{@libero.it}, \texttt{@iol.it},
-\texttt{@inwind.it}, \texttt{@blu.it}.
-\item [tin.lua]Questo plugin supporta in pieno la webmail di \texttt{communicator.virgilio.it}
-per mailbox con domini come \texttt{@tin.it}, \texttt{@virgilio.it}.
-\item [owa.lua]Questo plugin supporta le webmail che usano HTTPMAIL.
-Supporta i domini
-\texttt{@lycos.it}, 
-\texttt{@lycos.co.uk},
-\texttt{@lycos.ch},
-\texttt{@lycos.de},
-\texttt{@lycos.es},
-\texttt{@spray.se},
-\texttt{@lycos.at} e
-\texttt{@lycos.nl}; potenzialmente puo' essere esteso anche ad altre
-webmail che usano tale protocollo.
-\item [popforward.lua]Questo è un plugin usato principalmente per testare
-moduli di FreePOPs. Esso agisce come un forward POP3, semplicemente
-si comporta come mediatore tra voi ed un vero server POP3. Questo
-plugin ci ha permesso di testare FreePOPs senza avere alcun vero plugin
-già scritto. Potreste usarlo per mascherare un server POP3 con molti
-bug che può venire facilmente compromesso grazie a richieste malevole.
-Ovviamente suggeriamo di esaminare per bene questo plugin, e fare
-un po' di hacking per prevenire richieste malevole al vostro server.
-\item [aggregator.lua]Molti siti forniscono un backend RSS per indicizzare
-le loro news. Questo plugin fa si' che RSS si comporti come una mailbox
-in cui potete trovare una mail per ogni news.
-\item [flatnuke.lua]Questo è un aggregator più potente per siti basati
-sul CMS FlatNuke, e permette il download dell'intero corpo delle news.%
-\footnote{Vedete HTTP://flatnuke.sourceforge.net per l'homepage del progetto%
-}
-\item [kernel.lua]Questo è un plugin per tenersi aggiornati sulle ultime
-versioni del kernel Linux.
-\item [gmail.lua]Questo plugin supporta la mailbox su \texttt{gmail.google.com}
-per mailbox col dominio \texttt{@gmail.com}.
-\item [yahoo.lua]Questo plugin supporta la mailbox su \texttt{yahoo.com}
-per mailbox con domini \texttt{@yahoo.com.} e \texttt{@yahoo.it}.
-\item [squirrelmail.lua]Questo plugin supporta le webmail fatte con
-http://suirrelmail.org.
-\item [hotmail.lua]Questo plugin supporta le mailbox con i domini: 
-\texttt{@hotmail.com}, \texttt{@msn.com}, \texttt{@webtv.com}, 
-\texttt{@charter.com}, \texttt{@compaq.net}, \texttt{@passport.com}.
-\item [aol.lua]Questo plugin supporta i domini di mailbox seguenti: 
-\texttt{@aol.com}, \texttt{@aol.com.ar}, \texttt{@aol.fr}, \texttt{@aol.com.mx},
- \texttt{@aol.com.au}, \texttt{@aol.de}, \texttt{@aol.com.pr}, 
-\texttt{@aol.com.br}, \texttt{@jp.aol.com}, \texttt{@aol.com.uk}, 
-\texttt{@aol.ca}, \texttt{@aola.com}.
-\item[tre.lua]Questo plugin supporta la webmail di \texttt{tre.it} per 
-mailbox con il dominio \texttt{@tre.it}.
-
+\input{libero.lua.xml.b.it.xmltex}
+\input{tin.lua.xml.b.it.xmltex}
+\input{owa.lua.xml.b.it.xmltex}
+\input{popforward.lua.xml.b.it.xmltex}
+\input{aggregator.lua.xml.b.it.xmltex}
+\input{flatnuke.lua.xml.b.it.xmltex}
+\input{kernel.lua.xml.b.it.xmltex}
+\input{gmail.lua.xml.b.it.xmltex}
+\input{yahoo.lua.xml.b.it.xmltex}
+\input{squirrelmail.lua.xml.b.it.xmltex}
+\input{hotmail.lua.xml.b.it.xmltex}
+\input{aol.lua.xml.b.it.xmltex}
+\input{tre.lua.xml.b.it.xmltex}
 \end{description}
 
 \section{Storia}

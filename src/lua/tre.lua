@@ -16,7 +16,7 @@ PLUGIN_URL = "http://freepops.org/download.php?file=tre.lua"
 PLUGIN_HOMEPAGE = "http://freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Eddi De Pieri"}
 PLUGIN_AUTHORS_CONTACTS = {"dpeddi@users.sourceforge.net"}
-PLUGIN_DOMAINS = {"tre.it"} 
+PLUGIN_DOMAINS = {"@tre.it"} 
 PLUGIN_PARAMETERS = {}
 PLUGIN_DESCRIPTIONS = {
 	it=[[

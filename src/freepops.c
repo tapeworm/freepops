@@ -370,7 +370,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	unsigned short port = POP3PORT;
 	struct in_addr address;
 	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL, *fpat = NULL;
+
+#if defined(WIN32)	
 	int tray_icon = 1;
+#endif
 
 #if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)	
         pid_t this_pid;

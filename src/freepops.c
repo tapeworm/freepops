@@ -319,12 +319,20 @@ free(a);
 
 void my_putenv(const char* a, const char* b)
 {
-char tmp[1024];
+char * tmp = calloc(1024,sizeof(char));
 
 if(b == NULL)
 	return;
 
 snprintf(tmp,1024,"%s=%s",a,b);
+
+/* on some system this is not a proper leak since tmp is used (not copyed)
+ * in the environment.
+ *
+ * valgrind says this is the correct thing to do, so I prefer calling this
+ * memory leak function only in the main, outside loops. so, even memory is
+ * "lost" it is not a memory leak.
+ */
 putenv(tmp);
 }
 

@@ -135,7 +135,8 @@ function build_mail_header(title,uidl)
 	"MIME-Version: 1.0\r\n"..
 	"Content-Disposition: inline\r\n"..
 	"Content-Type: text/plain;   charset=\"iso-8859-1\"\r\n"..
-	--"Content-Transfer-Encoding: quoted-printable\r\n"..
+	-- This header cause some problems with link like [...]id=123[...]
+	-- "Content-Transfer-Encoding: quoted-printable\r\n"..
 	"\r\n"..
 	"News link:\r\n"
 end

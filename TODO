@@ -16,7 +16,6 @@ for version 0.0.14:
 		in cui sia facile supportarlo. (tin e libero sono OK).
 
 for version 0.0.13:
-	edit categorization in SF (add openbsd)
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
 

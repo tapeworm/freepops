@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "Lycos.IT"
 
 -- ************************************************************************** --
@@ -569,31 +569,39 @@ end
 
 -- -------------------------------------------------------------------------- --
 -- Fill msg uidl field
-uidl = common.uidl
-
+function uidl(pstate,msg)
+	return common.uidl(pstate,msg)
+end
 -- -------------------------------------------------------------------------- --
 -- Fill all messages uidl field
-uidl_all = common.uidl_all
-
+function uidl_all(pstate)
+	return common.uidl_all(pstate)
+end
 -- -------------------------------------------------------------------------- --
 -- Fill msg size
-list = common.list
-
+function list(pstate,msg)
+	return common.list(pstate,msg)
+end
 -- -------------------------------------------------------------------------- --
 -- Fill all messages size
-list_all = common.list_all
-
--- -------------------------------------------------------------------------- --
--- Do nothing
-noop = common.noop
-
+function list_all(pstate)
+	return common.list_all(pstate)
+end
 -- -------------------------------------------------------------------------- --
 -- Unflag each message merked for deletion
-rset = common.rset
-
+function rset(pstate)
+	return common.rset(pstate)
+end
 -- -------------------------------------------------------------------------- --
 -- Mark msg for deletion
-dele = common.dele
+function dele(pstate,msg)
+	return common.dele(pstate,msg)
+end
+-- -------------------------------------------------------------------------- --
+-- Do nothing
+function noop(pstate)
+	return common.noop(pstate)
+end
 
 -- -------------------------------------------------------------------------- --
 -- Get first lines message msg lines, must call 
@@ -654,7 +662,7 @@ function init(pstate)
 	log.dbg("FreePOPs plugin '"..
 		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
 
-	-- the serializatio module
+	-- the serialization module
 	if freepops.dofile("serialize.lua") == nil then 
 		return POPSERVER_ERR_UNKNOWN 
 	end 
@@ -668,7 +676,15 @@ function init(pstate)
 	if freepops.dofile("mimer.lua") == nil then 
 		return POPSERVER_ERR_UNKNOWN 
 	end	
+
+	-- the common implementation module
+	if freepops.dofile("common.lua") == nil then 
+		return POPSERVER_ERR_UNKNOWN 
+	end
 	
+	-- checks on globals
+	freepops.set_sanity_checks()
+
 	return POPSERVER_ERR_OK
 end
 

@@ -177,11 +177,61 @@ freepops.load_module_for = function (mailaddress)
 	
 end
 
+-- makes tab members globals
 freepops.export = function(tab)
 	local _export = function(name,value) 
 		_G[name]=value 
 	end
 	table.foreach(tab,_export)
+end
+
+-- required methods
+local pop3_methods = {
+	"user","pass",
+	"list","list_all",
+	"uidl","uidl_all",
+	"stat",
+	"retr","top",
+	"rset","noop","dele",
+	"quit","quit_update",
+	"init",
+}
+
+-- checks if the plugin has declared all required methods
+freepops.check_global_symbols = function()
+	for _,v in ipairs(pop3_methods) do
+		if _G[v] == nil then
+			log.error_print("The plugin has not declared '"..v.."'")
+			return nil
+		end
+	end
+	return true
+end
+
+-- checks for wrong globals usage
+freepops.set_sanity_checks = function()
+	-- no more globals can be declared after this (except _)
+	setmetatable(_G,{
+		__index = function(t,k)
+			local d = debug.getinfo(2,"lSn")or debug.getinfo(1,"lS")
+			local s = "BUG in '".. d.source ..
+				"' that uses an undefined global '" .. k .. 
+				"' at function '".. d.name .. 
+				"' line " .. d.currentline
+			log.say(s.."\n")
+			error(s)
+		end,
+		__newindex = function(t,k,v)
+			if k == "_" then rawset(_G,k,v) return end
+			local d = debug.getinfo(2,"lSn")or debug.getinfo(1,"lS")
+			local s = "BUG in '".. d.source ..
+				"' that sets an undefined global '" .. k .. 
+				"' at function '".. d.name .. 
+				"' line " .. d.currentline
+			log.say(s.."\n")
+			error(s)
+		end
+	})
 end
 
 --<==========================================================================>--
@@ -227,9 +277,10 @@ freepops.init = function (mailaddress)
 
 	-- standard lua modules that must be loaded
 	if freepops.dofile("support.lua") == nil then return 1 end
-	if freepops.dofile("common.lua") == nil then return 1 end
 	
 	if freepops.load_module_for(mailaddress) == nil then return 1 end
+
+	if freepops.check_global_symbols() == nil then return 1 end
 
 	return 0 -- OK
 end

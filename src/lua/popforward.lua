@@ -29,6 +29,9 @@ function init(pstate)
 		
 	freepops.export(pop3server)
 	
+	-- checks on globals
+	freepops.set_sanity_checks()
+
 	return POPSERVER_ERR_OK
 end
 

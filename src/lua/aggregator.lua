@@ -23,7 +23,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "RSS/RDF aggregator"
 
 -- Configuration:
@@ -350,31 +350,27 @@ end
 -- -------------------------------------------------------------------------- --
 -- Fill msg uidl field
 function uidl(pstate,msg)
-	return stat(pstate)
+	return common.uidl(pstate,msg)
 end
-
 -- -------------------------------------------------------------------------- --
 -- Fill all messages uidl field
 function uidl_all(pstate)
-	return stat(pstate)
+	return common.uidl_all(pstate)
 end
-
 -- -------------------------------------------------------------------------- --
 -- Fill msg size
 function list(pstate,msg)
-	return stat(pstate)
+	return common.list(pstate,msg)
 end
-
 -- -------------------------------------------------------------------------- --
 -- Fill all messages size
-function list_all(pstate,msg)
-	return stat(pstate)
+function list_all(pstate)
+	return common.list_all(pstate)
 end
-
 -- -------------------------------------------------------------------------- --
 -- Do nothing
 function noop(pstate)
-	return POPSERVER_ERR_OK
+	return common.noop(pstate)
 end
 
 -- -------------------------------------------------------------------------- --
@@ -421,7 +417,15 @@ function init(pstate)
 	if freepops.dofile("browser.lua") == nil then 
 		return POPSERVER_ERR_UNKNOWN 
 	end
-		
+	
+	-- the common implementation module
+	if freepops.dofile("common.lua") == nil then 
+		return POPSERVER_ERR_UNKNOWN 
+	end
+	
+	-- checks on globals
+	freepops.set_sanity_checks()
+	
 	return POPSERVER_ERR_OK
 end
 

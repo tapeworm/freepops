@@ -1,3 +1,4 @@
+- added sanity checks functions to plugins
 - common.lua now implements the commonly used uidl* list* dele rset noop
 - fixed tin.lua for messages bigger than 1MB
 - fixed proxy Host: problem

@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "Tin.IT"
 
 -- ************************************************************************** --
@@ -480,7 +480,7 @@ function stat(pstate)
 		-- statE and statG
 		local x = mlex.match(s,tin_string.statE,tin_string.statG)
 	
-		x:print()
+		--x:print()
 		
 		-- the number of results
 		local n = x:count()
@@ -501,7 +501,7 @@ function stat(pstate)
 			local size = x:get (1,i-1)
 
 			-- arrange message size
-			local k = nil
+			local k,m = nil,nil
 			_,_,k = string.find(size,"([Kk][Bb])")
 			_,_,m = string.find(size,"([Mm][Bb])")
 			_,_,size = string.find(size,"([%.%d]+)")
@@ -608,31 +608,39 @@ end
 
 -- -------------------------------------------------------------------------- --
 -- Fill msg uidl field
-uidl = common.uidl
-
+function uidl(pstate,msg)
+	return common.uidl(pstate,msg)
+end
 -- -------------------------------------------------------------------------- --
 -- Fill all messages uidl field
-uidl_all = common.uidl_all
-
+function uidl_all(pstate)
+	return common.uidl_all(pstate)
+end
 -- -------------------------------------------------------------------------- --
 -- Fill msg size
-list = common.list
-
+function list(pstate,msg)
+	return common.list(pstate,msg)
+end
 -- -------------------------------------------------------------------------- --
 -- Fill all messages size
-list_all = common.list_all
-
--- -------------------------------------------------------------------------- --
--- Do nothing
-noop = common.noop
-
+function list_all(pstate)
+	return common.list_all(pstate)
+end
 -- -------------------------------------------------------------------------- --
 -- Unflag each message merked for deletion
-rset = common.rset
-
+function rset(pstate)
+	return common.rset(pstate)
+end
 -- -------------------------------------------------------------------------- --
 -- Mark msg for deletion
-dele = common.dele
+function dele(pstate,msg)
+	return common.dele(pstate,msg)
+end
+-- -------------------------------------------------------------------------- --
+-- Do nothing
+function noop(pstate)
+	return common.noop(pstate)
+end
 
 -- -------------------------------------------------------------------------- --
 -- Get first lines message msg lines, must call 
@@ -766,7 +774,7 @@ function init(pstate)
 	log.dbg("FreePOPs plugin '"..
 		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
 
-	-- the serializatio module
+	-- the serialization module
 	if freepops.dofile("serialize.lua") == nil then 
 		return POPSERVER_ERR_UNKNOWN 
 	end 
@@ -775,7 +783,15 @@ function init(pstate)
 	if freepops.dofile("browser.lua") == nil then 
 		return POPSERVER_ERR_UNKNOWN 
 	end
-		
+
+	-- the common implementation module
+	if freepops.dofile("common.lua") == nil then 
+		return POPSERVER_ERR_UNKNOWN 
+	end
+	
+	-- checks on globals
+	freepops.set_sanity_checks()
+
 	return POPSERVER_ERR_OK
 end
 

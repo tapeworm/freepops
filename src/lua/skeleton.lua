@@ -41,6 +41,9 @@ function init(pstate)
 	--if freepops.dofile("browser.lua") == nil then 
 	--	return POPSERVER_ERR_UNKNOWN 
 	--end
+	
+	-- checks on globals
+	freepops.set_sanity_checks()
 		
 	return POPSERVER_ERR_OK
 end

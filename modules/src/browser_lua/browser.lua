@@ -357,7 +357,8 @@ function Private.init_curl(self)
 		self.curl:setopt(curl.OPT_PROXYUSERPWD,self.proxyauth)
 		-- old cURL < 7.10.7 have no OPT_PROXYAUTH
 		if curl.OPT_PROXYAUTH ~= nil then
-			self.curl:setopt(curl.OPT_PROXYAUTH,curl.AUTH_ANY)
+			self.curl:setopt(curl.OPT_PROXYAUTH,
+				curl.AUTH_ANY + curl.AUTH_DIGEST)
 		end
 	end
 	-- tells the library to follow any Location:

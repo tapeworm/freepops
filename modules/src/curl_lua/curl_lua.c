@@ -178,7 +178,7 @@ struct L_curl_bag {
  */ 
 struct L_const{
 	char* name;
-	unsigned long int value;
+	/*unsigned*/ long int value;
 };
 
 /******************************************************************************
@@ -449,26 +449,34 @@ return -1;
  */ 
 static long int L_checkconst_mask(lua_State* L,
 		const struct L_const* t,const char* t_nam, int c){
-int i,sum;
+//int i,sum;
 int con;
 
 if( lua_type(L,c) != LUA_TNUMBER )
-	L_error(L,"Expecting a %s value, gor nothing",t_nam);
+	L_error(L,"Expecting a %s value, got nothing",t_nam);
 
 con = (long int)lua_tonumber(L,c);
 
+/*
 for ( i = 0,sum = 0 ; t[i].name != NULL ; i++){
 	sum |= t[i].value;
 }
+*/
+
+/*
+fprintf(stderr,
+	"curl.AUTH_ANY %lx curl.AUTH_ANYSAFE %lx -> %lx\n",
+	 CURLAUTH_ANY,CURLAUTH_ANYSAFE,con);
+*/
 
 /* not really exaustive check */
-if(con <= sum)
+/*if(con <= sum)*/
 	return con;
-else {
+/*else {
 	L_error(L,"Expecting a %s orred value",t_nam);
-}
+}*/
 	
-return -1;
+//return -1;
 }
 
 /******************************************************************************
@@ -1089,7 +1097,7 @@ switch(opt) {
 #if CURL_NEWER(7,10,6)
 	case CURLOPT_HTTPAUTH:{
 		long int o= L_checkconst_mask(L,
-			curl_easy_auth_c,"CURL_AUTH_*",3);
+			curl_easy_auth_c,"CURLAUTH_*",3);
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
 #endif

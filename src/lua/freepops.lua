@@ -6,6 +6,8 @@ freepops = {}
 freepops.MODULES_MAP = {}
 freepops.SO = {}
 freepops.MODULE_ARGS = nil
+fp_m = { __index = function(table,k) error(string.format("Unable to access to 'freepops.%s'\n",k)) end }
+setmetatable(freepops,fp_m)
 
 --<==========================================================================>--
 -- these are global helpers for all freepops modules

@@ -67,7 +67,8 @@ $(LIBRARY): $(OBJ) $(INTERFACE)
 	$(H)[  -z "$(OBJ)" ] || echo "$(LIBRARY)"
 	$(H)cp $(INTERFACE) $(PREFIX)/include || true
 	$(H)[ ! -z "$(OBJ)" ] || touch $(LIBRARY)
-	$(H)[ -z "$(OBJ)" ] || cp $(LIBRARY) $(PREFIX)/lib || true
+#	$(H)[ -z "$(OBJ)" ] || cp $(LIBRARY) $(PREFIX)/lib || true
+	$(H)cp $(LIBRARY) $(PREFIX)/lib || true
 	
 $(SHARED): $(OBJ)
 	$(CC) -shared -o $(SHARED) $(OBJ) -L $(PREFIX)/lib $(SHAREDFLAG)

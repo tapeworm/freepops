@@ -44,7 +44,7 @@ local libero_string = {
 	login = "http://wpop%d%s/cgi-bin/webmail.cgi?dominio=%s&"..
 		"LOGIN=%s&PASSWD=%s&choice=%s&Act_Login.x=%d&Act_Login.y=%d",
 	-- This is the capture to get the session ID from the login-done webpage
-	sessionC = "/cgi%-bin/webmail%.cgi%?ID=([a-zA-Z0-9_]+)&",
+	sessionC = "/cgi%-bin/webmail%.cgi%?ID=([a-zA-Z0-9_%-]+)&",
 	-- This is the mlex expression to interpret the message list page.
 	-- Read the mlex C module documentation to understand the meaning
 	--
@@ -127,7 +127,7 @@ end
 -- Extracts the domain name of a mailaddress
 --
 function get_domain(s)
-	local _,_,d = string.find(s,"[_%.%a%d]+@([_%.%a%d]+)")
+	local _,_,d = string.find(s,"[^@]+@([_%.%-%w%d]+)")
 	return d
 end
 
@@ -135,7 +135,7 @@ end
 -- Extracts the account name of a mailaddress
 --
 function get_name(s)
-	local _,_,d = string.find(s,"([_%.%a%d]+)@[_%.%a%d]+")
+	local _,_,d = string.find(s,"([^@]+)@[_%.%-%w%d]+")
 	return d
 end
 

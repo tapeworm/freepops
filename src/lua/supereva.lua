@@ -63,8 +63,8 @@ local strings = {
   
   body_end = '</td></tr>\n<tr><td height=10 colspan=3></td></tr>',
   
-  head_begin = '</td></tr>\n<tr valign=top bgcolor="#FFFFFF">\n"..
-  	"<td colspan=2>&nbsp;</td>\n</tr>\n\n\n<tr class=g valign=top>\n',
+  head_begin = '</td></tr>\n<tr valign=top bgcolor="#FFFFFF">\n'..
+  	'<td colspan=2>&nbsp;</td>\n</tr>\n\n\n<tr class=g valign=top>\n',
   
   head_end = '</tr>\n\n*</table>\n</td></tr>\n<tr class=px11>',
   
@@ -234,6 +234,11 @@ function supereva_login()
 	local file,err = nil, nil
 	file,err = supereva_globals.browser:get_uri(post_uri)
 
+	if file == nil then
+		log.error_print(err or "unknown error")
+		return POPSERVER_ERR_NETWORK
+	end
+	
   	--print("we received this webpage: ".. file)
 	-- search the session ID
 	local id = string.find(file,"Benvenuto nella tua webMail")
@@ -327,7 +332,10 @@ function quit_update(pstate)
 	      	local file,err = 
 			supereva_globals.browser:post_uri(post_uri,post_data)
 
-		-- FIXME check file == nil
+		if file == nil then
+			log.error_print(err or "unknown error")
+			return POPSERVER_ERR_NETWORK
+		end
 	end
 	
 	-- save fails if it is already saved
@@ -363,7 +371,10 @@ function stat(pstate)
 		uri = string.format(strings.first,pagina)
 		file,err = supereva_globals.browser:get_uri(uri)
 
-		-- FIXME file may be nil
+		if file == nil then
+			log.error_print(err or "unknown error")
+			return POPSERVER_ERR_NETWORK
+		end
 		
   		fine = string.find(file,
 			string.format(strings.next_page,pagina+1))

@@ -239,7 +239,7 @@ end
 --@param size number the size in byte of the mail, can be nil.
 --@return table the global argument from common.top_cb.
 function common.new_global_for_top(lines,size)
-	if size = nil then
+	if size == nil then
 		return {lines=math.max(lines-1,0),
 			lines_requested=math.max(lines-1,0),
 			bytes = 0,

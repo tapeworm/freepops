@@ -21,14 +21,13 @@ PLUGIN_NAME = "GMail.com"
 -- (read sprintf) arguments, so theyr %s and %d are filled properly
 -- 
 local gmail_string = {
-	-- set browser user agent to one supported by Gmail service
-	browser_useragent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7) Gecko/20040616",
 	-- The uri the browser uses when you click the "login" button
 	login = "https://www.google.com/accounts/ServiceLoginBoxAuth",
-	login_post= "continue=https://gmail.google.com/gmail&service=mail&Email="..
-			"%s&Passwd=%s&null=Sign in",
-	login_checkcookie="https://www.google.com/accounts/CheckCookie?continue="..
-		"http%3A%2F%2Fgmail.google.com%2Fgmail&service=mail&chtml=LoginDoneHtml",
+	login_post= "continue=https://gmail.google.com/gmail&"..
+		"service=mail&Email=%s&Passwd=%s&null=Sign in",
+	login_checkcookie="https://www.google.com/accounts/CheckCookie?"..
+		"continue=http%3A%2F%2Fgmail.google.com%2Fgmail&"..
+		"service=mail&chtml=LoginDoneHtml",
 	login_fail="Username and password do not match.",
 	homepage="http://gmail.google.com/gmail",
 	view_email="http://gmail.google.com/gmail?view=om&th=%s&zx=%s",
@@ -36,15 +35,19 @@ local gmail_string = {
 	email_stat = ',%["(%w-)",(%d),(%d),".-","([^"]-)",.-%d%]\n',
 	-- next 2 lines: link to view a message in html format,
 	-- and regexp to extract sub messages.
-	view_email_thread="http://gmail.google.com/gmail?view=cv&search=inbox&th=%s&zx=%s",
-	email_stat_sub = '\nD%(%["mi",%d+,%d+,"(%w-)",(%d+),.-,".-","(.-)".-%]\n%);',
+	view_email_thread="http://gmail.google.com/gmail?"..
+		"view=cv&search=inbox&th=%s&zx=%s",
+	email_stat_sub = 
+		'\nD%(%["mi",%d+,%d+,"(%w-)",(%d+),.-,".-","(.-)".-%]\n%);',
 	-- This is the capture to get the session ID from the login-done webpage
-	cookieVal = 'cookieVal= "(%w*-%w*)"',
+	cookieVal = 'cookieVal= "(%w*%-%w*)"',
 	-- The uri for the first page with the list of messages
-	first = "http://gmail.google.com/gmail?search=%s&view=tl&start=0&init=1&zx=%s",
+	first = "http://gmail.google.com/gmail?"..
+		"search=%s&view=tl&start=0&init=1&zx=%s",
 	next_checkC = '\nD%(%["ts",(%d+),(%d+),(%d+),%d.-%]\n%);',
-	next = "http://gmail.google.com/gmail?search=%s&view=tl&start=%s&init=1&zx=%s",
-	-- view labels/folders = .../gmail?search=cat&cat=%s&view=tl&start=0&zx=%s
+	next = "http://gmail.google.com/gmail?"..
+		"search=%s&view=tl&start=%s&init=1&zx=%s",
+	-- view labels/folders=../gmail?search=cat&cat=%s&view=tl&start=0&zx=%s
 	msg_mark = "http://gmail.google.com/gmail?search=inbox&view=tl&start=0",
 	-- The peace of uri you must append to delete to choose the messages 
 	-- to delete
@@ -188,38 +191,31 @@ function gmail_login()
 	b:ssl_init_stuff()
 
 	local extract_f = support.do_extract(
-				internal_state,"cookie_val",gmail_string.cookieVal)
+			internal_state,"cookie_val",gmail_string.cookieVal)
 	local check_f = support.check_fail
 	local retrive_f = support.retry_n(
-				3,support.do_post(internal_state.b,uri,post))
+			3,support.do_post(internal_state.b,uri,post))
 
 	if not support.do_until(retrive_f,check_f,extract_f) then
 		log.error_print("Login failed\n")
 		return POPSERVER_ERR_AUTH
 	end
 	
-	table.foreach(b:get_cookie("SID"),function(a,b)
-			if a == "value" then
-				internal_state.cookie_sid = b
-			end
-		end)
+	-- get the cookie value
+	internal_state.cookie_sid = (b:get_cookie("SID")).value
+	--table.foreach(b:get_cookie("SID"),function(a,b)
+	--		if a == "value" then
+	--			internal_state.cookie_sid = b
+	--		end
+	--	end)
 
-
+	-- XXX FIXME XXX
+	-- here the browser has already a SID cookie!
+	-- isn't it a mistake?
 	local AuthCookie1 = mk_cookie(
-			"SID",internal_state.cookie_sid,nil,"/",".google.com",nil)
+		"SID",internal_state.cookie_sid,nil,"/",".google.com",nil)
 	local AuthCookie2 = mk_cookie(
-			"GV",internal_state.cookie_val,nil,"/",".google.com",nil)
-
--- TODO: Qui, se non creo un nuovo oggetto browser, non funziona,
--- commenta le prossime 5 riga e prova
-
---	internal_state.b = browser.new()
---	local b = internal_state.b
-
---	b.curl:setopt(curl.OPT_VERBOSE,1)
---	b.curl:setopt(curl.OPT_SSL_VERIFYHOST,  2)
---	b.curl:setopt(curl.OPT_USERAGENT, gmail_string.browser_useragent)
---	b.curl:setopt(curl.OPT_SSL_VERIFYPEER, 0)
+		"GV",internal_state.cookie_val,nil,"/",".google.com",nil)
 
 	b:add_cookie(gmail_string.homepage,AuthCookie1)
 	b:add_cookie(gmail_string.homepage,AuthCookie2)
@@ -230,8 +226,8 @@ function gmail_login()
 	internal_state.login_done = true
 	
 	-- log the creation of a session
-	log.say("Session started for " .. internal_state.name .. "@gmail.com " .. 
-		"(" .. internal_state.cookie_val .. ")\n")
+	log.say("Session started for " .. internal_state.name .. 
+		"@gmail.com " .. "(" .. internal_state.cookie_val .. ")\n")
 	return POPSERVER_ERR_OK
 end
 
@@ -249,7 +245,8 @@ function retr_cb(data)
 		-- \r = 13 = 0d                        \n \n .  \r \n
 		-- \n = 10 = 0a
 
-		-- fix that some clients don't know that the message was finished
+		-- fix that some clients don't know that the 
+		-- message was finished
 		-- because at the end of the message we got \r\n\n
 --		s = string.gsub(s,"\r$","")
 		if FirstBlock then
@@ -460,7 +457,8 @@ function stat(pstate)
 	--
 	local function action_f (s)
 		-- variables to hold temp parsing data
-		-- variables en, en2 hold the last position of the previous search,
+		-- variables en, en2 hold the last position 
+		-- of the previous search,
 		-- to start next loop where we ended the first one
 		local en, sUIDL, iNew, iStarred, sFrom
 		local en2, parentUIDL, sSender
@@ -475,27 +473,38 @@ function stat(pstate)
 
 		while sUIDL ~= nil do
 			_,_,sub_threads = string.find(sFrom, "%((%d+)%)$")
-			table.insert(MessageList,{["sUIDL"]=sUIDL, ["iSize"]=1,
-						["iNew"]=iNew, ["iStarred"]=iStarred})
+			table.insert(MessageList,{
+					["sUIDL"]=sUIDL, 
+					["iSize"]=1,
+					["iNew"]=iNew, 
+					["iStarred"]=iStarred
+					})
 			if sub_threads ~= nil then
 				-- get sub messages for this conversation
 				parentUIDL = sUIDL
-				uri = string.format(gmail_string.view_email_thread,
-							parentUIDL, RandNum())
+				uri = string.format(
+					gmail_string.view_email_thread,
+					parentUIDL, RandNum())
 				body,err=b:get_uri(uri)
 				en2=0
 				_,en2,sUIDL,iStarred,sSender=string.find(body,
 						gmail_string.email_stat_sub)
 				while sUIDL ~= nil do
-					if sUIDL ~= parentUIDL and sSender ~= myemail then
-						table.insert(MessageList,{["sUIDL"]=sUIDL,
-						["iSize"]=1, ["iNew"]=0, ["iStarred"]=iStarred})
+					if sUIDL ~= parentUIDL and 
+					   sSender ~= myemail then
+						table.insert(MessageList,{
+							["sUIDL"]=sUIDL,
+							["iSize"]=1, 
+							["iNew"]=0, 
+							["iStarred"]=iStarred})
 					end
-					_,en2,sUIDL,iStarred,sSender=string.find(body,
+					_,en2,sUIDL,iStarred,sSender=
+						string.find(body,
 						gmail_string.email_stat_sub,en2)
 				end
 			end
-			_,en,sUIDL,iNew,iStarred,sFrom=string.find(s,email_stat,en)
+			_,en,sUIDL,iNew,iStarred,sFrom=string.find(
+				s,email_stat,en)
 		end
 
 		local n = table.getn(MessageList)
@@ -513,13 +522,15 @@ function stat(pstate)
 		local val
 		-- gets all the results and puts them in the popstate structure
 		for i = 1,n do
-			-- n+1-i to get messages in reverse order, oldest to newest
+			-- n+1-i to get messages in reverse order, 
+			-- oldest to newest
 			val = MessageList[n+1-i]
 			sUIDL = val["sUIDL"]
 			if not sUIDL then
 				return nil,"Unable to parse page"
 			end
-			-- set it, size in gmail is unavailable, so set to 1 always
+			-- set it, size in gmail is unavailable, 
+			-- so set to 1 always
 			set_mailmessage_size(pstate,i+nmesg_old,1)
 			set_mailmessage_uidl(pstate,i+nmesg_old,sUIDL)
 		end
@@ -530,11 +541,13 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s)  
-		local _,_,iStart,iShow,iTotal=string.find(s,gmail_string.next_checkC)
+		local _,_,iStart,iShow,iTotal=string.find(s,
+			gmail_string.next_checkC)
 		if tonumber(iStart)+tonumber(iShow) < tonumber(iTotal) then
 		-- TODO: furthur tests with more than 2 pages of emails
 			-- change retrive behaviour
-			uri=string.format(gmail_string.next,box,iStart+iShow,RandNum())
+			uri=string.format(gmail_string.next,box,
+				iStart+iShow,RandNum())
 			-- continue the loop
 			return false
 		else
@@ -562,11 +575,13 @@ function stat(pstate)
 		return POPSERVER_ERR_UNKNOWN
 	end
 
-	table.foreach(b:get_cookie("GMAIL_AT"),function(a,b)
-			if a == "value" then
-				internal_state.gmail_at = b
-			end
-		end)
+	-- store in internal_state GMAIL_AT.value
+	internal_state.gmail_at=(b:get_cookie("GMAIL_AT")).value
+	--table.foreach(b:get_cookie("GMAIL_AT"),function(a,b)
+	--		if a == "value" then
+	--			internal_state.gmail_at = b
+	--		end
+	--	end)
 
 	-- save the computed values
 	internal_state["stat_done"] = true
@@ -650,8 +665,10 @@ function retr(pstate,msg,data)
 --       already done, but check if all is ok....
 			uri = gmail_string.msg_mark
 			local Gmail_at=internal_state.gmail_at
-			local post=string.format(gmail_string.msg_mark_post,"rd",Gmail_at)
-			post=post..string.format(gmail_string.msg_mark_next,uidl)
+			local post=string.format(gmail_string.msg_mark_post,
+				"rd",Gmail_at)
+			post=post..string.format(gmail_string.msg_mark_next,
+				uidl)
 			b:post_uri(uri,post)
 		end
 	end

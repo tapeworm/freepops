@@ -431,12 +431,12 @@ function Private.wherearewe(self)
 	end
 end
 
-function Private.ssl_init_stuff()
+function Private.ssl_init_stuff(self)
 	self.curl:setopt(curl.OPT_SSL_VERIFYHOST,  2)
 	self.curl:setopt(curl.OPT_SSL_VERIFYPEER, 0)
 end
 
-function Private.verbose_mode()
+function Private.verbose_mode(self)
 	self.curl:setopt(curl.OPT_VERBOSE,1)
 end
 

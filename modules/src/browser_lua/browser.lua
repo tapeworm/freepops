@@ -171,6 +171,15 @@ function Hidden.get_location(gl_h)
 	end)
 end
 
+-- gets the field Refresh:'s URL in a header table
+function Hidden.get_refresh_location(gl_h)
+	return table.foreach(gl_h,function(_,l)
+		local _,_,location = string.find(l,
+			"[Rr][Ee][Ff][Rr][Ee][Ss][Hh]%s*:%s*[%d]+;[Uu][Rr][Ll]=([^\r\n]*)")
+		return location
+	end)
+end
+
 -- returns an error
 function Hidden.error(s)
 	log.say(s)
@@ -209,6 +218,12 @@ function Hidden.parse_header(self,gl_h)
 		return Hidden.parse_header(self,gl_h1)
 	-- HTTP 2xx
 	elseif string.byte(ret,1) == string.byte("2",1) then
+		if self.followRefreshHeader == true then
+			local l = Hidden.get_refresh_location(gl_h)
+			if l ~= nil then
+				return Hidden.REDO,l
+			end
+		end
 		return Hidden.DONE,nil
 	-- HTTP 3xx
 	elseif string.byte(ret,1) == string.byte("3",1) then
@@ -430,6 +445,10 @@ function Private.whathaveweread(self)
 	return self.referrer
 end
 
+function Private.setFollowRefreshHeader(self, val)
+	self.followRefreshHeader = val
+end
+
 function Private.wherearewe(self)
 	local u = cookie.parse_url(self.referrer)
 	if u.port ~= nil then
@@ -464,6 +483,7 @@ function browser.new()
 		proxy = os.getenv("LUA_HTTP_PROXY"),
 		proxyauth = os.getenv("LUA_HTTP_PROXYAUTH"),
 		useragent = os.getenv("LUA_HTTP_USERAGENT"),
+		followRefreshHeader = false,
 	}
 
 	setmetatable(b,{
@@ -490,3 +510,4 @@ function browser.ssl_enabled()
 	local _,_,x = string.find(s,"([Ss][Ss][Ll])")
 	return x ~= nil
 end
+

@@ -133,7 +133,13 @@ dist-slack: freepops-$(VERSION).tar.gz
 		cp ../_slack_/freepops-$(VERSION)/COPYING usr/doc/freepops-$(VERSION); \
 		cp ../_slack_/freepops-$(VERSION)/ChangeLog usr/doc/freepops-$(VERSION); \
 		cp ../_slack_/freepops-$(VERSION)/README usr/doc/freepops-$(VERSION); \
-		makepkg --chown n freepops-$(VERSION)-i686-1.tgz; \
+		chown -R root.root .; \
+		chmod 755 .; \
+		chown root.bin usr/bin ; \
+		chmod 755 etc/rc.d/rc.freepops; \
+		chmod 644 usr/share/freepops/lua/*; \
+		rm -rf usr/share/freepops/lua_unofficial; \
+		makepkg --chown n freepops-$(VERSION)-i386-1.tgz; \
 		rm -rf etc; \
 		rm -rf install; \
 		rm -rf usr

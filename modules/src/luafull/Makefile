@@ -40,13 +40,14 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
 	-lbase64 -lcurl -llog -llist -loscompatibility \
-	-lpthread -lregex -lwsock32
+	-lpthread -lregex -lwsock32 -lcrypto
 else
 LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluaexpat -lregularexp_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
-	-lbase64 -lcurl -llog -llist -lreadline -lhistory -lcurses -lncurses
+	-lbase64 -lcurl -lcrypto -llog -llist -lreadline -lhistory \
+	-lcurses -lncurses
 endif
 endif
 

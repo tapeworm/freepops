@@ -1,4 +1,5 @@
 - session_lua now are made by hand, no more tolua++
+- log_lua now are made by hand, no more tolua++
 - all webmail now share the same get_name and get_domain functions
 - fixed stupid fetchmail top bug
 - log used to write liberopopsd :)

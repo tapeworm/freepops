@@ -1,6 +1,5 @@
 25/12/2004 0.0.23
 - es: *** empty log message *** (lisar314)
-- gmail.lua: STAT issue in gmail.lua (ncocchiaro)
 - tre.lua: Added folder parameter, now use curl for basic auth, added support for three.com.au and others (To be tested) (dpeddi)
 - hotmail.lua: added mailcom and fixed hotmail.it (gareuselesinge)
 - tre.lua: Bugfix, From/To/Cc should be parsed correctly, initial support for e-mail from vocal mailbox (dpeddi)

@@ -98,7 +98,6 @@ ifeq "$(OS)" "OpenBSD"
 else
 ifeq "$(OS)" "Cygwin"
 	LDFLAGS= -L ../modules/lib \
-		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
 		-lwsock32 -lgdi32   -lcygwin
 else	

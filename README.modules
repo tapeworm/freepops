@@ -20,8 +20,8 @@
  CFLAGS, HCFLAGS, LDFLAGS, HLDFLAGS, EXEEXTENSION, STATICEXTENSION, 
  SHAREDEXTENSION, OS.
 
- These variable must be used as the compiler,linker,..
- The module makefile is alco called defining PREFIX, CONFIG and TARGET.
+ These variable must be used as the compiler, linker, etc.
+ The module makefile is also called defining PREFIX, CONFIG and TARGET.
 
  A module file may contain something like:
  
@@ -33,7 +33,7 @@
  VERSION and PROGRAMNAME and other options for compilation not concerning 
  platform but only the software itself.
 
- Each module's Makefile must have this targets:
+ Each module's Makefile must have these targets:
 
  all, clean.
 
@@ -62,8 +62,8 @@
 
  ** name policy
 
- Lua bindings packages must be called packagename_lua and lua-only packages
- (containig .lua modules) must be called packagename_lua.
+ Lua bindings packages must be called packagename_lua, as with lua-only packages
+ (containing .lua modules).
 
  ** documentation
  
@@ -85,8 +85,8 @@
  function prototype or defined value
  <end>
 
- An handmade binding can't be documented via the .lua, so you have to add
- a .luadoc file. This file a lua documented file containing only the
+ A handmade binding can't be documented via the .lua, so you have to add
+ a .luadoc file. This file is a lua documented file containing only the
  functions prototypes and their documentation.
 
 ** COPYING

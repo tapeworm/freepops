@@ -18,9 +18,7 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells (at) despammed (.) com",
          "ncocchiaro (at) users (.) sourceforge (.) net"}
-PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca",
-	"@yahoo.com.ar","@yahoo.co.in","@yahoo.co.tw","@yahoo.co.uk",
-	"@yahoo.com.cn", "@yahoo.es"}
+PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
@@ -43,24 +41,16 @@ Inviati,Anti-spam, Cestino). For user defined folders, use their name as the val
 		}	
 	},
 	{name = "view", description = {
-		it = [[ Il parametro viene usato al momento dello scaricamento 
-dei messaggi. Esso determina quali messaggi scaricare, valori possibili sono ALL, UNREAD e FLAG.]],
 		en = [[ Parameter is used when getting the list of messages to 
 pull.  It determines what messages to be pulled.  Possible values are All, Unread and Flag.]]
 		}
 	},
 	{name = "markunread", description = {
-		it = [[ Il parametro viene usato per fare in modo che il plugin 
-segni ogni messaggio che scarica come non letto. Per attivare questo comportamento 
-impostare il valore a 1.]],
 		en = [[ Parameter is used to have the plugin mark all messages that it
 pulls as unread.  If the value is 1, the behavior is turned on.]]
 		}
 	},
 	{name = "nossl", description = {
-		it = [[ Questo parametro viene usato per forzare il plugin a 
-fare login con HTTP semplice e non con HTTPS e SSL. Impostare il valore a 1 per 
-evitare SSL.]],
 		en = [[ Parameter is used to force the module to login through plain
 HTTP and not HTTPS with SSL.  If the value is 1, the SSL is not used.]]
 		}
@@ -82,11 +72,11 @@ pulling messages.  Set the value to 1.]]
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Questo plugin vi per mette di leggere le mail che avete in una 
-mailbox come @yahoo.com, @yahoo.ca o @yahoo.it.
+mailbox @yahoo.com, @yahoo.ca o @yahoo.it.
 Per usare questo plugin dovete usare il vostro indirizzo email completo come
 user name e la vostra password reale come password.]],
 	en=[[
-This is the webmail support for mailboxes like @yahoo.com, @yahoo.ca and @yahoo.it. 
+This is the webmail support for @yahoo.com, @yahoo.ca and @yahoo.it mailboxes. 
 To use this plugin you have to use your full email address as the user 
 name and your real password as the password.]]
 }
@@ -169,7 +159,7 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date",
+  strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date&reset=1",
   strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&Nhead=f&toc=1&MsgId=%s&bodyPart=%s",
   strCmdMsgWebView = "%sym/ShowLetter?box=%s&MsgId=%s",
   strCmdDelete = "%sym/ShowFolder?box=%s&DEL=Delete", -- &Mid=%s&.crumb=%s
@@ -799,12 +789,6 @@ function quit_update(pstate)
       log.error_print("Cannot empty bulk - crumb not found\n")
     end
   end
-
-  -- Just "touch" the folder msg list page to update the status indicator of Yahoo
-  --
-  cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-    internalState.strMBox, 0, internalState.strView);
-  browser:get_uri(cmdUrl)
 
   -- Save and then Free up the session
   --

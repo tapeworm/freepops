@@ -33,7 +33,7 @@
 #include "mlex_lua.h"
 #include "stringhack_lua.h"
 #include "session_lua.h"
-#include "luasocket.h"
+#include "curl_lua.h"
 #include "getdate_lua.h"
 
 #include "log.h"
@@ -210,7 +210,7 @@ tolua_pop3server_lua_open(tmp->l);
 luaopen_mlex(tmp->l);
 luaopen_stringhack(tmp->l);
 tolua_session_lua_open(tmp->l);
-luaopen_socket(tmp->l);
+luacurl_open(tmp->l);
 tolua_getdate_lua_open(tmp->l);
 luay_emptystack(tmp->l);
 

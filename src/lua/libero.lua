@@ -162,27 +162,14 @@ end
 -- internal state. the problem is the field b. b is an object. this means
 -- that is a table (and no problem for this) that has some field that are
 -- pointers to functions. this is the problem. there is no easy way for the 
--- serial module to know how to serialize this. so the hack is: instead of 
--- a function pointer we put a "\a" marked string that tells the serialize 
--- module how to store properly the function pointer. This is donw through 
--- the getf function of the browser class that returns the function pointer 
--- for the function passed as the argument
+-- serial module to know how to serialize this. so we call b:serialize 
+-- method by hand hacking a bit on names
 --
 function serialize_state()
-	-- XXX FIX XXX --
-	-- disty hack for serial, if a string starts with \a (bell)
-	-- it is not written with " and this means that the object
-	-- members functions will be saved correctly
 	internal_state.stat_done = false;
-	table.foreach(internal_state.b, function (a,b)
-		if type(b) == "function" then
-			internal_state.b[a] = "\a".."browser.getf('"..a.."')"
-		end
-	end)
-	serial.init()
-	serial.serialize("internal_state",internal_state)
-
-	return serial.OUTPUT
+	
+	return serial.serialize("internal_state",internal_state) ..
+		internal_state.b:serialize("internal_state.b")
 end
 
 --------------------------------------------------------------------------------
@@ -295,23 +282,12 @@ end
 function retr_cb(data)
 	local a = stringhack.new()
 	
-	return function(s,err)
-		if s then
-			if s ~= "" then
-				s = a:dothack(s).."\0"
+	return function(s,len)
+		s = a:dothack(s).."\0"
 			
-				popserver_callback(s,data)
-			else
-				-- trasmission ended successfully!
-				return nil,"EOF"
-			end
-		else
-			log.error_print(err.."\n")
-			return nil,"network error: "..err
-		end
-
-		-- check if we need to stop (in top only)
-		return true,nil
+		popserver_callback(s,data)
+			
+		return len,nil
 	end
 end
 
@@ -322,43 +298,28 @@ end
 function top_cb(global,data)
 	local purge = false
 	
-	return function(s,err)
+	return function(s,len)
+		if purge == true then
+			--print("purging: "..string.len(s))
+			return len,nil
+		end
+			
+		s=global.a:tophack(s,global.lines_requested)
+		s =  global.a:dothack(s).."\0"
+			
+		popserver_callback(s,data)
 
-	if s then
-		if s ~= "" then
-			if purge == true then
-				--print("purging: "..string.len(s))
-				return true,nil
-			end
-			
-			s=global.a:tophack(s,global.lines_requested)
-			s =  global.a:dothack(s).."\0"
-			
-			popserver_callback(s,data)
+		-- check if we need to stop (in top only)
+		if global.a:check_stop(global.lines_requested) then
+			--print("TOP more than needed")
+			purge = true
+			global.lines = -1
+			return len,nil
 		else
-			-- trasmission ended successfully!
-			if global.a:check_stop(
-			   global.lines_requested) then
-				global.lines = -1
-				return nil,"EOF"
-			end
 			global.lines = global.lines_requested - 
 				global.a:current_lines()
-			return nil,"EOF"
+			return len,nil
 		end
-	else
-		log.error_print(err.."\n")
-		return nil,"network error: "..err
-	end
-
-	-- check if we need to stop (in top only)
-	if global.a:check_stop(global.lines_requested) then
-		--print("TOP more than needed")
-		purge = true
-		return true,nil
-	else
-		return true,nil
-	end
 	end
 end
 
@@ -741,7 +702,7 @@ function top(pstate,msg,lines,data)
 		to = 0,
 		-- the minimum amount of bytes we receive 
 		-- (compensates the mail header usually)
-		base = 2048,
+		base = 2--2048,
 	}
 	-- the callback for http stram
 	local cb = top_cb(global,data)
@@ -750,14 +711,15 @@ function top(pstate,msg,lines,data)
 		global.to = global.base + global.from + (global.lines + 1) * 100
 		global.base = 0
 		local extra_header = {
-			["Range"] = "bytes="..global.from.."-"..global.to
+			"Range: bytes="..global.from.."-"..global.to
 		}
-		local f,rc = b:pipe_uri(uri,cb,extra_header)
+		local f,err = b:pipe_uri(uri,cb,extra_header)
 		global.from = global.to + 1
-		if f == nil and rc.error == "EOF" then
-			return "",nil
-		end
-		return f,rc.error
+		--if f == nil --and rc.error == "EOF" 
+		--	then
+		--	return "",nil
+		--end
+		return f,err
 	end
 	-- global.lines = -1 means we are done!
 	local check_f = function(_)

@@ -9,13 +9,12 @@
 -- <B>pipe_uri(uri,callback,exhed)</B> : 
 -- Gets the uri and uses callback on the data
 -- received,exhed  are extra header lines you want to add. <BR> 
--- The callback takes a string (the data) and an optional error 
--- message as arguments and returns a couple. 
--- The first argument is true if it is ok to continue, nil if not. 
--- The second an error message. <BR/>
+-- The callback takes a string (the data) argument and returns a couple. 
+-- The first argument is the amount of byte served, if ~= from the sring.len 
+-- of the argument it is considered an error, and an error message.<BR/>
 -- pipe_uri returns a string that is nil 
 -- on error, "" on end of transmission. 
--- It also return a table representing the http header returned.<BR>
+-- It also return an error if one.<BR>
 -- See
 -- libero.lua for an example on how to use the callback. See 
 -- <A HREF="http://www.tecgraf.puc-rio.br/~diego/luasocket/new/http.html">
@@ -28,60 +27,108 @@ dofile("cookie.lua")
 
 local Private = {}
 
-function Private.get_uri(self,uri,exhed) 
-	local rc
-	local u = socket.url.parse(uri)
-	if not u.path then u.path = "/" end
+function Private.build_w_cb(t)
+        return function(s,len)
+                -- stores the received data in the table t
+                table.insert(t,s)
+                -- return number_of_byte_served, error_message
+                -- number_of_byte_served ~= string.len(s) is an error
+                return len,nil
+        end
+end
+
+function Private.get_uri(self,url,exhed) 
+	local u = cookie.parse_url(url)
+
 	--clean expired cookies
 	cookie.clean_expired(self.cookies)
-	--build the header
-	local r = {url=uri,headers={referrer = self.referrer,
-		cookie = cookie.get(self.cookies,u.path,u.host,u.host),
-		["user-agent"] = self.USERAGENT},method="GET",stay=nil}
-	if exhed ~= nil then
-		for k,v in pairs(exhed) do
-			r.headers[k] = v
-		end
-	end
+
+	-- the header
+	local head = exhed or {}
+	local cook = cookie.get(self.cookies,u.path,u.host,u.host)
 	
-	rc = socket.http.request(r)
-	if rc.code == 200 then
-		cookie.merge(self.cookies,cookie.parse_cookies(
-			rc.headers["set-cookie"],u.host))
-		self.referrer=uri
-		return rc.body,rc
+	if self.referrer then
+		table.insert(head,"Referer: "..self.referrer)
+	end
+	if cook ~= nil then
+		table.insert(head,"Cookie: "..cook)
+	end
+	self.curl:setopt(curl.OPT_HTTPHEADER,head)
+	
+	--the url
+	self.curl:setopt(curl.OPT_URL,url)
+	
+	-- the callbacks
+	local gl_b,gl_h = {},{}
+	self.curl:setopt(curl.OPT_WRITEFUNCTION,Private.build_w_cb(gl_b))
+	self.curl:setopt(curl.OPT_HEADERFUNCTION,Private.build_w_cb(gl_h))
+
+	-- go
+	local rc,err = self.curl:perform()
+
+	-- check result
+	if rc == 0 then
+		-- save referrer
+		self.referrer = url
+		table.foreach(gl_h,function(_,l)
+			local _,_,content = string.find(l,
+			   "^[Ss][Ee][Tt]%-[Cc][Oo][Oo][Kk][Ii][Ee]%s*:%s*(.*)")
+			if content ~= nil then
+				local c = cookie.parse_cookies(content,u.host)
+				cookie.merge(self.cookies,c)
+			end
+		end)
+		return table.concat(gl_b),nil
 	else
-		return nil,rc
+		return nil,err
 	end
 end
 
-function Private.pipe_uri(self,uri,cb,exhed) 
-	local rc
-	local u = socket.url.parse(uri)
-	if not u.path then u.path = "/" end
+function Private.pipe_uri(self,url,cb,exhed) 
+	local u = cookie.parse_url(url)
+
 	--clean expired cookies
 	cookie.clean_expired(self.cookies)
-	-- build header
-	local r = {url=uri,headers={referrer = self.referrer,
-		cookie = cookie.get(self.cookies,u.path,u.host,u.host),
-		["user-agent"] = self.USERAGENT}}
-	--table.foreach(r,print)	
-	--table.foreach(r.headers,print)
-	if exhed ~= nil then
-		for k,v in pairs(exhed) do
-			r.headers[k] = v
-		end
-	end
-	rc = socket.http.request_cb(r,{body_cb=cb})
-	if rc.code == 200 then
-		cookie.merge(self.cookies,cookie.parse_cookies(
-			rc.headers["set-cookie"],u.host))
-		self.referrer=uri
-		return "",rc
-	else
-		return nil,rc
-	end
 
+	-- the header
+	local head = exhed or {}
+	local cook = cookie.get(self.cookies,u.path,u.host,u.host)
+	
+	if self.referrer then
+		table.insert(head,"Referer: "..self.referrer)
+	end
+	if cook ~= nil then
+		table.insert(head,"Cookie: "..cook)
+	end
+	self.curl:setopt(curl.OPT_HTTPHEADER,head)
+	
+	--the url
+	self.curl:setopt(curl.OPT_URL,url)
+	
+	-- the callbacks
+	local gl_b,gl_h = {},{}
+	self.curl:setopt(curl.OPT_WRITEFUNCTION,cb)
+	self.curl:setopt(curl.OPT_HEADERFUNCTION,Private.build_w_cb(gl_h))
+
+	-- go
+	local rc,err = self.curl:perform()
+
+	-- check result
+	if rc == 0 then
+		-- save referrer
+		self.referrer = url
+		table.foreach(gl_h,function(_,l)
+			local _,_,content = string.find(l,
+			   "^[Ss][Ee][Tt]%-[Cc][Oo][Oo][Kk][Ii][Ee]%s*:%s*(.*)")
+			if content ~= nil then
+				local c = cookie.parse_cookies(content,u.host)
+				cookie.merge(self.cookies,c)
+			end
+		end)
+		return "",nil
+	else
+		return nil,err
+	end
 end
 
 function Private.show(self)
@@ -93,6 +140,31 @@ function Private.show(self)
 	print("\treferrer:\n\t\t" .. (self.referrer or ""))
 end
 
+function Private.init_curl(self)
+	self.curl = curl.easy_init()
+	self.curl:setopt(curl.OPT_USERAGENT,self.useragent or "browser.lua")
+	if self.proxy ~= nil then
+		self.curl:setopt(curl.OPT_PROXY,self.proxy)
+	end
+	if self.proxypass ~= nil then
+		self.curl:setopt(curl.OPT_PROXYUSERPWD,self.proxypass)
+	end
+	-- tells the library to follow any Location:
+        -- header that the server sends as part of an HTTP header
+	self.curl:setopt(curl.OPT_FOLLOWLOCATION,1)
+	-- libcurl will automatically set the Referer: field 
+	-- in requests  where  it follows a Location: redirect
+	self.curl:setopt(curl.OPT_AUTOREFERER,1)
+
+end
+
+function Private.serialize(self,name)
+	local s = {}
+	table.insert(s,name..".cookies="..serial.serialize(nil,self.cookies))
+	table.insert(s,name..".referrer="..serial.serialize(nil,self.referrer))
+	return name .. "= browser.new();" .. table.concat(s)
+end
+
 browser = {}
 
 --<==========================================================================>--
@@ -101,81 +173,26 @@ browser = {}
 -- Creates a new object.
 -- @return object.
 function browser.new()
-	local proxy = os.getenv("LUA_HTTP_PROXY")
-	local useragent = os.getenv("LUA_HTTP_USERAGENT")
-		
 	local b = {
-	cookies = {},
-	referrer = nil,
-	get_uri = Private.get_uri,
-	pipe_uri = Private.pipe_uri,
-	show = Private.show,
-	PROXY_HOST = nil,
-	PROXY_PORT = nil,
-	PROXY_AUTH = nil,
-	MAX_TIMEOUT = nil,
-	USERAGENT = nil,
+		cookies = {},
+		referrer = false, --nil will break the metatable check
+		curl = false,
+		proxy = os.getenv("LUA_HTTP_PROXY"),
+		proxypass = os.getenv("LUA_HTTP_PROXYPASS"),
+		useragent = os.getenv("LUA_HTTP_USERAGENT"),
 	}
 
-	-- proxy
-	if proxy ~= nil then
-		local _,_,h,p = string.find(proxy,"([%w_%-]+):(%d+)")
-		p = p or 80
-		if h ~= nil then
-			b.PROXY_HOST = h
-			b.PROXY_PORT = p
+	setmetatable(b,{
+		__index = Private,
+		__newindex = function(t,k,v) 
+			log.error_abort("No allowed to create a new field "..
+				"in a browser object!")
+		end
+	})
 
-			socket.http.PROXY_HOST = h
-			socket.http.PROXY_PORT = p
-			end
-	end
+	b:init_curl()
 	
-	--useragent
-	b.USERAGENT = useragent
-	socket.http.USERAGENT = useragent
-
 	return b
 end
 
----
--- Returns the function named f, the one you use when you write b:f().
--- @param f string the function name.
--- @return function.
-function browser.getf(f)
-	return Private[f]
-end
 
-
-
---<========================>--
-
---[[
-b = browser.new()
-b.USERAGENT = "CIAO"
---b:show()
-file,t = b:get_uri("http://localhost/ciao")
-if file then
-	print("got "..string.len(file))
-end
-b:show()
-
-print("...............")
-file,t = b:get_uri("http://liberopops.diludovico.it")
-if file then
-	print("got "..string.len(file))
-end
-b:show()
-print("...............")
-file,t = b:get_uri("http://tassi.web.cs.unibo.it")
-if file then
-	print("got "..string.len(file))
-end
-b:show()
-print("...............")
-
-file,t = b:get_uri("http://www.libero.it")
-if file then
-	print("got "..string.len(file))
-end
-b:show()
---]]

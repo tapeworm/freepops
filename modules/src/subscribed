@@ -32,4 +32,4 @@ MK_TEMPL_CTRIB=	lua \
 		pkg2luadoc \
 		getdate 
 
-MK_CUSTOM=	
+MK_CUSTOM=	curl_lua 

@@ -19,10 +19,10 @@ MODULES-Common= lua		\
 		log_lua		\
 		mlex_lua	\
 		support_lua	\
-		luasocket	\
 		pkg2luadoc	\
 		getdate		\
 		getdate_lua	\
+		curl_lua	\
 		browser_lua	\
 		stringhack_lua	\
 		luadoc

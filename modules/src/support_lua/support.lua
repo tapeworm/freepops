@@ -89,8 +89,7 @@ end
 -- Returns a retrive function for do_until that retrives uri u with browser b
 function support.do_retrive(b,u)
 	return function()
-		local f,r = b:get_uri(u)
-		return f,r.error
+		return b:get_uri(u)
 	end
 end
 

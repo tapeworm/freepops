@@ -251,6 +251,80 @@ function cookie.merge(t2,t1)
 	end)
 end
 
+-- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
+-- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
+--
+-- begin of code taken from luasocket by Diego Nehab 
+-- this code is part of url.lua, released under the MIT license
+--
+-- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
+-- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
+
+
+-----------------------------------------------------------------------------
+-- Parses a url and returns a table with all its parts according to RFC 2396
+-- The following grammar describes the names given to the URL parts
+-- <url> ::= <scheme>://<authority>/<path>;<params>?<query>#<fragment>
+-- <authority> ::= <userinfo>@<host>:<port>
+-- <userinfo> ::= <user>[:<password>]
+-- <path> :: = {<segment>/}<segment>
+-- Input
+--   url: uniform resource locator of request
+--   default: table with default values for each field
+-- Returns
+--   table with the following fields, where RFC naming conventions have
+--   been preserved:
+--     scheme, authority, userinfo, user, password, host, port, 
+--     path, params, query, fragment
+-- Obs:
+--   the leading '/' in {/<path>} is considered part of <path>
+-----------------------------------------------------------------------------
+function cookie.parse_url(url, default)
+    -- initialize default parameters
+    local parsed = default or {}
+    -- empty url is parsed to nil
+    if not url or url == "" then return nil end
+    -- remove whitespace
+    url = string.gsub(url, "%s", "")
+    -- get fragment
+    url = string.gsub(url, "#(.*)$", function(f) parsed.fragment = f end)
+    -- get scheme
+    url = string.gsub(url, "^([%w][%w%+%-%.]*)%:", 
+        function(s) parsed.scheme = s end)
+    -- get authority
+    url = string.gsub(url, "^//([^/]*)", function(n) parsed.authority = n end)
+    -- get query stringing
+    url = string.gsub(url, "%?(.*)", function(q) parsed.query = q end)
+    -- get params
+    url = string.gsub(url, "%;(.*)", function(p) parsed.params = p end)
+    if url ~= "" then parsed.path = url end
+    local authority = parsed.authority
+    if not authority then return parsed end
+    authority = string.gsub(authority,"^([^@]*)@",
+        function(u) parsed.userinfo = u end)
+    authority = string.gsub(authority, ":([^:]*)$", 
+        function(p) parsed.port = p end)
+    if authority ~= "" then parsed.host = authority end
+    local userinfo = parsed.userinfo
+    if not userinfo then return parsed end
+    userinfo = string.gsub(userinfo, ":([^:]*)$", 
+        function(p) parsed.password = p end)
+    parsed.user = userinfo 
+    return parsed
+end
+
+
+-- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
+-- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
+--
+-- end of code taken from luasocket by Diego Nehab 
+-- this code is part of url.lua, released under the MIT license
+--
+-- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
+-- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
+
+
+
 -- returns the needed cookie for the domain...
 -- returns the string
 function cookie.get(t,res,domain,host)

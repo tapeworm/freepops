@@ -41,20 +41,27 @@ for(i=lua_gettop(s) ; i > 0 ; i-- )
 	{
 	fprintf(stderr,"%sstack(%2d) : %s: ",LINE_PREFIX,i,
 		lua_typename(s,lua_type(s,i)));
-	if(lua_isstring(s,i))
-		fprintf(stderr," \"%s\"\n",lua_tostring(s,i));
-	else if (lua_isnumber(s,i))
-		fprintf(stderr," %5.3f\n",lua_tonumber(s,i));
-	else if (lua_isboolean(s,i))
-		fprintf(stderr," %s\n",lua_toboolean(s,i)==0?"true":"false");
-	else if (lua_isnil(s,i))
-		fprintf(stderr," nil\n");
-	else
-		fprintf(stderr," ??\n");
+	switch(lua_type(s,i)){
+		case LUA_TSTRING:
+			fprintf(stderr," \"%s\"\n",lua_tostring(s,i));
+		break;
+		case LUA_TNUMBER:
+			fprintf(stderr," %5.3f\n",lua_tonumber(s,i));
+		break;
+		case LUA_TBOOLEAN:
+			fprintf(stderr," %s\n",
+				lua_toboolean(s,i)==0?"true":"false");
+		break;
+		case LUA_TNIL:
+			fprintf(stderr," nil\n");
+		break;
+		default:
+			fprintf(stderr," ??\n");
+		break;
+	}
 	}
 fprintf(stderr,"%sstack( 0) : --bottom--\n\n",LINE_PREFIX);
 }
-
 
 /*! \brief used in lualp_call
  *

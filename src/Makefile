@@ -35,7 +35,7 @@ LIBS=		stringhack_lua	\
                 browser_lua     \
                 getdate_lua     \
                 getdate         \
-                luasocket       \
+                curl_lua        \
                 support_lua     \
                 mlex_lua        \
                 log_lua         \
@@ -71,13 +71,13 @@ ifeq "$(OS)" "Windows"
 	LDFLAGS= -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
-		-lregex -lm -lmingw32 -lwsock32 -lpthread -mwindows
+		-lregex -lm -lcurl -lmingw32 -lwsock32 -lpthread -lgdi32 -mwindows
 
 else
 ifeq "$(OS)" "Darwin"
-	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread
+	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread -lcurl
 else
-	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread -rdynamic
+	LDFLAGS=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm -lpthread -rdynamic -lcurl
 	
 endif
 endif	

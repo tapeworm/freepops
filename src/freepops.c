@@ -21,6 +21,8 @@
 #include <string.h>
 #include <time.h>
 
+#include <curl/curl.h>
+
 #if !defined(WIN32) && !defined(BEOS)
 	#include <sys/types.h>
 	#include <sys/stat.h>
@@ -356,6 +358,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	win32_init(&argc,&argv,lpszCmdLine);
 #endif
 
+	curl_global_init(CURL_GLOBAL_ALL);
+	
 #if !defined(WIN32) && !defined(BEOS)	
 	uid = geteuid();
 	gid = getegid();

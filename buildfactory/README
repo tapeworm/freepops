@@ -18,6 +18,7 @@ win32:
 	freepops.nsi.in
 	freepops-setup.xpm
 	freepops-remove.xpm
+	freepopsd.vbs
 
 osx:
 	freepops.psmp

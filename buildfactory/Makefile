@@ -31,6 +31,8 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/modules/include/*.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/
+	$(H)cp _win_/freepops-$(VERSION)/buildfactory/freepopsd.vbs \
+		_win_/freepops/
 	$(H)#cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/
 	$(H)#cp _win_/freepops-$(VERSION)/doc/manual-it.pdf _win_/freepops/
 

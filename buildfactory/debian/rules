@@ -69,12 +69,18 @@ install: build
 	 echo "#####################################">  $$FILE;	\
 	 echo "# configuration file for freepopsd.">> $$FILE;	\
 	 echo "#                                    ">> $$FILE; \
-	 echo "# man freepopsd for more info.     ">> $$FILE; \
-	 echo "DAEMON_OPTS=\" -d\"">> $$FILE 	
+	 echo "# man freepopsd for more info.     ">> $$FILE; 	\
+	 echo "DAEMON=\"/usr/bin/freepopsd\"">> $$FILE;		\
+	 echo "DAEMON_OPTS=\" -n\"">> $$FILE; 		\
+	 echo "PIDFILE=\"/var/run/freepops.pid\"">> $$FILE; 	\
+	 echo "CHROOTED_DAEMON_OPTS=\" -n -s nobody.nogroup\"">> $$FILE
 
 	#istall the icon
 	DESTDIR=$(CURDIR)/debian/freepops; 	\
 	 cp modules/src/winsystray/freepops-32.xpm $$DESTDIR/usr/share/pixmaps/
+	
+	DESTDIR=$(CURDIR)/debian/freepops;      \
+	 cp buildfactory/create_jail.sh $$DESTDIR/usr/lib/freepops
 
 	# .po stuff
 	#DESTDIR=$(CURDIR)/debian/freepops; 	\

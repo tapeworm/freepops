@@ -1,3 +1,8 @@
 ?package(freepops):needs="text" section="Apps/Net"\
-  title="freepopsd (start)" command="/usr/bin/freepopsd -v"\
+  title="freepopsd (start)" command="/usr/bin/freepopsd "\
   icon="/usr/share/pixmaps/freepops-32.xpm"
+# this is commented since we have no per-user pid file, so it will be a pain
+# in the ass to use killall 
+#?package(freepops):needs="text" section="Apps/Net"\
+#	 title="freepopsd (stop)" command="/usr/bin/freepopsd "\
+#	 icon="/usr/share/pixmaps/freepops-32.xpm"

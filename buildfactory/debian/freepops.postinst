@@ -30,42 +30,35 @@ case "$1" in
 	. /usr/share/debconf/confmodule
 
 	# Check their answers.
-	JAIL_SCRIPT=/usr/share/doc/freepops/create_jail.sh
+	JAIL_SCRIPT=/usr/lib/freepops/create_jail.sh
 	JAIL_DIR=`/bin/sh $JAIL_SCRIPT get-dir`
-	if [ -f $JAIL_DIR/var/run/freepopsd.pid ] ; then
-		VICTIM="`cat $JAIL_DIR/var/run/freepopsd.pid`"
-	fi
-	if [ -f /var/run/freepopsd.pid ]; then
-		VICTIM="$VICTIM `cat /var/run/freepopsd.pid`"
-	fi
 
 	# jail script........
 	db_get freepops/jail
+	TMPFILE=`tempfile`
 	if [ "$RET" = true ]; then
-		#create it
+		# create it
 		/bin/sh $JAIL_SCRIPT create
-		#comment old config
-		mv /etc/default/freepops /etc/default/.freepops~
-		sed s/DAEMON\=/\#DAEMON\=/ /etc/default/.freepops~ > \
-			/etc/default/freepops
-		rm /etc/default/.freepops~
-		#update config
-		echo "DAEMON=$JAIL_DIR/start.sh" >> /etc/default/freepops
+		# set the CHROOT variable
+		mv /etc/default/freepops $TMPFILE
+		echo "CHROOT=\"$JAIL_DIR\"" >> $TMPFILE
+		cat $TMPFILE | sed "s/\#CHROOT\=/CHROOT\=/" | \
+			uniq > /etc/default/freepops
+		
 	else
+		#remove it
 		rm -fr $JAIL_DIR
-		mv /etc/default/freepops /etc/default/.freepops~
-		sed s/DAEMON\=/\#DAEMON\=/ /etc/default/.freepops~ > \
-			/etc/default/freepops
-		rm /etc/default/.freepops~
+		#comment old config file CHROOT variable
+		mv /etc/default/freepops $TMPFILE
+		sed "s/CHROOT\=/\#CHROOT\=/" $TMPFILE | \
+			uniq > /etc/default/freepops
 	fi
-
+	rm $TMPFILE
+	
 	# init script..........
 	db_get freepops/init
 	if [ "$RET" = true ]; then
-		# how to kill if we changed from jail to normal and viceversa?
-		if [ ! -z "$VICTIM" ]; then
-			kill $VICTIM
-		fi
+		invoke-rc.d freepops stop 2>/dev/null || true
 		update-rc.d freepops defaults 19 19 1>/dev/null 2>/dev/null
 		invoke-rc.d freepops start
 	fi

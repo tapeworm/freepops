@@ -99,6 +99,13 @@ tgz-dist:
 		rm freepops.tgz;\
 		cd $$BASE; $(MAKE) realclean; cd ..;\
 		find $$BASE -name CVS -exec rm -fr \{\} \; 2>/dev/null;\
+		echo "removing non-free doc files (like RFCs and contracts)";\
+		cd $$BASE;\
+		ls doc/rfc/rfc*.txt | sed "s/.txt//g" | \
+			sed "s?doc/rfc/rfc??g"> doc/RFCs.txt;\
+		rm -rf doc/rfc/;\
+		rm -rf doc/contracts/;\
+		cd ..;\
 		mv $$BASE freepops-$(VERSION) || true;\
 		tar -cf freepops-$(VERSION).tar freepops-$(VERSION);\
 		gzip -9 freepops-$(VERSION).tar;\

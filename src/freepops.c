@@ -82,7 +82,7 @@ gid_t gid;
 #endif
 
 /*** usage ********************************************************************/
-#define GETOPT_STRING "b:p:P:A:c:u:t:l:s:dhVvwkx:"
+#define GETOPT_STRING "b:p:P:A:c:u:t:l:s:dhVvwknx:"
 HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "port", required_argument, NULL, 'p' },
 				 { "proxy", required_argument, NULL, 'P' },
@@ -98,6 +98,7 @@ HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "daemonize", no_argument, NULL, 'd' },
 				 { "suid", required_argument, NULL, 's' },
 				 { "kill", no_argument, NULL, 'k' },
+				 { "no-pid-file", no_argument, NULL, 'n' },
 				 { "toxml", required_argument, NULL, 'x' },
 				 { "force-proxy-auth-type", 
 					 required_argument, NULL, 1000 },
@@ -127,6 +128,7 @@ void usage(const char *progname) {
 #if !defined(WIN32) && !defined(BEOS)			
 "\t\t\t[-s|--suid user.group]\n"
 "\t\t\t[-k|--kill]\n"
+"\t\t\t[-n|--no-pid-file]\n"
 #endif
 "        %s\t[-V|--version]\n"
 "        %s\t[-h|--help]\n\n", progname, progname, progname);
@@ -397,6 +399,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 #if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)	
         pid_t this_pid;
+	int no_pid = 0; /* by default we want the pid file */
 #endif
 
 #if defined(WIN32) && !defined(CYGWIN)
@@ -550,6 +553,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		} else if (res == 's') {
 			/* --suid */
 			parse_suid(optarg);
+		} else if (res == 'n') {
+			/* --no-pid-file */
+			no_pid = 1;
 	#endif			
 		} else {
 			usage(argv[0]);
@@ -575,8 +581,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #if !(defined(WIN32) && !defined(CYGWIN)) && ! defined(BEOS)
 	if(daemonize)
 		daemonize_process();
-	
-	create_pid_file(PIDFILE);
+
+	if ( ! no_pid ) 
+		create_pid_file(PIDFILE);
 	
 	set_signals();
 #endif

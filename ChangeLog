@@ -1,3 +1,5 @@
+- removed rfcs and contracts from the default tarball since they are not
+conforming to DFSG.
 - added command 'status' to RPM init script
 - added Rojous patch to freepopsd.vbs to clean log files
 - fixed "no more log file names available" bug

@@ -1,84 +1,101 @@
 #! /bin/sh
 #
-# skeleton	example file to build /etc/init.d/ scripts.
-#		This file should be used to construct scripts for /etc/init.d.
-#
-#		Written by Miquel van Smoorenburg <miquels@cistron.nl>.
-#		Modified for Debian 
-#		by Ian Murdock <imurdock@gnu.ai.mit.edu>.
-#
-# Version:	@(#)skeleton  1.9  26-Feb-2001  miquels@cistron.nl
+#  TODO:
+#     To be in perfect debian style we should use start-stop-daemon also
+#     for chrooting.
+# 
 #
 
+### some default values ###
+
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-#DAEMON=/usr/bin/freepopsd #removed since now is read from thedefaults 
+
+DEFAULT_DAEMON=/usr/bin/freepopsd
+DEFAULT_PIDFILE=/var/run/freepopsd.pid
+DEFAULT_CHROOTED_DAEMON_OPTS=" -n -s nobody.nogroup"
+DEFAULT_DAEMON_OPTS=" -n"
+
 NAME=freepopsd
 DESC="freepops daemon"
 
-# Include freepops defaults if available
+### /etc/default/ loading ###
+
+# Include freepops defaults if available. Used variables are:
+# DAEMON, DAEMON_OPTS, CHROOTED_DAEMON_OPTS, PIDFILE, CHROOT
+# all have a DEFAULT_ here, except CHROOT that is empty if the 
+# daemon should run in the normal environment
+
 if [ -f /etc/default/freepops ] ; then
 	. /etc/default/freepops
 fi
 
 if [ -z "$DAEMON" ] ; then
-	DAEMON=/usr/bin/freepopsd
+	DAEMON=$DEFAULT_DAEMON
+fi
+
+if [ -z "$PIDFILE" ] ; then
+	PIDFILE=$DEFAULT_PIDFILE
+fi
+
+if [ -z "$DAEMON_OPTS" ] ; then
+	DAEMON_OPTS=$DEFAULT_DAEMON_OPTS
+fi
+
+if [ -z "$CHROOTED_DAEMON_OPTS" ] ; then
+	CHROOTED_DAEMON_OPTS=$DEFAULT_CHROOTED_DAEMON_OPTS
 fi
 
 test -x $DAEMON || exit 0
 
 set -e
 
+### helpers ###
+
+function start_freepopsd () {
+	if [ -z "$CHROOT" ] ; then
+		start-stop-daemon --start -b --quiet -m -p $PIDFILE \
+			--exec $DAEMON -- $DAEMON_OPTS
+	else
+		echo -n "(chroot) "
+		start-stop-daemon --start -b --quiet -m -p $PIDFILE \
+			-r $CHROOT --exec $DAEMON -- $CHROOTED_DAEMON_OPTS
+	fi
+
+}
+
+function stop_freepopsd () {
+	if [ -z "$CHROOT" ] ; then
+		start-stop-daemon --stop --quiet -p $PIDFILE 
+	else
+		echo -n "(chroot) "
+		start-stop-daemon --stop --quiet -p $PIDFILE 
+	fi
+	rm $PIDFILE
+}
+
+### real code ###
+
 case "$1" in
   start)
 	echo -n "Starting $DESC: "
-	start-stop-daemon --start -b --quiet \
-		--exec $DAEMON -- $DAEMON_OPTS
+	start_freepopsd
 	echo "$NAME."
 	;;
   stop)
 	echo -n "Stopping $DESC: "
-	if [ "$DAEMON" = "/usr/bin/freepopsd" ] ; then
-		start-stop-daemon --stop --quiet -p /var/run/freepopsd.pid 
-	else
-		start-stop-daemon --stop --quiet \
-			-p `dirname $DAEMON`/var/run/freepopsd.pid 
-	fi
-        [ $? -eq 0 -a -f /var/run/freepopsd.pid ] && rm /var/run/freepopsd.pid
+	stop_freepopsd
 	echo "$NAME."
 	;;
-  #reload)
-	#
-	#	If the daemon can reload its config files on the fly
-	#	for example by sending it SIGHUP, do it here.
-	#
-	#	If the daemon responds to changes in its config file
-	#	directly anyway, make this a do-nothing entry.
-	#
-	# echo "Reloading $DESC configuration files."
-	# start-stop-daemon --stop --signal 1 --quiet --pidfile \
-	#	/var/run/$NAME.pid --exec $DAEMON
-  #;;
   restart|force-reload)
-	#
-	#	If the "reload" option is implemented, move the "force-reload"
-	#	option to the "reload" entry above. If not, "force-reload" is
-	#	just the same as "restart".
-	#
 	echo -n "Restarting $DESC: "
-	if [ "$DAEMON" = "/usr/bin/freepopsd" ] ; then
-		start-stop-daemon --stop --quiet -p /var/run/freepopsd.pid 
-	else
-		start-stop-daemon --stop --quiet \
-			-p `dirname $DAEMON`/var/run/freepopsd.pid 
-	fi
+	stop_freepopsd
 	sleep 1
-	start-stop-daemon --start --quiet -b --exec $DAEMON -- $DAEMON_OPTS
+	start_freepopsd
 	echo "$NAME."
 	;;
   *)
-	N=/etc/init.d/$NAME
-	# echo "Usage: $N {start|stop|restart|reload|force-reload}" >&2
-	echo "Usage: $N {start|stop|restart|force-reload}" >&2
+	N=/etc/init.d/freepops
+	echo "Usage: $N {start|stop|restart}" >&2
 	exit 1
 	;;
 esac

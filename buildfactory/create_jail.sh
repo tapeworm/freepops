@@ -103,7 +103,7 @@ cat > $CHROOTDIR/start.sh << EOT
 export HOME=/home/$USER/
 export USER=$USER
 cd $CHROOTDIR
-chroot . usr/bin/freepopsd \$@ -s $USER.$GROUP
+exec -a chroot chroot . usr/bin/freepopsd \$@ -s $USER.$GROUP
 EOT
 
 chmod a+rx $CHROOTDIR/start.sh

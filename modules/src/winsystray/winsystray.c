@@ -66,13 +66,14 @@ HIDDEN pthread_attr_t att;
 
 
 // helper function for get_news()
+/*
 HIDDEN long str_to_num(char* v)
 {
 int a,b,c;
 sscanf(v,"%d.%d.%d",&a,&b,&c);
 return c + b*100 + a*10000;
 }
-
+*/
 /**********************
  * the real callback
  *
@@ -83,8 +84,6 @@ HIDDEN LRESULT CALLBACK wndProc(HWND hwnd, UINT message,
 POINT pt;
 HMENU hmenu, hpopup;
 NOTIFYICONDATA nid;
-char *news_msg;
-int news_out;
 
 switch (message) 
 	{

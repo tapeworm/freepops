@@ -352,6 +352,21 @@ lua_State* l;
 start_logging(strdup(LOGFILE),0);
 l = luabox_genbox(LUABOX_FULL);
 bootstrap(NULL,l,username,1);
+
+#ifdef WIN32
+	{
+	int len = strlen(filename) + 5;
+	char *outname = calloc(len,sizeof(char));
+	if ( outname == NULL) {
+		fprintf(stderr,"Unable to malloc\n");
+	}
+	
+	snprintf(outname,len,"%s.xml",filename);
+	if(stdout != freopen(outname,"w",stdout)) 
+		fprintf(stderr,"Unable to redirect stdout to %s\n",outname);	
+	}
+#endif
+
 luay_call(l,"s","plugins2xml.main",filename);
 lua_close(l);
 return 0;

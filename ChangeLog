@@ -1,3 +1,5 @@
+- fixed win32 XML generation, now freepopsd.exe -x gmail.lua creates a
+gmail.lua.xml file instead of writing the XML to stdout.txt
 - libero_login now made with a POST, since some proxy logs in clear the GET
 parameters. Thanks Roberto F.
 - added --no-icon win32 flag

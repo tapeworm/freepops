@@ -201,12 +201,8 @@ struct mail_msg_t* get_popstate_mailmessage(struct popstate_t *p,int n)
 {
 if(p == NULL)
 	ERROR_ABORT("popstate is NULL\n");
-if(n >= 0 && n <= p->num_msgs) {
-	if (p->msg_list[n]->flags & MAILMESSAGE_DELETE)
-		return NULL;
-	else
-		return p->msg_list[n];
-}
+if(n >= 0 && n <= p->num_msgs)
+	return p->msg_list[n];
 /*if(n>p->num_msgs)
 	{
 	set_popstate_nummesg(p,n+1);
@@ -215,7 +211,6 @@ if(n >= 0 && n <= p->num_msgs) {
 return NULL;
 }
 //! get popstate number of messages
-//
 int get_popstate_nummesg(struct popstate_t *p)
 {
 if(p == NULL)
@@ -315,12 +310,8 @@ if (p == NULL)
 if( p->size > 0 )
 	return p->size;
 
-for(i = 0 ; i < p->num_msgs ; i++) {
-	struct mail_msg_t* m = get_popstate_mailmessage(p,i);
-
-	if (m != NULL)
-		size += get_mailmessage_size(m);
-}
+for(i = 0 ; i < p->num_msgs ; i++)
+	size += get_mailmessage_size(get_popstate_mailmessage(p,i));
 
 return size;
 }

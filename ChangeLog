@@ -1,3 +1,5 @@
+- fixed Location handling in case a non rfc conformin web server (IIS)
+sends a relativeURI instead an absoluteURI
 - added @unforgettable.com to mailcom (thanks tranx)
 - fixed bad &nbsp; in httpmail.lua (thanks Charlie)
 - double - in the manual are now separated by a \hspace{1mm}

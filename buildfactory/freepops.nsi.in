@@ -107,11 +107,12 @@ SectionEnd
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\FreePOPs"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs -v.lnk" "$INSTDIR\freepopsd.exe" "-v" "$INSTDIR\freepopsd.exe" 0
-  CreateShortCut "$SMPROGRAMS\FreePOPs\Manual.lnk" "$INSTDIR\manual.pdf" "" "$INSTDIR\manual.pdf" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs (no log).lnk" "$INSTDIR\freepopsd.exe" "$INSTDIR\freepopsd.exe" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs -vv (verbose log).lnk" "$INSTDIR\freepopsd.exe" "-vv" "$INSTDIR\freepopsd.exe" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\Manual (english).lnk" "$INSTDIR\manual.pdf" "" "$INSTDIR\manual.pdf" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Manuale (italiano).lnk" "$INSTDIR\manual-it.pdf" "" "$INSTDIR\manual-it.pdf" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Website.lnk" "http://freepops.sourceforge.net/index.html" "" "http://freepops.sourceforge.net/" 0
-;  CreateShortCut "$SMPROGRAMS\FreePOPs\FAQ.lnk" "http://freepops.sourceforge.net/faq.html" "" "http://liberopops.sourceforge.net/faq.html" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\Forum.lnk" "http://freepops.diludovico.it" "" "http://freepops.diludovico.it" 0
 SectionEnd
 
 ; uninstall stuff

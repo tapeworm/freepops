@@ -1,12 +1,13 @@
 ---
+-- Support functions.
 -- This module implements some looping primitives, some useful wrappers.
 -- should be used to make code shorter.
+
+support = {}
 
 --============================================================================--
 -- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
 --============================================================================--
-
-support = {}
 
 ---
 -- A simple do while loop in a more compatc way.

@@ -1,6 +1,9 @@
 ---
 -- Do not use this directly. 
--- browser uses this module for his internal purpose.
+-- browser uses this module for his internal purpose. 
+-- Only one function is available to the end user.
+
+local Private = {}
 
 --============================================================================--
 -- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
@@ -8,7 +11,6 @@
 
 --<==========================================================================>--
 -- build data structures for parsing
-local Private = {}
 
 -- create a lua regex expression to capture v in both uppercase/lowercase
 function Private.create_match(v)

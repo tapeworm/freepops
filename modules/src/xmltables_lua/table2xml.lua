@@ -1,8 +1,26 @@
+---
+-- Txml to xml conversion.
+--
+-- This modules transforms a Txml object in an XML string. COnsider that
+-- tag_name or a property name can contain <tt>__</tt> 
+-- that will be converted to
+-- the corresponding escape_namespace parameter.<br/><br/>
+-- <tt>{tag_name = "html__a", xmlns__www="http://.../"}</tt><br/><br/>
+-- will be converted to <br/><br/>
+-- <tt>&lt;html:a xmlns:www="http://.../"&gt;</tt><br/><br/>
+-- You may prefer writing<br/><br/>
+-- <tt>{tag_name = "html:a", xmlns__www="http://.../"}</tt><br/><br/>
+-- that is mostrly the same,
+-- but there is no way to write <br/><br/>
+-- <tt>{tag_name = "html:a", xmlns:www="http://.../"}</tt><br/><br/>
+-- in LUA, so use the <tt>__</tt> for attributes. See the xml2table 
+-- documentation for more infos about Txml.
+
+local Private = {}
+
 --============================================================================--
 -- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
 --============================================================================--
-
-local Private = {}
 
 function Private.escape(s)
 	return (string.gsub(s,[[([><"'&])]],function(x)
@@ -121,6 +139,13 @@ end
 
 table2xml = {}
 
+---
+-- Txml2xml conversion.
+-- @param encoding string the encoding, default is iso-8859-1.
+-- @param escape_namespace string ":" is the good one, 
+-- if not provided no namespacing escaping is done, read no 
+-- <tt>__</tt> are converted.
+-- @return string an XML string.
 function table2xml.table2xml(t,escape_namespace,encoding)
 	fake_file = {s={}}
 	function fake_file.write(self,...)

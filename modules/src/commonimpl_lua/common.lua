@@ -1,12 +1,13 @@
 ---
--- Commonly used POP3 implementation. These functions need a <B>stat(pstate)</B>
+-- Commonly used POP3 implementation. 
+-- These functions need a <B>stat(pstate)</B> 
 -- that checks if it called more than once.
+
+common = {}
 
 --============================================================================--
 -- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
 --============================================================================--
-
-common = {}
 
 ---
 -- Checks if a message number is in range

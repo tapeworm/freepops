@@ -1,8 +1,109 @@
+---
+-- Internalize XML into LUA.
+--
+-- This module allows you to transform an XML string into a Txml lua table.
+-- But first, what is Txml? Another tag based language? <b>NO</b>.<br/>
+-- Im' not an XML guru, so take my personal opinions with the right doubts.<br/>
+-- XML is a pretty flexible language, good for doing nothig, bad for doing all.
+-- Since it is really generic it may allow the reuse of of some tools... 
+-- But what do you think?! Isn't grep a reused peace of code?
+-- Anyway it seem that doing XML stuff is for real men.
+-- So everithing is done in XML nowadays.<br/>
+-- Why I don't like it much? Simple, there is no way to access it 
+-- with the language. You have to parse it and transform it in a 
+-- more handy format for your internal purpose, elaborate it and 
+-- then retranform you data structure in XML.<br/>
+-- So this module is
+-- for the step of internalizing an XML tree into a LUA table. 
+-- This means that you will be able to travferse the tree in the
+-- same way you traverse a table.<br/>
+-- <pre>
+-- Txml = { tag_name = "father",
+--          name = "Mario",
+--          { tag_name = "son",
+--            {"son content"}
+--          }
+-- }
+-- </pre>
+-- This table represents this xml<br/>
+-- <pre>
+-- &lt;?xml version="1.0"?&gt;
+-- &lt;father name="Mario"&gt;
+--   &lt;son&gt;son content&lt;/son&gt;
+-- &lt;/father&gt;
+-- </pre>
+-- This modules is able to convert the XML into the Txml format in
+-- a quite smart way.
+-- For example this code is valid:<br/>
+-- <pre>
+-- father = xml2table.xml2table(the xml string you have seen before)
+-- print(father.name)
+-- print(father.son._content)
+-- </pre>
+-- and the result will be "Mario" and "son content".
+-- And now a more complex example with namespaces.<br/>
+-- <pre>
+-- &lt;?xml version="1.0"?&gt;
+-- &lt;D:multistatus xmlns:D="Dav:"&gt;
+--   &lt;D:response&gt;
+--     &lt;D:href&gt;http://ref1&lt;/D:href&gt;
+--     &lt;D:propstat&gt;
+--       &lt;D:status&gt;HTTP/1.1 200&lt;/D:status&gt;
+--     &lt;/D:propstat&gt;
+--   &lt;/D:response&gt;
+--   &lt;D:response&gt;
+--     &lt;D:href&gt;http://ref2&lt;/D:href&gt;
+--     &lt;D:propstat&gt;
+--       &lt;D:status&gt;HTTP/1.1 404&lt;/D:status&gt;
+--     &lt;/D:propstat&gt;
+--   &lt;/D:response&gt;
+-- &lt;/D:multistatus&gt;
+-- </pre>
+-- we can convert this to Txml in tree ways:
+-- <pre>
+-- tml1 = xml2table.xml2table(xml2)
+-- tml2 = xml2table.xml2table(xml2,{})
+-- tml3 = xml2table.xml2table(xml2,{["Dav:"]="d"})
+-- </pre>
+-- The information stored is the same, but only the third is the good one.
+-- The first has "Dav:" aded to each tag name. Impossiblo to type it in LUA.
+-- The second doesn't do anithing. The third one trnasforms each 
+-- shortcut to his mapped. Each shortcut to "Dav:" will be replaced with 
+-- a shortcut to "d". This is nice for two reasons. First it converts the ":"
+-- to <tt>__</tt> and so you can type it in LUA. Second you can forget what
+-- the XML uses as a shortcut, it will be replaced with "d" in any case.
+--
+-- <pre>
+-- > print(tml1.tag_name)
+-- Dav::multistatus
+-- > print(tml1[1].tag_name)
+-- Dav::response
+-- 
+-- > print(tml2.tag_name)
+-- D:multistatus
+-- > print(tml2[1].tag_name)
+-- D:response
+-- 
+-- > print(tml3.tag_name)
+-- d__multistatus
+-- > print(tml3[1].tag_name)
+-- d__response
+-- > print(tml3.d__response.d__href._content)
+-- http://ref1
+-- 
+-- > xml2table.forach_son(tml3,"d__response",
+-- >> function(k) 
+-- >>    print(k.d__href._content) 
+-- >> end)
+-- http://ref1
+-- http://ref2
+-- </pre>
+
+local Private = {}
+
 --============================================================================--
 -- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
 --============================================================================--
-
-Private = {}
 
 Private.stack = {}
 function Private.stack.mt(t) return {
@@ -140,6 +241,8 @@ xml2table = {}
 -- If m is nil namespaces are expanded every time it is possible.
 -- @param s string the xml data.
 -- @param m table the map.
+-- @param force_encoding string To force the encoding of the XML,
+--  putting "UTF-8" solves some problems with strange encodings.
 -- @return table the resulting table or nil follwed by msg,line,col.
 function xml2table.xml2table(s,m,force_encoding)
 	local tab = {s=Private.stack.new()}
@@ -167,7 +270,8 @@ function xml2table.xml2table(s,m,force_encoding)
 end
 
 ---
--- This is a selective table.foreach.
+-- This is a selective table-foreach.
+-- A correct usage is forach_son(t,"D__resposnse",f).
 function xml2table.forach_son(t,sonname,f)
 	table.foreachi(t,function(_,v)
 		if v.tag_name == sonname then

@@ -1,18 +1,18 @@
 ---
--- A module to save tables to strings
+-- A module to save tables to strings.
 -- Then the string can be executed with loadstring() obtainig a load of 
 -- the table
+-- 
+serial = {}
 
 --============================================================================--
 -- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
 --============================================================================--
 
-serial = {}
+local Private = {}
 
----
--- Do not use this.
 -- It is used internally!
-function serial._serialize_val(val)
+function Private.serialize_val(val)
 	if type(val) == "table" and getmetatable(val) == nil then
 		local tmp = {}
 		table.foreach(val,function (k,v)
@@ -59,7 +59,7 @@ function serial.serialize(name,val)
 			s = string.format("%s=",name)
 		end
 	end
-	return s .. serial._serialize_val(val) .. ";"
+	return s .. Private.serialize_val(val) .. ";"
 end
 
 -- ------------------------------------- TEST ----------------------------------

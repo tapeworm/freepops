@@ -32,7 +32,7 @@ $(PREFIX)/bin/luafull: luafull
 	
 luafull:
 	$(H)echo -n ' building luafull... '
-	$(H)[ -f ../../lib/liblua-host.a] && $(RANLIB) ../../lib/liblua-host.a
+	$(H)[ -f ../../lib/liblua-host.a ] && $(RANLIB) ../../lib/liblua-host.a
 	$(H)$(HCC) $(HCFLAGS) -o luafull lua.c $(HLDFLAGS) || true
 	$(H)echo "done."
 

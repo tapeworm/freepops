@@ -46,7 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc ChangeLog
 %doc COPYING
 %doc AUTHORS
-%doc doc/MANUAL
+%doc doc/MANUAL.txt
 /usr/bin/freepopsd
 /usr/share/man/man1/freepopsd.1.gz
 /etc/init.d/freepops

@@ -97,11 +97,7 @@ ifeq "$(OS)" "Windows"
 
 else
 ifeq "$(OS)" "Darwin"
-	#LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -ldl -lm \
-	#	-lpthread -L/usr/lib -L/sw/lib -lexpat -lcurl -arch ppc \
-	#	-lz -lssl -lcrypto
-	# these are for osx10.2
-	 LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lgetopt \
+	LDFLAGS=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lgetopt \
 	 	-lm \
 	 	-lpthread -L/sw/lib -lexpat \
 	 	-lcurl -lz -lssl \

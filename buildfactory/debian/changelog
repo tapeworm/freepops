@@ -1,3 +1,9 @@
+freepops (0.0.2-1) unstable; urgency=low
+
+  * moved to cURL
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Thu, 13 May 2004 19:20:25 +0200
+
 freepops (0.0.1-1) unstable; urgency=low
 
   * first public release

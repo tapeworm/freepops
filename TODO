@@ -2,7 +2,7 @@ legeng: more + means more done! (from 1 to 7)
 
 second release 0.0.2
 	update lua5.0 to lua5.0.2
-	curl.dll in the win installer
++++++++	curl.dll in the win installer
 	servizio di autoupdate. da valutare la sicurezza di cio'.
 		valutare se far scaricare uno script e farlo eseguire.
 +++++	fare documentazione per moduli lua e C decente

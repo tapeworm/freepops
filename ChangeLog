@@ -1,3 +1,5 @@
+- fixed bad &iexcl; in httpmail.lua (thanks Javier)
+- patch for FreeBSD compilation problems (thanks Filippo Natali)
 - fixed debian builds and debs, now hopefully conforming to debian policy
 25/12/2004 0.0.23
 - updated kernel.lua plugin

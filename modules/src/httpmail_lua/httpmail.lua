@@ -158,6 +158,7 @@ end
 -- @param s string the ugly XML.
 -- @return string the cleaned XML.
 function httpmail.clean_entities(s)
+	s = string.gsub(s,"&iexcl;","!")
 	return (string.gsub(s,"&([^;][^;][^;][^;][^;][^;][^;])","&amp;%1"))
 end
 

@@ -79,7 +79,8 @@ HLDFLAGS="$HLDFLAGS -bind_at_load"
 set_fbsd() {
 set_default
 OS=FreeBSD
-CFLAGS="$CFLAGS -DMACOSX -DFREEBSD"
+CFLAGS="$CFLAGS -DMACOSX -DFREEBSD -I/usr/local/include"
+LDFLAGS="$LDFLAGS -L/usr/local/lib" 
 MAKE=gmake
 }
 

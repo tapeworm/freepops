@@ -114,7 +114,8 @@ luafull:
 		$(RANLIB) ../../lib/liblualib-host.a; \
 		$(RANLIB) ../../lib/liblua.a; \
 		$(RANLIB) ../../lib/libluaexpat.a; \
-		$(RANLIB) ../../lib/libgetdate.a )
+		$(RANLIB) ../../lib/libgetdate.a; \
+	        $(RANLIB) ../../lib/libluafilesystem.a	)
 	$(H)$(CC) $(CFLAGS) -o $(BINARY) lua.c $(LDFLAGS) || true
 	$(H)$(BINARIZE)
 	$(H)echo "done."

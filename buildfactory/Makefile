@@ -160,8 +160,8 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua
-	$(H)cd _osx_/freepops-$(VERSION)/src/lua_unofficial;\
-		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua_unofficial
+	#$(H)cd _osx_/freepops-$(VERSION)/src/lua_unofficial;\
+	#	cp *.lua ../../../../../dist-osx/FreePOPs/src/lua_unofficial
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
@@ -189,8 +189,8 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua
-	$(H)cd _osx_/freepops-$(VERSION)/src/lua_unofficial;\
-		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua_unofficial
+#	$(H)cd _osx_/freepops-$(VERSION)/src/lua_unofficial;\
+#		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua_unofficial
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt

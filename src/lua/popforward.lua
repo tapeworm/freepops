@@ -209,7 +209,7 @@ function user(pstate,username)
 	end
 	
 	return single_line("USER "..
-		freepops.MODULE_ARGS.realusername or username,nil)
+		(freepops.MODULE_ARGS.realusername or username),nil)
 end
 
 -- Must login

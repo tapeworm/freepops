@@ -1,3 +1,4 @@
+- fixed popforward
 - now the popserver disconnects after 60 seconds of client inactivity (this is
 RFC compliant, even if the rfc says we should wait more maybe, and the NOP
 pop3 command is used to avoid timeouts.

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.7"
+PLUGIN_VERSION = "0.0.9"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -15,9 +15,9 @@ PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=hotmail.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
-PLUGIN_DOMAINS = {"@hotmail.com","@hotmail.co.uk","@hotmail.co.jp",
-	"@hotmail.de","@msn.com","@webtv.com","@charter.com",
-	"@compaq.net","@passport.com", "@hotmail.it"}
+PLUGIN_DOMAINS = {"@hotmail.com","@msn.com","@webtv.com","@charter.com",
+	"@compaq.net","@passport.com", "@hotmail.de", "@hotmail.it", "@hotmail.co.uk", 
+        "@hotmail.co.jp"}
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
@@ -40,8 +40,6 @@ To use this plugin you have to use your full email address as the username
 and your real password as the password.  For support, please post a question to
 the forum instead of emailing the author(s).]]
 }
-
-
 
 -- Domains supported:  hotmail.com, msn.com, webtv.com, charter.com, compaq.net,
 --                     passport.com
@@ -70,6 +68,7 @@ local globals = {
   --
   strRetLoginBadLogin = "(memberservices)",
   strRetLoginSessionExpired = "(Sign in)",
+  strRetStatBusy = "(form name=.hotmail.)",
   
   -- Regular expression to extract the mail server
   --
@@ -91,7 +90,12 @@ local globals = {
 
   -- Pattern to determine if we have no messages
   --
-  strMsgListNoMsgPat = "(There are no messages in this folder)",
+  strMsgListNoMsgPat = "(<td colspan=10>)", --"(There are no messages in this folder)",
+
+  -- Pattern to determine the total number of messages
+  --
+  strMsgListCntPattern = "<td width=100. align=center>([^<]+)</td><td align=right nowrap>",
+  strMsgListCntPattern2 = "([%d]+) [MmNnBbVv][eai]",
 
   -- Used by Stat to pull out the message ID and the size
   --
@@ -130,7 +134,7 @@ local globals = {
   strCmdMsgListNextPage = "&page=%d&wo=",
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
-  strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=&s&a=&s",
+  strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
   strCmdEmptyTrash = "http://%s/cgi-bin/dofolders?_HMaction=DoEmpty&curmbox=F000000004&a=%s&i=F000000004",
   strCmdLogout = "http://%s/cgi-bin/logout",
@@ -199,7 +203,8 @@ function loginHotmail()
   -- Define some local variables
   --
   local username = internalState.strUser
-  local password = internalState.strPassword
+  local password = internalState.strPassword --curl.escape(internalState.strPassword)
+  local passwordlen = string.len(internalState.strPassword)
   local domain = internalState.strDomain
   local url = globals.strLoginUrl
   local xml = globals.strFolderQry
@@ -246,7 +251,7 @@ function loginHotmail()
   local domainWithUnderscore = string.gsub(domain, "%.", "_")
   local pattern = string.format(globals.strLoginPostUrlPattern3, domainWithUnderscore)
   _, _, url = string.find(body, pattern)
-  local padding = string.sub(globals.strLoginPaddingFull, 0, 16 - string.len(password))
+  local padding = string.sub(globals.strLoginPaddingFull, 0, 16 - passwordlen)
   postdata = string.format(globals.strLoginPostData, username, domain, password, padding)
 
   body, err = browser:post_uri(url, postdata)
@@ -389,6 +394,20 @@ function downloadMsg(pstate, msg, nLines, data)
   -- Start the download on the body
   -- 
   local f, _ = browser:pipe_uri(url, cb)
+  if not f then
+    -- An empty message.  Throw an error
+    --
+    return POPSERVER_ERR_NETWORK
+  end
+
+  -- Handle whatever is left in the buffer
+  --
+  local body = cbInfo.strBuffer
+  if (string.len(body) > 0) then
+    body = cleanupBody(body)
+    body = cbInfo.strHack:dothack(body) .. "\0"
+    popserver_callback(body, data)
+  end
 
   -- Mark the message as read
   --
@@ -412,24 +431,18 @@ function downloadMsg_cb(cbInfo, data)
     --
     body = cbInfo.strBuffer .. body
     cbInfo.strBuffer = ""
-    while (string.len(body) > 4 and string.find(string.sub(body, -4), "(&)") ~= nil) do
-      cbInfo.strBuffer = string.sub(body, -4) .. cbInfo.strBuffer
-      body = string.sub(body, 1, -5)
+    while (string.len(body) > 6 and string.find(string.sub(body, -6), "([&<])") ~= nil) do
+      cbInfo.strBuffer = string.sub(body, -6) .. cbInfo.strBuffer
+      body = string.sub(body, 1, -7)
     end
-  
-    -- The only parts we care about are within <pre>..</pre>
-    --
-    body = string.gsub(body, "<pre>[%s]*", "")
-    body = string.gsub(body, "</pre>.*", "")
 
-    -- Clean up the end of line, and replace HTML tags
+    -- Did we reach the end of the message
     --
-    body = string.gsub(body, "\n", "\r\n")
-    body = string.gsub(body, "&amp;", "&")
-    body = string.gsub(body, "&lt;", "<")
-    body = string.gsub(body, "&gt;", ">")
-    body = string.gsub(body, "&quot;", '"')
-    body = string.gsub(body, "<!%-%-%$%$imageserver%-%->", internalState.strImgServer)
+    if (string.find(body, "(</pre>)") ~= nil) then
+      cbInfo.nLinesReceived = -1;
+    end
+
+    body = cleanupBody(body)
 
     -- Perform our "TOP" actions
     --
@@ -461,6 +474,23 @@ function downloadMsg_cb(cbInfo, data)
   end
 end
 
+function cleanupBody(body)
+  -- The only parts we care about are within <pre>..</pre>
+  --
+  body = string.gsub(body, "<pre>[%s]*", "")
+  body = string.gsub(body, "</pre>.*", "")
+
+  -- Clean up the end of line, and replace HTML tags
+  --
+  body = string.gsub(body, "\n", "\r\n")
+  body = string.gsub(body, "&amp;", "&")
+  body = string.gsub(body, "&lt;", "<")
+  body = string.gsub(body, "&gt;", ">")
+  body = string.gsub(body, "&quot;", "\"")
+  body = string.gsub(body, "<!%-%-%$%$imageserver%-%->", internalState.strImgServer)
+  return body
+end
+
 -- ************************************************************************** --
 --  Pop3 functions that must be defined
 -- ************************************************************************** --
@@ -468,7 +498,6 @@ end
 -- Extract the user, domain and mailbox from the username
 --
 function user(pstate, username)
-	
   -- Get the user, domain, and mailbox
   -- TODO:  mailbox - for now, just inbox
   --
@@ -533,7 +562,6 @@ end
 -- Perform login functionality
 --
 function pass(pstate, password)
-
   -- Store the password
   --
   internalState.strPassword = password
@@ -701,6 +729,7 @@ function stat(pstate)
   local browser = internalState.browser
   local nPage = 1
   local nMsgs = 0
+  local nTotMsgs = 0;
   local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
     internalState.strCrumb, internalState.strMBox);
   local baseUrl = cmdUrl
@@ -799,14 +828,19 @@ function stat(pstate)
   -- change the command url
   --
   local function funcCheckForMorePages(body) 
-    -- Look in the body and see if there is a link for a next page
-    -- If so, change the URL
+    -- See if there are messages remaining
     --
-    local _, _, hasNextPage = string.find(body, globals.strMsgListNextPagePattern)
-    if hasNextPage ~= nil then
+    if nMsgs < nTotMsgs then
       cmdUrl = baseUrl .. string.format(globals.strCmdMsgListNextPage, nPage)
       return false
     else
+      -- For western languages, our patterns don't work so use a backup pattern.
+      --
+      if (nTotMsgs == 0 and 
+          string.find(body, globals.strMsgListNextPagePattern) ~= nil) then
+        cmdUrl = baseUrl .. string.format(globals.strCmdMsgListNextPage, nPage)
+        return false
+      end
       return true
     end
   end
@@ -823,6 +857,13 @@ function stat(pstate)
     local body, err = browser:get_uri(cmdUrl)
     if body == nil then
       return body, err
+    end
+
+    -- Check to see if we got a good page back.  The folder list is
+    -- notorous for returning Server busy or page not available
+    --
+    if (string.find(body, globals.strRetStatBusy) == nil) then
+      return nil, "Hotmail is returning an error page."
     end
 
     -- Is the session expired
@@ -854,7 +895,25 @@ function stat(pstate)
       --
       return browser:get_uri(cmdUrl)
     end
-		
+
+    -- Get the total number of messages
+    --
+    if nTotMsgs == 0 then
+      local _, _, strTotMsgs = string.find(body, globals.strMsgListCntPattern)
+      if strTotMsgs == nil then
+        nTotMsgs = 0
+      else 
+        -- The number of messages can be in one of two patterns
+        --
+        _, _, nTotMsgs = string.find(strTotMsgs, globals.strMsgListCntPattern2)
+        if (nTotMsgs == nil) then
+          nTotMsgs = 0
+        end
+        nTotMsgs = tonumber(nTotMsgs)
+      end
+      log.dbg("Total messages in message list: " .. nTotMsgs)
+    end
+	
     return body, err
   end
 
@@ -865,13 +924,20 @@ function stat(pstate)
   if not support.do_until(funcGetPage, funcCheckForMorePages, funcProcess) then
     log.error_print("STAT Failed.\n")
     session.remove(hash())
-    return POPSERVER_ERR_UNKNOWN
+    return POPSERVER_ERR_NETWORK
   end
 	
   -- Update our state
   --
   internalState.bStatDone = true
 	
+  -- Check to see that we completed successfully.  If not, return a network
+  -- error.  This is the safest way to let the email client now that there is
+  -- a problem but that it shouldn't drop the list of known uidls.
+  if (nMsgs < nTotMsgs) then
+    return POPSERVER_ERR_NETWORK
+  end
+
   -- Return that we succeeded
   --
   return POPSERVER_ERR_OK

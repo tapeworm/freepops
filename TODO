@@ -27,13 +27,15 @@ Maybe fake reports (bugs do not appear true)
  * they say tin.it mail with a pdf attached are mangled (pdf unreadable),
    but it doesn't seem true to me (checked sending and receiving one pdf)
 
-For next version or later (in priority order, important first)
-==============================================================
+For next version or later (in random order, lucky first)
+========================================================
 
  * they say that win32 without -w can crash
  * link the rss feed in the homepage
  * create the -dev ML
  * curl_info
+ * add a LUA_CONTRIB dir that is scanned for plugins 
+   (avoid hacking the config.lua)
  * fix gmail addressbook exportation
  * fix gmail TOP 1 9999
  * fix gmail 695 tonumber(nil)

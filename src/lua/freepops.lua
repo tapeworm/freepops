@@ -143,7 +143,7 @@ freepops.load_module_for = function (mailaddress)
 	*                      README                               *
 	*                                                           *
 	* FreePOPs needs a username wit ha domain part. You         *
-	* must use a username in the form foo@sonothing to use      *
+	* must use a username in the form foo@something to use      *
 	* FreePOPs. Please read the manual available at             *
 	*                                                           *
         *   http://freepops.sourceforge.net/en/files/manual.pdf     *

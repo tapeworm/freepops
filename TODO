@@ -1,11 +1,13 @@
 legeng: more + means more done! (from 1 to 7)
 
 next release 0.0.13
-	servizio per win32
-	plugin (superva,freepass,hotmail,yahoo,excite,gmail)
+	regression tests maybe with netcat or other to make it possible to run
+		some tests at least over some plugin
+	win32 service interface
+	plugin (superva,freepass,hotmail,yahoo,excite)
 	problemi in lycos utf8 (magari sistemare il mimer decentemente)
 	problemi login tin(aspetta ethereal)
-	fai generare i ps in /doc al volo dai jpg
+	on the fly generation of ps in /doc from jpg
 	edit categorization in SF (add openbsd)
 	gmail saves exported addressbook to My Documents (fix manual)
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 

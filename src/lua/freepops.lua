@@ -174,8 +174,6 @@ freepops.load_module_for = function (mailaddress)
 			"' cause matched '" .. why .."'\n")
 	end
 
-	table.foreach(log,print)
-
 	-- the stuff
 	local domain = freepops.get_domain(mailaddress)
 	local module,args = freepops.choose_module(domain)

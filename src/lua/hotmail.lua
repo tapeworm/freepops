@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.6a"
+PLUGIN_VERSION = "0.0.7"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -102,6 +102,11 @@ local globals = {
   --
   strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
 
+  -- The amount of time that the session should time out at.
+  -- This is expressed in seconds
+  --
+  nSessionTimeout = 28800,  -- 8 hours!
+
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
   strNewFolderPattern = "(curmbox=0)",
@@ -128,6 +133,7 @@ local globals = {
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=&s&a=&s",
   strCmdMsgViewRaw = "&raw=0",
   strCmdEmptyTrash = "http://%s/cgi-bin/dofolders?_HMaction=DoEmpty&curmbox=F000000004&a=%s&i=F000000004",
+  strCmdLogout = "http://%s/cgi-bin/logout",
 }
 
 -- ************************************************************************** --
@@ -146,6 +152,7 @@ internalState = {
   strCrumb = nil,
   strMBox = nil,
   bEmptyTrash = false,
+  loginTime = nil,
 }
 
 -- ************************************************************************** --
@@ -308,6 +315,10 @@ function loginHotmail()
       string.sub(internalState.strMBox, 2, -1) 
     log.dbg("Hotmail - Using old folder names (" .. internalState.strMBox .. ")")
   end
+
+  -- Note the time when we logged in
+  --
+  internalState.loginTime = os.clock();
 
   -- Note that we have logged in successfully
   --
@@ -637,7 +648,7 @@ function quit_update(pstate)
   if internalState.bEmptyTrash then
     if internalState.strCrumb ~= '' then
       cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer,internalState.strCrumb)
-      log.dbg("Sending Empty Trash URL: ".. cmdUrl .."\n")
+      log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
       local body, err = browser:get_uri(cmdUrl)
       if not body or err then
         log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
@@ -647,6 +658,22 @@ function quit_update(pstate)
     end
   end
 
+  -- Should we force a logout.  If this session runs for more than a day, things
+  -- stop working
+  --
+  local currTime = os.clock()
+  local diff = currTime - internalState.loginTime
+  if diff > globals.nSessionTimeout then 
+    cmdUrl = string.format(globals.strCmdLogout, internalState.strMailServer)
+    log.dbg("Sending Logout URL: " .. cmdUrl .. "\n")
+    local body, err = browser:get_uri(cmdUrl)
+ 
+    log.dbg("Logout forced to keep hotmail session fresh and tasty!  Yum!\n")
+    log.dbg("Session removed - Account: " .. internalState.strUser .. 
+      "@" .. internalState.strDomain .. "\n")
+    session.remove(hash())
+    return POPSERVER_ERR_OK
+  end
 
   -- Save and then Free up the session
   --

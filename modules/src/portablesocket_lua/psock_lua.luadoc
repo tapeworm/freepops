@@ -11,13 +11,13 @@ function psock.connect(host,port) end
 ---
 -- Sends a string s.
 -- The function will send s.."\r\n" 
--- @param s string the data to send
--- @return number positive on success, negative on error
+-- @param s string the data to send.
+-- @return number positive on success, negative on error.
 function send(s) end
 
 ---
 -- Receives a line.
 -- The function automatically strips the ending "\r\n" from the line
--- @return string the line, nil on failure
+-- @return string the line, nil on failure.
 function recv() end
 		

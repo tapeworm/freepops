@@ -152,7 +152,7 @@ case $1 in
 		set_linux
 	;;
 	linux-slack)
-		set_linux_usr
+		set_linux_slack
 	;;
 	obsd)
 		set_obsd

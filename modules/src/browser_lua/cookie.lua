@@ -111,6 +111,9 @@ function Private.parse_cookie(s,h)
 			t["expires"] = tmp
 		end
 	end
+	if t.domain == nil then
+		t.domain = h
+	end
 	t.timestamp = os.time()
 	t.host = h
 	return t
@@ -341,6 +344,7 @@ function cookie.get(t,res,domain,host)
 	local r = {}
 	--print(res,domain,host)
 	table.foreach(t,function(_,c)
+		--table.foreach(c,print)
 		local l = Private.subpath_len(res,c["path"])
 		--print(Private.is_expired(c),l,c["domain"],c.host)
 		if not Private.is_expired(c) and

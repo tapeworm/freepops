@@ -10,7 +10,7 @@ else
 	HEADER=/usr/include/curl/curl.h
 endif
 
-#H=@
+H=@
 CFLAGS+= -Wall -I. -I$(PREFIX)/include
 OBJ=curl_lua.o
 

@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8"
+PLUGIN_VERSION = "0.0.9"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -50,6 +50,12 @@ pull.  It determines what messages to be pulled.  Possible values are ALL, UNREA
 pulls as unread.  If the value is 1, the behavior is turned on.]]
 		}
 	},
+	{name = "nossl", description = {
+		en = [[ Parameter is used to force the module to login through plain
+HTTP and not HTTPS with SSL.  If the value is 1, the SSL is not used.]]
+		}
+	},
+
 }
 
 PLUGIN_DESCRIPTIONS = {
@@ -201,6 +207,7 @@ internalState = {
   strIntFlag = nil,
   strView = nil,
   bMarkMsgAsUnread = false,
+  bNoSSL = false,
 }
 
 -- ************************************************************************** --
@@ -259,6 +266,10 @@ function loginYahoo()
   -- DEBUG - Set the browser in verbose mode
   --
   -- browser:verbose_mode()
+
+  if internalState.bNoSSL == true then
+    SSLEnabled = false
+  end
 
   if SSLEnabled then
     url = globals.strLoginHTTPs
@@ -577,6 +588,11 @@ function user(pstate, username)
   local val = (freepops.MODULE_ARGS or {}).markunread or 0
   if val == 1 then
     interalState.bMarkMsgAsUnread = true
+  end
+
+  local val = (freepops.MODULE_ARGS or {}).nossl or 0
+  if val == 1 then
+    interalState.bNoSSL = true
   end
 
   return POPSERVER_ERR_OK

@@ -9,7 +9,7 @@
 -- ************************************************************************** --
 
 
-PLUGIN_VERSION = "0.0.6"
+PLUGIN_VERSION = "0.0.7"
 PLUGIN_NAME = "Supereva web mail"
 PLUGIN_REQUIRE_VERSION = "0.0.20"
 PLUGIN_LICENSE = "GNU/GPL"

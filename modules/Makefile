@@ -27,7 +27,7 @@ all: src/config
 
 clean: src/config
 	$(H)ACTION="clean";\
-	NAME="cleaninig";\
+	NAME="cleaning";\
 	$(FORALL)
 	$(H)rm -f lib/* bin/* include/* src/config config 2>/dev/null || true
 	$(H)rm -fr  bin/luafiles/ || true

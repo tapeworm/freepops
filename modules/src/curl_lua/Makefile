@@ -35,8 +35,8 @@ clean:
 	$(H)echo "$@"
 
 curlopt.h: $(HEADER)
-	$(H)cat $(HEADER) | grep "^ *CINIT(" | \
-	   	sed "s/CINIT(/{\"OPT_/" | sed -r "s/, +/\",CURLOPTTYPE_/" | \
+	$(H)cat $(HEADER) | grep "^ *CINIT(" | sed "s/CINIT(/{\"OPT_/" | \
+		tr -s "  " " " | sed "s/, /\",CURLOPTTYPE_/" | \
 		sed "s/, / + /" | sed "s/),/},/" > curlopt.h
 
 curl_netrcopt.h:$(HEADER)

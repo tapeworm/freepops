@@ -23,9 +23,49 @@
 --  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
--- these are used in the init function
-PLUGIN_VERSION = "0.1.0"
+-- these are used in the init function and by the website, 
+-- fill them in the right way
+
+-- single string, all required
+PLUGIN_VERSION = "0.1.1"
 PLUGIN_NAME = "Libero.IT"
+PLUGIN_REQUIRE_VERSION = "0.0.0"
+PLUGIN_LICENSE = "GNU/GPL"
+PLUGIN_URL = "http://freepops.org/mirrors.php?package=plugins&file=libero.lua"
+PLUGIN_HOMEPAGE = "http://freepops.org/"
+
+-- list of strings, one required, one contact for each author
+PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
+PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
+
+-- list of strings, one required
+PLUGIN_DOMAINS = {"libero.it","inwind.it","aol.it","blu.it"}
+
+-- list of tables with fields name and description. 
+-- description must be in the stle of PLUGIN_DESCRIPTIONS,
+-- so something like {it="bla bla bla", en = "bla bla bla"}
+PLUGINS_PARAMETERS = {
+	{name = "folder", description = {
+		it = [[
+Serve per selezionare la cartella (inbox è quella di default) su cui operare. 
+Le cartelle standard disponibili sono draft, inbox, outbox, trash.
+Se hai creato delle cartelle dalla webmail allora puoi accedervi usando il
+loro nome. Se la cartella non è al livello principale puoi accederci usando 
+una / per separala dalla cartella padre. Questo è un esempio di uno
+user name per leggere la cartella son, che è una sotto cartella della cartella
+father: foo@libero.it?folder=father/son]],
+		}	
+	},
+}
+
+-- map from lang to strings, like {it="bla bla bla", en = "bla bla bla"}
+PLUGIN_DESCRIPTIONS = {
+	it="Questo plugin è per gli account di posta del portale libero.it. "..
+	   "Utilizzare lo username completo di dominio e l'usuale password. ",
+	en="This plugin is for italian users only."
+}
+
+
 
 -- ************************************************************************** --
 --  strings

@@ -29,17 +29,7 @@ sudo $PBUILD create \
 curl_map $1	
 sudo $PBUILD update \
 	--basetgz $BASE_DIR/base-$1.tgz \
-	--extrapackages tetex-extra \
-		libcurl$CURL-dev \
-		libcurl$CURL \
-		libexpat1-dev \
-		bison \
-		flex \
-		debhelper \
-		libreadline4-dev \
-		libreadline4 \
-		gs-common \
-		openssl
+	--extrapackages "tetex-extra libcurl$CURL-dev libcurl$CURL libexpat1-dev bison flex debhelper libreadline4-dev libreadline4 gs-common libssl-dev"
 } 
 
 function inform_cvs(){

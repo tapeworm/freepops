@@ -18,7 +18,9 @@ CFLAGS+= -Wall -I. -I$(PREFIX)/include
 ifeq "$(OS)" "Cygwin"
 	CFLAGS+= -I/usr/include
 endif
-CFLAGS+= $(shell curl-config --cflags 2>/dev/null)
+ifneq "$(OS)" "Windows"
+	CFLAGS+= $(shell curl-config --cflags 2>/dev/null)
+endif
 OBJ=curl_lua.o
 
 all: $(LIBRARY)

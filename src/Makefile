@@ -22,11 +22,16 @@ ifneq "$(LDEPFILES)" ""
 endif
 
 #flags #######################################################
-CFLAGS+= -I. -I../modules/include $(shell curl-config --cflags)
+CFLAGS+= -I. -I../modules/include 
+
+ifneq "$(OS)" "Windows"
+	CFLAGS+= $(shell curl-config --cflags)
+endif
+
 ifeq "$(OS)" "Windows"
-CFLAGS+= -DFREEPOPSLUA_PATH=\"lua/\"
+	CFLAGS+= -DFREEPOPSLUA_PATH=\"lua/\"
 else
-CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
+	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
 endif
 
 ifeq "$(OS)" "Cygwin"

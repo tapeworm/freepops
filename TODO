@@ -1,15 +1,22 @@
 legeng: more + means more done! (from 1 to 7)
 
-next release 0.0.13
+for future versions:
 	regression tests maybe with netcat or other to make it possible to run
 		some tests at least over some plugin
-	win32 service interface
 	plugin (superva,freepass,hotmail,yahoo,excite)
 	problemi in lycos utf8 (magari sistemare il mimer decentemente)
 	problemi login tin(aspetta ethereal)
+
+for version 0.1.0:
 	on the fly generation of ps in /doc from jpg
+	win32 service interface (evaluate if it is easy and not so intrusive)
+
+for version 0.0.14:
+++++	aggiungi il parametro folder eventualmente ad altre webmail 
+		in cui sia facile supportarlo. (tin e libero sono OK).
+
+for version 0.0.13:
 	edit categorization in SF (add openbsd)
 	aggiungi nel manuale che se uno lascia i messaggi usl server si 
 		genera molto traffico, con una stima decente.
-++++	aggiungi il parametro folder anche a libero (FATTO) e 
-		eventualmente altre webmail in cui sia facile supportarlo.
+

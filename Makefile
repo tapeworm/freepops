@@ -50,9 +50,11 @@ distclean: clean
 realclean: distclean
 	$(H)rm -f config
 	
-doc: doc/manual.pdf doc/manual-it.pdf
+doc: manual
 	$(H)$(MAKE) -C modules doc CONFIG=$(PWD)/config
 
+manual: doc/manual.pdf doc/manual-it.pdf
+	
 install: all
 	$(H)mkdir -p $(PREFIX)
 	$(H)mkdir -p $(PREFIX)bin

@@ -23,7 +23,7 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)cd _win_/freepops-$(VERSION);\
 		./configure.sh win;\
 		make all;\
-		make doc;
+		make manual;
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops

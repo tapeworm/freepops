@@ -40,12 +40,15 @@ HIDDEN int do_syslog = 0;
 #endif
 
 #define ZONE_POSTPEND 	"-> "
+#define MAX_LOG_FILE_NEMBER 100
+#define LOG_OF_MAX_LOG_FILE_NEMBER_PLUS_1 4
+#define LOG_FILE_FORMAT "%s.%d"
 
 /******************************************************************************/
 
 HIDDEN pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-int file_exists(char *filename) {
+HIDDEN int file_exists(char *filename) {
 	
 	FILE *fp;
 	fp = fopen(filename,"r");
@@ -58,10 +61,10 @@ int file_exists(char *filename) {
 		return(0);
 }
 
-char *get_free_logfile(char *logfile){
+HIDDEN char *get_free_logfile(char *logfile){
 
 	int suffix=-1;
-	int len  = strlen(logfile)+4;
+	int len  = strlen(logfile)+LOG_OF_MAX_LOG_FILE_NEMBER_PLUS_1;
 	char *str = (char*) calloc(len,sizeof(char));
 	
 	if (str == NULL){
@@ -72,8 +75,8 @@ char *get_free_logfile(char *logfile){
 	do {	
 		suffix++;
 		memset(str,0,len);
-		snprintf(str,len,"%s.%d",logfile,suffix);
-	} while(file_exists(str) && suffix < 100);
+		snprintf(str,len,LOG_FILE_FORMAT,logfile,suffix);
+	} while(file_exists(str) && suffix < MAX_LOG_FILE_NEMBER);
 	
 	if (suffix == 100) {
 		fprintf(stderr,"Unable to find a free file name\n");
@@ -83,7 +86,20 @@ char *get_free_logfile(char *logfile){
 	return(str);
 }
 
-void copy_file(char *src, char* dst){
+HIDDEN void remove_all_old_log_files(char *logfile){
+	int suffix;
+	int len  = strlen(logfile)+LOG_OF_MAX_LOG_FILE_NEMBER_PLUS_1;
+	char *str = (char*) calloc(len,sizeof(char));
+	
+	for (suffix=0;suffix<MAX_LOG_FILE_NEMBER;suffix++){
+		memset(str,0,len);
+		snprintf(str,len,LOG_FILE_FORMAT,logfile,suffix);
+		remove(str);	
+	}
+	free(str);
+}
+
+HIDDEN void copy_file(char *src, char* dst){
 
 	FILE *fpin, *fpout;
 
@@ -126,9 +142,17 @@ int log_rotate(char *logfile)
 	
 	if (rc != -1 && filestats.st_size > MAX_LOG_SIZE) {
 		char *freefile=get_free_logfile(logfile);
+		
 		if ( freefile == NULL) {
-			fprintf(stderr,"Unable to open free log file\n");
-			exit(1);
+			//retry after removing files
+			remove_all_old_log_files(logfile);
+			freefile=get_free_logfile(logfile);
+			
+			if ( freefile == NULL) {
+				fprintf(stderr,
+					"Unable to open free log file\n");
+				exit(1);
+			}
 		}
 		// creates backup file
 		copy_file(logfile, freefile);
@@ -141,6 +165,7 @@ int log_rotate(char *logfile)
 		fd = fopen(logfile, "a");
 		if (fd == NULL) {
 			fprintf(stderr,"Unable to open %s\n",logfile);
+			exit(1);
 		}
 	}
 	

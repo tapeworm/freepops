@@ -139,7 +139,7 @@ freepops.load_module_for = function (mailaddress)
 	* must use a username in the form foo@sonothing to use      *
 	* FreePOPs. Please read the manual available at             *
 	*                                                           *
-        *   http://freepops.sourceforge.net/it/files/manual-it.pdf  *
+        *   http://freepops.sourceforge.net/en/files/manual.pdf     *
 	*                                                           *
 	* or the tutorial                                           *
 	*                                                           *

@@ -636,6 +636,9 @@ function top(pstate,msg,lines,data)
 				
 				popserver_callback(s,data)
 				if e:check_stop(lines) then 
+					if(string.sub(s,-2,-1) ~= "\r\n") then
+					  popserver_callback("\r\n",data)
+					end	
 					purge = true
 					return true 
 				end

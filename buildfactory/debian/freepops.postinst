@@ -66,7 +66,7 @@ case "$1" in
 		if [ ! -z "$VICTIM" ]; then
 			kill $VICTIM
 		fi
-		update-rc.d freepops defaults 1>/dev/null 2>/dev/null
+		update-rc.d freepops defaults 19 19 1>/dev/null 2>/dev/null
 		/etc/init.d/freepops start
 	fi
 

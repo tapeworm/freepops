@@ -5510,4 +5510,13 @@ Thanks
 Special thanks goes to the users who tested the software, to the hackers
  who made it possible to have a free and reliable development environment
  as the Debian GNU/Linux system.
+\layout Section*
+
+Appendix
+\layout Standard
+
+Since the ASCII table is really common, we have not included one here.
+ You may ask google.
+ The only thing that may oud strange is that we use always 3 digits, even
+ for numbers smaller than 100.
 \the_end

@@ -1,3 +1,6 @@
+
+- updated the website with FAQ section
+- documentation for curl_lua and psock
 - moved popforward from luasocket to psock (poor but works)
 - added portablesocket_lua module
 - updated libero.lua to new browser.lua

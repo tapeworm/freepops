@@ -6,12 +6,15 @@
   
    Author: Enrico Tassi <gareuselesinge@users.sourceforge.net>
   
+   status: binds from 7.9.5 to 7.11.2
+   
    changelog:
    	- first public release
    
    todo:
 	- WRITE_CB,READ_CB,DEBUG_CB must be identifyed by a unique pointer, but
 	  using CURL* + OFFSET may not be the case... think a bit more
+	- CURLINFO ???
 	  
  ******************************************************************************
    $Id$
@@ -33,39 +36,67 @@
 #define CURL_READCB_OFF(a)	((void*)(((unsigned int)a)+1))
 #define CURL_HEADCB_OFF(a)	((void*)(((unsigned int)a)+2))
 
-/* strings putted in the bag, vectorialized for faster/shorter access */
-#define STR_SSLCERT 0
-#define STR_SSLCERTTYPE 1
-#define STR_SSLCERTPASSWD 2
-#define STR_SSLKEY 3
-#define STR_SSLKEYTYPE 4
-#define STR_SSLENGINE 5
-#define STR_CAINFO 6
-#define STR_CAPATH 7
-#define STR_RANDOM_FILE 8
-#define STR_EGDSOCKET 9
-#define STR_SSL_CIPHER_LIST 10
-#define STR_KRB4LEVEL 11
-#define STR_PRIVATE 12
-#define STR_RANGE 13
-#define STR_CUSTOMREQUEST 14
-#define STR_FTPPORT 15
-#define STR_PROXY 16
-#define STR_INTERFACE 17
-#define STR_NETRC_FILE 18
-#define STR_USERPWD 19
-#define STR_PROXYUSERPWD 20
-#define STR_ENCODING 21
-#define STR_POSTFIELDS 22
-#define STR_REFERER 23
-#define STR_USERAGENT 24
-#define STR_COOKIE 25
-#define STR_COOKIEFILE 26
-#define STR_COOKIEJAR 27
-#define STR_URL 28
-#define STR_LAST STR_URL
+/* to check the curl version on the fly, this is a v >= LIBCURL_VERSION */
+#define CURL_NEWER(M,m,p) ((p + (m << 8) + (M << 16)) <= LIBCURL_VERSION_NUM)
+#define CURL_OLDER(M,m,p) ((p + (m << 8) + (M << 16)) > LIBCURL_VERSION_NUM)
 
-#define STR_SIZE (STR_LAST + 1)
+/* this work only in 7.11.x
+ * #define CURL_NEWER(M,m,p) ( ( LIBCURL_VERSION_MAJOR > (M) ) || ( ( LIBCURL_VERSION_MAJOR == (M) ) && ( ( LIBCURL_VERSION_MINOR > (m) ) || ( ( LIBCURL_VERSION_MINOR == (m) ) && ( LIBCURL_VERSION_PATCH >= (p) ) ) ) ) )
+ */
+
+/* some compatibility for name aliases */
+#ifndef CURLOPT_WRITEDATA
+	#define CURLOPT_WRITEDATA CURLOPT_FILE
+#endif
+#ifndef CURLOPT_READDATA
+	#define CURLOPT_READDATA  CURLOPT_INFILE 
+#endif
+#ifndef CURLOPT_HEADERDATA
+	#define CURLOPT_HEADERDATA CURLOPT_WRITEHEADER
+#endif
+
+/* strings putted in the bag, vectorialized for faster/shorter access */
+	#define STR_SSLCERT 0
+	#define STR_SSLCERTTYPE 1
+	#define STR_SSLCERTPASSWD 2
+	#define STR_SSLKEY 3
+	#define STR_SSLKEYTYPE 4
+	#define STR_SSLENGINE 5
+	#define STR_CAINFO 6
+#if CURL_NEWER(7,9,8)
+	#define STR_CAPATH 7
+#endif
+	#define STR_RANDOM_FILE 8
+	#define STR_EGDSOCKET 9
+	#define STR_SSL_CIPHER_LIST 10
+	#define STR_KRB4LEVEL 11
+#if CURL_NEWER(7,10,3)
+	#define STR_PRIVATE 12
+#endif
+	#define STR_RANGE 13
+	#define STR_CUSTOMREQUEST 14
+	#define STR_FTPPORT 15
+	#define STR_PROXY 16
+	#define STR_INTERFACE 17
+#if CURL_NEWER(7,11,0)
+	#define STR_NETRC_FILE 18
+#endif
+	#define STR_USERPWD 19
+	#define STR_PROXYUSERPWD 20
+#if CURL_NEWER(7,10,0)
+	#define STR_ENCODING 21
+#endif
+	#define STR_POSTFIELDS 22
+	#define STR_REFERER 23
+	#define STR_USERAGENT 24
+	#define STR_COOKIE 25
+	#define STR_COOKIEFILE 26
+	#define STR_COOKIEJAR 27
+	#define STR_URL 28
+	#define STR_LAST STR_URL
+	
+	#define STR_SIZE (STR_LAST + 1)
+
 
 /******************************************************************************
  * DEBUG ONLY
@@ -127,7 +158,9 @@ struct L_curl_bag {
 	CURL* handler;
 	char* strings[STR_SIZE];
 	char err[CURL_ERROR_SIZE];
+#if CURL_NEWER(7,9,6)
 	struct curl_httppost *post;
+#endif
 };
 /******************************************************************************
  * curl.* CONSTANTS
@@ -159,10 +192,12 @@ static const struct L_const curl_easy_c [] = {
  *	awk '{print "{\"" $1 "\", (int)" $1 "}," }' | \
  *	sed "s/CURL_//" > curl_netrcopt.h
  */
+#if CURL_NEWER(7,9,8)
 static const struct L_const curl_easy_netrc_c [] = {
 #include "curl_netrcopt.h"
   {NULL,0}
 };
+#endif
 
 /******************************************************************************
  * table created with this script:
@@ -171,11 +206,12 @@ static const struct L_const curl_easy_netrc_c [] = {
  *		sed "s/#define *CURL/{\"/" | sed "s/ *\/\*.*\*\///" | \
  *		sed "s/ /\",/" | sed "s/$$/},/" > curl_authopt.h
  */
+#if CURL_NEWER(7,10,6)
 static const struct L_const curl_easy_auth_c [] = {
 #include "curl_authopt.h"
   {NULL,0}
 };
-
+#endif
 /******************************************************************************
  * table created by hand:
  * 
@@ -190,6 +226,7 @@ static const struct L_const curl_easy_httpver_c [] = {
  * table created by hand:
  * 
  */
+#if CURL_NEWER(7,11,0)
 static const struct L_const curl_easy_ftpssl_c [] = {
   {"FTPSSL_NONE",CURLFTPSSL_NONE},
   {"FTPSSL_TRY",CURLFTPSSL_TRY},
@@ -197,6 +234,7 @@ static const struct L_const curl_easy_ftpssl_c [] = {
   {"FTPSSL_ALL",CURLFTPSSL_ALL},
   {NULL,0}
 };
+#endif
 /******************************************************************************
  * table created by hand:
  * 
@@ -210,22 +248,25 @@ static const struct L_const curl_easy_closepolicy_c [] = {
  * table created by hand:
  * 
  */
+#if CURL_NEWER(7,10,8)
 static const struct L_const curl_easy_ipresolve_c [] = {
   {"IPRESOLVE_WHATEVER",CURL_IPRESOLVE_WHATEVER},
   {"IPRESOLVE_V4",CURL_IPRESOLVE_V4},
   {"IPRESOLVE_V6",CURL_IPRESOLVE_V6},
   {NULL,0}
 };
+#endif
 /******************************************************************************
  * table created by hand:
  * 
  */
+#if CURL_NEWER(7,10,0)
 static const struct L_const curl_easy_proxytype_c [] = {
   {"PROXY_HTTP",CURLPROXY_HTTP},
   {"PROXY_SOCKS5",CURLPROXY_SOCKS5},
   {NULL,0}
 };
-
+#endif
 /******************************************************************************
  * table created with this script:
  * 
@@ -277,21 +318,29 @@ switch (opt) {
 	case CURLOPT_SSLKEYTYPE: return STR_SSLKEYTYPE;
 	case CURLOPT_SSLENGINE: return STR_SSLENGINE;
 	case CURLOPT_CAINFO: return STR_CAINFO;
+#if CURL_NEWER(7,9,8)
 	case CURLOPT_CAPATH: return STR_CAPATH;
+#endif
 	case CURLOPT_RANDOM_FILE: return STR_RANDOM_FILE;
 	case CURLOPT_EGDSOCKET: return STR_EGDSOCKET;
 	case CURLOPT_SSL_CIPHER_LIST: return STR_SSL_CIPHER_LIST;
 	case CURLOPT_KRB4LEVEL: return STR_KRB4LEVEL;
+#if CURL_NEWER(7,10,3)
 	case CURLOPT_PRIVATE: return STR_PRIVATE;
+#endif
 	case CURLOPT_RANGE: return STR_RANGE;
 	case CURLOPT_CUSTOMREQUEST: return STR_CUSTOMREQUEST;
 	case CURLOPT_FTPPORT: return STR_FTPPORT;
 	case CURLOPT_PROXY: return STR_PROXY;
 	case CURLOPT_INTERFACE: return STR_INTERFACE;
+#if CURL_NEWER(7,11,0)
 	case CURLOPT_NETRC_FILE: return STR_NETRC_FILE;
+#endif
 	case CURLOPT_USERPWD: return STR_USERPWD;
 	case CURLOPT_PROXYUSERPWD: return STR_PROXYUSERPWD;
+#if CURL_NEWER(7,10,0)
 	case CURLOPT_ENCODING: return STR_ENCODING;
+#endif
 	case CURLOPT_POSTFIELDS: return STR_POSTFIELDS;
 	case CURLOPT_REFERER: return STR_REFERER;
 	case CURLOPT_USERAGENT: return STR_USERAGENT;
@@ -332,13 +381,15 @@ static char* L_checkcurlerr(lua_State*L)
 /******************************************************************************
  * checks and returns the post field from the first position in the stack
  * 
- */ 
+ */
+#if CURL_NEWER(7,9,6)
 static struct curl_httppost **L_checkcurlpost(lua_State*L){
   void* tmp = luaL_checkudata(L,1,CURL_EASY_META_NAME);
   luaL_argcheck(L,tmp != NULL,1,"curleasy expected");
   return &((struct L_curl_bag*)tmp)->post;
 
 }
+#endif
 /******************************************************************************
  * checks if c is_in t and returns it
  *
@@ -419,6 +470,8 @@ sl = NULL;
 /* traverse the table */
 lua_pushnil(L);
 while( lua_next(L,tab_index) != 0 ){
+	const char * val;
+	
 	/* now we have: ...old_stack... | key:int | val:string */
 	if ( lua_type(L,-1) != LUA_TSTRING) {
 		curl_slist_free_all(sl);
@@ -428,8 +481,9 @@ while( lua_next(L,tab_index) != 0 ){
 		curl_slist_free_all(sl);
 		L_error(L,"this table is a list, keys must be unused");
 	}
+
 	/* get the string */
-	const char * val = lua_tostring(L,-1);
+	val = lua_tostring(L,-1);
 	
 	/* pop val */
 	lua_pop(L,1);
@@ -627,6 +681,7 @@ return i;
  * CURLOPT_HTTPPOST parser
  *
  */ 
+#if CURL_NEWER(7,9,6)
 static CURLcode L_httppost(CURL* c,CURLoption opt,lua_State* L){
 /* we assume we hve stack: || c | opt | table 
  *
@@ -644,7 +699,12 @@ static CURLcode L_httppost(CURL* c,CURLoption opt,lua_State* L){
  *
  */
 struct curl_httppost *post = NULL, *last = NULL;
+#if CURL_NEWER(7,9,8)
 CURLFORMcode rc = CURL_FORMADD_OK;
+#else
+int rc = CURL_FORMADD_OK;
+#endif
+
 CURLcode rc_opt = CURLE_OK;
 
 /* check for the table */
@@ -756,6 +816,7 @@ if( *L_checkcurlpost(L) != NULL)
 	
 return rc_opt;
 }
+#endif
 /******************************************************************************
  * curl_easy_setopt
  *
@@ -780,7 +841,9 @@ switch(opt) {
 	case CURLOPT_NOBODY:
 	case CURLOPT_INFILESIZE:
 	case CURLOPT_UPLOAD:
+#if CURL_NEWER(7,10,8)
 	case CURLOPT_MAXFILESIZE:
+#endif
 	case CURLOPT_TIMECONDITION:
 	case CURLOPT_TIMEVALUE:
 	case CURLOPT_TIMEOUT:
@@ -794,34 +857,51 @@ switch(opt) {
 	case CURLOPT_FTPAPPEND:
 	case CURLOPT_HEADER:
 	case CURLOPT_NOPROGRESS:
+#if CURL_NEWER(7,10,0)		
 	case CURLOPT_NOSIGNAL:
+	case CURLOPT_BUFFERSIZE:
+#endif		
 	case CURLOPT_FAILONERROR:
 	case CURLOPT_PROXYPORT:
 	case CURLOPT_HTTPPROXYTUNNEL:
 	case CURLOPT_DNS_CACHE_TIMEOUT:
 	case CURLOPT_DNS_USE_GLOBAL_CACHE:
-	case CURLOPT_BUFFERSIZE:
 	case CURLOPT_PORT:
+#if CURL_NEWER(7,11,2)
 	case CURLOPT_TCP_NODELAY:
+#endif
 	case CURLOPT_AUTOREFERER:
 	case CURLOPT_FOLLOWLOCATION:
+#if CURL_NEWER(7,10,4)
 	case CURLOPT_UNRESTRICTED_AUTH:
+#endif
 	case CURLOPT_MAXREDIRS:
 	case CURLOPT_PUT:
 	case CURLOPT_POST:
 	case CURLOPT_POSTFIELDSIZE:
+#if CURL_NEWER(7,11,1)
 	case CURLOPT_POSTFIELDSIZE_LARGE:
+#endif
+#if CURL_NEWER(7,9,7)		
 	case CURLOPT_COOKIESESSION:
+#endif
 	case CURLOPT_HTTPGET:
 	case CURLOPT_VERBOSE:
+#if CURL_NEWER(7,10,7)
 	case CURLOPT_FTP_CREATE_MISSING_DIRS:
+#endif
+#if CURL_NEWER(7,10,8)
 	case CURLOPT_FTP_RESPONSE_TIMEOUT:
+#endif
+#if CURL_NEWER(7,10,5)
 	case CURLOPT_FTP_USE_EPRT:
+#endif
 	case CURLOPT_FTP_USE_EPSV:{
 		long par = luaL_checklong(L,3);
 		rc = curl_easy_setopt(c,opt,par);
 	}break;
-
+				  
+#if CURL_NEWER(7,11,0)
 	/* curl_off_t */
 	case CURLOPT_RESUME_FROM_LARGE:
 	case CURLOPT_INFILESIZE_LARGE:
@@ -829,7 +909,8 @@ switch(opt) {
 		curl_off_t o = (curl_off_t)luaL_checknumber(L,3);
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
-
+#endif
+				       
 	/* char* */
 	case CURLOPT_ERRORBUFFER:{
 		/* not used since the lua perform returns it */
@@ -843,21 +924,29 @@ switch(opt) {
 	case CURLOPT_SSLKEYTYPE:
 	case CURLOPT_SSLENGINE:
 	case CURLOPT_CAINFO:
+#if CURL_NEWER(7,9,8)				 
 	case CURLOPT_CAPATH:
+#endif				 
 	case CURLOPT_RANDOM_FILE:
 	case CURLOPT_EGDSOCKET:
 	case CURLOPT_SSL_CIPHER_LIST:
 	case CURLOPT_KRB4LEVEL:
+#if CURL_NEWER(7,10,3)
 	case CURLOPT_PRIVATE:
+#endif
 	case CURLOPT_RANGE:
 	case CURLOPT_CUSTOMREQUEST:
 	case CURLOPT_FTPPORT:
 	case CURLOPT_PROXY:
 	case CURLOPT_INTERFACE:
+#if CURL_NEWER(7,11,0)	
 	case CURLOPT_NETRC_FILE:
+#endif
 	case CURLOPT_USERPWD:
 	case CURLOPT_PROXYUSERPWD:
+#if CURL_NEWER(7,10,0)				 
 	case CURLOPT_ENCODING:
+#endif
 	case CURLOPT_POSTFIELDS:
 	case CURLOPT_REFERER:
 	case CURLOPT_USERAGENT:
@@ -873,10 +962,14 @@ switch(opt) {
 	}break;
 
 	/* function ? think more how many type we need here ? */
+#if CURL_NEWER(7,9,6)			 
 	case CURLOPT_DEBUGFUNCTION:{
 		L_error(L,"FIX: Not implemented");			   
 	}break;
+#endif
+#if CURL_NEWER(7,10,6)
 	case CURLOPT_SSL_CTX_FUNCTION:
+#endif
 	case CURLOPT_PROGRESSFUNCTION:{
 		L_error(L,"Not implemented");			      
 	}break;
@@ -936,8 +1029,12 @@ switch(opt) {
 	}break;
 
 	/* void* */
+#if CURL_NEWER(7,10,6)
 	case CURLOPT_SSL_CTX_DATA:
+#endif
+#if CURL_NEWER(7,9,6)
 	case CURLOPT_DEBUGDATA:
+#endif
 	case CURLOPT_WRITEHEADER:
 	case CURLOPT_PROGRESSDATA:
 	case CURLOPT_READDATA:
@@ -956,51 +1053,71 @@ switch(opt) {
 
 	/* constants */
 	case CURLOPT_NETRC:{
+#if CURL_NEWER(7,9,8)
 		enum CURL_NETRC_OPTION o=(enum CURL_NETRC_OPTION)
 			L_checkconst(L,curl_easy_netrc_c,"CURL_NETRC_OPTION",3);
+#else
+		long o = luaL_checklong(L,3);
+#endif
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
+#if CURL_NEWER(7,10,7)			   
 	case CURLOPT_PROXYAUTH:
+#endif
+#if CURL_NEWER(7,10,6)
 	case CURLOPT_HTTPAUTH:{
 		long int o= L_checkconst_mask(L,
 			curl_easy_auth_c,"CURL_AUTH_*",3);
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
+#endif
 	case CURLOPT_HTTP_VERSION:{
 		long int o = L_checkconst(L,
 			curl_easy_httpver_c,"CURL_HTTP_VERSION_*",3);
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
+#if CURL_NEWER(7,11,0)				  
 	case CURLOPT_FTP_SSL:{
 		long int o = L_checkconst(L,
 			curl_easy_ftpssl_c,"CURLFTPSSL_*",3);
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
+#endif
 	case CURLOPT_CLOSEPOLICY:{
 		long int o = L_checkconst(L,
 			curl_easy_closepolicy_c,"CURLCLOSEPOLICY_*",3);
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
+#if CURL_NEWER(7,10,8)
 	case CURLOPT_IPRESOLVE:{
 		long int o = L_checkconst(L,
 	  		curl_easy_ipresolve_c,"CURL_IPRESOLVE_*",3);
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
+#endif
+/* FIXME: not sure of this */
+#if CURL_NEWER(7,10,0)
 	case CURLOPT_PROXYTYPE:{
 		long int o = L_checkconst(L,
 	  		curl_easy_proxytype_c,"CURLPROXY_*",3);
 		rc = curl_easy_setopt(c,opt,o);
 	}break;
-
+#endif
 		 
 	/* slist */
+#if CURL_NEWER(7,9,6)			    
 	case CURLOPT_HTTPPOST:{
 		rc = L_httppost(c,opt,L);	      
 	}break;
+#endif
 	case CURLOPT_QUOTE:
 	case CURLOPT_POSTQUOTE:
+#if CURL_NEWER(7,9,5)
 	case CURLOPT_PREQUOTE:
+#endif
+#if CURL_NEWER(7,10,3)			      
 	case CURLOPT_HTTP200ALIASES:
+#endif
 	case CURLOPT_HTTPHEADER:{
 		struct curl_slist * sl = L_checkslist(L,3);
 		rc = curl_easy_setopt(c,opt,sl);
@@ -1008,9 +1125,21 @@ switch(opt) {
 	}break;
 
 	/* share handle */
+#if CURL_NEWER(7,10,0)
 	case CURLOPT_SHARE:{
 		L_error(L,"not implemented");		   
 	}break;
+#endif
+
+	/* deprecated */
+#if CURL_OLDER(7,10,8)
+	case CURLOPT_PASSWDFUNCTION:
+	case CURLOPT_PASSWDDATA:
+#endif
+			   {
+		L_error(L,"deprecated and not implemented");
+	}break;
+	
 			   
 	/* default */
 	default:{
@@ -1050,7 +1179,9 @@ lua_setmetatable(L,-2);
 c->handler = tmp;
 for(i = 0 ; i < STR_SIZE ; i++)
 	c->strings[i] = NULL;
+#if CURL_NEWER(7,9,6)
 c->post=NULL;
+#endif
 rc = curl_easy_setopt(tmp,CURLOPT_ERRORBUFFER,c->err);
 
 /* check for errors */
@@ -1072,8 +1203,10 @@ int i;
 curl_easy_cleanup(c->handler);
 for(i = 0 ; i < STR_SIZE ; i++)
 	free(c->strings[i]);
+#if CURL_NEWER(7,9,6)
 if(c->post != NULL)
 	curl_formfree(c->post);	
+#endif
 
 lua_pushlightuserdata(L,CURL_WRITECB_OFF(c));
 lua_pushnil(L);
@@ -1132,29 +1265,39 @@ for ( i = 0 ; t[i].name != NULL ; i++){
  */ 
 int luacurl_open(lua_State* L) {
 
-luaL_newmetatable(L,CURL_EASY_META_NAME);
+	luaL_newmetatable(L,CURL_EASY_META_NAME);
+	
+	lua_pushstring(L,"__gc");
+	lua_pushcfunction(L,luacurl_easy_cleanup);
+	lua_settable(L,-3);
+	
+	lua_pushstring(L,"__index");
+	lua_pushvalue(L,-2);
+	lua_settable(L,-3);
+	
+	luaL_openlib(L,NULL,curl_easy_m,0);
+	luaL_openlib(L,"curl",curl_f,0);
+	L_openconst(L,curl_easy_c);
+#if CURL_NEWER(7,9,8)
+	L_openconst(L,curl_easy_netrc_c);
+#endif
+#if CURL_NEWER(7,10,6)
+	L_openconst(L,curl_easy_auth_c);
+#endif	
+	L_openconst(L,curl_easy_httpver_c);
+	L_openconst(L,curl_easy_form_c);
+#if CURL_NEWER(7,11,0)
+	L_openconst(L,curl_easy_ftpssl_c);
+#endif
+	L_openconst(L,curl_easy_closepolicy_c);
+#if CURL_NEWER(7,10,8)
+	L_openconst(L,curl_easy_ipresolve_c);
+#endif
+#if CURL_NEWER(7,10,0)	
+	L_openconst(L,curl_easy_proxytype_c);
+#endif
 
-lua_pushstring(L,"__gc");
-lua_pushcfunction(L,luacurl_easy_cleanup);
-lua_settable(L,-3);
-
-lua_pushstring(L,"__index");
-lua_pushvalue(L,-2);
-lua_settable(L,-3);
-
-luaL_openlib(L,NULL,curl_easy_m,0);
-luaL_openlib(L,"curl",curl_f,0);
-L_openconst(L,curl_easy_c);
-L_openconst(L,curl_easy_netrc_c);
-L_openconst(L,curl_easy_auth_c);
-L_openconst(L,curl_easy_httpver_c);
-L_openconst(L,curl_easy_form_c);
-L_openconst(L,curl_easy_ftpssl_c);
-L_openconst(L,curl_easy_closepolicy_c);
-L_openconst(L,curl_easy_ipresolve_c);
-L_openconst(L,curl_easy_proxytype_c);
-
-return 1;
+	return 1;
 }
 
 /******************************************************************************
@@ -1164,7 +1307,7 @@ return 1;
  */ 
 int luacurl_open_and_init(lua_State* L) {
 
-curl_global_init(CURL_GLOBAL_ALL);
+	curl_global_init(CURL_GLOBAL_ALL);
 	
-return luacurl_open(L);
+	return luacurl_open(L);
 }

@@ -79,7 +79,7 @@ local libero_string = {
 		"R_Folder=&ZONEID=&Fld_P_List=aW5ib3g%%3D&"..
 		"dummy1_List=aW5ib3g%%3D&dummy2_List=aW5ib3g%%3D",
 	-- The capture to understand if the session ended
-	timeoutC = "Sessione non valida. Riconnettersi",
+	timeoutC = "(Sessione non valida. Riconnettersi)",
 	-- The uri to save a message (read download the message)
 	save = "http://%s/cgi-bin/webmail.cgi/message.txt?ID=%s&"..
 		"msgID=%s&Act_V_Save=1&"..

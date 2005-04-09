@@ -1,8 +1,8 @@
-freepops (0.0.26-1) unstable; urgency=low
+freepops (0.0.27-1) unstable; urgency=low
 
-  * fixed yahoo plugin
+  * new upastream release
 
- -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sat,  5 Mar 2005 20:52:00 +0100
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sat,  9 Apr 2005 16:43:38 +0200
 
 freepops (0.0.25-1) unstable; urgency=low
 

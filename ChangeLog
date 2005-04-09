@@ -1,3 +1,9 @@
+09/04/2005 0.0.27
+- hotmail.lua: A check to make sure that the stat page returned by hotmail is valid. (russell822)
+- es: fixed rss (ncocchiaro)
+- aol.lua: Updated AOL to handle the new interface. (russell822)
+- es: *** empty log message *** (lisar314)
+- hotmail.lua: Fixed a bunch of issues related to messages downloading as errors and more accurate stat counts for western languages. (russell822)
 - updated some code to make gcc4.0-amd64 happy
 - changed string find patten in serialize.lua (thanks flabdablet)
 - fixed typos in popserver.c (ncocchiaro)

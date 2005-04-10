@@ -145,7 +145,6 @@ freepops.MODULES_MAP["africamail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["arcticmail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["asia.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["australiamail.com"]	= {name="mailcom.lua"}
-freepops.MODULES_MAP["europe.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["japan.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["samerica.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["usa.com"]		= {name="mailcom.lua"}

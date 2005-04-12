@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8f"
+PLUGIN_VERSION = "0.0.8g"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -264,7 +264,7 @@ function login()
   local url = "";
   local post = string.format(globals.strLoginPostData, username, domain, password, domain)
 
-  if (domain == "email.com") then
+  if (domain == "email.com" or domain == "iname.com") then
     url = string.format(globals.strLoginPage, "www", "mail.com")
   elseif (domain == "usa.com") then
     url = string.format(globals.strLoginPage, "mail", "usa.com")

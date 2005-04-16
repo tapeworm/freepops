@@ -279,6 +279,7 @@ end
 function Private.quoted_printable_io_slave(cb)
 	local buffer = ""
 	return function(s,len)
+		local saved_len = len 
 		buffer = buffer .. s
 		
 		local todo_table = {}
@@ -304,7 +305,7 @@ function Private.quoted_printable_io_slave(cb)
 			cb(Private.qpr_eval_expansion(buffer))
 			buffer = ""
 		end
-		return len
+		return saved_len
 	end
 
 end

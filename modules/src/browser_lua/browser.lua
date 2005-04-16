@@ -520,7 +520,8 @@ function Private.pipe_uri(self,url,cb,exhed)
 	local rc,err = Hidden.perform(self,url,gl_h,cb)
 
 	return Hidden.continue_or_return(rc,err,{""},
-		Private.pipe_uri,self,err,exhed)
+		Private.pipe_uri,self,Hidden.mangle_location(self,err),
+		cb,exhed)
 end
 
 function Private.pipe_uri_with_header(self,url,cb_h,cb_b,exhed) 
@@ -529,7 +530,11 @@ function Private.pipe_uri_with_header(self,url,cb_h,cb_b,exhed)
 	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
 	
 	Hidden.build_header(self,url,exhed)
-	return Hidden.perform(self,url,cb_h,cb_b)
+	local rc,err = Hidden.perform(self,url,cb_h,cb_b)
+
+	return Hidden.continue_or_return(rc,err,{""},
+		 Private.pipe_uri_with_header,self,
+		 Hidden.mangle_location(self,err),cb_h,cb_b,exhed)
 end
 
 function Private.show(self)

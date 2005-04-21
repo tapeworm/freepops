@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8g"
+PLUGIN_VERSION = "0.0.8h"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -287,7 +287,7 @@ function login()
 
   -- Error checking
   --
-  if (retval == POPSERVER_ERR_UNKNOWN or retval == POPSERVER_ERR_NETWORK) then
+  if (retval == POPSERVER_ERR_UNKNOWN or retval == POPSERVER_ERR_NETWORK or retval == POPSERVER_ERR_AUTH) then
     url = string.format(globals.strLoginPage, "www", "mail.com")
     retval = postToLoginPage(browser, url, post, 2)  
     if (retval ~= POPSERVER_ERR_OK) then

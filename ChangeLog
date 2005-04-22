@@ -1,3 +1,5 @@
+- fixed compilation issue (-lcurses) on suse linux enterprise server 9 (thanks
+eddi)
 - fixed pipe_uri and pipe_uri_with_header adding mangle_location and continue_or_return
 - fixed mimer quoted_printable_io_slave that was returning a wrong len
 09/04/2005 0.0.27

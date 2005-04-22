@@ -69,7 +69,7 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
 	-lbase64 -lcurl -lcrypto -llog -llist -lreadline -lhistory \
-	-lcurses -lncurses
+	-lncurses
 endif
 endif
 endif

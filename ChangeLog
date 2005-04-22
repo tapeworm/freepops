@@ -1,3 +1,4 @@
+- added yahoo.dk domain to config.lua file
 - fixed compilation issue (-lcurses) on suse linux enterprise server 9 (thanks
 eddi)
 - fixed pipe_uri and pipe_uri_with_header adding mangle_location and continue_or_return

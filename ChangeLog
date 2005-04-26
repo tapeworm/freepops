@@ -1,3 +1,5 @@
+- fixed long description of freepops-doc in debian/control
+- fixed wrongs uk domains in config.lua
 - added yahoo.dk domain to config.lua file
 - fixed compilation issue (-lcurses) on suse linux enterprise server 9 (thanks
 eddi)

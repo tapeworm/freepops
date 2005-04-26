@@ -1,3 +1,10 @@
+freepops (0.0.27-2) unstable; urgency=low
+
+  * fixed wrong entries in config.lua (closes: Bug#304244)
+  * more detailed description for the -doc package (closes: Bug#306364)
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Tue, 26 Apr 2005 14:28:36 +0200
+
 freepops (0.0.27-1) unstable; urgency=low
 
   * new upastream release

@@ -15,6 +15,7 @@ Description: POP3 interface to several webmails
  freepopsd can also be used as RSS aggregator and POP3 forwarder.
 
 Package: freepops-doc
+Section: doc
 Architecture: all
 Depends: 
 Description: freepops user/developer manual

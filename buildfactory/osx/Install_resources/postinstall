@@ -3,14 +3,21 @@
 # http://www.freepops.org
 # Author: Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
 
-if [ ! -d /Library/StartupItems/ ] ; then
-	mkdir -m 775 -p /Library/StartupItems
+if [ ! "`uname -r`" = "8.0.0" ]; then
+	if [ ! -d /Library/StartupItems/ ] ; then
+		mkdir -m 775 -p /Library/StartupItems
+	fi
+	if [ ! -d /Library/StartupItems/FreePOPs ] ; then
+		mkdir -m 775 -p /Library/StartupItems/FreePOPs
+	fi
+	cp "$1/Contents/Resources/StartupParameters.plist" /Library/StartupItems/FreePOPs/
+	# add installation directory to startup script and copy it
+	cat "$1/Contents/Resources/FreePOPs" | sed s:DIR=:DIR=\""$2"/FreePOPs\": > /Library/StartupItems/FreePOPs/FreePOPs
+	chmod 755 /Library/StartupItems/FreePOPs/FreePOPs
+else
+	cat "$1/Contents/Resources/freepopsd.plist" | sed s:/Applications/FreePOPs/:$2/FreePOPs/: > /System/Library/LaunchDaemons/freepopsd.plist
+	chmod 644 /System/Library/LaunchDaemons/freepopsd.plist
+	chown root:wheel /System/Library/LaunchDaemons/freepopsd.plist
 fi
-if [ ! -d /Library/StartupItems/FreePOPs ] ; then
-	mkdir -m 775 -p /Library/StartupItems/FreePOPs
-fi
-cp "$1/Contents/Resources/StartupParameters.plist" /Library/StartupItems/FreePOPs/
-# add installation directory to startup script and copy it
-cat "$1/Contents/Resources/FreePOPs" | sed s:DIR=:DIR=\""$2"/FreePOPs\": > /Library/StartupItems/FreePOPs/FreePOPs
-chmod 755 /Library/StartupItems/FreePOPs/FreePOPs
+
 exit 0

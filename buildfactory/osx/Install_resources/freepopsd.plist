@@ -9,6 +9,7 @@ http://www.apple.com/DTDs/PropertyList-1.0.dtd >
     <string>/Applications/FreePOPs/freepopsd</string>
     <key>ProgramArguments</key>
     <array>
+         <string>/Applications/FreePOPs/freepopsd</string>
          <string>-b 127.0.0.1</string>
     </array>
     <key>OnDemand</key>

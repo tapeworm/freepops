@@ -48,6 +48,8 @@ Valid targets in this case are:
   dist-slack	- Slackware .tgz
   dist-tgz	- Source .tar.gz
   dist-obsd	- OpenBSD
+  dist-osx	- Mac OS X 10.3 and above
+  dist-osx-static	- Mac OS X 10.2 (static package)
 
 Enjoy!
 

@@ -8,7 +8,7 @@ help:
 	$(H)echo
 	$(H)echo "here we build all the distributed packages"
 	$(H)echo
-	$(H)echo "Targets are: all dist-{osx,win,deb,rpm,gen,tgz,obsd}"
+	$(H)echo "Targets are: all dist-{osx,osx-static,win,deb,rpm,gen,tgz,obsd}"
 	$(H)echo
 
 all: dist-deb dist-rpm dist-win dist-gen #dist-slack

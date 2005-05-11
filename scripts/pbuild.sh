@@ -29,11 +29,11 @@ echo -e "If not stop now and add it."
 sleep 4
 
 sudo $PBUILD create \
-	--distribution $1 --basetgz $BASE_DIR/base-$1.tgz
+	--distribution $1 --basetgz $BASE_DIR/base-$1.tgz --bindmounts /sys
 
 curl_map $1	
 sudo $PBUILD update \
-	--basetgz $BASE_DIR/base-$1.tgz \
+	--basetgz $BASE_DIR/base-$1.tgz --bindmounts /sys \
 	--extrapackages "tetex-extra libcurl$CURL-dev libcurl$CURL libexpat1-dev bison flex debhelper libreadline4-dev libreadline4 gs-common libssl-dev"
 } 
 

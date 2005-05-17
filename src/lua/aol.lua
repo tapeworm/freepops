@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.7"
+PLUGIN_VERSION = "0.0.8"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -18,7 +18,7 @@ PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {
 "@aol.com","@aol.com.ar","@aol.fr","@aol.com.mx","@aol.com.au","@aol.de",
 "@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com", 
-"@netscape.net"} 
+"@netscape.net", "@aim.com"} 
 PLUGIN_PARAMETERS = 
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
@@ -41,7 +41,7 @@ and your real password as the password.]]
 
 -- Domains supported:  aol.com, aol.com.ar, aol.fr, aol.com.mx, aol.com.au,
 --                     aol.de, aol.com.pr, aol.com.br, jp.aol.com, aol.co.uk,
---                     aol.ca, aola.com, netscape.net
+--                     aol.ca, aola.com, netscape.net, aim.com
 
 -- ************************************************************************** --
 --  Global Strings
@@ -51,6 +51,7 @@ local globals = {
   -- Server URL
   -- 
   strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?seamless=novl&sitedomain=beta.webmail.aol.com&lang=en&locale=us&authLev=2&siteState=",
+  strLoginAIMUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?mcState=initialized&seamless=novl&sitedomain=mail.aol.com&lang=en&locale=us&authLev=2&siteState=ver%3a1%252c0%26ld%3amail.aol.com",
 
   -- Login strings
   --
@@ -64,6 +65,7 @@ local globals = {
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem
   --
   strRetLoginGoodLogin = 'gTargetHost = "([^"]+)"';
+  strRetLoginGoodLoginAim = 'gPreferredHost = "([^"]+)"';
   strRetLoginSessionNotExpired = "(mail session has expired)",
   
   -- Regular expression to extract the mail server
@@ -72,6 +74,7 @@ local globals = {
   -- Pattern to extract the URL to go to get the login form
   --
   strLoginPageParamsPattern='goToLoginUrl.-Redir."([^"]+)"',
+  strLoginPageParamsPatternAim = 'snsRedir."([^"]+)".;',
 
   -- Pattern to pull out the url's we need to go to set some cookies.
   --
@@ -80,6 +83,10 @@ local globals = {
   -- Pattern to find the next page of messages
   --
   strMsgListPrevPagePattern = '<A HREF="([^"]+)" CLASS="msglistbottomnav">Next</A>',
+
+  -- Pattern to extract the version of webmail
+  --
+  strVersionPattern = 'var VERSION[ ]?=[ ]?"([^"]+)";',
 
   -- Extract the server to post the login data to
   --
@@ -93,7 +100,7 @@ local globals = {
 
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLinePattern = 'new parent%.MessageInfo%("([^"]+)",[^,]+,"[^,]+",[^,]+,([^,]+),',
+  strMsgLinePattern = 'new parent%.MessageInfo%("([^"]+)",[^,]+,"[^"]+",[^,]+,([^,]+),',
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
@@ -123,9 +130,10 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "http://%s//GetMessageList.aspx?user=%s&page=%d&folder=%s&previousFolder=&stateToken=&newMailToken=&version=_SRV_1_0_0_11984_",
-  strCmdDelete = "http://%s/rpc_messages.aspx?folder=%s&action=delete&user=%s&version=_SRV_1_0_0_11984_", --&uid=X",
+  strCmdMsgList = "http://%s/GetMessageList.aspx?user=%s&page=%d&folder=%s&previousFolder=&stateToken=&newMailToken=&version=%s",
+  strCmdDelete = "http://%s/rpc_messages.aspx?folder=%s&action=delete&user=%s&version=%s", --&uid=X",
   strCmdMsgView = "http://%s/rfc822.aspx?user=%s&folder=%s&uid=%s",
+  strCmdWelcome = "http://%s/MessageList.aspx",
 
   -- Site IDs
   --
@@ -148,6 +156,7 @@ internalState = {
   strMBox = nil,
   strSiteId = "",
   strUserId = nil,
+  strVersion = "",
 }
 
 -- ************************************************************************** --
@@ -196,7 +205,10 @@ function loginAOL()
   local username = internalState.strUser
   local password = curl.escape(internalState.strPassword)
   local domain = internalState.strDomain
-  local url = string.format(globals.strLoginUrl, internalState.strSiteId)
+  local url = globals.strLoginUrl  --string.format(globals.strLoginUrl, internalState.strSiteId)
+  if (domain == "aim.com") then
+    url = globals.strLoginAIMUrl
+  end
   local xml = globals.strFolderQry
   local browser = internalState.browser
 	
@@ -231,7 +243,11 @@ function loginAOL()
   -- The login page sends us to a page that tests cookies and javascript.  We
   -- don't run javascript and thus must do the work here of pulling out the URL that
   -- the javascript would redirect too.
-  _, _, url = string.find(body, globals.strLoginPageParamsPattern)
+  if domain == "aim.com" then
+    _, _, url = string.find(body, globals.strLoginPageParamsPatternAim)
+  else
+    _, _, url = string.find(body, globals.strLoginPageParamsPattern)
+  end
   if (url == nil) then
     log.error_print("Unable to figure out the redirect on the login page.")
     return POPSERVER_ERR_UNKNOWN
@@ -289,7 +305,12 @@ function loginAOL()
 
   -- We should be logged in now! Let's check and make sure.
   --
-  local _, _, str = string.find(body, globals.strRetLoginGoodLogin)
+  local str = nil
+  if domain == "aim.com" then
+    _, _, str = string.find(body, globals.strRetLoginGoodLoginAim)
+  else
+    _, _, str = string.find(body, globals.strRetLoginGoodLogin)
+  end
   if str == nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
@@ -315,6 +336,17 @@ function loginAOL()
     end
   end
 
+  -- Get the webmail version
+  --
+  url = string.format(globals.strCmdWelcome, internalState.strMailServer)
+  body, err = browser:get_uri(url)
+  _, _, str = string.find(body, globals.strVersionPattern)
+  if (str == nil) then 
+    internalState.strVersion = "_SRV_1_0_0_12281_"
+  else
+    internalState.strVersion = str
+  end
+  log.dbg("AOL webmail version: " .. internalState.strVersion)
   
   -- Note that we have logged in successfully
   --
@@ -589,7 +621,7 @@ function quit_update(pstate)
   local dcnt = 0
 
   local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer, 
-    internalState.strMBox, internalState.strUserId)
+    internalState.strMBox, internalState.strUserId, internalState.strVersion)
   local baseUrl = cmdUrl
 
   -- Cycle through the messages and see if we need to delete any of them
@@ -657,7 +689,7 @@ function stat(pstate)
   local browser = internalState.browser
   local nMsgs = 0
   local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer, internalState.strUserId,
-    1, internalState.strMBox);
+    1, internalState.strMBox, internalState.strVersion);
   local baseUrl = cmdUrl
 
   -- Debug Message
@@ -741,7 +773,7 @@ function stat(pstate)
       --
       browser = internalState.browser
       cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-        internalState.strMBox)
+        internalState.strMBox, internalState.strVersion)
 
       -- Retry to load the page
       --

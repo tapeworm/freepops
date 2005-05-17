@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9a"
+PLUGIN_VERSION = "0.0.9b"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.15"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -75,7 +75,7 @@ local globals = {
   
   -- Extract the server to post the login data to
   --
-  strLoginPostUrlPattern1='name=[%w]+ action="([^"]*)"',
+  strLoginPostUrlPattern1='action="([^"]*)" method=',
   strLoginPostUrlPattern2='name="([^"]*)" value="([^"]*)"',
   strLoginPostUrlPattern3='<form TARGET="_top" name="%s" action="([^"]*)"',
   strLoginDoneReloadToHMHome='URL=(.*[^"])"',

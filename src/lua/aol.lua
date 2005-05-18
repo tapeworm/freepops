@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8"
+PLUGIN_VERSION = "0.0.8a"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -110,6 +110,11 @@ local globals = {
   strTrashAOL = "Recently%20Deleted",
   strSentAOL = "Sent%20Mail",
   StrSavedAOL = "Saved%20Mail",
+
+  strInboxAim = "Inbox",
+  strTrashAim = "Trash",
+  strSentAim = "Sent",
+  strDraftsAim = "Drafts",
   
   strTrashNetscape = "VHJhc2g=",
   strSentNetscape = "U2VudA==",
@@ -488,7 +493,11 @@ function user(pstate, username)
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
   if mbox == nil then
-    internalState.strMBox = globals.strInbox
+    if domain == "aim.com" then
+      internalState.strMBox = globals.strInboxAim
+    else
+      internalState.strMBox = globals.strInbox
+    end
     return POPSERVER_ERR_OK
   end
 
@@ -500,17 +509,21 @@ function user(pstate, username)
 
   _, _, start = string.find(mbox, globals.strSentPat)
   if start ~= nil then
-    if internalState.strSiteId == globals.strAOLID then
-      internalState.strMBox = globals.strSentAOL
+    if domain == "aim.com" then
+      internalState.strMBox = globals.strSentAim
     else
-      internalState.strMBox = globals.strSentNetscape
+      internalState.strMBox = globals.strSentAOL
     end
     return POPSERVER_ERR_OK
   end
 
   _, _, start = string.find(mbox, globals.strDeletedPat)
   if start ~= nil then
-    internalState.strMBox = globals.strTrashAOL
+    if domain == "aim.com" then
+      internalState.strMBox = globals.strTrashAim
+    else
+      internalState.strMBox = globals.strTrashAOL
+    end
     return POPSERVER_ERR_OK
   end
 
@@ -522,7 +535,7 @@ function user(pstate, username)
 
   _, _, start = string.find(mbox, globals.strDraftPat)
   if start ~= nil then
-    internalState.strMBox = globals.strDraftNetscape
+    internalState.strMBox = globals.strDraftAim
     return POPSERVER_ERR_OK
   end
 

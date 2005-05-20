@@ -19,11 +19,12 @@ PLUGIN_DOMAINS = {
 "@aol.com","@aol.com.ar","@aol.fr","@aol.com.mx","@aol.com.au","@aol.de",
 "@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com", 
 "@netscape.net", "@aim.com"} 
-PLUGIN_PARAMETERS = 
+PLUGIN_PARAMETERS ={ 
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
 		en=[[The folder you want to interact with. Default is New (AOL)/Inbox (Netscape), other values are for AOL: Old, Sent, Saved, Spam and Deleted and Netscape: Sent, Trash, Draft.]]}
 	}
+}
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Per usare questo plugin dovrete usare il vostro indirizzo email completo come 

@@ -66,11 +66,13 @@ freepops.MODULES_MAP["hotmail.de"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["hotmail.it"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["hotmail.co.uk"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["hotmail.co.jp"]	= {name="hotmail.lua"}
+freepops.MODULES_MAP["hotmail.fr"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["msn.com"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["webtv.com"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["charter.com"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["compaq.net"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["passport.com"]	= {name="hotmail.lua"}
+freepops.MODULES_MAP["messengeruser.com"]	= {name="hotmail.lua"}
 
 -- aol
 freepops.MODULES_MAP["aol.com"]		= {name="aol.lua"}
@@ -85,7 +87,10 @@ freepops.MODULES_MAP["jp.aol.com"]	= {name="aol.lua"}
 freepops.MODULES_MAP["aol.com.uk"]	= {name="aol.lua"}
 freepops.MODULES_MAP["aol.ca"]		= {name="aol.lua"}
 freepops.MODULES_MAP["aola.com"]	= {name="aol.lua"}
-freepops.MODULES_MAP["netscape.net"]    = {name="aol.lua"}
+freepops.MODULES_MAP["aim.com"]		= {name="aol.lua"}
+
+-- netscape
+freepops.MODULES_MAP["netscape.net"]    = {name="netscape.lua"}
 
 -- squirrelmail
 freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}

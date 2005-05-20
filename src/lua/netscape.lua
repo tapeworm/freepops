@@ -1,5 +1,5 @@
 -- ************************************************************************** --
---  FreePOPs @aol.com webmail interface
+--  FreePOPs @netscape.net webmail interface
 --  
 --  Released under the GNU/GPL license
 --  Written by Russell Schwager <russells@despammed.com>
@@ -7,29 +7,27 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8a"
-PLUGIN_NAME = "aol.com"
+PLUGIN_VERSION = "0.0.1"
+PLUGIN_NAME = "netscape.net"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=aol.lua"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=netscape.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
-PLUGIN_DOMAINS = {
-"@aol.com","@aol.com.ar","@aol.fr","@aol.com.mx","@aol.com.au","@aol.de",
-"@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com", 
-"@netscape.net", "@aim.com"} 
-PLUGIN_PARAMETERS ={ 
+PLUGIN_DOMAINS = { "@netscape.net"} 
+PLUGIN_PARAMETERS = 
 	{name="folder", description={
-		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; New, gli altri valori possibili sono: Old, Sent, Saved, Spam e Deleted.]],
-		en=[[The folder you want to interact with. Default is New, other values are for: Old, Sent, Saved, Spam and Deleted.]]}
+		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox, gli altri valori possibili sono: Sent, Trash, Draft.]],
+		en=[[The folder you want to interact with. Default is Inbox, other values are: Sent, Trash, Draft.]]}
 	}
-}
 PLUGIN_DESCRIPTIONS = {
 	it=[[
+Questo plugin permette di scaricare la posta da mailbox con dominio tipo @netscape.net. 
 Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
 nome utente e la vostra vera password come password.]],
 	en=[[
+This plugin lets you download mail from @netscape.net mailboxes. 
 To use
 this plugin you have to use your full email address as the username
 and your real password as the password.]]
@@ -37,12 +35,7 @@ and your real password as the password.]]
 
 
 -- TODO
--- - User defined folder
 --
-
--- Domains supported:  aol.com, aol.com.ar, aol.fr, aol.com.mx, aol.com.au,
---                     aol.de, aol.com.pr, aol.com.br, jp.aol.com, aol.co.uk,
---                     aol.ca, aola.com, netscape.net, aim.com
 
 -- ************************************************************************** --
 --  Global Strings
@@ -50,9 +43,8 @@ and your real password as the password.]]
 
 local globals = {
   -- Server URL
-  -- 
-  strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?seamless=novl&sitedomain=beta.webmail.aol.com&lang=en&locale=us&authLev=2&siteState=",
-  strLoginAIMUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?mcState=initialized&seamless=novl&sitedomain=mail.aol.com&lang=en&locale=us&authLev=2&siteState=ver%3a1%252c0%26ld%3amail.aol.com",
+  --
+  strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?siteId=%s&authLev=2&seamless=novl&siteState=",
 
   -- Login strings
   --
@@ -61,12 +53,11 @@ local globals = {
 
   -- Logout
   --
-  strLogout = "http://%s/logout.aspx",
+  strLogout = "http://my.screenname.aol.com/_cqr/logout/mcLogout.tmpl?siteId=aolcomnewprod",
 
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem
   --
-  strRetLoginGoodLogin = 'gTargetHost = "([^"]+)"';
-  strRetLoginGoodLoginAim = 'gPreferredHost = "([^"]+)"';
+  strRetLoginGoodLogin = '(function reLocate)',
   strRetLoginSessionNotExpired = "(mail session has expired)",
   
   -- Regular expression to extract the mail server
@@ -75,7 +66,6 @@ local globals = {
   -- Pattern to extract the URL to go to get the login form
   --
   strLoginPageParamsPattern='goToLoginUrl.-Redir."([^"]+)"',
-  strLoginPageParamsPatternAim = 'snsRedir."([^"]+)".;',
 
   -- Pattern to pull out the url's we need to go to set some cookies.
   --
@@ -85,65 +75,37 @@ local globals = {
   --
   strMsgListPrevPagePattern = '<A HREF="([^"]+)" CLASS="msglistbottomnav">Next</A>',
 
-  -- Pattern to extract the version of webmail
-  --
-  strVersionPattern = 'var VERSION[ ]?=[ ]?"([^"]+)";',
-
   -- Extract the server to post the login data to
   --
   strLoginPostUrlPattern1='[Mm][Ee][Tt][Hh][Oo][Dd]="[^"]*" [Aa][Cc][Tt][Ii][Oo][Nn]="([^"]*)"',
   strLoginPostUrlPattern2='[Tt][Yy][Pp][Ee]="[Hh][Ii][Dd][Dd][Ee][Nn]" [Nn][Aa][Mm][Ee]="([^"]*)" [Vv][Aa][Ll][Uu][Ee]="([^"]*)"',
   strLoginPostUrlPattern3='[Nn][Aa][Mm][Ee]="[^"]*" [Mm][Ee][Tt][Hh][Oo][Dd]="POST" [Aa][Cc][Tt][Ii][Oo][Nn]="([^"]*)"',
   
-  -- Extract the AOL internal id for the user
-  --
-  strUserIdPattern = "uid:([^&]+)&",
-
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLinePattern = 'new parent%.MessageInfo%("([^"]+)",[^,]+,"[^"]+",[^,]+,([^,]+),',
+  strMsgLineIDPattern = 'NAME="msguid" VALUE="([^"]+)"',
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
-  strInbox = "New%20Mail", 
-  strSpamAOL = "Spam",
-  strOldboxAOL = "Old%20Mail",
-  strTrashAOL = "Recently%20Deleted",
-  strSentAOL = "Sent%20Mail",
-  StrSavedAOL = "Saved%20Mail",
-
-  strInboxAim = "Inbox",
-  strTrashAim = "Trash",
-  strSentAim = "Sent",
-  strDraftsAim = "Drafts",
+  strInbox = "SU5CT1g=",
   
   strTrashNetscape = "VHJhc2g=",
   strSentNetscape = "U2VudA==",
   strDraftNetscape = "RHJhZnQ=",
 
   strInboxPat = "([Nn]ew)",
-  strOldboxPat = "([Oo]ld)",
-  strSpamPat = "([Ss]pam)",
   strSentPat = "([Ss]ent)",
-  strDeletedPat = "([Dd]eleted)",
   strTrashPat = "([Tt]rash)",
   strDraftPat = "([Dd]raft)",
-  strSavedPat = "([Ss]aved)",
-
-  -- Base part of a custom folder name
-  --
-  strCustomFolderBase = "Saved%2F",
 
   -- Command URLS
   --
-  strCmdMsgList = "http://%s/GetMessageList.aspx?user=%s&page=%d&folder=%s&previousFolder=&stateToken=&newMailToken=&version=%s",
-  strCmdDelete = "http://%s/rpc_messages.aspx?folder=%s&action=delete&user=%s&version=%s", --&uid=X",
-  strCmdMsgView = "http://%s/rfc822.aspx?user=%s&folder=%s&uid=%s",
-  strCmdWelcome = "http://%s/MessageList.aspx",
+  strCmdMsgList = "http://%s/msglist.adp?folder=%s&start=1",
+  strCmdDelete = "http://%s/msglist.adp?folder=%s&start=1&cmd=deletemsgs", --&msguid=X",
+  strCmdMsgView = "http://%s/attachment/%s/%s/",
 
   -- Site IDs
   --
-  strAOLID = "atlasaol",
   strNetscapeID = "nscpenusmail",
 }
 
@@ -161,8 +123,6 @@ internalState = {
   strDomain = nil,
   strMBox = nil,
   strSiteId = "",
-  strUserId = nil,
-  strVersion = "",
 }
 
 -- ************************************************************************** --
@@ -211,10 +171,7 @@ function loginAOL()
   local username = internalState.strUser
   local password = curl.escape(internalState.strPassword)
   local domain = internalState.strDomain
-  local url = globals.strLoginUrl  --string.format(globals.strLoginUrl, internalState.strSiteId)
-  if (domain == "aim.com") then
-    url = globals.strLoginAIMUrl
-  end
+  local url = string.format(globals.strLoginUrl, internalState.strSiteId)
   local xml = globals.strFolderQry
   local browser = internalState.browser
 	
@@ -249,23 +206,12 @@ function loginAOL()
   -- The login page sends us to a page that tests cookies and javascript.  We
   -- don't run javascript and thus must do the work here of pulling out the URL that
   -- the javascript would redirect too.
-  if domain == "aim.com" then
-    _, _, url = string.find(body, globals.strLoginPageParamsPatternAim)
-  else
-    _, _, url = string.find(body, globals.strLoginPageParamsPattern)
-  end
+  _, _, url = string.find(body, globals.strLoginPageParamsPattern)
   if (url == nil) then
     log.error_print("Unable to figure out the redirect on the login page.")
     return POPSERVER_ERR_UNKNOWN
   end
   body, err = browser:get_uri(url)
-
-  -- Shouldn't happen but you never know
-  --
-  if body == nil then
-    log.error_print(globals.strLoginFailed)
-    return POPSERVER_ERR_NETWORK
-  end
 
   -- We are now at the signin page.  Let's pull out the action of the signin form and
   -- all the hidden variables.  When done, we'll post the data along with the user and password.
@@ -300,23 +246,33 @@ function loginAOL()
     end
   end
 
-  -- Need to redirect
-  --
-  _, _, url = string.find(body, "checkErrorAndSubmitForm%([^,]+, [^,]+, '([^']+)'")
+  _, _, url = string.find(body, globals.strLoginPostUrlPattern3)
+  local postdata = nil
+  local name, value  
+  for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
+    if postdata ~= nil then
+      postdata = postdata .. "&" .. name .. "=" .. value  
+    else
+      postdata = name .. "=" .. value 
+    end
+  end
   if url == nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH  
+  end  
+
+  body, err = browser:post_uri(url, postdata)
+
+  -- Shouldn't happen but you never know
+  --
+  if body == nil then
+    log.error_print(globals.strLoginFailed)
+    return POPSERVER_ERR_AUTH
   end
-  body, err = browser:get_uri(url)
 
   -- We should be logged in now! Let's check and make sure.
   --
-  local str = nil
-  if domain == "aim.com" then
-    _, _, str = string.find(body, globals.strRetLoginGoodLoginAim)
-  else
-    _, _, str = string.find(body, globals.strRetLoginGoodLogin)
-  end
+  local _, _, str = string.find(body, globals.strRetLoginGoodLogin)
   if str == nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
@@ -324,35 +280,11 @@ function loginAOL()
   
   -- Save the mail server
   --
-  internalState.strMailServer = str
+  internalState.strMailServer = browser:wherearewe()
 
   -- DEBUG Message
   --
-  log.dbg("AOL/Netscape Server: " .. internalState.strMailServer .. "\n")
-
-  -- Get UserID from cookie
-  --
-  local cookie = browser:get_cookie('Auth')
-  if cookie == nil then 
-    log.error_print("Unable to determine AOL internal user id.  The plugin needs to be updated.")
-  else
-    _, _, internalState.strUserId = string.find(cookie.value, globals.strUserIdPattern)
-    if internalState.strUserId == nil then 
-      log.error_print("Unable to determine AOL internal user id.  The plugin needs to be updated.")
-    end
-  end
-
-  -- Get the webmail version
-  --
-  url = string.format(globals.strCmdWelcome, internalState.strMailServer)
-  body, err = browser:get_uri(url)
-  _, _, str = string.find(body, globals.strVersionPattern)
-  if (str == nil) then 
-    internalState.strVersion = "_SRV_1_0_0_12281_"
-  else
-    internalState.strVersion = str
-  end
-  log.dbg("AOL webmail version: " .. internalState.strVersion)
+  log.dbg("Netscape Server: " .. internalState.strMailServer .. "\n")
   
   -- Note that we have logged in successfully
   --
@@ -382,7 +314,8 @@ function downloadMsg(pstate, msg, nLines, data)
   --
   local browser = internalState.browser
   local uidl = get_mailmessage_uidl(pstate, msg)
-  local url = string.format(globals.strCmdMsgView, internalState.strMailServer, internalState.strUserId,
+  
+  local url = string.format(globals.strCmdMsgView, internalState.strMailServer,
     internalState.strMBox, uidl);
 
   -- Debug Message
@@ -434,7 +367,20 @@ function downloadMsg_cb(cbInfo, data)
     if (cbInfo.nLinesRequested ~= -2 and cbInfo.nLinesReceived == -1) then
       return 0, nil
     end
-  
+
+    -- Clean up the end of line and other things.  In the HTML portion of a message
+    -- AOL encodes it with quoted-printable.  Let's fix the easy stuff here.  This will
+    -- probably need to be looked at again.  I am sure it will cause issues in the non-HTML
+    -- portions of the message.
+    --
+--      body = string.gsub(body, "(Content%-Transfer%-Encoding:) quoted%-printable", "%1 7bit")
+--      body = string.gsub(body, "=\r\n", "")
+--      body = string.gsub(body, "=\n", "")
+--      body = string.gsub(body, "=\r", "")
+--      body = string.gsub(body, "=[Aa]0", "\n")
+--      body = string.gsub(body, "=20", " ")
+--      body = string.gsub(body, "=3[dD]", "=")
+
     -- Perform our "TOP" actions
     --
     if (cbInfo.nLinesRequested ~= -2) then
@@ -484,47 +430,19 @@ function user(pstate, username)
 
   -- Set the site id
   -- 
-  if domain == "netscape.net" then
-    internalState.strSiteId = globals.strNetscapeID
-  else
-    internalState.strSiteId = globals.strAOLID
-  end
+  internalState.strSiteId = globals.strNetscapeID
 
   -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
   if mbox == nil then
-    if domain == "aim.com" then
-      internalState.strMBox = globals.strInboxAim
-    else
-      internalState.strMBox = globals.strInbox
-    end
-    return POPSERVER_ERR_OK
-  end
-
-  local _, _, start = string.find(mbox, globals.strSpamPat)
-  if start ~= nil then
-    internalState.strMBox = globals.strSpamAOL
+    internalState.strMBox = globals.strInbox
     return POPSERVER_ERR_OK
   end
 
   _, _, start = string.find(mbox, globals.strSentPat)
   if start ~= nil then
-    if domain == "aim.com" then
-      internalState.strMBox = globals.strSentAim
-    else
-      internalState.strMBox = globals.strSentAOL
-    end
-    return POPSERVER_ERR_OK
-  end
-
-  _, _, start = string.find(mbox, globals.strDeletedPat)
-  if start ~= nil then
-    if domain == "aim.com" then
-      internalState.strMBox = globals.strTrashAim
-    else
-      internalState.strMBox = globals.strTrashAOL
-    end
+    internalState.strMBox = globals.strSentNetscape
     return POPSERVER_ERR_OK
   end
 
@@ -536,25 +454,18 @@ function user(pstate, username)
 
   _, _, start = string.find(mbox, globals.strDraftPat)
   if start ~= nil then
-    internalState.strMBox = globals.strDraftAim
+    internalState.strMBox = globals.strDraftNetscape
     return POPSERVER_ERR_OK
   end
 
-  _, _, start = string.find(mbox, globals.strOldboxPat)
-  if start ~= nil then
-    internalState.strMBox = globals.strOldbox
-    return POPSERVER_ERR_OK
-  end
-
-  _, _, start = string.find(mbox, globals.strSavedPat)
-  if start ~= nil then
-    internalState.strMBox = globals.strSavedAOL
-    return POPSERVER_ERR_OK
-  end
-
-  -- It's a custom folder
+  -- TODO - set the other mailbox here and find it
+  -- when we log in.
   -- 
-  internalState.strMBox = globals.strCustomFolderBase .. mbox
+
+  -- Defaulting to the inbox
+  --
+  log.say("Unable to figure out the mailbox specified.  Defaulting to the Inbox.\n")
+  internalState.strMBox = globals.strInbox
   return POPSERVER_ERR_OK
 end
 
@@ -635,19 +546,21 @@ function quit_update(pstate)
   local dcnt = 0
 
   local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer, 
-    internalState.strMBox, internalState.strUserId, internalState.strVersion)
+    internalState.strMBox)
   local baseUrl = cmdUrl
 
   -- Cycle through the messages and see if we need to delete any of them
   -- 
   for i = 1, cnt do
     if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
-      cmdUrl = cmdUrl .. "&uid=" .. get_mailmessage_uidl(pstate, i) 
+      cmdUrl = cmdUrl .. "&msguid=" .. get_mailmessage_uidl(pstate, i) 
       dcnt = dcnt + 1
 
       -- Send out in a batch of 5
       --
       if math.mod(dcnt, 5) == 0 then
+        local cmdCookie = browser:get_cookie('COMMAND')
+        cmdUrl = cmdUrl .. "&cmdnum=" .. (cmdCookie.value or "")
         log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
         local body, err = browser:get_uri(cmdUrl)
         if not body or err then
@@ -665,6 +578,8 @@ function quit_update(pstate)
   -- Send whatever is left over
   --
   if dcnt > 0 and dcnt < 5 then
+    local cmdCookie = browser:get_cookie('COMMAND')
+    cmdUrl = cmdUrl .. "&cmdnum=" .. (cmdCookie.value or "")
     log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
     local body, err = browser:get_uri(cmdUrl)
     if not body or err then
@@ -674,8 +589,7 @@ function quit_update(pstate)
 
   -- Log out
   --
-  cmdUrl = string.format(globals.strLogout, internalState.strMailServer)
-  browser:get_uri(cmdUrl)
+  browser:get_uri(globals.strLogout)
 
   -- AOL acts retarded if we save the session.  We'll remove it and
   -- force the browser to log out.
@@ -702,8 +616,8 @@ function stat(pstate)
   -- 
   local browser = internalState.browser
   local nMsgs = 0
-  local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer, internalState.strUserId,
-    1, internalState.strMBox, internalState.strVersion);
+  local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
+    internalState.strMBox);
   local baseUrl = cmdUrl
 
   -- Debug Message
@@ -717,13 +631,17 @@ function stat(pstate)
   -- Local function to process the list of messages, getting id's and sizes
   --
   local function funcProcess(body)
-    -- Cycle through the items and store the msg id and size.  
-    ---
-    for uidl, size in string.gfind(body, globals.strMsgLinePattern) do
+    -- Cycle through the items and store the msg id.  AOL doesn't list the size
+    -- We'll just return the same value for every message.
+    for uidl in string.gfind(body, globals.strMsgLineIDPattern) do
+      -- Hard Code the size.
+      --
+      local size = 4096
+
       -- Save the information
       --
       nMsgs = nMsgs + 1
-      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", (hard coded) Size: " .. size)
       set_popstate_nummesg(pstate, nMsgs)
       set_mailmessage_size(pstate, nMsgs, size)
       set_mailmessage_uidl(pstate, nMsgs, uidl)
@@ -787,7 +705,7 @@ function stat(pstate)
       --
       browser = internalState.browser
       cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-        internalState.strMBox, internalState.strVersion)
+        internalState.strMBox)
 
       -- Retry to load the page
       --

@@ -1,3 +1,4 @@
+- fixed hotmail.lua and aol.lua, added new netscape.lua (russell822)
 - fixed long description of freepops-doc in debian/control
 - fixed wrongs uk domains in config.lua
 - added yahoo.dk domain to config.lua file

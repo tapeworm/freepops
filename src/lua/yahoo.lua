@@ -41,29 +41,34 @@ Inviati,Anti-spam, Cestino). For user defined folders, use their name as the val
 		}	
 	},
 	{name = "view", description = {
+		it = [[ Viene usato per determinare la lista di messaggi da scaricare. I valori possibili sono All (tutti), Unread (non letti) e Flag.]],
 		en = [[ Parameter is used when getting the list of messages to 
 pull.  It determines what messages to be pulled.  Possible values are All, Unread and Flag.]]
 		}
 	},
 	{name = "markunread", description = {
+		it = [[ Viene usato per far s&igrave; che il plugin segni come non letti i messaggi che scarica. Se il valore &egrave; 1 questo comportamento viene attivato.]],
 		en = [[ Parameter is used to have the plugin mark all messages that it
 pulls as unread.  If the value is 1, the behavior is turned on.]]
 		}
 	},
 	{name = "nossl", description = {
+		it = [[ Viene usato per forzare il modulo a fare login con HTTP semplice e non HTTPS con SSL. Se il valore &egrave; 1 questo comportamento viene attivato.]],
 		en = [[ Parameter is used to force the module to login through plain
 HTTP and not HTTPS with SSL.  If the value is 1, the SSL is not used.]]
 		}
 	},
 	{name = "emptytrash", description = {
+		it = [[ Viene usato per forzare il plugin a svuotare il cestino quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
 		en = [[
-Parameter is used to force the plugin to empty the trash when it is done
+Parameter is used to force the plugin to empty the trash folder when it is done
 pulling messages.  Set the value to 1.]]
 		}	
 	},
 	{name = "emptybulk", description = {
+		it = [[ Viene usato per forzare il plugin a svuotare la cartella AntiSpam quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
 		en = [[
-Parameter is used to force the plugin to empty the bulk when it is done
+Parameter is used to force the plugin to empty the bulk folder when it is done
 pulling messages.  Set the value to 1.]]
 		}	
 	},
@@ -72,11 +77,11 @@ pulling messages.  Set the value to 1.]]
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Questo plugin vi per mette di leggere le mail che avete in una 
-mailbox @yahoo.com, @yahoo.ca o @yahoo.it.
+mailbox con dominio come @yahoo.com, @yahoo.ca o @yahoo.it.
 Per usare questo plugin dovete usare il vostro indirizzo email completo come
 user name e la vostra password reale come password.]],
 	en=[[
-This is the webmail support for @yahoo.com, @yahoo.ca and @yahoo.it mailboxes. 
+This is the webmail support for @yahoo.com, @yahoo.ca and @yahoo.it and similar mailboxes. 
 To use this plugin you have to use your full email address as the user 
 name and your real password as the password.]]
 }

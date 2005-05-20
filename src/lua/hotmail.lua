@@ -20,10 +20,11 @@ PLUGIN_DOMAINS = {"@hotmail.com","@msn.com","@webtv.com","@charter.com",
         "@hotmail.co.jp", "@hotmail.fr", "@messengeruser.com"}
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
-		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
+		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox, gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
 		en=[[The folder you want to interact with. Default is Inbox, other values are: Junk, Trash, Draft, Sent.]]}
 	},
 	{name = "emptytrash", description = {
+		it = [[ Viene usato per forzare il plugin a svuotare il cestino quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
 		en = [[
 Parameter is used to force the plugin to empty the trash when it is done
 pulling messages.  Set the value to 1.]]
@@ -33,9 +34,11 @@ pulling messages.  Set the value to 1.]]
 }
 PLUGIN_DESCRIPTIONS = {
 	it=[[
+Questo plugin vi permette di scaricare la posta da mailbox con dominio della famiglia di @hotmail.com. 
 Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
 nome utente e la vostra vera password come password.]],
 	en=[[
+This plugin lets you download mail from @hotmail.com and similar mailboxes. 
 To use this plugin you have to use your full email address as the username
 and your real password as the password.  For support, please post a question to
 the forum instead of emailing the author(s).]]

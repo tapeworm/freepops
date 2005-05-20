@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9b"
+PLUGIN_VERSION = "0.1.0"
 PLUGIN_NAME = "hotmail.com"
-PLUGIN_REQUIRE_VERSION = "0.0.15"
+PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=hotmail.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
@@ -17,7 +17,7 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {"@hotmail.com","@msn.com","@webtv.com","@charter.com",
 	"@compaq.net","@passport.com", "@hotmail.de", "@hotmail.it", "@hotmail.co.uk", 
-        "@hotmail.co.jp"}
+        "@hotmail.co.jp", "@hotmail.fr", "@messengeruser.com"}
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
@@ -60,7 +60,7 @@ local globals = {
   -- Login strings
   -- TODO: Define the HTTPS version
   --
-  strLoginPostData = "login=%s&domain=%s&passwd=%s&sec=&mspp_shared=&padding=%s",
+  strLoginPostData = "login=%s&domain=%s&passwd=%s&sec=&mspp_shared=&PwdPad=%s&PPSX=Pas&LoginOptions=3",
   strLoginPaddingFull = "xxxxxxxxxxxxxxxx",
   strLoginFailed = "Login Failed - Invalid User name and/or password",
 
@@ -75,10 +75,12 @@ local globals = {
   
   -- Extract the server to post the login data to
   --
-  strLoginPostUrlPattern1='action="([^"]*)" method=',
-  strLoginPostUrlPattern2='name="([^"]*)" value="([^"]*)"',
-  strLoginPostUrlPattern3='<form TARGET="_top" name="%s" action="([^"]*)"',
-  strLoginDoneReloadToHMHome='URL=(.*[^"])"',
+  strLoginPostUrlPattern1='action="([^"]*)"',
+  strLoginPostUrlPattern2='type=["]?hidden["]? name="([^"]*)".* value="([^"]*)"',
+  strLoginPostUrlPattern3='g_DO."%s".="([^"]+)"',
+  strLoginPostUrlPattern4='var g_QS="([^"]+)";',
+  strLoginPostUrlPattern5='name="PPFT" id="[^"]+" value="([^"]+)"',
+  strLoginDoneReloadToHMHome='URL=([^"]+)"',
 
   -- Get the crumb value that is needed for every command
   --
@@ -240,6 +242,7 @@ function loginHotmail()
   local postdata = nil
   local name, value  
   for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
+    value = curl.escape(value)
     if postdata ~= nil then
       postdata = postdata .. "&" .. name .. "=" .. value  
     else
@@ -252,12 +255,21 @@ function loginHotmail()
   -- Pull out the place where we need to post the login information.  Post the form
   -- to login.
   --
-  local domainWithUnderscore = string.gsub(domain, "%.", "_")
-  local pattern = string.format(globals.strLoginPostUrlPattern3, domainWithUnderscore)
+  local pattern = string.format(globals.strLoginPostUrlPattern3, domain)
   _, _, url = string.find(body, pattern)
+  local _, _, str = string.find(body, globals.strLoginPostUrlPattern4)
+  local _, _, str2 = string.find(body, globals.strLoginPostUrlPattern5)
+  if (url == nil or str == nil or str2 == nil) then
+    log.error_print(globals.strLoginFailed)
+    return POPSERVER_ERR_AUTH
+  end
+  url = url .. "?" .. str 
+
   local padding = string.sub(globals.strLoginPaddingFull, 0, 16 - passwordlen)
   postdata = string.format(globals.strLoginPostData, username, domain, password, padding)
+  postdata = postdata .. "&PPFT=" .. str2
 
+  log.dbg("Hotmail - Sending login information to: " .. url)
   body, err = browser:post_uri(url, postdata)
 
   -- We should be logged in now!  Unfortunately, we aren't done.  Hotmail returns a page
@@ -268,8 +280,8 @@ function loginHotmail()
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
   end
-  
-  local _, _, str = string.find(url, globals.strRetLoginBadLogin)
+
+  _, _, str = string.find(url, globals.strRetLoginBadLogin)
   if str ~= nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH

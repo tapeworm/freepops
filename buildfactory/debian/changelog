@@ -1,3 +1,10 @@
+freepops (0.0.28-1) unstable; urgency=low
+
+  * added fr.po and cs.po (closes: #307449, #308059)
+  * new upstream release (closes: #309845)
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sat, 28 May 2005 14:31:56 +0200
+
 freepops (0.0.27-2) unstable; urgency=low
 
   * fixed wrong entries in config.lua (closes: Bug#304244)

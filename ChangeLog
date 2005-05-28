@@ -1,3 +1,5 @@
+- added cs and fr translations to debian template
+- fixed bugs fordebian package (now binary-indep builds the -doc package)
 - fixed hotmail.lua and aol.lua, added new netscape.lua (russell822)
 - fixed long description of freepops-doc in debian/control
 - fixed wrongs uk domains in config.lua

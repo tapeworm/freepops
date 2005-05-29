@@ -216,7 +216,9 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
+	$(H)mkdir -p ../dist-osx/FreePOPs/script
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
+	$(H)cp osx/Install_resources/FreePOPs osx/Install_resources/StartupParameters.plist osx/Install_resources/freepopsd.plist ../dist-osx/FreePOPs/script
 	$(H)cd _osx_/freepops-$(VERSION);\
 		cp COPYING AUTHORS ChangeLog config.lua ../../../dist-osx/FreePOPs/
 	$(H)cd _osx_/freepops-$(VERSION)/doc;\

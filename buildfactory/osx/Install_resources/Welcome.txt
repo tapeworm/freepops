@@ -6,7 +6,7 @@ Features
 
 - RFC compliant POP3 server (not full featured but still compliant).
 - Portable (written in C and LUA that is written in C, so everything is written in the most portable language around the world).
-- Small (in the sense of resources usage) and reasonably fast.
+- Small (in terms of resources usage) and reasonably fast.
 - Extremely extensible on the fly using a simple and power ful language.
 - Pretty documented.
 - Released under the GNU/GPL license (this means FreePOPs is Free Software).

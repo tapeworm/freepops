@@ -8,24 +8,27 @@ help:
 	$(H)echo
 	$(H)echo "here we build all the distributed packages"
 	$(H)echo
-	$(H)echo "Targets are: all dist-{osx,osx-static,win,deb,rpm,gen,tgz,obsd}"
+	$(H)echo "Targets are: all dist-{osx,osx-static,win,deb,rpm,gen,tgz,obsd,zip}"
 	$(H)echo
 
-all: dist-deb dist-rpm dist-win dist-gen #dist-slack
+all: dist-deb dist-rpm dist-win-e-zip dist-gen #dist-slack
 
 clean:
 	$(H)rm -rf _*_ freepops-[0-9\.]*.tar.gz
 	$(H)cd osx;rm -rf FreePOPs.app
 	$(H)cd win;rm -rf *.exe
 
-dist-win: freepops-$(VERSION).tar.gz
+dist-win: dist-win-e-zip
+dist-zip: dist-win-e-zip
+
+dist-win-e-zip: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _win_/freepops
 	$(H)[ -d _win_/freepops-$(VERSION) ] || \
 		tar -xzf freepops-$(VERSION).tar.gz -C _win_
 	$(H)cd _win_/freepops-$(VERSION);\
 		./configure.sh win;\
 		$(MAKE) all; \
-		#$(MAKE) manual;
+		#$(MAKE) manual
 	$(H)$(MAKE) -C win CONFIG=../_win_/freepops-$(VERSION)/config
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
@@ -40,8 +43,6 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)cp _win_/freepops-$(VERSION)/buildfactory/SERVICE.*.txt \
 		_win_/freepops/	
 	$(H)cp win/*.exe _win_/freepops/
-	$(H)#cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/
-	$(H)#cp _win_/freepops-$(VERSION)/doc/manual-it.pdf _win_/freepops/
 
 	$(H)cp _win_/freepops-$(VERSION)/COPYING _win_/freepops/COPYING.txt
 	$(H)cp _win_/freepops-$(VERSION)/ChangeLog _win_/freepops/ChangeLog.txt
@@ -50,12 +51,6 @@ dist-win: freepops-$(VERSION).tar.gz
 	$(H)unix2dos _win_/freepops/ChangeLog.txt
 	$(H)unix2dos _win_/freepops/README.FPM.*.txt
 	$(H)unix2dos _win_/freepops/SERVICE.*.txt
-
-	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \
-		_win_/freepops/freepops.nsi
-
-	$(H)xpm2wico -f freepops-setup.xpm _win_/freepops/freepops-setup.ico
-	$(H)xpm2wico -f freepops-remove.xpm _win_/freepops/freepops-remove.ico
 	
 	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl-3.dll \
 		_win_/freepops/libcurl-3.dll
@@ -63,11 +58,34 @@ dist-win: freepops-$(VERSION).tar.gz
 		_win_/freepops/expat.dll
 	$(H)/usr/local/cross-tools/i386-mingw32msvc/bin/strip \
 		_win_/freepops/*.exe _win_/freepops/*.dll
+
+	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \
+		_win_/freepops/freepops.nsi
+
+	$(H)xpm2wico -f freepops-setup.xpm _win_/freepops/freepops-setup.ico
+	$(H)xpm2wico -f freepops-remove.xpm _win_/freepops/freepops-remove.ico
+
 	$(H)cd _win_/freepops/;\
 		wine /usr/local/NSIS/makensis.exe freepops.nsi
-
+	
 	$(H)mkdir ../dist-win || true
-	$(H)cp _win_/freepops/FreePOPs-$(VERSION).exe ../dist-win
+	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe ../dist-win
+	
+	# end of installer 
+
+	$(H)cd _win_/freepops/;\
+		mkdir LUA;\
+		mv *.lua LUA;\
+		cp LUA/config.lua .;\
+		mkdir LUA_UNOFFICIAL
+	#$(H)cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/
+	#$(H)cp _win_/freepops-$(VERSION)/doc/manual-it.pdf _win_/freepops/
+	
+	$(H)cd _win_/freepops/; rm freepops-setup.ico
+	$(H)cd _win_/freepops/; rm freepops-remove.ico
+	
+	$(H)cd _win_/;zip -r -9 FreePOPs-$(VERSION).zip freepops
+	$(H)mv _win_/FreePOPs-$(VERSION).zip ../dist-win
 	
 	$(H)rm -r _win_
 

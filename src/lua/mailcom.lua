@@ -7,11 +7,11 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8h"
+PLUGIN_VERSION = "0.0.8i"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=mailcom.lua"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=mailcom.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = 
@@ -69,7 +69,8 @@ PLUGIN_DOMAINS = {"@mail.com","@email.com","@iname.com","@cheerful.com","@consul
 "@teddy.cc","@tennis-mail.com","@tottenham-mail.com","@utsukushii.net","@uymail.com","@villa-mail.com",
 "@webcity.ca","@webmail.lu","@welcomm.ac","@wenxuecity.net","@westham-mail.com","@wimbledon-mail.com",
 "@windrivers.net","@wolves-mail.com","@wongfaye.com","@worldmail.ac","@worldweb.ac","@isleuthmail.com",
-"@x-lab.cc","@xy.com.tw","@yankeeman.com","@yyhmail.com", "@verizonmail.com", "@lycos.com", "@cyberdude.com" }
+"@x-lab.cc","@xy.com.tw","@yankeeman.com","@yyhmail.com", "@verizonmail.com", "@lycos.com", "@cyberdude.com",
+"@mail.org" }
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		en = [[
@@ -120,7 +121,7 @@ local globals = {
   -- Expressions to pull out of returned HTML from mail.com corresponding to a problem
   --
   strRetLoginBadPassword = "(Invalid username/password.)",
-  strRetLoginSessionExpired = "( Message%(s%))",
+  strRetLoginSessionExpired = "( [Mm]essage%(s%))",
 
   -- Regular expression to extract the mail server
   --
@@ -131,18 +132,12 @@ local globals = {
   
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLineLitPattern = ".*<td>.*<a>[.*]{font}[.*]{b}[.*]{/b}[.*]{/font}.*</a>.*</td>.*<td>[.*]{nobr}[.*]{font}[.*]{/font}[.*]{/nobr}.*</td>.*<td>[.*]{font}.*{/font}[.*]</td>.*</tr>",
-  strMsgLineLitPattern2 = ".*<td>.*<a>[.*]{b}[.*]{font}[.*]{/font}[.*]{/b}.*</a>.*</td>.*<td>[.*]{nobr}[.*]{font}[.*]{/font}[.*]{/nobr}.*</td>.*<td>[.*]{font}.*{/font}[.*]</td>.*</tr>",
-  strMsgLineAbsPattern = "O<O>O<X>[O]{O}[O]{O}[O]{O}[O]{O}O<O>O<O>O<O>[O]{O}[O]{O}[O]{O}[O]{O}O<O>O<O>[O]{O}X{O}[O]<O>O<O>",
-
-  -- MSGID Pattern
-  -- 
-  strMsgIDPattern = 'msg_uid=([^&]+)&',
+  strMsgLinePattern = '<td[^>]->[^<]-<a.-href="[^"]+msg_uid=([^&]+)&[^"]+".-</a>[^<]-</td>[^<]-<td.-</td>[^<]-<td[^>]+>.-(%d+)[kK].-</td>[^<]-</tr>',
 
   -- Pattern used by Stat to get the total number of messages
   --
 --  strMsgListCntPattern = "Showing [^%d]*[%d]+[^%s]* to [^%d]*[%d]+[^%s]* of [^%d]*([%d]+)",
-  strMsgListCntPattern = "(%d+) Message%(s%)",
+  strMsgListCntPattern = "(%d+) [Mm]essage%(s%)",
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
@@ -664,6 +659,7 @@ function stat(pstate)
   -- 
   local browser = internalState.browser
   local nMsgs = 0
+  local nPrevCnt = 0
   local nTotMsgs = 0;
   local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
     internalState.strMBox, nMsgs + 1);
@@ -683,57 +679,22 @@ function stat(pstate)
     --
     body = string.gsub(body, "<!%-%-(.-)%-%->", "") 
     
-    -- Tokenize out the message ID and size for each item in the list
-    --    
-    local strLitPattern = globals.strMsgLineLitPattern
-    if (internalState.strDomain == "otakumail.com") then
-      strLitPattern = globals.strMsgLineLitPattern2
-    end
-    local items = mlex.match(body, strLitPattern, globals.strMsgLineAbsPattern)
-    log.dbg("Stat Count: " .. items:count())
-
-    -- Remember the count
-    --
-    local cnt = items:count()
-    if cnt == 0 then
-      return true, nil
-    end 
-		
     -- Cycle through the items and store the msg id and size
     --
-    for i = 1, cnt do
-      local uidl = items:get(0, i - 1) 
-      local size = items:get(1, i - 1)
-
-      if not uidl or not size then
-        log.say("Mail.com Module needs to fix it's individual message list pattern matching.\n")
-        return nil, "Unable to parse the size and uidl from the html"
-      end
-
+    local uidl, size
+    for uidl, size in string.gfind(body, globals.strMsgLinePattern) do
       -- Get the message id.  It's a series of a numbers followed by
       -- an underscore repeated.  .
       --
-      _, _, uidl = string.find(uidl, globals.strMsgIDPattern) 
-      if (uidl ~= nil) then
-        -- Convert the size from it's string (4k or 821b) to bytes
-        -- First figure out the unit (KB or just B)
-        --
-        local _, _, kbUnit = string.find(size, "([Kk])")
-        _, _, size = string.find(size, "([%d]+)[KkbB]")
-        if not kbUnit then 
-	  size = math.max(tonumber(size), 0)
-        else
-	  size = math.max(tonumber(size), 0) * 1024
-        end
- 
-        -- Save the information
-        --
-        nMsgs = nMsgs + 1
-        log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
-        set_popstate_nummesg(pstate, nMsgs)
-        set_mailmessage_size(pstate, nMsgs, size)
-        set_mailmessage_uidl(pstate, nMsgs, uidl)
-      end
+      size = math.max(tonumber(size), 0) * 1024
+
+      -- Save the information
+      --
+      nMsgs = nMsgs + 1
+      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+      set_popstate_nummesg(pstate, nMsgs)
+      set_mailmessage_size(pstate, nMsgs, size)
+      set_mailmessage_uidl(pstate, nMsgs, uidl)
     end
 		
     return true, nil
@@ -745,9 +706,10 @@ function stat(pstate)
   local function funcCheckForMorePages(body) 
     -- See if there are messages remaining
     --
-    if nMsgs < nTotMsgs then
+    if nMsgs < nTotMsgs and nPrevCnt ~= nMsgs then
       cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
         internalState.strMBox, nMsgs + 1);
+      nPrevCnt = nMsgs
       return false
     else
       return true
@@ -817,6 +779,13 @@ function stat(pstate)
   if not support.do_until(funcGetPage, funcCheckForMorePages, funcProcess) then
     log.error_print("STAT Failed.\n")
     session.remove(hash())
+    return POPSERVER_ERR_UNKNOWN
+  end
+
+  -- Make sure we processed the right amount
+  --
+  if (nMsgs < nTotMsgs) then
+    log.say("Mail.com Module needs to fix it's individual message list pattern matching.\n")
     return POPSERVER_ERR_UNKNOWN
   end
 	

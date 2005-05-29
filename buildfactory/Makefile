@@ -138,6 +138,8 @@ debian-dsc-real:
 		dpkg-source -b freepops-$(VERSION)
 	$(H)cp _deb_/*.tar.gz _deb_/*.dsc \
 		_deb_/*.diff.gz ../dist-deb/freepops
+	# to avoid problems with umask and pbuilder
+	$(H)chmod a+r ../dist-deb/freepops/* 
 
 dist-slack: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _slack_

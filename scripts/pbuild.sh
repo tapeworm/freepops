@@ -69,6 +69,7 @@ rm config || true
 ./configure.sh linux
 make -C buildfactory debian-dsc-$2
 cp dist-deb/freepops/* $1
+chmod a+r $1/*
 }
 
 ### call pbuild ###
@@ -86,7 +87,10 @@ sudo $PBUILD build \
 
 ### main ###
 
-(check_bases) 2>> log.debian.bases.err 1>> log.debian.bases.out
+(check_bases) \
+	2>> /tmp/freepops.pbuild.sh.check_bases.err \
+	1>> /tmp/freepops.pbuild.sh.check_bases.out
+	
 for X in $TODO; do
 	D=`pwd`
 	TMP=`mktemp -d`

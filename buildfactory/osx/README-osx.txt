@@ -24,8 +24,8 @@ directory "script" (presente dove avete installato FreePOPs) nel percorso detto
 sopra; se usate Mac OS X Tiger dovrete copiare il file freepopsd.plist, 
 altrimenti gli altri due. In freepopsd.plist dovrete sostituire ogni occorrenza 
 di /Applications/FreePOPs/ con il percorso reale dove avete installato FreePOPs;
-se usate Mac OS X Jaguar e' necessario cambiare nel file FreePOPs la riga che 
-dice "DIR=" aggiungendo dopo il segno di uguaglianza la directory dove 
+se usate Mac OS X Panther o Jaguar e' necessario cambiare nel file FreePOPs la 
+riga che dice "DIR=" aggiungendo dopo il segno di uguaglianza la directory dove 
 FreePOPs e' installato (ad es. /Applications/FreePOPs).
 
 Se desiderate far partire FreePOPs solo manualmente dovrete eliminare i file 
@@ -65,10 +65,10 @@ If that doesn't happen you may manually copy the files contained in the
 aforementioned path; if you use Mac OS X Tiger you will have to copy the 
 freepopsd.plist file, otherwise you'll copy the other two. In freepopsd.plist 
 you will have to change every occurrence of /Applications/FreePOPs with the 
-real path where you've installed FreePOPs; if you use Mac OS X Jaguar you will 
-have to change the line that says "DIR=" (in the file named FreePOPs) by adding 
-the path FreePOPs is installed into after the equals sign (for example 
-/Applications/FreePOPs).
+real path where you've installed FreePOPs; if you use Mac OS X Panther or 
+Jaguar you will have to change the line that says "DIR=" (in the file named 
+FreePOPs) by adding the path FreePOPs is installed into after the equals sign 
+(for example /Applications/FreePOPs).
 
 If you want to run FreePOPs only manually you will have to delete the files in 
 the /Library/StartupItems directory (or freepopsd.plist in 

@@ -604,8 +604,8 @@ function mangle_head(s)
   
 	-- helper #1 - extract a header field from HTML
 	local function extract(field,data)
-		local exM = ".*<td><b>%s</b></td><td>.*<.*>"
-		local exG = "O<O><O>O<O><O><O>X<O>"
+		local exM = ".*<td>.*<b>%s</b>.*</td>.*<td>.*<.*>"
+		local exG = "O<O>O<O>O<O>O<O>O<O>X<O>"
 		local x = mlex.match(data,string.format(exM,field),exG)
 		--x:print()
 		if x:count() < 1 then

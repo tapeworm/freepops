@@ -1,3 +1,17 @@
+29/05/2005 0.0.28
+- hotmail.lua: Reacted to changes from MSFT (russell822)
+- es: *** empty log message *** (lisar314)
+- es: fixed rss (gareuselesinge)
+- aol.lua: added aim.com support (russell822)
+- mailcom.lua: added supported for iname.com (russell822)
+- yahoo.lua, hotmail.lua, aol.lua, netscape.lua: description translations in italian updated (ncocchiaro)
+- aol.lua: fix (gareuselesinge)
+- hotmail.lua: fixed a minor login issue (russell822)
+- : fixed qpr_io_slave (gareuselesinge)
+- mailcom.lua: Fixed an issue with usa.com (russell822)
+- yahoo.lua: updated required core version (ncocchiaro)
+- mailcom.lua: fixed wrong download url (gareuselesinge)
+- aol.lua: fixed aim folder names (russell822)
 - added cs and fr translations to debian template
 - fixed bugs fordebian package (now binary-indep builds the -doc package)
 - fixed hotmail.lua and aol.lua, added new netscape.lua (russell822)

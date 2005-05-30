@@ -30,6 +30,7 @@ configure-stamp:
 
 
 build: build-stamp
+build-manual: build-manual-stamp
 
 build-stamp: configure-stamp 
 	dh_testdir
@@ -40,10 +41,18 @@ build-stamp: configure-stamp
 
 	touch build-stamp
 
+build-manual-stamp: build-stamp
+	dh_testdir
+
+	# Add here commands to compile the package.
+	$(MAKE) manual WHERE=/usr/
+
+	touch build-manual-stamp
+
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp configure-stamp
+	rm -f build-stamp configure-stamp build-manual-stamp
 
 	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
@@ -51,18 +60,19 @@ clean:
 	dh_clean 
 	debconf-updatepo
 
-install: build
+install-common:
 	dh_testdir
 	dh_testroot
 	dh_clean -k 
 	dh_installdirs
-
-	# Add here commands to install the package into debian/freepops.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops WHERE=/usr/
-
 	mv $(CURDIR)/debian/freepops/usr/share/doc/freepops/*.pdf \
-		$(CURDIR)/debian/freepops-doc/usr/share/doc/freepops-doc/
+		$(CURDIR)/debian/freepops-doc/usr/share/doc/freepops-doc/ \
+		|| true
 
+install-manual: build-manual install-common
+
+install: build install-common
 	#create the /etc/freepops/freepops.conf file
 	DESTDIR=$(CURDIR)/debian/freepops; 			\
 	FILE=$$DESTDIR/etc/default/freepops; 			\
@@ -82,16 +92,8 @@ install: build
 	DESTDIR=$(CURDIR)/debian/freepops;      \
 	 cp buildfactory/create_jail.sh $$DESTDIR/usr/lib/freepops
 
-	# .po stuff
-	#DESTDIR=$(CURDIR)/debian/freepops; 	\
-	#  po2debconf \
-	#    debian/freepops.templates > debian/freepops.templates.merged;
-	#  cp debian/freepops.templates.merged \
-	#    $$DESTDIR/DEBIAN/templates
-
-
 # Build architecture-independent files here.
-binary-indep: build install 
+binary-indep: build build-manual install-manual
 	dh_testdir -i
 	dh_testroot -i
 	dh_installchangelogs ChangeLog -i

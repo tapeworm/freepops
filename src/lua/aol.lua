@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8a"
+PLUGIN_VERSION = "0.0.8b"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -19,12 +19,11 @@ PLUGIN_DOMAINS = {
 "@aol.com","@aol.com.ar","@aol.fr","@aol.com.mx","@aol.com.au","@aol.de",
 "@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com", 
 "@netscape.net", "@aim.com"} 
-PLUGIN_PARAMETERS ={ 
+PLUGIN_PARAMETERS = 
 	{name="folder", description={
-		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; New, gli altri valori possibili sono: Old, Sent, Saved, Spam e Deleted.]],
-		en=[[The folder you want to interact with. Default is New, other values are for: Old, Sent, Saved, Spam and Deleted.]]}
+		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
+		en=[[The folder you want to interact with. Default is New (AOL)/Inbox (Netscape), other values are for AOL: Old, Sent, Saved, Spam and Deleted and Netscape: Sent, Trash, Draft.]]}
 	}
-}
 PLUGIN_DESCRIPTIONS = {
 	it=[[
 Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
@@ -52,7 +51,7 @@ local globals = {
   -- Server URL
   -- 
   strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?seamless=novl&sitedomain=beta.webmail.aol.com&lang=en&locale=us&authLev=2&siteState=",
-  strLoginAIMUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?mcState=initialized&seamless=novl&sitedomain=mail.aol.com&lang=en&locale=us&authLev=2&siteState=ver%3a1%252c0%26ld%3amail.aol.com",
+  strLoginAIMUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?mcState=initialized&seamless=novl&sitedomain=mail.aol.com&lang=en&locale=us&authLev=2&siteState=", --ver%3a1%252c0%26ld%3amail.aol.com",
 
   -- Login strings
   --
@@ -75,7 +74,7 @@ local globals = {
   -- Pattern to extract the URL to go to get the login form
   --
   strLoginPageParamsPattern='goToLoginUrl.-Redir."([^"]+)"',
-  strLoginPageParamsPatternAim = 'snsRedir."([^"]+)".;',
+  strLoginPageParamsPatternAim = 'snsInFrameRedir."([^"]+)".;',
 
   -- Pattern to pull out the url's we need to go to set some cookies.
   --

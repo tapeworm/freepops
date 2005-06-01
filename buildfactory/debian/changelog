@@ -1,4 +1,4 @@
-freepops (0.0.28-2) unstable; urgency=low
+freepops (0.0.28+CVS20050601-2) unstable; urgency=low
 
   * manual.pdf is now build only in binary-indep target (closes: #306799)
   * new version (0.1.0) of hotmail plugin works (closes: #309845)

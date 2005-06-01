@@ -1,3 +1,5 @@
+- fixed debian/rules to build the manual only when requested
+- fixed config.lua (added mail.org)
 29/05/2005 0.0.28
 - hotmail.lua: Reacted to changes from MSFT (russell822)
 - es: *** empty log message *** (lisar314)

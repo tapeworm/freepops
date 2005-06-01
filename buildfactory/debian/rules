@@ -37,7 +37,6 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	$(MAKE) all WHERE=/usr/
-	$(MAKE) manual WHERE=/usr/
 
 	touch build-stamp
 

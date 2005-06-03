@@ -11,8 +11,9 @@
 -- 1) Map for domains -> modules
 --
 -- Here you tell freepops what plugin should be used for you mailaddress domain
--- Some plugins acceprs som args. see popforward as an example of arg 
--- passing plugin.
+-- Some plugins accept some args. see popforward as an example of arg 
+-- passing plugin. If the plugin has regex setted to true then the mailaddress
+-- will be considered a regexp.
 -- 
 
 -- this is the tutorial plugin...
@@ -61,17 +62,17 @@ freepops.MODULES_MAP["yahoo.es"] 	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.dk"]        = {name="yahoo.lua"} 
 
 -- hotmail
-freepops.MODULES_MAP["hotmail.com"]	= {name="hotmail.lua"}
-freepops.MODULES_MAP["hotmail.de"]	= {name="hotmail.lua"}
-freepops.MODULES_MAP["hotmail.it"]	= {name="hotmail.lua"}
-freepops.MODULES_MAP["hotmail.co.uk"]	= {name="hotmail.lua"}
-freepops.MODULES_MAP["hotmail.co.jp"]	= {name="hotmail.lua"}
-freepops.MODULES_MAP["hotmail.fr"]	= {name="hotmail.lua"}
-freepops.MODULES_MAP["msn.com"]		= {name="hotmail.lua"}
-freepops.MODULES_MAP["webtv.com"]	= {name="hotmail.lua"}
-freepops.MODULES_MAP["charter.com"]	= {name="hotmail.lua"}
-freepops.MODULES_MAP["compaq.net"]	= {name="hotmail.lua"}
-freepops.MODULES_MAP["passport.com"]	= {name="hotmail.lua"}
+freepops.MODULES_MAP["hotmail.com"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["hotmail.de"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["hotmail.it"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["hotmail.co.uk"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["hotmail.co.jp"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["hotmail.fr"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["msn.com"]			= {name="hotmail.lua"}
+freepops.MODULES_MAP["webtv.com"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["charter.com"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["compaq.net"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["passport.com"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["messengeruser.com"]	= {name="hotmail.lua"}
 
 -- aol
@@ -123,13 +124,13 @@ freepops.MODULES_MAP["earthling.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["myself.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["post.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["techie.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["usa.com"]		= {name="mailcom.lua"}
+freepops.MODULES_MAP["usa.com"]			= {name="mailcom.lua"}
 freepops.MODULES_MAP["writeme.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["2die4.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["artlover.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["bikerider.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["catlover.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["cliffhanger.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["cliffhanger.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["cutey.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["doglover.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["gardener.com"]		= {name="mailcom.lua"}
@@ -153,7 +154,7 @@ freepops.MODULES_MAP["asia.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["australiamail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["japan.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["samerica.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["usa.com"]		= {name="mailcom.lua"}
+freepops.MODULES_MAP["usa.com"]			= {name="mailcom.lua"}
 freepops.MODULES_MAP["berlin.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["dublin.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["london.com"]		= {name="mailcom.lua"}
@@ -163,7 +164,7 @@ freepops.MODULES_MAP["munich.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["nycmail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["paris.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["rome.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["sanfranmail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["sanfranmail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["singapore.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["tokyo.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["accountant.com"]		= {name="mailcom.lua"}
@@ -177,7 +178,7 @@ freepops.MODULES_MAP["columnist.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["comic.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["consultant.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["counsellor.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["deliveryman.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["deliveryman.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["diplomats.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["doctor.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["dr.com"]			= {name="mailcom.lua"}
@@ -186,7 +187,7 @@ freepops.MODULES_MAP["execs.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["financier.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["geologist.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["graphic-designer.com"]	= {name="mailcom.lua"}
-freepops.MODULES_MAP["hairdresser.net"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["hairdresser.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["insurer.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["journalist.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["lawyer.com"]		= {name="mailcom.lua"}
@@ -200,13 +201,13 @@ freepops.MODULES_MAP["presidency.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["priest.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["programmer.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["publicist.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["realtyagent.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["realtyagent.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["registerednurses.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["repairman.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["representative.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["rescueteam.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["scientist.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["sociologist.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["sociologist.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["teacher.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["techie.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["technologist.com"]	= {name="mailcom.lua"}
@@ -238,7 +239,7 @@ freepops.MODULES_MAP["blackburn-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["bsdmail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["bsdmail.org"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["c-palace.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["celtic-mail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["celtic-mail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["charlton-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["chelsea-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["china139.com"]		= {name="mailcom.lua"}
@@ -267,9 +268,9 @@ freepops.MODULES_MAP["fastermail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["femail.ac"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["fiorentina-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["football-mail.com"]	= {name="mailcom.lua"}
-freepops.MODULES_MAP["forest-mail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["forest-mail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["freeid.net"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["fulham-mail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["fulham-mail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["gaywiredmail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["genkimail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["gigileung.org"]		= {name="mailcom.lua"}
@@ -284,7 +285,7 @@ freepops.MODULES_MAP["hitechweekly.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["hkis.org"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["hkmag.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["hkomail.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["hockey-mail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["hockey-mail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["hollywood-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["ii-mail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["iname.ru"]		= {name="mailcom.lua"}
@@ -292,16 +293,16 @@ freepops.MODULES_MAP["inboexes.org"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["inboxes.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["inboxes.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["inboxes.org"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["insingapore.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["insingapore.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["intermilan-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["ipswich-mail.com"]	= {name="mailcom.lua"}
-freepops.MODULES_MAP["isleuthmail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["isleuthmail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["jane.com.tw"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["japan1.org"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["japanet.ac"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["japanmail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["jayde.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["jcom.ac"]		= {name="mailcom.lua"}
+freepops.MODULES_MAP["jcom.ac"]			= {name="mailcom.lua"}
 freepops.MODULES_MAP["jedimail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["joinme.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["joyo.com"]		= {name="mailcom.lua"}
@@ -338,11 +339,11 @@ freepops.MODULES_MAP["markguide.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["maxplanet.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["megacity.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["middlesbrough-mail.com"]	= {name="mailcom.lua"}
-freepops.MODULES_MAP["miriamyeung.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["miriamyeung.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["miriamyeung.com.hk"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["myoffice.ac"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["nctta.org"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["netmarketingcentral.com"]= {name="mailcom.lua"}
+freepops.MODULES_MAP["netmarketingcentral.com"] = {name="mailcom.lua"}
 freepops.MODULES_MAP["nettalk.ac"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["newcastle-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["nihonjin1.com"]		= {name="mailcom.lua"}
@@ -356,7 +357,7 @@ freepops.MODULES_MAP["outblaze.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["outgun.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["pakistans.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["pokefan.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["portugalnet.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["portugalnet.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["powerasia.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["qpr-mail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["rangers-mail.com"]	= {name="mailcom.lua"}
@@ -372,7 +373,7 @@ freepops.MODULES_MAP["slonline.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["smapxsmap.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["southampton-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["speedmail.ac"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["sports-mail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["sports-mail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["starmate.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["sunderland-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["sunmail.ac"]		= {name="mailcom.lua"}
@@ -383,7 +384,7 @@ freepops.MODULES_MAP["surfy.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["taiwan.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["talknet.ac"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["teddy.cc"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["tennis-mail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["tennis-mail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["tottenham-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["utsukushii.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["uymail.com"]		= {name="mailcom.lua"}
@@ -395,18 +396,18 @@ freepops.MODULES_MAP["wenxuecity.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["westham-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["wimbledon-mail.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["windrivers.net"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["wolves-mail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["wolves-mail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["wongfaye.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["worldmail.ac"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["worldweb.ac"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["isleuthmail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["isleuthmail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["x-lab.cc"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["xy.com.tw"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["yankeeman.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["yyhmail.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["verizonmail.com"]	= {name="mailcom.lua"}
+freepops.MODULES_MAP["verizonmail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["lycos.com" ]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["unforgettable.com" ]		= {name="mailcom.lua"}
+freepops.MODULES_MAP["unforgettable.com" ]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["mail.org" ]		= {name="mailcom.lua"}
 
 -- popforward plugin

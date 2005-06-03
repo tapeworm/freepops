@@ -16,6 +16,7 @@ PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/download.php?file=skeleton.lu
 PLUGIN_AUTHORS_NAMES = {"---fill--- "}
 PLUGIN_AUTHORS_CONTACTS = {"---fill---"}
 PLUGIN_DOMAINS = {"@..."}
+PLUGIN_REGEXES = {"@..."}
 PLUGIN_PARAMETERS = { 
 	{name="---name---", 
 	 description={en="---desc-en---",it=="---desc-it---"}},

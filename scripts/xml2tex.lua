@@ -69,6 +69,12 @@ multilang["domain"].en = "Domain"
 multilang["domains"] = {}
 multilang["domains"].it = "Domini"
 multilang["domains"].en = "Domains"
+multilang["regex"] = {}
+multilang["regex"].it = "Dominio(regex)"
+multilang["regex"].en = "Domain(regex)"
+multilang["regexes"] = {}
+multilang["regexes"].it = "Domini(regex)"
+multilang["regexes"].en = "Domains(regex)"
 multilang["description"] = {}
 multilang["description"].it = "Descrizione"
 multilang["description"].en = "Description"
@@ -137,16 +143,31 @@ if string.sub(s,-2,-1) == ", " then
 	s = string.sub(s,1,-3) .. "\n"
 end
 -------
-if table.getn(t.domains) > 1 then
-	s = s .. "\\item["..multilang["domains"][lang]..":]"
-else
-	s = s .. "\\item["..multilang["domain"][lang]..":]"
+if (t.domains ~= nil) then
+	if table.getn(t.domains) > 1 then
+		s = s .. "\\item["..multilang["domains"][lang]..":]"
+	else
+		s = s .. "\\item["..multilang["domain"][lang]..":]"
+	end
+	xml2table.forach_son(t.domains,"domain",function(k)
+		s = s .. E(k._content)..", "
+	end)
+	if string.sub(s,-2,-1) == ", " then
+		s = string.sub(s,1,-3) .. "\n"
+	end
 end
-xml2table.forach_son(t.domains,"domain",function(k)
-	s = s .. E(k._content)..", "
-end)
-if string.sub(s,-2,-1) == ", " then
-	s = string.sub(s,1,-3) .. "\n"
+if(t.regexes ~= nil) then
+	if table.getn(t.regexes) > 1 then
+		s = s .. "\\item["..multilang["regexes"][lang]..":]"
+	else
+		s = s .. "\\item["..multilang["regex"][lang]..":]"
+	end
+	xml2table.forach_son(t.domains,"regex",function(k)
+		s = s .. E(k._content)..", "
+	end)
+	if string.sub(s,-2,-1) == ", " then
+		s = string.sub(s,1,-3) .. "\n"
+	end
 end
 ------
 s = s .. "\\item["..multilang["description"][lang]..":]"

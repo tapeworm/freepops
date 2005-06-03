@@ -17,6 +17,7 @@ PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net"
 PLUGIN_AUTHORS_NAMES = {"FP tutorial"}
 PLUGIN_AUTHORS_CONTACTS = {"-----"}
 PLUGIN_DOMAINS = {"@..."}
+PLUGIN_REGEXES = {"@..."}
 PLUGIN_PARAMETERS = { 
 	{name="--name--", description={en="--desc--",it=="--desc--"}},
 }

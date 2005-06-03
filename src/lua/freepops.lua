@@ -106,29 +106,45 @@ function freepops.safe_extract_domains(f)
 	g()
 	
 	-- checks 
-	if type(env.PLUGIN_DOMAINS) ~= "table" then
-		return nil
+	local check_types = function(t)
+		return table.foreachi(t,function(k,v)
+			if type(v) ~= "string" then
+				print("'"..tostring(v).."' is not a string")
+				return true
+			end
+			if string.byte(v) ~= string.byte("@") then
+				print("'"..v.."' does not start with @")
+				return true
+			end
+		end)
 	end
-	local rc = table.foreachi(env.PLUGIN_DOMAINS,function(k,v)
-		if type(v) ~= "string" then
-			print("'"..tostring(v).."' is not a string")
-			return true
-		end
-		if string.byte(v) ~= string.byte("@") then
-			print("'"..v.."' does not start with @")
-			return true
-		end
-	end)
-	if rc then return nil end
 	
+	if env.PLUGIN_DOMAINS ~= nil then
+		if type(env.PLUGIN_DOMAINS) ~= "table" then return nil end
+		if check_types(env.PLUGIN_DOMAINS) then return nil end
+	end
+	
+	if env.PLUGIN_REGEXES ~= nil then
+		if type(env.PLUGIN_REGEXES) ~= "table" then return nil end
+		if check_types(env.PLUGIN_REGEXES) then return nil end
+	end
+
 	-- extract
-	local rc = {}
-	table.foreachi(env.PLUGIN_DOMAINS,function(_,v)
-		local x = string.sub(v,2,-1)
-		table.insert(rc,x)
-	end)
+	local rc, rd = {}, {}
+	if env.PLUGIN_DOMAINS ~= nil then
+		table.foreachi(env.PLUGIN_DOMAINS,function(_,v)
+			local x = string.sub(v,2,-1)
+			table.insert(rc,x)
+		end)
+	end
+	if env.PLUGIN_REGEXES ~= nil then
+		table.foreachi(env.PLUGIN_REGEXES,function(_,v)
+			local x = string.sub(v,2,-1)
+			table.insert(rd,x)
+		end)
+	end
 	
-	return rc
+	return rc,rd
 end
 
 --searches if an unofficial plugin handles this domain
@@ -139,7 +155,15 @@ function freepops.search_domain_in_unofficial(domain)
 			if v == x then return true end
 		end) or false
 	end
-	return table.foreach(freepops.MODULES_PREFIX_UNOFFICIAL,function(_,v)
+	local function match_regex(x,t)
+		if t == nil then return false end
+		return table.foreach(t,function(_,v)
+			local w,_ = string.find(x,"^" .. v .. "$")
+			if w ~= nil then return true end
+		end)
+	end	
+	local name, where = nil, nil
+	table.foreach(freepops.MODULES_PREFIX_UNOFFICIAL,function(_,v)
 		local it = nil
 		local p_dir = function() it = lfs.dir(v) end
 		local rc,err = pcall(p_dir)
@@ -149,16 +173,21 @@ function freepops.search_domain_in_unofficial(domain)
 		end
 		for f in it do
 			if string.upper(string.sub(f,-3,-1)) == "LUA" then
-				local h = 
+				local h,rex = 
 					freepops.safe_extract_domains(v.."/"..f)
 				if is_in_table(domain,h) then
-					log.dbg("Using unofficial '"..
-						v.."/"..f.."'")
-					return v.."/"..f
+					name, where =  v.."/"..f, "unofficial"
+					return true -- stop loop
+				elseif match_regex(domain,rex) then
+					name, where =  
+						v.."/"..f, "unofficial(regex)"
+					return true -- stop loop
 				end
 			end
 		end	
 	end)
+
+	return name, where
 end
 
 
@@ -173,21 +202,66 @@ freepops.table_overwrite = function (t,t1)
 end
 
 -- function that maps domains to modules
+--
+-- 0th: if domain d is nil then fail
+-- 1st: check if a verbatim mapping exists (freepops.MODULES_MAP[d] ~= nil)
+-- 2nd: check if a plugin tagged regex matches
+-- 3rd: check if the mailaddress is a plugin name
+-- 4th: check if an unofficial plugin matches verbatim
+-- 5th: check if an unofficial plugin tagged regex matches
+-- 
 freepops.choose_module = function (d)
-	if d == nil then return nil,nil end
-	if freepops.MODULES_MAP[d] == nil then 
-		local _,_,x = string.find(d,"^(%w+%.lua)$")
-		if x == nil then
-			local unoff = freepops.search_domain_in_unofficial(d)
-			if unoff then
-				return unoff,{}
-			else
-				return nil,nil
+	local found, where, name, args = false, "nowhere", nil, nil
+	
+	-- 0th: if domain d is nil then fail
+	if d == nil then 
+		found, where, name, args = true, "nowhere", nil, nil 
+	end
+
+	-- 1st: check if a verbatim mapping exists 
+	if not found and freepops.MODULES_MAP[d] ~= nil then
+		found, where, name, args = true, "official", 
+			freepops.MODULES_MAP[d].name,
+			freepops.MODULES_MAP[d].args
+	end
+	 
+	-- 2nd: check if a plugin tagged regex matches
+	if not found then
+		local plugins_with_regex = {}
+		table.foreach(freepops.MODULES_MAP, function (k,v)
+			if v.regex then
+				plugins_with_regex[k] = v
 			end
+		end)
+		table.foreach(plugins_with_regex,function(k,v)
+			local x,_ = string.find(d,"^" .. k .. "$")
+			if x ~= nil then
+				found, where, name, args = 
+					true, "official(regex)", v.name, v
+				return true -- stop iteration
+			end
+		end)
+	end
+	
+	-- 3rd: check if the mailaddress is a plugin name
+	if not found then 
+		local _,_,x = string.find(d,"^(%w+%.lua)$")
+		if x ~= nil then
+			found, where, name, args = 
+				true, "inline", x, {}
 		end
-		return x,{}
 	end	
-	return 	freepops.MODULES_MAP[d].name,freepops.MODULES_MAP[d].args
+	-- 4th: check if an unofficial plugin matches verbatim
+	-- 5th: check if an unofficial plugin tagged regex matches
+	if not found then
+		local unoff, wh = freepops.search_domain_in_unofficial(d)
+		if unoff ~= nil then
+			log.dbg("Using unofficial '"..unoff.."'")
+			found, where, name, args = true, wh, unoff, {}
+		end
+	end
+	
+	return name, args, where 
 end
 
 -- dofile with freepops.MODULES_PREFIX path
@@ -326,7 +400,7 @@ freepops.load_module_for = function (mailaddress,loadonly)
 
 	-- the stuff
 	local domain = freepops.get_domain(mailaddress)
-	local module,args = freepops.choose_module(domain)
+	local module,args,where = freepops.choose_module(domain)
 	if module == nil then
 		if domain ~= nil then
 			log.error_print(err_format(domain,mailaddress))
@@ -341,7 +415,8 @@ freepops.load_module_for = function (mailaddress,loadonly)
 		--table.foreach(args,print)
 		--print("PARSED ARGS:")
 		--table.foreach(freepops.get_args(mailaddress),print)
-		
+		--print("plugin found: ",where)
+
 		local marg = freepops.table_overwrite(args,
 			freepops.get_args(mailaddress))
 		

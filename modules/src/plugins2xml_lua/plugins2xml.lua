@@ -79,12 +79,17 @@ function plugins2xml.sanity_check()
 	assert(counter > 0, "At least one author must be provided")
 	-- domains
 	local counter = 0
-	assert(	PLUGIN_DOMAINS ~= nil and type(PLUGIN_DOMAINS == "table"),
-		"PLUGIN_DOMAINS is required and must a be a list of strings")
+	assert(	(PLUGIN_DOMAINS ~= nil and type(PLUGIN_DOMAINS == "table")) or 
+	        (PLUGIN_REGEXES ~= nil and type(PLUGIN_REGEXES == "table")),
+		"PLUGIN_DOMAINS or PLUGIN_REGEXES is required and must be "..
+		"a list of strings")
 	table.foreachi(PLUGIN_DOMAINS,function(i,name)
 		counter = counter + 1
 	end)
-	assert(counter > 0, "At least one domain must be provided")
+	table.foreachi(PLUGIN_REGEXES,function(i,name)
+		counter = counter + 1
+	end)
+	assert(counter > 0, "At least one domain or one regex must be provided")
 	-- desc
 	local counter = 0
 	assert(	PLUGIN_DESCRIPTIONS ~= nil and 
@@ -142,6 +147,11 @@ plugins2xml.extractor_function = function(file)
 	table.foreachi(PLUGIN_DOMAINS,function(i,name)
 		add_node_content(plugin_Txml,
 			{tag_name = "domain",{name}},"domains")
+	end)
+	-- add domains
+	table.foreachi(PLUGIN_REGEXES,function(i,name)
+		add_node_content(plugin_Txml,
+			{tag_name = "regex",{name}},"regexes")
 	end)
 	-- add descriptions
 	table.foreach(PLUGIN_DESCRIPTIONS,function(lang,name)

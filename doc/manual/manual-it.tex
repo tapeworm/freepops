@@ -2399,6 +2399,24 @@ o al volo usando \texttt{user@domain?param1=value1\&...\&paramN=valueN}
 come descritto nel capitolo sui plugin. Per l'autore di plugin non
 c'è differenza tra i due metodi. I parametri sono disponibili per
 il plugin nella tabella \texttt{freepops.MODULE\_ARGS}.
+\item [Regex~per~definire~i~domini~gestiti]sono supportate dalla 
+version 0.0.29. I plugin ufficiali possono avere una riga nel
+config.lua come questa
+\begin{verbatim}
+freepops.MODULES_MAP["foo2.*"]  = {
+
+name="foo.lua",
+
+regex = true -- enables the regex processing
+
+}
+\end{verbatim}
+mentre i plugin non ufficiali possono dichiarare una lista di regex 
+nel campo \texttt{PLUGIN\_REGEXES}. Per esempio
+\begin{verbatim}
+PLUGIN_REGEXES = {"@foo2.*", "@foo3.*", "@foo4[A-Z]*"}
+\end{verbatim}
+
 \end{description}
 
 \section{Segnalare un bug}

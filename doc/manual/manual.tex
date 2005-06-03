@@ -2365,6 +2365,22 @@ file or on the fly using \texttt{user@domain?param1=value1\&...\&paramN=valueN}
 as described in the plugins chapter. For the plugin writer there is
 no difference between the two passing mechanisms. The parameters are
 available to the plugin in the table \texttt{freepops.MODULE\_ARGS}.
+\item [Regex~to~define~handled~domains]are allowed since version
+0.0.29. Official plugins can have a config.lua line like
+\begin{verbatim}
+freepops.MODULES_MAP["foo2.*"]  = {
+
+name="foo.lua",
+
+regex = true -- enables the regex processing
+
+}
+\end{verbatim}
+while unofficial plugins can declare a regexp list in the 
+\texttt{PLUGIN\_REGEXES} field. For example
+\begin{verbatim}
+PLUGIN_REGEXES = {"@foo2.*", "@foo3.*", "@foo4[A-Z]*"}
+\end{verbatim}
 \end{description}
 
 \section{Submitting a bug}

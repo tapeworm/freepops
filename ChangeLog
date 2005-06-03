@@ -1,3 +1,6 @@
+- cosmetic change to the pop3server, now the timout error is handled in pretty
+way
+- added support for PLUGIN_REGEXES in plugin header  and regex = true in config.lua
 - apdated slackaware requires
 - fixed debian/rules to build the manual only when requested
 - fixed config.lua (added mail.org)

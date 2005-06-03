@@ -54,6 +54,11 @@
 #define ERROR_PRINT(a) {\
 	LOGIT(LOG_ZONE,"ERROR(%s,%4d): %s",__FILE__,__LINE__,a);\
 }
+//!overrides ERROR_SAY
+#define ERROR_SAY(a...) {\
+	LOGIT(LOG_ZONE,"ERROR(%s,%4d): ",__FILE__,__LINE__);\
+	LOGIT(LOG_ZONE,a);\
+}
 //! DBG needs -v -v
 #define DBG(a...) {\
 	if (log_get_verbosity() >= 2) {\

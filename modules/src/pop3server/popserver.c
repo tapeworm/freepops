@@ -161,8 +161,14 @@ if(matches(SOCK_RECEIVED RFC_1939_PASS,c))
 	DBG("[%d] %s%s%s\n",pid,SOCK_RECEIVED,RFC_1939_PASS," *********");
 	}
 else	{
+	char * fmt = "[%d] %s\n";
 	if (matches(SOCK_INFO "A previous error occurred",c))
-		SAY("[%d] %s\n",pid,c);
+		SAY(fmt,pid,c);
+	if (matches(SOCK_ERROR "Error calling \"recvstring_with_timeout",c))
+		{
+		ERROR_SAY(fmt,pid,"Probably the client disconnected.");
+		ERROR_SAY(fmt,pid,"Try increasing the client timeout.\n");
+		}
 	DBG("[%d] %s\n",pid,c);	
 	}
 }

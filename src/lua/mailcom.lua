@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8i"
+PLUGIN_VERSION = "0.0.8j"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -754,7 +754,7 @@ function stat(pstate)
 
       -- Retry to load the page
       --
-      return browser:get_uri(cmdUrl)
+      return getPage(cmdUrl)
     end
 
     -- Get the total number of messages

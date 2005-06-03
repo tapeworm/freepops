@@ -36,6 +36,7 @@ local plugin_Txml =
 	{tag_name = "homepage"},
 	{tag_name = "authors"},
 	{tag_name = "domains"},
+	{tag_name = "regexes"},
 	{tag_name = "descriptions"},
 	{tag_name = "parameters"}
 }

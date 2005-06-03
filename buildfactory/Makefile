@@ -65,8 +65,12 @@ dist-win-e-zip: freepops-$(VERSION).tar.gz
 	$(H)xpm2wico -f freepops-setup.xpm _win_/freepops/freepops-setup.ico
 	$(H)xpm2wico -f freepops-remove.xpm _win_/freepops/freepops-remove.ico
 
-	$(H)cd _win_/freepops/;\
-		wine /usr/local/NSIS/makensis.exe freepops.nsi
+	# NSIS is now a debian package :)
+	#
+	#$(H)cd _win_/freepops/;\
+	#	wine /usr/local/NSIS/makensis.exe freepops.nsi
+	#
+	$(H)cd _win_/freepops/; makensis freepops.nsi
 	
 	$(H)mkdir ../dist-win || true
 	$(H)mv _win_/freepops/FreePOPs-$(VERSION).exe ../dist-win

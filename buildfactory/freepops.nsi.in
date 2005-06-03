@@ -46,7 +46,8 @@ VIProductVersion %FREEPOPSVERSION.0
 Name "FreePOPs %FREEPOPSVERSION"
 
 ;head
-BrandingText /TRIMCENTER "Installer by nsis.sf.net"
+;BrandingText /TRIMCENTER "Installer by nsis.sf.net"
+BrandingText "Installer by nsis.sf.net"
 
 
 ; The file to write

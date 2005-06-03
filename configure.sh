@@ -113,18 +113,50 @@ OS=Cygwin
 }
 
 set_win() {
+local firstpref
+local defpref
 set_default
-CC=/usr/local/cross-tools/i386-mingw32msvc/bin/gcc
-LD=/usr/local/cross-tools/i386-mingw32msvc/bin/ld
-AR=/usr/local/cross-tools/i386-mingw32msvc/bin/ar
-STRIP=/usr/local/cross-tools/i386-mingw32msvc/bin/strip
-RANLIB=/usr/local/cross-tools/i386-mingw32msvc/bin/ranlib
-WINDRES=/usr/local/cross-tools/bin/i386-mingw32msvc-windres
+firstpref=/usr/bin/i586-mingw32msvc-
+defpref=/usr/local/cross-tools/i386-mingw32msvc/bin/
+if test -x ${firstpref}gcc; then
+	CC=${firstpref}gcc
+else
+	CC=${defpref}gcc
+fi
+if test -x ${firstpref}ld; then
+	LD=${firstpref}ld
+else
+	LD=${defpref}ld
+fi
+if test -x ${firstpref}ar; then
+	AR=${firstpref}ar
+else
+	AR=${defpref}ar
+fi
+if test -x ${firstpref}strip; then
+	STRIP=${firstpref}strip
+else
+	STRIP=${defpref}strip
+fi
+if test -x ${firstpref}ranlib; then
+	RANLIB=${firstpref}ranlib
+else
+	RANLIB=${defpref}ranlib
+fi
+if test -x ${firstpref}windres; then
+	WINDRES=${firstpref}windres
+else
+	WINDRES=/usr/local/cross-tools/bin/i386-mingw32msvc-windres
+fi
 EXEEXTENSION=.exe
 SHAREDEXTENSION=.dll
 CFLAGS="$CFLAGS -DWIN32 -mwindows " # " -mms-bitfields"
 LDFLAGS="$LDFLAGS -lmsvcrt -lmingw32  -lwsock32 -mwindows " # "-mms-bitfields"
-DLLTOOL=/usr/local/cross-tools/i386-mingw32msvc/bin/dlltool
+if test -x ${firstpref}dlltool; then
+	DLLTOOL=${firstpref}dlltool
+else
+	DLLTOOL=${defpref}dlltool
+fi
 OS=Windows
 }
 

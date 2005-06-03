@@ -1,9 +1,7 @@
-freepops (0.0.28+CVS20050601-1) unstable; urgency=low
+freepops (0.0.29-1) unstable; urgency=low
 
   * manual.pdf is now build only in binary-indep target (closes: #306799)
-  * new version (0.1.0) of hotmail plugin works (closes: #309845)
-  * minor patches to aol.lua and mailcom.lua
-  * minor update to config.lua
+  * new upstream release
 
  -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Wed,  1 Jun 2005 18:25:22 +0200
 

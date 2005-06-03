@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 // common
-#define VERSION 	"0.0.28"
+#define VERSION 	"0.0.29"
 #define PROGRAMNAME	"FreePOPs"
 #define PIDFILE 	"/var/run/freepopsd.pid"
 #define POP3PORT  	2000
@@ -25,8 +25,8 @@
 	#define LOGFILE		"log.txt"
 	#define BINDADDRESS  	INADDR_LOOPBACK
 	#define DEFAULT_USERAGENT \
-		"Mozilla/5.0 (; U; Win32; en-US; rv:1.6)"\
-		" Gecko/20040322 Firefox/0.8"
+		"Mozilla/5.0 (; U; Win32; en-US; rv:1.7.8)"\
+		" Gecko/20050518 Firefox/1.0.4"
 	//#define FREEPOPSLUA_USER_UNOFFICIAL "lua_unofficial"
 #endif
 
@@ -35,8 +35,8 @@
 	#define LOGFILE		"/var/log/freepops.log"
 	#define BINDADDRESS  	INADDR_LOOPBACK
 	#define DEFAULT_USERAGENT \
-		"Mozilla/5.0 (X11; U; BeOS; en-US; rv:1.6)"\
-		" Gecko/20040322 Firefox/0.8"
+		"Mozilla/5.0 (X11; U; BeOS; en-US; rv:1.7.8)"\
+		" Gecko/20050518 Firefox/1.0.4"
 	//#define FREEPOPSLUA_USER_UNOFFICIAL "lua_unofficial"
 #endif
 
@@ -44,8 +44,8 @@
 	#define LOGFILE		"stdout"
 	#define BINDADDRESS  	INADDR_ANY
 	#define DEFAULT_USERAGENT \
-		"Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O;"\
-		" en-US; rv:1.6) Gecko/20040113"
+		"Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; "\
+		"en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0"
 	//#define FREEPOPSLUA_USER_UNOFFICIAL "lua_unofficial"
 #endif
 		
@@ -54,8 +54,8 @@
 	#define LOGFILE		"stdout"
 	#define BINDADDRESS  	INADDR_ANY
 	#define DEFAULT_USERAGENT \
-		"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.6)"\
-		" Gecko/20040322 Firefox/0.8"
+		"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.8)"\
+		" Gecko/20050518 Firefox/1.0.4"
 	//#define FREEPOPSLUA_USER_UNOFFICIAL "%s/.freepops/lua_unofficial"
 	
 #endif

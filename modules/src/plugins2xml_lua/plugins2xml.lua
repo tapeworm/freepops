@@ -83,12 +83,16 @@ function plugins2xml.sanity_check()
 	        (PLUGIN_REGEXES ~= nil and type(PLUGIN_REGEXES == "table")),
 		"PLUGIN_DOMAINS or PLUGIN_REGEXES is required and must be "..
 		"a list of strings")
-	table.foreachi(PLUGIN_DOMAINS,function(i,name)
-		counter = counter + 1
-	end)
-	table.foreachi(PLUGIN_REGEXES,function(i,name)
-		counter = counter + 1
-	end)
+	if (PLUGIN_DOMAINS ~= nil) then
+		table.foreachi(PLUGIN_DOMAINS,function(i,name)
+			counter = counter + 1
+		end)
+	end
+	if(PLUGIN_REGEXES ~= nil) then
+		table.foreachi(PLUGIN_REGEXES,function(i,name)
+			counter = counter + 1
+		end)
+	end
 	assert(counter > 0, "At least one domain or one regex must be provided")
 	-- desc
 	local counter = 0
@@ -144,15 +148,19 @@ plugins2xml.extractor_function = function(file)
 			},"authors")
 	end)
 	-- add domains
-	table.foreachi(PLUGIN_DOMAINS,function(i,name)
-		add_node_content(plugin_Txml,
-			{tag_name = "domain",{name}},"domains")
-	end)
-	-- add domains
-	table.foreachi(PLUGIN_REGEXES,function(i,name)
-		add_node_content(plugin_Txml,
-			{tag_name = "regex",{name}},"regexes")
-	end)
+	if(PLUGIN_DOMAINS~=nil) then
+		table.foreachi(PLUGIN_DOMAINS,function(i,name)
+			add_node_content(plugin_Txml,
+				{tag_name = "domain",{name}},"domains")
+		end)
+	end
+	-- add domains(regex)
+	if (PLUGIN_REGEXES ~= nil) then
+		table.foreachi(PLUGIN_REGEXES,function(i,name)
+			add_node_content(plugin_Txml,
+				{tag_name = "regex",{name}},"regexes")
+		end)
+	end
 	-- add descriptions
 	table.foreach(PLUGIN_DESCRIPTIONS,function(lang,name)
 		add_node_content(plugin_Txml,

@@ -38,8 +38,8 @@ nella directory dove avete installato FreePOPs e lanciate il comando
 2. Maggiori informazioni
 
 Lanciate freepopsd -h da Terminale o leggete i manuali che trovate su:
-http://freepops.sourceforge.net/it/files/manual-it.pdf (IT version)
-http://freepops.sourceforge.net/it/files/manual.pdf    (EN version)
+http://www.freepops.org/it/files/manual-it.pdf (IT version)
+http://www.freepops.org/it/files/manual.pdf    (EN version)
 per una completa lista delle opzioni.
 
 Potete chiedere aiuto scrivendo sul forum presso http://freepops.diludovico.it.
@@ -80,8 +80,8 @@ favorite command line options.
 2. Additional info
 
 See freepopsd -h or the manuals you find at:
-http://freepops.sourceforge.net/it/files/manual-it.pdf (IT version)
-http://freepops.sourceforge.net/it/files/manual.pdf    (EN version)
+http://www.freepops.org/it/files/manual-it.pdf (IT version)
+http://www.freepops.org/it/files/manual.pdf    (EN version)
 for a complete list of command line options.
 
 You may ask for help posting on the forum at http://freepops.diludovico.it.

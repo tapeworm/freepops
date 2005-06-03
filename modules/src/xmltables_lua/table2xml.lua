@@ -19,7 +19,7 @@
 local Private = {}
 
 --============================================================================--
--- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
+-- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
 --============================================================================--
 
 function Private.escape(s,unescape)

@@ -11,8 +11,8 @@ PLUGIN_VERSION = "0.1.0"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=hotmail.lua"
-PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
+PLUGIN_URL = "http://www.freepops.org/download.php?file=hotmail.lua"
+PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {"@hotmail.com","@msn.com","@webtv.com","@charter.com",

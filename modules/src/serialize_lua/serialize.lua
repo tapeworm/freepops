@@ -6,7 +6,7 @@
 serial = {}
 
 --============================================================================--
--- This is part of FreePOPs (http://freepops.sf.net) released under GNU/GPL  
+-- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
 --============================================================================--
 
 local Private = {}

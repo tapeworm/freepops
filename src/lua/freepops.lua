@@ -355,7 +355,7 @@ freepops.load_module_for = function (mailaddress,loadonly)
 	* parte @qualcosa. FreePOPs ha bisogno di username con      *
 	* un dominio. Se eri un utente LiberoPOPs puoi leggere      *
 	*                                                           *
-	*   http://freepops.sourceforge.net/it/lp_to_fp.shtml       *
+	*   http://www.freepops.org/it/lp_to_fp.shtml       *
 	*                                                           *
 	* che spiega cosa devi esattamente fare. Per favore non     *
 	* mettere richieste di aiuto sul forum se non hai           *
@@ -371,11 +371,11 @@ freepops.load_module_for = function (mailaddress,loadonly)
 	* must use a username in the form foo@something to use      *
 	* FreePOPs. Please read the manual available at             *
 	*                                                           *
-        *   http://freepops.sourceforge.net/en/files/manual.pdf     *
+        *   http://www.freepops.org/en/files/manual.pdf     *
 	*                                                           *
 	* or the tutorial                                           *
 	*                                                           *
-	*   http://freepops.sourceforge.net/en/tutorial/index.shtml *
+	*   http://www.freepops.org/en/tutorial/index.shtml *
 	*                                                           *
 	*************************************************************
 ]]

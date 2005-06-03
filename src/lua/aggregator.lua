@@ -27,8 +27,8 @@ PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "RSS/RDF aggregator"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=aggregator.lua"
-PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
+PLUGIN_URL = "http://www.freepops.org/download.php?file=aggregator.lua"
+PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
 PLUGIN_AUTHORS_CONTACTS = {"simone_vellei (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@aggregator","@..."}

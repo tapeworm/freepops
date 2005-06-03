@@ -11,8 +11,8 @@ PLUGIN_VERSION = "0.0.8i"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=mailcom.lua"
-PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
+PLUGIN_URL = "http://www.freepops.org/download.php?contrib=mailcom.lua"
+PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells (at) despammed (.) com"}

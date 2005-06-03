@@ -6,7 +6,7 @@ Epoch:		4
 Copyright:	GPL
 Group:		System Environment/Daemons
 Source: 	freepops-%{version}.tar.gz
-URL:		http://freepops.sf.net
+URL:		http://www.freepops.org
 Prefix:		%{_prefix}
 Vendor: 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
 Packager:	Enrico Tassi <gareuselesinge@users.sourceforge.net>

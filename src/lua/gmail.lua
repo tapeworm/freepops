@@ -12,8 +12,8 @@ PLUGIN_VERSION = "0.0.39"
 PLUGIN_NAME = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.16"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=gmail.lua"
-PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
+PLUGIN_URL = "http://www.freepops.org/download.php?file=gmail.lua"
+PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Rami Kattan"}
 PLUGIN_AUTHORS_CONTACTS = {"rkattan (at) gmail (.) com"}
 PLUGIN_DOMAINS = {"@gmail.com"}

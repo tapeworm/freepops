@@ -443,12 +443,12 @@ freepops.MODULES_MAP["flatnuke"] 	= {
 -- flatnuke binded domains
 freepops.MODULES_MAP["freepops.it"] 	= {
 	name="flatnuke.lua",
-	args={host="http://freepops.sourceforge.net/it"}
+	args={host="http://www.freepops.org/it"}
 }
 
 freepops.MODULES_MAP["freepops.en"] 	= {
 	name="flatnuke.lua",
-	args={host="http://freepops.sourceforge.net/en"}
+	args={host="http://www.freepops.org/en"}
 }
 
 -- rss backended news plugin
@@ -459,12 +459,12 @@ freepops.MODULES_MAP["aggregator"] 		= {
 -- rss binded domains
 freepops.MODULES_MAP["freepops.rss.en"] 	= {
 	name="aggregator.lua",
-	args={host="http://freepops.sf.net/en/misc/backend.rss"}
+	args={host="http://www.freepops.org/en/misc/backend.rss"}
 }
 
 freepops.MODULES_MAP["freepops.rss.it"] 	= {
 	name="aggregator.lua",
-	args={host="http://freepops.sf.net/it/misc/backend.rss"}
+	args={host="http://www.freepops.org/it/misc/backend.rss"}
 }
 
 freepops.MODULES_MAP["flatnuke.sf.net"] 	= {

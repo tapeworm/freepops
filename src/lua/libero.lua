@@ -31,8 +31,8 @@ PLUGIN_VERSION = "0.2.1"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=libero.lua"
-PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
+PLUGIN_URL = "http://www.freepops.org/download.php?file=libero.lua"
+PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 
 -- list of strings, one required, one contact for each author
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}

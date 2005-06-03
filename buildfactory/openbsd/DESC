@@ -1,12 +1,12 @@
-FreePOPs is an extendible pop3 server.
+FreePOPs is an extensible pop3 server.
 
 This package contains the pre-compiled distribution of FreePOPs for
 OpenBSD systems. See freepopsd -h or the manuals you find at:
-http://freepops.sourceforge.net/it/files/manual-it.pdf (IT version)
-http://freepops.sourceforge.net/it/files/manual.pdf (EN version) for a
+http://www.freepops.org/it/files/manual-it.pdf (IT version)
+http://www.freepops.org/it/files/manual.pdf (EN version) for a
 complete list of command line options.
 
 Please remember to generate a verbose log with the '-w -l log.txt'
 options if you need to ask the developers for help or report a bug.
 
-See http://freepops.sf.net for more information.
+See http://www.freepops.org for more information.

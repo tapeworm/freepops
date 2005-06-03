@@ -14,11 +14,11 @@ Please remember to generate a verbose log with the '-w -l log.txt' options if yo
 To ask for help, AFTER you've read the documentation, you may look at:
 
 - Official website at http://www.freepops.org
-- A tutorial for dummies at http://freepops.sourceforge.net/en/tutorial/index.shtml
+- A tutorial for newbies at http://www.freepops.org/en/tutorial/index.shtml
 - Users forum at http://freepops.diludovico.it/
 - Complete manuals at:
-  http://freepops.sourceforge.net/it/files/manual-it.pdf (IT version)
-  http://freepops.sourceforge.net/it/files/manual.pdf    (EN version)
+  http://www.freepops.org/it/files/manual-it.pdf (IT version)
+  http://www.freepops.org/it/files/manual.pdf    (EN version)
 
 
 ChangeLog:

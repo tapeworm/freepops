@@ -1,6 +1,6 @@
 /******************************************************************************
  * $Id$
- * This file is part of FreePOPs (http://freepops.sf.net)                     *
+ * This file is part of FreePOPs (http://www.freepops.org)                     *
  * This file is distributed under the terms of GNU GPL license.               *
  ******************************************************************************/
 
@@ -22,7 +22,7 @@
 
 #define FP_BIN "freepopsd.exe"
 #define FP_DEFAULT_ARG "--no-icon"
-#define FP_DESC "FreePOPs daemon service. http://freepops.sf.net"
+#define FP_DESC "FreePOPs daemon service. http://www.freepops.org"
 
 #define FP_NSIS_BASE "SOFTWARE\\NSIS_FreePOPs"
 #define FP_NSIS_INSTDIR "Install_Dir"

@@ -1,3 +1,4 @@
+- added juno.lua to official plugins
 - cosmetic change to the pop3server, now the timout error is handled in pretty
 way
 - added support for PLUGIN_REGEXES in plugin header  and regex = true in config.lua

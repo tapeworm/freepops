@@ -410,6 +410,12 @@ freepops.MODULES_MAP["lycos.com" ]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["unforgettable.com" ]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["mail.org" ]		= {name="mailcom.lua"}
 
+-- juno plugin
+freepops.MODULES_MAP["netzero.net"]	= {name="juno.lua"}	
+freepops.MODULES_MAP["netzero.com"]	= {name="juno.lua"}	
+freepops.MODULES_MAP["juno.com"]   	= {name="juno.lua"}     
+
+
 -- popforward plugin
 
 --freepops.MODULES_MAP["something.xx"] 	= {

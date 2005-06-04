@@ -1,3 +1,4 @@
+- updated manual
 - added juno.lua to official plugins
 - cosmetic change to the pop3server, now the timout error is handled in pretty
 way

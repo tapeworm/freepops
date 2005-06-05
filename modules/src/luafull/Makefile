@@ -23,7 +23,11 @@ else
      ifeq "$(OS)" "BeOS"
         LDFLAGS+= -llua -llualib -ldl
      else
- 	LDFLAGS+= -llua -llualib -lm -ldl
+       ifeq "$(OS)" "Windows"
+         LDFLAGS+= -llua -llualib -lm $(LDFLAGSDL)
+       else
+         LDFLAGS+= -llua -llualib -lm -ldl
+       endif	
      endif
    endif
  endif
@@ -53,7 +57,7 @@ LDFLAGS+= -lcrypto_lua -lgetdate_lua -lmlex_lua -lportablesocket_lua \
 	-lluaexpat -lregularexp_lua -lluafilesystem \
 	-lbase64_lua -lstringhack_lua -lcurl_lua \
 	-lluabind -lgetdate -lmlex -lportablesocket -lexpat -lregularexp \
-	-lbase64 -lcurl -llog -llist -loscompatibility \
+	-lbase64 -l$(CURLNAME) -llog -llist -loscompatibility \
 	-lpthread -lregex -lwsock32 -lcrypto
 else
 ifeq "$(OS)" "BeOS"
@@ -81,17 +85,11 @@ ifeq "$(OS)" "Windows"
 		luafull;\
 		chmod a+x luafull
 	BINARY=luafull.exe
+	
 	INST=cp luafull* $(PREFIX)/bin || true;\
 	     ln -s $(PREFIX)/lib/libpthread.dll $(PREFIX)/bin/;\
-	     ln -s $(PREFIX)/lib/libpthread.dll $(PREFIX)/..;\
-	     ln -s /usr/local/cross-tools/i386-mingw32msvc/bin/expat.dll \
-	     	$(PREFIX)/bin/;\
- 	     ln -s /usr/local/cross-tools/i386-mingw32msvc/bin/expat.dll \
-	     	$(PREFIX)/..;\
-	     ln -s /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl-3.dll \
-	       $(PREFIX)/bin/;\
-	     ln -s /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl-3.dll \
-	       $(PREFIX)/..
+	     ln -s $(DLLPATH)/expat.dll $(PREFIX)/bin/;\
+	     ln -s $(DLLPATH)/libcurl-3.dll $(PREFIX)/bin/;\
 else
 	BINARIZE=
 	BINARY=luafull

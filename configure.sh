@@ -120,29 +120,42 @@ firstpref=/usr/bin/i586-mingw32msvc-
 defpref=/usr/local/cross-tools/i386-mingw32msvc/bin/
 if test -x ${firstpref}gcc; then
 	CC=${firstpref}gcc
+	DLLPATH=/usr/i586-mingw32msvc/lib/
+	INCLUDEPATH=/usr/i586-mingw32msvc/include/
+	LDFLAGSDL=
+	CURLNAME=curl-3
 else
 	CC=${defpref}gcc
+	DLLPATH=/usr/local/cross-tools/i386-mingw32msvc/bin/
+	INCLUDEPATH=/usr/local/cross-tools/i386-mingw32msvc/include/
+	LDFLAGSDL=-ldl
+	CURLNAME=curl
 fi
+HCC=gcc
 if test -x ${firstpref}ld; then
 	LD=${firstpref}ld
 else
 	LD=${defpref}ld
 fi
+HLD=ld
 if test -x ${firstpref}ar; then
 	AR=${firstpref}ar
 else
 	AR=${defpref}ar
 fi
+HAR=ar
 if test -x ${firstpref}strip; then
 	STRIP=${firstpref}strip
 else
 	STRIP=${defpref}strip
 fi
+HSTRIP=strip
 if test -x ${firstpref}ranlib; then
 	RANLIB=${firstpref}ranlib
 else
 	RANLIB=${defpref}ranlib
 fi
+HRANLIB=ranlib
 if test -x ${firstpref}windres; then
 	WINDRES=${firstpref}windres
 else
@@ -234,6 +247,10 @@ STATICEXTENSION=$STATICEXTENSION
 SHAREDEXTENSION=$SHAREDEXTENSION
 WINDRES=$WINDRES
 DLLTOOL=$DLLTOOL
+DLLPATH=$DLLPATH
+INCLUDEPATH=$INCLUDEPATH
+LDFLAGSDL=$LDFLAGSDL
+CURLNAME=$CURLNAME
 OS=$OS
 MAKE=$MAKE
 WHERE=$WHERE

@@ -1,3 +1,5 @@
+- moved to a complede vanilla debian box for windoz crosscompilation (the old
+and good SDL crosscompiler is not used anymore. RIP)
 05/06/2005 0.0.29
 - es: *** empty log message *** (lisar314)
 - mailcom.lua: fixed issues with operamail and ambigious match (russell822)

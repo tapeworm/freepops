@@ -5,7 +5,7 @@ LIBRARY=lib$(TARGET)$(STATICEXTENSION)
 CONSTANTS=curlopt.h curl_netrcopt.h curl_form.h curl_authopt.h 
 
 ifeq "$(OS)" "Windows"
-	HEADER=/usr/local/cross-tools/i386-mingw32msvc/include/curl/curl.h
+	HEADER=$(INCLUDEPATH)/curl/curl.h
 else
 	HEADER=$(shell ./find_curl.sh)
 	# if this fails hack here #########################################

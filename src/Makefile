@@ -108,7 +108,7 @@ ifeq "$(OS)" "Windows"
 	LDFLAGS+= -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
-		-lregex -lm -lcurl -lmingw32 -lwsock32 \
+		-lregex -lm -l$(CURLNAME) -lmingw32 -lwsock32 \
 			-lpthread -lexpat -lgdi32 -mwindows -lcrypto
 
 else

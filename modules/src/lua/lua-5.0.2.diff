@@ -184,7 +184,7 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +		cd src ; 						\
 +			$(HCC) $(HCFLAGS) -c *.c ; 			\
 +			$(HAR) rc ../lib/liblua-host.a *.o ; 	\
-+			$(RANLIB) ../lib/liblua-host.a ;		\
++			$(HRANLIB) ../lib/liblua-host.a ;		\
 +			rm -f *.o;					\
 +		echo "done.";						\
 +		echo -n ' building standard host library... ';		\

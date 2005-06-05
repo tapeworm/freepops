@@ -2,6 +2,18 @@
 Cross compile for win32 
 =======================
 
+  cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co zlib_deb
+  cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co expat_deb
+  cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co openssl_deb
+  cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co curl_deb
+  cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co mingw32_freepops
+  apt-get install mingw32 mingw32-runtime mingw32-binutils 
+  apt-get install xpm2wico sysutils nsis bison flex 
+  cd mingw32_freepops
+  make 
+
+  [ outdated, but kept in case of fallback ]
+
   The cross compiler can be found http://libsdl.org/extras/win32/cross/ ,
   you should install it to /usr/local/cross-tools/
   

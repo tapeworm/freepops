@@ -52,12 +52,11 @@ dist-win-e-zip: freepops-$(VERSION).tar.gz
 	$(H)unix2dos _win_/freepops/README.FPM.*.txt
 	$(H)unix2dos _win_/freepops/SERVICE.*.txt
 	
-	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/libcurl-3.dll \
-		_win_/freepops/libcurl-3.dll
-	$(H)cp /usr/local/cross-tools/i386-mingw32msvc/bin/expat.dll \
-		_win_/freepops/expat.dll
-	$(H)/usr/local/cross-tools/i386-mingw32msvc/bin/strip \
-		_win_/freepops/*.exe _win_/freepops/*.dll
+	$(H)DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d = -f 2`;\
+		cp $$DLLPATH/libcurl-3.dll _win_/freepops/libcurl-3.dll;\
+		cp $$DLLPATH/expat.dll _win_/freepops/expat.dll
+	$(H)STRIP=`grep STRIP _win_/freepops-$(VERSION)/config| cut -d = -f 2`;\
+		$$STRIP _win_/freepops/*.exe _win_/freepops/*.dll
 
 	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \
 		_win_/freepops/freepops.nsi

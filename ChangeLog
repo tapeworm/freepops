@@ -1,3 +1,18 @@
+05/06/2005 0.0.29
+- es: *** empty log message *** (lisar314)
+- mailcom.lua: fixed issues with operamail and ambigious match (russell822)
+- fr: *** empty log message *** (fvancaen)
+- aol.lua: Made a minor tweak for aim. (russell822)
+- fr: convenience zip chapter (fvancaen)
+- fr: freepops is now part of debian (fvancaen)
+- es: fixed rss (gareuselesinge)
+- es, fr: removed statistics (gareuselesinge)
+- mailcom.lua: Fixed an issue with multipage stat having issues due to ad pages (russell822)
+- es, fr: added zip (gareuselesinge)
+- es: Updated download-linux.shtml (lisar314)
+- es, fr: fixed download linux (gareuselesinge)
+- gmail.lua, squirrelmail.lua, tre.lua, yahoo.lua, hotmail.lua, aol.lua, , mailcom.lua, netscape.lua: Changed FreePOPs homepage address to http://www.freepops.org (alessiofender)
+- es, fr: Changed FreePOPs homepage to http://www.freepops.org (alessiofender)
 - updated manual
 - added juno.lua to official plugins
 - cosmetic change to the pop3server, now the timout error is handled in pretty

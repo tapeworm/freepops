@@ -7,12 +7,12 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8b"
+PLUGIN_VERSION = "0.0.8c"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=aol.lua"
-PLUGIN_HOMEPAGE = "http://www.freepops.org/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=aol.lua"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {
@@ -311,9 +311,8 @@ function loginAOL()
   -- We should be logged in now! Let's check and make sure.
   --
   local str = nil
-  if domain == "aim.com" then
-    _, _, str = string.find(body, globals.strRetLoginGoodLoginAim)
-  else
+  _, _, str = string.find(body, globals.strRetLoginGoodLoginAim)
+  if str == nil then
     _, _, str = string.find(body, globals.strRetLoginGoodLogin)
   end
   if str == nil then
@@ -327,7 +326,7 @@ function loginAOL()
 
   -- DEBUG Message
   --
-  log.dbg("AOL/Netscape Server: " .. internalState.strMailServer .. "\n")
+  log.dbg("AOL/AIM Server: " .. internalState.strMailServer .. "\n")
 
   -- Get UserID from cookie
   --

@@ -7,12 +7,12 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8j"
+PLUGIN_VERSION = "0.0.9"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?contrib=mailcom.lua"
-PLUGIN_HOMEPAGE = "http://www.freepops.org/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=mailcom.lua"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells (at) despammed (.) com"}
@@ -678,6 +678,8 @@ function stat(pstate)
     -- Remove commented out html.  It just causes too much trouble.
     --
     body = string.gsub(body, "<!%-%-(.-)%-%->", "") 
+    body = string.gsub(body, "<[bB]>", "") 
+    body = string.gsub(body, "</[bB]>", "") 
     
     -- Cycle through the items and store the msg id and size
     --
@@ -725,7 +727,7 @@ function stat(pstate)
 
     -- Get the page and check to see if we got results
     --
-    local body, err = browser:get_uri(cmdUrl)
+    local body, err = getPage(browser, cmdUrl)
     if body == nil then
       return body, err
     end
@@ -754,7 +756,7 @@ function stat(pstate)
 
       -- Retry to load the page
       --
-      return getPage(cmdUrl)
+      return getPage(browser, cmdUrl)
     end
 
     -- Get the total number of messages

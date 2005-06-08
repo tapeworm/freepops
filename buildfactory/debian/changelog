@@ -1,3 +1,12 @@
+freepops (0.0.29-2) unstable; urgency=low
+
+  * the .configure  script now supports going backward
+  * cleaned some dh_make useless stuff in rules
+  * fixed the build-depends(-indep) field
+  * fixed the clean target that now calls make distclean
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Wed,  8 Jun 2005 16:49:50 +0200
+
 freepops (0.0.29-1) unstable; urgency=low
 
   * manual.pdf is now build only in binary-indep target (closes: #306799)

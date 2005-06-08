@@ -1,3 +1,4 @@
+- fixed some stuff for debian
 - moved to a complede vanilla debian box for windoz crosscompilation (the old
 and good SDL crosscompiler is not used anymore. RIP)
 05/06/2005 0.0.29

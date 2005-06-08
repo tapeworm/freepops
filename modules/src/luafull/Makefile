@@ -79,21 +79,22 @@ endif
 endif
 endif
 
+	
 ifeq "$(OS)" "Windows"
 	BINARIZE=echo -en \
 		"\\043\\041/bin/sh\nwine $(PREFIX)/bin/luafull.exe \\044\\100">\
 		luafull;\
 		chmod a+x luafull
-	BINARY=luafull.exe
+	EXTENSION=.exe
 	
-	INST=cp luafull* $(PREFIX)/bin || true;\
+	INSTALLATION=cp luafull* $(PREFIX)/bin || true;\
 	     ln -s $(PREFIX)/lib/libpthread.dll $(PREFIX)/bin/;\
 	     ln -s $(DLLPATH)/expat.dll $(PREFIX)/bin/;\
-	     ln -s $(DLLPATH)/libcurl-3.dll $(PREFIX)/bin/;\
+	     ln -s $(DLLPATH)/libcurl-3.dll $(PREFIX)/bin/
 else
 	BINARIZE=
-	BINARY=luafull
-	INST=cp luafull $(PREFIX)/bin || true
+	EXTENSION=
+	INSTALLATION=cp luafull $(PREFIX)/bin || true
 endif
 H=@
 
@@ -101,7 +102,7 @@ all: $(PREFIX)/bin/luafull
 	$(H)echo -n
 	
 $(PREFIX)/bin/luafull: luafull
-	$(H)$(INST)
+	$(H)$(INSTALLATION)
 	
 luafull:
 	$(H)echo -n ' building luafull... '
@@ -114,9 +115,9 @@ luafull:
 		$(RANLIB) ../../lib/libluaexpat.a; \
 		$(RANLIB) ../../lib/libgetdate.a; \
 	        $(RANLIB) ../../lib/libluafilesystem.a	)
-	$(H)$(CC) $(CFLAGS) -o $(BINARY) lua.c $(LDFLAGS) || true
+	$(H)$(CC) $(CFLAGS) -o $@$(EXTENSION) lua.c $(LDFLAGS) || true
 	$(H)$(BINARIZE)
 	$(H)echo "done."
 
 clean:
-	$(H)rm -f lib/* bin/* luafull
+	$(H)rm -f lib/* bin/* luafull luafull.exe

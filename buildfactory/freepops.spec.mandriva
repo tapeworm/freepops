@@ -5,7 +5,7 @@ Release:	1ddz
 License:	GPL
 Group:		Networking/Other
 Source: 	freepops-%{version}.tar.bz2
-URL:		http://freepops.sf.net
+URL:		http://www.freepops.org
 Prefix:		%{_prefix}
 Vendor: 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot

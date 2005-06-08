@@ -16,6 +16,9 @@ rpm:
 	freepops.rc
 	freepops.sysconfig
 
+rpm mandriva:
+	freepops.spec.mandriva
+
 slack:
 	slackware/*
 

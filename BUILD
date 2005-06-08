@@ -2,10 +2,6 @@
 Cross compile for win32 
 =======================
 
-  cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co zlib_deb
-  cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co expat_deb
-  cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co openssl_deb
-  cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co curl_deb
   cvs -d :ext:$USER@cvs.sf.net:/cvsroot/freepops/ co mingw32_freepops
   apt-get install mingw32 mingw32-runtime mingw32-binutils 
   apt-get install xpm2wico sysutils nsis bison flex 

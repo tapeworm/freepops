@@ -139,12 +139,28 @@ void usage(const char *progname) {
 
 void win32_init(int *argc,char ***argv,LPSTR lpszCmdLine)
 {
+char *lastslash;
+  
 if(stderr != freopen("stderr.txt","w",stderr)) 
 	fprintf(stderr,"Unable to redirect stderr\n");
 
 if(stdout != freopen("stdout.txt","w",stdout)) 
 	fprintf(stderr,"Unable to redirect stdout\n");		
 *argc = parse_commandline(argv, lpszCmdLine);
+
+/* Try to change working directory if command line provides a path */
+if ((lastslash = strrchr((*argv)[0], '\\')) != NULL) {
+	char *dir;
+	int length = lastslash - (*argv)[0] + 2;
+	if (length <= MAX_PATH &&
+	    (dir = (char *)calloc(length, sizeof(char))) != NULL) {
+		strncpy(dir, (*argv)[0], length - 1);
+		dir[length - 1] = '\0';
+		SetCurrentDirectory(dir);
+		free(dir);
+	}
+}
+
 sockinit();
 }
 

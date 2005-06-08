@@ -1,3 +1,5 @@
+- in Windows, try to automatically change the working directory if the 
+command line provides some kind of path
 - fixed some stuff for debian
 - moved to a complede vanilla debian box for windoz crosscompilation (the old
 and good SDL crosscompiler is not used anymore. RIP)

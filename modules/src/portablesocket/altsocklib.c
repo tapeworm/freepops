@@ -318,7 +318,7 @@ return sd;
 int sockinfo(int sd, char *info)
 {
     struct sockaddr_in sin;
-#ifndef WIN32
+#if !defined(WIN32) && !defined(BEOS)
     socklen_t len = sizeof(sin);
 #else
     int len = sizeof(sin);

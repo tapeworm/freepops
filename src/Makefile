@@ -36,14 +36,14 @@ ifeq "$(OS)" "Darwin"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"src/lua_unofficial/\"
 else
-ifeq "$(OS)" "BeOS"
-	CFLAGS+= -DFREEPOPSLUA_PATH=\"$HOME/config/settings/freepops/lua/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"$HOME/config/settings/freepops/lua_unofficial/\"
-
-else
+#ifeq "$(OS)" "BeOS"
+#	CFLAGS+= -DFREEPOPSLUA_PATH=\"$HOME/config/settings/freepops/lua/\"
+#	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"$HOME/config/settings/freepops/lua_unofficial/\"
+#
+#else
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"$(PREFIX)share/freepops/lua_unofficial/\"
-endif
+#endif
 endif
 endif
 

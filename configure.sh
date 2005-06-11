@@ -98,7 +98,7 @@ CFLAGS="$CFLAGS -DBEOS -I/boot/home/config/include/ "
 LDFLAGS="$LDFLAGS -L/boot/home/config/lib/"
 HCFLAGS="$HCFLAGS -DBEOS -I/boot/home/config/include/ "
 HLDFLAGS="$HLDFLAGS -L/boot/home/config/lib/"
-WHERE=/boot/home/config
+WHERE=/boot/home/config/
 }
 
 set_cygwin() {

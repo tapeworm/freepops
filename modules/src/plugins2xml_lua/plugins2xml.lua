@@ -190,7 +190,7 @@ plugins2xml.extractor_function = function(file)
 				 {name}},"descriptions")
 		end)
 	end)
-
+	return plugin_Txml
 end
 
 local restricted_enviroment = proxy_table
@@ -202,8 +202,8 @@ setfenv(extractor_function,restricted_enviroment)
 -- this is called with the filename 
 
 plugins2xml.main = function(file)
-	plugins2xml.extractor_function(file)
-	print(table2xml.table2xml(plugin_Txml,nil,nil,false))
+	local txml = plugins2xml.extractor_function(file)
+	print(table2xml.table2xml(txml,nil,nil,false))
 end
 
 -- eof

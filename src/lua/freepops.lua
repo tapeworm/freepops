@@ -264,32 +264,33 @@ freepops.choose_module = function (d)
 	return name, args, where 
 end
 
--- dofile with freepops.MODULES_PREFIX path
-freepops.dofile = function (file)
-	local got = nil
-	local try_do = function (index,path)
+-- searches a file in $CWD + MODULES_PREFIX and returns the full path or nil
+freepops.find = function(file)
+	local try = function(_,path)
 		local f,_ = io.open(path..file,"r")
 		if f ~= nil then
 			io.close(f)
-			freepops.__dofile(path..file)
-			got = 1
-			return 0 -- stop looping
-		else
-			return nil -- continue looping
+			return path..file
 		end
 	end
-
-	-- first check for absolute path
-	try_do(0,"")
-	if not got then
-		table.foreach(freepops.MODULES_PREFIX,try_do)
+	if try(_,"") ~= nil then
+		return file
 	end
-	if not got then
+	return table.foreach(freepops.MODULES_PREFIX,try)
+end
+
+-- dofile with freepops.MODULES_PREFIX path
+freepops.dofile = function (file)
+	local got = freepops.find(file)
+	if got == nil then
 		log.error_print(string.format("Unable to find '%s'\n",file))
 		log.error_print(string.format("Path is '%s'\n",
 			table.concat(freepops.MODULES_PREFIX,":")))
+		return nil
+	else
+		freepops.__dofile(got)
+		return 0
 	end
-	return got
 end
 freepops.__dofile = dofile
 dofile = freepops.dofile

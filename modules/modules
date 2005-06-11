@@ -36,7 +36,8 @@ MODULES-Common= lua		\
 		luafilesystem 	\
 		luadoc		\
 		plugins2xml_lua	\
-		luafull
+		luafull		\
+		updater_lua
 	
 MODULES-Windows-pre=regex pthread 
 MODULES-Windows-post=winsystray

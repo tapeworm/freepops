@@ -12,7 +12,7 @@
 --
 -- Here you tell freepops what plugin should be used for you mailaddress domain
 -- Some plugins accept some args. see popforward as an example of arg 
--- passing plugin. If the plugin has regex setted to true then the mailaddress
+-- passing plugin. If the plugin has regex set to true then the mailaddress
 -- will be considered a regexp.
 -- 
 

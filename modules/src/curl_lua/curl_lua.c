@@ -56,7 +56,7 @@
 	#define CURLOPT_HEADERDATA CURLOPT_WRITEHEADER
 #endif
 
-/* strings putted in the bag, vectorialized for faster/shorter access */
+/* strings put in the bag, vectorialized for faster/shorter access */
 	
         #define STR_CAINFO 		0
         #define STR_COOKIE 		1

@@ -74,7 +74,7 @@
 /*** typedefs *****************************************************************/
 typedef void (*sighandler_t)(int);
 
-/*** globals setted trough command line options *******************************/
+/*** globals set trough command line options *******************************/
 
 int verbose_output=0;
 int daemonize = 0;

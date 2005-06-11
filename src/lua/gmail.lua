@@ -354,7 +354,7 @@ function retr_cb(data)
 	local a = stringhack.new()
 	local FirstBlock = true
 
-	-- setted in the First Block
+	-- set in the First Block
 	local correction = ""
 	
 	return function(s,len)

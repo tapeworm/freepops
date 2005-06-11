@@ -599,28 +599,42 @@ end
 -- This is the function freepops calls
 
 -- -------------------------------------------------------------------------- --
---  This is the only function called from the C code. This loads the module
---  that handles mailaddress's domain and load standard LUA modules
+-- freepops.dofile may be called too by the C core to execute a script that is
+-- not found (and so it is searched in the standard paths)
 -- -------------------------------------------------------------------------- --
-freepops.init = function (mailaddress,loadonly)
+
+-- -------------------------------------------------------------------------- --
+-- This is only the LUA box bootstrap code. This is called to initialize the
+-- lua box when freepops is started with -e or -x
+-- -------------------------------------------------------------------------- --
+freepops.bootstrap = function()
 	load_config()
 	
 	-- standard lua modules that must be loaded
 	if freepops.dofile("support.lua") == nil then return 1 end
+
+	return 0 -- OK
+end
+
+-- -------------------------------------------------------------------------- --
+--  This is the only (except the latter) function called from the C code. 
+--  This loads the module that handles mailaddress's domain and load standard
+--  LUA modules
+-- -------------------------------------------------------------------------- --
+freepops.init = function (mailaddress)
+	freepops.bootstrap()
 	
 	if freepops.load_module_for(mailaddress) == nil then return 1 end
 	
-	if loadonly == 0 then
-		-- check if the required version is older
-		if not freepops.enough_new(PLUGIN_REQUIRE_VERSION) then
-			log.error_print(
-				"This plugin requires a newer version "..
-				"of FreePOPs. Please update!")
-			return 1
-		end
-		-- some sanity checks
-		if freepops.check_global_symbols() == nil then return 1 end
+	-- check if the required version is older
+	if not freepops.enough_new(PLUGIN_REQUIRE_VERSION) then
+		log.error_print(
+			"This plugin requires a newer version "..
+			"of FreePOPs. Please update!")
+		return 1
 	end
+	-- some sanity checks
+	if freepops.check_global_symbols() == nil then return 1 end
 	
 	return 0 -- OK
 end

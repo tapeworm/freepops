@@ -21,13 +21,14 @@
  *  \param args is a formt string. It tells both passed arguments and 
  *  	expected arguments. The '|' is used as a separator for in/out 
  *  	parameters. Type specifyers are d for int, s for char*, p for
- *  	void*(lightuserdata), f for double. An example of format string is
+ *  	void*(lightuserdata), f for double, b for bool. 
+ *  	An example of format string is
  *  	"spf|dp" says that the function takes a string, a userdata and a 
  *  	double(lua_Number) and return an integer(trucated lua_Number) and 
  *  	a lightuserdata. With 's' string received are strdup()ed, since
  *  	the pointer to the LUA data may become a dandling reference due to a 
  *  	garbage collector call. If you are sure the LUA string will not be 
- *  	collected you can use 'S' instead.
+ *  	collected you can use 'S' instead. 
  *  \param funcname the function name
  *  \param ... arguments are passed as described int the args parameter,
  *  	remember that returns values must be of type pointer-to. For 

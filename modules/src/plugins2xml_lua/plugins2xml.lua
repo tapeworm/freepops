@@ -9,8 +9,11 @@ plugins2xml = {}
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
 --============================================================================--
 
+main = function(files) 
+	table.foreach(files,function(_,file) plugins2xml.main(file) end)
+end
 
-dofile("table2xml.lua")
+freepops.dofile("table2xml.lua")
 
 local env = {}
 local proxy_table = env
@@ -201,11 +204,6 @@ setfenv(extractor_function,restricted_enviroment)
 plugins2xml.main = function(file)
 	plugins2xml.extractor_function(file)
 	print(table2xml.table2xml(plugin_Txml,nil,nil,false))
-end
-
--- since this can be loaded as plugin it must have at least the init function
-if init == nil then
-	_G.init = function(p) return 0 end
 end
 
 -- eof

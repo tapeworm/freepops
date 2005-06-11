@@ -1,3 +1,4 @@
+- moved -x to the new -e stuff (code cleanup in engine.c and freepops.c)
 - added some patches for BEOS (thanks Michle)
 - added -e to interpret a lua script
 - in Windows, try to automatically change the working directory if the 

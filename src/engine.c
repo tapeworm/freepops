@@ -110,86 +110,112 @@ if(strlen(ans)>1) // what if the string is empty
 free(ans);
 }
 
-//------------------------------------------------------------------------
-// starts the VM with the freepops stuff, 
-// and loads the plugin implied by username
-int bootstrap(struct popstate_t*p,lua_State* l,char* username,int loadonly){
-int rc = POPSERVER_ERR_UNKNOWN;
-
+/******************************************************************************
+ * starts the VM with the freepops stuff, if username is NULL only
+ * freepops.bootstrap is called, else freepops.init(username) and init(p).
+ */
 #define FREEPOPSLUA_FILE "freepops.lua"
-putenv("FREEPOPSLUA_PATH_UNOFFICIAL="FREEPOPSLUA_PATH_UNOFFICIAL);
-putenv("FREEPOPS_VERSION="VERSION);
 
-//FIXME 
-//putenv("FREEPOPSLUA_USER_UNOFFICIAL="FREEPOPSLUA_USER_UNOFFICIAL);
+lua_State* bootstrap(const char * username, struct popstate_t* p){
+	lua_State* l;
+	l = luabox_genbox(LUABOX_STANDARD|LUABOX_LOG|LUABOX_LUAFILESYSTEM);
+	int rc = POPSERVER_ERR_UNKNOWN;
 
-//open freepops module
-rc = luaL_loadfile(l,FREEPOPSLUA_PATH FREEPOPSLUA_FILE);
-if (rc != 0)
-	{
-	DBG("Unable to load " FREEPOPSLUA_PATH FREEPOPSLUA_FILE "\n");
-	luay_printstack(l);
-	
-	//for developing purposes
-	luay_emptystack(l);
-	rc = luaL_loadfile(l,"src/lua/" FREEPOPSLUA_FILE);
+	putenv("FREEPOPSLUA_PATH_UNOFFICIAL="FREEPOPSLUA_PATH_UNOFFICIAL);
+	putenv("FREEPOPS_VERSION="VERSION);
+
+	//FIXME 
+	//putenv("FREEPOPSLUA_USER_UNOFFICIAL="FREEPOPSLUA_USER_UNOFFICIAL);
+
+	//open freepops module
+	rc = luaL_loadfile(l,FREEPOPSLUA_PATH FREEPOPSLUA_FILE);
 	if (rc != 0)
 		{
-		DBG("Unable to load src/lua/" FREEPOPSLUA_FILE "\n");
+		DBG("Unable to load " FREEPOPSLUA_PATH FREEPOPSLUA_FILE "\n");
 		luay_printstack(l);
 		
 		//for developing purposes
 		luay_emptystack(l);
-		rc = luaL_loadfile(l,FREEPOPSLUA_FILE);
+		rc = luaL_loadfile(l,"src/lua/" FREEPOPSLUA_FILE);
 		if (rc != 0)
 			{
-			ERROR_PRINT("Unable to load " FREEPOPSLUA_FILE "\n");
+			DBG("Unable to load src/lua/" FREEPOPSLUA_FILE "\n");
 			luay_printstack(l);
-
-			//luay_printstack(l);
-			ERROR_PRINT("Unable to load " FREEPOPSLUA_FILE 
-				". Path was '" 
-				FREEPOPSLUA_PATH ":src/lua/:./'\n");
-
-			SAY("Working dir is %s\n",getenv("PWD"));
 			
-			ERROR_ABORT("Can't bootstrap without "
-				FREEPOPSLUA_FILE"\n");
+			//for developing purposes
+			luay_emptystack(l);
+			rc = luaL_loadfile(l,FREEPOPSLUA_FILE);
+			if (rc != 0)
+				{
+				ERROR_PRINT("Unable to load "
+						FREEPOPSLUA_FILE "\n");
+				luay_printstack(l);
+				ERROR_PRINT("Unable to load " FREEPOPSLUA_FILE 
+					". Path was '" 
+					FREEPOPSLUA_PATH ":src/lua/:./'\n");
+				ERROR_SAY("Working dir is %s\n",getenv("PWD"));
+				ERROR_SAY("Can't bootstrap without "
+					FREEPOPSLUA_FILE"\n");
+				lua_close(l);
+				return NULL;
+				}
+			putenv("FREEPOPSLUA_PATH=./");
 			}
-		putenv("FREEPOPSLUA_PATH=./");
+		putenv("FREEPOPSLUA_PATH=src/lua/");
+	} else	{
+		putenv("FREEPOPSLUA_PATH="FREEPOPSLUA_PATH);
+	}
+
+	rc = lua_pcall(l, 0, LUA_MULTRET, 0);
+	if (rc != 0)
+		{
+		luay_printstack(l);
+		lua_close(l);
+		return NULL;
 		}
-	putenv("FREEPOPSLUA_PATH=src/lua/");
-} else	{
-	putenv("FREEPOPSLUA_PATH="FREEPOPSLUA_PATH);
-}
 
+	luay_emptystack(l);
 
-rc = lua_pcall(l, 0, LUA_MULTRET, 0);
-if (rc != 0)
-	{
-	luay_printstack(l);
-	ERROR_ABORT("Unable to load freepops.lua\n");
+	if (username == NULL) {
+		luay_call(l, "s|d", "freepops.bootstrap", username, &rc);
+		if(rc != 0){
+			ERROR_SAY("Error calling freepops.bootstrap");
+			luay_printstack(l);
+			lua_close(l);
+			return NULL;
+		}
+		luay_emptystack(l);
+		
+		// add the missing lua stuff
+		luabox_addtobox(l,LUABOX_FREEPOPS ^ 
+				(LUABOX_LOG & LUABOX_LUAFILESYSTEM));
+		
+		luay_emptystack(l);
+	} else {
+		luay_call(l, "s|d", "freepops.init", username, &rc);
+		if(rc != 0){
+			ERROR_SAY("Error calling freepops.init('%s')",username);
+			luay_printstack(l);
+			lua_close(l);
+			return NULL;
+		}
+		luay_emptystack(l);
+		
+		// add the missing lua stuff
+		luabox_addtobox(l,LUABOX_FREEPOPS ^ 
+				(LUABOX_LOG & LUABOX_LUAFILESYSTEM));
+		
+		luay_emptystack(l);
+		
+		luay_call(l, "p|d", "init", p, &rc);	
+		if(rc != 0){
+			ERROR_SAY("Error calling init function of lua module");
+			luay_printstack(l);
+			lua_close(l);
+			return NULL;
+		}
 	}
-
-luay_emptystack(l);
-
-//open freepops standard LUA library and modules for username's domain
-luay_call(l,"sd|d","freepops.init",username,loadonly,&rc);
-if ( rc != 0)
-	{
-	ERROR_PRINT("Error calling freepops.init().\n");
-	luay_printstack(l);
-
-	return POPSERVER_ERR_UNKNOWN;
-	}
-luay_emptystack(l);
-
-luabox_addtobox(l,LUABOX_FREEPOPS ^ (LUABOX_LOG & LUABOX_LUAFILESYSTEM));
-
-//init lua module
-luay_call(l,"p|d","init",p,&rc);
-
-return rc;
+	return l;
 }
 
 /******************************************************************************/
@@ -203,16 +229,13 @@ int rc = POPSERVER_ERR_UNKNOWN;
 struct popstate_other_t * tmp = malloc(sizeof(struct popstate_other_t));	
 
 MALLOC_CHECK(tmp);
-tmp->l=luabox_genbox(LUABOX_STANDARD|LUABOX_LOG|LUABOX_LUAFILESYSTEM);
 new_popstate_other(p,assign,tmp);
 
-rc = bootstrap(p,tmp->l,username,0);
+tmp->l = bootstrap(username,p);
 
-if ( rc != POPSERVER_ERR_OK)
+if ( tmp->l == NULL)
 	{
-	ERROR_PRINT("Error calling init function  of lua module\n");
-	lua_close(tmp->l);
-	tmp->l = NULL;
+	ERROR_PRINT("Error bootstrapping\n");
 	return POPSERVER_ERR_UNKNOWN;
 	}
 

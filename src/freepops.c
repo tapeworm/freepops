@@ -69,6 +69,8 @@
 
 #define HIDDEN static
 
+#define PLUGIN2XML "plugins2xml.lua"
+
 /*** typedefs *****************************************************************/
 typedef void (*sighandler_t)(int);
 
@@ -78,10 +80,20 @@ int verbose_output=0;
 int daemonize = 0;
 char *configfile = NULL;
 char *logfile = NULL;
+char **args = NULL;
+int args_len = 0;
+
 #if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)
 uid_t uid;
 gid_t gid; 
 #endif
+
+/* extra arguement pool handling */
+HIDDEN void add_to_args(const char * arg){
+	args_len++;
+	args = realloc(args,args_len * sizeof(void*));
+	args[args_len - 1] = strdup(arg);
+}
 
 /*** usage ********************************************************************/
 #define GETOPT_STRING "-b:p:P:A:c:u:t:l:s:dhVvwknx:e:"
@@ -110,7 +122,7 @@ HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "execute",required_argument, NULL, 'e'},
 	                         { NULL, 0, NULL, 0 } };
 
-void usage(const char *progname) {
+HIDDEN void usage(const char *progname) {
 	fprintf(stderr, 
 "Usage:  %s\t[-b|--bind address] \n"
 "\t\t\t[-p|--port portnumber] \n"
@@ -141,44 +153,41 @@ void usage(const char *progname) {
 /*** WIN32 only functions *****************************************************/
 #if defined(WIN32) && !defined(CYGWIN)
 
-void win32_init(int *argc,char ***argv,LPSTR lpszCmdLine)
-{
-char *lastslash;
-  
-if(stderr != freopen("stderr.txt","w",stderr)) 
-	fprintf(stderr,"Unable to redirect stderr\n");
+HIDDEN void win32_init(int *argc,char ***argv,LPSTR lpszCmdLine) {
+	char *lastslash;
+	  
+	if(stderr != freopen("stderr.txt","w",stderr)) 
+		fprintf(stderr,"Unable to redirect stderr\n");
 
-if(stdout != freopen("stdout.txt","w",stdout)) 
-	fprintf(stderr,"Unable to redirect stdout\n");		
-*argc = parse_commandline(argv, lpszCmdLine);
+	if(stdout != freopen("stdout.txt","w",stdout)) 
+		fprintf(stderr,"Unable to redirect stdout\n");		
+	*argc = parse_commandline(argv, lpszCmdLine);
 
-/* Try to change working directory if command line provides a path */
-if ((lastslash = strrchr((*argv)[0], '\\')) != NULL) {
-	char *dir;
-	int length = lastslash - (*argv)[0] + 2;
-	if (length <= MAX_PATH &&
-	    (dir = (char *)calloc(length, sizeof(char))) != NULL) {
-		strncpy(dir, (*argv)[0], length - 1);
-		dir[length - 1] = '\0';
-		SetCurrentDirectory(dir);
-		free(dir);
+	/* Try to change working directory if command line provides a path */
+	if ((lastslash = strrchr((*argv)[0], '\\')) != NULL) {
+		char *dir;
+		int length = lastslash - (*argv)[0] + 2;
+		if (length <= MAX_PATH &&
+		    (dir = (char *)calloc(length, sizeof(char))) != NULL) {
+			strncpy(dir, (*argv)[0], length - 1);
+			dir[length - 1] = '\0';
+			SetCurrentDirectory(dir);
+			free(dir);
+		}
 	}
+
+	sockinit();
 }
 
-sockinit();
-}
-
-void win32_exit()
-{
-fclose(stdout);
-fclose(stderr);
+HIDDEN void win32_exit(){
+	fclose(stdout);
+	fclose(stderr);
 }
 #endif
 
 /*** unix only functions ******************************************************/
 #if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)
-int *sighandler(int sig)
-{
+HIDDEN int *sighandler(int sig){
 	if (sig == SIGINT || sig == SIGTERM) {
 		remove_pid_file();
 		SAY("%s killed by %d\n\n",PROGRAMNAME,sig);
@@ -191,243 +200,213 @@ int *sighandler(int sig)
 	return 0;
 }
 
-void daemonize_process()
-{
-if(fork()!=0)
-	{
-	exit(0);
-	}
-
-setsid();
-
-setpgid(0, 0);
-
-close(0);
-if(logfile != NULL && !strcmp(logfile,"stdout") && verbose_output != 0)
-	{
-	SAY("Can't log to %s and daemonize!\n",logfile);
-	ERROR_ABORT("Bailing out!\n");
-	}
-close(1);
-close(2);
-}
-
-int loose_rights(uid_t set_uid,gid_t set_gid)
-{
-int rc=0;
-
-rc = setegid(set_gid);
-if(rc == -1)
-	{
-	SAY("Unable to setegid(%d)",set_gid);
-	return 1;	
-	}
-
-rc = seteuid(set_uid);
-if(rc == -1)
-	{
-	SAY("Unable to seteuid(%d)",set_uid);
-	return 1;	
-	}
-
-rc = setregid(getegid(),getegid());
-if(rc == -1)
-	{
-	SAY("Unable to setregid(%d)",getegid(),getegid());
-	return 1;	
-	}
-
-rc = setreuid(geteuid(),geteuid());
-if(rc == -1)
-	{
-	SAY("Unable to setreuid(%d,%d)",geteuid(),geteuid());
-	return 1;	
-	}
-
-return rc;
-}
-
-void set_signals()
-{
-// signal for ctrl+c 	
-signal(SIGINT,  (sighandler_t) sighandler);
-// signal for debian start-stop-daemon
-signal(SIGTERM, (sighandler_t) sighandler);
-
-//probably needed only by MACOSX and FreeBSD systems
-signal(SIGPIPE,SIG_IGN);
-}
-
-void parse_suid(const char* optarg)
-{
-int rc;
-
-if(optarg == NULL)
-	fprintf(stderr,"%s : %s : %d : optarg cant be NULL\n"
-		,__FILE__,__FUNCTION__,__LINE__);
-
-//fprintf(stderr,"optarg = ^%s$\n",optarg);
-
-if( (rc = regfind_start(optarg,"^[A-Za-z_]+\\.[A-Za-z_]+$")) != -1 )
-	{
-	//alphabetic form
-	struct passwd *pw;
-	struct group *gr;
-	char *tmp = strdup(optarg);
-
-	rc = regfind_end(tmp,"^[A-Za-z_]+\\.");
-	rc--;
-
-	tmp[rc] = '\0';
-	pw = getpwnam(tmp);
-	if(pw == NULL)
+HIDDEN void daemonize_process(){
+	if(fork()!=0)
 		{
-		fprintf(stderr,"Unable to getpwnam(\"%s\")\n",tmp);
-		goto error;
+		exit(0);
 		}
-	uid = pw->pw_uid;
 
-	rc++;
-	gr = getgrnam(&tmp[rc]);
-	if(gr == NULL)
+	setsid();
+
+	setpgid(0, 0);
+
+	close(0);
+	if(logfile != NULL && !strcmp(logfile,"stdout") && verbose_output != 0)
 		{
-		fprintf(stderr,"Unable to getgrnam(\"%s\")\n",&tmp[rc]);
-		goto error;
+		SAY("Can't log to %s and daemonize!\n",logfile);
+		ERROR_ABORT("Bailing out!\n");
 		}
-	gid = gr->gr_gid;
+	close(1);
+	close(2);
+}
 
-	//fprintf(stderr,"uid = %d gid = %d\n",uid,gid);
-	
-	free(tmp);
-	}
-else if ( (rc = regfind_start(optarg,"^[0-9]+\\.[0-9]+$")) != -1 )
-	{
-	//numeric form
-	char *tmp = strdup(optarg);
+HIDDEN int loose_rights(uid_t set_uid,gid_t set_gid){
+	int rc=0;
 
-	rc = regfind_end(tmp,"^[0-9]+\\.");
-	rc--;
+	rc = setegid(set_gid);
+	if(rc == -1)
+		{
+		SAY("Unable to setegid(%d)",set_gid);
+		return 1;	
+		}
 
-	tmp[rc] = '\0';
-	uid = strtol(tmp,NULL,10);
-	if(errno == ERANGE)
-		goto error;			
-	//printf("-> ^%s$\n",tmp);
+	rc = seteuid(set_uid);
+	if(rc == -1)
+		{
+		SAY("Unable to seteuid(%d)",set_uid);
+		return 1;	
+		}
 
-	rc++;
-	gid = strtol(&tmp[rc],NULL,10);
-	if(errno == ERANGE)
-		goto error;	
-	//printf("-> ^%s$\n",&tmp[rc]);
-	
-	//fprintf(stderr,"uid = %d gid = %d\n",uid,gid);
-	
-	free(tmp);	
-	}
-else
-	goto error;
+	rc = setregid(getegid(),getegid());
+	if(rc == -1)
+		{
+		SAY("Unable to setregid(%d)",getegid(),getegid());
+		return 1;	
+		}
 
-return;
+	rc = setreuid(geteuid(),geteuid());
+	if(rc == -1)
+		{
+		SAY("Unable to setreuid(%d,%d)",geteuid(),geteuid());
+		return 1;	
+		}
 
-error:
-	fprintf(stderr,"Invalid parameter for -s --suid.\n");
-	fprintf(stderr,"usage: -s username.group\n");
-	perror("bailing out");
-	exit(1);	
+	return rc;
+}
 
+HIDDEN void set_signals(){
+	// signal for ctrl+c 	
+	signal(SIGINT,  (sighandler_t) sighandler);
+	// signal for debian start-stop-daemon
+	signal(SIGTERM, (sighandler_t) sighandler);
+
+	//probably needed only by MACOSX and FreeBSD systems
+	signal(SIGPIPE,SIG_IGN);
+}
+
+HIDDEN void parse_suid(const char* optarg){
+	int rc;
+
+	if(optarg == NULL)
+		fprintf(stderr,"%s : %s : %d : optarg cant be NULL\n"
+			,__FILE__,__FUNCTION__,__LINE__);
+
+	//fprintf(stderr,"optarg = ^%s$\n",optarg);
+
+	if( (rc = regfind_start(optarg,"^[A-Za-z_]+\\.[A-Za-z_]+$")) != -1 )
+		{
+		//alphabetic form
+		struct passwd *pw;
+		struct group *gr;
+		char *tmp = strdup(optarg);
+
+		rc = regfind_end(tmp,"^[A-Za-z_]+\\.");
+		rc--;
+
+		tmp[rc] = '\0';
+		pw = getpwnam(tmp);
+		if(pw == NULL)
+			{
+			fprintf(stderr,"Unable to getpwnam(\"%s\")\n",tmp);
+			goto error;
+			}
+		uid = pw->pw_uid;
+
+		rc++;
+		gr = getgrnam(&tmp[rc]);
+		if(gr == NULL)
+			{
+			fprintf(stderr,"Unable to getgrnam(\"%s\")\n",&tmp[rc]);
+			goto error;
+			}
+		gid = gr->gr_gid;
+
+		//fprintf(stderr,"uid = %d gid = %d\n",uid,gid);
+		
+		free(tmp);
+		}
+	else if ( (rc = regfind_start(optarg,"^[0-9]+\\.[0-9]+$")) != -1 )
+		{
+		//numeric form
+		char *tmp = strdup(optarg);
+
+		rc = regfind_end(tmp,"^[0-9]+\\.");
+		rc--;
+
+		tmp[rc] = '\0';
+		uid = strtol(tmp,NULL,10);
+		if(errno == ERANGE)
+			goto error;			
+		//printf("-> ^%s$\n",tmp);
+
+		rc++;
+		gid = strtol(&tmp[rc],NULL,10);
+		if(errno == ERANGE)
+			goto error;	
+		//printf("-> ^%s$\n",&tmp[rc]);
+		
+		//fprintf(stderr,"uid = %d gid = %d\n",uid,gid);
+		
+		free(tmp);	
+		}
+	else
+		goto error;
+
+	return;
+
+	error:
+		fprintf(stderr,"Invalid parameter for -s --suid.\n");
+		fprintf(stderr,"usage: -s username.group\n");
+		perror("bailing out");
+		exit(1);	
 }
 
 #endif
 
 
 /*** helpers ******************************************************************/
-void start_logging(char* logfile,int verbosity)
-{
-log_set_verbosity(verbosity);
-LOG_INIT(logfile,verbose_output == 1);
-SAY("freepops started with loglevel %d on a %s machine.\n",verbosity,
-	((unsigned short)1 != htons(1))?"little endian":"big endian");
+HIDDEN void start_logging(char* logfile,int verbosity) {
+	log_set_verbosity(verbosity);
+	LOG_INIT(logfile,verbose_output == 1);
+	SAY("freepops started with loglevel %d on a %s machine.\n",verbosity,
+		((unsigned short)1 != htons(1))?"little endian":"big endian");
 }
 
-void my_putenv(const char* a, const char* b)
-{
-char * tmp = calloc(1024,sizeof(char));
+HIDDEN void my_putenv(const char* a, const char* b) {
+	char * tmp = calloc(1024,sizeof(char));
 
-if(b == NULL)
-	return;
+	if(b == NULL)
+		return;
 
-snprintf(tmp,1024,"%s=%s",a,b);
+	snprintf(tmp,1024,"%s=%s",a,b);
 
-/* on some system this is not a proper leak since tmp is used (not copyed)
- * in the environment.
- *
- * valgrind says this is the correct thing to do, so I prefer calling this
- * memory leak function only in the main, outside loops. so, even memory is
- * "lost" it is not a memory leak.
- */
-putenv(tmp);
+	/* on some system this is not a proper leak since tmp is used (not
+	 * copyed) in the environment.
+	 *
+	 * valgrind says this is the correct thing to do, so I prefer calling
+	 * this memory leak function only in the main, outside loops. so, even
+	 * memory is "lost" it is not a memory leak.
+	 */
+	putenv(tmp);
 }
 
-// FIXME: should be removed. we should use the -e --execute code and 
-// change a bit the plugins2xml.lua code
-static int generate_xml(char* filename) {
-char username[] = "foo@plugins2xml.lua";
-lua_State* l;
-start_logging(strdup(LOGFILE),0);
-l = luabox_genbox(LUABOX_FULL);
-bootstrap(NULL,l,username,1);
+/*** LUA INTERPRETER BOOTSTRAPPING (for using FP as luafull) *****************/
 
-#ifdef WIN32
-	{
-	int len = strlen(filename) + 5;
-	char *outname = calloc(len,sizeof(char));
-	if ( outname == NULL) {
-		fprintf(stderr,"Unable to malloc\n");
+/* start the interpreter */
+HIDDEN int execute(const char* scriptfile, const char* stdoutname){
+	int rc, e;
+	
+	// boot
+	lua_State* l = bootstrap(NULL,NULL);
+	if(l == NULL){
+		ERROR_SAY("Unable to bootstrap\n");
+		return -1;
 	}
 	
-	snprintf(outname,len,"%s.xml",filename);
-	if(stdout != freopen(outname,"w",stdout)) 
-		fprintf(stderr,"Unable to redirect stdout to %s\n",outname);	
+	// load the script 
+	e = luay_call(l, "s|b", "freepops.dofile", scriptfile, &rc);
+	if(!rc || e){
+		ERROR_SAY("Unable to load %s\n",scriptfile);
+		return -1;
 	}
-#endif
-
-luay_call(l,"s","plugins2xml.main",filename);
-lua_close(l);
-
-#ifdef WIN32
-fclose(stdout);
-#endif
-
-return 0;
-}
-
-
-char **args = NULL;
-int args_len = 0;
-void add_to_args(const char * arg){
-	args_len++;
-	args = realloc(args,args_len * sizeof(void*));
-	args[args_len - 1] = strdup(arg);
-}
-
-int execute(char* scriptfile){
-	int rc;
-	lua_State* l;
-	start_logging(strdup(LOGFILE),0);
-	l = luabox_genbox(LUABOX_FULL);
-	rc = luaL_loadfile(l,scriptfile);
-	if(rc != 0) {
-		luay_printstack(l);
-		ERROR_ABORT("Unable to open script file");	
-	}
-	rc = lua_pcall(l, 0, LUA_MULTRET, 0);
-	if (rc != 0)
-		{
-		luay_printstack(l);
-		ERROR_ABORT("Unable to load script file\n");
+	
+	// begin redirection
+	if (stdoutname != NULL) {
+		if(stdout != freopen(stdoutname,"w",stdout)) {
+			fprintf(stderr,"Unable to redirect stdout to %s\n",
+					stdoutname);	
 		}
-	luay_emptystack(l);
-	luay_callv(l, "|d", "main", args, args_len , &rc);
+	}
+	
+	// main 
+	e = luay_callv(l, "|d", "main", args, args_len , &rc);
+	if (e) 
+		return e;
+	// end redirection 
+	if (stdoutname != NULL) {
+		fclose(stdout);
+	}
+	
 	return rc;
 }
 
@@ -444,7 +423,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	unsigned short port = POP3PORT;
 	struct in_addr address;
 	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL, *fpat = NULL;
-	char *script = NULL;
+	char *script = NULL, *execute_stdout = NULL;
 
 #if defined(WIN32)	
 	int tray_icon = 1;
@@ -563,9 +542,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			daemonize = 1;
 			free(logfile);
 			logfile = NULL; 
-		} else if (res == 'x') {
-			/* toxml */
-			exit(generate_xml(optarg));
 		} else if (res == 'w') {
 			/* --veryverbose */
 			verbose_output+=2;
@@ -610,21 +586,36 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			/* --no-pid-file */
 			no_pid = 1;
 	#endif			
+		} else if (res == 'x') {
+			/* --toxml */
+		#ifdef WIN32
+			int len = strlen(optarg) + 5;
+			char *outname = calloc(len,sizeof(char));
+			if ( outname == NULL) {
+				fprintf(stderr,"Unable to malloc\n");
+				exit(1);
+			}
+			snprintf(outname,len,"%s.xml",optarg);
+			free(execute_stdout);
+			execute_stdout=outname;
+		#endif			
+			free(script);
+			script=strdup(PLUGIN2XML);
+			add_to_args(optarg);
 		} else if (res == 'e'){
+			/* --execute */
 			free(script);
 			script=strdup(optarg);
+			free(execute_stdout);
+			execute_stdout=NULL;
 		} else if (res == 1){
 			/* extra arguments */
 			add_to_args(optarg);
 		} else {
+			/* unknown param */
 			usage(argv[0]);
 			exit(1);
 		}
-	}
-	
-/*** INTERPRETER MODE ***/
-	if (script != NULL){
-		exit(execute(script));
 	}
 	
 /*** INITIALIZATION ALL ***/
@@ -640,6 +631,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	my_putenv("LUA_HTTP_PROXY",proxy);
 	my_putenv("LUA_HTTP_PROXYAUTH",proxyauth);
 	my_putenv("LUA_FORCE_PROXY_AUTH_TYPE",fpat);
+	
+/*** INTERPRETER MODE ***/
+	if (script != NULL){
+		exit(execute(script,execute_stdout));
+	}
 	
 /*** INITIALIZATION UNIX ***/
 #if !(defined(WIN32) && !defined(CYGWIN)) && ! defined(BEOS)

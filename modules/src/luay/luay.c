@@ -21,6 +21,9 @@
 
 #define LINE_PREFIX "LUAY: "
 
+// uncomment for debugging C calls of LUA functions
+// #define PRINT_FUNCTIONS
+
 int luay_printtrace(lua_State* s)
 {
 lua_Debug d;
@@ -92,6 +95,12 @@ fflush(stderr);
 switch(x)\
 	{\
 	\
+	case 'b':\
+		{\
+		int d = va_arg(vargs,int);\
+		lua_pushboolean(s,(lua_Number)d);\
+		}\
+	break;\
 	case 'd':\
 		{\
 		int d = va_arg(vargs,int);\
@@ -130,6 +139,12 @@ switch(x)\
 #define luay_poparg(s,x,vargs) {\
 switch(x)\
 	{\
+	case 'b':\
+		{\
+		int* d = va_arg(vargs,int*);\
+		*d = (int)lua_toboolean(s,base+1);\
+		}\
+	break;\
 	case 'd':\
 		{\
 		int* d = va_arg(vargs,int*);\
@@ -249,6 +264,10 @@ else
 	nret = 0;
 
 //call the function
+#ifdef PRINT_FUNCTIONS
+	fprintf(stderr,"%scalling: %s\n", LINE_PREFIX, funcname);
+	luay_printstack(s);
+#endif
 rc = lua_pcall(s,i,nret,base);
 if(rc != 0)
 	{
@@ -297,6 +316,10 @@ for(i = 0 ; i<len ; i++)
 nret = strlen(&args[i]) -1;
 
 //call the function
+#ifdef PRINT_FUNCTIONS
+	fprintf(stderr,"%scalling: %s\n", LINE_PREFIX, funcname);
+	luay_printstack(s);
+#endif
 rc = lua_pcall(s,1,nret,base);
 if(rc != 0)
 	{

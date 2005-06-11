@@ -29,11 +29,14 @@
 extern struct popserver_functions_t freepops_functions;
 
 /**
- * \brief Use this to launch custom modules
+ * \brief Use this to bootstrap a LUA VM
+ *
+ * Starts the VM with the freepops stuff, if username is NULL only
+ * freepops.bootstrap is called, else freepops.init(username) and init(p).
  *
  * should be put in another module I think
  */ 
-extern void bootstrap(struct popstate_t*p,lua_State* l,char* username,int loadonly);
+extern lua_State* bootstrap(char* username, struct popstate_t*p);
 
 #endif
 

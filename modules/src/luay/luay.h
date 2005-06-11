@@ -43,6 +43,15 @@
  */ 
 int luay_call(lua_State* s,const char *args,const char *funcname,...);
 
+/*!
+ * \brief as before but the input is a char* array.
+ *
+ * The output is arbitrary as described in args that should omit every input.
+ *
+ */ 
+int luay_callv(lua_State* s,const char *args,const char *funcname,
+		char**argv, int len, ...);
+
 /*! \brief pops all the stak's elements
  *
  */ 

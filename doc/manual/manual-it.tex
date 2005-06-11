@@ -232,6 +232,12 @@ il bind. Se lanciato da utente normale non serve questa opzione.
 \emph{(Non usato in Windows)}
 \item [-x~pluginfile,~-\hspace{1mm}-toxml~pluginfile]
 Stampa la descrizione in XML del plugin sullo standard output.
+\item [-e~scriptfile~args...,~-\hspace{1mm}-execute~scriptfile~args...]
+Esegue lo script in un interprete LUA dotato di tutte le librerie che
+usa FreePOPs. Lo script deve definire una funzione main che prende in
+input una table di stringhe (i parametri passati a freepopd dopo il
+nome dello script) e deve ritornare un intero (che verr\`a poi
+ritornato dall'interprete.
 \item [-\hspace{1mm}-fpat~authtype,~-\hspace{1mm}-force-proxy-auth-type~authtype]
 Per forzare l'utilizzo di un determinato metodo di autenticazione per
 il proxy.

@@ -79,6 +79,12 @@ fprintf(stderr,"%sstack( 0) : --bottom--\n\n",LINE_PREFIX);
 fflush(stderr);
 }
 
+
+#define VARDECL \
+	int i,nret,rc,base;\
+	char* c;\
+	va_list vargs;
+
 /*! \brief used in lualp_call
  *
  */ 
@@ -173,6 +179,33 @@ switch(x)\
 lua_remove(s,base+1);\
 }\
 
+#define PREAMBLE \
+	lua_pushcfunction(s,luay_printtrace);\
+	base = lua_gettop(s);\
+	lua_pushstring(s,"_G");\
+	lua_gettable(s,LUA_GLOBALSINDEX);\
+	c = (char*)funcname;\
+	while(c != NULL)\
+		{\
+		i = find_member_len(c);\
+		if(i > 0)\
+			{\
+			lua_pushlstring(s,c,i);\
+			lua_rawget(s,base+1);\
+			lua_remove(s,base+1);\
+			c = find_next_member(c);\
+			}\
+		}
+
+#define ERROR_HANDLER \
+	error:\
+	fprintf(stderr,\
+		"%s: %d: ERROR: args='%s' funcname='%s' i='%d' args[i]='%c'\n",\
+		__FILE__,__LINE__,args,funcname,i,args[i]);\
+	fflush(stderr);\
+	luay_printstack(s);\
+	return 1;
+
 static char * find_next_member(char* s)
 {
 //find a .
@@ -199,31 +232,8 @@ return i;
 
 int luay_call(lua_State* s,const char *args,const char *funcname,...)
 {
-int i,nret,rc,base;
-char* c;
-va_list vargs;
-
-lua_pushcfunction(s,luay_printtrace);
-base = lua_gettop(s);
-
-// put the function on the stack
-lua_pushstring(s,"_G");
-lua_gettable(s,LUA_GLOBALSINDEX);
-c = (char*)funcname;
-while(c != NULL)
-	{
-	i = find_member_len(c);
-	if(i > 0)
-		{
-		lua_pushlstring(s,c,i);
-		
-		lua_rawget(s,base+1);
-		
-		lua_remove(s,base+1);
-		
-		c = find_next_member(c);
-		}
-	}
+VARDECL
+PREAMBLE
 
 // put parameters
 va_start(vargs,funcname);
@@ -258,12 +268,54 @@ lua_remove(s,base);
 va_end(vargs);
 return 0;
 
-error:
-	fprintf(stderr,
-		"%s: %d: ERROR: args='%s' funcname='%s' i='%d' args[i]='%c'\n",
-		__FILE__,__LINE__,args,funcname,i,args[i]);
-	fflush(stderr);
-	luay_printstack(s);
-	return 1;
+ERROR_HANDLER
 }
 
+
+int luay_callv(lua_State* s,const char *args,const char *funcname,
+		char**argv, int len, ...)
+{
+VARDECL
+
+if(args[0] != '|') 
+	{
+	fprintf(stderr,"luay_callv input args must contain no input\n");
+	return 1;
+	}
+
+PREAMBLE
+
+// put parameters
+lua_newtable(s);
+for(i = 0 ; i<len ; i++)
+	{
+	lua_pushstring(s,argv[i]);
+	lua_rawseti(s,-2,i+1);
+	}
+
+// count return values
+nret = strlen(&args[i]) -1;
+
+//call the function
+rc = lua_pcall(s,1,nret,base);
+if(rc != 0)
+	{
+	return 1;
+	}
+
+// pop returns
+va_start(vargs,len);
+if(nret > 0)
+	for(i=1;args[i] != '\0';i++)
+		{
+		luay_poparg(s,args[i],vargs);
+		}
+
+// empty the stack (needed for the c function)
+lua_remove(s,base);
+
+va_end(vargs);
+return 0;
+
+ERROR_HANDLER
+}

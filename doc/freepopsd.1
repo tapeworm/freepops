@@ -81,6 +81,13 @@ Kills a running freepopsd.
 \fB \-x \fRpluginfile, \fB\-\-toxml \fRpluginfile
 Prints on standard output the XML description of the plugin.
 .TP
+\fB \-e \fRscriptfile [args...], \fB\-\-execute \fRscriptfile [args...]
+This is a full bloated LUA interpreter, the executed script has access to all
+freepops libraries.  The interpreter calls the main function that must get a
+table of strings and return an integer. The arguments passed to freepopsd after
+the script file name are putted inside the table argument.  The return value is
+returned from the interpreter. 
+.TP
 \fB \-\-fpat \fIauthtype\fR, \fB\-\-force\-proxy\-auth\-type \fIauthtype
 Force the use of a specific proxy auth method. Accepted types are
 \fIbasic\fR, \fIdigest\fR, \fIntlm\fR and \fIgss\fR.

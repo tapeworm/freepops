@@ -1,3 +1,4 @@
+- added -e to interpret a lua script
 - in Windows, try to automatically change the working directory if the 
 command line provides some kind of path
 - fixed some stuff for debian

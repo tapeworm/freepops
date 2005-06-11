@@ -59,6 +59,8 @@
 #include "lua.h"
 #include "luay.h"
 #include "luabox.h"
+#include "lauxlib.h"
+#include "luay.h"
 
 #include "log.h"
 #define LOG_ZONE "INTERNAL"
@@ -82,7 +84,7 @@ gid_t gid;
 #endif
 
 /*** usage ********************************************************************/
-#define GETOPT_STRING "b:p:P:A:c:u:t:l:s:dhVvwknx:"
+#define GETOPT_STRING "-b:p:P:A:c:u:t:l:s:dhVvwknx:e:"
 HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "port", required_argument, NULL, 'p' },
 				 { "proxy", required_argument, NULL, 'P' },
@@ -105,6 +107,7 @@ HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "fpat", 
 					 required_argument, NULL, 1000 },
 				 { "no-icon",no_argument, NULL, 1001},
+				 { "execute",required_argument, NULL, 'e'},
 	                         { NULL, 0, NULL, 0 } };
 
 void usage(const char *progname) {
@@ -121,6 +124,7 @@ void usage(const char *progname) {
 "\t\t\t[-d|--daemonize]\n"
 "\t\t\t[-l|--logmode (syslog|filename|stdout)]\n"
 "\t\t\t[-x|--toxml pluginfile]\n"
+"\t\t\t[-e|--execute scriptfile [args...]]\n"
 "\t\t\t[--fpat|--force-proxy-auth-type (basic|digest|ntlm|gss)]\n"
 #if defined(WIN32)
 "\t\t\t[--no-icon]\n"
@@ -364,6 +368,8 @@ snprintf(tmp,1024,"%s=%s",a,b);
 putenv(tmp);
 }
 
+// FIXME: should be removed. we should use the -e --execute code and 
+// change a bit the plugins2xml.lua code
 static int generate_xml(char* filename) {
 char username[] = "foo@plugins2xml.lua";
 lua_State* l;
@@ -395,6 +401,36 @@ fclose(stdout);
 return 0;
 }
 
+
+char **args = NULL;
+int args_len = 0;
+void add_to_args(const char * arg){
+	args_len++;
+	args = realloc(args,args_len * sizeof(void*));
+	args[args_len - 1] = strdup(arg);
+}
+
+int execute(char* scriptfile){
+	int rc;
+	lua_State* l;
+	start_logging(strdup(LOGFILE),0);
+	l = luabox_genbox(LUABOX_FULL);
+	rc = luaL_loadfile(l,scriptfile);
+	if(rc != 0) {
+		luay_printstack(l);
+		ERROR_ABORT("Unable to open script file");	
+	}
+	rc = lua_pcall(l, 0, LUA_MULTRET, 0);
+	if (rc != 0)
+		{
+		luay_printstack(l);
+		ERROR_ABORT("Unable to load script file\n");
+		}
+	luay_emptystack(l);
+	luay_callv(l, "|d", "main", args, args_len , &rc);
+	return rc;
+}
+
 /*** THE MAIN HAS YOU *********************************************************/
 
 #if !(defined(WIN32) && !defined(CYGWIN))
@@ -408,6 +444,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	unsigned short port = POP3PORT;
 	struct in_addr address;
 	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL, *fpat = NULL;
+	char *script = NULL;
 
 #if defined(WIN32)	
 	int tray_icon = 1;
@@ -573,10 +610,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			/* --no-pid-file */
 			no_pid = 1;
 	#endif			
+		} else if (res == 'e'){
+			free(script);
+			script=strdup(optarg);
+		} else if (res == 1){
+			/* extra arguments */
+			add_to_args(optarg);
 		} else {
 			usage(argv[0]);
 			exit(1);
 		}
+	}
+	
+/*** INTERPRETER MODE ***/
+	if (script != NULL){
+		exit(execute(script));
 	}
 	
 /*** INITIALIZATION ALL ***/

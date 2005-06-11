@@ -224,6 +224,12 @@ user there is no need to use this option. \emph{(Not used under Windows)}
 \emph{(Not used under Windows)}
 \item [-x~pluginfile,~-\hspace{1mm}-toxml~pluginfile]Prints on standard
 output the XML description of the plugin.
+\item [-e~scriptfile~args...,~-\hspace{1mm}-execute~scriptfile~args...]
+This is a full bloated LUA interpreter, the executed script has access to all
+freepops libraries.  The interpreter calls the main function that must get a
+table of strings and return an integer. The arguments passed to freepopsd after
+the script file name are putted inside the table argument.  The return value is
+returned from the interpreter. 
 \item [-\hspace{1mm}-fpat~authtype,~-\hspace{1mm}-force-proxy-auth-type~authtype]
 To forse a specific proxy auth method.
 Accepted values are: ntlm, basic, digest e gss.

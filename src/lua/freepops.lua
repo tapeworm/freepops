@@ -295,48 +295,47 @@ end
 freepops.__dofile = dofile
 dofile = freepops.dofile
 
--- load a shared library with freepops.MODULES_PREFIX path
+-- load a shared library (or even a .lua file) with freepops.MODULES_PREFIX path
+-- check if the file has been already loaded
 freepops.loadlib = function (file,fname)
-	local got = nil
-	local try_do = function (index,path)
-		local f,_ = io.open(path..file,"r")
-		if f ~= nil then
-			io.close(f)
-			local g,err = freepops.__loadlib(path..file,fname)
-			if not g then
-				log.error_print(path..file..": "..err.."\n")
-				return nil
-			else
-				g()
-				got = 1
-				return 0 -- stop looping
-			end
-		else
-			return nil -- continue looping
-		end
-	end
-	local function foo() end
 	-- check if already loaded
-	if freepops.SO[file] then
-		return foo
+	if freepops.SO[file] ~= nil then
+		return function() end 
 	end
-	-- load it
-	table.foreach(freepops.MODULES_PREFIX,try_do)
+	
+	local got = freepops.find(file)
+	
 	-- check result
-	if not got then
+	if got == nil then
 		log.error_print(string.format("Unable to load '%s'\n",file))
 		log.error_print(string.format("Path is '%s'\n",
 			table.concat(freepops.MODULES_PREFIX,":")))
 		return nil
 	else
-		freepops.SO[file] = 1	
-		return foo
+		local x,_ = string.find(file, "%.lua$")
+		local g, err = nil, nil
+		
+		if x ~= nil then
+			-- we are loading a .lua file
+			g, err = freepops.__loadfile(got)
+		else
+			g, err = freepops.__loadlib(got, fname)
+		end
+		if not g then
+			log.error_print(got..": "..err.."\n")
+			return nil
+		else
+			freepops.SO[file] = true
+			return g
+		end
 	end
 end
 
 -- prevent using the real loadlib
 freepops.__loadlib = loadlib
 loadlib = freepops.loadlib
+freepops.__loadfile = loadfile
+loadfile = freepops.loadlib
 
 -- load needed module for handling domain
 freepops.load_module_for = function (mailaddress,loadonly)
@@ -431,12 +430,10 @@ freepops.load_module_for = function (mailaddress,loadonly)
 	
 end
 
--- checks if this FreePOPs version is enough for the plugin
-freepops.enough_new = function(plugin_version_string)
-	local fp_version_string = os.getenv("FREEPOPS_VERSION")
+freepops.is_version_ge = function(version1, version2)
 	local match = "(%d+)%.(%d+)%.(%d+)"
-	local _,_,fp_x,fp_y,fp_z = string.find(fp_version_string,match)
-	local _,_,p_x,p_y,p_z = string.find(plugin_version_string,match)
+	local _,_,fp_x,fp_y,fp_z = string.find(version1, match)
+	local _,_,p_x,p_y,p_z = string.find(version2, match)
 	if fp_x == nil or fp_y == nil or fp_z == nil then
 		log.error_print("Wrong FreePOPs version string format")
 		return false
@@ -455,6 +452,13 @@ freepops.enough_new = function(plugin_version_string)
 	   tonumber(fp_z) >= tonumber(p_z) then return true end
 
 	return false
+end
+
+-- checks if this FreePOPs version is enough for the plugin
+freepops.enough_new = function(plugin_version_string)
+	local fp_version_string = os.getenv("FREEPOPS_VERSION")
+	return freepops.is_version_ge(fp_version_string, 
+						plugin_version_string)
 end
 
 -- makes tab members globals
@@ -578,7 +582,7 @@ local function load_config()
 	}
 
 	local try_load = function (_,p)
-		local h = loadfile(p .. "config.lua")
+		local h = freepops.__loadfile(p .. "config.lua")
 		if h ~= nil then 
 			h() 
 			return true

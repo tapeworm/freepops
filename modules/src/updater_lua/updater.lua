@@ -1,3 +1,8 @@
+assert(freepops.loadlib("browser.lua"))()
+assert(freepops.loadlib("xml2table.lua"))()
+assert(freepops.loadlib("table2xml.lua"))()
+assert(freepops.loadlib("plugins2xml.lua"))() 
+
 b = nil
 FP = "http://www.freepops.org/"
 
@@ -24,7 +29,6 @@ end
 function get_online_versions(plugins)
 	local v = {}
 	table.foreach(plugins,function(_,name)
-		log.dbg("working on " .. name .. "...\n")
 		local xml = download_xml(name)
 		local txml = xml2table.xml2table(xml)
 		local version = txml.version._content
@@ -37,16 +41,8 @@ end
 function get_local_versions(plugins)
 	local v = {}
 	table.foreach(plugins,function(_,name)
-		log.dbg("working on " .. name .. "...\n")
 		local file = freepops.find(name)
-		local txml = plugins2xml.extractor_function(file)
-		-- this round trip is necessari to have a Txml with 
-		-- metamethods (clever lookup on sons). the Txml built from
-		-- plugins2xml.extractor_function is not a real txml (but can
-		-- be printed since table2xml doesn't relay on metamethods
-		-- (that are only for human beings
-		local xml = table2xml.table2xml(txml,nil,nil,false)
-		local txml = xml2table.xml2table(xml)
+		local txml = plugins2xml.extract(file)
 		local version = txml.version._content
 		local require_version = txml.require_version._content
 		v[name] = {version = version, require_version = require_version}
@@ -55,11 +51,6 @@ function get_local_versions(plugins)
 end
 
 function main(plugins)
-	-- this should be loaded here (to not redefine main)
-	freepops.dofile("browser.lua")
-	freepops.dofile("xml2table.lua")
-	freepops.dofile("table2xml.lua")
-	freepops.dofile("plugins2xml.lua") 
 	b = browser.new()
 --	b:verbose_mode()
 	
@@ -67,18 +58,22 @@ function main(plugins)
 		plugins = fetchlist("official")
 	end
 	local versions = get_online_versions(plugins)
-	print("Verions available online are:")
-	table.foreach(versions, function(name,v)
-		print("  " .. name .. " " .. v.version .. 
-			" requires FreePOPs " .. v.require_version)
-	end)
 	local old_versions = get_local_versions(plugins)
-	print("Verions available locally are:")
-	table.foreach(old_versions, function(name,v)
-		print("  " .. name .. " " .. v.version .. 
-			" requires FreePOPs " .. v.require_version)
-	end)
 	
+	table.foreach(old_versions, function(name,v)
+		local avail = versions[name] or {}
+		local version = avail.version or ""
+		log.dbg("For " .. name .. " " .. v.version .. " >= " .. version)
+		if not freepops.is_version_ge(v.version, version) then
+			-- new version available
+			local new = freepops.enough_new(avail.require_version)
+			if not new then
+				print(name, "is upgradable (new core needed)")
+			else
+				print(name, "is upgradable")
+			end
+		end
+	end)
 	
 	return 0
 end

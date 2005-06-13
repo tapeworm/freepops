@@ -33,7 +33,8 @@ MK_TEMPLATE=	luabind \
 		httpmail_lua	\
 		plugins2xml_lua	\
 		crypto_lua	\
-		updater_lua
+		updater_lua	\
+		version_comparer_lua
 
 MK_TEMPL_CTRIB=	lua \
 		pthread \

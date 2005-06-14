@@ -46,7 +46,8 @@ Ci&ograve; &egrave; molto utile se non vuoi sfogliare l' intero
 sito web per leggere le news.
 Per usare questo plugin dovete avere un nome utente con il dominio @flatnuke
 (es.: qualcosa@flatnuke) e l'URL di una homepage flatnuke come password
-(es.: http://flatnuke.sourceforge.net/, non c'è bisogno di URL di file RSS
+(es.: http://flatnuke.sourceforge.net/, non c'&egrave; 
+bisogno di URL di file RSS
 visto che FlatNuke mette gli RSS in una posizione nota e fissata.]],
 	en=[[
 This plugin is an aggregator plugin specialized in the websites made with the

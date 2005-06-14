@@ -23,11 +23,11 @@ PLUGIN_DESCRIPTIONS = {
 Questo &egrave; un plugin specializzato per tenersi
 aggiornati sulle ultime versioni
 del kernel Linux. La pagina ufficiale che pubblica la lista delle versioni
-correnti del kernel Linux è http://kernel.org. Esiste un metodo comune,
+correnti del kernel Linux &egrave; http://kernel.org. Esiste un metodo comune,
 per i progetti sviluppati in sistemi GNU, per aggiornare l' utente 
 sulle modifiche effettuate nelle nuove versioni di un programma. 
 In ogni pacchetto &egrave; infatti presente il file ChangeLog che descrive le 
-novità apportate dagli autori. Anche
+novit&agrave; apportate dagli autori. Anche
 il kernel Linux ha un ChangeLog per ogni versione nuova. Se desideri essere
 aggior nato sulle novit&agrave; apportate nelle versioni del kernel e,
 quindi, visionare il

@@ -111,7 +111,7 @@ tgz-dist:
 		cd ..;\
 		mv $$BASE freepops-$(VERSION) || true;\
 		tar -cf freepops-$(VERSION).tar freepops-$(VERSION);\
-		gzip -9 freepops-$(VERSION).tar;\
+		gzip -f9 freepops-$(VERSION).tar;\
 		rm -r freepops-$(VERSION)
 	
 buildfactory:

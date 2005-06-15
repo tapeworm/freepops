@@ -1,3 +1,9 @@
+freepops (0.0.29-3) unstable; urgency=low
+
+  * added Vietnamese debconf translation (closes: #314186)
+
+ -- Enrico Tassi <tassi@garfield>  Wed, 15 Jun 2005 11:01:37 +0200
+
 freepops (0.0.29-2) unstable; urgency=low
 
   * the .configure  script now supports going backward

@@ -8,9 +8,9 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.39"
+PLUGIN_VERSION = "0.0.40"
 PLUGIN_NAME = "GMail.com"
-PLUGIN_REQUIRE_VERSION = "0.0.16"
+PLUGIN_REQUIRE_VERSION = "0.0.29"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=gmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
@@ -109,14 +109,14 @@ as read.]]
 local gmail_string = {
 	-- The uri the browser uses when you click the "login" button
 	login = "https://www.google.com/accounts/ServiceLoginBoxAuth",
-	login_post= "continue=https://gmail.google.com/gmail&"..
+	login_post= "continue=https://mail.google.com/mail&"..
 		"service=mail&Email=%s&Passwd=%s&null=Sign in",
 	login_checkcookie="https://www.google.com/accounts/CheckCookie?"..
-		"continue=http%3A%2F%2Fgmail.google.com%2Fgmail&"..
+		"continue=http%3A%2F%2Fmail.google.com%2Fmail&"..
 		"service=mail&chtml=LoginDoneHtml",
 	login_fail="Username and password do not match.",
-	homepage="http://gmail.google.com/gmail",
-	view_email="http://gmail.google.com/gmail?view=om&th=%s&zx=%s",
+	homepage="http://mail.google.com/mail",
+	view_email="http://mail.google.com/mail?view=om&th=%s&zx=%s",
 	-- message list (regexp)
 	-- email_stat = ',%["(%w-)",(%d),(%d),".-","([^"]-)",.-%d%]\n',
 	email_stat = ',%["(%w-)",(%d),(%d),"(.-)"%]\n',
@@ -129,12 +129,12 @@ local gmail_string = {
 	-- This is the capture to get the session ID from the login-done webpage
 	cookieVal = 'cookieVal= "(%w*%-%w*)"',
 	-- The uri for the first page with the list of messages
-	first = "http://gmail.google.com/gmail?"..
+	first = "http://mail.google.com/mail?"..
 		"search=%s&view=tl&start=0&init=1&zx=%s",
 	next_checkC = '\nD%(%["ts",(%d+),(%d+),(%d+),%d.-%]\n%);',
-	next = "http://gmail.google.com/gmail?"..
+	next = "http://mail.google.com/mail?"..
 		"search=%s&view=tl&start=%s&init=1&zx=%s",
-	msg_mark = "http://gmail.google.com/gmail?search=%s&view=tl&start=0",
+	msg_mark = "http://mail.google.com/mail?search=%s&view=tl&start=0",
 	-- The piece of uri you must append to delete to choose the messages 
 	-- to delete
 	msg_mark_post = "act=%s&at=%s",
@@ -298,7 +298,6 @@ function gmail_login()
 	
 	--local retrive_f = support.retry_n(
 	--		3,support.do_retrive(internal_state.b,uri))		
-			
 	local f,e = b:get_uri(uri)
 			
 	--if not support.do_until(retrive_f,check_f,extract_f) then
@@ -312,7 +311,6 @@ function gmail_login()
 	-- get the cookie value
 	internal_state.cookie_sid = (b:get_cookie("SID")).value
 	internal_state.cookie_val = (b:get_cookie("GV")).value
-
 	-- save all the computed data
 	internal_state.login_done = true
 	
@@ -696,6 +694,9 @@ function stat(pstate)
 	local function check_f (s)  
 		local _,_,iStart,iShow,iTotal=string.find(s,
 			gmail_string.next_checkC)
+                if (iStart == nil) then iStart = "0" end
+                if (iShow == nil) then iShow = "0" end
+                if (iTotal == nil) then iTotal = "0" end
 		if tonumber(iStart)+tonumber(iShow) < tonumber(iTotal) then
 		-- TODO: furthur tests with more than 2 pages of emails
 			-- change retrive behaviour
@@ -714,7 +715,6 @@ function stat(pstate)
 		if f == nil then
 			return f,err
 		end
-
 		return f,err
 	end
 

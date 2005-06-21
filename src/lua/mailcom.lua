@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9"
+PLUGIN_VERSION = "0.0.9a"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -456,7 +456,7 @@ function cleanupHeaders(headers)
   headers = string.gsub(headers, "<!%-%-.-%-%->", "")
   headers = string.gsub(headers, "<!%-%-.*$", "")
   headers = string.gsub(headers, "\n", "")
-  headers = string.gsub(headers, "\t", "")
+  headers = string.gsub(headers, "\t", " ")
   headers = string.gsub(headers, "<[Ss][Ee][Ll][Ee][Cc][Tt][^>]+>(.-)</[Ss][Ee][Ll][Ee][Cc][Tt]>", "")
   headers = string.gsub(headers, "<script[^>]+>(.-)</script>", "")
   headers = string.gsub(headers, "</td></tr>", "\n")

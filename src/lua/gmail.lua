@@ -8,11 +8,11 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.40"
-PLUGIN_NAME = "GMail.com"
+PLUGIN_VERSION = "0.0.41"
+PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.29"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=gmail.lua"
+PLUGIN_URL     = "http://www.freepops.org/download.php?file=gmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Rami Kattan"}
 PLUGIN_AUTHORS_CONTACTS = {"rkattan (at) gmail (.) com"}
@@ -106,39 +106,44 @@ as read.]]
 -- Some of them are incomplete, in the sense that are used as string.format()
 -- (read sprintf) arguments, so theyr %s and %d are filled properly
 -- 
-local gmail_string = {
+local globals = {
 	-- The uri the browser uses when you click the "login" button
-	login = "https://www.google.com/accounts/ServiceLoginBoxAuth",
-	login_post= "continue=https://mail.google.com/mail&"..
+	strLoginUrl = "https://www.google.com/accounts/ServiceLoginBoxAuth",
+	strLoginPostData = "continue=https://mail.google.com/mail&"..
 		"service=mail&Email=%s&Passwd=%s&null=Sign in",
-	login_checkcookie="https://www.google.com/accounts/CheckCookie?"..
+	strLoginCheckcookie_TODO ="https://www.google.com/accounts/CheckCookie?"..
 		"continue=http%3A%2F%2Fmail.google.com%2Fmail&"..
 		"service=mail&chtml=LoginDoneHtml",
-	login_fail="Username and password do not match.",
-	homepage="http://mail.google.com/mail",
-	view_email="http://mail.google.com/mail?view=om&th=%s&zx=%s",
+	strLoginFailed = "(Username and password do not match)",
+
+	strHomepage_TODO = "http://mail.google.com/mail",
+
+	strViewMessage = "http://mail.google.com/mail?view=om&th=%s&zx=%s",
 	-- message list (regexp)
-	-- email_stat = ',%["(%w-)",(%d),(%d),".-","([^"]-)",.-%d%]\n',
-	email_stat = ',%["(%w-)",(%d),(%d),".-","(.-)",".-",".-",%[',
+
+	-- strMessageListRegExp = ',%["(%w-)",(%d),(%d),".-","([^"]-)",.-%d%]\n',
+	strMessageListRegExp = ',%["(%w-)",(%d),(%d),".-","(.-)",".-",".-",%[',
+
 	-- next 2 lines: link to view a message in html format,
 	-- and regexp to extract sub messages.
-	view_email_thread="http://mail.google.com/mail?"..
+	strMessageThreadUrl = "http://mail.google.com/mail?"..
 		"view=cv&search=%s&th=%s&zx=%s",
-	email_stat_sub = 
-		'\nD%(%["mi",%d+,%d+,"(%w-)",(%d+),.-,".-","(.-)".-%]\n%);',
+	strMessageThreadRegExp = 
+		'\nD%(%["mi",%d+,%d+,"(%w-)",(%d+),.-,".-",".-","(.-)".-%]\n%);',
+
 	-- This is the capture to get the session ID from the login-done webpage
-	cookieVal = 'cookieVal= "(%w*%-%w*)"',
+	strCookieVal = 'cookieVal= "(%w*%-%w*)"',
+
 	-- The uri for the first page with the list of messages
-	first = "http://mail.google.com/mail?"..
-		"search=%s&view=tl&start=0&init=1&zx=%s",
-	next_checkC = '\nD%(%["ts",(%d+),(%d+),(%d+),%d.-%]\n%);',
-	next = "http://mail.google.com/mail?"..
+	strCmdMsgList = "http://mail.google.com/mail?"..
 		"search=%s&view=tl&start=%s&init=1&zx=%s",
-	msg_mark = "http://mail.google.com/mail?search=%s&view=tl&start=0",
+	strCmdMsgListChkNext = '\nD%(%["ts",(%d+),(%d+),(%d+),%d.-%]\n%);',
+
+	strCmdMarkMsgUrl = "http://mail.google.com/mail?search=%s&view=tl&start=0",
 	-- The piece of uri you must append to delete to choose the messages 
 	-- to delete
-	msg_mark_post = "act=%s&at=%s",
-	msg_mark_next = "&t=%s"
+	strCmdMarkMsgPostData = "act=%s&at=%s",
+	strCmdMarkMsgNext = "&t=%s"
 }
 
 -- ************************************************************************** --
@@ -148,16 +153,16 @@ local gmail_string = {
 -- this is the internal state of the plugin. This structure will be serialized 
 -- and saved to remember the state.
 internal_state = {
-	stat_done = false,
-	login_done = false,
-	name = nil,
-	password = nil,
-	cmds = nil,
-	folder = nil,
-	b = nil,
-	cookie_val = nil,
-	cookie_sid = nil,
-	gmail_at = ""
+	bStatDone = false,
+	bLoginDone = false,
+	strUserName = nil,
+	strPassword = nil,
+	strFolder = nil,
+	strActions = nil,
+	brBrowser = nil,
+	strCookieVal = nil,
+	strCookieSID = nil,
+	strGmailAt = ""
 }
 
 -- ************************************************************************** --
@@ -187,7 +192,7 @@ function check_sanity(name,pass)
 		log.error_print("username must be from 6 to 30 chars")
 		return false
 	end
-	local _,_,x = string.find(name,"([^0-9A-Za-z%.%_%-])")
+	local _, _, x = string.find(name,"([^0-9A-Za-z%.%_%-])")
 	if x ~= nil then
 		log.error_print("username contains invalid character "..x.."\n")
 		return false
@@ -196,7 +201,7 @@ function check_sanity(name,pass)
 		log.error_print("password must be from 6 to 24 chars")
 		return false
 	end
-	local _,_,x = string.find(pass,"[^0-9A-Za-z%.%_%-אטילעש]")
+	local _, _, x = string.find(pass,"[^0-9A-Za-z%.%_%-אטילעש]")
 	if x ~= nil then
 		log.error_print("password contains invalid character "..x.."\n")
 		return false
@@ -237,10 +242,10 @@ end
 -- method by hand hacking a bit on names
 --
 function serialize_state()
-	internal_state.stat_done = false;
+	internal_state.bStatDone = false;
 	
 	return serial.serialize("internal_state",internal_state) ..
-		internal_state.b:serialize("internal_state.b")
+		internal_state.brBrowser:serialize("internal_state.brBrowser")
 end
 
 --------------------------------------------------------------------------------
@@ -250,74 +255,84 @@ end
 -- for all the webmails
 --
 function key()
-	return (internal_state.name or "")..
+	return (internal_state.strUserName or "")..
 		("gmail.com")..
-		(internal_state.password or "")..
-		(internal_state.folder or "")
+		(internal_state.strPassword or "")..
+		(internal_state.strFolder or "")..
+		(internal_state.strActions or "")
 end
 
 --------------------------------------------------------------------------------
 -- Login to the gmail website
 --
 function gmail_login()
-	if internal_state.login_done then
+	if internal_state.bLoginDone then
 		return POPSERVER_ERR_OK
 	end
 
-	-- build the uri
-	local password = internal_state.password
-	local user = internal_state.name
-	local uri = gmail_string.login
-	local post = string.format(gmail_string.login_post,user,curl.escape(password))
+	-- Build the login URI and its post data
+	-- 
+	local password = internal_state.strPassword
+	local username = internal_state.strUserName
+	local uri = globals.strLoginUrl
+	local post = string.format(globals.strLoginPostData,
+					username, curl.escape(password))
 
-	-- the browser must be preserved
-	internal_state.b = browser.new()
-
-	local b = internal_state.b
+	-- The browser must be preserved
+	internal_state.brBrowser = browser.new()
+	local b = internal_state.brBrowser
 
 	-- b:verbose_mode()
 	b:ssl_init_stuff()
 
-	local extract_f = support.do_extract(
-			internal_state,"cookie_val",gmail_string.cookieVal)
-	local check_f = support.check_fail
-	
 
-	local f,e = b:post_uri(uri,post)
-	if f == nil then
-		log.error_print(e)
+	-- Connect to gmail login page
+	-- 
+	local body, err = b:post_uri(uri, post)
+
+	-- Checks for login
+	-- 
+	if body == nil then
+		log.error_print(err)
 		return POPSERVER_ERR_UNKNOWN
 	end
-	--print(f)
-	local _,_,uri = string.find(f,'(CheckCookie[^%"]*)"')
+
+	-- Check for invalid password
+	-- 
+	local _, _, str = string.find(body, globals.strLoginFailed)
+	if str ~= nil then
+		log.error_print("Login Failed: Invalid Password")
+		return POPSERVER_ERR_AUTH
+	end
+	-- print(body)
+
+	-- Check for successful login, and extract some cookie values
+	-- 
+	local _, _, uri = string.find(body, '(CheckCookie[^%"]*)"')
 	if uri == nil then
-		log.error_print(e)
+		log.error_print("Cannot find cookie")
 		return POPSERVER_ERR_UNKNOWN
 	end
 	uri = "http://" .. b:wherearewe() .. "/accounts/" .. uri
 	
-	--local retrive_f = support.retry_n(
-	--		3,support.do_retrive(internal_state.b,uri))		
-	local f,e = b:get_uri(uri)
+	local body, err = b:get_uri(uri)
 			
-	--if not support.do_until(retrive_f,check_f,extract_f) then
-	--	log.error_print("Login failed\n")
-	--	return POPSERVER_ERR_AUTH
-	--end
-	if f == nil then
-		log.error_print(e)
+	-- print(body)
+	if body == nil then
+		log.error_print(err)
 		return POPSERVER_ERR_UNKNOWN
 	end
-	-- get the cookie value
-	internal_state.cookie_sid = (b:get_cookie("SID")).value
-	internal_state.cookie_val = (b:get_cookie("GV")).value
+	-- Extract cookie values
+	-- 
+	internal_state.strCookieSID = (b:get_cookie("SID")).value
+	internal_state.strCookieVal = (b:get_cookie("GV")).value
 
-	-- save all the computed data
-	internal_state.login_done = true
+	-- Save all the computed data
+	internal_state.bLoginDone = true
 	
 	-- log the creation of a session
-	log.say("Session started for " .. internal_state.name .. 
-		"@gmail.com " .. "(" .. internal_state.cookie_val .. ")\n")
+	log.say("Session started for " .. internal_state.strUserName .. 
+		"@gmail.com " .. "(" .. internal_state.strCookieVal .. ")\n")
 	return POPSERVER_ERR_OK
 end
 
@@ -328,19 +343,19 @@ end
 function auto_learn(s)
 	local correction = ""
 	
-	local _,_,x = string.find(s,"[^\r\n](\r\n)[^\r\n]")
+	local _, _, x = string.find(s,"[^\r\n](\r\n)[^\r\n]")
 	if x ~= nil then
 		-- no correction
 		correction = nil
 		--print("correnction nil")
 	end
-	local _,_,x = string.find(s,"[^\r\n](\r)[^\r\n]")
+	local _, _, x = string.find(s,"[^\r\n](\r)[^\r\n]")
 	if x ~= nil then
 		-- \r -> \r\n 
 		correction = "\r"
 		--print("correnction \\r")
 	end
-	local _,_,x = string.find(s,"[^\r\n](\n)[^\r\n]")
+	local _, _, x = string.find(s,"[^\r\n](\n)[^\r\n]")
 	if x ~= nil then
 		-- \n -> \r\n
 		correction = "\n"
@@ -457,13 +472,13 @@ function user(pstate,username)
 	local name = freepops.get_name(username)
 	local folder = ""
 
-	internal_state.name = name
+	internal_state.strUserName = name
 	folder = freepops.MODULE_ARGS.folder or "inbox"
 	if freepops.MODULE_ARGS.label then
 		folder = "cat&cat=" .. freepops.MODULE_ARGS.label
 	end
-	internal_state.folder = folder
-	internal_state.cmds = freepops.MODULE_ARGS.act or ""
+	internal_state.strFolder = folder
+	internal_state.strActions = freepops.MODULE_ARGS.act or ""
 
 	return POPSERVER_ERR_OK
 end
@@ -472,11 +487,11 @@ end
 -- Must login
 function pass(pstate,password)
 	-- save the password
-	internal_state.password = password
+	internal_state.strPassword = password
 
 	-- check if the domain is valid
-	if not check_sanity(internal_state.name,
-			internal_state.password) then
+	if not check_sanity(internal_state.strUserName,
+			internal_state.strPassword) then
 		return POPSERVER_ERR_AUTH
 	end
 
@@ -487,7 +502,7 @@ function pass(pstate,password)
 	if s ~= nil then
 		-- "\a" means locked
 		if s == "\a" then
-			log.say("Session for "..internal_state.name..
+			log.say("Session for "..internal_state.strUserName..
 				" is already locked\n")
 			return POPSERVER_ERR_LOCKED
 		end
@@ -502,9 +517,9 @@ function pass(pstate,password)
 		-- exec the code loaded from the session tring
 		c()
 
-		log.say("Session loaded for " .. internal_state.name ..
+		log.say("Session loaded for " .. internal_state.strUserName ..
 			"@gmail.com " .. 
-			"(" .. internal_state.cookie_val .. ")\n")
+			"(" .. internal_state.strCookieVal .. ")\n")
 		
 		return POPSERVER_ERR_OK
 	else
@@ -527,12 +542,12 @@ function quit_update(pstate)
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 
-	local b = internal_state.b
-	local folder = internal_state.folder
+	local b = internal_state.brBrowser
+	local folder = internal_state.strFolder
 
-	local Gmail_at = internal_state.gmail_at
+	local Gmail_at = internal_state.strGmailAt
 
-	local uri = string.format(gmail_string.msg_mark, folder)
+	local uri = string.format(globals.strCmdMarkMsgUrl, folder)
 	-- act = [rd|ur|rc_^i|tr]
 	--        rd = mark as read
 	--        ur = mark as unread
@@ -548,7 +563,7 @@ function quit_update(pstate)
 		end
 	end
 
-	local post=string.format(gmail_string.msg_mark_post,MarkAction,Gmail_at)
+	local post=string.format(globals.strCmdMarkMsgPostData, MarkAction, Gmail_at)
 
 	-- here we need the stat, we build the uri and we check if we 
 	-- need to delete something
@@ -556,7 +571,7 @@ function quit_update(pstate)
 	
 	for i=1,get_popstate_nummesg(pstate) do
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
-			post = post .. string.format(gmail_string.msg_mark_next,
+			post = post .. string.format(globals.strCmdMarkMsgNext,
 				get_mailmessage_uidl(pstate,i))
 			delete_something = true	
 		end
@@ -578,8 +593,8 @@ function quit_update(pstate)
 	-- since it wuold fail instead overwriting
 	session.unlock(key())
 
-	log.say("Session saved for " .. internal_state.name .. "@gmail.com" ..
-			"(" .. internal_state.cookie_val .. ")\n")
+	log.say("Session saved for " .. internal_state.strUserName .. "@gmail.com" ..
+			"(" .. internal_state.strCookieVal .. ")\n")
 
 	return POPSERVER_ERR_OK
 end
@@ -589,74 +604,99 @@ end
 function stat(pstate)
 
 	-- check if already called
-	if internal_state.stat_done then
+	if internal_state.bStatDone then
 		return POPSERVER_ERR_OK
 	end
 
-	-- shorten names, not really important
-	local b = internal_state.b
-	local action = internal_state.cmds
-	local folder = internal_state.folder
+	-- Define some local variables
+	--
+	local b = internal_state.brBrowser
+	local action = internal_state.strActions
+	local folder = internal_state.strFolder
+	local GetNew = false
+
+	-- Check for action command
+	--
 	if action == "export" then
+		-- Export the gmail contacts
 		ExportContacts()
+	else 
+		if action == "getnew" then
+			-- Command the action_f to parse only new messages
+			--
+			GetNew = true
+		end
 	end
 
-	-- this string will contain the uri to get. it may be updated by 
-	-- the check_f function, see later
-	local uri=string.format(gmail_string.first,folder,RandNum())
+	-- Build the message list URL
+	--
+	local uri = string.format(globals.strCmdMsgList, folder, 0, RandNum())
 
 	-- The action for do_until
 	--
 	local function action_f (s)
 		-- variables to hold temp parsing data
-		-- variables en, en2 hold the last position 
-		-- of the previous search,
+		-- variables iPos1, iPos2 hold the last position of the previous search,
 		-- to start next loop where we ended the first one
-		local en, sUIDL, iNew, iStarred, sFrom
-		local en2, parentUIDL, sSender
-		local myemail = internal_state.name .. "@gmail.com"
+		local iPos1, sUIDL, sFrom, iNew, iStarred
+		local iPos2, parentUIDL, sSender
+		local myemail = internal_state.strUserName .. "@gmail.com"
 
-		local sub_threads
-		local body,err
+		local subThreads
+		local body, err
 
 		local MessageList = {}
-		local email_stat = gmail_string.email_stat
-		_, en, sUIDL, iNew, iStarred, sFrom = string.find(s, email_stat)
+		local strMessageListRegExp = globals.strMessageListRegExp
+		_, iPos1, sUIDL, iNew, iStarred, sFrom = string.find(s, strMessageListRegExp)
 
 		while sUIDL ~= nil do
-			_,_,sub_threads = string.find(sFrom, "%((%d+)%)$")
-			table.insert(MessageList,{
-					["sUIDL"]=sUIDL, 
-					["iSize"]=1,
-					["iNew"]=iNew, 
-					["iStarred"]=iStarred
-					})
-			if sub_threads ~= nil then
-				-- get sub messages for this conversation
-				parentUIDL = sUIDL
-				uri = string.format(
-					gmail_string.view_email_thread,
-					folder, parentUIDL, RandNum())
-				body,err=b:get_uri(uri)
-				en2=0
-				_,en2,sUIDL,iStarred,sSender=string.find(body,
-						gmail_string.email_stat_sub)
-				while sUIDL ~= nil do
-					if sUIDL ~= parentUIDL and 
-					   sSender ~= myemail then
-						table.insert(MessageList,{
-							["sUIDL"]=sUIDL,
-							["iSize"]=1, 
-							["iNew"]=0, 
-							["iStarred"]=iStarred})
+			if not GetNew or (GetNew and iNew == "1") then
+				-- Check for conversations
+				--
+				_, _, subThreads = string.find(sFrom, "%((%d+)%)$")
+
+				-- TODO: before adding message, check also if sender is self
+				--       important for threads...
+				-- TODO2: mark message as unread if it was new (GetNew)
+				-- log.say(sFrom .. " - " .. myemail .. "\n")
+				if string.find(sFrom, "("..myemail..")") == nil then
+					table.insert(MessageList, {
+							["sUIDL"] = sUIDL, 
+							["iSize"] = 1,
+							["iNew"]  = iNew, 
+							["iStarred"] = iStarred })
+				end
+
+				-- If it is a conversation, then get sub messages
+				--
+				if subThreads ~= nil then
+					parentUIDL = sUIDL
+					uri = string.format(
+						globals.strMessageThreadUrl,
+						folder, parentUIDL, RandNum())
+
+					body, err = b:get_uri(uri)
+
+					iPos2 = 0
+					_, iPos2, sUIDL, iStarred, sSender = string.find(body,
+							globals.strMessageThreadRegExp)
+
+					while sUIDL ~= nil do
+						if sUIDL ~= parentUIDL and sSender ~= myemail then
+							table.insert(MessageList, {
+								["sUIDL"] = sUIDL,
+								["iSize"] = 1, 
+								["iNew"] = 0, 
+								["iStarred"] = iStarred })
+						end
+						_, iPos2, sUIDL, iStarred, sSender =
+							string.find(body,
+							globals.strMessageThreadRegExp, iPos2)
 					end
-					_,en2,sUIDL,iStarred,sSender=
-						string.find(body,
-						gmail_string.email_stat_sub,en2)
 				end
 			end
-			_,en,sUIDL,iNew,iStarred,sFrom=string.find(
-				s,email_stat,en)
+			_, iPos1, sUIDL, iNew, iStarred, sFrom = string.find(
+				s, strMessageListRegExp, iPos1)
 		end
 
 		local n = table.getn(MessageList)
@@ -679,12 +719,12 @@ function stat(pstate)
 			val = MessageList[n+1-i]
 			sUIDL = val["sUIDL"]
 			if not sUIDL then
-				return nil,"Unable to parse page"
+				return nil, "Unable to parse page"
 			end
 			-- set it, size in gmail is unavailable, 
 			-- so set to 1 always
-			set_mailmessage_size(pstate,i+nmesg_old,1)
-			set_mailmessage_uidl(pstate,i+nmesg_old,sUIDL)
+			set_mailmessage_size(pstate, i+nmesg_old, 1)
+			set_mailmessage_uidl(pstate, i+nmesg_old, sUIDL)
 		end
 		
 		return true,nil
@@ -693,16 +733,17 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s)  
-		local _,_,iStart,iShow,iTotal=string.find(s,
-			gmail_string.next_checkC)
-                if (iStart == nil) then iStart = "0" end
-                if (iShow == nil) then iShow = "0" end
-                if (iTotal == nil) then iTotal = "0" end
+		local _, _, iStart, iShow, iTotal = string.find(s, globals.strCmdMsgListChkNext)
+
+		if (iStart == nil) then iStart = "0" end
+		if (iShow  == nil) then iShow  = "0" end
+		if (iTotal == nil) then iTotal = "0" end
+
 		if tonumber(iStart)+tonumber(iShow) < tonumber(iTotal) then
 		-- TODO: furthur tests with more than 2 pages of emails
 			-- change retrive behaviour
-			uri=string.format(gmail_string.next,folder,
-				iStart+iShow,RandNum())
+			uri = string.format(globals.strCmdMsgList, folder,
+				iStart+iShow, RandNum())
 			-- continue the loop
 			return false
 		else
@@ -712,36 +753,36 @@ function stat(pstate)
 
 	-- this is simple and uri-dependent
 	local function retrive_f ()
-		local f,err = b:get_uri(uri)
+		local f, err = b:get_uri(uri)
 		if f == nil then
 			return f,err
 		end
-		return f,err
+		return f, err
 	end
 
 	-- this to initialize the data structure
-	set_popstate_nummesg(pstate,0)
+	set_popstate_nummesg(pstate, 0)
 
 	-- do it
-	if not support.do_until(retrive_f,check_f,action_f) then
+	if not support.do_until(retrive_f, check_f, action_f) then
 		log.error_print("Stat failed\n")
 		session.remove(key())
 		return POPSERVER_ERR_UNKNOWN
 	end
 
 	-- store in internal_state GMAIL_AT.value
-	internal_state.gmail_at=(b:get_cookie("GMAIL_AT")).value
+	internal_state.strGmailAt = (b:get_cookie("GMAIL_AT")).value
 
 	-- save the computed values
-	internal_state["stat_done"] = true
+	internal_state.bStatDone = true
 	
 	return POPSERVER_ERR_OK
 end
 
 -- -------------------------------------------------------------------------- --
 -- Fill msg uidl field
-function uidl(pstate,msg)
-	return common.uidl(pstate,msg)
+function uidl(pstate, msg)
+	return common.uidl(pstate, msg)
 end
 -- -------------------------------------------------------------------------- --
 -- Fill all messages uidl field
@@ -750,8 +791,8 @@ function uidl_all(pstate)
 end
 -- -------------------------------------------------------------------------- --
 -- Fill msg size
-function list(pstate,msg)
-	return common.list(pstate,msg)
+function list(pstate, msg)
+	return common.list(pstate, msg)
 end
 -- -------------------------------------------------------------------------- --
 -- Fill all messages size
@@ -765,8 +806,8 @@ function rset(pstate)
 end
 -- -------------------------------------------------------------------------- --
 -- Mark msg for deletion
-function dele(pstate,msg)
-	return common.dele(pstate,msg)
+function dele(pstate, msg)
+	return common.dele(pstate, msg)
 end
 -- -------------------------------------------------------------------------- --
 -- Do nothing
@@ -777,31 +818,31 @@ end
 -- -------------------------------------------------------------------------- --
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
-function retr(pstate,msg,data)
+function retr(pstate, msg, data)
 	-- we need the stat
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 
--- TODO: range checks doesn't work... need fixing... btw, in dele it works....
-	if not common.check_range(pstate,msg) then
+	local returnState = nil
+
+	-- TODO: range checks doesn't work... need fixing... btw, in dele it works....
+	if not common.check_range(pstate, msg) then
 		log.say("Message index out of range.\n")
 		-- log will say the above message, but no error message (-ERR)
 		-- will be sent to the client.
-		return POPSERVER_ERR_NOMSG
-	end
-	
-	if common.check_range(pstate,msg) then
+		returnState = POPSERVER_ERR_NOMSG
+	else	
 		-- the callback
 		local cb = retr_cb(data)
 		
 		-- some local stuff
-		local b = internal_state.b
-		local folder = internal_state.folder
+		local b = internal_state.brBrowser
+		local folder = internal_state.strFolder
 
 		-- build the uri
 		local uidl = get_mailmessage_uidl(pstate,msg)
 
-		local uri=string.format(gmail_string.view_email,uidl,RandNum())
+		local uri = string.format(globals.strViewMessage,uidl,RandNum())
 
 		-- tell the browser to pipe the uri using cb
 		local f,rc = b:pipe_uri(uri,cb)
@@ -815,37 +856,34 @@ function retr(pstate,msg,data)
 			
 -- TODO: after sending the message to the client, we need to set it as read
 --       already done, but check if all is ok....
-			uri = string.format(gmail_string.msg_mark, folder)
-			local Gmail_at=internal_state.gmail_at
-			local post=string.format(gmail_string.msg_mark_post,
-				"rd",Gmail_at)
-			post=post..string.format(gmail_string.msg_mark_next,
-				uidl)
-			b:post_uri(uri,post)
+			uri = string.format(globals.strCmdMarkMsgUrl, folder)
+			local Gmail_at = internal_state.strGmailAt
+			local post = string.format(globals.strCmdMarkMsgPostData,
+				"rd", Gmail_at)
+			post = post..string.format(globals.strCmdMarkMsgNext, uidl)
+			b:post_uri(uri, post)
 		end
+		returnState = POPSERVER_ERR_OK
 	end
 
-	return POPSERVER_ERR_OK
+	return returnState
 end
 
 -- -------------------------------------------------------------------------- --
 -- Get message msg, must call 
 -- popserver_callback to send the data
 --
---  TODO: Still TOP in not functioning, will cause complete message to be 
---        delivered to the client.
---
-function top(pstate,msg,lines,data)
+function top(pstate, msg, lines, data)
 	-- we need the stat
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 
 	-- some local stuff
-	local b = internal_state.b
+	local b = internal_state.brBrowser
 
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(gmail_string.view_email,uidl,RandNum())
+	local uri = string.format(globals.strViewMessage,uidl,RandNum())
 
 	-- build the callbacks --
 	
@@ -913,12 +951,12 @@ end
 -- Export the address book from your gmail account to a file
 -- on the local machine, in csv format (name,email,notes)
 function ExportContacts()
-	local b = internal_state.b
+	local b = internal_state.brBrowser
 
 	local uri = string.format("http://mail.google.com/mail/?view=cl"..
-						 "&search=contacts&pnl=a&zx=%s",RandNum())
+						 "&search=contacts&pnl=a&zx=%s", RandNum())
 						 
-	local body,err = b:get_uri(uri)
+	local body, err = b:get_uri(uri)
 
 	local single_contact = '%["ce","[^"]*","([^"]*)","[^"]*","([^"]*)","([^"]*)".-%]'
 	local exportfile
@@ -943,10 +981,10 @@ function ExportContacts()
 	io.output(io.open(exportfile ,"w"))
 	io.write("Name,E-mail Address,Notes\n")
 	if body ~= nil then
-		local _,en,name,email,note = string.find(body,single_contact)
+		local _, iPos, sName, sEmail, sNote = string.find(body, single_contact)
 		while email~=nil do
-			io.write(name..","..email..","..note.."\n")
-			_,en,name,email,note=string.find(body,single_contact,en)
+			io.write(sName..","..sEmail..","..sNote.."\n")
+			_, iPos, sName, sEmail, sNote = string.find(body, single_contact, iPos)
 		end
 	end
 	io.close()

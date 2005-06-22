@@ -119,10 +119,10 @@ local gmail_string = {
 	view_email="http://mail.google.com/mail?view=om&th=%s&zx=%s",
 	-- message list (regexp)
 	-- email_stat = ',%["(%w-)",(%d),(%d),".-","([^"]-)",.-%d%]\n',
-	email_stat = ',%["(%w-)",(%d),(%d),"(.-)"%]\n',
+	email_stat = ',%["(%w-)",(%d),(%d),".-","(.-)",".-",".-",%[',
 	-- next 2 lines: link to view a message in html format,
 	-- and regexp to extract sub messages.
-	view_email_thread="http://gmail.google.com/gmail?"..
+	view_email_thread="http://mail.google.com/mail?"..
 		"view=cv&search=%s&th=%s&zx=%s",
 	email_stat_sub = 
 		'\nD%(%["mi",%d+,%d+,"(%w-)",(%d+),.-,".-","(.-)".-%]\n%);',
@@ -311,6 +311,7 @@ function gmail_login()
 	-- get the cookie value
 	internal_state.cookie_sid = (b:get_cookie("SID")).value
 	internal_state.cookie_val = (b:get_cookie("GV")).value
+
 	-- save all the computed data
 	internal_state.login_done = true
 	
@@ -914,12 +915,12 @@ end
 function ExportContacts()
 	local b = internal_state.b
 
-	local uri = string.format("http://gmail.google.com/gmail?view=page"..
-					"&name=address&ver=%s",RandNum())
-
+	local uri = string.format("http://mail.google.com/mail/?view=cl"..
+						 "&search=contacts&pnl=a&zx=%s",RandNum())
+						 
 	local body,err = b:get_uri(uri)
 
-	local single_contact = '%["abco","([^"]*)","([^"]*)","([^"]*)".-%]'
+	local single_contact = '%["ce","[^"]*","([^"]*)","[^"]*","([^"]*)","([^"]*)".-%]'
 	local exportfile
 
 	-- Check user home path in linux
@@ -942,10 +943,10 @@ function ExportContacts()
 	io.output(io.open(exportfile ,"w"))
 	io.write("Name,E-mail Address,Notes\n")
 	if body ~= nil then
-		local _,en,email,name,note = string.find(body,single_contact)
+		local _,en,name,email,note = string.find(body,single_contact)
 		while email~=nil do
 			io.write(name..","..email..","..note.."\n")
-			_,en,email,name,note=string.find(body,single_contact,en)
+			_,en,name,email,note=string.find(body,single_contact,en)
 		end
 	end
 	io.close()

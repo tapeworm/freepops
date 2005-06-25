@@ -1,10 +1,24 @@
---<==========================================================================>--
---<=                        FREEPOPS STARTUP FILE                           =>--
---<==========================================================================>--
+---
+-- FreePOPs bootstrap file. This is the entrypoint for the C core.
+-- This also includes some basic functions that can be used by plugins/scripts.
+-- 
 
+---
+-- The global freepops module.
 freepops = {}
+
+---
+-- A map between domains and plugins, see 
+-- <TT>config(dot)lua</TT> for a bunch of examples.
 freepops.MODULES_MAP = {}
-freepops.SO = {}
+
+---
+-- List of loaded so/dll/lua libs.
+freepops.LOADED = {}
+
+---
+-- This is a global variable that the plugins may read, see the libero plugin
+-- for an example.
 freepops.MODULE_ARGS = nil
 
 --<==========================================================================>--
@@ -24,22 +38,78 @@ fp_m = {
 setmetatable(freepops,fp_m)
 
 --<==========================================================================>--
+-- Local functions
+
+local __dofile = dofile
+local __loadlib = loadlib
+local __loadfile = loadfile
+
+-- Config file loading.
+local function load_config()
+
+	local paths = { 
+		"/etc/freepops/",
+		"./",
+		os.getenv("FREEPOPSLUA_PATH") or "./" ,
+	}
+
+	local try_load = function (_,p)
+		local h = __loadfile(p .. "config.lua")
+		if h ~= nil then 
+			h() 
+			return true
+		else
+			return nil
+		end
+	end
+
+	local rc = table.foreachi(paths,try_load)
+
+	if rc == nil then
+		error("Unable to load config.lua. Path is "..
+			table.concat(paths,":"))
+	end
+
+end
+
+-- Required methods for a plugin.
+local pop3_methods = {
+	"user","pass",
+	"list","list_all",
+	"uidl","uidl_all",
+	"stat",
+	"retr","top",
+	"rset","noop","dele",
+	"quit","quit_update",
+	"init",
+}
+
+--<==========================================================================>--
 -- these are global helpers for all freepops modules
 
--- function to extract domain part of a mailaddress
-freepops.get_domain = function (mailaddress)
+---
+-- function to extract domain part of a mailaddress.
+-- @param mailaddress string for example pippo@libero.it?param=value.
+-- @return string The text between @ and (?|$). In our example 'libero.it'.
+function freepops.get_domain(mailaddress)
 	local _,_,ad = string.find(mailaddress,"[^@]+@([^?]+).*")
 	return ad
 end
 
--- function to extract the username part of a mailaddress
-freepops.get_name = function (mailaddress)
+---
+-- function to extract the username part of a mailaddress.
+-- @param mailaddress string for example pippo@libero.it?param=value.
+-- @return string The text between ^ and @. in our example pippo.
+function freepops.get_name(mailaddress)
 	local _,_,ad = string.find(mailaddress,"([^@]+)@[^?]+.*")
 	return ad
 end
 
--- function to extract the parameters part of a mailaddress
-freepops.get_args = function (mailaddress)
+---
+-- function to extract the parameters part of a mailaddress.
+-- @param mailaddress string for example pippo@libero.it?par1=val1&par2=val2.
+-- @return table in our example {par1=val1 ; par2=val2}.
+function freepops.get_args(mailaddress)
 	local _,_,ad = string.find(mailaddress,"[^@]+@[^?%s]+([?%s].*)")
 	local args = {}
 	local function extract_arg(s)
@@ -88,9 +158,13 @@ freepops.get_args = function (mailaddress)
 	return args
 end
 
--- extracts a list of supported domain from a plugin file
--- (the plugin is executed in a protected environment, 
--- no pollution but computations are done)
+---
+-- Extracts a list of supported domain from a plugin file.
+-- The plugin is executed in a protected environment, 
+-- no pollution but computations are done.
+-- @param f string The path of the lua plugin file.
+-- @return table A couple of tables, the list of domains and
+-- the list of regexes.
 function freepops.safe_extract_domains(f)
 	local env = {}
 	local meta_env = { __index = _G }
@@ -147,7 +221,10 @@ function freepops.safe_extract_domains(f)
 	return rc,rd
 end
 
---searches if an unofficial plugin handles this domain
+---
+-- Searches if an unofficial plugin handles this domain.
+-- @param domain string The domain you want to handle.
+-- @return string A couple, name and path.
 function freepops.search_domain_in_unofficial(domain)
 	local function is_in_table(x,t)
 		if t == nil then return false end
@@ -190,9 +267,13 @@ function freepops.search_domain_in_unofficial(domain)
 	return name, where
 end
 
-
--- to merge 2 tables (t1 wins over t)
-freepops.table_overwrite = function (t,t1)  
+---
+-- Merge 2 tables.
+-- t is destroyed, and t1 wins over t.
+-- @param t table The slave table.
+-- @param t1 table The master table.
+-- @return table the union (t1 wins over t).
+function freepops.table_overwrite(t,t1)  
 	t = t or {}
 	t1 = t1 or {}
 	table.foreach(t1, function(k,v)
@@ -201,16 +282,18 @@ freepops.table_overwrite = function (t,t1)
 	return t
 end
 
--- function that maps domains to modules
---
--- 0th: if domain d is nil then fail
--- 1st: check if a verbatim mapping exists (freepops.MODULES_MAP[d] ~= nil)
--- 2nd: check if a plugin tagged regex matches
--- 3rd: check if the mailaddress is a plugin name
--- 4th: check if an unofficial plugin matches verbatim
--- 5th: check if an unofficial plugin tagged regex matches
--- 
-freepops.choose_module = function (d)
+---
+-- function that maps domains to modules.
+-- These are the rules that will be honored to choose the module:</BR>
+-- 0th: if domain d is nil then fail</BR>
+-- 1st: check if a verbatim mapping exists (freepops.MODULES_MAP[d] ~= nil)</BR>
+-- 2nd: check if a plugin tagged regex matches</BR>
+-- 3rd: check if the mailaddress is a plugin name</BR>
+-- 4th: check if an unofficial plugin matches verbatim</BR>
+-- 5th: check if an unofficial plugin tagged regex matches.
+-- @param d string The domain.
+-- @return found, where, name, args.
+function freepops.choose_module(d)
 	local found, where, name, args = false, "nowhere", nil, nil
 	
 	-- 0th: if domain d is nil then fail
@@ -264,8 +347,11 @@ freepops.choose_module = function (d)
 	return name, args, where 
 end
 
--- searches a file in $CWD + MODULES_PREFIX and returns the full path or nil
-freepops.find = function(file)
+---
+-- Searches a file in $CWD + MODULES_PREFIX and returns the full path or nil.
+-- @param file string The ifle name.
+-- @return string The full path or nil.
+function freepops.find(file)
 	local try = function(_,path)
 		local f,_ = io.open(path..file,"r")
 		if f ~= nil then
@@ -279,8 +365,10 @@ freepops.find = function(file)
 	return table.foreach(freepops.MODULES_PREFIX,try)
 end
 
--- dofile with freepops.MODULES_PREFIX path
-freepops.dofile = function (file)
+---
+-- As the standard LUA dofile but with MODULES_PREFIX path.
+-- @return number 0 if OK, nil if not.
+function freepops.dofile(file)
 	local got = freepops.find(file)
 	if got == nil then
 		log.error_print(string.format("Unable to find '%s'\n",file))
@@ -288,18 +376,22 @@ freepops.dofile = function (file)
 			table.concat(freepops.MODULES_PREFIX,":")))
 		return nil
 	else
-		freepops.__dofile(got)
+		__dofile(got)
 		return 0
 	end
 end
-freepops.__dofile = dofile
-dofile = freepops.dofile
 
--- load a shared library (or even a .lua file) with freepops.MODULES_PREFIX path
--- check if the file has been already loaded
-freepops.loadlib = function (file,fname)
+---
+-- As the standard LUA loadlib but with MODULES_PREFIX path.
+-- Load a shared library (or even a .lua file).
+-- Checks if the file has been already loaded.
+-- Should be preferred to freepops.dofile().
+-- @param file string The object name.
+-- @param fname string The function to call (nil in case the object is a lua).
+-- @return function The result of a LUA loadfile or nil.
+function freepops.loadlib(file,fname)
 	-- check if already loaded
-	if freepops.SO[file] ~= nil then
+	if freepops.LOADED[file] ~= nil then
 		return function() end 
 	end
 	
@@ -317,28 +409,33 @@ freepops.loadlib = function (file,fname)
 		
 		if x ~= nil then
 			-- we are loading a .lua file
-			g, err = freepops.__loadfile(got)
+			g, err = __loadfile(got)
 		else
-			g, err = freepops.__loadlib(got, fname)
+			g, err = __loadlib(got, fname)
 		end
 		if not g then
 			log.error_print(got..": "..err.."\n")
 			return nil
 		else
-			freepops.SO[file] = true
+			freepops.LOADED[file] = true
 			return g
 		end
 	end
 end
 
--- prevent using the real loadlib
-freepops.__loadlib = loadlib
+---
+-- uses freepops' dofile instead of the standard one.
+dofile = freepops.dofile
+---
+-- uses freepops' loadlib instead of the standard one.
 loadlib = freepops.loadlib
-freepops.__loadfile = loadfile
+---
+-- uses freepops' loadfile instead of the standard one.
 loadfile = freepops.loadlib
 
--- load needed module for handling domain
-freepops.load_module_for = function (mailaddress,loadonly)
+---
+-- Load needed module for handling domain.
+function freepops.load_module_for(mailaddress,loadonly)
 	-- helpers
 	local function err_format(dom,mail) 
 		return string.format(
@@ -430,7 +527,13 @@ freepops.load_module_for = function (mailaddress,loadonly)
 	
 end
 
-freepops.is_version_ge = function(version1, version2)
+---
+-- Compares 2 verions in FreePOPs format.
+-- This is the LUA regex to extract the components: "(%d+)%.(%d+)%.(%d+)".
+-- @param version1 string A version.
+-- @param version2 string A version.
+-- @return boolean true if version1 >= version2.
+function freepops.is_version_ge(version1, version2)
 	local match = "(%d+)%.(%d+)%.(%d+)"
 	local _,_,fp_x,fp_y,fp_z = string.find(version1, match)
 	local _,_,p_x,p_y,p_z = string.find(version2, match)
@@ -454,35 +557,28 @@ freepops.is_version_ge = function(version1, version2)
 	return false
 end
 
--- checks if this FreePOPs version is enough for the plugin
-freepops.enough_new = function(plugin_version_string)
+---
+-- Checks if this FreePOPs version is enough for the plugin.
+function freepops.enough_new(plugin_version_string)
 	local fp_version_string = os.getenv("FREEPOPS_VERSION")
 	return freepops.is_version_ge(fp_version_string, 
 						plugin_version_string)
 end
 
--- makes tab members globals
-freepops.export = function(tab)
+---
+-- Makes tab members globals.
+function freepops.export(tab)
 	local _export = function(name,value) 
 		_G[name]=value 
 	end
 	table.foreach(tab,_export)
 end
 
--- required methods
-local pop3_methods = {
-	"user","pass",
-	"list","list_all",
-	"uidl","uidl_all",
-	"stat",
-	"retr","top",
-	"rset","noop","dele",
-	"quit","quit_update",
-	"init",
-}
 
--- checks if the plugin has declared all required methods
-freepops.check_global_symbols = function()
+---
+-- Checks if the plugin has declared all required methods.
+-- This should be called after the plugin is loaded.
+function freepops.check_global_symbols()
 	for _,v in ipairs(pop3_methods) do
 		if _G[v] == nil then
 			log.error_print("The plugin has not declared '"..v.."'")
@@ -492,8 +588,10 @@ freepops.check_global_symbols = function()
 	return true
 end
 
--- checks for wrong globals usage
-freepops.set_sanity_checks = function()
+---
+-- Sets a metatable for _G that checks for wrong globals usage.
+-- No more globals can be declared after this function is called.
+function freepops.set_sanity_checks()
 	-- no more globals can be declared after this (except _)
 	setmetatable(_G,{
 		__index = function(t,k)
@@ -530,8 +628,9 @@ freepops.set_sanity_checks = function()
 	})
 end
 
--- checks if this version of FP is SSL enabled
--- !! must be called after loading the browser module !!
+---
+-- Checks if this version of FP is SSL enabled.
+-- Must be called after loading the browser module.
 function freepops.need_ssl()
 	local c = browser.ssl_enabled()
 	if not c then
@@ -549,11 +648,12 @@ function freepops.need_ssl()
 	end
 end
 
-
--- checks if the address a is matched by the strings defined in table t
+---
+-- Checks if the address a is matched by the strings defined in table t.
 function freepops.match_address(a,t)
 	local why = ""
 	local rc = table.foreach(t,function(k,v)
+		-- what is this? boh...
 		local capt = "^(" .. v .. ")$"
 		local _,_,x = string.find(a,capt)
 		if x ~= nil then 
@@ -569,36 +669,6 @@ function freepops.match_address(a,t)
 	end
 end
 
---<==========================================================================>--
--- Local functions
-
--- config file loading
-local function load_config()
-
-	local paths = { 
-		"/etc/freepops/",
-		"./",
-		os.getenv("FREEPOPSLUA_PATH") or "./" ,
-	}
-
-	local try_load = function (_,p)
-		local h = freepops.__loadfile(p .. "config.lua")
-		if h ~= nil then 
-			h() 
-			return true
-		else
-			return nil
-		end
-	end
-
-	local rc = table.foreachi(paths,try_load)
-
-	if rc == nil then
-		error("Unable to load config.lua. Path is "..
-			table.concat(paths,":"))
-	end
-
-end
 
 --<==========================================================================>--
 -- This is the function freepops calls
@@ -612,7 +682,11 @@ end
 -- This is only the LUA box bootstrap code. This is called to initialize the
 -- lua box when freepops is started with -e or -x
 -- -------------------------------------------------------------------------- --
-freepops.bootstrap = function()
+
+---
+-- Load the configuration file and the support module.
+-- Is intended to be used by the C core.
+function freepops.bootstrap()
 	load_config()
 	
 	-- standard lua modules that must be loaded
@@ -626,7 +700,12 @@ end
 --  This loads the module that handles mailaddress's domain and load standard
 --  LUA modules
 -- -------------------------------------------------------------------------- --
-freepops.init = function (mailaddress)
+
+---
+-- Load the configuration file and the support module and the plugin that
+-- handles mailaddress.
+-- Is intended to be used by the C core.
+function freepops.init(mailaddress)
 	freepops.bootstrap()
 	
 	if freepops.load_module_for(mailaddress) == nil then return 1 end

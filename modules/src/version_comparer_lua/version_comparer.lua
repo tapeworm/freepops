@@ -58,8 +58,8 @@ end
 
 ---
 -- Compare version1 and version2.
--- @param version1 string 
--- @param version1 string 
+-- @param version1 string.
+-- @param version1 string.
 -- @return number 0 if version1 == version2, 
 -- 		-1 if version1 < version2, 
 -- 		1 if version1 > version2, nil if incomparable.

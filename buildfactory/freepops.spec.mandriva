@@ -1,12 +1,14 @@
-Summary:	pop3 interface to webmails
+Summary:	POP3 interface to webmails
 Name:		freepops
 Version:	0.0.29
-Release:	1ddz
+Release:	2ddz
 License:	GPL
 Group:		Networking/Other
 Source: 	freepops-%{version}.tar.bz2
+Patch0:		freepops-0.0.29-patch20050613.diff.bz2
 URL:		http://www.freepops.org
 Prefix:		%{_prefix}
+Packager:	Davide Duina <davide.duina_AT_gmail_DOT_com>
 Vendor: 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -15,14 +17,16 @@ FreePOPs is a daemon that acts as a local pop3 server, translating
 local pop3 requests to remote http requests to suppoerted webmails.
 
 %prep
-rm -rf ${RPM_BUILD_ROOT}
 %setup -q
-./configure.sh linux
+%patch -p1
+
 
 %build
+./configure.sh linux
 make all WHERE=/usr/ FORCE_LINK="-L /tmp/freepops-expat/expat/.libs/"
 
 %install
+rm -rf ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}/usr/bin/
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/man/man1/
 mkdir -p ${RPM_BUILD_ROOT}/etc/init.d/
@@ -34,10 +38,15 @@ cp buildfactory/freepops.rc ${RPM_BUILD_ROOT}/etc/init.d/freepops
 chmod a+x ${RPM_BUILD_ROOT}/etc/init.d/freepops
 cp buildfactory/freepops.sysconfig ${RPM_BUILD_ROOT}/etc/sysconfig/freepops
 mv ${RPM_BUILD_ROOT}/usr/share/doc/freepops/* ${RPM_BUILD_ROOT}/usr/share/doc/freepops-%{version}
+
 %post
+%_post_service freepops
+
+%preun
+%_preun_service freepops
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr (-,root,root)
@@ -49,22 +58,26 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/freepopsd.1.bz2
 #%{_mandir}/man1/freepopsd.1.gz
 %{_sysconfdir}/init.d/freepops
-%{_sysconfdir}/sysconfig/freepops
-%{_sysconfdir}/freepops/config.lua
+%config %{_sysconfdir}/sysconfig/freepops
+%config %{_sysconfdir}/freepops/config.lua
 %{_datadir}/freepops/*
 #/usr/share/doc/freepops-%{version}
 
 %changelog
-* Tue Jun 07 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.29-1ddz
+* Tue Jun 14 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.29-2ddz
+- spec file mods
+- Applied patch: fixes in mailcom.lua and aol.lua (13/06/2005)
+
+* Tue Jun 07 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.29-1ddz
 - new version.
 
-* Fri Jun 03 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.28-3ddz
+* Fri Jun 03 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.28-3ddz
 - aol.lua and mailcom.lua patch
 
-* Thu Jun 02 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.28-2ddz
+* Thu Jun 02 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.28-2ddz
 - Mandriva Group Changed
 - spec file mods
 - bz2 sources
 
-* Tue May 31 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.28-1ddz
+* Tue May 31 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.28-1ddz
 - Unclean Mandriva 2005 LE RPM, based on Enrico Tassi's spec file.

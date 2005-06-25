@@ -1,3 +1,7 @@
+---
+-- Updater script.
+-- This is a script that fetches the new plugin releases and installs them.
+
 assert(freepops.loadlib("browser.lua"))()
 assert(freepops.loadlib("xml2table.lua"))()
 assert(freepops.loadlib("table2xml.lua"))()
@@ -56,6 +60,11 @@ function get_local_versions(plugins)
 	return v
 end
 
+---
+-- The main function.
+-- Takes a list pf strings, if omitted the list of official plugins is used.
+-- @param plugins table The list of plugin names.
+-- @return number 0 if success.
 function main(plugins)
 	b = browser.new()
 --	b:verbose_mode()

@@ -1,3 +1,5 @@
+- new .spec file for mandriva
+- added much docs in freepops.lua
 - added a snapshot of updater.lua
 - moved -x to the new -e stuff (code cleanup in engine.c and freepops.c)
 - added some patches for BEOS (thanks Michle)

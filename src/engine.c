@@ -117,9 +117,9 @@ free(ans);
 #define FREEPOPSLUA_FILE "freepops.lua"
 
 lua_State* bootstrap(const char * username, struct popstate_t* p){
+	int rc = POPSERVER_ERR_UNKNOWN;
 	lua_State* l;
 	l = luabox_genbox(LUABOX_STANDARD|LUABOX_LOG|LUABOX_LUAFILESYSTEM);
-	int rc = POPSERVER_ERR_UNKNOWN;
 
 	putenv("FREEPOPSLUA_PATH_UNOFFICIAL="FREEPOPSLUA_PATH_UNOFFICIAL);
 	putenv("FREEPOPS_VERSION="VERSION);

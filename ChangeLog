@@ -1,3 +1,15 @@
+26/06/2005 0.0.30
+- aol.lua, mailcom.lua: changed homepage to http://www.freepops.org (alessiofender)
+- es: *** empty log message *** (lisar314)
+- fr: *** empty log message *** (fvancaen)
+- aol.lua: fixed aol change to aol.com domain (russell822)
+- mailcom.lua: A small tweak to fix minor received: header line issues with tabs being replaced by nothing when they should be replaced by a space. (russell822)
+- gmail.lua: language fixes (ncocchiaro)
+- es, fr: fix (gareuselesinge)
+- gmail.lua: Updated the URL's to reflect gmail's changes and changed the require version so that ssl errors don't appear from a bad curl dependency. (russell822)
+- gmail.lua: Fixed few conversation bugs, and added the getnew feature. (rkattan)
+- gmail.lua: Fixed few bugs due to changes in gmail web pages (rkattan)
+- mailcom.lua: fixed some minor issues with lycos.com (russell822)
 - added support for jubii.dk to the davmail plugin
 - new .spec file for mandriva
 - added much docs in freepops.lua

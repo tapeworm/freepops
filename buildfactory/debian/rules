@@ -42,7 +42,7 @@ clean:
 	rm -f build-stamp configure-stamp build-manual-stamp
 
 	# Add here commands to clean up after the build process.
-	-$(MAKE) distclean
+	-$(MAKE) realclean
 
 	dh_clean 
 	debconf-updatepo

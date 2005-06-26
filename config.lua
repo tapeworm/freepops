@@ -45,6 +45,7 @@ freepops.MODULES_MAP["lycos.it"]	= {name="davmail.lua"}
 freepops.MODULES_MAP["lycos.at"]	= {name="davmail.lua"}
 freepops.MODULES_MAP["lycos.nl"]	= {name="davmail.lua"}
 freepops.MODULES_MAP["spray.se"]	= {name="davmail.lua"}
+freepops.MODULES_MAP["jubii.dk"]	= {name="davmail.lua"}
 
 -- gmail
 freepops.MODULES_MAP["gmail.com"]	= {name="gmail.lua"}

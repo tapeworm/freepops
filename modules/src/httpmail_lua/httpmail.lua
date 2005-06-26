@@ -133,9 +133,12 @@ end
 -- @return string the returned page.
 function httpmail.propfind(b,uri,post,header)
 	if httpmail.debug then
-		print("sending",uri,post)
+		print("HTTPMAIL: sending (uri,post): ",uri,post)
 	end
 	local ans,err = b:custom_post_uri(uri,"PROPFIND",post,header)
+	if httpmail.debug then
+		print("HTTPMAIL: received (err,ans): ",err,ans)
+	end
 	return ans,err
 end
 
@@ -158,9 +161,20 @@ end
 -- @param s string the ugly XML.
 -- @return string the cleaned XML.
 function httpmail.clean_entities(s)
+	local function content_clean(s, start_tag, stop_tag)
+		return string.gsub(s,start_tag .. "(.-)" .. stop_tag,function(c)
+			local s = nil
+			s = string.gsub(c,"<","&lt;")
+			s = string.gsub(s,">","&gt;")
+			return start_tag .. s .. stop_tag
+		end)
+	end
 	s = string.gsub(s,"&iexcl;","!")
 	s = string.gsub(s,"&nbsp;"," ")
-	return (string.gsub(s,"&([^;][^;][^;][^;][^;][^;][^;])","&amp;%1"))
+	s = string.gsub(s,"&([^;][^;][^;][^;][^;][^;][^;])","&amp;%1")
+	-- this is a REAL shit used only by jubii.dk
+	s = content_clean(s, "<m:from>", "</m:from>")
+	return s
 end
 
 ---
@@ -189,16 +203,24 @@ function httpmail.safe_traverse(t,...)
 end
 
 ---
+-- Basic HTTP authentication (plain base64(username:pwd)).
+httpmail.LOGIN_BASIC = 1 
+
+---
+-- Digest HTTP authentication (untested)
+httpmail.LOGIN_DIGEST = 2
+
+---
 -- HTTPMAIL login implementation.
 -- Finds where the mailboxes are rooted.
--- @param authbasic boolean true if you you want to use the basic and not the
---  digest auth method.
+-- @param auth number one of httpmail.LOGIN_*.
 -- @return string base_uri of the folders, and err if nil.
-function httpmail.login(b,uri,username,password,authbasic)
+function httpmail.login(b,uri,username,password,auth)
 	b.curl:setopt(curl.OPT_USERPWD,username..":"..password)
-	if not authbasic then
-		-- this is untested
+	if auth == httpmail.LOGIN_DIGEST then
 		b.curl:setopt(curl.OPT_HTTPAUTH,curl.AUTH_DIGEST)
+	elseif auth ~= httpmail.LOGIN_BASIC then
+		return nil, "httpmail.login: auth must be httpmail.LOGIN_*"
 	end
 	local ans,err = httpmail.propfind(b,uri,
 		httpmail.R_folder_root_xml,httpmail.R_folder_root_header)
@@ -285,13 +307,14 @@ function httpmail.stat(b,uri)
 
 		xml2table.forach_son(answer,"D__response",
 		function(t)
+			if t == nil then return end
 			local uri = 
 				httpmail.safe_traverse(t,"D__href","_content")
 			local size = httpmail.safe_traverse(t,
 					"D__propstat",
 					"D__prop",
 					"D__getcontentlength",
-					"_content")
+					"_content") or 1
 			table.insert(mails,{uri=uri,size=size})
 		end)
 		

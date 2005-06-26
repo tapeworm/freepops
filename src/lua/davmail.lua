@@ -16,7 +16,7 @@ PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@lycos.co.uk","@lycos.ch","@lycos.de","@lycos.es",
-	"@lycos.it","@lycos.at","@lycos.nl","@spray.se"}
+	"@lycos.it","@lycos.at","@lycos.nl","@spray.se","@jubii.dk"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
@@ -26,8 +26,21 @@ The folder you want to read. Default is inbox.
 		]]}}}
 PLUGIN_DESCRIPTIONS = {
 	it="Questo plugin &egrave; per gli account che usano il "..
-	   "protocollo HTTPMAIL.",
-	en="This plugin implements the HTTPMAIL protocol."
+	   "protocollo HTTPMAIL.<br/>Limitazione per Jubii.dk: Non &egrave; "..
+	   "possibile lasciare i messaggi sul server, in quanto dopo la "..
+	   "prima lettura non sono pi&ugrave; visibili (ma non vengono "..
+	   "cancellati, via web si vedono). Quindi se non vuoi usare la "..
+	   "webmail per cancellare i messaggi non scegliere l'opzione "..
+	   "&quot;lacia una copia dei messaggi sul server&quot; nella "..
+	   "configurazione di questo account.",
+	en="This plugin implements the HTTPMAIL protocol.<br/>Limitation for "..
+	   "Jubii.dk: it is not possible to &quot;leave a copy of the "..
+	   "messages on server&quot; since after they've been seen once they "..
+	   "disappear (but are not deleted, since via web you can "..
+	   "manage them). So, if you don't want to use the webmail to empty "..
+	   "your mailbox, don't mark the &quot;leave a copy...&quot; option "..
+	   "in your account configuration."
+	   
 }
 
 
@@ -40,31 +53,50 @@ internal_state = {
 	stat_done = false,
 	login_done = false,
 	stat_done = false,
-	login_site = nil
+	login_site = nil,
+	domain = nil,
+	auth = nil,
 }
 
-login_sites = {
-	 -- thanks hotway for these uris :)
-         ["lycos.co.uk"] = "http://webdav.lycos.co.uk/httpmail.asp",
-         ["lycos.ch"] = "http://webdav.lycos.de/httpmail.asp",
-         ["lycos.de"] = "http://webdav.lycos.de/httpmail.asp",
-         ["lycos.es"] = "http://webdav.lycos.es/httpmail.asp",
-         ["lycos.it"] = "http://webdav.lycos.it/httpmail.asp",
-         ["lycos.at"] = "http://webdav.lycos.at/httpmail.asp",
-         ["lycos.nl"] = "http://webdav.lycos.nl/httpmail.asp",
-         ["spray.se"] = "http://webdav.spray.se/httpmail.asp"
-}
+function login_site_for(domain, name)
+	-- $U is expanded to the username (domain is stripped off)
+	local login_sites = {
+		 -- thanks hotway for these uris :)
+		 ["lycos.co.uk"] = "http://webdav.lycos.co.uk/httpmail.asp",
+		 ["lycos.ch"] = "http://webdav.lycos.de/httpmail.asp",
+		 ["lycos.de"] = "http://webdav.lycos.de/httpmail.asp",
+		 ["lycos.es"] = "http://webdav.lycos.es/httpmail.asp",
+		 ["lycos.it"] = "http://webdav.lycos.it/httpmail.asp",
+		 ["lycos.at"] = "http://webdav.lycos.at/httpmail.asp",
+		 ["lycos.nl"] = "http://webdav.lycos.nl/httpmail.asp",
+		 ["spray.se"] = "http://webdav.spray.se/httpmail.asp",
+		 ["jubii.dk"] = "http://webdav.jubii.dk/$U",
+	}
+	return string.gsub(login_sites[domain],"$U",name) 
+end
 
-basic_auth = {
-	["http://webdav.lycos.co.uk/httpmail.asp"] = true,
-	["http://webdav.lycos.de/httpmail.asp"] = true, 
-	["http://webdav.lycos.de/httpmail.asp"] = true,
-	["http://webdav.lycos.es/httpmail.asp"] = true,
-	["http://webdav.lycos.it/httpmail.asp"] = true,
-	["http://webdav.lycos.at/httpmail.asp"] = true,
-	["http://webdav.lycos.nl/httpmail.asp"] = true,
-	["http://webdav.spray.se/httpmail.asp"] = true,
-}
+-- this is not a plain table since httpmail is loaded during init()
+function needed_auth(domain) 
+	local t = {
+		["lycos.co.uk"] = httpmail.LOGIN_BASIC,
+		["lycos.de"] = httpmail.LOGIN_BASIC, 
+		["lycos.de"] = httpmail.LOGIN_BASIC,
+		["lycos.es"] = httpmail.LOGIN_BASIC,
+		["lycos.it"] = httpmail.LOGIN_BASIC,
+		["lycos.at"] = httpmail.LOGIN_BASIC,
+		["lycos.nl"] = httpmail.LOGIN_BASIC,
+		["spray.se"] = httpmail.LOGIN_BASIC,
+		["jubii.dk"] = httpmail.LOGIN_BASIC,
+	}
+	return t[domain]
+end
+
+function needed_useragent(domain) 
+	local t = {
+		["jubii.dk"] = "Lycos-Addin authentication"
+	}
+	return t[domain]
+end
 
 --------------------------------------------------------------------------------
 -- The key used to store session info
@@ -141,10 +173,11 @@ end
 -- -------------------------------------------------------------------------- --
 -- Must save the mailbox name
 function user(pstate,username)
-	internal_state.username = username 
 
 	local domain = freepops.get_domain(username)
-	local login_site = login_sites[domain]
+	local name = freepops.get_name(username)
+	local login_site = login_site_for(domain, name)
+	local auth = needed_auth(domain)
 
 	if login_site == nil then
 		log.error_print("Unknown domain "..(domain or "nil"))
@@ -152,6 +185,9 @@ function user(pstate,username)
 	end
 
 	internal_state.login_site = login_site
+	internal_state.domain = domain
+	internal_state.auth = auth
+	internal_state.username = name .. "@" .. domain
 	
 	return POPSERVER_ERR_OK
 end
@@ -198,7 +234,8 @@ function owa_login()
 		return POPSERVER_ERR_OK
 	end
 
-	internal_state.b = browser.new()
+	-- jubii.dk needs a specia useragent
+	internal_state.b = browser.new(needed_useragent(internal_state.domain))
 	
 	local b = internal_state.b
 	--b:verbose_mode()
@@ -207,7 +244,7 @@ function owa_login()
 		internal_state.login_site,
 		internal_state.username,
 		internal_state.password,
-		basic_auth[internal_state.login_site])
+		internal_state.auth)
 
 	if not uri then
 		log.error_print(err)
@@ -360,6 +397,11 @@ function retr(pstate,msg,data)
 	-- we need the stat
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
+
+	-- check the range
+	if not common.check_range(pstate,msg) then
+		return POPSERVER_ERR_NOMSG	
+	end
 	
 	-- the callback
 	local cb = common.retr_cb(data)

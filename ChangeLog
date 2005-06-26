@@ -1,3 +1,4 @@
+- added support for jubii.dk to the davmail plugin
 - new .spec file for mandriva
 - added much docs in freepops.lua
 - added a snapshot of updater.lua

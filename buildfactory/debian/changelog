@@ -1,23 +1,14 @@
 freepops (0.0.30-1) unstable; urgency=low
 
   * new upstream release
-
- -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sun, 26 Jun 2005 15:39:16 +0200
-
-freepops (0.0.29-3) unstable; urgency=low
-
+  * fixed libero multipage stat (Closes: #315958)
   * added Vietnamese debconf translation (closes: #314186)
-
- -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Wed, 15 Jun 2005 11:01:37 +0200
-
-freepops (0.0.29-2) unstable; urgency=low
-
   * the .configure  script now supports going backward
   * cleaned some dh_make useless stuff in rules
   * fixed the build-depends(-indep) field
   * fixed the clean target that now calls make distclean
 
- -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Wed,  8 Jun 2005 16:49:50 +0200
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Mon, 27 Jun 2005 19:49:02 +0200
 
 freepops (0.0.29-1) unstable; urgency=low
 

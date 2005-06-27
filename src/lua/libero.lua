@@ -106,8 +106,9 @@ local libero_string = {
 	first = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs=1&"..
 		"C_Folder=%s",
 	-- The capture to check if there is one more page of message list
-	next_checkC = "<a href=\"javascript:doit"..
-		"%('Act_Msgs_Page_Next',1,1%)\">.*</a>",
+
+	next_checkC = "<a%s+href=\"javascript:doit"..
+		"%('Act_Msgs_Page_Next',1,1%)\".*</a>",
 	-- The uri to get the next page of messages
 	next = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs_Page_Next=1&"..
 		"HELP_ID=inbox&SEL_ALL=0&"..

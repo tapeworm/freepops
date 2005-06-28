@@ -34,7 +34,8 @@ MK_TEMPLATE=	luabind \
 		plugins2xml_lua	\
 		crypto_lua	\
 		updater_lua	\
-		version_comparer_lua
+		version_comparer_lua \
+		xml2tex_lua
 
 MK_TEMPL_CTRIB=	lua \
 		pthread \

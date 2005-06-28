@@ -50,24 +50,23 @@ xml:
 		mkdir -p /tmp/$$DIR;\
 		cd ../../;\
 		[ -e src/freepopsd ] || make all;\
-		[ -e modules/bin/luafull ] || make all;\
 		for X in src/lua/*.lua; do \
 			src/freepopsd -x $$X 1> \
 				/tmp/$$DIR/`basename $$X`.xml 2>/dev/null;\
 		done;\
 		for X in /tmp/$$DIR/*.xml; do \
 			echo "Generating tex data for " `basename $$X`;\
-			modules/bin/luafull \
-				scripts/xml2tex.lua $$X it 1> \
+			src/freepopsd -e \
+				xml2tex.lua $$X it 1> \
 				doc/manual/`basename $$X`.it.xmltex;\
-			modules/bin/luafull \
-				scripts/xml2tex.lua $$X en 1> \
+			src/freepopsd -e \
+				xml2tex.lua $$X en 1> \
 				doc/manual/`basename $$X`.en.xmltex;\
-			modules/bin/luafull \
-				scripts/xml2tex.lua $$X it brief 1> \
+			src/freepopsd -e \
+				xml2tex.lua $$X it brief 1> \
 				doc/manual/`basename $$X`.b.it.xmltex;\
-			modules/bin/luafull \
-				scripts/xml2tex.lua $$X en brief 1> \
+			src/freepopsd -e \
+				xml2tex.lua $$X en brief 1> \
 				doc/manual/`basename $$X`.b.en.xmltex;\
 		done;\
 		rm -rf /tmp/$$DIR

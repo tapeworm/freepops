@@ -44,5 +44,4 @@ MK_TEMPL_CTRIB=	lua \
 		luaexpat \
 		luafilesystem
 
-MK_CUSTOM=	curl_lua \
-		luafull
+MK_CUSTOM=	curl_lua 

@@ -36,7 +36,6 @@ MODULES-Common= lua		\
 		luafilesystem 	\
 		luadoc		\
 		plugins2xml_lua	\
-		luafull		\
 		version_comparer_lua \
 		updater_lua	\
 		xml2tex_lua 

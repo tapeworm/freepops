@@ -1,24 +1,6 @@
-diff -ruN luadoc/Makefile luadoc-new/Makefile
---- luadoc/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ luadoc-new/Makefile	2004-01-30 17:43:12.000000000 +0100
-@@ -0,0 +1,14 @@
-+include $(CONFIG)
-+
-+all: $(PREFIX)/bin/luadoc
-+	@echo -n	
-+
-+$(PREFIX)/bin/luadoc:
-+	@mkdir $(PREFIX)/bin/luafiles || true
-+	@cp *.lua $(PREFIX)/bin/luafiles
-+	@echo -e "#!/bin/sh\ncd $(PREFIX)/bin/luafiles/;$(PREFIX)/bin/lua $(PREFIX)/bin/luafiles/luadoc.lua \$$@" \
-+		> $(PREFIX)/bin/luadoc
-+	@chmod a+rx $(PREFIX)/bin/luadoc
-+	
-+clean:
-+.PHONY: all
-diff -ruN luadoc/analyze.lua luadoc-new/analyze.lua
---- luadoc/analyze.lua	2001-11-19 11:55:34.000000000 +0100
-+++ luadoc-new/analyze.lua	2004-01-30 17:43:12.000000000 +0100
+diff -ruN luadoc.orig/analyze.lua luadoc/analyze.lua
+--- luadoc.orig/analyze.lua	2005-06-29 10:11:23.000000000 +0200
++++ luadoc/analyze.lua	2005-06-29 10:15:19.000000000 +0200
 @@ -20,10 +20,10 @@
  
  function Gappend (field)
@@ -142,9 +124,9 @@ diff -ruN luadoc/analyze.lua luadoc-new/analyze.lua
     -- load source string.
     readfrom (in_file)
     local source = read ("*a")
-diff -ruN luadoc/cmp.lua luadoc-new/cmp.lua
---- luadoc/cmp.lua	2002-08-14 15:14:32.000000000 +0200
-+++ luadoc-new/cmp.lua	2004-01-30 18:57:56.000000000 +0100
+diff -ruN luadoc.orig/cmp.lua luadoc/cmp.lua
+--- luadoc.orig/cmp.lua	2005-06-29 10:11:23.000000000 +0200
++++ luadoc/cmp.lua	2005-06-29 10:15:19.000000000 +0200
 @@ -11,6 +11,9 @@
  	table = 1,
  	["function"] = 1,
@@ -309,9 +291,9 @@ diff -ruN luadoc/cmp.lua luadoc-new/cmp.lua
  		;
  		order_field = { "section", "name" },
  		link_field = { "name" },
-diff -ruN luadoc/compose.lua luadoc-new/compose.lua
---- luadoc/compose.lua	2001-11-19 11:55:45.000000000 +0100
-+++ luadoc-new/compose.lua	2004-01-30 17:43:12.000000000 +0100
+diff -ruN luadoc.orig/compose.lua luadoc/compose.lua
+--- luadoc.orig/compose.lua	2005-06-29 10:11:23.000000000 +0200
++++ luadoc/compose.lua	2005-06-29 10:15:19.000000000 +0200
 @@ -38,7 +38,7 @@
        	elseif not r1 then
        	   return 1
@@ -330,9 +312,9 @@ diff -ruN luadoc/compose.lua luadoc-new/compose.lua
     CMP.out_format = html		-- !!!!!
     --CMP.out_table = {}
     --CMP.resolve_anchoring (in_tab, CMP.out_format)
-diff -ruN luadoc/luadoc-compatibility.lua luadoc-new/luadoc-compatibility.lua
---- luadoc/luadoc-compatibility.lua	1970-01-01 01:00:00.000000000 +0100
-+++ luadoc-new/luadoc-compatibility.lua	2004-01-30 17:43:12.000000000 +0100
+diff -ruN luadoc.orig/luadoc-compatibility.lua luadoc/luadoc-compatibility.lua
+--- luadoc.orig/luadoc-compatibility.lua	1970-01-01 01:00:00.000000000 +0100
++++ luadoc/luadoc-compatibility.lua	2005-06-29 10:15:19.000000000 +0200
 @@ -0,0 +1,50 @@
 +function tinsert(t,i)
 +	return table.insert(t,i)
@@ -384,9 +366,9 @@ diff -ruN luadoc/luadoc-compatibility.lua luadoc-new/luadoc-compatibility.lua
 +function strlower(s)
 +	return string.lower(s)
 +end
-diff -ruN luadoc/luadoc.lua luadoc-new/luadoc.lua
---- luadoc/luadoc.lua	2001-11-19 11:54:59.000000000 +0100
-+++ luadoc-new/luadoc.lua	2004-01-30 17:43:12.000000000 +0100
+diff -ruN luadoc.orig/luadoc.lua luadoc/luadoc.lua
+--- luadoc.orig/luadoc.lua	2005-06-29 10:11:23.000000000 +0200
++++ luadoc/luadoc.lua	2005-06-29 10:18:18.000000000 +0200
 @@ -1,12 +1,14 @@
  #!/usr/local/bin/lua -f
  
@@ -404,9 +386,27 @@ diff -ruN luadoc/luadoc.lua luadoc-new/luadoc.lua
  
  -- Print version number.
  function print_version ()
-diff -ruN luadoc/sub.lua luadoc-new/sub.lua
---- luadoc/sub.lua	2001-11-19 12:15:00.000000000 +0100
-+++ luadoc-new/sub.lua	2004-01-30 17:43:12.000000000 +0100
+diff -ruN luadoc.orig/Makefile luadoc/Makefile
+--- luadoc.orig/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ luadoc/Makefile	2005-06-29 10:15:19.000000000 +0200
+@@ -0,0 +1,14 @@
++include $(CONFIG)
++
++all: $(PREFIX)/bin/luadoc
++	@echo -n	
++
++$(PREFIX)/bin/luadoc:
++	@mkdir $(PREFIX)/bin/luafiles || true
++	@cp *.lua $(PREFIX)/bin/luafiles
++	@echo -e "#!/bin/sh\ncd $(PREFIX)/bin/luafiles/;$(PREFIX)/bin/lua $(PREFIX)/bin/luafiles/luadoc.lua \$$@" \
++		> $(PREFIX)/bin/luadoc
++	@chmod a+rx $(PREFIX)/bin/luadoc
++	
++clean:
++.PHONY: all
+diff -ruN luadoc.orig/sub.lua luadoc/sub.lua
+--- luadoc.orig/sub.lua	2005-06-29 10:11:23.000000000 +0200
++++ luadoc/sub.lua	2005-06-29 10:15:19.000000000 +0200
 @@ -117,7 +117,7 @@
  		function (tab)
  		   if tab.param_list and tab.param then

@@ -78,7 +78,7 @@ LicenseText "This is free software, distributed under the GNU/GPL license" \
 LicenseBkColor /windows
 LicenseData "COPYING.txt"
 LicenseForceSelection radiobuttons \
-	"I like free software." \
+	"I like free software and I accept this license." \
 	"I only use proprietary software, I'll never install this crap."
 
 ; The text to prompt the user to enter a directory

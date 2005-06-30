@@ -37,9 +37,11 @@ Really important contributions like code, plugins, translations from:\n\
 	Pegasus\n\
 	Eddi De Pieri\n\
 	Lisardo Bello\n\
+	fvancaen\n\
+	...and many more...\n\
 \n\
 For more infos look at the web site:\n\
-	http://freepops.org"
+	http://www.freepops.org"
 
 #define DOWNLOAD_STRING "\
 Autoupdate completed."

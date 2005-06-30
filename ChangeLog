@@ -1,3 +1,5 @@
+- luabind and curl_lua are now double licensed under GPL and MIT to make the
+LUA community happy.
 29/06/2005 0.0.30
 - removed luafull
 - moved xml2tex to modules/ and now is executed with -e (no more luafull)

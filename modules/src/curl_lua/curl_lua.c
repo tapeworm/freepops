@@ -2,7 +2,8 @@
                        cURL_Lua, Lua bindings for cURL
  ******************************************************************************
    
-   Released under the GNU GPL license, no warranties
+   Released under the GNU/GPL license or MIT license (at your option), 
+   no warranties.
   
    Author: 
    	- Enrico Tassi <gareuselesinge@users.sourceforge.net>

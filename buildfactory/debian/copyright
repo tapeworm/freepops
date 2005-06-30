@@ -77,4 +77,10 @@ pthread/
 
   This is taken from the redhat site and is distributed under the LGPL.
   Public License can be found in `/usr/share/common-licenses/LGPL'.
+ 
+luabind/
+curl_lua/
+
+  These modules are duole licensed under GPL and MIT (the same for the lua/
+  module).
   

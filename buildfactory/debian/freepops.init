@@ -51,7 +51,7 @@ set -e
 
 ### helpers ###
 
-function start_freepopsd () {
+start_freepopsd () {
 	if [ -z "$CHROOT" ] ; then
 		start-stop-daemon --start -b --quiet -m -p $PIDFILE \
 			--exec $DAEMON -- $DAEMON_OPTS
@@ -63,7 +63,7 @@ function start_freepopsd () {
 
 }
 
-function stop_freepopsd () {
+stop_freepopsd () {
 	if [ -z "$CHROOT" ] ; then
 		start-stop-daemon --stop --quiet -p $PIDFILE 
 	else

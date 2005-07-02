@@ -1,3 +1,10 @@
+freepops (0.0.30-2) unstable; urgency=low
+
+  * init.d script uses only POSIX shell commands, applied patch by
+    Rogério Brito (Closes: #316221)
+
+ -- Enrico Tassi <tassi@garfield>  Sat,  2 Jul 2005 14:34:14 +0200
+
 freepops (0.0.30-1) unstable; urgency=low
 
   * new upstream release

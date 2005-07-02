@@ -11,7 +11,7 @@ help:
 	$(H)echo "Targets are: all dist-{osx,osx-static,win,deb,rpm,gen,tgz,obsd,zip}"
 	$(H)echo
 
-all: dist-deb dist-rpm dist-win-e-zip dist-gen #dist-slack
+all: dist-deb dist-rpm dist-win-e-zip #dist-gen dist-slack
 
 clean:
 	$(H)rm -rf _*_ freepops-[0-9\.]*.tar.gz

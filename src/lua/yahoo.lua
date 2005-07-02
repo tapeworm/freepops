@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6"
+PLUGIN_VERSION = "0.1.6a"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.27"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -92,8 +92,8 @@ name and your real password as the password.]]
 
 local globals = {
   -- Login strings
-  -- TODO: Define the HTTPS version
   --
+  strMailPage = "http://mail.yahoo.com",
   strLoginPage = "http://login.yahoo.com",
   strLoginHTTP = "http://login.yahoo.com/config/login",   
   strLoginHTTPs = "https://login.yahoo.com/config/login",   
@@ -230,7 +230,7 @@ internalState = {
   bNoSSL = false,
   bEmptyTrash = false,
   bEmptyBulk = false,
-  msgids = {}
+  msgids = {},
 }
 
 -- ************************************************************************** --
@@ -900,8 +900,6 @@ function quit_update(pstate)
     end
   end
 
-  -- Save and then Free up the session
-  --
   session.save(hash(), serialize_state(), session.OVERWRITE)
   session.unlock(hash())
 
@@ -935,6 +933,10 @@ function stat(pstate)
   -- really sucks!
   --
   local knownIDs = {}
+
+  -- Force Yahoo to update
+  --
+  browser:get_uri(globals.strMailPage)
 
   -- Debug Message
   --
@@ -1081,7 +1083,7 @@ function stat(pstate)
       --
       browser = internalState.browser
       cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-        internalState.strMBox, nPage, globals.nViewAll);
+        internalState.strMBox, nPage, internalState.strView);
 
       -- Retry to load the page
       --

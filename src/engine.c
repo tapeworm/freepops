@@ -256,7 +256,7 @@ return rc;
 
 int freepops_quit(struct popstate_t*p)
 {
-int rc = POPSERVER_ERR_UNKNOWN;
+int rc = POPSERVER_ERR_OK;
 
 if(CAST(get_popstate_other(p)) != NULL &&
    CAST(get_popstate_other(p))->l != NULL )

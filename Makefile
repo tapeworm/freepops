@@ -108,6 +108,7 @@ tgz-dist:
 		done; \
 		rm -rf doc/rfc/;\
 		rm -rf doc/contracts/;\
+		chmod -R a+r *;\
 		cd ..;\
 		mv $$BASE freepops-$(VERSION) || true;\
 		tar -cf freepops-$(VERSION).tar freepops-$(VERSION);\

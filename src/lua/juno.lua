@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8e"
+PLUGIN_VERSION = "0.0.8f"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.27"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -29,6 +29,12 @@ Trash. For user defined folders, use their name as the value.]]
 	{name = "emptytrash", description = {
 		en = [[
 Parameter is used to force the plugin to empty the trash when it is done
+pulling messages.]]
+		}	
+	},
+	{name = "resetheaders", description = {
+		en = [[
+Parameter is used to force the plugin to turn off full headers when it is done
 pulling messages.]]
 		}	
 	},
@@ -97,7 +103,7 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "%s/7?folder=%s&sortby=date&direction=up",
+  strCmdMsgList = "%s/7?folder=%s",
   strCmdMsgView = "%s/8?msgNum=%s&folder=%s",
   strCmdDelete = "%s/7?folder=%s&command=delete&msgList=", 
   strCmdReadOptions = "%s/48",
@@ -120,6 +126,7 @@ internalState = {
   strCrumb = nil,
   strMBox = nil,
   bEmptyTrash = false,
+  bResetHeaders = false,
 }
 
 -- ************************************************************************** --
@@ -733,6 +740,14 @@ function user(pstate, username)
     internalState.bEmptyTrash = true
   end
 
+  -- Should the trash be emptied at the end of the session?
+  --
+  local val = (freepops.MODULE_ARGS or {}).resetheaders or 0
+  if val == "1" then
+    log.dbg("Juno/Netzero: The full header option will be turn off on quit.")
+    internalState.bResetHeaders = true
+  end
+
   return POPSERVER_ERR_OK
 end
 
@@ -858,6 +873,15 @@ function quit_update(pstate)
     cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer)
     log.dbg("Emptying the trash with URL: " .. cmdUrl .. "\n")
     local body, err = browser:get_uri(cmdUrl)
+  end
+
+  -- Turn off full headers
+  --
+  if internalState.bResetHeaders == true then
+    cmdUrl = string.format(globals.strCmdReadOptions, internalState.strMailServer)
+    log.dbg("Turning off full headers with URL: " .. cmdUrl .. "\n")
+    local postdata = "headers=0&command=save&page=5"
+    local body, err = browser:post_uri(cmdUrl, postdata)
   end
 
   -- Save and then Free up the session

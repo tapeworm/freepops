@@ -35,6 +35,9 @@ start() {
 	if  [ ${USER_NAME} ] && [ ${USER_PASSWD} ]; then	 
 		ARGS="${ARGS} -A ${USER_NAME}:${USER_PASSWD}"
 	fi	
+	if [ ${SUID_USER} ] && [ ${SUID_GROUP} ]; then
+		ARGS="${ARGS} -s ${SUID_USER}.${SUID_GROUP}"
+	fi
 	start-stop-daemon --start  --exec /usr/bin/freepopsd \
 		-- -d ${ARGS} 
 	eend ${?}

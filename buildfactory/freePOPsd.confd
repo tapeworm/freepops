@@ -24,3 +24,6 @@ VERBOSE="1"
 # USER_NAME=""
 # USER_PASSWD=""
 
+# You can drop root privs by changing to this username/group
+SUID_USER="nobody"
+SUID_GROUP="nogroup"

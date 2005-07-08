@@ -70,7 +70,7 @@ PLUGIN_DOMAINS = {"@mail.com","@email.com","@iname.com","@cheerful.com","@consul
 "@webcity.ca","@webmail.lu","@welcomm.ac","@wenxuecity.net","@westham-mail.com","@wimbledon-mail.com",
 "@windrivers.net","@wolves-mail.com","@wongfaye.com","@worldmail.ac","@worldweb.ac","@isleuthmail.com",
 "@x-lab.cc","@xy.com.tw","@yankeeman.com","@yyhmail.com", "@verizonmail.com", "@lycos.com", "@cyberdude.com",
-"@mail.org" }
+"@mail.org", "@italymail.com" }
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		en = [[

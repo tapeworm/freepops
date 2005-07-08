@@ -1,3 +1,4 @@
+- Gentoo init script now uses -s option to drop privileges (by Daniel Black)
 - fixed std file permissions in the tarball (should help Gentoo)
 - fixed debian init script
 - fixed error message if you type just quit (thanks rami)

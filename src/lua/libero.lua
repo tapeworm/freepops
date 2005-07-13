@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.1"
+PLUGIN_VERSION = "0.2.2"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -98,7 +98,7 @@ local libero_string = {
 	-- to cut and paste the html source and work on it. For example
 	-- you could copy a message table row in a blank file, substitute
 	-- every useless field with '.*'.
-	statE = ".*<script>TREvidenceMsg</script>.*<TD>.*<input.*value.*=.*[[:digit:]]+.*>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<img>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<a>.*<script>IMGEvidenceMsg</script>.*</a>.*<script>AEvidenceMsg</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<script>AEvidenceMsg</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<IMG>.*</TD>.*<script>TDEvidenceMsg</script>.*</TD>.*<TD>.*<IMG>.*</TD>.*<script>TDEvidenceMsg</script>[.*]{b}.*[[:digit:]]+.*{/b}[.*]</TD>.*</TR>",
+	statE = ".*<script>.*TREv.*</script>.*<TD.*>.*<input.*value.*=.*[[:digit:]]+.*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<IMG.*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<div.*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<a>.*<script>IMGEv.*</script>.*</a>.*<script>AEv.*</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<script>.*AEv.*</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<div.*>.*</TD>.*<script>.*TDEv.*</script>.*</TD>.*<TD.*>.*<div.*>.*</TD>.*<script>TDEv.*</script>[.*]{b}.*[[:digit:]]+.*{/b}[.*]</TD>.*</TR>",
 	-- This is the mlex get expression to choose the important fields 
 	-- of the message list page. Used in combination with statE
 	statG = "O<O><O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}X{O}[O]<O>O<O>",
@@ -106,9 +106,8 @@ local libero_string = {
 	first = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs=1&"..
 		"C_Folder=%s",
 	-- The capture to check if there is one more page of message list
-
-	next_checkC = "<a%s+href=\"javascript:doit"..
-		"%('Act_Msgs_Page_Next',1,1%)\".*</a>",
+	next_checkC = "<a href=\"javascript:doit"..
+		"%('Act_Msgs_Page_Next',1,1%)\"",
 	-- The uri to get the next page of messages
 	next = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs_Page_Next=1&"..
 		"HELP_ID=inbox&SEL_ALL=0&"..

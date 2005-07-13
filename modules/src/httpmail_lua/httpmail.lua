@@ -4,7 +4,8 @@
 -- This module implements the HTTPMAIL protocol on top of the browser
 -- module and the xml2table/table2xml modules.
  
-
+assert(loadlib("xml2table.lua"))()
+assert(loadlib("table2xml.lua"))()
 httpmail = {}
 
 --============================================================================--

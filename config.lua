@@ -57,8 +57,8 @@ freepops.MODULES_MAP["yahoo.it"]       	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.ca"] 	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.co.in"] 	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.com.tw"] 	= {name="yahoo.lua"}
-freepops.MODULES_MAP["yahoo.com.uk"] 	= {name="yahoo.lua"}
-freepops.MODULES_MAP["yahoo.com.cn"] 	= {name="yahoo.lua"}
+freepops.MODULES_MAP["yahoo.co.uk"] 	= {name="yahoo.lua"}
+freepops.MODULES_MAP["yahoo.co.cn"] 	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.es"] 	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.dk"]        = {name="yahoo.lua"} 
 
@@ -86,7 +86,7 @@ freepops.MODULES_MAP["aol.de"]		= {name="aol.lua"}
 freepops.MODULES_MAP["aol.com.pr"]	= {name="aol.lua"}
 freepops.MODULES_MAP["aol.com.br"]	= {name="aol.lua"}
 freepops.MODULES_MAP["jp.aol.com"]	= {name="aol.lua"}
-freepops.MODULES_MAP["aol.com.uk"]	= {name="aol.lua"}
+freepops.MODULES_MAP["aol.co.uk"]	= {name="aol.lua"}
 freepops.MODULES_MAP["aol.ca"]		= {name="aol.lua"}
 freepops.MODULES_MAP["aola.com"]	= {name="aol.lua"}
 freepops.MODULES_MAP["aim.com"]		= {name="aol.lua"}

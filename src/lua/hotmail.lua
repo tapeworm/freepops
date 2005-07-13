@@ -7,17 +7,20 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.0"
+PLUGIN_VERSION = "0.1.1"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=hotmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
-PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
-PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
-PLUGIN_DOMAINS = {"@hotmail.com","@msn.com","@webtv.com","@charter.com",
-	"@compaq.net","@passport.com", "@hotmail.de", "@hotmail.it", "@hotmail.co.uk", 
-        "@hotmail.co.jp", "@hotmail.fr", "@messengeruser.com"}
+PLUGIN_AUTHORS_NAMES = {"Russell Schwager", "D. Milne" }
+PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com", "drmilne (at) safe-mail (.) net"}
+PLUGIN_DOMAINS = { "@hotmail.com","@msn.com","@webtv.com",
+      "@charter.com", "@compaq.net","@passport.com", 
+      "@hotmail.de", "@hotmail.it", "@hotmail.co.uk", 
+      "@hotmail.co.jp", "@hotmail.fr", "@messengeruser.com",
+      "@hotmail.com.ar", "@hotmail.co.th", "@hotmail.com.tr"  
+      }
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox, gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
@@ -403,7 +406,12 @@ function downloadMsg(pstate, msg, nLines, data)
 
     -- Buffer
     --
-    strBuffer = ""
+    strBuffer = "",
+
+    -- addition
+    cb_uidl = uidl,     --  to provide the uidl for later... 
+    bEndReached = false  	-- this is a hack, I know...
+    -- end of addition
   }
 	
   -- Define the callback
@@ -423,7 +431,7 @@ function downloadMsg(pstate, msg, nLines, data)
   --
   local body = cbInfo.strBuffer
   if (string.len(body) > 0) then
-    body = cleanupBody(body)
+    body = cleanupBody(body, cbInfo)
     body = cbInfo.strHack:dothack(body) .. "\0"
     popserver_callback(body, data)
   end
@@ -461,7 +469,7 @@ function downloadMsg_cb(cbInfo, data)
       cbInfo.nLinesReceived = -1;
     end
 
-    body = cleanupBody(body)
+    body = cleanupBody(body, cbInfo)
 
     -- Perform our "TOP" actions
     --
@@ -493,19 +501,114 @@ function downloadMsg_cb(cbInfo, data)
   end
 end
 
-function cleanupBody(body)
+function cleanupHeaders(headers, cbInfo)
+  -- Cleanup the headers.  They are HTML-escaped.  
+  --
+  local origHeaders = headers
+  local bMissingTo = false    -- it seems hotmail server sometimes disregards To: when 'raw=0' ? 
+                              --   probably only in internal HoTMaiL-service letters, where the actual 
+                              --   internet message headers do not contain actual To:-field
+  local bMissingID = false    -- when no Message-ID -field seems to have been automatically generated ?
+  local bodyrest = ""
+
+
+  _, _, headers, bodyrest = string.find(headers, "^(.-)\r*\n%s*\r*\n(.*)$" )
+
+
+  if (headers == nil) then
+    log.dbg("Unable to parse out message body headers!")
+    return nil
+  end  
+
+  -- 
+  -- some cleanup... 
+  --
+  headers = string.gsub(headers, "&#34;", '"')
+  headers = string.gsub(headers, "&quot;", '"')
+  headers = string.gsub(headers, "&gt;", ">")
+  headers = string.gsub(headers, "&lt;", "<")
+  headers = string.gsub(headers, "&nbsp;", " ")
+
+
+  headers = string.gsub(headers, "%s+$", "\n")
+  headers = headers .. "\n";
+  headers = string.gsub(headers, "\n\n", "\n")
+
+  --
+  -- some checking...
+  --
+  if ( string.find(headers, "(To:)") == nil ) then
+     bMissingTo = true;
+  end
+  if ( string.find(headers, "(Message%-I[dD]:)") == nil ) then
+     bMissingID = true;
+  end
+
+  --
+  -- Add some headers
+  --
+
+  if (bMissingTo ~= false) then
+      headers = headers .. "To: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\n" ;
+  end
+
+  if (bMissingID ~= false) then
+      local msgid = cbInfo.cb_uidl .. "@" .. internalState.strMailServer ; -- well, if we do not have any better choice...
+      headers = headers .. "Message-ID: <" .. msgid .. ">\n" ; 
+  end
+
+---[[--
+  headers = headers .. "X-FreePOPs-User: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\n";
+  headers = headers .. "X-FreePOPs-Domain: " .. internalState.strDomain .. "\n";
+  headers = headers .. "X-FreePOPs-Folder: " .. "[" .. internalState.strMBox .. "]" .. "\n";
+  headers = headers .. "X-FreePOPs-MailServer: " .. internalState.strMailServer .. "\n";
+  headers = headers .. "X-FreePOPs-ImageServer: " .. internalState.strImgServer .. "\n";
+  headers = headers .. "X-FreePOPs-MsgNumber: " .. "<" .. cbInfo.cb_uidl .. ">" .. "\n";
+-- --  headers = headers .. "X-FreePOPs-Crumb: " .. "<" .. internalState.strCrumb .. ">" .. "\n";
+--]]--
+
+--  make the final touch...
+
+  headers = headers .. "\n" .. bodyrest;
+
+  return headers ;
+end
+
+
+function cleanupBody(body, cbInfo)
+
+-- check to see whether the end of message has already been seen...
+    if ( cbInfo.bEndReached == true ) then
+       return ("") ; 	-- in this case we pass nothing past the end of message
+    end
+----
+
   -- The only parts we care about are within <pre>..</pre>
   --
-  body = string.gsub(body, "<pre>[%s]*", "")
-  body = string.gsub(body, "</pre>.*", "")
+
+  body = string.gsub(body, "^.*<pre>[%s]*(.*)", "%1")
+  body = string.gsub(body, "(.*)</pre>.*$", "%1")
+
+  --  now the body really consists of headers and the true body...
+  --
+
+  if ( cbInfo.bFirstBlock ~= false ) then
+     body = cleanupHeaders(body, cbInfo)
+     cbInfo.bFirstBlock = false 
+  end
+
+  -- a hack to ensure we do not continue after the </pre> tag has been seen...
+  if ( cbInfo.nLinesReceived == -1 ) then
+     cbInfo.bEndReached = true ;
+  end
 
   -- Clean up the end of line, and replace HTML tags
   --
-  body = string.gsub(body, "\n", "\r\n")
-  body = string.gsub(body, "&amp;", "&")
+  body = string.gsub(body, "\r*\n", "\r\n")  
   body = string.gsub(body, "&lt;", "<")
   body = string.gsub(body, "&gt;", ">")
   body = string.gsub(body, "&quot;", "\"")
+  body = string.gsub(body, "&amp;", "&")         --  this ought to be the last of these
   body = string.gsub(body, "<!%-%-%$%$imageserver%-%->", internalState.strImgServer)
   return body
 end

@@ -7,12 +7,12 @@
 -- XML is a pretty flexible language, good for doing nothig, bad for doing all.
 -- Since it is really generic it may allow the reuse of of some tools... 
 -- But what do you think?! Isn't grep a reused peace of code?
--- Anyway it seem that doing XML stuff is for real men.
+-- Anyway it seems that doing XML stuff is for real men.
 -- So everithing is done in XML nowadays.<br/>
 -- Why I don't like it much? Simple, there is no way to access it 
 -- with the language. You have to parse it and transform it in a 
 -- more handy format for your internal purpose, elaborate it and 
--- then retranform you data structure in XML.<br/>
+-- then retransform you data structure in XML.<br/>
 -- So this module is
 -- for the step of internalizing an XML tree into a LUA table. 
 -- This means that you will be able to travferse the tree in the

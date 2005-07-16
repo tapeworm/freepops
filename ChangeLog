@@ -1,3 +1,4 @@
+- fixed some typo in xml2table.lua
 13/07/2005 0.0.31
 - fixed config.lua com.uk -> co.uk
 - yahoo.lua: Fixed an issue where the yahoo new mail indicator wasn't being reset after a session. Also, fixed an error when a yahoo session expires and it regenerates the base url in STAT. (russell822)

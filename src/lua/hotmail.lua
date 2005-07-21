@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.1"
+PLUGIN_VERSION = "0.1.2"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -86,7 +86,8 @@ local globals = {
   strLoginPostUrlPattern3='g_DO."%s".="([^"]+)"',
   strLoginPostUrlPattern4='var g_QS="([^"]+)";',
   strLoginPostUrlPattern5='name="PPFT" id="[^"]+" value="([^"]+)"',
-  strLoginDoneReloadToHMHome='URL=([^"]+)"',
+  strLoginDoneReloadToHMHome1='URL=([^"]+)"',
+  strLoginDoneReloadToHMHome2='top%.location%.replace%("([^"]+)"',
 
   -- Get the crumb value that is needed for every command
   --
@@ -172,6 +173,37 @@ internalState = {
 }
 
 -- ************************************************************************** --
+--  Debugging functions
+-- ************************************************************************** --
+
+-- Set to true to enable Raw Logging
+--
+local ENABLE_LOGRAW = false
+
+-- The platform dependent End Of Line string
+-- e.g. this should be changed to "\n" under UNIX, etc.
+local EOL = "\r\n"
+
+-- The raw logging function
+--
+log.raw = function ( line, data )
+  if not ENABLE_LOGRAW then
+    return
+  end
+
+  local out = assert(io.open("log_raw.txt", "ab"))
+  out:write( EOL .. os.date("%c") .. " : " )
+  out:write( line )
+  if data ~= nil then
+    out:write( EOL .. "--------------------------------------------------" .. EOL )
+    out:write( data )
+    out:write( EOL .. "--------------------------------------------------" )
+  end
+  assert(out:close())
+end
+
+
+-- ************************************************************************** --
 --  Helper functions
 -- ************************************************************************** --
 
@@ -196,12 +228,35 @@ end
 function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
-         (internalState.strMBox or "")
+         (string.sub(internalState.strMBox, -5) or "")
+end
+
+function getPage(browser, url)
+  local try = 0
+  while (try < 3) do
+    local body, err = browser:get_uri(url)
+
+    if (body == nil) then
+      log.raw("Tried to load: " .. url .. " and got error: " .. err)
+    elseif (string.find(body, "We are experiencing higher than normal volume") == nil and 
+        string.find(body, "<[Hh][Tt][Mm][Ll]>") ~= nil and
+        string.find(body, "MSN Hotmail %- ERROR") == nil) then
+      return body, err
+    end
+    try = try + 1
+    if (body ~= nil) then
+      log.raw("Attempt to load: " .. url .. " failed in attempt: " .. try)
+    end
+  end
+
+  return nil, nil
 end
 
 -- Issue the command to login to Hotmail
 --
 function loginHotmail()
+  log.raw("Entering login")
+
   -- Check to see if we've already logged in
   --
   if internalState.loginDone then
@@ -232,12 +287,13 @@ function loginHotmail()
 
   -- Retrieve the login page.
   --
-  local body, err = browser:get_uri(url)
+  local body, err = getPage(browser, url)
 
   -- No connection
   --
   if body == nil then
     log.error_print("Login Failed: Unable to make connection")
+    log.raw("Login failed: Can't get the page: " .. url .. ", Error: " .. (err or "none"));
     return POPSERVER_ERR_NETWORK
   end
 
@@ -267,7 +323,7 @@ function loginHotmail()
   local _, _, str2 = string.find(body, globals.strLoginPostUrlPattern5)
   if (url == nil or str == nil or str2 == nil) then
     log.error_print(globals.strLoginFailed)
-    return POPSERVER_ERR_AUTH
+    return POPSERVER_ERR_NETWORK
   end
   url = url .. "?" .. str 
 
@@ -281,24 +337,29 @@ function loginHotmail()
   -- We should be logged in now!  Unfortunately, we aren't done.  Hotmail returns a page
   -- that should auto-reload in a browser but not in curl.  It's the URL for Hotmail Today.
   --
-  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome)
+  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome1)
   if url == nil then
-    log.error_print(globals.strLoginFailed)
-    return POPSERVER_ERR_AUTH
+    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+    if url == nil then
+      log.error_print(globals.strLoginFailed)
+      log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(1):\n" .. body);
+      return POPSERVER_ERR_NETWORK
+    end
   end
 
   _, _, str = string.find(url, globals.strRetLoginBadLogin)
   if str ~= nil then
     log.error_print(globals.strLoginFailed)
-    return POPSERVER_ERR_AUTH
+    log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(2):\n" .. body);
+    return POPSERVER_ERR_NETWORK
   end
-  body, err = browser:get_uri(url)
+  body, err = getPage(browser, url)
 
   -- Shouldn't happen but you never know
   --
   if body == nil then
     log.error_print(globals.strLoginFailed)
-    return POPSERVER_ERR_AUTH
+    return POPSERVER_ERR_NETWORK
   end
 
   -- Save the mail server
@@ -332,6 +393,7 @@ function loginHotmail()
   else
     internalState.strImgServer = internalState.strMailServer
     log.dbg("Couldn't figure out the image server.  Using the mail server as a default.")
+    log.raw("Login failed: Should be logged in right now but am not.  Last page loaded: " .. url .. " with body:\n" .. body);
   end
 
   -- See if we are using the new folder id's
@@ -358,6 +420,7 @@ function loginHotmail()
 
   -- Return Success
   --
+  log.raw("Successful login")
   return POPSERVER_ERR_OK
 end
 
@@ -391,6 +454,8 @@ function downloadMsg(pstate, msg, nLines, data)
     -- Whether this is the first call of the callback
     --
     bFirstBlock = true,
+    nAttempt = 0,
+    bRetry = true,
 
     -- String hacker
     --
@@ -420,10 +485,17 @@ function downloadMsg(pstate, msg, nLines, data)
 
   -- Start the download on the body
   -- 
-  local f, _ = browser:pipe_uri(url, cb)
-  if not f then
-    -- An empty message.  Throw an error
-    --
+  while (cbInfo.bRetry == true and cbInfo.nAttempt < 3) do
+    local f, err = browser:pipe_uri(url, cb)
+    if err then
+      -- Log the error
+      --
+      log.raw("Message: " .. cbInfo.cb_uidl .. " received error: " .. err)
+    end
+  end
+  if (cbInfo.bRetry == true) then
+    log.error_print("Message: " .. cbInfo.cb_uidl .. " failed to download.")
+    log.raw("Message: " .. cbInfo.cb_uidl .. " failed to download.")
     return POPSERVER_ERR_NETWORK
   end
 
@@ -431,6 +503,7 @@ function downloadMsg(pstate, msg, nLines, data)
   --
   local body = cbInfo.strBuffer
   if (string.len(body) > 0) then
+    log.raw("Message: " .. cbInfo.cb_uidl .. ", left over buffer being processed: " .. body)
     body = cleanupBody(body, cbInfo)
     body = cbInfo.strHack:dothack(body) .. "\0"
     popserver_callback(body, data)
@@ -438,8 +511,10 @@ function downloadMsg(pstate, msg, nLines, data)
 
   -- Mark the message as read
   --
+  log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as being done.")
   browser:get_head(markReadUrl)
 
+  log.raw("Message: " .. cbInfo.cb_uidl .. ", Completed!")
   return POPSERVER_ERR_OK
 end
 
@@ -448,9 +523,27 @@ end
 function downloadMsg_cb(cbInfo, data)
 	
   return function(body, len)
+    log.raw("In download callback: " .. cbInfo.cb_uidl)    
+
+    -- Is this the first block?  If so, make sure we have a valid message
+    --
+    if (cbInfo.bFirstBlock == true) then
+      if (string.find(body, "^<pre>")) then
+        cbInfo.bRetry = false
+        log.raw("Message: " .. cbInfo.cb_uidl .. " was loaded successfully.")
+      else
+        cbInfo.bRetry = true   
+        cbInfo.nAttempt = cbInfo.nAttempt + 1
+        log.raw("Message: " .. cbInfo.cb_uidl .. " failed on attempt: " .. cbInfo.nAttempt .. ", Body: " .. body)
+        log.raw("out download callback: " .. cbInfo.cb_uidl)    
+        return 0, nil
+      end
+    end 
+
     -- Are we done with Top and should just ignore the chunks
     --
-    if (cbInfo.nLinesRequested ~= -2 and cbInfo.nLinesReceived == -1) then
+    if (cbInfo.nLinesReceived == -1) then
+      log.raw("out download callback: " .. cbInfo.cb_uidl .. ", Sent: <Nothing>")    
       return 0, nil
     end
 
@@ -458,9 +551,9 @@ function downloadMsg_cb(cbInfo, data)
     --
     body = cbInfo.strBuffer .. body
     cbInfo.strBuffer = ""
-    while (string.len(body) > 6 and string.find(string.sub(body, -6), "([&<])") ~= nil) do
-      cbInfo.strBuffer = string.sub(body, -6) .. cbInfo.strBuffer
-      body = string.sub(body, 1, -7)
+    if (string.len(body) > 7 and string.find(string.sub(body, -7), "([&<])") ~= nil) then
+      cbInfo.strBuffer = string.sub(body, -7) .. cbInfo.strBuffer
+      body = string.sub(body, 1, -8)
     end
 
     -- Did we reach the end of the message
@@ -497,6 +590,7 @@ function downloadMsg_cb(cbInfo, data)
     --
     popserver_callback(body, data)
 			
+    log.raw("out download callback: " .. cbInfo.cb_uidl .. ", Sent: " .. body)    
     return len, nil
   end
 end
@@ -511,12 +605,10 @@ function cleanupHeaders(headers, cbInfo)
   local bMissingID = false    -- when no Message-ID -field seems to have been automatically generated ?
   local bodyrest = ""
 
-
   _, _, headers, bodyrest = string.find(headers, "^(.-)\r*\n%s*\r*\n(.*)$" )
 
-
   if (headers == nil) then
-    log.dbg("Unable to parse out message body headers!")
+    --log.dbg("Unable to parse out message body headers!")
     return nil
   end  
 
@@ -557,19 +649,16 @@ function cleanupHeaders(headers, cbInfo)
       headers = headers .. "Message-ID: <" .. msgid .. ">\n" ; 
   end
 
----[[--
   headers = headers .. "X-FreePOPs-User: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\n";
   headers = headers .. "X-FreePOPs-Domain: " .. internalState.strDomain .. "\n";
   headers = headers .. "X-FreePOPs-Folder: " .. "[" .. internalState.strMBox .. "]" .. "\n";
   headers = headers .. "X-FreePOPs-MailServer: " .. internalState.strMailServer .. "\n";
   headers = headers .. "X-FreePOPs-ImageServer: " .. internalState.strImgServer .. "\n";
   headers = headers .. "X-FreePOPs-MsgNumber: " .. "<" .. cbInfo.cb_uidl .. ">" .. "\n";
--- --  headers = headers .. "X-FreePOPs-Crumb: " .. "<" .. internalState.strCrumb .. ">" .. "\n";
---]]--
 
---  make the final touch...
-
-  headers = headers .. "\n" .. bodyrest;
+  -- make the final touch...
+  --
+  headers = headers .. "\r\n" .. bodyrest;
 
   return headers ;
 end
@@ -577,29 +666,28 @@ end
 
 function cleanupBody(body, cbInfo)
 
--- check to see whether the end of message has already been seen...
-    if ( cbInfo.bEndReached == true ) then
-       return ("") ; 	-- in this case we pass nothing past the end of message
-    end
-----
+  -- check to see whether the end of message has already been seen...
+  --
+  if (cbInfo.bEndReached == true) then
+    return ("") ; 	-- in this case we pass nothing past the end of message
+  end
 
   -- The only parts we care about are within <pre>..</pre>
   --
-
   body = string.gsub(body, "^.*<pre>[%s]*(.*)", "%1")
   body = string.gsub(body, "(.*)</pre>.*$", "%1")
 
   --  now the body really consists of headers and the true body...
   --
-
-  if ( cbInfo.bFirstBlock ~= false ) then
-     body = cleanupHeaders(body, cbInfo)
-     cbInfo.bFirstBlock = false 
+  if (cbInfo.bFirstBlock ~= false) then
+    body = cleanupHeaders(body, cbInfo)
+    cbInfo.bFirstBlock = false 
   end
 
   -- a hack to ensure we do not continue after the </pre> tag has been seen...
-  if ( cbInfo.nLinesReceived == -1 ) then
-     cbInfo.bEndReached = true ;
+  --
+  if (cbInfo.nLinesReceived == -1) then
+    cbInfo.bEndReached = true 
   end
 
   -- Clean up the end of line, and replace HTML tags
@@ -799,7 +887,7 @@ function quit_update(pstate)
     if internalState.strCrumb ~= '' then
       cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer,internalState.strCrumb)
       log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
-      local body, err = browser:get_uri(cmdUrl)
+      local body, err = getPage(browser, cmdUrl)
       if not body or err then
         log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
       end
@@ -816,11 +904,13 @@ function quit_update(pstate)
   if diff > globals.nSessionTimeout then 
     cmdUrl = string.format(globals.strCmdLogout, internalState.strMailServer)
     log.dbg("Sending Logout URL: " .. cmdUrl .. "\n")
-    local body, err = browser:get_uri(cmdUrl)
+    local body, err = getPage(browser, cmdUrl)
  
     log.dbg("Logout forced to keep hotmail session fresh and tasty!  Yum!\n")
     log.dbg("Session removed - Account: " .. internalState.strUser .. 
       "@" .. internalState.strDomain .. "\n")
+    log.raw("Session removed (Forced by Hotmail timer) - Account: " .. internalState.strUser .. 
+      "@" .. internalState.strDomain) 
     session.remove(hash())
     return POPSERVER_ERR_OK
   end
@@ -976,7 +1066,7 @@ function stat(pstate)
 
     -- Get the page and check to see if we got results
     --
-    local body, err = browser:get_uri(cmdUrl)
+    local body, err = getPage(browser, cmdUrl)
     if body == nil then
       return body, err
     end
@@ -996,6 +1086,7 @@ function stat(pstate)
       --
       internalState.bLoginDone = nil
       session.remove(hash())
+      log.raw("Session Expired - Last page loaded: " .. cmdUrl .. ", Body: " .. body)
 
       -- Try Logging back in
       --
@@ -1015,7 +1106,7 @@ function stat(pstate)
 
       -- Retry to load the page
       --
-      return browser:get_uri(cmdUrl)
+      return getPage(browser, cmdUrl)
     end
 
     -- Get the total number of messages
@@ -1052,6 +1143,8 @@ function stat(pstate)
   if not support.do_until(funcGetPage, funcCheckForMorePages, funcProcess) then
     log.error_print("STAT Failed.\n")
     session.remove(hash())
+    log.raw("Session removed (STAT Failure) - Account: " .. internalState.strUser .. 
+      "@" .. internalState.strDomain) 
     return POPSERVER_ERR_NETWORK
   end
 	

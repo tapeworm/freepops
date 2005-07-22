@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.2"
+PLUGIN_VERSION = "0.1.2a"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -674,8 +674,10 @@ function cleanupBody(body, cbInfo)
 
   -- The only parts we care about are within <pre>..</pre>
   --
-  body = string.gsub(body, "^.*<pre>[%s]*(.*)", "%1")
-  body = string.gsub(body, "(.*)</pre>.*$", "%1")
+  body = string.gsub(body, "^[%s]-<pre>[%s]+", "")
+  body = string.gsub(body, "</pre>.-$", "")
+--  body = string.gsub(body, "^.-<pre>[%s]-(.*)", "%1")
+--  body = string.gsub(body, "(.-)</pre>.-$", "%1")
 
   --  now the body really consists of headers and the true body...
   --
@@ -692,7 +694,9 @@ function cleanupBody(body, cbInfo)
 
   -- Clean up the end of line, and replace HTML tags
   --
-  body = string.gsub(body, "\r*\n", "\r\n")  
+  body = string.gsub(body, "\r\n", "\n")  
+  body = string.gsub(body, "\r", "\n")  
+  body = string.gsub(body, "\n", "\r\n")  
   body = string.gsub(body, "&lt;", "<")
   body = string.gsub(body, "&gt;", ">")
   body = string.gsub(body, "&quot;", "\"")

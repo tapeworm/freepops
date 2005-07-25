@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.2a"
+PLUGIN_VERSION = "0.1.2b"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -528,7 +528,7 @@ function downloadMsg_cb(cbInfo, data)
     -- Is this the first block?  If so, make sure we have a valid message
     --
     if (cbInfo.bFirstBlock == true) then
-      if (string.find(body, "^<pre>")) then
+      if (string.find(body, "<pre>")) then
         cbInfo.bRetry = false
         log.raw("Message: " .. cbInfo.cb_uidl .. " was loaded successfully.")
       else
@@ -551,15 +551,9 @@ function downloadMsg_cb(cbInfo, data)
     --
     body = cbInfo.strBuffer .. body
     cbInfo.strBuffer = ""
-    if (string.len(body) > 7 and string.find(string.sub(body, -7), "([&<])") ~= nil) then
-      cbInfo.strBuffer = string.sub(body, -7) .. cbInfo.strBuffer
-      body = string.sub(body, 1, -8)
-    end
-
-    -- Did we reach the end of the message
-    --
-    if (string.find(body, "(</pre>)") ~= nil) then
-      cbInfo.nLinesReceived = -1;
+    if (string.len(body) > 6 and string.find(string.sub(body, -6), "([&<])") ~= nil) then
+      cbInfo.strBuffer = string.sub(body, -6)
+      body = string.sub(body, 1, -7)
     end
 
     body = cleanupBody(body, cbInfo)
@@ -608,19 +602,9 @@ function cleanupHeaders(headers, cbInfo)
   _, _, headers, bodyrest = string.find(headers, "^(.-)\r*\n%s*\r*\n(.*)$" )
 
   if (headers == nil) then
-    --log.dbg("Unable to parse out message body headers!")
-    return nil
+    log.dbg("Hotmail: unable to parse out message headers.  Extra headers will not be used.")
+    return origHeaders
   end  
-
-  -- 
-  -- some cleanup... 
-  --
-  headers = string.gsub(headers, "&#34;", '"')
-  headers = string.gsub(headers, "&quot;", '"')
-  headers = string.gsub(headers, "&gt;", ">")
-  headers = string.gsub(headers, "&lt;", "<")
-  headers = string.gsub(headers, "&nbsp;", " ")
-
 
   headers = string.gsub(headers, "%s+$", "\n")
   headers = headers .. "\n";
@@ -629,79 +613,76 @@ function cleanupHeaders(headers, cbInfo)
   --
   -- some checking...
   --
-  if ( string.find(headers, "(To:)") == nil ) then
-     bMissingTo = true;
+  if string.find(headers, "(To:)") == nil then
+    bMissingTo = true
   end
-  if ( string.find(headers, "(Message%-I[dD]:)") == nil ) then
-     bMissingID = true;
+  if string.find(headers, "(Message%-I[dD]:)") == nil then
+    bMissingID = true
   end
 
-  --
   -- Add some headers
   --
-
-  if (bMissingTo ~= false) then
-      headers = headers .. "To: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\n" ;
+  if bMissingTo ~= false then
+    headers = headers .. "To: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\n" ;
   end
 
-  if (bMissingID ~= false) then
-      local msgid = cbInfo.cb_uidl .. "@" .. internalState.strMailServer ; -- well, if we do not have any better choice...
-      headers = headers .. "Message-ID: <" .. msgid .. ">\n" ; 
+  if bMissingID ~= false then
+    local msgid = cbInfo.cb_uidl .. "@" .. internalState.strMailServer -- well, if we do not have any better choice...
+    headers = headers .. "Message-ID: <" .. msgid .. ">\n"  
   end
 
-  headers = headers .. "X-FreePOPs-User: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\n";
-  headers = headers .. "X-FreePOPs-Domain: " .. internalState.strDomain .. "\n";
-  headers = headers .. "X-FreePOPs-Folder: " .. "[" .. internalState.strMBox .. "]" .. "\n";
-  headers = headers .. "X-FreePOPs-MailServer: " .. internalState.strMailServer .. "\n";
-  headers = headers .. "X-FreePOPs-ImageServer: " .. internalState.strImgServer .. "\n";
-  headers = headers .. "X-FreePOPs-MsgNumber: " .. "<" .. cbInfo.cb_uidl .. ">" .. "\n";
+  headers = headers .. "X-FreePOPs-User: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\n"
+  headers = headers .. "X-FreePOPs-Domain: " .. internalState.strDomain .. "\n"
+  headers = headers .. "X-FreePOPs-Folder: " .. internalState.strMBox .. "\n"
+  headers = headers .. "X-FreePOPs-MailServer: " .. internalState.strMailServer .. "\n"
+  headers = headers .. "X-FreePOPs-ImageServer: " .. internalState.strImgServer .. "\n"
+  headers = headers .. "X-FreePOPs-MsgNumber: " .. "<" .. cbInfo.cb_uidl .. ">" .. "\n"
 
   -- make the final touch...
   --
-  headers = headers .. "\r\n" .. bodyrest;
+  headers = headers .. "\n" .. bodyrest
 
-  return headers ;
+  return headers 
 end
 
 
 function cleanupBody(body, cbInfo)
-
   -- check to see whether the end of message has already been seen...
   --
   if (cbInfo.bEndReached == true) then
     return ("") ; 	-- in this case we pass nothing past the end of message
   end
 
-  -- The only parts we care about are within <pre>..</pre>
+  -- Did we reach the end of the message
   --
-  body = string.gsub(body, "^[%s]-<pre>[%s]+", "")
-  body = string.gsub(body, "</pre>.-$", "")
---  body = string.gsub(body, "^.-<pre>[%s]-(.*)", "%1")
---  body = string.gsub(body, "(.-)</pre>.-$", "%1")
-
-  --  now the body really consists of headers and the true body...
-  --
-  if (cbInfo.bFirstBlock ~= false) then
-    body = cleanupHeaders(body, cbInfo)
-    cbInfo.bFirstBlock = false 
-  end
-
-  -- a hack to ensure we do not continue after the </pre> tag has been seen...
-  --
-  if (cbInfo.nLinesReceived == -1) then
+  if (string.find(body, "(</pre>)") ~= nil) then
+    cbInfo.nLinesReceived = -1;
     cbInfo.bEndReached = true 
   end
 
+  -- The only parts we care about are within <pre>..</pre>
+  --
+  body = string.gsub(body, "<pre>[%s]*", "")
+  body = string.gsub(body, "</pre>.-$", "")
+
   -- Clean up the end of line, and replace HTML tags
   --
-  body = string.gsub(body, "\r\n", "\n")  
-  body = string.gsub(body, "\r", "\n")  
-  body = string.gsub(body, "\n", "\r\n")  
+  body = string.gsub(body, "\n", "\r\n")
+  body = string.gsub(body, "&amp;", "&")
   body = string.gsub(body, "&lt;", "<")
   body = string.gsub(body, "&gt;", ">")
   body = string.gsub(body, "&quot;", "\"")
-  body = string.gsub(body, "&amp;", "&")         --  this ought to be the last of these
+  body = string.gsub(body, "&#34;", "\"")
+  body = string.gsub(body, "&nbsp;", " ")
   body = string.gsub(body, "<!%-%-%$%$imageserver%-%->", internalState.strImgServer)
+
+  -- We've now at least seen one block, attempt to clean up the headers
+  --
+  if (cbInfo.bFirstBlock == true) then
+    cbInfo.bFirstBlock = false 
+    body = cleanupHeaders(body, cbInfo)
+  end
+
   return body
 end
 

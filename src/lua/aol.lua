@@ -177,6 +177,7 @@ local EOL = "\r\n"
 
 -- The raw logging function
 --
+log = log or {} -- fast hack to make the xml generator happy
 log.raw = function ( line, data )
   if not ENABLE_LOGRAW then
     return

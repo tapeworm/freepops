@@ -7,12 +7,12 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.1"
+PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "netscape.net"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?contrib=netscape.lua"
-PLUGIN_HOMEPAGE = "http://www.freepops.org/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=netscape.lua"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = { "@netscape.net"} 
@@ -44,11 +44,12 @@ and your real password as the password.]]
 local globals = {
   -- Server URL
   --
-  strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?siteId=%s&authLev=2&seamless=novl&siteState=",
+  strLoginUrl = "http://ncmail.netscape.com/_cqr/vllogin.adp",
+--http://my.screenname.aol.com/_cqr/login/login.psp?siteId=%s&authLev=2&seamless=novl&siteState=",
 
   -- Login strings
   --
-  strLoginPostData = "screenname=%s&password=%s",
+  strLoginPostData = "loginId=%s&password=%s",
   strLoginFailed = "Login Failed - Invalid User name and/or password",
 
   -- Logout
@@ -80,6 +81,7 @@ local globals = {
   strLoginPostUrlPattern1='[Mm][Ee][Tt][Hh][Oo][Dd]="[^"]*" [Aa][Cc][Tt][Ii][Oo][Nn]="([^"]*)"',
   strLoginPostUrlPattern2='[Tt][Yy][Pp][Ee]="[Hh][Ii][Dd][Dd][Ee][Nn]" [Nn][Aa][Mm][Ee]="([^"]*)" [Vv][Aa][Ll][Uu][Ee]="([^"]*)"',
   strLoginPostUrlPattern3='[Nn][Aa][Mm][Ee]="[^"]*" [Mm][Ee][Tt][Hh][Oo][Dd]="POST" [Aa][Cc][Tt][Ii][Oo][Nn]="([^"]*)"',
+  strLoginPostUrlPattern4=", '([^']+)'%);",
   
   -- Used by Stat to pull out the message ID and the size
   --
@@ -106,7 +108,7 @@ local globals = {
 
   -- Site IDs
   --
-  strNetscapeID = "nscpenusmail",
+  strNetscapeID = "vnscpenusmail",
 }
 
 -- ************************************************************************** --
@@ -124,6 +126,36 @@ internalState = {
   strMBox = nil,
   strSiteId = "",
 }
+
+-- ************************************************************************** --
+--  Logging functions
+-- ************************************************************************** --
+
+-- Set to true to enable Raw Logging
+--
+local ENABLE_LOGRAW = false
+
+-- The platform dependent End Of Line string
+-- e.g. this should be changed to "\n" under UNIX, etc.
+local EOL = "\r\n"
+
+-- The raw logging function
+--
+log.raw = function ( line, data )
+  if not ENABLE_LOGRAW then
+    return
+  end
+
+  local out = assert(io.open("log_raw.txt", "ab"))
+  out:write( EOL .. os.date("%c") .. " : " )
+  out:write( line )
+  if data ~= nil then
+    out:write( EOL .. "--------------------------------------------------" .. EOL )
+    out:write( data )
+    out:write( EOL .. "--------------------------------------------------" )
+  end
+  assert(out:close())
+end
 
 -- ************************************************************************** --
 --  Helper functions
@@ -220,16 +252,27 @@ function loginAOL()
   local postdata = nil
   local name, value  
   for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
+    value = string.gsub(value, "%%", "%%25")
     if postdata ~= nil then
-      postdata = postdata .. "&" .. name .. "=" .. value  
+      postdata = postdata .. "&" .. name .. "=" .. value
     else
       postdata = name .. "=" .. value 
     end
   end
   postdata = postdata .. "&" .. 
     string.format(globals.strLoginPostData, username, password)
-  url = "http://" .. browser:wherearewe() .. url
+  url = "https://" .. browser:wherearewe() .. url
   body, err = browser:post_uri(url, postdata)
+
+  -- We'll be redirected back to a page which redirects us to a non-ssl
+  -- page.
+  --
+  _, _, url = string.find(body, globals.strLoginPostUrlPattern4)
+  if url == nil then
+    log.error_print(globals.strLoginFailed)
+    return POPSERVER_ERR_AUTH  
+  end  
+  body, err = browser:get_uri(url)
 
   -- This is where things get a little hokey.  AOL returns a page with three javascript
   -- links that need to be "GET'ed" and then a form that needs to be submitted.  We don't
@@ -260,7 +303,6 @@ function loginAOL()
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH  
   end  
-
   body, err = browser:post_uri(url, postdata)
 
   -- Shouldn't happen but you never know

@@ -7,12 +7,12 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8c"
+PLUGIN_VERSION = "0.0.8d"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=aol.lua"
-PLUGIN_HOMEPAGE = "http://www.freepops.org/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=aol.lua"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {
@@ -50,12 +50,11 @@ and your real password as the password.]]
 local globals = {
   -- Server URL
   -- 
-  strLoginUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?seamless=novl&sitedomain=beta.webmail.aol.com&lang=en&locale=us&authLev=2&siteState=",
-  strLoginAIMUrl = "http://my.screenname.aol.com/_cqr/login/login.psp?mcState=initialized&seamless=novl&sitedomain=mail.aol.com&lang=en&locale=us&authLev=2&siteState=", --ver%3a1%252c0%26ld%3amail.aol.com",
+  strLoginUrl = "http://webmail.aol.com",
 
   -- Login strings
   --
-  strLoginPostData = "screenname=%s&password=%s",
+  strLoginPostData = "loginId=%s&password=%s",
   strLoginFailed = "Login Failed - Invalid User name and/or password",
 
   -- Logout
@@ -73,8 +72,8 @@ local globals = {
   
   -- Pattern to extract the URL to go to get the login form
   --
-  strLoginPageParamsPattern='goToLoginUrl.-Redir."([^"]+)"',
-  strLoginPageParamsPatternAim = 'snsInFrameRedir."([^"]+)".;',
+  strLoginWebmailRedirect = 'replace."([^"]+)"',
+  strLoginPageParamsPattern = 'goToLoginUrl.-Redir."([^"]+)"',
 
   -- Pattern to pull out the url's we need to go to set some cookies.
   --
@@ -165,6 +164,36 @@ internalState = {
 }
 
 -- ************************************************************************** --
+--  Logging functions
+-- ************************************************************************** --
+
+-- Set to true to enable Raw Logging
+--
+local ENABLE_LOGRAW = false
+
+-- The platform dependent End Of Line string
+-- e.g. this should be changed to "\n" under UNIX, etc.
+local EOL = "\r\n"
+
+-- The raw logging function
+--
+log.raw = function ( line, data )
+  if not ENABLE_LOGRAW then
+    return
+  end
+
+  local out = assert(io.open("log_raw.txt", "ab"))
+  out:write( EOL .. os.date("%c") .. " : " )
+  out:write( line )
+  if data ~= nil then
+    out:write( EOL .. "--------------------------------------------------" .. EOL )
+    out:write( data )
+    out:write( EOL .. "--------------------------------------------------" )
+  end
+  assert(out:close())
+end
+
+-- ************************************************************************** --
 --  Helper functions
 -- ************************************************************************** --
 
@@ -210,10 +239,10 @@ function loginAOL()
   local username = internalState.strUser
   local password = curl.escape(internalState.strPassword)
   local domain = internalState.strDomain
-  local url = globals.strLoginUrl  --string.format(globals.strLoginUrl, internalState.strSiteId)
-  if (domain == "aim.com") then
-    url = globals.strLoginAIMUrl
-  end
+  local url = globals.strLoginUrl  
+  --if (domain == "aim.com") then
+  --  url = globals.strLoginAIMUrl
+  --end
   local xml = globals.strFolderQry
   local browser = internalState.browser
 	
@@ -233,10 +262,24 @@ function loginAOL()
   --
   local body, err = browser:get_uri(url)
 
+  -- No connection
+  --
+  if body == nil then
+    log.error_print("Login Failed: Unable to make connection")
+    return POPSERVER_ERR_NETWORK
+  end
+
+  _, _, url = string.find(body, globals.strLoginWebmailRedirect)
+
+  if (url == nil) then
+    log.error_print("Unable to figure out the redirect on the welcome page.")
+    return POPSERVER_ERR_UNKNOWN
+  end
+  body, err = browser:get_uri(url)
+
   -- We need to add a cookie.
   --
-  --local c = cookie.parse_cookies("MC_COOKIETEST=YES; path=/", browser:wherearewe())
-  browser:add_cookie(url, "MC_COOKIETEST=YES; path=/")
+  browser:add_cookie(url, "cookies=cookies; path=/")
 
   -- No connection
   --
@@ -248,11 +291,7 @@ function loginAOL()
   -- The login page sends us to a page that tests cookies and javascript.  We
   -- don't run javascript and thus must do the work here of pulling out the URL that
   -- the javascript would redirect too.
-  if domain == "aim.com" then
-    _, _, url = string.find(body, globals.strLoginPageParamsPatternAim)
-  else
-    _, _, url = string.find(body, globals.strLoginPageParamsPattern)
-  end
+  _, _, url = string.find(body, globals.strLoginPageParamsPattern)
   if (url == nil) then
     log.error_print("Unable to figure out the redirect on the login page.")
     return POPSERVER_ERR_UNKNOWN
@@ -281,7 +320,8 @@ function loginAOL()
   end
   postdata = postdata .. "&" .. 
     string.format(globals.strLoginPostData, username, password)
-  url = "http://" .. browser:wherearewe() .. url
+  url = "https://" .. browser:wherearewe() .. url
+
   body, err = browser:post_uri(url, postdata)
 
   -- This is where things get a little hokey.  AOL returns a page with three javascript
@@ -303,6 +343,7 @@ function loginAOL()
   --
   _, _, url = string.find(body, "checkErrorAndSubmitForm%([^,]+, [^,]+, '([^']+)'")
   if url == nil then
+    log.raw(body)
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH  
   end

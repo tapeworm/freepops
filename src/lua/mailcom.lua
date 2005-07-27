@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9a"
+PLUGIN_VERSION = "0.0.9b"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -121,7 +121,7 @@ local globals = {
   -- Expressions to pull out of returned HTML from mail.com corresponding to a problem
   --
   strRetLoginBadPassword = "(Invalid username/password.)",
-  strRetLoginSessionExpired = "( [Mm]essage%(s%))",
+  strRetLoginSessionExpired = "( [Mm]essage)",
 
   -- Regular expression to extract the mail server
   --
@@ -138,6 +138,7 @@ local globals = {
   --
 --  strMsgListCntPattern = "Showing [^%d]*[%d]+[^%s]* to [^%d]*[%d]+[^%s]* of [^%d]*([%d]+)",
   strMsgListCntPattern = "(%d+) [Mm]essage%(s%)",
+  strMsgListCntPattern2 = "(%d+) Total Messages",
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
@@ -763,6 +764,10 @@ function stat(pstate)
     --
     if nTotMsgs == 0 then
       _, _, nTotMsgs = string.find(body, globals.strMsgListCntPattern)
+      if nTotMsgs == nil then -- Try a different pattern
+        _, _, nTotMsgs = string.find(body, globals.strMsgListCntPattern2)
+      end
+
       if nTotMsgs == nil then
         nTotMsgs = 0
       else 

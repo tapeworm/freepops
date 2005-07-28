@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8f"
+PLUGIN_VERSION = "0.0.8g"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.27"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -361,9 +361,9 @@ function downloadMsg(pstate, msg, nLines, data)
     
   -- Pipe this through the mimer
   --
-  _, _, str = string.find(cbInfo.strBody, "(<[Hh][Tt][Mm][Ll]>)")
+  --_, _, str = string.find(cbInfo.strBody, "(<[Hh][Tt][Mm][Ll]>)")
   local strBody, strHtml
-  if str ~= nil then
+  if str == nil then
     strBody = nil
     strHtml = cbInfo.strBody
   else
@@ -597,7 +597,6 @@ function findInlineAttachments(attachments, cbInfo)
   local cnt = 0
 
   -- Find inline images and sounds
-  --
   for url in string.gfind(body, [[[Ss][Rr][Cc]="(8[^"]+)"]]) do
     attachurl = internalState.strMailServer .. "/" .. url
     filename = "juno_attach_" .. cnt .. "." .. getExtension(attachurl)

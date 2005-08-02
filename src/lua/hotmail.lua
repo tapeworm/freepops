@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.2b"
+PLUGIN_VERSION = "0.1.2C"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -624,24 +624,24 @@ function cleanupHeaders(headers, cbInfo)
   -- Add some headers
   --
   if bMissingTo ~= false then
-    headers = headers .. "To: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\n" ;
+    headers = headers .. "To: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\r\n" ;
   end
 
   if bMissingID ~= false then
     local msgid = cbInfo.cb_uidl .. "@" .. internalState.strMailServer -- well, if we do not have any better choice...
-    headers = headers .. "Message-ID: <" .. msgid .. ">\n"  
+    headers = headers .. "Message-ID: <" .. msgid .. ">\r\n"  
   end
 
-  headers = headers .. "X-FreePOPs-User: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\n"
-  headers = headers .. "X-FreePOPs-Domain: " .. internalState.strDomain .. "\n"
-  headers = headers .. "X-FreePOPs-Folder: " .. internalState.strMBox .. "\n"
-  headers = headers .. "X-FreePOPs-MailServer: " .. internalState.strMailServer .. "\n"
-  headers = headers .. "X-FreePOPs-ImageServer: " .. internalState.strImgServer .. "\n"
-  headers = headers .. "X-FreePOPs-MsgNumber: " .. "<" .. cbInfo.cb_uidl .. ">" .. "\n"
+  headers = headers .. "X-FreePOPs-User: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\r\n"
+  headers = headers .. "X-FreePOPs-Domain: " .. internalState.strDomain .. "\r\n"
+  headers = headers .. "X-FreePOPs-Folder: " .. internalState.strMBox .. "\r\n"
+  headers = headers .. "X-FreePOPs-MailServer: " .. internalState.strMailServer .. "\r\n"
+  headers = headers .. "X-FreePOPs-ImageServer: " .. internalState.strImgServer .. "\r\n"
+  headers = headers .. "X-FreePOPs-MsgNumber: " .. "<" .. cbInfo.cb_uidl .. ">" .. "\r\n"
 
   -- make the final touch...
   --
-  headers = headers .. "\n" .. bodyrest
+  headers = headers .. "\r\n" .. bodyrest
 
   return headers 
 end

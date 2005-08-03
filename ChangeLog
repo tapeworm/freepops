@@ -1,3 +1,4 @@
+- changed debian init script shell to bash
 - fixed some typo in xml2table.lua
 13/07/2005 0.0.31
 - fixed config.lua com.uk -> co.uk

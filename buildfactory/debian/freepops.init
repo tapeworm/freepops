@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 #
 #  TODO:
 #     To be in perfect debian style we should use start-stop-daemon also

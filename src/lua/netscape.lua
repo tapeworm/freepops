@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.2a"
 PLUGIN_NAME = "netscape.net"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -141,6 +141,7 @@ local EOL = "\r\n"
 
 -- The raw logging function
 --
+local log = log or {}
 log.raw = function ( line, data )
   if not ENABLE_LOGRAW then
     return

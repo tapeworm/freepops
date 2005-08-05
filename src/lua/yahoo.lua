@@ -18,7 +18,11 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells (at) despammed (.) com",
          "ncocchiaro (at) users (.) sourceforge (.) net"}
-PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca", "@rocketmail.com"}
+PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
+                  "@yahoo.co.in", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
+                  "@yahoo.es", "@yahoo.de"
+}
+
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
@@ -258,6 +262,7 @@ local EOL = "\r\n"
 
 -- The raw logging function
 --
+log = log or {} -- fast hack to make the xml generator happy
 log.raw = function ( line, data )
   if not ENABLE_LOGRAW then
     return
@@ -417,6 +422,9 @@ function loginYahoo()
   -- 
   local _, _, str = string.find(body, globals.strRetLoginBadPassword)
   if str ~= nil then
+    log.raw("------ Returned Page saying invalid password ------\n")
+    log.raw(body)
+    log.raw("------ End Page saying invalid password -------\n")
     log.error_print("Login Failed: Invalid Password")
     return POPSERVER_ERR_AUTH
   end

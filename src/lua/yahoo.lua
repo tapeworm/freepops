@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6a"
+PLUGIN_VERSION = "0.1.6b"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.27"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -131,7 +131,10 @@ local globals = {
   -- Get the crumb value that is needed for deleting messages and emptying the trash
   --
   strRegExpCrumb = "=1&%.crumb=([^&]*)&",
-  strRegExpCrumb2 = "&UNR=1&.crumb=([^&]*)&",
+
+  -- Mark unread url
+  -- 
+  strMsgMarkUnreadPat = '<a href="/(ym[^"]*UNR=1[^"]*)">',
 
   -- Pattern to determine if we have no messages.  If this is found, we have messages.
   --
@@ -558,12 +561,12 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
       internalState.strMBox, msgid);
     local str, _ = browser:get_uri(cmdUrl) 
-    _, _, str = string.find(str, globals.strRegExpCrumb2)
+    _, _, str = string.find(str, globals.strMsgMarkUnreadPat)
     if str == nil then
-      log.warn("Unable to get the crumb view for marking message as unread.")
+      log.warn("Unable to get the url for marking message as unread.")
     else
-      cmdUrl = string.format(globals.strCmdUnread, internalState.strMailServer,
-        internalState.strMBox, msgid, str);
+      cmdUrl = internalState.strMailServer .. str;
+      log.dbg("Marking as message: " .. msgid .. " as unread, url: " .. cmdUrl);
       browser:get_uri(cmdUrl) -- We don't care about the results.
     end
   end
@@ -944,7 +947,7 @@ function stat(pstate)
 
   -- Force Yahoo to update
   --
-  browser:get_uri(globals.strMailPage)
+  local body, err = browser:get_uri(globals.strMailPage)
 
   -- Debug Message
   --

@@ -88,7 +88,7 @@ function Private.table2xml_aux(t,oc,c,indent,unescape)
 		local err = "A pcdata field can't have sons"
 		return nil,Private.errorize(err,t)
 	end
-	if data2 and not son then
+	if data1 and not son then
 		local err = "Only one pcdata son is allowed" 
 		return nil,Private.errorize(err,t)
 	end
@@ -154,7 +154,8 @@ table2xml = {}
 -- @param unescape boolean true to not escape XML entities
 -- @return string an XML string.
 function table2xml.table2xml(t,escape_namespace,encoding,unescape)
-	fake_file = {s={}}
+        local s = nil
+	local fake_file = {s={}}
 	function fake_file.write(self,...)
 		table.insert(self.s,table.concat(arg))
 	end

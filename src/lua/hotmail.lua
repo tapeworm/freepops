@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.2C"
+PLUGIN_VERSION = "0.1.2d"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -552,9 +552,14 @@ function downloadMsg_cb(cbInfo, data)
     --
     body = cbInfo.strBuffer .. body
     cbInfo.strBuffer = ""
-    if (string.len(body) > 6 and string.find(string.sub(body, -6), "([&<])") ~= nil) then
-      cbInfo.strBuffer = string.sub(body, -6)
-      body = string.sub(body, 1, -7)
+    if (string.len(body) > 6) then
+      local idx = string.find(string.sub(body, -6), "([&<])")
+      if (idx ~= nil) then
+        idx = idx - 1
+        cbInfo.strBuffer = string.sub(body, -6 + idx)
+        local len = string.len(body) - 6 + idx
+        body = string.sub(body, 1, len)
+      end
     end
 
     body = cleanupBody(body, cbInfo)

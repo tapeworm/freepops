@@ -359,7 +359,8 @@ function freepops.find(file)
 			return path..file
 		end
 	end
-	if try(_,"") ~= nil then
+        local foo
+	if try(foo,"") ~= nil then
 		return file
 	end
 	return table.foreach(freepops.MODULES_PREFIX,try)

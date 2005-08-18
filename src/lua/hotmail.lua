@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.2d"
+PLUGIN_VERSION = "0.1.2e"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -329,7 +329,7 @@ function loginHotmail()
   url = url .. "?" .. str 
 
   local padding = string.sub(globals.strLoginPaddingFull, 0, 16 - passwordlen)
-  postdata = string.format(globals.strLoginPostData, username, domain, password, padding)
+  postdata = string.format(globals.strLoginPostData, username, domain, curl.escape(password), padding)
   postdata = postdata .. "&PPFT=" .. str2
 
   log.dbg("Hotmail - Sending login information to: " .. url)

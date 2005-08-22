@@ -1,16 +1,23 @@
+%define distrel %(rpm -qf --qf='%{VERSION}' /etc/mandrake-release)
+%define	pkgrel 	5
+%define	mytag 	ddz
+
 Summary:	POP3 interface to webmails
 Name:		freepops
-Version:	0.0.29
-Release:	2ddz
+Version:	0.0.31
+Release:	%{pkgrel}.%{distrel}.%{mytag}
 License:	GPL
 Group:		Networking/Other
 Source: 	freepops-%{version}.tar.bz2
-Patch0:		freepops-0.0.29-patch20050613.diff.bz2
 URL:		http://www.freepops.org
 Prefix:		%{_prefix}
 Packager:	Davide Duina <davide.duina_AT_gmail_DOT_com>
 Vendor: 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
+Requires(post): rpm-helper
+Requires(preun): rpm-helper
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+
+
 
 %description
 FreePOPs is a daemon that acts as a local pop3 server, translating
@@ -18,7 +25,6 @@ local pop3 requests to remote http requests to suppoerted webmails.
 
 %prep
 %setup -q
-%patch -p1
 
 
 %build
@@ -34,7 +40,7 @@ mkdir -p ${RPM_BUILD_ROOT}/etc/rc3.d
 mkdir -p ${RPM_BUILD_ROOT}/etc/sysconfig/
 make install DESTDIR=${RPM_BUILD_ROOT} WHERE=/usr/
 gzip -9 ${RPM_BUILD_ROOT}/usr/share/man/man1/freepopsd.1
-cp buildfactory/freepops.rc ${RPM_BUILD_ROOT}/etc/init.d/freepops
+cp buildfactory/freepops.rc.mandriva ${RPM_BUILD_ROOT}/etc/init.d/freepops
 chmod a+x ${RPM_BUILD_ROOT}/etc/init.d/freepops
 cp buildfactory/freepops.sysconfig ${RPM_BUILD_ROOT}/etc/sysconfig/freepops
 mv ${RPM_BUILD_ROOT}/usr/share/doc/freepops/* ${RPM_BUILD_ROOT}/usr/share/doc/freepops-%{version}
@@ -64,6 +70,28 @@ rm -rf ${RPM_BUILD_ROOT}
 #/usr/share/doc/freepops-%{version}
 
 %changelog
+* Fri Aug 19 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.31-5ddz
+- Splitted 2005 and 2006 Cooker release
+- patched initscript to comply with mandriva post-install services management scripts
+
+* Tue Aug 09 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.31-4ddz
+- Added rpm-helper to requires.
+
+* Thu Aug 04 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.31-3ddz
+- aol.lua 0.0.8d
+- hotmail.lua 0.1.2b
+- netscape.lua 0.0.2
+
+* Tue Jul 19 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.31-2ddz
+- Updated hotmail.lua plugin.
+
+* Thu Jul 14 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.31-1ddz
+- Few fixes
+- Some fixes for yahoo, juno and libero. Some improvements in packaging for debian and gentoo.
+	
+* Fri Jul 01 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.30-1ddz
+- New version.
+
 * Tue Jun 14 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.29-2ddz
 - spec file mods
 - Applied patch: fixes in mailcom.lua and aol.lua (13/06/2005)
@@ -76,7 +104,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 * Thu Jun 02 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.28-2ddz
 - Mandriva Group Changed
-- spec file mods
+- Spec file mods
 - bz2 sources
 
 * Tue May 31 2005 Davide Duina <davide.duina_AT_gmail_DOT_com> 0.0.28-1ddz

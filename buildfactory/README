@@ -18,6 +18,7 @@ rpm:
 
 rpm mandriva:
 	freepops.spec.mandriva
+	freepops.rc.mandriva
 
 slack:
 	slackware/*

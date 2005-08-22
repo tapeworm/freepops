@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.5"
+PLUGIN_VERSION = "0.0.6"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -61,7 +61,7 @@ local tin_string = {
 		"a3se=http://communicator.virgilio.it/asp/login.asp&"..
 		"a3dcep=http://communicator.virgilio.it/asp/homepage.asp?s=005",
 	homepage="http://communicator.virgilio.it",
-	webmail="http://communicator.virgilio.it/mail/webmail.asp",
+	webmail="http://communicator.virgilio.it/mail/webmail_OLD.asp",
 	-- This is the capture to get the session ID from the login-done webpage
 	sessionC = 'LoadFrames%(".*sid=(%w*)%&',
 	-- mesage list mlex

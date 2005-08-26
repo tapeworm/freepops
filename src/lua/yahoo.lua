@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6b"
+PLUGIN_VERSION = "0.1.7"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.27"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -117,7 +117,6 @@ local globals = {
 
   -- Get the mail server for Yahoo
   --
-  --strRegExpMailServer = '<a href="(http://[^"]*)ym/',
   strRegExpMailServer = '(http://[^/]+/)ym/',
   
   -- Redirect site on login
@@ -130,7 +129,12 @@ local globals = {
 
   -- Get the crumb value that is needed for deleting messages and emptying the trash
   --
-  strRegExpCrumb = "=1&%.crumb=([^&]*)&",
+  strRegExpCrumb = '<input type=hidden name=".crumb" value="([^"]+)">',
+
+  -- Delete Form hidden items
+  --
+  strHiddenItems = '<input type="hidden" name="([^"]+)".- value="([^"]-)">',
+  strDeletePostPat = '<form name=messageList method=post action="/([^"]+)">',
 
   -- Mark unread url
   -- 
@@ -174,7 +178,6 @@ local globals = {
   strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date&reset=1&Norder=up",
   strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&Nhead=f&toc=1&MsgId=%s&bodyPart=%s",
   strCmdMsgWebView = "%sym/ShowLetter?box=%s&MsgId=%s",
-  strCmdDelete = "%sym/ShowFolder?box=%s&DEL=Delete", -- &Mid=%s&.crumb=%s
   strCmdEmptyTrash = "%sym/ShowFolder?ET=1&.crumb=%s&reset=1", 
   strCmdEmptyBulk = "%sym/ShowFolder?EB=1&.crumb=%s&reset=1", 
   strCmdUnread = "%sym/ShowLetter?box=%s&MsgId=%s&.crumb=%s&UNR=1",
@@ -229,7 +232,6 @@ internalState = {
   browser = nil,
   strMailServer = nil,
   strDomain = nil,
-  strCrumb = nil,
   strMBox = nil,
   strIntFlag = nil,
   strView = nil,
@@ -238,6 +240,7 @@ internalState = {
   bEmptyTrash = false,
   bEmptyBulk = false,
   msgids = {},
+  strStatCache = nil
 }
 
 -- ************************************************************************** --
@@ -837,9 +840,8 @@ function quit_update(pstate)
   -- Local Variables
   --
   local browser = internalState.browser
-  local baseUrl = string.format(globals.strCmdDelete, internalState.strMailServer,
-    internalState.strMBox);
-  local cmdUrl = baseUrl
+  local cmdUrl = nil
+  local postdata = ""
   local cnt = get_popstate_nummesg(pstate)
   local dcnt = 0
 
@@ -849,43 +851,62 @@ function quit_update(pstate)
     if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
       local uidl = get_mailmessage_uidl(pstate, i)
       local msgid = internalState.msgids[uidl]
-      cmdUrl = cmdUrl .. "&Mid=" .. msgid
+      postdata = postdata .. "Mid=" .. msgid .. "&"
       dcnt = dcnt + 1
-
-      -- Send out in a batch of 5
-      --
-      if math.mod(dcnt, 5) == 0 then
-        cmdUrl = cmdUrl .. "&.crumb=" .. internalState.strCrumb
-        log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
-        local body, err = browser:get_uri(cmdUrl)
-        if not body or err then
-          log.error_print("Unable to delete messages.\n")
-        end
-       
-        -- Reset the variables
-        --
-        dcnt = 0
-        cmdUrl = baseUrl
-      end
     end
   end
 
-  -- Send whatever is left over
+  -- We don't have a stat cache
   --
-  if dcnt > 0 and dcnt < 5 then
-    cmdUrl = cmdUrl .. "&.crumb=" .. internalState.strCrumb
-    log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
-    local body, err = browser:get_uri(cmdUrl)
-    if not body or err then
-      log.error_print("Unable to delete messages.\n")
+  if (internalState.strStatCache == nil) then
+    log.dbg("Yahoo - unable to retrieve the crumb value.")
+    return POPSERVER_ERR_OK
+  end
+
+  -- Let's get the crumb value
+  --
+  local _, _, strCrumb = string.find(internalState.strStatCache, globals.strRegExpCrumb)
+  if strCrumb == nil then
+    log.error_print("Yahoo - unable to parse out crumb value.  Deletion will fail.")
+    log.raw("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: " .. 
+      internalState.strStatCache)
+    return POPSERVER_ERR_OK
+  end
+
+  -- We have things to delete, let's do it!
+  --
+  if (dcnt > 0) then
+    -- Lets get the form variables
+    --
+    local name, value  
+    for name, value in string.gfind(internalState.strStatCache, globals.strHiddenItems) do
+      postdata = postdata .. name .. "=" .. curl.escape(value) .. "&" 
     end
+    postdata = string.gsub(postdata, "DEL=&", "DEL=1&")
+    postdata = postdata .. ".crumb=" .. strCrumb
+   
+    -- Get the url to post to
+    --
+    _, _, cmdUrl = string.find(internalState.strStatCache, globals.strDeletePostPat)
+    if (cmdUrl == nil) then 
+      log.error_print("Yahoo - unable to parse out delete url.  Deletion will fail.")
+      log.raw("Yahoo - unable to parse out delete url.  Deletion will fail, Body: " .. 
+        internalState.strStatCache)
+      return POPSERVER_ERR_OK
+    end
+
+    -- Do it!
+    -- 
+    cmdUrl = internalState.strMailServer .. cmdUrl
+    log.dbg("Yahoo - Sending delete url: " .. cmdUrl .. ", data: " .. postdata)
+    browser:post_uri(cmdUrl, postdata)
   end
 
   -- Empty the trash
   --
   if internalState.bEmptyTrash then
-    if internalState.strCrumb ~= '' then
-      cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer,internalState.strCrumb)
+    if strCrumb ~= '' then
+      cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer, strCrumb)
       log.dbg("Sending Empty Trash URL: ".. cmdUrl .."\n")
       local body, err = browser:get_uri(cmdUrl)
       if not body or err then
@@ -899,8 +920,8 @@ function quit_update(pstate)
   -- Empty the bulk folder
   --
   if internalState.bEmptyBulk then
-    if internalState.strCrumb ~= '' then
-      cmdUrl = string.format(globals.strCmdEmptyBulk, internalState.strMailServer,internalState.strCrumb)
+    if strCrumb ~= '' then
+      cmdUrl = string.format(globals.strCmdEmptyBulk, internalState.strMailServer, strCrumb)
       log.dbg("Sending Empty Bulk URL: ".. cmdUrl .."\n")
       local body, err = browser:get_uri(cmdUrl)
       if not body or err then
@@ -1098,25 +1119,10 @@ function stat(pstate)
 
       -- Retry to load the page
       --
-      return browser:get_uri(cmdUrl)
-    end
-
-    -- Extract the crumb - This is needed for deletion of items
-    --
-    if (internalState.strCrumb == nil) then
-      local _, _, str = string.find(body, globals.strRegExpCrumb)
-      if str == nil then
-        log.error_print("Can't get the 'crumb' value. Will not be able to delete messages.")
-        internalState.strCrumb = ""
-      else
-        internalState.strCrumb = str
-  
-        -- Debug Message
-        -- 
-        log.dbg("Yahoo Crumb value: " .. str .. "\n")
-      end
+      browser:get_uri(cmdUrl)
     end
 		
+    internalState.strStatCache = body
     return body, err
   end
 

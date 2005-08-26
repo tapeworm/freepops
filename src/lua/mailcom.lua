@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9b"
+PLUGIN_VERSION = "0.0.9c"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -120,7 +120,7 @@ local globals = {
 
   -- Expressions to pull out of returned HTML from mail.com corresponding to a problem
   --
-  strRetLoginBadPassword = "(Invalid username/password.)",
+  strRetLoginBadPassword = "(Invalid username[^p]+password.)",
   strRetLoginSessionExpired = "( [Mm]essage)",
 
   -- Regular expression to extract the mail server
@@ -172,6 +172,37 @@ internalState = {
   bEmptyTrash = false,
   bOptionOverride = false,
 }
+
+-- ************************************************************************** --
+--  Logging functions
+-- ************************************************************************** --
+
+-- Set to true to enable Raw Logging
+--
+local ENABLE_LOGRAW = false
+
+-- The platform dependent End Of Line string
+-- e.g. this should be changed to "\n" under UNIX, etc.
+local EOL = "\r\n"
+
+-- The raw logging function
+--
+log = log or {} -- fast hack to make the xml generator happy
+log.raw = function ( line, data )
+  if not ENABLE_LOGRAW then
+    return
+  end
+
+  local out = assert(io.open("log_raw.txt", "ab"))
+  out:write( EOL .. os.date("%c") .. " : " )
+  out:write( line )
+  if data ~= nil then
+    out:write( EOL .. "--------------------------------------------------" .. EOL )
+    out:write( data )
+    out:write( EOL .. "--------------------------------------------------" )
+  end
+  assert(out:close())
+end
 
 -- ************************************************************************** --
 --  Helper functions
@@ -234,7 +265,6 @@ function postToLoginPage(browser, url, post, attempt)
     --
     log.dbg("Mail.com Mail Server: " .. str .. "\n")
   end
-
   return POPSERVER_ERR_OK
 end
 
@@ -757,7 +787,7 @@ function stat(pstate)
 
       -- Retry to load the page
       --
-      return getPage(browser, cmdUrl)
+      body, err = getPage(browser, cmdUrl)
     end
 
     -- Get the total number of messages

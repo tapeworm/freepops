@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.7"
+PLUGIN_VERSION = "0.1.7a"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.27"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -20,7 +20,7 @@ PLUGIN_AUTHORS_CONTACTS =
          "ncocchiaro (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
                   "@yahoo.co.in", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
-                  "@yahoo.es", "@yahoo.de"
+                  "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com"
 }
 
 PLUGIN_PARAMETERS = {
@@ -379,6 +379,8 @@ function loginYahoo()
   if (domain == "rocketmail.com") then
     domain = "yahoo.com"
     username = username .. ".rm"
+  elseif (domain == "btinternet.com" or domain == "talk21.com") then
+    username = username .. "@" .. domain
   end
 	
   -- DEBUG - Set the browser in verbose mode

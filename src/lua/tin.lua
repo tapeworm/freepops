@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.6"
+PLUGIN_VERSION = "0.0.7"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -49,9 +49,6 @@ PLUGIN_DESCRIPTIONS = {
 -- expressions), mlex expressions, mlex get expressions.
 -- 
 local tin_string = {
-	tinsso_dxurl="",
-	tinsso_wmail="webmail_IT",
-	-- The uri the browser uses when you click the "login" button
 	login = "http://aaacsc.virgilio.it/piattaformaAAA/controller/"..
 		"AuthenticationServlet",
 	login_post= "a3l=%s&a3p=%s&a3st=VCOMM&"..
@@ -60,36 +57,36 @@ local tin_string = {
 		"a3afep=http://communicator.virgilio.it/asp/login.asp&"..
 		"a3se=http://communicator.virgilio.it/asp/login.asp&"..
 		"a3dcep=http://communicator.virgilio.it/asp/homepage.asp?s=005",
-	homepage="http://communicator.virgilio.it",
-	webmail="http://communicator.virgilio.it/mail/webmail_OLD.asp",
+	-- domain, email, tincctoken
+	login2 = "http://webmailcommunicator.virgilio.it/"..
+		"cp/ps/Main/login/PreLogin?"..
+		"d=%s&sa=webmail&style=&mail=%s&token=%s",
+	login2C = 'src="(/cp/ps/Mail/EmailList[^"]*)"',
+	login2Ct="&t=([^&]+)",
+	login2Cs="&s=([%d]+)",
 	-- This is the capture to get the session ID from the login-done webpage
-	sessionC = 'LoadFrames%(".*sid=(%w*)%&',
 	-- mesage list mlex
-	statE = ".*<tr>.*<td>.*<spacer>.*</td>.*<td>.*<a>.*<img>.*<img>.*<script>.*</script>.*</a>.*</td>.*<td>.*<input>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</a>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*<a>.*</A>.*{/b}[.*]</p>.*</td>.*<td>.*<p>[.*]{b}.*[KkMm]?[Bb]?{/b}[.*]</p>.*</td>.*</tr>",
-	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O{O}[O]<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>O<O>O<O>",
+	statE = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a.*Email>.*</a>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*</tr>",
+	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
+	
 	-- The uri for the first page with the list of messages
-	first = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=%s&chk=1&style=comm4_IT",
-	-- The uri to get the next page of messages
-	next = "http://%s/mail/MessageList?sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=%s&chk=1&style=comm4_IT&"..
-		"start=%d&end=%d",
-	-- some stuff for the mail list browsing
-	rangeC='\n%s*rng%s*=%s*"(%d+)%-(%d+)"%s*;',
-	totalC='\n%s*var%s*totalpage%s*=%s*(%d+)%s*/%s*page%s*;',
-	stepC="\n%s*var%s*page%s*=%s*(%d+)%s*;",
+	-- parameters all %s except fi that is %d: 
+	--   wherearewe(), folder, domain, username, t, s, fi
+	first = "http://%s/cp/ps/Mail/EmailList?"..
+		"fp=%s&d=%s&an=&u=%s&t=%s&style="..
+		"&l=it&s=%s&fi=%d&sc=&sd=",
+	-- The regex that, if not found, means we are on the last stat page
+	no_next = "href='/cp/ps/Mail/EmailList[^']*fi=[^']*'>&gt;&gt;",
 	-- The capture to understand if the session ended
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
 	save = "http://%s/mail/MessageDownload?sid=%s&userid=%s&"..
 		"seq=+Q&auth=+A&srcfolder=%s&uid=%s&srch=0&style=comm4_IT",	
 	-- The uri to delete some messages
-	delete = "http://%s/mail/MessageErase",
-	-- The peace of uri you must append to delete to choose the messages 
-	-- to delete
-	delete_post = "sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=%s&chk=1&style=comm4_IT&",
-	delete_next = "msguid=%s&"
+	-- whearewe(), domain, username, t, s, 
+	delete = "http://%s/cp/ps/Mail/Delete?d=%s&u=%s&t=%s&style=&l=it&s=%s",
+	-- folder, uidl, username
+	delete_post = "fp=%s&uid=%s&dellist=&an=%s",
 }
 
 tin_domains = {
@@ -107,7 +104,8 @@ internal_state = {
 	stat_done = false,
 	login_done = false,
 	popserver = nil,
-	session_id = nil,
+	session_id_s = nil,
+	session_id_t = nil,
 	domain = nil,
 	name = nil,
 	password = nil,
@@ -238,63 +236,56 @@ function tin_login()
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
-	local uri = tin_string.login
-	local post = string.format(tin_string.login_post,pop_login,password)
-	local txcpiu = aaa_encode(pop_login,password,curl.escape(
-		tin_string.tinsso_dxurl))
-	local txmail = aaa_encode(pop_login,password,tin_string.tinsso_wmail)
-	
-	-- we are really greedy :) gnam! gnam!
-	local bisquit1 = mk_cookie("CPIULOGIN","",nil,"/",".virgilio.it",nil)
-	local bisquit2 = mk_cookie("CPTX",txcpiu,nil,"/",".virgilio.it",nil)
-	local bisquit3 = mk_cookie("CPWM",txmail,nil,"/",".virgilio.it",nil)
-	local bisquit4 = mk_cookie("PHXID","",nil,"/",".virgilio.it",nil)
-	local bisquit5 = mk_cookie("PHXPAGE","",nil,"/",".virgilio.it",nil)
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()
 
 	local b = internal_state.b
--- 	b:verbose_mode()
+ 	--b:verbose_mode()
 
-	b:add_cookie(tin_string.homepage,bisquit3)
-	b:add_cookie(tin_string.homepage,bisquit2)
-	b:add_cookie(tin_string.homepage,bisquit1)
+	-- step 1: fetch bisquits
+	local post = string.format(tin_string.login_post,pop_login,password)
+	local body, err = b:post_uri(tin_string.login,post)
+	if body == nil then
+		log.error_print("Error getting "..tin_string.login..": "..err)
+		return POPSERVER_ERR_AUTH
+	end
+
+	-- step 2: get session id_s and id_t
+	local tincctoken = assert(b:get_cookie("tincctoken"),
+		"unable to find cookie tincctoken").value
+	local url = string.format(tin_string.login2, domain,
+		curl.escape(pop_login), curl.unescape(tincctoken))
+	local body,err = b:get_uri(url)
+	if body == nil then
+		log.error_print("Error getting "..url..": "..err)
+		return POPSERVER_ERR_AUTH
+	end
+	local _,_, capt = string.find(body, tin_string.login2C)
+	local _,_,t = string.find(capt, tin_string.login2Ct) 
+	local _,_,s = string.find(capt, tin_string.login2Cs) 
 	
-	local body,err = b:post_uri(uri,post)
-
-	b:add_cookie(tin_string.homepage,bisquit4)
-	b:add_cookie(tin_string.homepage,bisquit5)
+	internal_state.session_id_s = s
+	internal_state.session_id_t = t
 	
-	local extract_f = support.do_extract(
-		internal_state,"session_id",tin_string.sessionC)
-	local check_f = support.check_fail
-	local retrive_f = support.retry_n(
-		3,support.do_retrive(internal_state.b,tin_string.webmail))
-
-	if not support.do_until(retrive_f,check_f,extract_f) then
+	if internal_state.session_id_s == nil or
+	   internal_state.session_id_t == nil then
 		log.error_print("Login failed\n")
 		return POPSERVER_ERR_AUTH
 	end
 
-	-- check if do_extract has correctly extracted the session ID
-	if internal_state.session_id == nil then
-		log.error_print("Login failed, unable to get session ID\n")
-		return POPSERVER_ERR_AUTH
-	end
-		
 	-- save all the computed data
 	internal_state.login_done = true
 	
 	-- log the creation of a session
 	log.say("Session started for " .. internal_state.name .. "@" .. 
 		internal_state.domain .. 
-		"(" .. internal_state.session_id .. ")\n")
+		"(" .. internal_state.session_id_t .. ", " .. 
+			internal_state.session_id_s .. ")\n")
 
 	return POPSERVER_ERR_OK
 end
-
-
+		
 -- ************************************************************************** --
 --  Tin functions
 -- ************************************************************************** --
@@ -314,8 +305,7 @@ function user(pstate,username)
 	-- save domain and name
 	internal_state.domain = domain
 	internal_state.name = name
-	internal_state.folder = freepops.MODULE_ARGS.folder or
-		"INBOX"
+	internal_state.folder = freepops.MODULE_ARGS.folder or "INBOX"
 	
 	return POPSERVER_ERR_OK
 end
@@ -357,7 +347,8 @@ function pass(pstate,password)
 
 		log.say("Session loaded for " .. internal_state.name .. "@" .. 
 			internal_state.domain .. 
-			"(" .. internal_state.session_id .. ")\n")
+			"(" .. internal_state.session_id_s .. ", " ..
+			internal_state.session_id_t .. ")\n")
 		
 		return POPSERVER_ERR_OK
 	else
@@ -383,36 +374,27 @@ function quit_update(pstate)
 	-- shorten names, not really important
 	local b = internal_state.b
 	local popserver = b:wherearewe()
-	local session_id = internal_state.session_id
+	local session_id_s = internal_state.session_id_s
+	local session_id_t = internal_state.session_id_t
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
+	local folder = internal_state.folder
 	
-	local uri = string.format(tin_string.delete,popserver)
-	local post = string.format(tin_string.delete_post,
-		session_id,pop_login,internal_state.folder)
-
-	-- here we need the stat, we build the uri and we check if we 
-	-- need to delete something
-	local delete_something = false;
+	local uri = string.format(tin_string.delete, popserver, domain, 
+		user, session_id_t, session_id_s)
 	
 	for i=1,get_popstate_nummesg(pstate) do
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
-			post = post .. string.format(tin_string.delete_next,
-				get_mailmessage_uidl(pstate,i))
-			delete_something = true	
-		end
-	end
-
-	if delete_something then
-		-- Build the functions for do_until
-		local extract_f = function(s) return true,nil end
-		local check_f = support.check_fail
-		local retrive_f = support.retry_n(3,support.do_post(b,uri,post))
-
-		if not support.do_until(retrive_f,check_f,extract_f) then
-			log.error_print("Unable to delete messages\n")
-			return POPSERVER_ERR_UNKNOWN
+			local uidl = get_mailmessage_uidl(pstate,i)
+			local post = string.format(tin_string.delete_post,
+				folder, uidl, user)
+			local body, err = b:post_uri(uri, post)
+			print(uri, post)--, body)
+			if body == nil then
+				log.error_print("Error getting "..uri..":"..err)
+				return POPSERVER_ERR_UNKNOWN
+			end
 		end
 	end
 
@@ -425,7 +407,8 @@ function quit_update(pstate)
 
 	log.say("Session saved for " .. internal_state.name .. "@" .. 
 		internal_state.domain .. "(" .. 
-		internal_state.session_id .. ")\n")
+		internal_state.session_id_t .. ", " .. 
+		internal_state.session_id_s .. ")\n")
 
 	return POPSERVER_ERR_OK
 end
@@ -434,13 +417,19 @@ end
 -- Fill the number of messages and their size
 function stat(pstate)
 
+	-- XXX non arriva fino in fondo... >> scompare quando si e' a pagina
+	-- - 2...
+	-- si possono cercare i link a pagine successive e estrarre il fi
+	-- oppure usare mlex
+	
 	-- check if already called
 	if internal_state.stat_done then
 		return POPSERVER_ERR_OK
 	end
 	
 	-- shorten names, not really important
-	local session_id = internal_state.session_id
+	local session_id_s = internal_state.session_id_s
+	local session_id_t = internal_state.session_id_t
 	local b = internal_state.b
 	local popserver = b:wherearewe()
 	local domain = internal_state.domain
@@ -449,8 +438,10 @@ function stat(pstate)
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
-	local uri = string.format(tin_string.first,popserver,
-		session_id,curl.escape(pop_login),internal_state.folder)
+	local page = 1
+	local uri = string.format(tin_string.first,
+		b:wherearewe(), internal_state.folder,
+		domain, user, session_id_t, session_id_s, page)
 	
 	-- The action for do_until
 	--
@@ -485,7 +476,7 @@ function stat(pstate)
 			_,_,k = string.find(size,"([Kk][Bb])")
 			_,_,m = string.find(size,"([Mm][Bb])")
 			_,_,size = string.find(size,"([%.%d]+)")
-			_,_,uidl = string.find(uidl,'value="([%d]+)"')
+			_,_,uidl = string.find(uidl,'uid=([%d]+)')
 
 			if not uidl or not size then
 				return nil,"Unable to parse page"
@@ -510,30 +501,14 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s) 
-		-- FIXME use the <form> fields instead
-		local _,_,_,to = string.find(s,
-			tin_string.rangeC)
-		local _,_,last = string.find(s,
-			tin_string.totalC)
-		if last == nil or to == nil then
-			error("unable to capture last or to")
-		end
-		--print("$$\n"..s.."$$\n")
-		--print("-->",to,last)
-		if to < last then
+		local tmp = string.find(s,tin_string.no_next)
+		if tmp ~= nil then
 			-- change retrive behaviour
-			local _,_,step = string.find(s,
-				tin_string.stepC)
-			if step == nil then
-				log.error_print("unable to capture step")
-				return true
-			end
-			local start = last - to
-			local end_ = math.max(0,start-step)
-			uri = string.format(tin_string.next,popserver,
-				session_id,curl.escape(pop_login),
+			page = page + 10
+			uri = string.format(tin_string.first,
+				b:wherearewe(),
 				internal_state.folder,
-				start,end_)
+				domain, user, session_id_t, session_id_s, page)
 			-- continue the loop
 			return false
 		else
@@ -559,13 +534,14 @@ function stat(pstate)
 				return nil,"Session ended,unable to recover"
 			end
 			
-			session_id = internal_state.session_id
+			session_id_s = internal_state.session_id_s
+			session_id_t = internal_state.session_id_t
 			b = internal_state.b
 			-- popserver has not changed
-			
-			uri = string.format(tin_string.first,popserver,
-				session_id,curl.escape(pop_login)
-				,internal_state.folder)
+			page = 1
+			uri = string.format(tin_string.first,
+				internal_state.folder,
+				domain, user, session_id_t, session_id_s, page)
 			return b:get_uri(uri)
 		end
 		

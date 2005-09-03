@@ -64,7 +64,6 @@ local tin_string = {
 	login2C = 'src="(/cp/ps/Mail/EmailList[^"]*)"',
 	login2Ct="&t=([^&]+)",
 	login2Cs="&s=([%d]+)",
-	-- This is the capture to get the session ID from the login-done webpage
 	-- mesage list mlex
 	statE = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a.*Email>.*</a>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*</tr>",
 	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
@@ -80,10 +79,12 @@ local tin_string = {
 	-- The capture to understand if the session ended
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
-	save = "http://%s/mail/MessageDownload?sid=%s&userid=%s&"..
-		"seq=+Q&auth=+A&srcfolder=%s&uid=%s&srch=0&style=comm4_IT",	
+	--   whearewe, mailbox, username, username, uidl, t, s
+	save = "http://%s/cp/ps/Mail/Email"..
+		"?sh=&fp=%s&d=virgilio.it&sd=&sc=&an=%s&u=%s&"..
+		"uid=%s&t=%s&style=&l=it&s=%s",	
 	-- The uri to delete some messages
-	-- whearewe(), domain, username, t, s, 
+	--   whearewe(), domain, username, t, s, 
 	delete = "http://%s/cp/ps/Mail/Delete?d=%s&u=%s&t=%s&style=&l=it&s=%s",
 	-- folder, uidl, username
 	delete_post = "fp=%s&uid=%s&dellist=&an=%s",
@@ -603,36 +604,91 @@ end
 -- -------------------------------------------------------------------------- --
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
+-- 
+-- http://webmailcommunicator.virgilio.it/cp/ps/Mail/Email?sh=&fp=INBOX&d=virgilio.it&sd=&sc=&an=gareuselesinge2&u=gareuselesinge2&uid=53&t=d48d125d6396d181052d&style=&l=it&s=1125731991279&sl=8
+-- 
+-- headersE = ".*<script>.*var *hd *=</script>.*<br>.*<br>.*</div>"
+-- headersG = "O<O>X<O>O<O>O<O>O<O>"
+-- 
+--
+--
+--
+
+-- c'e' una tabella per gli header che si vedono e gli atachements
+-- c'e' una seconda tabella per i contenuti
+--   da questa becchiamo gli header
+--   e poi fino alla fine tabella becchiamo un testo HTML raw
+--   a cui (forse) vanno tolti i tag <comment>dust</comment>
+
+function tin_parse_webmessage(data)
+	local head, body, body_html, attach = nil, nil, nil, {}
+
+	-- extract headers 
+	local headersE = ".*<script>.*var *hd *=</script>.*<br>.*<br>.*</div>"
+	local headersG = "O<O>X<O>O<O>O<O>O<O>"
+	local x = mlex.match(data, headersE, headersG)
+	local headers = x:get(0,0)
+	local _, _, head = string.find(headers, 'var%s*hd%s*=%s*"([^"]+)"%s*;')
+	head = string.gsub(head, "\\n\\n", "")
+	head = string.gsub(head, "\\r", "\r")
+	head = string.gsub(head, "\\n", "\n")
+	head = string.gsub(head, "        ", "\t")
+	head = string.gsub(head, "\\&quot;", "\"")
+	head = string.gsub(head, "&lt;", "<")
+	head = string.gsub(head, "&gt;", ">")
+	head = mimer.remove_lines_in_proper_mail_header(head, {"content%-type"})
+	
+	-- extract body
+	--TODO
+	
+	-- extract attachments
+	-- TODO
+	error(head)
+	
+	
+	return head, body, body_html, attach
+end
+
 function retr(pstate,msg,data)
 	-- we need the stat
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 	
 	-- the callback
-	local cb = common.retr_cb(data)
+	--local cb = common.retr_cb(data)
 	
 	-- some local stuff
-	local session_id = internal_state.session_id
+	local session_id_t = internal_state.session_id_t
+	local session_id_s = internal_state.session_id_s
 	local b = internal_state.b
 	local popserver = b:wherearewe()
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
+	local folder = internal_state.folder
 	
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	local uri = string.format(tin_string.save,popserver,
-		session_id,curl.escape(pop_login),internal_state.folder,uidl)
+	--   whearewe, mailbox, username, username, uidl, t, s
+	local uri = string.format(tin_string.save,b:wherearewe(),
+		folder, user, user, uidl, session_id_t, session_id_s)
 	
 	-- tell the browser to pipe the uri using cb
-	local f,rc = b:pipe_uri(uri,cb)
+	local f,rc = b:get_uri(uri)
 
-	if not f then
+	if f == nil then
 		log.error_print("Asking for "..uri.."\n")
 		log.error_print(rc.."\n")
 		return POPSERVER_ERR_NETWORK
 	end
 
+	local head,body,body_html,attach = tin_parse_webmessage(f)
+	local cb = mimer.callback_mangler(common.retr_cb(data))
+	mimer.pipe_msg(
+		head,body,body_html,
+		"http://" .. b:wherearewe(),attach,b,cb)
+	
+	
 	return POPSERVER_ERR_OK
 end
 
@@ -687,6 +743,11 @@ function init(pstate)
 
 	-- the common implementation module
 	if freepops.dofile("common.lua") == nil then 
+		return POPSERVER_ERR_UNKNOWN 
+	end
+	
+	-- the mimer module
+	if freepops.dofile("mimer.lua") == nil then 
 		return POPSERVER_ERR_UNKNOWN 
 	end
 	

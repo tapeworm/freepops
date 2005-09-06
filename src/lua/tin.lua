@@ -8,9 +8,9 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.7"
+PLUGIN_VERSION = "0.0.90"
 PLUGIN_NAME = "Tin.IT"
-PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_REQUIRE_VERSION = "0.0.31"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=tin.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

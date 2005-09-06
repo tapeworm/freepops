@@ -75,7 +75,8 @@ local tin_string = {
 		"fp=%s&d=%s&an=&u=%s&t=%s&style="..
 		"&l=it&s=%s&fi=%d&sc=&sd=",
 	-- The regex that, if not found, means we are on the last stat page
-	no_next = "href='/cp/ps/Mail/EmailList[^']*fi=[^']*'>&gt;&gt;",
+	no_next = "href%s*=%s*'/cp/ps/Mail/EmailList[^']*fi=[^']*'>&gt;&gt;",
+	list_href = "href%s*=%s*'/cp/ps/Mail/EmailList",
 	-- The capture to understand if the session ended
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
@@ -519,7 +520,17 @@ function stat(pstate)
 			-- we are on the last page only if we have seen
 			-- this 3 times
 			count = count + 1
-			if count > 2 then 
+			local how_many_refs = 0
+			for x in string.gfind(s, tin_string.list_href) do
+				how_many_refs = how_many_refs + 1
+			end
+			-- there should be links before and after the list
+			if math.mod(how_many_refs, 2) ~= 0 then
+				log.error_print("Error in counting list_href")
+				return true
+			end
+			how_many_refs = how_many_refs / 2
+			if count > how_many_refs then 
 				return true 
 			else
 				return next_page()
@@ -529,7 +540,7 @@ function stat(pstate)
 
 	-- this is simple and uri-dependent
 	local function retrive_f ()  
-		print("getting "..uri)
+		-- print("getting "..uri)
 		local f,err = b:get_uri(uri)
 		if f == nil then
 			return f,err

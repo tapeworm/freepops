@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8d"
+PLUGIN_VERSION = "0.0.8e"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -99,7 +99,7 @@ local globals = {
 
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLinePattern = 'new parent%.MessageInfo%("([^"]+)",[^,]+,"[^"]+",[^,]+,([^,]+),',
+  strMsgLinePattern = 'new MI%("([^"]+)",[^,]+,"[^"]+",[^,]+,([^,]+),',
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --

@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.90"
+PLUGIN_VERSION = "0.0.91"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.31"
 PLUGIN_LICENSE = "GNU/GPL"

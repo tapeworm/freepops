@@ -49,6 +49,11 @@ PLUGIN_DESCRIPTIONS = {
 -- expressions), mlex expressions, mlex get expressions.
 -- 
 local tin_string = {
+	prelogin = "http://communicator.virgilio.it/asp/a3login.asp",
+	prelogin_post = "a3aid=comhpma&"..
+		"a3afep=http://mail.virgilio.it/mail/home/mail_error.html&"..
+		"USER=%s&DOMAIN=%s&"..
+		"PASS=%s&Act_Login.x=%d&Act_Login.y=%d",
 	login = "http://aaacsc.virgilio.it/piattaformaAAA/controller/"..
 		"AuthenticationServlet",
 	login_post= "a3l=%s&a3p=%s&a3st=VCOMM&"..
@@ -97,6 +102,7 @@ local tin_string = {
 	delete = "http://%s/cp/ps/Mail/Delete?d=%s&u=%s&t=%s&style=&l=it&s=%s",
 	-- folder, uidl, username
 	delete_post = "fp=%s&uid=%s&dellist=&an=%s",
+	error_title = "<title>An error has occurred</title>",
 }
 
 tin_domains = {
@@ -233,6 +239,20 @@ function key()
 		(internal_state.folder or "")
 end
 
+
+--------------------------------------------------------------------------------
+-- Detect if the page is an error page
+--
+function is_an_error_page(data)
+	local c = string.find(data, tin_string.error_title)
+	if c == nil then
+		return false
+	else
+		return true
+	end
+end
+
+
 --------------------------------------------------------------------------------
 -- Login to the tin website
 --
@@ -251,8 +271,22 @@ function tin_login()
 	internal_state.b = browser.new()
 
 	local b = internal_state.b
- 	--b:verbose_mode()
+ 	b:verbose_mode()
 
+	-- step 0: create some dummy bisquits and fetch some
+	--local bsq1 = mk_cookie("CPTX","",nil,"/",".virgilio.it",nil)
+	--local bsq2 = mk_cookie("CPWM","",nil,"/",".virgilio.it",nil)
+	--b:add_cookie(tin_string.prelogin,bsq1)
+	--b:add_cookie(tin_string.prelogin,bsq2)
+	--local post = string.format(tin_string.prelogin_post,
+	--	user,domain,password,10,10)
+	--local body, err = b:post_uri(tin_string.prelogin,post)
+	--if body == nil then
+	--	log.error_print("Error getting "..tin_string.login..": "..err)
+	--	return POPSERVER_ERR_AUTH
+	--end
+	--b:show()
+	
 	-- step 1: fetch bisquits
 	local post = string.format(tin_string.login_post,pop_login,password)
 	local body, err = b:post_uri(tin_string.login,post)
@@ -634,6 +668,7 @@ function tin_parse_webmessage(wherearewe, data)
 	local headersG = "O<O>X<O>O<O>O<O>O<O>"
 	local x = mlex.match(data, headersE, headersG)
 	local headers = x:get(0,0)
+	assert(headers ~= nil, "Unable to mlex " .. data)
 	local _, _, head = string.find(headers, 'var%s*hd%s*=%s*"([^"]+)"%s*;')
 	head = string.gsub(head, "\\n\\n", "")
 	head = string.gsub(head, "\\r", "\r")
@@ -667,6 +702,7 @@ function tin_parse_webmessage(wherearewe, data)
 	return head, body, body_html, attach
 end
 
+
 function retr(pstate,msg,data)
 	-- we need the stat
 	local st = stat(pstate)
@@ -681,20 +717,33 @@ function retr(pstate,msg,data)
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
 	local folder = internal_state.folder
+
+	-- hack
+	local uri = string.format(tin_string.first,
+		b:wherearewe(), internal_state.folder,
+		domain, user, session_id_t, session_id_s, msg)
+	local _,_ = b:get_uri(uri)
 	
 	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	--   whearewe, mailbox, username, username, uidl, t, s
+	-- whearewe, mailbox, username, username, uidl, t, s
 	local uri = string.format(tin_string.save,b:wherearewe(),
 		folder, user, user, uidl, session_id_t, session_id_s)
 	
-	-- tell the browser to pipe the uri using cb
+	-- tell the browser to fetch
 	local f,rc = b:get_uri(uri)
-
+	
 	if f == nil then
 		log.error_print("Asking for "..uri.."\n")
 		log.error_print(rc.."\n")
 		return POPSERVER_ERR_NETWORK
+	end
+		
+	if is_an_error_page(f) then
+		log.error_print("Asking for "..uri.."\n")
+		log.error_print("Internal plugin error, erroneous uri\n")
+		b:show()
+		return POPSERVER_ERR_UNKNOWN
 	end
 
 	local wherearewe = b:wherearewe()

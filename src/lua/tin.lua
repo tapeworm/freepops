@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.91"
+PLUGIN_VERSION = "0.0.92"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.31"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -88,7 +88,10 @@ local tin_string = {
 	--   whearewe, mailbox, username, username, uidl, t, s
 	save = "http://%s/cp/ps/Mail/Email"..
 		"?sh=&fp=%s&d=virgilio.it&sd=&sc=&an=%s&u=%s&"..
-		"uid=%s&t=%s&style=&l=it&s=%s",	
+		"uid=%s&t=%s&style=&l=it&s=%s&sl=%d",	
+	save_sl = "http://%s/cp/ps/Mail/Email"..
+		"?sh=&fp=%s&d=virgilio.it&sd=&sc=&an=%s&u=%s&"..
+		"uid=&t=%s&style=&l=it&s=%s&sl=%d",	
 	body_start = [[
 </script>	
 			<br>
@@ -126,7 +129,9 @@ internal_state = {
 	name = nil,
 	password = nil,
 	b = nil,
-	folder="INBOX"
+	folder="INBOX",
+	reverse_lookup = {},
+	list_begin = -1
 }
 
 -- ************************************************************************** --
@@ -221,6 +226,8 @@ end
 --
 function serialize_state()
 	internal_state.stat_done = false;
+	internal_state.reverse_lookup = {}
+	internal_state.list_begin = -1
 	
 	return serial.serialize("internal_state",internal_state) ..
 		internal_state.b:serialize("internal_state.b")
@@ -271,7 +278,7 @@ function tin_login()
 	internal_state.b = browser.new()
 
 	local b = internal_state.b
- 	b:verbose_mode()
+ 	--b:verbose_mode()
 
 	-- step 0: create some dummy bisquits and fetch some
 	--local bsq1 = mk_cookie("CPTX","",nil,"/",".virgilio.it",nil)
@@ -531,6 +538,7 @@ function stat(pstate)
 			-- set it
 			set_mailmessage_size(pstate,i+nmesg_old,size)
 			set_mailmessage_uidl(pstate,i+nmesg_old,uidl)
+			internal_state.reverse_lookup[uidl] = i+nmesg_old
 		end
 		
 		return true,nil
@@ -702,6 +710,21 @@ function tin_parse_webmessage(wherearewe, data)
 	return head, body, body_html, attach
 end
 
+function is_a_list_needed(msg, uidl)
+	-- first retr
+	if internal_state.list_begin == -1 then return true, 1 end
+	
+	local position = internal_state.reverse_lookup[uidl]
+	local delta = position - internal_state.list_begin + 1
+	
+	-- before the begin of the list
+	if delta < 0 then return true, 1 end
+	-- in the following 9 items
+	if delta < 10 then return false, delta end
+	
+	return true, 1
+end
+
 
 function retr(pstate,msg,data)
 	-- we need the stat
@@ -717,18 +740,25 @@ function retr(pstate,msg,data)
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
 	local folder = internal_state.folder
-
-	-- hack
-	local uri = string.format(tin_string.first,
-		b:wherearewe(), internal_state.folder,
-		domain, user, session_id_t, session_id_s, msg)
-	local _,_ = b:get_uri(uri)
-	
-	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
+
+	-- It seems the webmail keeps a status of your current listing
+	-- and allows you to see only the messages that the last listing showed
+	-- so, if needed, we relist. If the mail client asks messages from 
+	-- 1 to n this minimizes network usage... if it goes from n to 1 this
+	-- is a shit.
+	local relist, sl = is_a_list_needed(msg, uidl)
+	if relist then
+		-- we do a list that begins with our message
+		local uri_l = string.format(tin_string.first,
+			b:wherearewe(), internal_state.folder,
+			domain, user, session_id_t, session_id_s, msg)
+		local _,_ = b:get_uri(uri_l)
+		internal_state.list_begin = msg
+	end
 	-- whearewe, mailbox, username, username, uidl, t, s
 	local uri = string.format(tin_string.save,b:wherearewe(),
-		folder, user, user, uidl, session_id_t, session_id_s)
+		folder, user, user, uidl, session_id_t, session_id_s,sl)
 	
 	-- tell the browser to fetch
 	local f,rc = b:get_uri(uri)
@@ -742,7 +772,7 @@ function retr(pstate,msg,data)
 	if is_an_error_page(f) then
 		log.error_print("Asking for "..uri.."\n")
 		log.error_print("Internal plugin error, erroneous uri\n")
-		b:show()
+		--b:show()
 		return POPSERVER_ERR_UNKNOWN
 	end
 

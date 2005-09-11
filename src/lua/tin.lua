@@ -801,12 +801,25 @@ function top(pstate,msg,lines,data)
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
 	local folder = internal_state.folder
-	
-	-- build the uri
 	local uidl = get_mailmessage_uidl(pstate,msg)
-	--   whearewe, mailbox, username, username, uidl, t, s
+	
+	-- It seems the webmail keeps a status of your current listing
+	-- and allows you to see only the messages that the last listing showed
+	-- so, if needed, we relist. If the mail client asks messages from 
+	-- 1 to n this minimizes network usage... if it goes from n to 1 this
+	-- is a shit.
+	local relist, sl = is_a_list_needed(msg, uidl)
+	if relist then
+		-- we do a list that begins with our message
+		local uri_l = string.format(tin_string.first,
+			b:wherearewe(), internal_state.folder,
+			domain, user, session_id_t, session_id_s, msg)
+		local _,_ = b:get_uri(uri_l)
+		internal_state.list_begin = msg
+	end
+	-- whearewe, mailbox, username, username, uidl, t, s
 	local uri = string.format(tin_string.save,b:wherearewe(),
-		folder, user, user, uidl, session_id_t, session_id_s)
+		folder, user, user, uidl, session_id_t, session_id_s,sl)
 	
 	-- tell the browser to pipe the uri using cb
 	local f,rc = b:get_uri(uri)
@@ -820,7 +833,7 @@ function top(pstate,msg,lines,data)
 	local wherearewe = b:wherearewe()
 	local head,body,body_html,attach = tin_parse_webmessage(wherearewe, f)
 	local global = common.new_global_for_top(lines,nil)
-	local cb = mimer.callback_mangler(common.top_cb(global,pdata,true))
+	local cb = mimer.callback_mangler(common.top_cb(global,data,true))
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb)
 		
 	return POPSERVER_ERR_OK

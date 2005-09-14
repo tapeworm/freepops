@@ -5,17 +5,18 @@
 --  
 --  Released under the GNU/GPL license
 --  Written by Rami Kattan <rkattan at gmail (single dot) com>
+--  Revised by EoinK <eoin.pops at gmail (single dot) com>
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.41"
+PLUGIN_VERSION = "0.0.42"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.29"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL     = "http://www.freepops.org/download.php?file=gmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
-PLUGIN_AUTHORS_NAMES = {"Rami Kattan"}
-PLUGIN_AUTHORS_CONTACTS = {"rkattan (at) gmail (.) com"}
+PLUGIN_AUTHORS_NAMES = {"Rami Kattan", "EoinK"}
+PLUGIN_AUTHORS_CONTACTS = {"rkattan (at) gmail (.) com", "eoin.pops (at) gmail (.) com"}
 PLUGIN_DOMAINS = {"@gmail.com"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
@@ -108,7 +109,8 @@ as read.]]
 -- 
 local globals = {
 	-- The uri the browser uses when you click the "login" button
-	strLoginUrl = "https://www.google.com/accounts/ServiceLoginBoxAuth",
+	--strLoginUrl = "https://www.google.com/accounts/ServiceLoginBoxAuth",
+	strLoginUrl = "https://www.google.com/accounts/ServiceLoginAuth",
 	strLoginPostData = "continue=https://mail.google.com/mail&"..
 		"service=mail&Email=%s&Passwd=%s&null=Sign in",
 	strLoginCheckcookie_TODO ="https://www.google.com/accounts/CheckCookie?"..
@@ -308,20 +310,23 @@ function gmail_login()
 
 	-- Check for successful login, and extract some cookie values
 	-- 
-	local _, _, uri = string.find(body, '(CheckCookie[^%"]*)"')
-	if uri == nil then
-		log.error_print("Cannot find cookie")
-		return POPSERVER_ERR_UNKNOWN
-	end
-	uri = "http://" .. b:wherearewe() .. "/accounts/" .. uri
-	
-	local body, err = b:get_uri(uri)
-			
-	-- print(body)
-	if body == nil then
-		log.error_print(err)
-		return POPSERVER_ERR_UNKNOWN
-	end
+    
+    --THIS CODE HAS BEEN REMOVED DUE TO CHANGES IN GMAIL HTML (CAUSING LOGIN ISSUES) -EK
+--~ 	local _, _, uri = string.find(body, '(CheckCookie[^%"]*)"')
+--~ 	if uri == nil then
+--~ 		log.error_print("Cannot find cookie")
+--~ 		return POPSERVER_ERR_UNKNOWN
+--~ 	end
+--~ 	uri = "http://" .. b:wherearewe() .. "/accounts/" .. uri
+--~ 	
+--~ 	local body, err = b:get_uri(uri)
+--~ 			
+--~ 	-- print(body)
+--~ 	if body == nil then
+--~ 		log.error_print(err)
+--~ 		return POPSERVER_ERR_UNKNOWN
+--~ 	end
+
 	-- Extract cookie values
 	-- 
 	internal_state.strCookieSID = (b:get_cookie("SID")).value
@@ -438,7 +443,7 @@ function top_cb(global,data)
 		s = string.gsub(s,"\r\n\n","\r\n")
 		s = string.gsub(s,"\n\n","\r\n")
 		s = string.gsub(s,"\r\r","\r\n")
-
+        
 		s = global.a:tophack(s,global.lines_requested)
 		s = global.a:dothack(s).."\0"
 			

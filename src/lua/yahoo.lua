@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.7a"
+PLUGIN_VERSION = "0.1.7b"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.27"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -157,6 +157,10 @@ local globals = {
   --
   strMsgListPrevPagePattern = '<a href="/(ym[^"]*previous=1[^"]*)">',
 
+  -- Pattern for emptying all
+  --
+  strEmptyAllPat = 'url %+= "=1&([^"]+)"',
+
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
   strInbox = "Inbox",
@@ -178,8 +182,8 @@ local globals = {
   strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date&reset=1&Norder=up",
   strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&Nhead=f&toc=1&MsgId=%s&bodyPart=%s",
   strCmdMsgWebView = "%sym/ShowLetter?box=%s&MsgId=%s",
-  strCmdEmptyTrash = "%sym/ShowFolder?ET=1&.crumb=%s&reset=1", 
-  strCmdEmptyBulk = "%sym/ShowFolder?EB=1&.crumb=%s&reset=1", 
+  strCmdEmptyTrash = "%sym/ShowFolder?ET=1&", 
+  strCmdEmptyBulk = "%sym/ShowFolder?EB=1&", 
   strCmdUnread = "%sym/ShowLetter?box=%s&MsgId=%s&.crumb=%s&UNR=1",
 
   -- Emails to list - These define the filter on the messages to grab
@@ -906,9 +910,10 @@ function quit_update(pstate)
 
   -- Empty the trash
   --
+  local _, _, strAll = string.find(internalState.strStatCache, globals.strEmptyAllPat)
   if internalState.bEmptyTrash then
-    if strCrumb ~= '' then
-      cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer, strCrumb)
+    if strAll ~= nil then
+      cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer) .. strAll
       log.dbg("Sending Empty Trash URL: ".. cmdUrl .."\n")
       local body, err = browser:get_uri(cmdUrl)
       if not body or err then
@@ -922,8 +927,8 @@ function quit_update(pstate)
   -- Empty the bulk folder
   --
   if internalState.bEmptyBulk then
-    if strCrumb ~= '' then
-      cmdUrl = string.format(globals.strCmdEmptyBulk, internalState.strMailServer, strCrumb)
+    if strAll ~= nil then
+      cmdUrl = string.format(globals.strCmdEmptyBulk, internalState.strMailServer) .. strAll
       log.dbg("Sending Empty Bulk URL: ".. cmdUrl .."\n")
       local body, err = browser:get_uri(cmdUrl)
       if not body or err then

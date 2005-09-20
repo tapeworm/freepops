@@ -7,14 +7,15 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.1b"
+PLUGIN_VERSION = "0.0.1c"
 PLUGIN_NAME = "mail2world.com"
 PLUGIN_REQUIRE_VERSION = "0.0.29"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=mail2world.lua"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=mail2world.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
+--PLUGIN_DOMAINS = {"@mail2world.com", "@mail2.*%.com"}
 PLUGIN_REGEXES = {"@mail2.*%.com"}
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
@@ -50,20 +51,24 @@ local globals = {
 
   -- Login strings
   --
-  strLoginPostData = "username=%s&domain=%s&password=%s&rememberme=&faction=login&securebutt=",
+  strLoginPostData = "username=%s&domain=%s&password=%s&rememberme=&faction=login&securebutt=on&submitbut.x=19&submitbut.y=14",
   strLoginFailed = "Login Failed - Invalid User name and/or password",
 
   -- Expressions to pull out of returned HTML from mail2world corresponding to a problem
   --
-  strRetGoodLogin = "(<title>Gateway</title>)",
+  strRetGoodLogin = '(<form name="userLogin")',
   strRetLoginSessionExpired = "(<title>User Message List Display</title>)",
   
   -- Regular expression to extract the mail server
   --
-
-  -- Extract the post login next page
+ 
+  -- Extract the first post login next page
   --
-  strLoginGoodNextPage = 'var nextpage = "([^"]+)";',
+  strLoginGoodNextPage1 = 'url=([^"]+)"></noscript>',
+
+  -- Extract the second post login next page
+  --
+  strLoginGoodNextPage2 = 'var nextpage = "([^"]+)";',
   
   -- Get the crumb value that is needed for every command
   --
@@ -189,7 +194,7 @@ function login()
   end
 
   local _, _, str = string.find(body, globals.strRetGoodLogin)
-  if str == nil then
+  if str ~= nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
   end
@@ -200,7 +205,17 @@ function login()
 
   -- Find the next page to go to.  We need to extract some info
   --
-  _, _, str = string.find(body, globals.strLoginGoodNextPage)
+  _, _, str = string.find(body, globals.strLoginGoodNextPage1)
+  if (str == nil) then
+    log.error_print("Mail2World's login page has changed.  Alert the author.")
+    return POPSERVER_ERR_NETWORK
+  end
+  log.dbg("http://" .. internalState.strMailServer .. str)
+  body, err = browser:get_uri("http://" .. internalState.strMailServer .. str)
+
+  -- Find the next page to go to.  We need to extract some info
+  --
+  _, _, str = string.find(body, globals.strLoginGoodNextPage2)
   if (str == nil) then
     log.error_print("Mail2World's login page has changed.  Alert the author.")
     return POPSERVER_ERR_NETWORK

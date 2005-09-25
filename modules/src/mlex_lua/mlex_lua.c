@@ -77,8 +77,12 @@ int x = luaL_checkint(L,2);
 int y = luaL_checkint(L,3);
 
 char* ret = mlmatch_get_result(x,y,r,c);
-lua_pushstring(L,(const char*)ret);
-free((char*)ret);
+if (ret == NULL) {
+	lua_pushnil(L);
+} else {
+	lua_pushstring(L,(const char*)ret);
+	free((char*)ret);
+}
 return 1;
 }
 

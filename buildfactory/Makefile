@@ -1,4 +1,8 @@
-include $(CONFIG)
+ifeq ($(CONFIG),)
+ include ../config
+else
+ include $(CONFIG)
+endif
 
 VERSION=$(shell grep "\#define VERSION" ../config.h | cut -d \" -f 2)
 
@@ -24,7 +28,7 @@ dist-zip: dist-win-e-zip
 dist-win-e-zip: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _win_/freepops
 	$(H)[ -d _win_/freepops-$(VERSION) ] || \
-		tar -xzf freepops-$(VERSION).tar.gz -C _win_
+		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _win_
 	$(H)cd _win_/freepops-$(VERSION);\
 		./configure.sh win;\
 		$(MAKE) all; \
@@ -121,7 +125,7 @@ dist-deb: deb-preamble dist-deb-real
 deb-preamble: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _deb_
 	$(H)[ -d _deb_/freepops-$(VERSION) ] || \
-		tar -xzf freepops-$(VERSION).tar.gz -C _deb_
+		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _deb_
 	$(H)cp freepops-$(VERSION).tar.gz \
 		_deb_/freepops_$(VERSION).orig.tar.gz
 	$(H)cd _deb_/freepops-$(VERSION);\
@@ -166,7 +170,7 @@ dist-slack: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _slack_
 	$(H)mkdir -p dist-slack
 	$(H)[ -d _slack_/freepops-$(VERSION) ] || \
-		tar -xzf freepops-$(VERSION).tar.gz -C _slack_
+		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _slack_
 	$(H)cd _slack_/freepops-$(VERSION); \
 		./configure.sh linux-slack; \
 		$(MAKE) all; \
@@ -203,7 +207,7 @@ dist-slack: freepops-$(VERSION).tar.gz
 dist-osx: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _osx_
 	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
-		tar -xzf freepops-$(VERSION).tar.gz -C _osx_
+		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _osx_
 	$(H)cd _osx_/freepops-$(VERSION); ./configure.sh osx; $(MAKE) all
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
@@ -233,7 +237,7 @@ dist-osx: freepops-$(VERSION).tar.gz
 dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _osx_
 	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
-		tar -xzf freepops-$(VERSION).tar.gz -C _osx_
+		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _osx_
 	$(H)cd _osx_/freepops-$(VERSION); ./configure.sh osx-static; $(MAKE) all
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
@@ -267,7 +271,7 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 osx-app: freepops-$(VERSION).tar.gz Info.plist
 	$(H)mkdir -p _osx_
 	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
-		tar -xzf freepops-$(VERSION).tar.gz -C _osx_
+		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _osx_
 	$(H)cd _osx_/freepops-$(VERSION);\
 		./configure.sh osx;\
 	$(H)cd _osx_;$(MAKE) all

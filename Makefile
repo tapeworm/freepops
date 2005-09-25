@@ -91,12 +91,12 @@ tgz-dist:
 	$(H)CUR=`pwd`;\
 		BASE=`basename $$CUR`;\
 		cd ..;\
-		tar -czf freepops.tgz $$BASE;\
+		$(TAR) -czf freepops.tgz $$BASE;\
 		cd $$BASE;\
 		[ -d dist-tgz ] || mkdir dist-tgz;\
 		mv ../freepops.tgz dist-tgz/;\
 		cd dist-tgz/;\
-		tar -xzf freepops.tgz;\
+		$(TAR) -xzf freepops.tgz;\
 		rm freepops.tgz;\
 		cd $$BASE; $(MAKE) realclean; cd ..;\
 		find $$BASE -name CVS -exec rm -fr \{\} \; 2>/dev/null;\
@@ -111,7 +111,7 @@ tgz-dist:
 		chmod -R a+r *;\
 		cd ..;\
 		mv $$BASE freepops-$(VERSION) || true;\
-		tar -cf freepops-$(VERSION).tar freepops-$(VERSION);\
+		$(TAR) -cf freepops-$(VERSION).tar freepops-$(VERSION);\
 		gzip -f9 freepops-$(VERSION).tar;\
 		rm -r freepops-$(VERSION)
 	

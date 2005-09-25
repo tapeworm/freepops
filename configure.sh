@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 usage() {
 cat << EOT
@@ -13,6 +13,7 @@ Available options:
 	osx-static	to compile on a darwin host with some static libs
 	obsd		to compile on a openbsd host
 	fbsd 		to compile on a freebsd host
+	solaris 	to compile on a solaris host
 	beos		to compile on a beos host
 	cygwin		to compile on a cygwin environment
 	win		to cross-compile for win on a linux host with 
@@ -44,6 +45,8 @@ WINDRES=windres
 DLLTOOL=dlltool
 MAKE=make
 WHERE=/usr/local/
+TAR=tar
+PATCH=patch
 }
 
 set_linux() {
@@ -74,6 +77,16 @@ CFLAGS="$CFLAGS -I/sw/include -DMACOSX"
 HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX"
 LDFLAGS="$LDFLAGS -bind_at_load -framework Carbon"
 HLDFLAGS="$HLDFLAGS -bind_at_load"
+}
+
+set_solaris() {
+set_default
+OS=Solaris
+CFLAGS="$CFLAGS -DMACOSX -DFREEBSD -I/usr/local/include"
+LDFLAGS="$LDFLAGS -L/usr/local/lib -lnsl -lsocket" 
+MAKE="gmake SHELL=/bin/bash"
+TAR=gtar
+PATCH=gpatch
 }
 
 set_fbsd() {
@@ -203,6 +216,9 @@ case $1 in
 	obsd)
 		set_obsd
 	;;
+	solaris)
+		set_solaris
+	;;
 	fbsd)
 		set_fbsd
 	;;
@@ -254,5 +270,7 @@ CURLNAME=$CURLNAME
 OS=$OS
 MAKE=$MAKE
 WHERE=$WHERE
+TAR=$TAR
+PATCH=$PATCH
 EOT
 

@@ -1,10 +1,7 @@
 #!/bin/bash
-#
-#  TODO:
-#     To be in perfect debian style we should use start-stop-daemon also
-#     for chrooting.
-# 
-#
+
+# lsb functions, to use those ugly colors.. 
+. /lib/lsb/init-functions
 
 ### some default values ###
 
@@ -53,22 +50,27 @@ set -e
 
 start_freepopsd () {
 	if [ -z "$CHROOT" ] ; then
+	  	log_daemon_msg "Starting $DESC" "$NAME"
 		start-stop-daemon --start -b --quiet -m -p $PIDFILE \
 			--exec $DAEMON -- $DAEMON_OPTS
+		log_end_msg $?
 	else
-		echo -n "(chroot) "
+  		log_daemon_msg "Starting $DESC" "(chroot) $NAME"
 		start-stop-daemon --start -b --quiet -m -p $PIDFILE \
 			-r $CHROOT --exec $DAEMON -- $CHROOTED_DAEMON_OPTS
+		log_end_msg $?
 	fi
-
 }
 
 stop_freepopsd () {
 	if [ -z "$CHROOT" ] ; then
+	  	log_daemon_msg "Stopping $DESC" "$NAME"
 		start-stop-daemon --stop --quiet -p $PIDFILE 
+		log_end_msg $?
 	else
-		echo -n "(chroot) "
+	  	log_daemon_msg "Stopping $DESC" "(chroot) $NAME"
 		start-stop-daemon --stop --quiet -p $PIDFILE 
+		log_end_msg $?
 	fi
 	rm $PIDFILE
 }
@@ -77,21 +79,15 @@ stop_freepopsd () {
 
 case "$1" in
   start)
-	echo -n "Starting $DESC: "
 	start_freepopsd
-	echo "$NAME."
 	;;
   stop)
-	echo -n "Stopping $DESC: "
 	stop_freepopsd
-	echo "$NAME."
 	;;
   restart|force-reload)
-	echo -n "Restarting $DESC: "
 	stop_freepopsd
 	sleep 1
 	start_freepopsd
-	echo "$NAME."
 	;;
   *)
 	N=/etc/init.d/freepops

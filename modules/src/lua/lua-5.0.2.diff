@@ -1,7 +1,7 @@
 diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 --- lua-5.0.2-old/Makefile	Fri Mar 12 02:50:55 2004
 +++ lua-5.0.2-new/Makefile	Sat Jul 10 10:08:02 2004
-@@ -1,102 +1,116 @@
+@@ -1,102 +1,122 @@
 -# makefile for Lua hierarchy
 -# see INSTALL for installation instructions
 -# see config for customization instructions
@@ -112,9 +112,11 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 + ifneq "$(OS)" "Darwin-static"
 +  ifneq "$(OS)" "OpenBSD"
 +   ifneq "$(OS)" "FreeBSD"
++    ifneq "$(OS)" "Solaris"
 +	CPFLAGS+= -a
 +	LDFLAGS+= -Wl,-E
 +	HLDFLAGS+= -Wl,-E
++    endif
 +   endif
 +  endif
 + endif
@@ -147,7 +149,11 @@ diff -ruN lua-5.0.2-old/Makefile lua-5.0.2-new/Makefile
 +     ifeq "$(OS)" "BeOS"
 + 	  HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -ldl
 +     else
-+ 	  HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++       ifeq "$(OS)" "Solaris"
++ 	    HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lsocket -lnsl -lm
++       else
++ 	    HLDFLAGS+= -L../lib/ -L../../lib/ -llua-host -llualib-host -lm -ldl
++       endif
 +     endif
 +   endif
 + endif

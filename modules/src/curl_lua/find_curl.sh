@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ERRORMSG="unable_to_find_curl.h_you_should_edit_by_hand_the_curl_lua/Makefile"
 

@@ -1,3 +1,9 @@
+- fixed chroot jail creatin (/etc/freepops/config.lua was not created)
+- changed debian copyright with the new FSF address
+- relaxed mlex checking to not call abort but fail more gracefully
+- added patch for building on Solaris (thanks Alfredo Pena)
+- changed manual to GPL license to allow it to stay in Debian/etch
+- init script for debian is now lsb-compliant
 - changed debian init script shell to bash
 - fixed some typo in xml2table.lua
 13/07/2005 0.0.31

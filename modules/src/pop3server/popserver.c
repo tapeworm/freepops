@@ -25,6 +25,10 @@
 #  include <bsd_mem.h>
 #endif
 
+#ifdef __sun
+#  include <strings.h> /* for char* index() */
+#endif
+
 #include "socketcommon.h"
 #include "popserver.h"
 #include "popstate.h"

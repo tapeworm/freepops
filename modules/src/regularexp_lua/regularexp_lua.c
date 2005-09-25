@@ -68,7 +68,13 @@ int nmatch = 0;
 int max;
 const char *text;
 regex_t *pr;
+#ifndef __sun
 regmatch_t pm[1]={{-1,-1}};
+#else
+regmatch_t pm[1];
+pm[0].rm_so = -1;
+pm[0].rm_eo = -1;
+#endif
 
 pr = check_regularexp(L);
 text = luaL_checkstring(L,2);
@@ -100,7 +106,13 @@ int max;
 size_t cur=0;
 const char *text;
 regex_t *pr;
+#ifndef __sun
 regmatch_t pm[1]={{-1,-1}};
+#else
+regmatch_t pm[1];
+pm[0].rm_so = -1;
+pm[0].rm_eo = -1;
+#endif
 
 pr = check_regularexp(L);
 text = luaL_checkstring(L,2);

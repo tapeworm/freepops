@@ -25,7 +25,13 @@ regmatch_t regfind(const char* from,const char* exp)
 {
 int errcode;
 regex_t r;
+#ifndef __sun
 regmatch_t pm[1]={{-1,-1}};
+#else
+regmatch_t pm[1];
+pm[0].rm_so = -1;
+pm[0].rm_eo = -1;
+#endif
 
 if(from == NULL)
 	return pm[0];

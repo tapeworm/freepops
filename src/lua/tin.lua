@@ -675,6 +675,7 @@ function tin_parse_webmessage(wherearewe, data)
 	local headersE = ".*<script>.*var *hd *=</script>.*<br>.*<br>.*</div>"
 	local headersG = "O<O>X<O>O<O>O<O>O<O>"
 	local x = mlex.match(data, headersE, headersG)
+	assert(x:count() > 0,"Unable to mlex "..data )
 	local headers = x:get(0,0)
 	assert(headers ~= nil, "Unable to mlex " .. data)
 	local _, _, head = string.find(headers, 'var%s*hd%s*=%s*"([^"]+)"%s*;')

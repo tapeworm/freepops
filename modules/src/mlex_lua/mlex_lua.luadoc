@@ -15,7 +15,8 @@ function mlex.match(data,exp,ret) end
 function print() end
 
 ---
--- gets the x,y result.
+-- Gets the x,y result.
+-- @return string The result, or nil if x,y is wrong.
 function get (x,y) end
 		
 ---

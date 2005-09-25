@@ -9,8 +9,9 @@
 
 #configure this################################################################
 
-LPBIN="/usr/bin/freepopsd"
-LPFILES="/usr/share/freepops/lua"
+FPBIN="/usr/bin/freepopsd"
+FPFILES="/usr/share/freepops/lua"
+FPCONF="/etc/freepops"
 CHROOTDIR="/var/lib/freepops/chroot-jail/"
 USER="nobody"
 GROUP="nogroup"
@@ -92,9 +93,10 @@ echo "nogroup:x:65534:" > etc/group
 #make /dev/null
 mknod -m 0666 dev/null c 1 3
 
-#copy liberopos files
-cp $LPBIN usr/bin/
-cp -r $LPFILES usr/share/freepops/
+#copy freepops files
+cp $FPBIN usr/bin/
+cp -r $FPFILES usr/share/freepops/
+cp -r $FPCONF etc/
 
 #create the script#############################################################
 cat > $CHROOTDIR/start.sh << EOT

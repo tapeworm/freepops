@@ -135,6 +135,11 @@ ifeq "$(OS)" "FreeBSD"
         LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) -lm -pthread \
                 $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 else
+ifeq "$(OS)" "Solaris"
+        LIBSTOLINK+= getopt     
+        LDFLAGS+=-R$(PREFIX)/lib -L../modules/lib $(addprefix \
+	        -l,$(LIBSTOLINK)) -lm $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
+else
 ifeq "$(OS)" "Cygwin"
 	LDFLAGS+= -L ../modules/lib \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
@@ -149,6 +154,7 @@ else
 		-ldl -lm -lpthread -lcrypto -rdynamic \
 		$(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
 
+endif
 endif
 endif	
 endif

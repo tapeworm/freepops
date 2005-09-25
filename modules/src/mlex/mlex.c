@@ -630,8 +630,8 @@ if(l != NULL)
 	}
 else
 	{
-	DBG("you are asking for %d\n",pos);
-	ERROR_PRINT("Internal: wrong position\n");
+	//DBG("you are asking for %d\n",pos);
+	//ERROR_PRINT("Internal: wrong position\n");
 	return NULL;
 	}
 
@@ -653,8 +653,8 @@ if(l != NULL)
 	}
 else
 	{
-	DBG("you are asking for %d\n",pos);
-	ERROR_PRINT("Internal: wrong position\n");
+	//DBG("you are asking for %d\n",pos);
+	//ERROR_PRINT("Internal: wrong position\n");
 	return NULL;
 	}
 }
@@ -1070,9 +1070,9 @@ struct chunk_t* tmp = mlmatch_get_x(mlmatch_get_y(res,y),x);
 
 if(tmp == NULL)
 	{
-	DBG("you are asking for %d %d here :\n",x,y);
-	mlmatch_print_results(res,s);
-	ERROR_ABORT("FIX ME");
+	//DBG("you are asking for %d %d here :\n",x,y);
+	//mlmatch_print_results(res,s);
+	return NULL;
 	}
 	
 return mlmatch_get(tmp,s);

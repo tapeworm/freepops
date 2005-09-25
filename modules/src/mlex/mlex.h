@@ -160,7 +160,7 @@ void mlmatch_free_results(list_t*res);
  * \param y row
  * \param res returned by mlmatch
  * \param s the src string
- * \return a strdup of s chunked in the right position
+ * \return a strdup of s chunked in the right position or NULL
  *
  */ 
 char* mlmatch_get_result(int x,int y,

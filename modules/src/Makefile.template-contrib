@@ -1,3 +1,5 @@
+include $(CONFIG)
+
 H=@
 
 TGZ=$(shell ls *.tar.gz)
@@ -12,10 +14,10 @@ all: $(SUBDIR)
 	$(H)echo -n
 
 $(SUBDIR):
-	$(H)tar -xzf $(TGZ)
+	$(H)$(TAR) -xzf $(TGZ)
 	$(H)if test ! "nodiff" = "$(DIFF)"; then \
 		cd $(SUBDIR); \
-		patch -p1 < ../$(DIFF) 1>/dev/null; \
+		$(PATCH) -p1 < ../$(DIFF) 1>/dev/null; \
 		if [ $$? != 0 ]; then \
 			echo -e "\n ! error patching !\n";\
 		fi;\

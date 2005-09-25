@@ -190,7 +190,7 @@ struct sock_state_t * sock_connect(char *hostname,
 	unsigned long port,int maxlinelen,void (*print)(char *))
 {
 struct sock_state_t *tmp;
-#if !(defined(WIN32) && !defined(CYGWIN))
+#if !(defined(WIN32) && !defined(CYGWIN) || defined(__sun)) 
 struct in_addr anyaddress = { INADDR_ANY };
 #else
 struct in_addr anyaddress = {{{ INADDR_ANY }}};

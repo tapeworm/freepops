@@ -19,6 +19,10 @@
 #  include <bsd_mem.h>
 #endif
 
+#ifdef __sun
+#  include <strings.h>
+#endif
+
 #include "lstringhack.h"
 #include "regularexp.h"
 

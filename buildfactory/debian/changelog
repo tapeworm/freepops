@@ -1,3 +1,13 @@
+freepops (0.0.32-1) unstable; urgency=low
+
+  * new upstream release
+  * using lsb-base in init scripts
+  * changed FSF address in copying file
+  * the manuals in -doc are now under GPL and not FDL as before (the upstream
+    changed the license)
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sun, 25 Sep 2005 13:01:39 +0200
+
 freepops (0.0.31-1) unstable; urgency=low
 
   * init.d script uses only POSIX shell commands, applied patch by

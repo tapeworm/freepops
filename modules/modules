@@ -58,6 +58,9 @@ MODULES-OpenBSD-post=
 MODULES-FreeBSD-pre=getopt
 MODULES-FreeBSD-post=
 
+MODULES-Solaris-pre=getopt
+MODULES-Solaris-post=
+
 MODULES-Cygwin-pre=regex 
 MODULES-Cygwin-post=
 

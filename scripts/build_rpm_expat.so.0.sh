@@ -24,7 +24,7 @@ rm -rf freepops-expat
 mkdir freepops-expat
 cd freepops-expat
 apt-get source --download-only expat
-$(TAR) -xvzf *orig.tar.gz
+tar -xvzf *orig.tar.gz
 mv expat-* expat
 cd expat
 ./configure

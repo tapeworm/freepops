@@ -19,7 +19,6 @@
 #include "lauxlib.h"
 #include "base64.h"
 
-/* function: dothack */
 static int lua_base64_encode(lua_State* L)
 {
 const char * s = luaL_checkstring(L,1);
@@ -32,8 +31,21 @@ if (tmp != s)
 return 1;
 }
 
+static int lua_base64_decode(lua_State* L)
+{
+const char * s = luaL_checkstring(L,1);
+
+char * tmp = base64dec(s,lua_strlen(L,1));
+lua_pushstring(L,tmp);
+if (tmp != s)
+	free(tmp);
+
+return 1;
+}
+
 static const struct luaL_reg stringhack_f [] = {
   {"encode",lua_base64_encode},
+  {"decode",lua_base64_decode},
   {NULL,NULL}
 };
 

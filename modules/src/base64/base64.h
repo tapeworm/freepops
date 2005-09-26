@@ -20,5 +20,8 @@
 char *base64enc_raw(const char *input,size_t len);
 //! base64 encoding
 char *base64enc(const char *input);
+//! base64 decoding
+char *base64dec(const char *input, size_t len);
+
 
 #endif

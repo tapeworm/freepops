@@ -10,7 +10,7 @@
 -- these are used in the init function
 PLUGIN_VERSION = "0.0.92"
 PLUGIN_NAME = "Tin.IT"
-PLUGIN_REQUIRE_VERSION = "0.0.31"
+PLUGIN_REQUIRE_VERSION = "0.0.32"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=tin.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
@@ -263,206 +263,60 @@ end
 --------------------------------------------------------------------------------
 -- Login to the tin website
 --
-
-function geta3p()
-	local _,_ = [[
-<form  name="AAform" target="_top" method="post" action="http://aaacsc.virgilio.it/piattaformaAAA/controller/AuthenticationServlet">
-<input type="hidden" NAME="a3l" VALUE="gareuselesinge2@virgilio.it">
-<input type="hidden" NAME="a3p" VALUE="">
-<input type="hidden" NAME="a3si" value=-1>
-<input type="hidden" NAME="percmig" value=100>
-<input type="hidden" NAME="a3st" value="VCOMM">
-<input type="hidden" NAME="a3aid" value="comhpma">
-<input type="hidden" NAME="a3flag" value="0">
-<input type="hidden" NAME="a3ep" value="http://communicator.virgilio.it/asp/login.asp">
-<input type="hidden" NAME="a3afep" value="http://communicator.virgilio.it/asp/login.asp">
-<input type="hidden" NAME="a3se" value="http://communicator.virgilio.it/asp/login.asp">
-<input type="hidden" NAME="a3dcep" value="http://communicator.virgilio.it/asp/homepage.asp?s=005">
-</form>]],[[
-var keyStr = "ABCDEFGHIJKLMNOP" +
-                "QRSTUVWXYZabcdef" +
-                "ghijklmnopqrstuv" +
-                "wxyz0123456789+/" +
-                "=";
-
-function hex2ascii(hextext)
-{
-var nibbles = "0123456789ABCDEF";
-var s1=new String(hextext);
-s1=s1.toUpperCase();
-var s="";
-for (y=0; y<s1.length;) {
-    var sHex=s1.slice(y,y+2);
-    var nC = nibbles.indexOf(sHex.slice(0,1))*16;
-    nC += nibbles.indexOf(sHex.slice(1,2));
-    s = s+String.fromCharCode(nC);
-    y=y+2;
-}
-return s;
-}
-
-
-   function decode64(input) {
-      var output = "";
-      var chr1, chr2, chr3 = "";
-      var enc1, enc2, enc3, enc4 = "";
-      var i = 0;
-
-      // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
-      var base64test = /[^A-Za-z0-9\+\/\=]/g;
-      var sTmp=input;
-      while (sTmp.indexOf("%") != -1) {
-      	input=unescape(sTmp);
-      	sTmp=input;
-      }
-/*
-	if (base64test.exec(input)) {
-         alert("("+input+")\n\nThere were invalid base64 characters in the input text.\n" +
-               "Valid base64 characters are A-Z, a-z, 0-9, '+', '/', and '='\n" +
-               "Expect errors in decoding.");
-      }
-*/
-      input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-
-      do {
-         enc1 = keyStr.indexOf(input.charAt(i++));
-         enc2 = keyStr.indexOf(input.charAt(i++));
-         enc3 = keyStr.indexOf(input.charAt(i++));
-         enc4 = keyStr.indexOf(input.charAt(i++));
-
-         chr1 = (enc1 << 2) | (enc2 >> 4);
-         chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-         chr3 = ((enc3 & 3) << 6) | enc4;
-
-         output = output + String.fromCharCode(chr1);
-
-         if (enc3 != 64) {
-            output = output + String.fromCharCode(chr2);
-         }
-         if (enc4 != 64) {
-            output = output + String.fromCharCode(chr3);
-         }
-
-         chr1 = chr2 = chr3 = "";
-         enc1 = enc2 = enc3 = enc4 = "";
-
-      } while (i < input.length);
-
-      return output;
-   }
-
-function dec(s,i) {
-
-var sCred=decode64(s);
-var aCred=sCred.split("|");
-return(aCred[i]);
-}
-
-function GetCookie(name) 
-{
-	var dc = document.cookie;
-	
-	var prefix = name + "=";
-	var begin = dc.indexOf("; " + prefix);
-	if (begin == -1) {
-		begin = dc.indexOf(prefix);
-		if (begin != 0) return null;
-	}
-	else begin += 2;
-	
-	var end = document.cookie.indexOf(";", begin);
-	if (end == -1) end = dc.length;
-	
-	return unescape(dc.substring(begin + prefix.length, end));
-}
-
-
-function getCPRET(){
-
-	var sCPRET = GetCookie( "CPRET");
-	var sReturnBack;
-	
-	sReturnBack="http://www.virgilio.it";
-		
-	
-	if (sCPRET != null)
-	{
-		if (sCPRET != "" && sCPRET.length >0)
-		{
-			sReturnBack = dec(hex2ascii(sCPRET),0);
+function dec(s, i) 
+	local tmp = base64.decode(s)
+	local rc = {}
+	while tmp ~= nil do
+		local start, stop = string.find(tmp,"|")
+		if start == nil then
+			table.insert(rc,tmp)
+			tmp = nil
+		else
 			
-			if (sReturnBack.indexOf("virgilio.it") == -1)
-			{ 
-				sReturnBack = "http://www.virgilio.it";
+			table.insert(rc,string.sub(tmp,1,start-1))
+			tmp = string.sub(tmp,stop+1,-1)
+		end
+	end
+	return rc[i]
+end
 
-			}
-		}
+function hex2ascii(s)
+	local tab = {
+		["0"]=0;  ["1"]=1;  ["2"]=2;  ["3"]=3;
+		["4"]=4;  ["5"]=5;  ["6"]=6;  ["7"]=7;
+		["8"]=8;  ["9"]=9;  ["A"]=10; ["B"]=11;
+		["C"]=12; ["D"]=13; ["E"]=14; ["F"]=15
 	}
-	
-	
-	return (sReturnBack);
-}
+	s = string.upper(s)
+	local rc = {}
+	local i=1
+	while i <= string.len(s) do
+		local a = tab[string.char(string.byte(s,i))]
+		local b = tab[string.char(string.byte(s,i+1))]
+		if a == nil or b == nil then
+			log.error_print("invalid hex")
+			return ""
+		end
+		table.insert(rc,string.char(a*16+b))
+		i = i + 2
+	end
+	return table.concat(rc)
+end
 
-
-function getA3FEP(){
-
-	var sCPRET = GetCookie( "CPRET");
-	var sReturnBack;
+function geta3p(b, email)
+	local url, post = nil,nil
 	
-	sReturnBack="http://mail.virgilio.it/mail/home/mail_error.html";
-		
-	
-	if (sCPRET != null)
-	{
-		if (sCPRET != "" && sCPRET.length >0)
-		{
-			sReturnBack = dec(hex2ascii(sCPRET),1);
-			
-			
-			if (sReturnBack.indexOf("virgilio.it") == -1)
-			{ 
-				sReturnBack = "http://mail.virgilio.it/mail/home/mail_error.html";
-			}
-		}
-	}
-	
-	
-	return (sReturnBack);
-}
-
-
-function geta3p()
-{
-	var sCPTX=GetCookie("CPTX");
-	
-	if(sCPTX == null)
-	{
-        	top.document.location.href=getCPRET();
-	}
-	
-	else if(sCPTX.length == 0)
-	{
-		top.document.location.href=getCPRET();
-	}
-	
-	else {
-		sCPTX=hex2ascii(sCPTX);
-		
-		document.AAform.a3p.value=dec(sCPTX,1);
-	
-		
-		if (document.AAform.a3p.value.length == 0)
-		{
-			top.document.location.href=getCPRET();
-		}
-		else 
-		{
-			document.AAform.submit();
-		}
-	}
-}
-]]
-
+	local CPTX = b:get_cookie("CPTX")
+	if CPTX == nil then
+		log.error_print("unable to get CPTX")
+		return nil
+	else
+		local sCPTX = curl.unescape(CPTX.value)
+		sCPTX = hex2ascii(sCPTX)
+		local a3p = dec(sCPTX,2);
+		url = "http://aaacsc.virgilio.it/piattaformaAAA/controller/AuthenticationServlet"
+		post=string.format("a3l=%s&a3p=%s&a3si=-1&percmig=100&a3st=VCOMM&a3aid=comhpma&a3flag=0&a3ep=http://communicator.virgilio.it/asp/login.asp&a3afep=http://communicator.virgilio.it/asp/login.asp&a3se=http://communicator.virgilio.it/asp/login.asp&a3dcep=http://communicator.virgilio.it/asp/homepage.asp?s=005",email,a3p)
+	end
 
 	
 	return url, post
@@ -483,13 +337,9 @@ function tin_login()
 	internal_state.b = browser.new()
 
 	local b = internal_state.b
- 	b:verbose_mode()
+ 	--b:verbose_mode()
 
 	-- step 0: create some dummy bisquits and fetch some
-	local bsq1 = mk_cookie("CPTX","",nil,"/",".virgilio.it",nil)
-	local bsq2 = mk_cookie("CPWM","",nil,"/",".virgilio.it",nil)
-	b:add_cookie(tin_string.prelogin,bsq1)
-	b:add_cookie(tin_string.prelogin,bsq2)
 	local post = string.format(tin_string.prelogin_post,
 		user,domain,password,10,10)
 	local body, err = b:post_uri(tin_string.prelogin,post)
@@ -499,12 +349,11 @@ function tin_login()
 		return POPSERVER_ERR_AUTH
 	end
 
-	local url, post = geta3p()
+	local url, post = geta3p(b, pop_login)
 	
 	-- step 1: fetch bisquits
 	
-	local post = string.format(tin_string.login_post,pop_login,password)
-	local body, err = b:post_uri(tin_string.login,post,{"Referer: http://communicator.virgilio.it/asp/a3login.asp"})
+	local body, err = b:post_uri(url,post)
 	if body == nil then
 		log.error_print("Error getting "..tin_string.login..": "..err)
 		return POPSERVER_ERR_AUTH

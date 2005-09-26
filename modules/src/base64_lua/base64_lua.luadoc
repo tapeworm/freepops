@@ -6,3 +6,8 @@
 -- @return string The encoded string.
 function base64.encode(s) end
 
+---
+-- base64decodes the string.
+-- @return string The encoded string.
+function base64.decode(s) end
+

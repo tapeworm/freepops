@@ -107,7 +107,50 @@ output[out_len - 1] = '\0';
 
 return output;
 }
+
 char *base64enc(const char *input){
-return base64enc_raw(input,strlen(input));
+	return base64enc_raw(input,strlen(input));
+}
+
+static unsigned int index_in_table(char c){
+	int i;
+	if (c == '=') return 0;
+	for(i=0;i < 64 && table[i] != c;i++) ;
+	if (i == 64) {
+		return -1;
+	} else {
+		return i;
+	}
+}
+
+char *base64dec(const char *input, size_t len){
+	char * rc = calloc(len * 3 / 4 + 4,sizeof(char));
+	int i,o=0;
+	MALLOC_CHECK(rc);
+
+	for(i=0; i+3<=len; ){
+		char c1 = input[i++];
+		char c2 = input[i++];
+		char c3 = input[i++];
+		char c4 = input[i++];
+		unsigned int val1 = index_in_table(c1);
+		unsigned int val2 = index_in_table(c2);
+		unsigned int val3 = index_in_table(c3);
+		unsigned int val4 = index_in_table(c4);
+		unsigned char rc1 = (val1 << 2) | (val2 >> 4);
+		unsigned char rc2 = ((val2 & 15) << 4) | (val3 >> 2);
+		unsigned char rc3 = ((val3 & 3) << 6) | val4;
+
+		rc[o++] = rc1;
+		if (c3 != '='){
+			rc[o++] = rc2;
+		}
+		if (c4 != '='){
+			rc[o++] = rc3;
+		}
+	}
+	rc[o]='\0';
+
+	return rc;
 }
 

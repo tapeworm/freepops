@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9c"
+PLUGIN_VERSION = "0.0.9d"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -113,6 +113,7 @@ local globals = {
   strLoginPage = "http://%s.%s/scripts/common/proxy.main",
   strLoginPage2 = "http://%s.%s/scripts/common/login.main",
   strLoginPage3 = "http://%s.%s/scripts/lycos/lyproxy.main",
+  strLoginPage4 = "http://super.japan.com/scripts/common/ss_main.cgi",
   strLoginPostData = "show_frame=Enter&mail_language=us&action=login&login=%s%%40%s&password=%s&domain=%s&siteselected=normal&",
   strLoginPostData2 = "show_frame=Enter&mail_language=us&action=login&login=%s&password=%s&domain=%s&siteselected=normal&",
 
@@ -299,6 +300,8 @@ function login()
   elseif (domain == "otakumail.com") then
     post = string.format(globals.strLoginPostData2, username, password, domain)
     url = string.format(globals.strLoginPage2, "www", "otakumail.com")
+  elseif (domain == "japan.com") then
+    url = globals.strLoginPage4
   else
     url = string.format(globals.strLoginPage, "www", domain)
   end

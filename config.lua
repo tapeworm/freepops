@@ -472,12 +472,12 @@ freepops.MODULES_MAP["aggregator"] 		= {
 -- rss binded domains
 freepops.MODULES_MAP["freepops.rss.en"] 	= {
 	name="aggregator.lua",
-	args={host="http://www.freepops.org/en/misc/backend.rss"}
+	args={host="http://www.freepops.org/en/rss.php"}
 }
 
 freepops.MODULES_MAP["freepops.rss.it"] 	= {
 	name="aggregator.lua",
-	args={host="http://www.freepops.org/it/misc/backend.rss"}
+	args={host="http://www.freepops.org/it/rss.php"}
 }
 
 freepops.MODULES_MAP["flatnuke.sf.net"] 	= {

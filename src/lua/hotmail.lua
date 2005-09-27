@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.2e"
+PLUGIN_VERSION = "0.1.2f"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -33,7 +33,12 @@ Parameter is used to force the plugin to empty the trash when it is done
 pulling messages.  Set the value to 1.]]
 		}	
 	},
-
+	{name = "markunread", description = {
+		it = [[ Viene usato per far s&igrave; che il plugin segni come non letti i messaggi che scarica. Se il valore &egrave; 1 questo comportamento viene attivato.]],
+		en = [[ Parameter is used to have the plugin mark all messages that it
+pulls as unread.  If the value is 1, the behavior is turned on.]]
+		}
+	},
 }
 PLUGIN_DESCRIPTIONS = {
 	it=[[
@@ -170,6 +175,7 @@ internalState = {
   strMBox = nil,
   bEmptyTrash = false,
   loginTime = nil,
+  bMarkMsgAsUnread = false,
 }
 
 -- ************************************************************************** --
@@ -512,8 +518,10 @@ function downloadMsg(pstate, msg, nLines, data)
 
   -- Mark the message as read
   --
-  log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as being done.")
-  browser:get_head(markReadUrl)
+  if internalState.bMarkMsgAsUnread == false then
+    log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as being done.")
+    browser:get_head(markReadUrl)
+  end
 
   log.raw("Message: " .. cbInfo.cb_uidl .. ", Completed!")
   return POPSERVER_ERR_OK
@@ -715,6 +723,15 @@ function user(pstate, username)
   if val == "1" then
     log.dbg("Hotmail: Trash folder will be emptied on exit.")
     internalState.bEmptyTrash = true
+  end
+
+  -- If the flag markunread=1 is set, then we will mark all messages
+  -- that we pull as unread when done.
+  --
+  local val = (freepops.MODULE_ARGS or {}).markunread or 0
+  if val == "1" then
+    log.dbg("Hotmail: All messages pulled will be marked unread.")
+    internalState.bMarkMsgAsUnread = true
   end
 
   -- Get the folder

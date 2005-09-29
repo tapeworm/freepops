@@ -1,3 +1,4 @@
+- libero.lua: the plugin chooses from more web servers
 - changed predefined link for FreePOPs RSS in aggregator
 - fixed chroot jail creatin (/etc/freepops/config.lua was not created)
 - changed debian copyright with the new FSF address

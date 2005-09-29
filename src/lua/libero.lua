@@ -215,7 +215,10 @@ function libero_login()
 
 	-- build the uri
 	local password = internal_state.password
-	local popnumber = math.mod(os.time(),16) + 1
+	local popnumber = math.mod(os.time(),29) + 1
+        if popnumber == 25 then
+        	popnumber = 24	-- wpop25 doesn't exists
+        end
 	local domain = internal_state.domain
 	local site = libero_domain[domain].website
 	local choice = libero_domain[domain].choice

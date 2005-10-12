@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.3"
+PLUGIN_VERSION = "0.2.4"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -98,10 +98,10 @@ local libero_string = {
 	-- to cut and paste the html source and work on it. For example
 	-- you could copy a message table row in a blank file, substitute
 	-- every useless field with '.*'.
-	statE = ".*<script>.*TREv.*</script>.*<TD.*>.*<input.*value.*=.*[[:digit:]]+.*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<IMG.*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<[Iid][Mmi][Ggv].*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<a>.*<script>IMGEv.*</script>.*</a>.*<script>AEv.*</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<script>.*AEv.*</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<div.*>.*</TD>.*<script>.*TDEv.*</script>.*</TD>.*<TD.*>.*<div.*>.*</TD>.*<script>TDEv.*</script>[.*]{b}.*[[:digit:]]+.*{/b}[.*]</TD>.*</TR>",
+	statE = ".*<script>.*TREv.*</script>.*<TD.*>.*<input.*value.*=.*[[:digit:]]+.*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<IMG.*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<[Iid][Mmi][Ggv].*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<a>.*<script>IMGEv.*</script>.*</a>.*<script>AEv.*</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<script>.*AEv.*</script>[.*]{b}.*{/b}[.*]</a>.*</TD>.*<TD>.*<div.*>.*</TD>.*<script>.*TDEv.*</script>[.*]{b}.*{b}[.*]</TD>.*<TD.*>.*<div.*>.*</TD>.*<script>TDEv.*</script>[.*]{b}.*[[:digit:]]+.*{/b}[.*]</TD>.*</TR>",
 	-- This is the mlex get expression to choose the important fields 
 	-- of the message list page. Used in combination with statE
-	statG = "O<O><O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}X{O}[O]<O>O<O>",
+	statG = "O<O><O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}O{O}[O]<O>O<O>O<O>O<O>O<O><O>[O]{O}X{O}[O]<O>O<O>",
 	-- The uri for the first page with the list of messages
 	first = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs=1&"..
 		"C_Folder=%s",

@@ -57,8 +57,12 @@ dist-win-e-zip: freepops-$(VERSION).tar.gz
 	$(H)unix2dos _win_/freepops/SERVICE.*.txt
 	
 	$(H)DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d = -f 2`;\
-		cp $$DLLPATH/libcurl-3.dll _win_/freepops/libcurl-3.dll;\
-		cp $$DLLPATH/expat.dll _win_/freepops/expat.dll
+		cp $$DLLPATH/libcurl.dll _win_/freepops/libcurl.dll;\
+		cp $$DLLPATH/libexpat.dll _win_/freepops/libexpat.dll;\
+		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll;\
+		cp $$DLLPATH/libgnutls.dll _win_/freepops/libgnutls.dll;\
+		cp $$DLLPATH/libgcrypt.dll _win_/freepops/libgcrypt.dll;\
+		cp $$DLLPATH/libgpg-error.dll _win_/freepops/libgpg-error.dll
 	$(H)STRIP=`grep STRIP _win_/freepops-$(VERSION)/config| cut -d = -f 2`;\
 		$$STRIP _win_/freepops/*.exe _win_/freepops/*.dll
 
@@ -115,10 +119,14 @@ dist-gen:
 dist-deb-hackwoody:
 	$(H)cd _deb_/freepops-$(VERSION);\
 		cp buildfactory/debian-woody/* debian/
+dist-deb-hacksarge:
+	$(H)cd _deb_/freepops-$(VERSION);\
+		cp buildfactory/debian-sarge/* debian/
 
 dist-deb-woody: deb-preamble dist-deb-hackwoody dist-deb-real
-dist-deb-sarge:	dist-deb
+dist-deb-sarge: deb-preamble dist-deb-hacksarge dist-deb-real
 dist-deb-sid: dist-deb
+dist-deb-etch: dist-deb
 	
 dist-deb: deb-preamble dist-deb-real
 
@@ -152,7 +160,8 @@ dist-deb-real:
 	$(H)rm -rf _deb_
 
 debian-dsc-woody: deb-preamble dist-deb-hackwoody debian-dsc-real
-debian-dsc-sarge: debian-dsc
+debian-dsc-sarge: deb-preamble dist-deb-hacksarge debian-dsc-real
+debian-dsc-etch: debian-dsc
 debian-dsc-sid: debian-dsc
 
 debian-dsc: deb-preamble debian-dsc-real

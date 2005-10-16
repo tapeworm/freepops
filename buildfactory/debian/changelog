@@ -1,10 +1,13 @@
 freepops (0.0.32-1) unstable; urgency=low
 
   * new upstream release
+  * fixed chroot jail creation (missing .so and config.lua files)
+  * added sv debconf translation (Closes: #333343)
   * using lsb-base in init scripts
   * changed FSF address in copying file
   * the manuals in -doc are now under GPL and not FDL as before (the upstream
     changed the license)
+  * added dependency on debconf-2.0 (Closes: #331825)
 
  -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sun, 25 Sep 2005 13:01:39 +0200
 

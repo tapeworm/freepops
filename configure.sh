@@ -3,11 +3,13 @@
 usage() {
 cat << EOT
 
-Usage: ./configure.sh <option>
+usage: ./configure.sh <option>
 
 Available options: 
 	help		this screen
 	linux		to compile on a linux host and install in /usr/local
+	linux-gnutls	to compile on a linux host and install in /usr/local
+			using gnutls and not openssl
 	linux-slack	to compile on a linux slack box (installs in /usr)
 	osx		to compile on a darwin host
 	osx-static	to compile on a darwin host with some static libs
@@ -17,7 +19,7 @@ Available options:
 	beos		to compile on a beos host
 	cygwin		to compile on a cygwin environment
 	win		to cross-compile for win on a linux host with 
-			mingw32msvc (read BUILD for more info)
+			mingw32msvc (read BUILD for more info) using gnutls
 
 EOT
 
@@ -47,10 +49,19 @@ MAKE=make
 WHERE=/usr/local/
 TAR=tar
 PATCH=patch
+SSL=openssl
 }
 
 set_linux() {
 set_default
+OS=Linux
+}
+
+set_linux_gnutls() {
+set_default
+CFLAGS="$CFLAGS -DCRYPTO_IMPLEMENTATION=1"
+HCFLAGS="$HCFLAGS -DCRYPTO_IMPLEMENTATION=1"
+SSL=gnutls
 OS=Linux
 }
 
@@ -133,10 +144,10 @@ firstpref=/usr/bin/i586-mingw32msvc-
 defpref=/usr/local/cross-tools/i386-mingw32msvc/bin/
 if test -x ${firstpref}gcc; then
 	CC=${firstpref}gcc
-	DLLPATH=/usr/i586-mingw32msvc/lib/
+	DLLPATH=/usr/i586-mingw32msvc/bin/
 	INCLUDEPATH=/usr/i586-mingw32msvc/include/
 	LDFLAGSDL=
-	CURLNAME=curl-3
+	CURLNAME=curl
 else
 	CC=${defpref}gcc
 	DLLPATH=/usr/local/cross-tools/i386-mingw32msvc/bin/
@@ -178,6 +189,8 @@ EXEEXTENSION=.exe
 SHAREDEXTENSION=.dll
 CFLAGS="$CFLAGS -DWIN32 -mwindows " # " -mms-bitfields"
 LDFLAGS="$LDFLAGS -lmsvcrt -lmingw32  -lwsock32 -mwindows " # "-mms-bitfields"
+CFLAGS="$CFLAGS -DCRYPTO_IMPLEMENTATION=1"
+HCFLAGS="$HCFLAGS -DCRYPTO_IMPLEMENTATION=1"
 if test -x ${firstpref}dlltool; then
 	DLLTOOL=${firstpref}dlltool
 else
@@ -210,6 +223,9 @@ case $1 in
 	linux)
 		set_linux
 	;;
+	linux-gnutls)
+		set_linux_gnutls
+	;;
 	linux-slack)
 		set_linux_slack
 	;;
@@ -241,7 +257,7 @@ case $1 in
 		usage
 		exit 1
 	;;
-esac	
+esac
 
 cat > config << EOT
 CC=$CC
@@ -272,5 +288,6 @@ MAKE=$MAKE
 WHERE=$WHERE
 TAR=$TAR
 PATCH=$PATCH
+SSL=$SSL
 EOT
 

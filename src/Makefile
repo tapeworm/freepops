@@ -109,7 +109,7 @@ ifeq "$(OS)" "Windows"
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
 		-lregex -lm -l$(CURLNAME) -lmingw32 -lwsock32 \
-			-lpthread -lexpat -lgdi32 -mwindows -lcrypto
+			-lpthread -lexpat -lgdi32 -mwindows -lgcrypt -lgpg-error
 
 else
 ifeq "$(OS)" "Darwin"
@@ -150,10 +150,15 @@ ifeq "$(OS)" "BeOS"
 		-ldl -lpthread $(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS) \
 		-lbe -lsocket -lbind
 else
+ifeq "$(SSL)" "openssl"
 	LDFLAGS+=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
 		-ldl -lm -lpthread -lcrypto -rdynamic \
 		$(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
-
+else
+	LDFLAGS+=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK))\
+		-ldl -lm -lpthread -lgcrypt -rdynamic \
+		$(CURL_LD_FLAGS) $(EXPAT_LD_FLAGS)
+endif
 endif
 endif
 endif	

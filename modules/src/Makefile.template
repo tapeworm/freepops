@@ -77,7 +77,7 @@ $(SHARED): $(OBJ)
 	
 .%.d:%.c
 	$(H)echo " building dep for $<"
-	$(H)$(CC) -I. -I$(PREFIX)/include -MM $< > $@;
+	$(H)$(CC) -I. -I$(PREFIX)/include $(CFLAGS) -MM $< > $@;
 
 .%.d:%.pkg
 	$(H)echo " building dep for $<"

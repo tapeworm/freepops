@@ -18,57 +18,95 @@
 #include "lauxlib.h"
 
 #include <stdlib.h>
-#include <openssl/opensslconf.h>
-#include <openssl/md5.h>
-#include <openssl/hmac.h>
-#include <openssl/evp.h>
+#define CRYPTO_ALGO_MD "crypto.ALGO_md.type"
 
-#define CRYPTO_EVP_MD "crypto.evp_md.type"
+#define CRYPTO_GCRYPT	1
+#define CRYPTO_OPENSSL	2
+#ifndef CRYPTO_IMPLEMENTATION
+	#define CRYPTO_IMPLEMENTATION CRYPTO_OPENSSL
+#endif
 
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
+	#include <openssl/opensslconf.h>
+	#include <openssl/md5.h>
+	#include <openssl/hmac.h>
+	#include <openssl/evp.h>
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	#include <gcrypt.h>
+#else
+	#error "CRYPTO_IMPLEMENTATION not supported"
+#endif
+
+// =================== MD5 ==================
 static int lmd5(lua_State* L){
-	MD5_CTX C;
-	const char *data;
 	size_t len;
-	char md[MD5_DIGEST_LENGTH];
+	const char *data = luaL_checklstring(L,1,&len);
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
+	size_t digest_len = MD5_DIGEST_LENGTH;
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	size_t digest_len = gcry_md_get_algo_dlen(GCRY_MD_MD5);
+#endif
+	char md[digest_len];
 	
-	data = luaL_checklstring(L,1,&len);
-
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
+	MD5_CTX C;
 	MD5_Init(&C);
         MD5_Update(&C, (const void *)data,(unsigned long) len);
         MD5_Final((unsigned char *)md, &C);
-
-	lua_pushlstring(L,md,MD5_DIGEST_LENGTH);
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	gcry_md_hash_buffer(GCRY_MD_MD5,md,data,len);
+#endif
+	
+	lua_pushlstring(L,md,digest_len);
 	return 1;
 }
 
+// ============================ generic HMAC ==============================
+
 static int lhmac(lua_State* L){
-	HMAC_CTX C;
 	const char *data;
 	const char *key;
 	size_t len_sizet;
-	unsigned int len_uint;
 	size_t klen;
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
+	unsigned int len_uint;
+	HMAC_CTX C;
 	const EVP_MD *evp;
 	char md[EVP_MAX_MD_SIZE];
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	int algo;
+	gcry_md_hd_t hd;
+	unsigned char * tmp;
+#endif
 	
 	data = luaL_checklstring(L,1,&len_sizet);
 	key = luaL_checklstring(L,2,&klen);
-	evp = *(const EVP_MD **) luaL_checkudata(L,3,CRYPTO_EVP_MD);
-        luaL_argcheck(L,evp != NULL,3,"crypto.EVP_* expected");
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
+	evp = *(const EVP_MD **) luaL_checkudata(L,3,CRYPTO_ALGO_MD);
+        luaL_argcheck(L,evp != NULL,3,"crypto.ALGO_* expected");
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	algo = (int)luaL_checkudata(L,3,CRYPTO_ALGO_MD);
+	luaL_argcheck(L,algo != GCRY_MD_NONE,3,"crypto.ALGO_* expected");
+#endif
 	
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
 	len_uint = len_sizet;
-	
-	//HMAC_CTX_init(&C);
-	//printf("%p %p\n",evp,EVP_sha1);
-	HMAC_Init/*_ex*/(&C,key,klen,((const EVP_MD *(*)(void))evp)());
+	HMAC_Init(&C,key,klen,((const EVP_MD *(*)(void))evp)());
 	HMAC_Update(&C,(const void *)data,len_uint);
 	len_uint = EVP_MAX_MD_SIZE;
 	HMAC_Final(&C,(unsigned char *)md,&len_uint);
 	HMAC_cleanup(&C);
-
 	len_sizet = len_uint;
-		
 	lua_pushlstring(L,md,len_sizet);
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	gcry_md_open(&hd,algo,GCRY_MD_FLAG_HMAC);
+	gcry_md_setkey(hd,key,klen);
+	gcry_md_write(hd,data,len_sizet);
+	gcry_md_final(hd);
+	tmp = gcry_md_read(hd,algo);
+	lua_pushlstring(L,(char*)tmp,gcry_md_get_algo_dlen(algo));
+	gcry_md_close(hd);
+#endif
 	return 1;
 }
 
@@ -115,37 +153,62 @@ static const struct luaL_reg crypto_t [] = {
   {NULL,NULL}
 };
 
-static const struct L_Tuserdata crypto_evp [] = {
-  {"EVP_md_null",EVP_md_null},
-#ifndef OPENSSL_NO_MD2
-  {"EVP_md2",EVP_md2},
+static const struct L_Tuserdata crypto_ALGO [] = {
+// ======= NULL ====
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
+	  {"ALGO_md_null",EVP_md_null},
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	  {"ALGO_md_null", (void*)GCRY_MD_NONE},
 #endif
-#ifndef OPENSSL_NO_MD4
-  {"EVP_md4",EVP_md4},
+// ====== MD* =====
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
+	#ifndef OPENSSL_NO_MD2
+	  {"ALGO_md2",EVP_md2},
+	#endif
+	#ifndef OPENSSL_NO_MD4
+	  {"ALGO_md4",EVP_md4},
+	#endif
+	#ifndef OPENSSL_NO_MD5
+	  {"ALGO_md5",EVP_md5},
+	#endif
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	  {"ALGO_md2", (void*)GCRY_MD_MD2},
+	  {"ALGO_md4", (void*)GCRY_MD_MD4},
+	  {"ALGO_md5", (void*)GCRY_MD_MD5},
 #endif
-#ifndef OPENSSL_NO_MD5
-  {"EVP_md5",EVP_md5},
-#endif
-#ifndef OPENSSL_NO_SHA
-  {"EVP_sha",EVP_sha},
-  {"EVP_sha1",EVP_sha1},
-  {"EVP_dss",EVP_dss},
-  {"EVP_dss1",EVP_dss1},
-#endif
-#if defined(HEADER_MDC2_H)
-#ifndef OPENSSL_NO_MDC2
-  {"EVP_mdc2",EVP_mdc2},
-#endif
-#endif
-#ifndef OPENSSL_NO_RIPEMD
-  {"EVP_ripemd160",EVP_ripemd160},
-#endif
+// ====== SHA* =====
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
+	#ifndef OPENSSL_NO_SHA
+	  {"ALGO_sha",EVP_sha},
+	  {"ALGO_sha1",EVP_sha1},
+	  {"ALGO_dss",EVP_dss},
+	  {"ALGO_dss1",EVP_dss1},
+	#endif
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	  {"ALGO_sha1", (void*)GCRY_MD_SHA1},
+	  {"ALGO_sha256", (void*)GCRY_MD_SHA256},
+	  {"ALGO_sha384", (void*)GCRY_MD_SHA384},
+	  {"ALGO_sha512", (void*)GCRY_MD_SHA512},
+#endif  
+// ====== MDC2 & RIPE160 =====
+#if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
+	#if defined(HEADER_MDC2_H)
+	#ifndef OPENSSL_NO_MDC2
+	  {"ALGO_mdc2",EVP_mdc2},
+	#endif
+	#endif
+	#ifndef OPENSSL_NO_RIPEMD
+	  {"ALGO_ripemd160",EVP_ripemd160},
+	#endif
+#elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	  {"ALGO_ripemd160", (void*)GCRY_MD_RMD160},
+#endif  
   {NULL,NULL}
 };
 
 int luaopen_crypto(lua_State* L){
 	
-	luaL_newmetatable(L,CRYPTO_EVP_MD);
+	luaL_newmetatable(L,CRYPTO_ALGO_MD);
 	
 	lua_pushstring(L,"__gc");
 	lua_pushcfunction(L,my_free);
@@ -153,7 +216,7 @@ int luaopen_crypto(lua_State* L){
 
 	luaL_openlib(L,"crypto",crypto_t,0);
 
-	L_openTconst(L,crypto_evp,CRYPTO_EVP_MD);
+	L_openTconst(L,crypto_ALGO,CRYPTO_ALGO_MD);
 
 	return 2;
 }

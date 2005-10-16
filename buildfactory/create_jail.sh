@@ -62,9 +62,13 @@ mkdir -p home/nobody
 cp -a /lib/ld-* lib/
 cp -a /lib/libc.* lib/
 cp -a /lib/libc-* lib/
-cp -a /usr/lib/libcurl.so* usr/lib/
+cp -a /usr/lib/libcurl*.so* usr/lib/
 cp -a /usr/lib/libcrypto.so* usr/lib/
 cp -a /usr/lib/libssl*.so* usr/lib/
+cp -a /usr/lib/libkrb5.so usr/lib/ || true
+cp -a /usr/lib/libgssapi_krb5.so usr/lib/ || true
+cp -a /usr/lib/libk5crypto.so usr/lib/ || true
+cp -a /lib/libcom_err.so usr/lib/ || true
 cp -a /lib/libdl.so* lib/
 cp -a /usr/lib/libz.so* usr/lib/
 cp -a /lib/libm.* lib/

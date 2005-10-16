@@ -12,7 +12,7 @@ configure-stamp:
 	# Add here commands to configure the package.
 
 	rm -f config
-	./configure.sh linux
+	./configure.sh linux-gnutls
 
 	touch configure-stamp
 

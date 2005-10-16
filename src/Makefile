@@ -2,7 +2,7 @@ include $(CONFIG)
 
 # TARGET and PREFIX are passed
 
-H=@
+#H=@
 
 #get the files ################################################
 HDR=$(shell ls *.h  2> /dev/null)
@@ -51,7 +51,7 @@ ifeq "$(OS)" "Cygwin"
 	CFLAGS+= -I/usr/include
 endif
 
-CURL_LD_FLAGS=$(shell curl-config --libs || true)
+#CURL_LD_FLAGS=$(shell curl-config --libs || true)
 ifeq "$(CURL_LD_FLAGS)" ""
 	CURL_LD_FLAGS= -lcurl
 endif

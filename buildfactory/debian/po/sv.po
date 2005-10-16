@@ -1,0 +1,64 @@
+# Translators, if you are not familiar with the PO format, gettext
+# documentation is worth reading, especially sections dedicated to
+# this format, e.g. by running:
+# info -n '(gettext)PO Files'
+# info -n '(gettext)Header Entry'
+# Some information specific to po-debconf are available at
+# /usr/share/doc/po-debconf/README-trans
+# or http://www.debian.org/intl/l10n/po-debconf/README-trans
+# Developers do not need to manually edit POT or PO files.
+# , fuzzy
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: freepops 0.0.31-1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-12-23 16:43+0100\n"
+"PO-Revision-Date: 2005-10-12 15:01+0200\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"Language-Team: Swedish <sv@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3
+msgid "Start freepopsd automatically after each boot?"
+msgstr "Starta freepopsd automatiskt efter varje uppstart?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3
+msgid ""
+"The FreePOPs daemon can be started automatically after each boot for you. By "
+"default it will bind on port 2000, but you can change this behaviour "
+"editing /etc/default/freepops"
+msgstr ""
+"FreePOPs daemonen kan startas automatiskt efter varje uppstart åt dig. Som standard "
+"kommer den att binda sig till port 2000 men du kan ändra detta genom att ändra /etc/default/freepops"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:11
+msgid "Create a chroot jail for freepops?"
+msgstr "Skapa ett chroot jail åt freepops?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:11
+msgid ""
+"FreePOPs can be launched in a chrooted environment to improve security. The "
+"jail will be created in /var/lib/freepops/chroot-jail/. This will also "
+"create a start.sh script in the root of the jail that should be used to "
+"launch freepopsd. This is perfectly integrated with the init script, so you "
+"have to change nothing to automatically start freepopsd at boot. This "
+"feature is mostly untested, you are warned."
+msgstr ""
+"FreePOPs kan startas i ett chrootad miljö för att öka säkerheten. Fängelset kommer att "
+"skapas i /var/lib/freepops/chroot-jail/. Detta kommer också skapa ett skript start.sh i roten på fängelset "
+"som ska användas för att starta freepopsd. Detta är perfekt integrerat med init-skriptet så du behöver "
+"inte ändra något för att automatiskt starta freepopsd vid uppstart. Denna funktion är "
+"mestadels otestad så du är nu varnad."
+

@@ -819,7 +819,9 @@ function retr(pstate,msg,data)
 		folder, user, user, uidl, session_id_t, session_id_s,sl)
 	
 	-- tell the browser to fetch
-	local f,rc = b:get_uri(uri)
+	local head,f,rc = b:get_head_and_body(uri)
+	local _,_,ctype = string.find(head,
+		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")		
 	
 	if f == nil then
 		log.error_print("Asking for "..uri.."\n")
@@ -837,7 +839,7 @@ function retr(pstate,msg,data)
 	local wherearewe = b:wherearewe()
 	local head,body,body_html,attach = tin_parse_webmessage(wherearewe, f)
 	local cb = mimer.callback_mangler(common.retr_cb(data))
-	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb)
+	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,nil,ctype)
 		
 	return POPSERVER_ERR_OK
 end
@@ -879,9 +881,10 @@ function top(pstate,msg,lines,data)
 	local uri = string.format(tin_string.save,b:wherearewe(),
 		folder, user, user, uidl, session_id_t, session_id_s,sl)
 	
-	-- tell the browser to pipe the uri using cb
-	local f,rc = b:get_uri(uri)
-
+	-- tell the browser to fetch
+	local head,f,rc = b:get_head_and_body(uri)
+	local _,_,ctype = string.find(head,
+		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")		
 	if f == nil then
 		log.error_print("Asking for "..uri.."\n")
 		log.error_print(rc.."\n")
@@ -892,7 +895,7 @@ function top(pstate,msg,lines,data)
 	local head,body,body_html,attach = tin_parse_webmessage(wherearewe, f)
 	local global = common.new_global_for_top(lines,nil)
 	local cb = mimer.callback_mangler(common.top_cb(global,data,true))
-	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb)
+	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,nil,ctype)
 		
 	return POPSERVER_ERR_OK
 end

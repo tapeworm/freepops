@@ -12,6 +12,10 @@
 -- returns only the header, not the the body. If fallback is true then
 -- a GET with range: bytes 0 is tryed<BR/>
 -- <BR/>
+-- <B>get_head_and_body(uri,exhed,fallback)</B> : returns string,string,err and
+-- takes the same arguments of get_uri, but returns as the first value the
+-- header
+-- <BR/>
 -- <B>pipe_uri(uri,callback,exhed)</B> : 
 -- Gets the uri and uses callback on the data
 -- received,exhed  are extra header lines you want to add. <BR> 
@@ -369,10 +373,29 @@ function Hidden.perform(self,url,gl_h,gl_b)
 
 end
 
+-- return true if the table contains strings (checks only the first argument)
+function Hidden.is_a_string_table(t)
+	if type(t[1]) == "string" then
+		return true
+	else
+		return false
+	end
+end
+
 -- to not do by hand the call if we get a 3xx code
 function Hidden.continue_or_return(rc,err,t,f,...)
 	if rc == Hidden.DONE then
-		return table.concat(t),nil
+		if type(t) == "table" then
+			if Hidden.is_a_string_table(t) then
+				return table.concat(t),nil
+			else
+				-- we are in the case of the get_head_and_body
+				return table.concat(t[1]),table.concat(t[2]),nil
+			end
+		else
+			error("Hidden.continue_or_return(_,_,t,...): "..
+				"t of invalit type")
+		end
 	elseif rc == Hidden.REDO then
 		return f(unpack(arg))
 	elseif rc == nil then
@@ -421,6 +444,20 @@ function Private.get_uri(self,url,exhed)
 	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
 
 	return Hidden.continue_or_return(rc,err,gl_b,
+		Private.get_uri,self,Hidden.mangle_location(self,err),exhed)
+end
+
+function Private.get_head_and_body(self,url,exhed)
+	local gl_b,gl_h = {},{}
+	
+	self.curl:setopt(curl.OPT_HTTPGET,1)
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
+	
+	Hidden.build_header(self,url,exhed)
+	
+	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
+
+	return Hidden.continue_or_return(rc,err,{gl_h,gl_b},
 		Private.get_uri,self,Hidden.mangle_location(self,err),exhed)
 end
 

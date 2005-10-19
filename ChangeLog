@@ -1,3 +1,6 @@
+- mimer now optionally get the text_encoding (default iso-8859-1) so that utf8
+webmails can be threated correctly
+- added get_head_and_body method to browser
 - fixed a bug in httpmail.lua involving non quoted & characters in XML data
 - win32 version build against gnutls and not openssl
 - fixed chroot jail creation (some libs missing, thanks Gabriele Giacone)

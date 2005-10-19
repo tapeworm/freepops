@@ -445,7 +445,7 @@ function Private.attach_it_old(browser,boundary,send_cb)
 end
 
 -- ------------------------------------------------------------------------- --
-function Private.send_alternative(body,body_html,send_cb)
+function Private.send_alternative(text_encoding,body,body_html,send_cb)
 	local boundary = Private.randomize_boundary()
 	local rc = nil
 	
@@ -456,14 +456,14 @@ function Private.send_alternative(body,body_html,send_cb)
 	if rc ~= nil then return rc end
 	
 	rc = send_cb("--"..boundary.."\r\n"..
-		"Content-Type: text/plain charset=\"iso-8859-1\"\r\n"..
+		"Content-Type: text/plain charset=\""..text_encoding.."\"\r\n"..
 		"Content-Transfer-Encoding: quoted-printable\r\n"..
 		"\r\n"..
 		body)
 	if rc ~= nil then return rc end
 	
 	rc = send_cb("--"..boundary.."\r\n"..
-		"Content-Type: text/html charset=\"iso-8859-1\"\r\n"..
+		"Content-Type: text/html charset=\""..text_encoding.."\"\r\n"..
 		"Content-Transfer-Encoding: quoted-printable\r\n"..
 		"\r\n"..
 		body_html)
@@ -528,11 +528,13 @@ end
 -- @param send_cb function the callback to send the message, 
 --        may be called more then once and may return not nil to stop 
 --        the ending process.
--- @param inlineids table a table { ["filename"] = "content-Ids" } which contains the
---        ids for inline attachments.
-function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,inlineids)
+-- @param inlineids table a table { ["filename"] = "content-Ids" } which
+-- 	  contains the ids for inline attachments (default {}).
+-- @param text_encoding string default "iso-8859-1"	  
+function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,inlineids,text_encoding)
 	attachments = attachments or {}
         inlineids = inlineids or {}
+	text_encoding = text_encoding or "iso-8859-1"
 	local rc = nil
 
 	if body == nil and body_html == nil then
@@ -563,7 +565,7 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 		if body_html == nil then
 			rc = send_cb("--"..boundary.."\r\n"..
 				"Content-Type: text/plain; "..
-					"charset=\"iso-8859-1\"\r\n"..
+					"charset=\""..text_encoding.."\"\r\n"..
 				"Content-Disposition: inline\r\n" ..
 				"Content-Transfer-Encoding: "..
 					"quoted-printable\r\n"..
@@ -576,7 +578,7 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 			rc = send_cb("--"..boundary.."\r\n")
 			if rc ~= nil then return end
 
-			rc = Private.send_alternative(
+			rc = Private.send_alternative(text_encoding,
 				mimer.txt2mail(
 					mimer.quoted_printable_encode(body)),
 				mimer.txt2mail(
@@ -604,7 +606,7 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 			rc = send_cb(headers)
 			if rc ~= nil then return end
 			
-			rc = Private.send_alternative(
+			rc = Private.send_alternative(text_encoding,
 				mimer.txt2mail(
 					mimer.quoted_printable_encode(body)),
 				mimer.txt2mail(

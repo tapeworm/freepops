@@ -15,6 +15,7 @@ FPCONF="/etc/freepops"
 CHROOTDIR="/var/lib/freepops/chroot-jail/"
 USER="nobody"
 GROUP="nogroup"
+NULL="&>/dev/null"
 
 #options parsing###############################################################
 
@@ -59,31 +60,31 @@ mkdir -p dev/
 mkdir -p home/nobody
 
 #copy libs
-cp -a /lib/ld-* lib/
-cp -a /lib/libc.* lib/
-cp -a /lib/libc-* lib/
-cp -a /usr/lib/libcurl*.so* usr/lib/
-cp -a /usr/lib/libcrypto.so* usr/lib/
-cp -a /usr/lib/libssl*.so* usr/lib/
-cp -a /usr/lib/libkrb5.so usr/lib/ || true
-cp -a /usr/lib/libgssapi_krb5.so usr/lib/ || true
-cp -a /usr/lib/libk5crypto.so usr/lib/ || true
-cp -a /lib/libcom_err.so usr/lib/ || true
-cp -a /lib/libdl.so* lib/
-cp -a /usr/lib/libz.so* usr/lib/
-cp -a /lib/libm.* lib/
-cp -a /lib/libm-* lib/
-cp -a /lib/libdl-* lib/
-cp -a /lib/libdl.* lib/
-cp -a /lib/libnss_db* lib/
-cp -a /lib/libnss_dns* lib/
-cp -a /lib/libnss_files* lib/
-cp -a /lib/libpthread* lib/
-cp -a /lib/libresolv* lib/
-cp -a /usr/lib/libdb3* usr/lib/
-cp -a /usr/lib/libexpat* usr/lib/
+cp -a /lib/ld-* lib/ $NULL
+cp -a /lib/libc.* lib/ $NULL
+cp -a /lib/libc-* lib/ $NULL
+cp -a /usr/lib/libcurl*.so* usr/lib/ $NULL
+cp -a /usr/lib/libcrypto.so* usr/lib/ $NULL
+cp -a /usr/lib/libssl*.so* usr/lib/ $NULL
+cp -a /usr/lib/libkrb5.so usr/lib/ $NULL || true
+cp -a /usr/lib/libgssapi_krb5.so usr/lib/ $NULL || true
+cp -a /usr/lib/libk5crypto.so usr/lib/ $NULL || true
+cp -a /lib/libcom_err.so usr/lib/ $NULL || true
+cp -a /lib/libdl.so* lib/ $NULL
+cp -a /usr/lib/libz.so* usr/lib/ $NULL
+cp -a /lib/libm.* lib/ $NULL
+cp -a /lib/libm-* lib/ $NULL
+cp -a /lib/libdl-* lib/ $NULL
+cp -a /lib/libdl.* lib/ $NULL
+cp -a /lib/libnss_db* lib/ $NULL
+cp -a /lib/libnss_dns* lib/ $NULL
+cp -a /lib/libnss_files* lib/ $NULL
+cp -a /lib/libpthread* lib/ $NULL
+cp -a /lib/libresolv* lib/ $NULL
+cp -a /usr/lib/libdb3* usr/lib/ $NULL
+cp -a /usr/lib/libexpat* usr/lib/ $NULL
 # for sid,sarge
-cp -a /usr/lib/libidn* usr/lib/ || true
+cp -a /usr/lib/libidn* usr/lib/ $NULL || true
 
 #copy misc
 cp /etc/resolv.conf etc/

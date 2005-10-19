@@ -74,6 +74,7 @@ static int lhmac(lua_State* L){
 	const EVP_MD *evp;
 	char md[EVP_MAX_MD_SIZE];
 #elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+	int (*algo_f)(void) = NULL;
 	int algo;
 	gcry_md_hd_t hd;
 	unsigned char * tmp;
@@ -85,7 +86,8 @@ static int lhmac(lua_State* L){
 	evp = *(const EVP_MD **) luaL_checkudata(L,3,CRYPTO_ALGO_MD);
         luaL_argcheck(L,evp != NULL,3,"crypto.ALGO_* expected");
 #elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
-	algo = (int)luaL_checkudata(L,3,CRYPTO_ALGO_MD);
+	algo_f = *(int (**)(void))luaL_checkudata(L,3,CRYPTO_ALGO_MD);
+	algo = algo_f();
 	luaL_argcheck(L,algo != GCRY_MD_NONE,3,"crypto.ALGO_* expected");
 #endif
 	
@@ -153,12 +155,25 @@ static const struct luaL_reg crypto_t [] = {
   {NULL,NULL}
 };
 
+#if CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
+static int algno_of_GCRY_MD_NONE() { return GCRY_MD_NONE;}
+static int algno_of_GCRY_MD_MD2() { return GCRY_MD_MD2;}
+static int algno_of_GCRY_MD_MD4() { return GCRY_MD_MD4;}
+static int algno_of_GCRY_MD_MD5() { return GCRY_MD_MD5;}
+static int algno_of_GCRY_MD_SHA1() { return GCRY_MD_SHA1;}
+static int algno_of_GCRY_MD_SHA256() { return GCRY_MD_SHA256;}
+static int algno_of_GCRY_MD_SHA384() { return GCRY_MD_SHA384;}
+static int algno_of_GCRY_MD_SHA512() { return GCRY_MD_SHA512;}
+static int algno_of_GCRY_MD_RMD160() { return GCRY_MD_RMD160;}
+#endif
+
+
 static const struct L_Tuserdata crypto_ALGO [] = {
 // ======= NULL ====
 #if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
 	  {"ALGO_md_null",EVP_md_null},
 #elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
-	  {"ALGO_md_null", (void*)GCRY_MD_NONE},
+	  {"ALGO_md_null", algno_of_GCRY_MD_NONE},
 #endif
 // ====== MD* =====
 #if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
@@ -172,9 +187,9 @@ static const struct L_Tuserdata crypto_ALGO [] = {
 	  {"ALGO_md5",EVP_md5},
 	#endif
 #elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
-	  {"ALGO_md2", (void*)GCRY_MD_MD2},
-	  {"ALGO_md4", (void*)GCRY_MD_MD4},
-	  {"ALGO_md5", (void*)GCRY_MD_MD5},
+	  {"ALGO_md2", algno_of_GCRY_MD_MD2},
+	  {"ALGO_md4", algno_of_GCRY_MD_MD4},
+	  {"ALGO_md5", algno_of_GCRY_MD_MD5},
 #endif
 // ====== SHA* =====
 #if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
@@ -185,10 +200,10 @@ static const struct L_Tuserdata crypto_ALGO [] = {
 	  {"ALGO_dss1",EVP_dss1},
 	#endif
 #elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
-	  {"ALGO_sha1", (void*)GCRY_MD_SHA1},
-	  {"ALGO_sha256", (void*)GCRY_MD_SHA256},
-	  {"ALGO_sha384", (void*)GCRY_MD_SHA384},
-	  {"ALGO_sha512", (void*)GCRY_MD_SHA512},
+	  {"ALGO_sha1", algno_of_GCRY_MD_SHA1},
+	  {"ALGO_sha256", algno_of_GCRY_MD_SHA256},
+	  {"ALGO_sha384", algno_of_GCRY_MD_SHA384},
+	  {"ALGO_sha512", algno_of_GCRY_MD_SHA512},
 #endif  
 // ====== MDC2 & RIPE160 =====
 #if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
@@ -201,7 +216,7 @@ static const struct L_Tuserdata crypto_ALGO [] = {
 	  {"ALGO_ripemd160",EVP_ripemd160},
 	#endif
 #elif CRYPTO_IMPLEMENTATION == CRYPTO_GCRYPT
-	  {"ALGO_ripemd160", (void*)GCRY_MD_RMD160},
+	  {"ALGO_ripemd160", algno_of_GCRY_MD_RMD160},
 #endif  
   {NULL,NULL}
 };

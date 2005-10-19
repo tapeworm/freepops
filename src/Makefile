@@ -2,7 +2,7 @@ include $(CONFIG)
 
 # TARGET and PREFIX are passed
 
-#H=@
+H=@
 
 #get the files ################################################
 HDR=$(shell ls *.h  2> /dev/null)

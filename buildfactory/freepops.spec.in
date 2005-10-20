@@ -18,7 +18,7 @@ local pop3 requests to remote http requests to suppoerted webmails.
 
 %prep
 %setup -q
-./configure.sh linux
+./configure.sh linux-gnutls
 
 %build
 make all WHERE=/usr/ FORCE_LINK="-L /tmp/freepops-expat/expat/.libs/"

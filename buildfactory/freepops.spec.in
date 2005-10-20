@@ -3,11 +3,13 @@ Name:		freepops
 Version:	%FREEPOPSVERSION
 Release:	1
 Epoch:		4
-Copyright:	GPL
+License:	GPL
 Group:		System Environment/Daemons
 Source: 	freepops-%{version}.tar.gz
 URL:		http://www.freepops.org
 Prefix:		%{_prefix}
+Requires(post): rpm-helper
+Requires(preun): rpm-helper
 Vendor: 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
 Packager:	Enrico Tassi <gareuselesinge@users.sourceforge.net>
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot

@@ -1,3 +1,18 @@
+23/10/2005 0.0.95
+- yahoo.lua: Needed to deal with some scoping issues with local variables and how it relates to the updater. (russell822)
+- yahoo.lua: Fixed the markasunread functionality which wasn't working. (russell822)
+- es: *** empty log message *** (lisar314)
+- yahoo.lua: Rewrite of the delete functionality (russell822)
+- gmail.lua: Reaction to a change by gmail. (russell822)
+- es: fixed ending tag typo (alessiofender)
+- yahoo.lua: Added support for btinternet and talk21 (russell822)
+- es, fr: fix (gareuselesinge)
+- fr: changed html entities to corresponding characters (alessiofender)
+- yahoo.lua: Fixed emptrytrash and emptybulk (russell822)
+- es, fr: added kubuntu links (gareuselesinge)
+- es, fr: added sarge link to download-linuxadded frank to aboutremoved "sf has broken statistics" (gareuselesinge)
+- es: removed md5sumsfiles from es FAQ (gareuselesinge)
+- es, fr: News splitted on more pages (alessiofender)
 - mimer now optionally get the text_encoding (default iso-8859-1) so that utf8
 webmails can be threated correctly
 - added get_head_and_body method to browser

@@ -38,10 +38,12 @@ Valid targets in this case are:
   dist-deb	- Debian GNU/Linux .deb .changes .dsc .orig.tar.gz .diff.gz
   dist-deb-woody
   dist-deb-sarge
+  dist-deb-etch
   dist-deb-sid
   debian-dsc	- Debian GNU/Linux .dsc .orig.tar.gz .diff.gz
   debian-dsc-woody
   debian-dsc-sarge
+  debian-dsc-etch
   debian-dsc-sid
   dist-rpm	- Red Hat Linux .rpm
   dist-gen	- Gentoo Linux .ebuild

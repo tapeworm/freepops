@@ -1,4 +1,4 @@
-freepops (0.0.32-1) unstable; urgency=low
+freepops (0.0.95-1) unstable; urgency=low
 
   * new upstream release
   * fixed chroot jail creation (missing .so and config.lua files)

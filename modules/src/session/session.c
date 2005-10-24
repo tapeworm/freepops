@@ -31,8 +31,15 @@ MALLOC_CHECK(tmp);
 tmp->used = 0;
 tmp->data = strdup(data);
 
-if(dictionary_add(&sessions,key,tmp) != 0)
-	ERROR_ABORT("Unable to save session\n");
+if(dictionary_add(&sessions,key,tmp) != 0) {
+	if (overwrite) {
+		ERROR_ABORT("internal error: "
+				"Unable to save session with overwrite set\n");
+	} else {
+		ERROR_PRINT("Unable to save session, "
+				"try setting overwrite parameter");
+	}
+}
 }
 
 const char* session_load_and_lock(const char* key)

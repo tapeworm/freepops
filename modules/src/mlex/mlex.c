@@ -371,10 +371,13 @@ else if( str[t->start] == 'O')
 	return 0;
 else if(str[t->start] == '\0')
 	return 0;
-else
+else 
+	{
 	DBG("we got a '%c'\n",str[t->start]);
 	DBG("string was '%s'\n",&str[t->start]);
-	ERROR_ABORT("Internal error : not X nor O");
+	ERROR_PRINT("Internal error : not X nor O (O of Ohio, not 0 of zero)");
+	return 0;
+	}
 }
 
 /***  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  **

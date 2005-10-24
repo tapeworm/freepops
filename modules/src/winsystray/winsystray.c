@@ -272,7 +272,8 @@ do
 				}
 			else
 				{
-				ERROR_ABORT("Wrong arg string\n");
+				ERROR_PRINT("Wrong arg string %s\n",arg);
+				goto abort;
 				}
 			
 			}
@@ -320,7 +321,8 @@ do
 				}
 			else
 				{
-				ERROR_ABORT("Wrong arg string\n");
+				ERROR_PRINT("Wrong arg string %s\n",arg);
+				goto abort;
 				}
 			}
 		}
@@ -329,6 +331,7 @@ while(p.begin != -1);
 
 *argv=argv_win32;
 
+abort:
 free(str);
 return n;
 }

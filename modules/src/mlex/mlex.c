@@ -1117,13 +1117,15 @@ if(len_g != len_r)
 	{
 	DBG("Internal: len(exp)=%d != len(get)=%d",
 		len_r,len_g);
-	ERROR_ABORT("list_len(g) != list_len(r)\n");
+	ERROR_PRINT("list_len(g) != list_len(r)\n");
+	goto abort;
 	}
 if(min_len_g != min_len_r)
 	{
 	DBG("Internal: min_len(exp)=%d != min_len(get)=%d",
 		min_len_r,min_len_g);
-	ERROR_ABORT("exp_min_len(g) != exp_min_len(r)\n");
+	ERROR_PRINT("exp_min_len(g) != exp_min_len(r)\n");
+	goto abort;
 	}
 
 //check for ambiguous matches
@@ -1144,10 +1146,11 @@ printf("\n");
 
 x = mlmatch_epurate(a,str,g,get);
 
+list_free(a,free_answer);
+abort:
 list_free(l,free);
 list_free(r,free);
 list_free(g,free);
-list_free(a,free_answer);
 
 return x;
 }

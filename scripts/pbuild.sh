@@ -29,11 +29,15 @@ echo -e "If not stop now and add it."
 sleep 4
 
 sudo $PBUILD create \
+	--mirror http://ftp.debian.org/debian/ \
 	--distribution $1 --basetgz $BASE_DIR/base-$1.tgz
 
 curl_map $1	
 sudo $PBUILD update \
 	--basetgz $BASE_DIR/base-$1.tgz \
+	--mirror http://ftp.debian.org/debian/ \
+	--distribution $1 \
+	--override-config \
 	--extrapackages "tetex-extra libcurl$CURL-dev libcurl$CURL libexpat1-dev bison flex debhelper libreadline4-dev libreadline4 gs-common libssl-dev"
 } 
 
@@ -78,10 +82,16 @@ function build(){
 rm -rf $2/$BASE_DIR/freepops-$1
 mkdir $2/$BASE_DIR/freepops-$1
 sudo $PBUILD update \
+	--mirror http://ftp.debian.org/debian/ \
+	--distribution $1 \
+	--override-config \
 	--basetgz $2/$BASE_DIR/base-$1.tgz
 sudo $PBUILD build \
 	--basetgz $2/$BASE_DIR/base-$1.tgz \
 	--buildresult $2/$BASE_DIR/freepops-$1 \
+	--mirror http://ftp.debian.org/debian/ \
+	--distribution $1 \
+	--override-config \
 	--debbuildopts "-us -uc" freepops*.dsc
 }
 

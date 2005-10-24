@@ -1,4 +1,5 @@
 23/10/2005 0.0.95
+- removed some ERROR_ABORT from mlex.c
 - libero.lua: mlex to identify the message list enhanced again
 - yahoo.lua: Needed to deal with some scoping issues with local variables and how it relates to the updater. (russell822)
 - yahoo.lua: Fixed the markasunread functionality which wasn't working. (russell822)

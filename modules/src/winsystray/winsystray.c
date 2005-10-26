@@ -272,7 +272,7 @@ do
 				}
 			else
 				{
-				ERROR_PRINT("Wrong arg string %s\n",arg);
+				ERROR_PRINT("Wrong arg string \n");
 				goto abort;
 				}
 			
@@ -321,7 +321,7 @@ do
 				}
 			else
 				{
-				ERROR_PRINT("Wrong arg string %s\n",arg);
+				ERROR_PRINT("Wrong arg string \n");
 				goto abort;
 				}
 			}

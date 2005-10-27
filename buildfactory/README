@@ -16,6 +16,9 @@ rpm:
 	freepops.rc
 	freepops.sysconfig
 
+rpm sus-sles9:
+	freepops.spec.suse-sles9
+
 rpm mandriva:
 	freepops.spec.mandriva
 	freepops.rc.mandriva

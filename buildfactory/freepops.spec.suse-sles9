@@ -1,6 +1,6 @@
 Summary:	pop3 interface to webmails
 Name:		freepops
-Version:	%FREEPOPSVERSION
+Version:	0.0.95
 Release:	1
 Epoch:		4
 License:	GPL
@@ -8,8 +8,8 @@ Group:		System Environment/Daemons
 Source: 	freepops-%{version}.tar.gz
 URL:		http://www.freepops.org
 Prefix:		%{_prefix}
-Requires(post): rpm-helper
-Requires(preun): rpm-helper
+#Requires(post): rpm-helper
+#Requires(preun): rpm-helper
 Vendor: 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
 Packager:	Enrico Tassi <gareuselesinge@users.sourceforge.net>
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot

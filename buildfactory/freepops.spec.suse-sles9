@@ -1,0 +1,60 @@
+Summary:	pop3 interface to webmails
+Name:		freepops
+Version:	%FREEPOPSVERSION
+Release:	1
+Epoch:		4
+License:	GPL
+Group:		System Environment/Daemons
+Source: 	freepops-%{version}.tar.gz
+URL:		http://www.freepops.org
+Prefix:		%{_prefix}
+Requires(post): rpm-helper
+Requires(preun): rpm-helper
+Vendor: 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
+Packager:	Enrico Tassi <gareuselesinge@users.sourceforge.net>
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+
+%description
+FreePOPs is a daemon that acts as a local pop3 server, translating
+local pop3 requests to remote http requests to suppoerted webmails.
+
+%prep
+%setup -q
+./configure.sh linux-gnutls
+
+%build
+make all WHERE=/usr/ FORCE_LINK="-L /tmp/freepops-expat/expat/.libs/"
+
+%install
+mkdir -p ${RPM_BUILD_ROOT}/usr/bin/
+mkdir -p ${RPM_BUILD_ROOT}/usr/share/man/man1/
+mkdir -p ${RPM_BUILD_ROOT}/etc/init.d/
+mkdir -p ${RPM_BUILD_ROOT}/etc/rc3.d
+mkdir -p ${RPM_BUILD_ROOT}/etc/sysconfig/
+mkdir -p ${RPM_BUILD_ROOT}%{_defaultdocdir}/freepops/
+make install DESTDIR=${RPM_BUILD_ROOT} WHERE=/usr/
+gzip -9 ${RPM_BUILD_ROOT}/usr/share/man/man1/freepopsd.1
+cp buildfactory/freepops.rc ${RPM_BUILD_ROOT}/etc/init.d/freepops
+chmod a+x ${RPM_BUILD_ROOT}/etc/init.d/freepops
+cp buildfactory/freepops.sysconfig ${RPM_BUILD_ROOT}/etc/sysconfig/freepops
+mv ${RPM_BUILD_ROOT}/usr/share/doc/freepops/* ${RPM_BUILD_ROOT}%{_defaultdocdir}/freepops/
+%post
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr (-,root,root)
+%doc README 
+%doc ChangeLog
+%doc COPYING
+%doc AUTHORS
+%{_bindir}/freepopsd
+#%{_mandir}/man1/freepopsd.1.bz2
+%{_mandir}/man1/freepopsd.1.gz
+%{_sysconfdir}/init.d/freepops
+%{_sysconfdir}/sysconfig/freepops
+%{_sysconfdir}/freepops/config.lua
+%{_datadir}/freepops/*
+#/usr/share/doc/freepops-%{version}
+#%{_defaultdocdir}/freepops/*

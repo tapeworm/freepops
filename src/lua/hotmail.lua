@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.2f"
+PLUGIN_VERSION = "0.1.3"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -102,6 +102,10 @@ local globals = {
   --
   strImgServerPattern = 'img src="(http://[^/]*)/spacer.gif"',
 
+  -- Folder id pattern
+  --
+  strFolderPattern = '<a href="[^"]+curmbox=([^&]+)&[^"]+" >', 
+
   -- Pattern to determine if we have no messages
   --
   strMsgListNoMsgPat = "(<td colspan=10>)", --"(There are no messages in this folder)",
@@ -156,6 +160,7 @@ local globals = {
   strCmdMsgViewRaw = "&raw=0",
   strCmdEmptyTrash = "http://%s/cgi-bin/dofolders?_HMaction=DoEmpty&curmbox=F000000004&a=%s&i=F000000004",
   strCmdLogout = "http://%s/cgi-bin/logout",
+  strCmdFolders = "http://%s/cgi-bin/folders?&curmbox=F000000001&a=%s",
 }
 
 -- ************************************************************************** --
@@ -173,6 +178,7 @@ internalState = {
   strDomain = nil,
   strCrumb = nil,
   strMBox = nil,
+  strMBoxName = nil,
   bEmptyTrash = false,
   loginTime = nil,
   bMarkMsgAsUnread = false,
@@ -281,7 +287,6 @@ function loginHotmail()
   local passwordlen = string.len(internalState.strPassword)
   local domain = internalState.strDomain
   local url = globals.strLoginUrl
-  local xml = globals.strFolderQry
   local browser = internalState.browser
 	
   -- DEBUG - Set the browser in verbose mode
@@ -415,6 +420,22 @@ function loginHotmail()
   -- Note the time when we logged in
   --
   internalState.loginTime = os.clock();
+
+  -- If we haven't set the folder yet, then it is a custom one and we need to grab it
+  --
+  if (internalState.strMBoxName ~= nil) then
+    local url = string.format(globals.strCmdFolders, internalState.strMailServer, 
+      internalState.strCrumb)
+    body, err = browser:get_uri(url)
+    _, _, str = string.find(body, globals.strFolderPattern .. internalState.strMBoxName .. "</a>")
+    if (str == nil) then
+      log.error_print(globals.strLoginFailed)
+      return POPSERVER_ERR_NETWORK
+    else
+      internalState.strMBox = str
+      log.dbg("Hotmail - Using custom folder (" .. internalState.strMBox .. ")")
+    end
+  end
 
   -- Note that we have logged in successfully
   --
@@ -766,13 +787,10 @@ function user(pstate, username)
     return POPSERVER_ERR_OK
   end
 
-  -- TODO - set the other mailbox here and find it
-  -- when we log in.
-  -- 
-
   -- Defaulting to the inbox
   --
-  log.say("Unable to figure out the mailbox specified.  Defaulting to the Inbox.\n")
+  log.say("Custom mailbox set to: " .. mbox .. ".\n")
+  internalState.strMBoxName = mbox
   internalState.strMBox = globals.strInbox
   return POPSERVER_ERR_OK
 end

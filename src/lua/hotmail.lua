@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.3"
+PLUGIN_VERSION = "0.1.3a"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.25"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -345,6 +345,11 @@ function loginHotmail()
 
   log.dbg("Hotmail - Sending login information to: " .. url)
   body, err = browser:post_uri(url, postdata)
+  if (body == nil) then
+      log.error_print(globals.strLoginFailed)
+      log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(0):\n" .. err);
+      return POPSERVER_ERR_NETWORK
+  end
 
   -- We should be logged in now!  Unfortunately, we aren't done.  Hotmail returns a page
   -- that should auto-reload in a browser but not in curl.  It's the URL for Hotmail Today.

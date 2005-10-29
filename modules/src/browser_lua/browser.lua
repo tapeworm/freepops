@@ -726,7 +726,7 @@ end
 -- @return boolean.
 function browser.ssl_enabled()
 	local s = curl.version()
-	local _,_,x = string.find(s,"([Ss][Ss][Ll])")
+	local _,_,x = string.find(s,"([SsTt][SsLl][LlSs])")
 	return x ~= nil
 end
 

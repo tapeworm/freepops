@@ -22,17 +22,29 @@ clean:
 	$(H)cd osx;rm -rf FreePOPs.app
 	$(H)cd win;rm -rf *.exe
 
-dist-win: dist-win-e-zip
-dist-zip: dist-win-e-zip
+dist-win: dist-win-e-zip-openssl
+dist-zip: dist-win-e-zip-openssl
+dist-win-gnutls: dist-win-e-zip-gnutls
+dist-zip-gnutls: dist-win-e-zip-gnutls
 
-dist-win-e-zip: freepops-$(VERSION).tar.gz
+dist-win-e-zip-step1:
 	$(H)mkdir -p _win_/freepops
 	$(H)[ -d _win_/freepops-$(VERSION) ] || \
 		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _win_
+
+dist-win-e-zip-step2-openssl:
 	$(H)cd _win_/freepops-$(VERSION);\
 		./configure.sh win;\
 		$(MAKE) all; \
 		#$(MAKE) manual
+		
+dist-win-e-zip-step2-gnutls:
+	$(H)cd _win_/freepops-$(VERSION);\
+		./configure.sh win-gnutls;\
+		$(MAKE) all; \
+		#$(MAKE) manual
+
+dist-win-e-zip-step3:
 	$(H)$(MAKE) -C win CONFIG=../_win_/freepops-$(VERSION)/config
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
@@ -55,14 +67,24 @@ dist-win-e-zip: freepops-$(VERSION).tar.gz
 	$(H)unix2dos _win_/freepops/ChangeLog.txt
 	$(H)unix2dos _win_/freepops/README.FPM.*.txt
 	$(H)unix2dos _win_/freepops/SERVICE.*.txt
-	
-	$(H)DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d = -f 2`;\
+
+dist-win-e-zip-step4-openssl:
+	$(H)\
+	  DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d= -f2`;\
 		cp $$DLLPATH/libcurl.dll _win_/freepops/libcurl.dll;\
 		cp $$DLLPATH/libexpat.dll _win_/freepops/libexpat.dll;\
-		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll;\
+		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll
+dist-win-e-zip-step4-gnutls:
+	$(H)\
+	  DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d= -f2`;\
+		cp $$DLLPATH/libcurl.dll _win_/freepops/libcurl.dll;\
+		cp $$DLLPATH/libexpat.dll _win_/freepops/libexpat.dll;\
+		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll; \
 		cp $$DLLPATH/libgnutls.dll _win_/freepops/libgnutls.dll;\
 		cp $$DLLPATH/libgcrypt.dll _win_/freepops/libgcrypt.dll;\
 		cp $$DLLPATH/libgpg-error.dll _win_/freepops/libgpg-error.dll
+
+dist-win-e-zip-step5:
 	$(H)STRIP=`grep STRIP _win_/freepops-$(VERSION)/config| cut -d = -f 2`;\
 		$$STRIP _win_/freepops/*.exe _win_/freepops/*.dll
 
@@ -99,6 +121,34 @@ dist-win-e-zip: freepops-$(VERSION).tar.gz
 	$(H)mv _win_/FreePOPs-$(VERSION).zip ../dist-win
 	
 	$(H)rm -r _win_
+
+dist-win-e-zip-step6-openssl:
+	$(H)mv ../dist-win/FreePOPs-$(VERSION).exe \
+		../dist-win/FreePOPs-$(VERSION)-openssl.exe
+	$(H)mv ../dist-win/FreePOPs-$(VERSION).zip \
+		../dist-win/FreePOPs-$(VERSION)-openssl.zip
+	
+dist-win-e-zip-step6-gnutls:
+	$(H)mv ../dist-win/FreePOPs-$(VERSION).exe \
+		../dist-win/FreePOPs-$(VERSION)-gnutls.exe
+	$(H)mv ../dist-win/FreePOPs-$(VERSION).zip \
+		../dist-win/FreePOPs-$(VERSION)-gnutls.zip
+
+dist-win-e-zip-openssl: freepops-$(VERSION).tar.gz \
+	dist-win-e-zip-step1 \
+	dist-win-e-zip-step2-openssl \
+	dist-win-e-zip-step3 \
+	dist-win-e-zip-step4-openssl \
+	dist-win-e-zip-step5 \
+	dist-win-e-zip-step6-openssl 
+
+dist-win-e-zip-gnutls: freepops-$(VERSION).tar.gz \
+	dist-win-e-zip-step1 \
+	dist-win-e-zip-step2-gnutls \
+	dist-win-e-zip-step3 \
+	dist-win-e-zip-step4-gnutls \
+	dist-win-e-zip-step5 \
+	dist-win-e-zip-step6-gnutls 
 
 dist-rpm: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _rpm_/build

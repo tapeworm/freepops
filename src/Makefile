@@ -104,13 +104,19 @@ LIBSTOLINK=$(filter-out $(EXCLUDELIBS),$(LIBS))
 LDFLAGS=$(FORCE_LINK)
 		
 ifeq "$(OS)" "Windows"
-	#LIBS+= pthread winsystray regex 
+  ifeq "$(SSL)" "openssl"
+	LDFLAGS+= -L ../modules/lib \
+		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
+		$(addprefix -l,$(LIBSTOLINK)) \
+		-lregex -lm -l$(CURLNAME) -lmingw32 -lwsock32 \
+			-lpthread -lexpat -lcrypto -lgdi32 -mwindows 
+  else
 	LDFLAGS+= -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
 		-lregex -lm -l$(CURLNAME) -lmingw32 -lwsock32 \
 			-lpthread -lexpat -lgdi32 -mwindows -lgcrypt -lgpg-error
-
+  endif
 else
 ifeq "$(OS)" "Darwin"
 	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \

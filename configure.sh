@@ -19,7 +19,9 @@ Available options:
 	beos		to compile on a beos host
 	cygwin		to compile on a cygwin environment
 	win		to cross-compile for win on a linux host with 
-			mingw32msvc (read BUILD for more info) using gnutls
+			mingw32msvc (read BUILD for more info) using openssl
+	win-gnutls	to cross-compile for win on a linux host with 
+			mingw32msvc using gnutls
 
 EOT
 
@@ -189,14 +191,19 @@ EXEEXTENSION=.exe
 SHAREDEXTENSION=.dll
 CFLAGS="$CFLAGS -DWIN32 -mwindows " # " -mms-bitfields"
 LDFLAGS="$LDFLAGS -lmsvcrt -lmingw32  -lwsock32 -mwindows " # "-mms-bitfields"
-CFLAGS="$CFLAGS -DCRYPTO_IMPLEMENTATION=1"
-HCFLAGS="$HCFLAGS -DCRYPTO_IMPLEMENTATION=1"
 if test -x ${firstpref}dlltool; then
 	DLLTOOL=${firstpref}dlltool
 else
 	DLLTOOL=${defpref}dlltool
 fi
 OS=Windows
+}
+
+set_win_gnutls() {
+set_win
+CFLAGS="$CFLAGS -DCRYPTO_IMPLEMENTATION=1"
+HCFLAGS="$HCFLAGS -DCRYPTO_IMPLEMENTATION=1"
+SSL=gnutls
 }
 
 if test -z "$1"; then
@@ -252,6 +259,9 @@ case $1 in
 	;;
 	win)
 		set_win
+	;;
+	win-gnutls)
+		set_win_gnutls
 	;;
 	*)
 		usage

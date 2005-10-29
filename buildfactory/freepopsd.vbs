@@ -1,4 +1,5 @@
-'FreePOPS & Mail v. 1.4 23/10/2004
+'FreePOPS & Mail v. 1.5 28/10/2005
+'Modified by Rojous to add parameters for updater & log clearing
 
 Option Explicit
 
@@ -84,8 +85,19 @@ Function DeleteLogs (oFS)
 End Function
 '==End of modification
 
+'==Modification for a function which retrieves FreePOP's path
+
+Function GetFreePOPsPath(sh)
+  Dim key,temp
+  key = "HKLM\Software\NSIS_FreePOPs\Install_Dir"
+  temp = sh.RegRead (key)
+  GetFreePOPsPath = temp & "\"
+End Function
+
+'==End of modification
+
 Const fileName = "fpm.ini"
-Dim sh, objWMIService,active,delay,mailClientPath,mailProcessName,mailClientCla,cla,arg,i,oFs
+Dim sh, objWMIService,active,delay,mailClientPath,mailProcessName,mailClientCla,cla,arg,i,oFs,FPUpdate
 Set sh=wScript.CreateObject("wScript.Shell")
 Set objWMIService = GetObject("winmgmts:")
 Set cla = wScript.Arguments
@@ -113,9 +125,19 @@ If active = False Then
      If Lcase(cla(i)) = "-clearlogs" Then
        DeleteLogs oFS
      Else
-       arg = arg & " " & cla(i)
+       If Lcase(cla(i)) = "-update" Then
+         FPUpdate = True
+       Else
+         arg = arg & " " & cla(i)
+       End If
      End If
   Next
+  '==End of modification
+
+  '==Modification to run updater prior to running FreePOPs
+  If FPUpdate = True Then
+    sh.Run """" & GetFreePOPsPath(sh) & "freepopsd.exe" & """ -e lua\updater.lua" & """",1,true
+  End If
   '==End of modification
 
   sh.Run("freepopsd.exe" & arg)

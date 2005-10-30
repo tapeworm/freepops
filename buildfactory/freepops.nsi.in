@@ -173,7 +173,7 @@ Section "Start Menu Shortcuts"
   	"http://www.freepops.org/it/files/manual-it.pdf" "" \
 	"http://www.freepops.org/" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Website.lnk" \
-  	"http://www.freepops.org/index.html" "" \
+  	"http://www.freepops.org/" "" \
 	"http://www.freepops.org/" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Forum.lnk" \
 	  "http://freepops.diludovico.it" "" "http://freepops.diludovico.it" 0

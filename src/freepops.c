@@ -51,6 +51,11 @@
 #      include "config.h"
 #endif
 
+#if CRYPTO_IMPLEMENTATION == 1
+	#include <pthread.h>
+	#include <gcrypt.h>
+#endif
+
 #include "popserver.h"
 #include "engine.h"
 #include "altsocklib.h"
@@ -411,6 +416,9 @@ HIDDEN int execute(const char* scriptfile, const char* stdoutname){
 }
 
 /*** THE MAIN HAS YOU *********************************************************/
+#if CRYPTO_IMPLEMENTATION == 1
+	GCRY_THREAD_OPTION_PTHREAD_IMPL;
+#endif
 
 #if !(defined(WIN32) && !defined(CYGWIN))
 int main(int argc, char *argv[]) {
@@ -441,6 +449,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	win32_init(&argc,&argv,lpszCmdLine);
 #endif
 
+
+#if CRYPTO_IMPLEMENTATION == 1
+	gcry_check_version("1.2.2");
+	gcry_control(GCRYCTL_SET_THREAD_CBS,gcry_threads_pthread);
+#endif
+	
 	curl_global_init(CURL_GLOBAL_ALL);
 	
 #if !(defined(WIN32) && !defined(CYGWIN)) && !defined(BEOS)	

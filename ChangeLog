@@ -1,3 +1,4 @@
+- added thread callbacks initialization for gcrypt
 - fixed the FreePOPs website link in the Windows start menu shortcut
 - freepopsd.vbs: added -update option to run the updater prior to run FreePOPs
 26/10/2005 0.0.95

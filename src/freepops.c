@@ -452,7 +452,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 #if CRYPTO_IMPLEMENTATION == 1
 	gcry_check_version("1.2.2");
-	gcry_control(GCRYCTL_SET_THREAD_CBS,gcry_threads_pthread);
+	gcry_control(GCRYCTL_SET_THREAD_CBS,&gcry_threads_pthread);
 #endif
 	
 	curl_global_init(CURL_GLOBAL_ALL);

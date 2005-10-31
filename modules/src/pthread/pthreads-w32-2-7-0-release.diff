@@ -1055,14 +1055,14 @@ diff -ruN pthreads-w32-2-7-0-release/Makefile pthreads-w32-2-7-0-release-new/Mak
 -	if exist *.stamp del *.stamp
 +$(LIBRARY): $(DLL_OBJS)
 +	@echo -n " linking "
-+	#$(DLLTOOL) -e exports.o -l lib$(TARGET).lib $(DLL_OBJS)
-+	$(CC) $(OPT) -shared -o $(LIBRARY_DLL) $(DLL_OBJS) $(LFLAGS)
++	@#$(DLLTOOL) -e exports.o -l lib$(TARGET).lib $(DLL_OBJS)
++	@$(CC) $(OPT) -shared -o $(LIBRARY_DLL) $(DLL_OBJS) $(LFLAGS)
 +	@#$(DLLTOOL) -z lib$(TARGET).def $(DLL_OBJS) exports.o
 +	@#$(DLLTOOL) -k --dllname $(LIBRARY_DLL) --output-lib $(LIBRARY) --def lib$(TARGET).def
 +	@#$(RANLIB) $(LIBRARY)
-+	echo "$(LIBRARY)"
-+	cp pthread.h sched.h semaphore.h $(PREFIX)/include
-+	cp $(LIBRARY_DLL) $(PREFIX)/lib
++	@echo "$(LIBRARY)"
++	@cp pthread.h sched.h semaphore.h $(PREFIX)/include
++	@cp $(LIBRARY_DLL) $(PREFIX)/lib
  
  clean:
 -	if exist *.obj del *.obj

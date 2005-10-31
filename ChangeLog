@@ -1,3 +1,5 @@
+- restored pthread-win32 since they are not broken
+- fixed a bug in gcrypt initialization
 - atted to the source tree a recent pthread-win32 release (that seems broken)
 - added thread callbacks initialization for gcrypt
 - fixed the FreePOPs website link in the Windows start menu shortcut

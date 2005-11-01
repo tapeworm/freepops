@@ -744,6 +744,8 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "&lt;", "<")
 	head = string.gsub(head, "&gt;", ">")
 	head = mimer.remove_lines_in_proper_mail_header(head, {"content%-type"})
+	head = string.gsub(head, "\r([^\n])", 
+		function(capture) return "\r\n" .. capture end)
 	
 	-- extract body
 	local _, begin_body = string.find(data, tin_string.body_start)

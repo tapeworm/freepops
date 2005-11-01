@@ -1,3 +1,4 @@
+- fixed \r and not \r\n in tin.lua
 - fixed mail2world url
 - restored pthread-win32 since they are not broken
 - fixed a bug in gcrypt initialization

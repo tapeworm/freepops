@@ -352,7 +352,7 @@ HIDDEN void parse_suid(const char* optarg){
 /*** helpers ******************************************************************/
 HIDDEN void start_logging(char* logfile,int verbosity) {
 	log_set_verbosity(verbosity);
-	LOG_INIT(logfile,verbose_output == 1);
+	LOG_INIT(logfile,verbose_output >= 1);
 	SAY("freepops started with loglevel %d on a %s machine.\n",verbosity,
 		((unsigned short)1 != htons(1))?"little endian":"big endian");
 }

@@ -1,3 +1,4 @@
+- fixed mail2world url
 - restored pthread-win32 since they are not broken
 - fixed a bug in gcrypt initialization
 - atted to the source tree a recent pthread-win32 release (that seems broken)

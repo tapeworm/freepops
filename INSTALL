@@ -1,20 +1,31 @@
-FreePOPs
+----------
+ FreePOPs
+----------
 
-To install, edit by hand config.h for tuning the build if necessary and then 
-type:
+
+Compilation and installation
+----------------------------
+
+To complile and install FreePOPs, use these commands:
 
  ./configure.sh <system>
  make <target>
  
 Available systems:
-  linux		- to compile on a linux host and install in /usr/local
-  linux-slack	- to compile on a linux host and install in /usr
-  osx		- to compile on a darwin host
-  obsd		- to compile on an OpenBSD host
-  fbsd		- to compile on an FreeBSD host
-  beos		- to compile on a beos host
-  cygwin	- to compile on a cygwin environment
-  win		- to cross-compile for win on a linux host with mingw32msvc
+  linux        - to compile on a linux host and install in /usr/local
+                 using openssl libraries
+  linux-gnutls - to compile on a linux host and install in /usr/local
+                 using gnutls libraries instead of openssl
+  linux-slack  - to compile on a linux host and install in /usr
+  osx          - to compile on a darwin host
+  obsd         - to compile on an OpenBSD host
+  fbsd         - to compile on an FreeBSD host
+  beos         - to compile on a beos host
+  cygwin       - to compile on a cygwin environment
+  win          - to cross-compile for win on a linux host with mingw32msvc
+                 using openssl libraries
+  win-gnutls   - to cross-compile for win on a linux host with mingw32msvc
+                 using gnutls libraries instead of openssl
 	
 Valid targets are:
   all		- build it (remember to ./configure.sh first)
@@ -25,8 +36,14 @@ Valid targets are:
   install	- install it (linux/unix - distribution independent)
   uninstall	- uninstall it (linux/unix - distribution independent)
   buildfactory	- build all distributions
+Default target is all.
 
-Default is all.
+If you want to modify some parameters of FreePOPs, edit by hand the file
+config.h
+
+
+Build packages
+--------------
 
 If you prefer to build a package for only one distribution instead of using the 
 buildfactory target, you may do 'cd buildfactory' and launch

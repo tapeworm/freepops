@@ -86,8 +86,8 @@ HLDFLAGS="$HLDFLAGS -bind_at_load"
 set_osx_static() {
 set_default
 OS=Darwin-static
-CFLAGS="$CFLAGS -I/sw/include -DMACOSX"
-HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX"
+CFLAGS="$CFLAGS -I/sw/include -DMACOSX -DOSXSTC"
+HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX -DOSXSTC"
 LDFLAGS="$LDFLAGS -bind_at_load -framework Carbon"
 HLDFLAGS="$HLDFLAGS -bind_at_load"
 }

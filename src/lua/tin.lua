@@ -604,6 +604,7 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local count = 0
+	local how_many_refs = 0
 	local function next_page()
 		page = page + 10
 		uri = string.format(tin_string.first,
@@ -613,23 +614,26 @@ function stat(pstate)
 	end
 	local function check_f (s) 
 		local tmp = string.find(s,tin_string.no_next)
-		if tmp ~= nil then
+		if tmp ~= nil and count == 0 then
 			return next_page()
 		else
-			-- we are on the last page only if we have seen
-			-- this 3 times
+			if count == 0 then
+				-- we are on the last page only if we have seen
+				-- this 3 times
+				for x in string.gfind(s,tin_string.list_href) do
+					how_many_refs = how_many_refs + 1
+				end
+				-- there should be links before and after 
+				-- the list
+				if math.mod(how_many_refs, 2) ~= 0 then
+					log.error_print(
+						"Error in counting list_href")
+					return true
+				end
+				how_many_refs = how_many_refs / 2
+			end
 			count = count + 1
-			local how_many_refs = 0
-			for x in string.gfind(s, tin_string.list_href) do
-				how_many_refs = how_many_refs + 1
-			end
-			-- there should be links before and after the list
-			if math.mod(how_many_refs, 2) ~= 0 then
-				log.error_print("Error in counting list_href")
-				return true
-			end
-			how_many_refs = how_many_refs / 2
-			if count > how_many_refs then 
+			if count >= how_many_refs then 
 				return true 
 			else
 				return next_page()

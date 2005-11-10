@@ -1,3 +1,4 @@
+- fixed bad stas in tin.lua
 - fixed socklen_t undefined bug in Mac OS X 10.2
 - fixed an ancient bug in the logger initialization call (syslogmode was one
 only with -v and not -w)

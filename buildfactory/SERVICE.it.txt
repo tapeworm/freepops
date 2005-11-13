@@ -2,26 +2,26 @@
 
 * Installazione
 
-  Il servizio parte in fase di boot. Per cambiare i parametri lo devi rimuovere
+  Il servizio parte in fase di boot. Per cambiare i parametri si deve rimuovere
   e installare un'altra volta.
 
-  syntassi:
-    freeservice.exe install [options]
+  sintassi:
+    freepopsservice.exe install [options]
 
   esempi:
-    freeservice.exe install
-    freeservice.exe install -p110
-    freeservice.exe install -p110 -w
+    freepopsservice.exe install
+    freepopsservice.exe install -p110
+    freepopsservice.exe install -p110 -w
 
 
-* Uninstallation
+* Disinstallazione
 
   Questo comando rimuove il servizio. Il valore 
   HKLM\\Software\\NSIS_FreePOPs Command_Line non viene rimosso.
-  Il precesso di rimozione di FreePOPs lo rimuovera.
+  Il precesso di rimozione di FreePOPs lo rimuovera`.
 
-  syntassi:
-    freeservice.exe uninstall
+  sintassi:
+    freepopsservice.exe uninstall
 
   esempio:
-    freeservice.exe uninstall
+    freepopsservice.exe uninstall

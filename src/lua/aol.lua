@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8e"
+PLUGIN_VERSION = "0.0.8f"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -18,7 +18,7 @@ PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {
 "@aol.com","@aol.com.ar","@aol.fr","@aol.com.mx","@aol.com.au","@aol.de",
 "@aol.com.pr","@aol.com.br","@jp.aol.com","@aol.com.uk","@aol.ca","@aola.com", 
-"@netscape.net", "@aim.com"} 
+"@aim.com"} 
 PLUGIN_PARAMETERS = 
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
@@ -135,8 +135,8 @@ local globals = {
   -- Command URLS
   --
   strCmdMsgList = "http://%s/GetMessageList.aspx?user=%s&page=%d&folder=%s&previousFolder=&stateToken=&newMailToken=&version=%s",
-  strCmdDelete = "http://%s/rpc_messages.aspx?folder=%s&action=delete&user=%s&version=%s", --&uid=X",
-  strCmdMsgView = "http://%s/rfc822.aspx?user=%s&folder=%s&uid=%s",
+  strCmdDelete = "http://%s/%s/%s/en-us/RPC/messageAction.aspx?folder=%s&action=delete&user=%s&version=%s", --&uid=X",
+  strCmdMsgView = "http://%s/%s/%s/en-us/Mail/rfc822.aspx?user=%s&folder=%s&uid=%s",
   strCmdWelcome = "http://%s/MessageList.aspx",
 
   -- Site IDs
@@ -161,6 +161,7 @@ internalState = {
   strSiteId = "",
   strUserId = nil,
   strVersion = "",
+  strBrand = "",
 }
 
 -- ************************************************************************** --
@@ -353,9 +354,11 @@ function loginAOL()
   -- We should be logged in now! Let's check and make sure.
   --
   local str = nil
-  _, _, str = string.find(body, globals.strRetLoginGoodLoginAim)
-  if str == nil then
-    _, _, str = string.find(body, globals.strRetLoginGoodLogin)
+  if (body ~= nil) then
+    _, _, str = string.find(body, globals.strRetLoginGoodLoginAim)
+    if str == nil then
+      _, _, str = string.find(body, globals.strRetLoginGoodLogin)
+    end
   end
   if str == nil then
     log.error_print(globals.strLoginFailed)
@@ -422,7 +425,8 @@ function downloadMsg(pstate, msg, nLines, data)
   --
   local browser = internalState.browser
   local uidl = get_mailmessage_uidl(pstate, msg)
-  local url = string.format(globals.strCmdMsgView, internalState.strMailServer, internalState.strUserId,
+  local url = string.format(globals.strCmdMsgView, internalState.strMailServer, 
+    internalState.strVersion, internalState.strBrand, internalState.strUserId,
     internalState.strMBox, uidl);
 
   -- Debug Message
@@ -524,10 +528,10 @@ function user(pstate, username)
 
   -- Set the site id
   -- 
-  if domain == "netscape.net" then
-    internalState.strSiteId = globals.strNetscapeID
+  if domain == "aim.com" then
+    internalState.strBrand = "aim"
   else
-    internalState.strSiteId = globals.strAOLID
+    internalState.strBrand = "aol"
   end
 
   -- Get the folder
@@ -674,7 +678,8 @@ function quit_update(pstate)
   local cnt = get_popstate_nummesg(pstate)
   local dcnt = 0
 
-  local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer, 
+  local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer,
+    internalState.strVersion, internalState.strBrand, 
     internalState.strMBox, internalState.strUserId, internalState.strVersion)
   local baseUrl = cmdUrl
 

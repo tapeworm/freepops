@@ -72,6 +72,8 @@
 
 /*** local helper functions ***************************************************/
 
+#define MAX_ERRORS_ACCEPTED 10
+				 
 /************************************************
  * Usefull macros and data structures
  *
@@ -380,9 +382,9 @@ return POPSERVER_ERR_OK;
  *
  */
 HIDDEN enum states_e send_unsupported(struct sock_state_t *s,
-		char* err_cooment,enum states_e err_next)
+		char* err_comment,enum states_e err_next)
 {
-char *		TMP_ERR_MSG[]={err_cooment};
+char *		TMP_ERR_MSG[]={err_comment};
 enum states_e 	TMP_ERR_STA[]={err_next};
 int 		TMP_ERR_NUM=1;	
 return send_result_simple(s,1,TMP_ERR_MSG,TMP_ERR_STA,TMP_ERR_NUM,"",POPSTATE_ERR);
@@ -418,7 +420,8 @@ return POPSTATE_ERR;
 
 HIDDEN enum states_e pop3_POPSTATE_AUTH(struct sock_state_t *s, 
 		struct popserver_functions_t* f,
-		struct popstate_t* p)
+		struct popstate_t* p,
+		int* error_counter) // this is to kik bad clients
 {
 char ask[RFC_1939_MAXLINELEN];
 enum states_e next;
@@ -483,8 +486,19 @@ else if(matches(RFC_2449_CAPA,ask)) /*** CAPA *********************/
 	}
 else
 	{
-	next=send_unsupported(s,
-		"WRONG/UNKNOWN COMMAND IN AUTHORIZATION STATE",POPSTATE_LAST);	
+	if (*error_counter < MAX_ERRORS_ACCEPTED)
+		{
+		next=send_unsupported(s,
+			"WRONG/UNKNOWN COMMAND IN AUTHORIZATION STATE",
+			POPSTATE_LAST);	
+		(*error_counter)++;
+		}
+	else
+		{
+		next=send_unsupported(s,
+			"WRONG/UNKNOWN COMMAND IN AUTHORIZATION STATE",
+			POPSTATE_ERR);	
+		}
 	}
 return next;
 }
@@ -502,7 +516,8 @@ return next;
 
 HIDDEN enum states_e pop3_POPSTATE_TRANS(struct sock_state_t *s, 
 		struct popserver_functions_t* f,
-		struct popstate_t* p)
+		struct popstate_t* p,
+		int* error_counter) // this is to kik bad clients
 {
 char ask[RFC_1939_MAXLINELEN];
 //char ans[RFC_1939_MAXLINELEN];
@@ -669,7 +684,7 @@ else if(matches(RFC_NETSCAPE_XSENDER,ask)) /*** XSENDER *********************/
 	next=send_unsupported(s,
 		"XSENDER NOT SUPPORTED",POPSTATE_TRANS);
 	}
-else if(matches(RFC_DEPRECATED_LAST,ask)) /*** LAST**************************/
+else if(matches(RFC_DEPRECATED_LAST,ask)) /*** LAST **************************/
 	{
 	next=send_unsupported(s,
 		"LAST NOT SUPPORTED",POPSTATE_TRANS);
@@ -705,8 +720,19 @@ else if(matches(RFC_1939_DELE,ask)) /*** DELE *********************/
 	}
 else
 	{
-	next=send_unsupported(s,
-		"WRONG/UNKNOWN COMMAND IN TRANSACTION STATE",POPSTATE_LAST);
+	if (*error_counter < MAX_ERRORS_ACCEPTED) 
+		{
+		next=send_unsupported(s,
+			"WRONG/UNKNOWN COMMAND IN TRANSACTION STATE",
+			POPSTATE_LAST);
+		(*error_counter)++;
+		} 
+	else 
+		{
+		next=send_unsupported(s,
+			"WRONG/UNKNOWN COMMAND IN TRANSACTION STATE",
+			POPSTATE_ERR);
+		}
 	}
 return next;
 }
@@ -724,6 +750,7 @@ struct popserver_functions_t* f = (struct  popserver_functions_t*)
 	((struct triplet_t*)data)->f;
 struct popstate_t* p = (struct  popstate_t* )((struct triplet_t*)data)->p;
 int stop=0;
+int error_counter=0;
 
 free(data);//malloc called by socketcommon
 
@@ -745,15 +772,15 @@ while(!stop)
 	switch(state)
 		{
 		case POPSTATE_AUTH:
-			state = pop3_POPSTATE_AUTH(s,f,p);
+			state = pop3_POPSTATE_AUTH(s,f,p,&error_counter);
 		break;
 		
 		case POPSTATE_TRANS:
-			state = pop3_POPSTATE_TRANS(s,f,p);
+			state = pop3_POPSTATE_TRANS(s,f,p,&error_counter);
 		break;
 		
 		case POPSTATE_ERR:
-			f->quit(p); // to infom 
+			f->quit(p); // to inform 
 			sock_disconnect(s);
 			thread_die(pthread_self());
 			stop=1;

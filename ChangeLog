@@ -1,3 +1,4 @@
+- popserver.c is now case insensitive (as RFC says)
 - added yahoo.dk to config.lua
 - fixed typos in SERVICE.it.txt and SERVICE.en.txt
 - fixed bad stas in tin.lua

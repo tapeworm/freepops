@@ -88,11 +88,15 @@ HIDDEN int matches_bad_client(char* rfc_command,char* received_string)
 {
 int rc;
 char lowercase_command[strlen(rfc_command)+1];
+char lowercase_string[strlen(received_string)+1];
 
 //try case
 for(rc=0;rfc_command[rc] != '\0';rc++)
 	lowercase_command[rc] = (char)tolower((int)rfc_command[rc]);
-rc = strncmp(lowercase_command,received_string,strlen(rfc_command));
+for(rc=0;received_string[rc] != '\0';rc++)
+	lowercase_string[rc] = (char)tolower((int)received_string[rc]);
+
+rc = strncmp(lowercase_command,lowercase_string,strlen(rfc_command));
 if(rc == 0)
 	return 1;
 

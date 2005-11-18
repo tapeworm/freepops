@@ -5,6 +5,8 @@
 # Distributed under the GPL license
 #
 # This script should create a jail for freepopsd.
+#
+#
 # 
 
 #configure this################################################################
@@ -15,7 +17,6 @@ FPCONF="/etc/freepops"
 CHROOTDIR="/var/lib/freepops/chroot-jail/"
 USER="nobody"
 GROUP="nogroup"
-NULL=&>/dev/null
 
 #options parsing###############################################################
 
@@ -45,55 +46,38 @@ rm -rf $CHROOTDIR
 # create the dir tree
 mkdir -p $CHROOTDIR
 cd $CHROOTDIR
-mkdir -p var/log/
-chown $USER.$GROUP var/log/
+for X in var/log/ var/run/ etc/ usr/share/freepops/ usr/bin/ usr/lib/ lib/ dev/ home/nobody; do
+	mkdir -p $X
+done
+# set permissions 
 chmod g+w var/log/
-mkdir -p var/run/
-chown $USER.$GROUP var/run/
 chmod g+w var/run/
-mkdir -p etc/
-mkdir -p usr/share/freepops/
-mkdir -p usr/bin/
-mkdir -p usr/lib/
-mkdir -p lib/
-mkdir -p dev/
-mkdir -p home/nobody
+chown $USER.$GROUP var/log/
+chown $USER.$GROUP var/run/
+# for 64 bit 
+ln -s lib lib64
+cd usr
+ln -s lib lib64
+cd ..
 
-#copy libs
-cp -a /lib/ld-* lib/ 
-cp -a /lib/libc.* lib/ 
-cp -a /lib/libc-* lib/ 
-cp -a /usr/lib/libcurl*.so* usr/lib/ 
-cp -a /usr/lib/libcrypto.so* usr/lib/
-cp -a /usr/lib/libssl*.so* usr/lib/ 
-cp -a /usr/lib/libkrb5.so usr/lib/ $NULL || true
-cp -a /usr/lib/libgssapi_krb5.so usr/lib/ $NULL || true
-cp -a /usr/lib/libk5crypto.so usr/lib/ $NULL || true
-cp -a /lib/libcom_err.so usr/lib/ $NULL || true
-cp -a /lib/libdl.so* lib/ 
-cp -a /usr/lib/libz.so* usr/lib/ 
-cp -a /lib/libm.* lib/ 
-cp -a /lib/libm-* lib/ 
-cp -a /lib/libdl-* lib/ 
-cp -a /lib/libdl.* lib/ 
-cp -a /lib/libnss_db* lib/
-cp -a /lib/libnss_dns* lib/ 
-cp -a /lib/libnss_files* lib/ 
-cp -a /lib/libpthread* lib/ 
-cp -a /lib/libresolv* lib/ 
-cp -a /usr/lib/libdb3* usr/lib/ 
-cp -a /usr/lib/libexpat* usr/lib/ 
-# for sid,sarge
-cp -a /usr/lib/libidn* usr/lib/ $NULL || true
+# needed libs that are linked at compile time 
+for X in `ldd $FPBIN | cut -d / -f 2- | cut -d \( -f 1`; do
+	cp /$X $X
+done
+# libc6
+for X in `dpkg -L libc6 | grep "^/lib/" | grep -v "^/.*/.*/"`; do
+	cp $X .$X
+done
 
-#copy misc
-cp /etc/resolv.conf etc/
-cp /etc/hosts etc/
-cp /etc/services etc/
+#copy etc conffiles
+for X in /etc/resolv.conf /etc/hosts /etc/services; do
+	cp $X etc/
+done
 
 #create ad hoc files
 echo "nobody:x:65534:65534:nobody:/nonexistent:/bin/sh" > etc/passwd
 echo "nogroup:x:65534:" > etc/group
+
 
 #make /dev/null
 mknod -m 0666 dev/null c 1 3

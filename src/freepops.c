@@ -293,6 +293,7 @@ HIDDEN void parse_suid(const char* optarg){
 		if(pw == NULL)
 			{
 			fprintf(stderr,"Unable to getpwnam(\"%s\")\n",tmp);
+			fprintf(stderr,"getpwnam: %s\n",strerror(errno));
 			goto error;
 			}
 		uid = pw->pw_uid;
@@ -302,6 +303,7 @@ HIDDEN void parse_suid(const char* optarg){
 		if(gr == NULL)
 			{
 			fprintf(stderr,"Unable to getgrnam(\"%s\")\n",&tmp[rc]);
+			fprintf(stderr,"getgrnam: %s\n",strerror(errno));
 			goto error;
 			}
 		gid = gr->gr_gid;

@@ -21,6 +21,7 @@ case "$1" in
     remove|upgrade|deconfigure)
 
 	invoke-rc.d freepops stop 2>/dev/null  || true
+	echo
 
 	JAIL_SCRIPT=/usr/lib/freepops/create_jail.sh
 	JAIL_DIR=`/bin/sh $JAIL_SCRIPT get-dir`

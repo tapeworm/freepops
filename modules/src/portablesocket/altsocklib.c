@@ -50,7 +50,7 @@
  #include <errno.h>
 
  /* on some libc there is no _r support */
- #ifndef strerror_r
+ #if !defined(strerror_r) || defined(OSXSTC)
 
   # include <pthread.h>
   pthread_mutex_t strerror_lock = PTHREAD_MUTEX_INITIALIZER;

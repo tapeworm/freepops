@@ -273,6 +273,14 @@ function Hidden.errorcode(ret)
 	return nil,(ret .. ": " .. (Hidden.errors[ret] or "unknown error"))
 end
 
+-- HTTP CONNECT Proxy 2xx
+function Hidden.is_https_proxy_tunnel(b, url, ret)
+	return (b.proxy ~= nil) and 
+		(string.sub(url, 1, 5) == "https") and 
+		(ret == "200")
+end
+	
+
 -- reads the HTTP return code and returns
 -- nil,error if an error
 -- DONE,nil if ok
@@ -287,9 +295,9 @@ function Hidden.parse_header(self,gl_h,url)
 		table.foreach(gl_h,print)
 		return Hidden.error("malformed HTTP header line: "..gl_h[1])
 	end
-	
-	-- HTTP 1xx
-	if string.byte(ret,1) == string.byte("1",1) then
+	-- HTTP 1xx or HTTPS proxy tunnel
+	if string.byte(ret,1) == string.byte("1",1) or 
+	   Hidden.is_https_proxy_tunnel(self, url, ret) then
 		local gl_h1 = {} -- to not lose the real header
 		local end_of_1xx = false
 		for i=1,table.getn(gl_h) do
@@ -300,7 +308,11 @@ function Hidden.parse_header(self,gl_h,url)
 				end_of_1xx = true
 			end
 		end
-		return Hidden.parse_header(self,gl_h1,url)
+		if gl_h1[1] ~= nil then
+			return Hidden.parse_header(self,gl_h1,url)
+		else
+			return Hidden.error("Malformed HTTP/1.x 1xx header")
+		end
 	-- HTTP 2xx
 	elseif string.byte(ret,1) == string.byte("2",1) then
 		if self.followRefreshHeader == true then

@@ -1,3 +1,9 @@
+19/11/2005 0.0.96
+- added zibo86 https trough proxy patch (many thanks!)
+- es: *** empty log message *** (lisar314)
+- fr: *** empty log message *** (fvancaen)
+- freepopsd.vbs: Updated version number (alessiofender)
+- es, fr: fix (gareuselesinge)
 - added max count for bad pop3 commands (10) befor connection closing. Should
 easily avoid the problem of clients looping sending \r\n that wastes CPU.
 - popserver.c is now case insensitive (as RFC says)

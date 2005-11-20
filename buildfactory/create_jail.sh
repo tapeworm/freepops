@@ -61,7 +61,7 @@ ln -s lib lib64
 cd ..
 
 # needed libs that are linked at compile time 
-for X in `ldd $FPBIN | sed 's/=>/*/' | cut -d '*' -f 2 | cut -d \( -f 1 | | tr -d '[:blank:]'`; do
+for X in `ldd $FPBIN | sed 's/=>/*/' | cut -d '*' -f 2 | cut -d \( -f 1 | tr -d '[:blank:]'`; do
 	mkdir -p `dirname $X`
 	cp /$X $X
 done

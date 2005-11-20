@@ -1,4 +1,5 @@
 19/11/2005 0.0.96
+- added a fix for strerror_r on OSX
 - added zibo86 https trough proxy patch (many thanks!)
 - es: *** empty log message *** (lisar314)
 - fr: *** empty log message *** (fvancaen)

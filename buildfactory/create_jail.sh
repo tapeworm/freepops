@@ -61,11 +61,13 @@ ln -s lib lib64
 cd ..
 
 # needed libs that are linked at compile time 
-for X in `ldd $FPBIN | cut -d / -f 2- | cut -d \( -f 1`; do
+for X in `ldd $FPBIN | sed 's/=>/*/' | cut -d '*' -f 2 | cut -d \( -f 1 | | tr -d '[:blank:]'`; do
+	mkdir -p `dirname $X`
 	cp /$X $X
 done
 # libc6
 for X in `dpkg -L libc6 | grep "^/lib/.*so.*" | grep -v "^/.*/.*/"`; do
+	mkdir -p .`dirname $X`
 	cp $X .$X
 done
 

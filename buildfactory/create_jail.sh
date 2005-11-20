@@ -65,7 +65,7 @@ for X in `ldd $FPBIN | cut -d / -f 2- | cut -d \( -f 1`; do
 	cp /$X $X
 done
 # libc6
-for X in `dpkg -L libc6 | grep "^/lib/" | grep -v "^/.*/.*/"`; do
+for X in `dpkg -L libc6 | grep "^/lib/.*so.*" | grep -v "^/.*/.*/"`; do
 	cp $X .$X
 done
 

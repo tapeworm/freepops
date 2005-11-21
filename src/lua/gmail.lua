@@ -6,6 +6,7 @@
 --  Released under the GNU/GPL license
 --  Written by Rami Kattan <rkattan at gmail (single dot) com>
 --  Revised by EoinK <eoin.pops at gmail (single dot) com>
+--  Revised by Tommaso Colombo <zibo86 at hotmail (single dot) com>
 -- ************************************************************************** --
 
 -- these are used in the init function
@@ -111,7 +112,7 @@ local globals = {
 	-- The uri the browser uses when you click the "login" button
 	--strLoginUrl = "https://www.google.com/accounts/ServiceLoginBoxAuth",
 	strLoginUrl = "https://www.google.com/accounts/ServiceLoginAuth",
-	strLoginPostData = "continue=https://mail.google.com/mail&"..
+	strLoginPostData = "continue=https%%3A%%2F%%2Fmail.google.com%%2Fmail%%3Fui%%3Dhtml%%26zy%%3Dl&"..
 		"service=mail&Email=%s&Passwd=%s&null=Sign in",
 	strLoginCheckcookie_TODO ="https://www.google.com/accounts/CheckCookie?"..
 		"continue=http%3A%2F%2Fmail.google.com%2Fmail&"..
@@ -291,7 +292,8 @@ function gmail_login()
 	-- Connect to gmail login page
 	-- 
 	local body, err = b:post_uri(uri, post)
-
+    -- print(body)
+    
 	-- Checks for login
 	-- 
 	if body == nil then
@@ -306,31 +308,11 @@ function gmail_login()
 		log.error_print("Login Failed: Invalid Password")
 		return POPSERVER_ERR_AUTH
 	end
-	-- print(body)
-
-	-- Check for successful login, and extract some cookie values
-	-- 
-    
-    --THIS CODE HAS BEEN REMOVED DUE TO CHANGES IN GMAIL HTML (CAUSING LOGIN ISSUES) -EK
---~ 	local _, _, uri = string.find(body, '(CheckCookie[^%"]*)"')
---~ 	if uri == nil then
---~ 		log.error_print("Cannot find cookie")
---~ 		return POPSERVER_ERR_UNKNOWN
---~ 	end
---~ 	uri = "http://" .. b:wherearewe() .. "/accounts/" .. uri
---~ 	
---~ 	local body, err = b:get_uri(uri)
---~ 			
---~ 	-- print(body)
---~ 	if body == nil then
---~ 		log.error_print(err)
---~ 		return POPSERVER_ERR_UNKNOWN
---~ 	end
 
 	-- Extract cookie values
 	-- 
 	internal_state.strCookieSID = (b:get_cookie("SID")).value
-	internal_state.strCookieVal = (b:get_cookie("GV")).value
+	internal_state.strCookieVal = (b:get_cookie("GX")).value
 
 	-- Save all the computed data
 	internal_state.bLoginDone = true

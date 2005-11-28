@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8f"
+PLUGIN_VERSION = "0.0.9"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.21"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -50,7 +50,8 @@ and your real password as the password.]]
 local globals = {
   -- Server URL
   -- 
-  strLoginUrl = "http://webmail.aol.com",
+  strLoginUrlAOL = "http://webmail.aol.com",
+  strLoginUrlNetscape = "http://mail.netscape.com",
 
   -- Login strings
   --
@@ -103,7 +104,7 @@ local globals = {
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
-  strInbox = "New%20Mail", 
+  strInboxAOL = "New%20Mail", 
   strSpamAOL = "Spam",
   strOldboxAOL = "Old%20Mail",
   strTrashAOL = "Recently%20Deleted",
@@ -111,14 +112,7 @@ local globals = {
   StrSavedAOL = "Saved%20Mail",
 
   strInboxAim = "Inbox",
-  strTrashAim = "Trash",
-  strSentAim = "Sent",
-  strDraftsAim = "Drafts",
   
-  strTrashNetscape = "VHJhc2g=",
-  strSentNetscape = "U2VudA==",
-  strDraftNetscape = "RHJhZnQ=",
-
   strInboxPat = "([Nn]ew)",
   strOldboxPat = "([Oo]ld)",
   strSpamPat = "([Ss]pam)",
@@ -241,10 +235,10 @@ function loginAOL()
   local username = internalState.strUser
   local password = curl.escape(internalState.strPassword)
   local domain = internalState.strDomain
-  local url = globals.strLoginUrl  
-  --if (domain == "aim.com") then
-  --  url = globals.strLoginAIMUrl
-  --end
+  local url = globals.strLoginUrlAOL  
+  if (domain == "netscape.net") then
+    url = globals.strLoginUrlNetscape
+  end
   local xml = globals.strFolderQry
   local browser = internalState.browser
 	
@@ -530,6 +524,8 @@ function user(pstate, username)
   -- 
   if domain == "aim.com" then
     internalState.strBrand = "aim"
+  elseif domain == "netscape.net" then
+    internalState.strBrand = "nc"
   else
     internalState.strBrand = "aol"
   end
@@ -538,10 +534,10 @@ function user(pstate, username)
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
   if mbox == nil then
-    if domain == "aim.com" then
+    if domain == "aim.com" or domain == "netscape.net" then
       internalState.strMBox = globals.strInboxAim
     else
-      internalState.strMBox = globals.strInbox
+      internalState.strMBox = globals.strInboxAOL
     end
     return POPSERVER_ERR_OK
   end
@@ -554,9 +550,7 @@ function user(pstate, username)
 
   _, _, start = string.find(mbox, globals.strSentPat)
   if start ~= nil then
-    if domain == "aim.com" then
-      internalState.strMBox = globals.strSentAim
-    else
+    if domain ~= "aim.com" and domain ~= "netscape.net" then
       internalState.strMBox = globals.strSentAOL
     end
     return POPSERVER_ERR_OK
@@ -564,25 +558,12 @@ function user(pstate, username)
 
   _, _, start = string.find(mbox, globals.strDeletedPat)
   if start ~= nil then
-    if domain == "aim.com" then
-      internalState.strMBox = globals.strTrashAim
-    else
+    if domain ~= "aim.com" and domain ~= "netscape.net" then
       internalState.strMBox = globals.strTrashAOL
     end
     return POPSERVER_ERR_OK
   end
 
-  _, _, start = string.find(mbox, globals.strTrashPat)
-  if start ~= nil then
-    internalState.strMBox = globals.strTrashNetscape
-    return POPSERVER_ERR_OK
-  end
-
-  _, _, start = string.find(mbox, globals.strDraftPat)
-  if start ~= nil then
-    internalState.strMBox = globals.strDraftAim
-    return POPSERVER_ERR_OK
-  end
 
   _, _, start = string.find(mbox, globals.strOldboxPat)
   if start ~= nil then

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9d"
+PLUGIN_VERSION = "0.0.9e"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.17"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -509,6 +509,7 @@ function cleanupHeaders(headers)
   -- This part could use some cleanup.  There are usually some links in the 
   -- same line as the From:  line. 
   --
+  headers = string.gsub(headers, "%[Save address | Block sender | This Is Spam%]", "\n")
   headers = string.gsub(headers, "%[Save address | Block sender%]", "\n")  
   headers = string.gsub(headers, "%[Save Address%]%[Block Sender%]", "\n")  
   headers = string.gsub(headers, "Save Address Block Sender ", "\n")  

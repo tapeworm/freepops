@@ -11,8 +11,8 @@ PLUGIN_VERSION = "0.0.1"
 PLUGIN_NAME = "criticalpath.lua"
 PLUGIN_REQUIRE_VERSION = "0.0.31"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=criticalpath.lua"
-PLUGIN_HOMEPAGE = "http://www.freepops.org/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=criticalpath.lua"
+PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {"@canada.com"}
@@ -41,11 +41,11 @@ the forum instead of emailing the author(s).]]
 local globals = {
   -- Server URL
   --
-  strLoginUrl = "https://members.canada.com/login.aspx?site=canada&provider=aol&brand=email&returnurl=http://webmail.canada.com",
+  strLoginUrl = "https://members.canada.com/cc/login.aspx?site=canada&provider=aol&brand=email&returnurl=http://webmail.canada.com",
 
   -- Login strings
   --
-  strLoginPostData = "liLogin%%3AtxtEmail=%s@%s&liLogin%%3AtxtPassword=%s&liLogin%%3AbtnLogin.x=15&liLogin%%3AbtnLogin.y=8&__VIEWSTATE=%s",
+  strLoginPostData = "email_address=%s@%s&password=%s&ibtnLogin.x=0&ibtnLogin.y=0&__VIEWSTATE=%s",
   strLoginFailed = "Login Failed - Invalid User name and/or password",
   strLoginFailedVS = "Login Failed - Unable to retrieve the view state to properly send the login info.",
   strLoginFailedRegExp = "Login Failed - Unable to retrieve the token field: ",
@@ -192,7 +192,7 @@ function login()
   -- Send the login info
   --
   body, err = browser:post_uri(url, post)
-
+log.dbg(url .. " - " .. post)
   -- No connection
   --
   if body == nil then

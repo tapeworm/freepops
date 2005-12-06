@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.1"
+PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "criticalpath.lua"
 PLUGIN_REQUIRE_VERSION = "0.0.31"
 PLUGIN_LICENSE = "GNU/GPL"

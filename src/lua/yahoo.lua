@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.7b"
+PLUGIN_VERSION = "0.1.7c"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.27"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -540,6 +540,10 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   -- Define the callback
   --
   local cb = downloadMsg_cb(cbInfo, data)
+
+  -- Remove the quote-printed encoding line from the header
+  --
+  headers = string.gsub(headers, "Content%-Transfer%-Encoding: quoted%-printable%s+", "");
 
   -- Send the headers first to the callback
   --

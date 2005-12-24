@@ -51,9 +51,8 @@ curlopt.h: $(HEADER)
 
 curl_netrcopt.h:$(HEADER)
 	$(H)cat $(HEADER) | grep "^ *CURL_NETRC_[A-Z]*," | \
-		cut -f 1 -d "," |  \
-		awk '{print "{\"" $$1 "\", (int)" $$1 "}," }' | \
-		sed "s/CURL_//" > curl_netrcopt.h
+		sed -r 's/^ *CURL_(NETRC_[A-Z]*),.*$$/{"\1", (int)CURL_\1},/' \
+		> curl_netrcopt.h
 
 curl_authopt.h:$(HEADER)
 	$(H)cat $(HEADER) | grep "CURLAUTH_" | \
@@ -61,9 +60,8 @@ curl_authopt.h:$(HEADER)
 		sed "s/ /\",/" | sed "s/$$/},/" > curl_authopt.h
 
 curl_form.h: $(HEADER)
-	$(H)cat $(HEADER) | grep "^ *CFINIT" | \
-		grep -v "CFINIT(NOTHING)" | sed "s/CFINIT(//" | \
-		sed "s/),/ ,/" | \
-		awk '{print "{\"FORM_" $$1 "\",CURLFORM_" $$1 "},"}'>curl_form.h
+	$(H)cat $(HEADER) | grep "^ *CFINIT" | grep -v "CFINIT(NOTHING)" | \
+		sed -r 's/^ *CFINIT\(([^)]*)\),.*$$/{"FORM_\1",CURLFORM_\1},/' \
+		> curl_form.h
 
 

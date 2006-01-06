@@ -656,7 +656,18 @@ freepops.MODULES_MAP["linuxgazette.net"] 	= {
 -- created will be "^(" .. your expression here .. ")$". nil capture means not
 -- matched.
 --
-
+-- remember that multiple rules are supported, but must be comma-separated. 
+-- for example
+--  { ".*@foo.xx" , ".*@example.org", "root@here.xx" }
+-- is a valid LUA syntax, while
+--  { ".*@foo.xx" ".*@example.org" "root@here.xx" }
+-- or 
+--  {
+--    ".*@foo.xx" 
+--    ".*@example.org" 
+--    "root@here.xx"
+--  }
+-- are wrong.
 
 freepops.ACCEPTED_ADDRESSES = {
 	-- empty table means that there is no address that is accepted

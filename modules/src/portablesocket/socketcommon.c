@@ -280,7 +280,7 @@ return (tmp);
 struct sock_state_t * sock_listen(struct sock_state_t * s)
 {
 struct sockaddr sockaddr;
-int addrlen = sizeof(sockaddr);
+unsigned int addrlen = sizeof(sockaddr);
 int newsock;
 
 memset(&sockaddr, 0, sizeof(sockaddr));

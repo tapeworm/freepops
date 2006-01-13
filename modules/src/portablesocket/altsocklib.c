@@ -315,7 +315,7 @@ return sd;
  *
  *
  */ 
-int sockinfo(int sd, char *info)
+int sockinfo(int sd, unsigned char *info)
 {
     struct sockaddr_in sin;
 #if !defined(WIN32) && !defined(BEOS) && !defined(OSXSTC)

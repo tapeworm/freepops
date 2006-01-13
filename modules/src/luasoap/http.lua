@@ -12,9 +12,10 @@ function call(browser, url, namespace, method, entries, headers)
 			{ "Content-type: text/xml", 
 			  "SOAPAction: " .. method })
 	if rc ~= nil then
-		return soap.decode(rc), nil
+		local ns, meth, ent = soap.decode(rc)
+		return ns, meth, ent, nil
 	else
-		return nil, err
+		return nil, nil, nil, err
 	end
 end 
 

@@ -40,7 +40,7 @@
 /** if host == NULL means to bind as a server on bind_add, =! NULL 
 	resolves and connects */
 int sockopen(char *host, struct in_addr bind_add, unsigned short port);
-int sockinfo(int sock, char *info);
+int sockinfo(int sock, unsigned char *info);
 int sockclose(int sock);
 int senddata(int socket, char *buffer, int length);
 int senddata_raw(int socket,const char *buffer, int length);

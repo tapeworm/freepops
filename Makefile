@@ -65,6 +65,12 @@ install: all
 	$(H)cp src/freepopsd$(EXECSUFFIX) $(PREFIX)bin
 	$(H)cp src/lua/*.lua modules/include/*.lua config.lua \
 		$(PREFIX)share/freepops/lua/
+	$(H)for D in modules/include/*/; do\
+		N=`ls $$D/*.lua $$D/*/*.lua $$D/*/*/*.lua 2>/dev/null | wc -l`;\
+		if [ $$N -gt 0 ]; then \
+			cp -r $$D $(PREFIX)share/freepops/lua/;\
+		fi;\
+	done
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
 	$(H)cp doc/manual*.pdf  $(PREFIX)share/doc/freepops/ 2>/dev/null ||\
 		cp doc/MANUAL.txt  $(PREFIX)share/doc/freepops/ 2>/dev/null || \

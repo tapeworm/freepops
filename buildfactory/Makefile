@@ -28,7 +28,7 @@ dist-win-gnutls: dist-win-e-zip-gnutls
 dist-zip-gnutls: dist-win-e-zip-gnutls
 
 dist-win-e-zip-step1:
-	$(H)mkdir -p _win_/freepops
+	$(H)mkdir -p _win_/freepops/LUA/
 	$(H)[ -d _win_/freepops-$(VERSION) ] || \
 		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _win_
 
@@ -49,9 +49,16 @@ dist-win-e-zip-step3:
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
-	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/
-	$(H)cp _win_/freepops-$(VERSION)/modules/include/*.lua _win_/freepops/
-	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/
+	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/LUA/
+	$(H)cp _win_/freepops-$(VERSION)/modules/include/*.lua \
+		_win_/freepops/LUA/
+	$(H)for D in _win_/freepops-$(VERSION)/modules/include/*/; do\
+		N=`ls $$D/*.lua $$D/*/*.lua $$D/*/*/*.lua 2>/dev/null | wc -l`;\
+		if [ $$N -gt 0 ]; then \
+			cp -r $$D _win_/freepops/LUA/;\
+		fi;\
+	done
+	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/LUA/
 	$(H)cp _win_/freepops-$(VERSION)/buildfactory/freepopsd.vbs \
 		_win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/buildfactory/README.FPM.*.txt \
@@ -85,7 +92,7 @@ dist-win-e-zip-step4-gnutls:
 		cp $$DLLPATH/libgpg-error.dll _win_/freepops/libgpg-error.dll
 
 dist-win-e-zip-step5:
-	$(H)STRIP=`grep STRIP _win_/freepops-$(VERSION)/config| cut -d = -f 2`;\
+	$(H)STRIP=`grep ^STRIP _win_/freepops-$(VERSION)/config|cut -d = -f 2`;\
 		$$STRIP _win_/freepops/*.exe _win_/freepops/*.dll
 
 	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \
@@ -107,8 +114,6 @@ dist-win-e-zip-step5:
 	# end of installer 
 
 	$(H)cd _win_/freepops/;\
-		mkdir LUA;\
-		mv *.lua LUA;\
 		cp LUA/config.lua .;\
 		mkdir LUA_UNOFFICIAL
 	#$(H)cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/

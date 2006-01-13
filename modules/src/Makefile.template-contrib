@@ -21,6 +21,7 @@ $(SUBDIR):
 		if [ $$? != 0 ]; then \
 			echo -e "\n ! error patching !\n";\
 		fi;\
+		find . -name makefile -exec rm \{\} \;;\
 	fi
 	$(H)cd $(SUBDIR);\
 		$(MAKE) -f Makefile \

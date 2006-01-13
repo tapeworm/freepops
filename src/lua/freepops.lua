@@ -693,6 +693,16 @@ function freepops.bootstrap()
 	-- standard lua modules that must be loaded
 	if freepops.dofile("support.lua") == nil then return 1 end
 
+	-- compat-5.1
+	LUA_PATH=""
+	local function path_to_compat51_path(_,path)
+	        LUA_PATH=LUA_PATH .. path .. "?.lua;"
+	        LUA_PATH=LUA_PATH .. path .. "?/?.lua;"
+	end
+	table.foreach(freepops.MODULES_PREFIX,path_to_compat51_path)
+	table.foreach(freepops.MODULES_PREFIX_UNOFFICIAL,path_to_compat51_path)
+	freepops.dofile("compat-5.1.lua")
+
 	return 0 -- OK
 end
 

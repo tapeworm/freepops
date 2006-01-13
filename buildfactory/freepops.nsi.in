@@ -95,10 +95,8 @@ Section "FreePOPs (required)"
   File "*.dll"
   File "*.txt"
   File "*.vbs"
-  File "config.lua"
-  SetOutPath $INSTDIR\LUA
-  File "*.lua"
-  SetOutPath $INSTDIR
+  File "LUA/config.lua"
+  File /r "LUA"
   CreateDirectory $INSTDIR\LUA_UNOFFICIAL
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\NSIS_FreePOPs "Install_Dir" "$INSTDIR"

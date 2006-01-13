@@ -25,6 +25,8 @@
 
 #include "luabind.h"
 
+#include "compat-5.1.h"
+
 #define METANAME "regularep.t"
 
 // returns and checks a stringhack from the stack

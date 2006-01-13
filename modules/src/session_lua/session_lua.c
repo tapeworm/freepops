@@ -19,6 +19,8 @@
 #include "string.h"
 #include "session.h"
 
+#include "compat-5.1.h"
+
 #define OVERWRITE 1
 #define FAILIFPRESENT 0
 

@@ -38,6 +38,7 @@ INTERFACE=$(shell if test -e interface ; then cat interface ; fi )
 ifeq "" "$(INTERFACE)"
 	INTERFACE=$(HDR)
 endif
+INSTALLATIONMAP=$(shell if test -e installation ; then cat installation ; fi )
 
 LIBRARY=lib$(TARGET)$(STATICEXTENSION)
 SHARED=lib$(TARGET)$(SHAREDEXTENSION)
@@ -66,7 +67,16 @@ $(LIBRARY): $(OBJ) $(INTERFACE)
 	$(H)[  -z "$(OBJ)" ] || $(AR) -r $(LIBRARY) $(OBJ) 2>/dev/null
 	$(H)[  -z "$(OBJ)" ] || $(RANLIB) $(LIBRARY)
 	$(H)[  -z "$(OBJ)" ] || echo "$(LIBRARY)"
-	$(H)cp $(INTERFACE) $(PREFIX)/include || true
+	$(H)if [  -z "$(INSTALLATIONMAP)" ]; then\
+		cp $(INTERFACE) $(PREFIX)/include || true;\
+	    else\
+	    	for CMD in $(INSTALLATIONMAP); do\
+			SRC=`echo $$CMD | cut -d = -f 1`;\
+			TGT=`echo $$CMD | cut -d = -f 2`;\
+			mkdir -p $(PREFIX)/include/`dirname $$TGT`;\
+			cp $$SRC $(PREFIX)/include/$$TGT;\
+		done;\
+	    fi
 	$(H)[ ! -z "$(OBJ)" ] || touch $(LIBRARY)
 #	$(H)[ -z "$(OBJ)" ] || cp $(LIBRARY) $(PREFIX)/lib || true
 	$(H)cp $(LIBRARY) $(PREFIX)/lib || true

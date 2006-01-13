@@ -18,6 +18,7 @@
 #include "lua.h"
 #include "lauxlib.h"
 #include "base64.h"
+#include "compat-5.1.h"
 
 static int lua_base64_encode(lua_State* L)
 {

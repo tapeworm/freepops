@@ -19,6 +19,8 @@
 #include "lauxlib.h"
 #include "lstringhack.h"
 
+#include "compat-5.1.h"
+
 // returns and checks a stringhack from the stack
 static struct strhack_t* check_strhack(lua_State*L)
 {

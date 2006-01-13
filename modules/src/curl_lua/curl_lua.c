@@ -33,6 +33,8 @@
 
 #include "luabind.h"
 
+#include "compat-5.1.h"
+
 #define CURL_EASY_META_NAME "curleasy.type"
 
 /* think more if this means unicity... maybe store in the bag some pointers */

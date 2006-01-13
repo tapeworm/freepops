@@ -21,6 +21,8 @@
 #include "socketcommon.h"
 #include "luabind.h"
 
+#include "compat-5.1.h"
+
 #include "log.h"
 #define LOG_ZONE "psock"
 

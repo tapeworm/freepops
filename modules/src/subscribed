@@ -35,13 +35,15 @@ MK_TEMPLATE=	luabind \
 		crypto_lua	\
 		updater_lua	\
 		version_comparer_lua \
-		xml2tex_lua
+		xml2tex_lua \
+		luasoap
 
 MK_TEMPL_CTRIB=	lua \
 		pthread \
 		luadoc \
 		getdate \
 		luaexpat \
-		luafilesystem
+		luafilesystem \
+		luacompat 
 
 MK_CUSTOM=	curl_lua 

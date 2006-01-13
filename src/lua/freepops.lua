@@ -697,7 +697,7 @@ function freepops.bootstrap()
 end
 
 -- -------------------------------------------------------------------------- --
---  This is the only (except the latter) function called from the C code. 
+--  This is the only (except the former) function called from the C code. 
 --  This loads the module that handles mailaddress's domain and load standard
 --  LUA modules
 -- -------------------------------------------------------------------------- --

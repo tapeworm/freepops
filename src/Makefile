@@ -92,6 +92,7 @@ LIBS=		crypto_lua	\
 		luaexpat	\
 		luafilesystem	\
                 luay            \
+		luacompat-5.1	\
                 lua             \
                 lualib          
 		

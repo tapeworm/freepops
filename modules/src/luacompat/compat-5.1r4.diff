@@ -1,0 +1,27 @@
+diff -ruN compat-5.1r4-old/Makefile compat-5.1r4/Makefile
+--- compat-5.1r4-old/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ compat-5.1r4/Makefile	2006-01-13 00:32:00.000000000 +0100
+@@ -0,0 +1,23 @@
++include $(CONFIG)
++
++WARNS = -Wall 
++
++CFLAGS += $(WARNS) -I$(PREFIX)/include -I. 
++
++H=@
++
++all: libluacompat-5.1.a
++	$(H)echo -n
++
++libluacompat-5.1.a : compat-5.1.c
++	$(H)echo " compiling compat-5.1.c -> compat-5.1.o"
++	$(H)$(CC) $(CFLAGS) -c  compat-5.1.c 
++	$(H)echo " linking libluacompat-5.1.a"
++	$(H)$(AR) rc libluacompat-5.1.a compat-5.1.o 1>/dev/null		
++	$(H)cp compat-5.1.h $(PREFIX)/include
++	$(H)cp compat-5.1.lua $(PREFIX)/include
++	$(H)cp $(CPFLAGS) libluacompat-5.1.a $(PREFIX)/lib
++
++clean:
++	$(H)rm -f *.a *.o
++.PHONY: all

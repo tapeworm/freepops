@@ -1,0 +1,67 @@
+diff -ruN luaexpat-1.0.1-old/makefile luaexpat-1.0.1/makefile
+--- luaexpat-1.0.1-old/makefile	2005-06-06 22:25:23.000000000 +0200
++++ luaexpat-1.0.1/makefile	1970-01-01 01:00:00.000000000 +0100
+@@ -1,26 +0,0 @@
+-T= lxp
+-V= 1.0.1
+-CONFIG= ./config
+-
+-include $(CONFIG)
+-
+-
+-lib: src/$(LIBNAME)
+-
+-src/$(LIBNAME) : src/lxplib.o $(COMPAT_DIR)/compat-5.1.o
+-	$(CC) -o src/$(LIBNAME) $(LIB_OPTION) src/lxplib.o $(COMPAT_DIR)/compat-5.1.o
+-
+-$(COMPAT_DIR)/compat-5.1.o: $(COMPAT_DIR)/compat-5.1.c
+-	$(CC) -c $(CFLAGS) -o $@ $(COMPAT_DIR)/compat-5.1.c
+-
+-install:
+-	mkdir -p $(LUA_LIBDIR)
+-	cp src/$(LIBNAME) $(LUA_LIBDIR)
+-	ln -f -s $(LUA_LIBDIR)/$(LIBNAME) $(LUA_LIBDIR)/$T.so
+-	mkdir -p $(LUA_DIR)/$T
+-	cp src/$T/lom.lua $(LUA_DIR)/$T
+-
+-clean:
+-	rm -f src/$(LIBNAME) src/lxplib.o $(COMPAT_DIR)/compat-5.1.o
+-
+-# $Id$
+diff -ruN luaexpat-1.0.1-old/Makefile luaexpat-1.0.1/Makefile
+--- luaexpat-1.0.1-old/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ luaexpat-1.0.1/Makefile	2006-01-13 00:24:25.000000000 +0100
+@@ -0,0 +1,33 @@
++include $(CONFIG)
++
++WARNS = -Wall -pedantic \
++        -Waggregate-return \
++        -Wcast-align \
++        -Wmissing-prototypes \
++        -Wstrict-prototypes \
++        -Wnested-externs \
++        -Wpointer-arith \
++        -Wshadow \
++        -Wwrite-strings
++
++
++CFLAGS += $(WARNS) -I$(PREFIX)/include -I. 
++
++LDFLAGS+= -L../lib/ -L../../lib/ -lexpat
++
++H=@
++
++all: libluaexpat.a
++	$(H)echo -n
++
++libluaexpat.a : src/lxplib.c
++	$(H)echo " compiling lxplib.c -> lxplib.o"
++	$(H)$(CC) $(CFLAGS) -c  src/lxplib.c -o src/lxplib.o -I src/
++	$(H)echo " linking libluaexpat.a"
++	$(H)$(AR) rc libluaexpat.a src/lxplib.o 1>/dev/null		
++	$(H)cp src/lxplib.h src/lxp/lom.lua $(PREFIX)/include
++	$(H)cp $(CPFLAGS) libluaexpat.a $(PREFIX)/lib
++
++clean:
++	$(H)rm -f *.a *.o
++.PHONY: all

@@ -23,7 +23,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.5"
+PLUGIN_VERSION = "0.0.6"
 PLUGIN_NAME = "RSS/RDF aggregator"
 PLUGIN_REQUIRE_VERSION = "0.0.14"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -184,13 +184,20 @@ end
 --------------------------------------------------------------------------------
 -- Build a mail header
 --
+function make_valid_domain(s)
+	s = string.gsub(s,"[^%a%d-_]",".")
+	s = string.gsub(s,"%.+",".")
+	return s
+end
+
 function build_mail_header(title,uidl,mydate)
 	return 
 	"Message-Id: <"..uidl..">\r\n"..
-	"To: "..internal_state.name.."@"..internal_state.password.."\r\n"..
+	"To: "..internal_state.name.."@"..
+		make_valid_domain(internal_state.password).."\r\n"..
 	"Date: "..build_date(mydate).."\r\n"..
 	"Subject: "..title.."\r\n"..
-	"From: freepops@"..internal_state.password.."\r\n"..
+	"From: freepops@"..make_valid_domain(internal_state.password).."\r\n"..
 	"User-Agent: freepops "..PLUGIN_NAME..
 		" plugin "..PLUGIN_VERSION.."\r\n"..
 	"MIME-Version: 1.0\r\n"..
@@ -289,7 +296,7 @@ function retr_or_top(pstate,msg,data,lines)
 	end
 
 	--clean it
-	header=string.gsub(header,"&amp;","&");
+	header=html2txt(header)
 	title=html2txt(title)
 	body=html2txt(body)
 

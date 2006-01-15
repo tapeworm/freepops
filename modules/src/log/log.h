@@ -35,9 +35,9 @@
  */ 
 //@{
 //!Wrapper for logging
-#define LOGIT(b...) {logit(b);}
+#define LOGIT(a,b,c,d,e...) {logit(a,b,c,d,e);}
 //! Wrapper for module init
-#define LOG_INIT(logfile,sysmode) {log_init(logfile,sysmode);}
+#define LOG_INIT(logfile) {log_init(logfile);}
 //! Wrapper for module shutdown
 #define LOG_END() {log_end();}
 //!overrides MALLOC_CHECK
@@ -47,30 +47,23 @@
 }
 //!overrides ERROR_ABORT
 #define ERROR_ABORT(a) {\
-	LOGIT(LOG_ZONE,"ABORT(%s,%4d): %s",__FILE__,__LINE__,a);\
+	LOGIT(LOG_ZONE,"ABORT",__FILE__,__LINE__,a);\
 	abort();\
 }
 //!overrides ERROR_PRINT
-#define ERROR_PRINT(a) {\
-	LOGIT(LOG_ZONE,"ERROR(%s,%4d): %s",__FILE__,__LINE__,a);\
-}
-//!overrides ERROR_SAY
-#define ERROR_SAY(a...) {\
-	LOGIT(LOG_ZONE,"ERROR(%s,%4d): ",__FILE__,__LINE__);\
-	LOGIT(LOG_ZONE,a);\
+#define ERROR_PRINT(a...) {\
+	LOGIT(LOG_ZONE,"ERROR",__FILE__,__LINE__,a);\
 }
 //! DBG needs -v -v
 #define DBG(a...) {\
 	if (log_get_verbosity() >= 2) {\
-		LOGIT(LOG_ZONE,"DBG(%s,%4d): ",\
-			__FILE__,__LINE__);\
-		LOGIT(LOG_ZONE,a);\
+		LOGIT(LOG_ZONE,"DBG",__FILE__,__LINE__,a);\
 	}\
 }
 //! SAY needs -v
 #define SAY(a...) {\
 	if (log_get_verbosity() >= 1) {\
-		LOGIT(LOG_ZONE,a);\
+		LOGIT(LOG_ZONE,NULL,NULL,0,a);\
 	}\
 }
 //@}
@@ -85,14 +78,17 @@
  * \brief log in a pretty way
  * 
  * \param zone will be prepended
+ * \param preamble string (if NULL the following 2 params are ignored)
+ * \param file "__FILE__"
+ * \param line "__LINE__"
  * \param str printf like syntax
  * \return 0 on success
  *
  */ 
-int logit(char* zone, char *str, ...);
+int logit(char* zone, char* preamble, char*filename,int line,char *str, ...);
 
 //! initialize the log module
-int log_init(char* logfile, int syslogmode);
+int log_init(char* logfile);
 
 //! shut down the module
 int log_end(void);

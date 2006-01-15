@@ -4,20 +4,21 @@
 -- This module implements the HTTPMAIL protocol on top of the browser
 -- module and the xml2table/table2xml modules.
  
-assert(loadlib("xml2table.lua"))()
-assert(loadlib("table2xml.lua"))()
-httpmail = {}
+require("xml2table")
+require("table2xml")
+
+local Private = {}
 
 --============================================================================--
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
 --============================================================================--
 
---httpmail.debug = true
-httpmail.debug = false 
+--Private.debug = true
+Private.debug = false 
 
 ---
 -- This is the xml to Txml namespace conversion table used by xml2table.
-httpmail.Txml_convmap = {
+Private.Txml_convmap = {
 	["DAV:"]="D",
 	["urn:schemas:httpmail:"]="hm",
 	["urn:schemas:mailheader:"]="h",
@@ -26,12 +27,12 @@ httpmail.Txml_convmap = {
 	["urn:schemas:calendar:"]="cal"
 }
 
-httpmail.default_charset = "iso-8859-1"
+Private.default_charset = "iso-8859-1"
 
 ---
 -- This should list props for inbox and the root of folders.
 -- The server returns always everithing.
-httpmail.R_folder_root_Txml = 
+Private.R_folder_root_Txml = 
 { tag_name = "D__propfind",
   xmlns__D = "Dav:",
   xmlns__hm = "urn:schemas:httpmail:",
@@ -48,18 +49,18 @@ httpmail.R_folder_root_Txml =
 }
 ---
 -- The corresponding extra header.
-httpmail.R_folder_root_header = {
+Private.R_folder_root_header = {
 	"Depth: 0", "Brief: t", -- "Accept-Charset: UTF-8", --ignored 
 }
 ---
 -- The xml of table2xml(R_folder_root_Txml).
-httpmail.R_folder_root_xml = 
-	table2xml.table2xml(httpmail.R_folder_root_Txml,":")
+Private.R_folder_root_xml = 
+	table2xml.table2xml(Private.R_folder_root_Txml,":")
 
 ---
 -- This should list all folders, giving theyr URIs.
 -- but lists everithing as usual.
-httpmail.R_folder_list_Txml = 
+Private.R_folder_list_Txml = 
 { tag_name = "D__propfind",
   xmlns__D = "Dav:",
   xmlns__hm = "urn:schemas:httpmail:",
@@ -75,20 +76,20 @@ httpmail.R_folder_list_Txml =
 }
 ---
 -- The corresponding header.
-httpmail.R_folder_list_header = {
+Private.R_folder_list_header = {
 	"Depth: 1", -- "Depth: 1,noroot", 
 	"Brief: t", -- "Accept-Charset: UTF-8", --ignored
 }
 ---
 -- The xml of R_folder_list_Txml.
-httpmail.R_folder_list_xml = 
-	table2xml.table2xml(httpmail.R_folder_list_Txml,":")
+Private.R_folder_list_xml = 
+	table2xml.table2xml(Private.R_folder_list_Txml,":")
 
 ---
 -- List the folder contents.
 -- As usual the server does what he wants
 --  and _need_ the xmlns:m="urn:schemas:mailheader:" or it fails ;).
-httpmail.R_folder_content_Txml = {
+Private.R_folder_content_Txml = {
   tag_name  = "D__propfind",
   xmlns__D  = "Dav:",
   xmlns__hm = "urn:schemas:httpmail:",
@@ -105,21 +106,25 @@ httpmail.R_folder_content_Txml = {
 }
 ---
 -- The corresponding header.
-httpmail.R_folder_content_header = {
+Private.R_folder_content_header = {
 	"Depth: 1", -- "Depth: 1,noroot", 
 	"Brief: t", -- "Accept-Charset: UTF-8", --ignored
 }
 ---
 -- The xml of table2xml.
-httpmail.R_folder_content_xml = 
-	table2xml.table2xml(httpmail.R_folder_content_Txml,":")
+Private.R_folder_content_xml = 
+	table2xml.table2xml(Private.R_folder_content_Txml,":")
+
+--<=========================================================================>--
+	
+module("httpmail")
 
 ---
 -- Resources mentioned in the answer.
 -- This function simply gets all the uris in the response.
 -- @param answer table a Txml object.
 -- @return table a uri list.
-function httpmail.href_of_Txml(answer)
+function href_of_Txml(answer)
 	local uri = {}
 	xml2table.forach_son(answer,"D__response",
 		function(t) table.insert(uri,t.D__href._content) end)
@@ -132,12 +137,12 @@ end
 -- @param header table is in the browser fashion extra header.
 -- @param post string is an XML string.
 -- @return string the returned page.
-function httpmail.propfind(b,uri,post,header)
-	if httpmail.debug then
+function propfind(b,uri,post,header)
+	if Private.debug then
 		print("HTTPMAIL: sending (uri,post): ",uri,post)
 	end
 	local ans,err = b:custom_post_uri(uri,"PROPFIND",post,header)
-	if httpmail.debug then
+	if Private.debug then
 		print("HTTPMAIL: received (err,ans): ",err,ans)
 	end
 	return ans,err
@@ -145,14 +150,14 @@ end
 
 ---
 -- Deletes a dav resource, use this for mails.
-function httpmail.delete(b,uri,extraheader)
+function delete(b,uri,extraheader)
 	local ans,err = b:custom_get_uri(uri,"DELETE",extraheader)
 	return ans,err
 end
 
 ---
 -- Retrives a dav resuorce, use this for mails.
-function httpmail.get(b,uri,extraheader)
+function get(b,uri,extraheader)
 	local ans,err = b:get_uri(uri,extraheader)
 	return ans,err
 end
@@ -161,7 +166,7 @@ end
 -- Avoids wrong entities.
 -- @param s string the ugly XML.
 -- @return string the cleaned XML.
-function httpmail.clean_entities(s)
+function clean_entities(s)
 	local function content_clean(s, start_tag, stop_tag)
 		return string.gsub(s,start_tag .. "(.-)" .. stop_tag,function(c)
 			local s = nil
@@ -188,7 +193,7 @@ end
 
 ---
 -- Pipes a dav resource, works as the pipe_uri method of the browser object.
-function httpmail.pipe(b,uri,cb,extraheader)
+function pipe(b,uri,cb,extraheader)
 	return b:pipe_uri(uri,cb,extraheader)
 end
 
@@ -198,7 +203,7 @@ end
 -- local base_uri,err = httpmail.safe_traverse(answer,
 --  "D__response", "D__propstat", "D__prop", "hm__msgfolderroot", "_content").
 -- @return string the content, or nil and an error message.
-function httpmail.safe_traverse(t,...)
+function safe_traverse(t,...)
 	local err = "Stopping at "
 	for _,f in ipairs(arg) do
 		if t ~= nil then
@@ -213,37 +218,37 @@ end
 
 ---
 -- Basic HTTP authentication (plain base64(username:pwd)).
-httpmail.LOGIN_BASIC = 1 
+LOGIN_BASIC = 1 
 
 ---
 -- Digest HTTP authentication (untested)
-httpmail.LOGIN_DIGEST = 2
+LOGIN_DIGEST = 2
 
 ---
 -- HTTPMAIL login implementation.
 -- Finds where the mailboxes are rooted.
 -- @param auth number one of httpmail.LOGIN_*.
 -- @return string base_uri of the folders, and err if nil.
-function httpmail.login(b,uri,username,password,auth)
+function login(b,uri,username,password,auth)
 	b.curl:setopt(curl.OPT_USERPWD,username..":"..password)
-	if auth == httpmail.LOGIN_DIGEST then
+	if auth == LOGIN_DIGEST then
 		b.curl:setopt(curl.OPT_HTTPAUTH,curl.AUTH_DIGEST)
-	elseif auth ~= httpmail.LOGIN_BASIC then
+	elseif auth ~= LOGIN_BASIC then
 		return nil, "httpmail.login: auth must be httpmail.LOGIN_*"
 	end
-	local ans,err = httpmail.propfind(b,uri,
-		httpmail.R_folder_root_xml,httpmail.R_folder_root_header)
+	local ans,err = propfind(b,uri,
+		Private.R_folder_root_xml,Private.R_folder_root_header)
 	if ans ~= nil then
 		local answer,msg,_,_ = 
-			xml2table.xml2table(httpmail.clean_entities(ans),
-				httpmail.Txml_convmap,
-				httpmail.default_charset)
+			xml2table.xml2table(clean_entities(ans),
+				Private.Txml_convmap,
+				Private.default_charset)
 		
 		if answer == nil then
 			return answer,msg
 		end
 
-		local base_uri,err = httpmail.safe_traverse(answer,
+		local base_uri,err = safe_traverse(answer,
 			"D__response",
 			"D__propstat",
 			"D__prop",
@@ -259,14 +264,14 @@ end
 -- HTTPMAIL folder disocevery implementation.
 -- currently finds only the first level folders and not subfolders.
 -- @return table like {{uri="uri",name="name"},...,{uri="uri",name="name"}}.
-function httpmail.folderlist(b,uri)
-	local ans,err =httpmail.propfind(b,uri,
-		httpmail.R_folder_list_xml,httpmail.R_folder_list_header)
+function folderlist(b,uri)
+	local ans,err =propfind(b,uri,
+		Private.R_folder_list_xml,Private.R_folder_list_header)
 	if ans ~= nil then
 		local answer,msg,_,_ = 
-			xml2table.xml2table(httpmail.clean_entities(ans),
-				httpmail.Txml_convmap,
-				httpmail.default_charset)
+			xml2table.xml2table(clean_entities(ans),
+				Private.Txml_convmap,
+				Private.default_charset)
 	
 		if answer == nil then
 			return answer,msg
@@ -276,13 +281,13 @@ function httpmail.folderlist(b,uri)
 		xml2table.forach_son(answer,"D__response",
 		function(t)
 			local uri = 
-				httpmail.safe_traverse(t,"D__href","_content")
+				safe_traverse(t,"D__href","_content")
 			local name = (
-				(httpmail.safe_traverse(t,
+				(safe_traverse(t,
 					"D__propstat",
 					"D__prop",
 					"D__displayname")) or
-				(httpmail.safe_traverse(t,
+				(safe_traverse(t,
 					"D__propstat",
 					"D__prop",
 					"hm__special"))
@@ -300,14 +305,14 @@ end
 -- HTTPMAIL stat implementation.
 -- Does a STAT for the folder pointed by uri.
 -- @return table like {{uri="uri",size=1234},...,{uri="uri",size=1234}}.
-function httpmail.stat(b,uri)
-	local ans,err =httpmail.propfind(b,uri,
-		httpmail.R_folder_content_xml,httpmail.R_folder_content_header)
+function stat(b,uri)
+	local ans,err =propfind(b,uri,
+		Private.R_folder_content_xml,Private.R_folder_content_header)
 	if ans ~= nil then
 		local answer,msg,_,_ = 
-			xml2table.xml2table(httpmail.clean_entities(ans),
-				httpmail.Txml_convmap,
-				httpmail.default_charset)
+			xml2table.xml2table(clean_entities(ans),
+				Private.Txml_convmap,
+				Private.default_charset)
 		if answer == nil then
 			return answer,msg
 		end
@@ -318,8 +323,8 @@ function httpmail.stat(b,uri)
 		function(t)
 			if t == nil then return end
 			local uri = 
-				httpmail.safe_traverse(t,"D__href","_content")
-			local size = httpmail.safe_traverse(t,
+				safe_traverse(t,"D__href","_content")
+			local size = safe_traverse(t,
 					"D__propstat",
 					"D__prop",
 					"D__getcontentlength",

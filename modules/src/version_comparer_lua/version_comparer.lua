@@ -2,7 +2,6 @@
 -- version_comparer functions.
 -- This module implements a smart version somparer.
 
-version_comparer = {}
 
 --============================================================================---- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL
 --============================================================================--
@@ -56,6 +55,10 @@ function private.compare_token(tok1, tok2)
 	end
 end
 
+--============================================================================--
+
+module("version_comparer")
+
 ---
 -- Compare version1 and version2.
 -- @param version1 string.
@@ -63,13 +66,13 @@ end
 -- @return number 0 if version1 == version2, 
 -- 		-1 if version1 < version2, 
 -- 		1 if version1 > version2, nil if incomparable.
-function version_comparer.compare_versions(version1, version2)
+function compare_versions(version1, version2)
 	local v1, tok1 = private.next_token(version1)	
 	local v2, tok2 = private.next_token(version2)	
 
 	local rc = private.compare_token(tok1, tok2)
 	if rc == 0 and (v1 ~= nil or v2 ~= nil) then
-		return version_comparer.compare_versions(v1, v2)
+		return compare_versions(v1, v2)
 	else
 		return rc
 	end

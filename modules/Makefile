@@ -34,6 +34,12 @@ clean: src/config
 	$(H)rm -fr  bin/luafiles/ || true
 	$(H)rm -fr html html_lua
 	$(H)$(MAKE) -C src clean
+	$(H)for D in include/*/; do\
+		N=`ls $$D/*.lua $$D/*/*.lua $$D/*/*/*.lua 2>/dev/null | wc -l`;\
+		if [ $$N -gt 0 ]; then \
+			rm -fr $$D;\
+		fi;\
+	done
 
 doc: all
 	$(H)doxygen

@@ -143,7 +143,7 @@ end
 -- extern function
 --==========================================================================--
 
-table2xml = {}
+module("table2xml")
 
 ---
 -- Txml2xml conversion.
@@ -153,7 +153,7 @@ table2xml = {}
 -- <tt>__</tt> are converted.
 -- @param unescape boolean true to not escape XML entities
 -- @return string an XML string.
-function table2xml.table2xml(t,escape_namespace,encoding,unescape)
+function table2xml(t,escape_namespace,encoding,unescape)
         local s = nil
 	local fake_file = {s={}}
 	function fake_file.write(self,...)

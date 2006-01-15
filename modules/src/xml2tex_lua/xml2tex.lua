@@ -1,4 +1,4 @@
-assert(freepops.loadlib("modules/include/xml2table.lua"))()
+require("xml2table")
 
 local private = {}
 private.multilang = {}

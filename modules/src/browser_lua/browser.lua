@@ -59,7 +59,8 @@
 -- <B>ssl_init_stuff()</B> : some stuff for SSL<BR/>
 --<BR/>
 
-dofile("cookie.lua")
+require("curl")
+local cookie = require("browser.cookie")
 
 -- the methods of a browser objects
 local Private = {}
@@ -697,14 +698,15 @@ function Private.verbose_mode(self)
 	self.curl:setopt(curl.OPT_VERBOSE,1)
 end
 
-browser = {}
 
 --<==========================================================================>--
+
+module("browser")
 
 ---
 -- Creates a new object.
 -- @return object.
-function browser.new(override_useragent)
+function new(override_useragent)
 	local b = {
 		cookies = {},
 		referrer = false, --nil will break the metatable check
@@ -736,7 +738,7 @@ end
 ---
 -- Returns true if the browser is SSL enabled.
 -- @return boolean.
-function browser.ssl_enabled()
+function ssl_enabled()
 	local s = curl.version()
 	local _,_,x = string.find(s,"([SsTt][SsLl][LlSs])")
 	return x ~= nil

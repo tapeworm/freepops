@@ -153,8 +153,8 @@ lua_State* bootstrap(const char * username, struct popstate_t* p){
 				ERROR_PRINT("Unable to load " FREEPOPSLUA_FILE 
 					". Path was '" 
 					FREEPOPSLUA_PATH ":src/lua/:./'\n");
-				ERROR_SAY("Working dir is %s\n",getenv("PWD"));
-				ERROR_SAY("Can't bootstrap without "
+				ERROR_PRINT("Working dir is %s\n",getenv("PWD"));
+				ERROR_PRINT("Can't bootstrap without "
 					FREEPOPSLUA_FILE"\n");
 				lua_close(l);
 				return NULL;
@@ -179,7 +179,7 @@ lua_State* bootstrap(const char * username, struct popstate_t* p){
 	if (username == NULL) {
 		luay_call(l, "s|d", "freepops.bootstrap", username, &rc);
 		if(rc != 0){
-			ERROR_SAY("Error calling freepops.bootstrap");
+			ERROR_PRINT("Error calling freepops.bootstrap");
 			luay_printstack(l);
 			lua_close(l);
 			return NULL;
@@ -194,7 +194,8 @@ lua_State* bootstrap(const char * username, struct popstate_t* p){
 	} else {
 		luay_call(l, "s|d", "freepops.init", username, &rc);
 		if(rc != 0){
-			ERROR_SAY("Error calling freepops.init('%s')",username);
+			ERROR_PRINT("Error calling freepops.init('%s')",
+					username);
 			luay_printstack(l);
 			lua_close(l);
 			return NULL;
@@ -209,7 +210,8 @@ lua_State* bootstrap(const char * username, struct popstate_t* p){
 		
 		luay_call(l, "p|d", "init", p, &rc);	
 		if(rc != 0){
-			ERROR_SAY("Error calling init function of lua module");
+			ERROR_PRINT(
+				"Error calling init function of lua module");
 			luay_printstack(l);
 			lua_close(l);
 			return NULL;

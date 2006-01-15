@@ -1148,27 +1148,19 @@ function init(pstate)
 
   -- Serialization
   --
-  if freepops.dofile("serialize.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end 
+  require("serial")
 
   -- Browser
   --
-  if freepops.dofile("browser.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end
+  require("browser")
 	
   -- MIME Parser/Generator
   --
-  if freepops.dofile("mimer.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end	
+  require("mimer")
 
   -- Common module
   --
-  if freepops.dofile("common.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end
+  require("common")
 	
   -- Run a sanity check
   --

@@ -49,12 +49,12 @@ function init(pstate)
 		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
 
 	-- the serialization module
-	--if freepops.dofile("serialize.lua") == nil then 
+	--require("serial")
 	--	return POPSERVER_ERR_UNKNOWN 
 	--end 
 
 	-- the browser module
-	--if freepops.dofile("browser.lua") == nil then 
+	--require("browser")
 	--	return POPSERVER_ERR_UNKNOWN 
 	--end
 	

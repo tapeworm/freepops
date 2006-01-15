@@ -8,9 +8,8 @@
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
 --============================================================================--
 
-
-assert(freepops.loadlib("table2xml.lua"))()
-assert(freepops.loadlib("xml2table.lua"))()
+require("table2xml")
+require("xml2table")
 
 local private = {}
 

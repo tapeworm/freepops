@@ -139,30 +139,18 @@ function init(pstate)
 		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
 
 	-- the serialization module
-	if freepops.dofile("serialize.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end 
+	require("serial")
 
 	-- the browser module
-	if freepops.dofile("browser.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end
+	require("browser")
 
 	-- lod these in this order
-	if freepops.dofile("xml2table.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end
-	if freepops.dofile("table2xml.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end
-	if freepops.dofile("httpmail.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end
+	require("xml2table")
+	require("table2xml")
+	require("httpmail")
 
 	-- the common module
-	if freepops.dofile("common.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end
+	require("common")
 	
 	
 	-- checks on globals

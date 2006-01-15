@@ -230,7 +230,7 @@ end
 -- extern function
 --==========================================================================--
 
-xml2table = {}
+module("xml2table")
 
 ---
 -- Converts XML data in a table.
@@ -244,7 +244,7 @@ xml2table = {}
 -- @param force_encoding string To force the encoding of the XML,
 --  putting "UTF-8" solves some problems with strange encodings.
 -- @return table the resulting table or nil follwed by msg,line,col.
-function xml2table.xml2table(s,m,force_encoding)
+function xml2table(s,m,force_encoding)
 	local tab = {s=Private.stack.new()}
 	local handle_namespaces = nil
 	if m == nil then
@@ -276,7 +276,7 @@ end
 ---
 -- This is a selective table-foreach.
 -- A correct usage is forach_son(t,"D__resposnse",f).
-function xml2table.forach_son(t,sonname,f)
+function forach_son(t,sonname,f)
 	table.foreachi(t,function(_,v)
 		if v.tag_name == sonname then
 			f(v)

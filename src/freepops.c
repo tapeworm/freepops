@@ -354,7 +354,7 @@ HIDDEN void parse_suid(const char* optarg){
 /*** helpers ******************************************************************/
 HIDDEN void start_logging(char* logfile,int verbosity) {
 	log_set_verbosity(verbosity);
-	LOG_INIT(logfile,verbose_output >= 1);
+	LOG_INIT(logfile);
 	SAY("freepops started with loglevel %d on a %s machine.\n",verbosity,
 		((unsigned short)1 != htons(1))?"little endian":"big endian");
 }
@@ -386,14 +386,14 @@ HIDDEN int execute(const char* scriptfile, const char* stdoutname){
 	// boot
 	lua_State* l = bootstrap(NULL,NULL);
 	if(l == NULL){
-		ERROR_SAY("Unable to bootstrap\n");
+		ERROR_PRINT("Unable to bootstrap\n");
 		return -1;
 	}
 	
 	// load the script 
 	e = luay_call(l, "s|b", "freepops.dofile", scriptfile, &rc);
 	if(!rc || e){
-		ERROR_SAY("Unable to load %s\n",scriptfile);
+		ERROR_PRINT("Unable to load %s\n",scriptfile);
 		return -1;
 	}
 	

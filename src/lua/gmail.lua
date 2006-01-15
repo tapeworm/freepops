@@ -992,21 +992,15 @@ function init(pstate)
 		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
 
 	-- the serialization module
-	if freepops.dofile("serialize.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end 
+	require("serial")
 
 	-- the browser module
-	if freepops.dofile("browser.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end
+	require("browser")
 
 	freepops.need_ssl()
 
 	-- the common implementation module
-	if freepops.dofile("common.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end
+	require("common")
 	
 	-- checks on globals
 	freepops.set_sanity_checks()

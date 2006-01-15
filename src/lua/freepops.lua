@@ -13,13 +13,29 @@ freepops = {}
 freepops.MODULES_MAP = {}
 
 ---
--- List of loaded so/dll/lua libs.
-freepops.LOADED = {}
-
----
 -- This is a global variable that the plugins may read, see the libero plugin
 -- for an example.
 freepops.MODULE_ARGS = nil
+
+---
+-- List of loaded so/dll/lua libs.
+-- XXX DEPRECATED XXX 
+--   we use compat-5.1 'require' system
+--   we temporarily add a metatable to print a warning
+  freepops.LOADED = {}
+  local real_freepops_dot_LOADED = {}
+  setmetatable(freepops.LOADED,{
+  	__index = function(t,k) 
+		log.error_print("method deprecated. please use 'require'"..
+			" to load "..k)
+		return real_freepops_dot_LOADED[k]
+	end,
+  	__newindex = function(t,k,v) 
+		log.error_print("method deprecated. please use 'require'"..
+			" to load "..k)
+		real_freepops_dot_LOADED[k] = v
+	end
+  })
 
 --<==========================================================================>--
 -- This metatable/metamethod avoid accessing wrong fields of the tabe
@@ -69,7 +85,6 @@ local function load_config()
 		error("Unable to load config.lua. Path is "..
 			table.concat(paths,":"))
 	end
-
 end
 
 -- Required methods for a plugin.
@@ -171,7 +186,7 @@ function freepops.safe_extract_domains(f)
 
 	-- the hack
 	setmetatable(env,meta_env)
-	local g, err = loadfile(f)
+	local g, err = __loadfile(f)
 	if g  == nil then
 		log.dbg(err)
 		return nil
@@ -426,13 +441,7 @@ end
 
 ---
 -- uses freepops' dofile instead of the standard one.
-dofile = freepops.dofile
----
--- uses freepops' loadlib instead of the standard one.
-loadlib = freepops.loadlib
----
--- uses freepops' loadfile instead of the standard one.
-loadfile = freepops.loadlib
+dofile = function(f) return require(f) or freepops.dofile(f) end
 
 ---
 -- Load needed module for handling domain.
@@ -690,9 +699,6 @@ end
 function freepops.bootstrap()
 	load_config()
 	
-	-- standard lua modules that must be loaded
-	if freepops.dofile("support.lua") == nil then return 1 end
-
 	-- compat-5.1
 	LUA_PATH=""
 	local function path_to_compat51_path(_,path)
@@ -702,6 +708,9 @@ function freepops.bootstrap()
 	table.foreach(freepops.MODULES_PREFIX,path_to_compat51_path)
 	table.foreach(freepops.MODULES_PREFIX_UNOFFICIAL,path_to_compat51_path)
 	freepops.dofile("compat-5.1.lua")
+	
+	-- standard lua modules that must be loaded
+	if require("support") == nil then return 1 end
 
 	return 0 -- OK
 end

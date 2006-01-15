@@ -176,10 +176,10 @@ else	{
 		SAY(fmt,pid,c);
 	if (matches(SOCK_ERROR "Error calling \"recvstring_with_timeout",c))
 		{
-		ERROR_SAY(fmt,pid,"Probably the client disconnected.");
-		ERROR_SAY(fmt,pid,"Try increasing the client timeout.\n");
+		ERROR_PRINT(fmt,pid,"Probably the client disconnected.");
+		ERROR_PRINT(fmt,pid,"Try increasing the client timeout.\n");
 		}
-	DBG("[%d] %s\n",pid,c);	
+	DBG("[%d] %s",pid,c);	
 	}
 }
 

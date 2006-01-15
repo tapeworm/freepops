@@ -187,10 +187,10 @@ end
 
 --<==========================================================================>--
 
-cookie = {}
+module("browser.cookie")
 
 -- parse
-function cookie.parse_cookies(s,h)
+function parse_cookies(s,h)
 	if s then
 		local r = {}
 		table.insert(r,Private.parse_cookie(s,h)) 
@@ -201,7 +201,7 @@ function cookie.parse_cookies(s,h)
 end
 
 -- merges two tables of cookies
-function cookie.merge(t2,t1)
+function merge(t2,t1)
 	if not t1 then
 		return
 	end
@@ -252,7 +252,7 @@ end
 -- Obs:
 --   the leading '/' in {/<path>} is considered part of <path>
 -----------------------------------------------------------------------------
-function cookie.parse_url(url, default)
+function parse_url(url, default)
     -- initialize default parameters
     local parsed = default or {}
     -- empty url is parsed to nil
@@ -300,7 +300,7 @@ end
 
 -- returns the needed cookie for the domain...
 -- returns the string
-function cookie.get(t,res,domain,host)
+function get(t,res,domain,host)
 	if domain == nil then
 		error("cookie.get can't be called with an empty domain")
 	end
@@ -353,7 +353,7 @@ function cookie.get(t,res,domain,host)
 end
 
 -- cleans expired cookies
-function cookie.clean_expired(t)
+function clean_expired(t)
 	table.foreach(t,function(x,c)
 	if Private.is_expired(c) then
 		t[x] = nil

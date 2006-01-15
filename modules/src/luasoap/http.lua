@@ -1,8 +1,9 @@
 -- this is not the origina http.lua, since it was luasocket-based
 -- this file is released under the same license as LUA 5.0 (MIT)
 
-freepops.dofile("browser.lua") 
-require "soap"
+require("browser") 
+require("soap")
+
 module("soap.http")
 
 function call(browser, url, namespace, method, entries, headers)

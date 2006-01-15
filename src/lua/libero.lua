@@ -660,20 +660,9 @@ function init(pstate)
 	log.dbg("FreePOPs plugin '"..
 		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
 
-	-- the serialization module
-	if freepops.dofile("serialize.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end 
-
-	-- the browser module
-	if freepops.dofile("browser.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end
-
-	-- the common implementation module
-	if freepops.dofile("common.lua") == nil then 
-		return POPSERVER_ERR_UNKNOWN 
-	end
+	require("serial") -- the serialization module
+	require("browser") -- the browser module
+	require("common") -- the common implementation module
 
 	-- checks on globals
 	freepops.set_sanity_checks()

@@ -1,0 +1,2 @@
+browser.lua=browser/browser.lua
+cookie.lua=browser/cookie.lua

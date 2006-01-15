@@ -3,7 +3,6 @@
 -- Module to build on the fly a message from a header, a body (both in html or
 -- plain text format), a list of attachments urls
 
-mimer = {}
 
 --============================================================================--
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
@@ -224,7 +223,7 @@ Private.cr = string.byte("\r",1)
 ---
 -- Encodes the message for mail transfer.
 -- must be
-function mimer.quoted_printable_encode(s)
+function Private.quoted_printable_encode(s)
 	local out = {}
 	local eq = Private.eq
 	
@@ -293,10 +292,10 @@ function Private.quoted_printable_io_slave(cb)
 			if forced then
 				chunk = string.gsub(chunk,"[\r\n]","")
 				table.insert(todo_table,
-				mimer.quoted_printable_encode(chunk).."\r\n")
+				Private.quoted_printable_encode(chunk).."\r\n")
 			else
 				table.insert(todo_table,
-				mimer.quoted_printable_encode(chunk).."=\r\n")
+				Private.quoted_printable_encode(chunk).."=\r\n")
 			end
 			
 			buffer = string.sub(buffer,len + 1,-1)
@@ -514,6 +513,7 @@ function Private.html2txt(s,base_uri,html_coded,html_tags,all)
 end
 
 --<==========================================================================>--
+module("mimer")
 
 ---
 -- Builds a MIME encoded message and pipes it to send_cb.
@@ -531,7 +531,7 @@ end
 -- @param inlineids table a table { ["filename"] = "content-Ids" } which
 -- 	  contains the ids for inline attachments (default {}).
 -- @param text_encoding string default "iso-8859-1"	  
-function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,inlineids,text_encoding)
+function pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,inlineids,text_encoding)
 	attachments = attachments or {}
         inlineids = inlineids or {}
 	text_encoding = text_encoding or "iso-8859-1"
@@ -542,7 +542,7 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 		return
 	end
 
-	body = body or mimer.html2txtmail(body_html,base_uri)
+	body = body or html2txtmail(body_html,base_uri)
 
 	if table.getn(attachments) > 0 then
 		local boundary = Private.randomize_boundary()
@@ -570,8 +570,8 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 				"Content-Transfer-Encoding: "..
 					"quoted-printable\r\n"..
 				"\r\n"..
-				mimer.txt2mail(
-					mimer.quoted_printable_encode(body))..
+				txt2mail(
+					Private.quoted_printable_encode(body))..
 				"\r\n")
 			if rc ~= nil then return end	
 		else
@@ -579,10 +579,10 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 			if rc ~= nil then return end
 
 			rc = Private.send_alternative(text_encoding,
-				mimer.txt2mail(
-					mimer.quoted_printable_encode(body)),
-				mimer.txt2mail(
-					mimer.quoted_printable_encode(
+				txt2mail(
+					Private.quoted_printable_encode(body)),
+				txt2mail(
+					Private.quoted_printable_encode(
 						body_html)),
 				send_cb)
 			if rc ~= nil then return end	
@@ -600,17 +600,17 @@ function mimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,send
 			rc = send_cb(headers .. "\r\n")
 			if rc ~= nil then return end
 			
-			rc = send_cb(mimer.txt2mail(body))
+			rc = send_cb(txt2mail(body))
 			if rc ~= nil then return end
 		else
 			rc = send_cb(headers)
 			if rc ~= nil then return end
 			
 			rc = Private.send_alternative(text_encoding,
-				mimer.txt2mail(
-					mimer.quoted_printable_encode(body)),
-				mimer.txt2mail(
-					mimer.quoted_printable_encode(
+				txt2mail(
+					Private.quoted_printable_encode(body)),
+				txt2mail(
+					Private.quoted_printable_encode(
 						body_html)),
 				send_cb)
 			if rc ~= nil then return end	
@@ -621,7 +621,7 @@ end
 ---
 -- Tryes to convert an HTML document to a human readable plain text.
 --
-function mimer.html2txtmail(s,base_uri)
+function html2txtmail(s,base_uri)
 	return Private.html2txt(s,base_uri,Private.html_coded,Private.html_tags,true)
 end
 
@@ -629,7 +629,7 @@ end
 -- Converts an HTML document to a plain text file, removing tags and
 -- unescaping &XXXX; sequences.
 --
-function mimer.html2txtplain(s,base_uri)
+function html2txtplain(s,base_uri)
 	return Private.html2txt(s,base_uri,Private.html_coded,
 		Private.html_tags_plain,false)
 end
@@ -638,7 +638,7 @@ end
 -- Converts a plain text string to a \r\n encoded message, ready to send as
 -- a RETR response.
 -- 
-function mimer.txt2mail(s)
+function txt2mail(s)
 	s = string.gsub(s,'\r','')
 	s = string.gsub(s,'\n','\r\n')
 	s = string.gsub(s,'\r\n.\r\n','\r\n..\r\n')
@@ -682,7 +682,7 @@ end
 --Removes unwanted tags from an html string.
 --@param p table a list of tags in this form {"head","p"}.
 --@return string the cleaned html.
-function mimer.remove_tags(s,p)
+function remove_tags(s,p)
 	table.foreachi(p,function(k,v)
 		s = string.gsub(s,Private.domatch("<%s*[!/]?",v,"[^>]*>"),"")
 	end)
@@ -709,7 +709,7 @@ end
 --@param p table a list of mail headers in this form {"content%-type","date"} 
 -- 	(with - escaped with %).
 --@return string the cleaned header.
-function mimer.remove_lines_in_proper_mail_header(s,p)
+function remove_lines_in_proper_mail_header(s,p)
 	local s1 = Private.lines_of_string(s)
 	local remove_next = false
 	local result = {}
@@ -749,7 +749,7 @@ end
 --@param f function a function that takes s,len and returns len,error.
 --@return function a callback that returns non nil to stop (instead of 
 --                 0,"" or nil,"").
-function mimer.callback_mangler(f) 
+function callback_mangler(f) 
 	return function(s)
 		local b,err = f(s,string.len(s))
 		if b == 0 or b == nil then

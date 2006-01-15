@@ -3,7 +3,7 @@
 -- These functions need a <B>stat(pstate)</B> 
 -- that checks if it called more than once.
 
-common = {}
+module("common")
 
 --============================================================================--
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
@@ -12,44 +12,44 @@ common = {}
 ---
 -- Checks if a message number is in range
 --
-function common.check_range(pstate,msg)
+function check_range(pstate,msg)
 	local n = get_popstate_nummesg(pstate)
 	return msg >= 1 and msg <= n
 end
 
 ---
 -- Fill msg uidl field
-function common.uidl(pstate,msg)
+function uidl(pstate,msg)
 	return stat(pstate)
 end
 
 ---
 -- Fill all messages uidl field
-function common.uidl_all(pstate)
+function uidl_all(pstate)
 	return stat(pstate)
 end
 
 ---
 -- Fill msg size
-function common.list(pstate,msg)
+function list(pstate,msg)
 	return stat(pstate)
 end
 
 ---
 -- Fill all messages size
-function common.list_all(pstate,msg)
+function list_all(pstate,msg)
 	return stat(pstate)
 end
 
 ---
 -- Do nothing
-function common.noop(pstate)
+function noop(pstate)
 	return POPSERVER_ERR_OK
 end
 
 ---
 -- Unflag each message merked for deletion
-function common.rset(pstate)
+function rset(pstate)
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 	
@@ -61,11 +61,11 @@ end
 
 ---
 -- Mark msg for deletion
-function common.dele(pstate,msg)
+function dele(pstate,msg)
 	local st = stat(pstate)
 	if st ~= POPSERVER_ERR_OK then return st end
 
-	if not common.check_range(pstate,msg) then
+	if not check_range(pstate,msg) then
 		return POPSERVER_ERR_NOMSG
 	end
 	set_mailmessage_flag(pstate,msg,MAILMESSAGE_DELETE)
@@ -76,7 +76,7 @@ end
 -- A common implementation of the retr_cb used in the retr() function
 -- @param data userdata the data passed to the retr function.
 -- @return function the callback to use with b:pipe_uri().
-function common.retr_cb(data)
+function retr_cb(data)
 -- The callbach factory for retr
 --
 -- A callback factory is a function that generates other functions. both retr
@@ -123,7 +123,7 @@ end
 -- @param truncate bool if we should truncate the commection when done or not.
 -- @return function the callback for b:pipe_uri().
 --
-function common.top_cb(global,data,truncate)
+function top_cb(global,data,truncate)
 	local purge = false
 	
 	return function(s,len)
@@ -171,7 +171,7 @@ end
 -- 	field or should be implemented dropping the connection.
 -- @return number POPSERVER_ERR_*.
 --
-function common.top(b,uri,key,tot_bytes,lines,data,truncate)
+function top(b,uri,key,tot_bytes,lines,data,truncate)
 	-- build the callbacks --
 	
 	-- this data structure is shared between callbacks
@@ -195,7 +195,7 @@ function common.top(b,uri,key,tot_bytes,lines,data,truncate)
 		base = 2048,
 	}
 	-- the callback for http stram
-	local cb = common.top_cb(global,data,truncate)
+	local cb = top_cb(global,data,truncate)
 	-- retrive must retrive from-to bytes, stores from and to in globals.
 	local retrive_f = function()
 		global.to = global.base + global.from + (global.lines + 1) * 100
@@ -238,7 +238,7 @@ end
 --@param lines number the number of line we want.
 --@param size number the size in byte of the mail, can be nil.
 --@return table the global argument from common.top_cb.
-function common.new_global_for_top(lines,size)
+function new_global_for_top(lines,size)
 	if size == nil then
 		return {lines=math.max(lines-1,0),
 			lines_requested=math.max(lines-1,0),

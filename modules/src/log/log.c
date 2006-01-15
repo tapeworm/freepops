@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <pthread.h>
+#include <math.h>
 
 #include "regularexp.h"
 #include "log.h"
@@ -27,19 +28,24 @@
 #define HIDDEN static
 
 #define OPENLOG_NAME "freepopsd"
+//! max of two
+#ifndef MAX
+#define MAX(a,b)        ((a<b)?(b):(a))
+#endif
+//! len
+#define B(n)           floor(MAX(log10(n),0) + 1)
 
 /******************************************************************************/
 
 HIDDEN int verbose_output = 0;
 HIDDEN FILE *fd = NULL;
-HIDDEN int syslogmode = 0;
 HIDDEN char *log_file_name = NULL;
 
 #ifndef WIN32
 HIDDEN int do_syslog = 0;
 #endif
 
-#define ZONE_POSTPEND 	"-> "
+#define ZONE_POSTPEND 	": "
 #define MAX_LOG_FILE_NEMBER 100
 #define LOG_OF_MAX_LOG_FILE_NEMBER_PLUS_1 4
 #define LOG_FILE_FORMAT "%s.%d"
@@ -176,7 +182,7 @@ int log_rotate(char *logfile)
 
 
 
-int log_init(char* logfile, int sysmode)
+int log_init(char* logfile)
 {
 #if (!(defined(WIN32) && !defined(CYGWIN))) && (!defined(BEOS))
 	char *filestr = NULL;
@@ -244,7 +250,6 @@ int log_init(char* logfile, int sysmode)
 		fprintf(stderr, "UNABLE TO OPEN LOGFILE: %s\n",logfile);
 
 #endif
-	syslogmode = sysmode;
 		
 	free(logfile);
 	return 0;
@@ -261,74 +266,85 @@ int log_end()
 }
 
 
-int logit(char* zone, char *str, ...)
+int logit(char* zone, char* preamble, char*filename,int line,char *str, ...)
 {
+	// the string that will be printed
 	char *logstr = NULL;
+	// the string the user wants to print
 	char *strtmp = NULL;
+	
 	int logstr_len,rc;
 	va_list args;
 
-	//fprintf(fd,"start\n");
+	// lock the logging media
 	pthread_mutex_lock(&mutex);
 
+	// create and clean the buffer for the user string
 	strtmp = (char *) malloc(MAX_LOG_STRING);
 	memset(strtmp, '\0', MAX_LOG_STRING);
 
+	// fill the buffer for the user string
 	va_start(args, str);
 	rc = vsnprintf(strtmp, MAX_LOG_STRING, str, args);
 	va_end(args);
 
-	if (rc >= MAX_LOG_STRING - 1 && strtmp[MAX_LOG_STRING-2] != '\n')
-		strtmp[MAX_LOG_STRING-2] = '\n';
-
-	if(syslogmode){
-		/* +1 is for \0 */
+	if (preamble == NULL)
 		logstr_len = strlen(zone) + strlen(ZONE_POSTPEND) + 
 			strlen(strtmp) + 1;
-		logstr = (char *) malloc(logstr_len);
-		MALLOC_CHECK(logstr);
+	else 
+		// +1 is for "\0" , + 3 is for "(,)"
+		logstr_len = strlen(preamble) +
+			strlen(filename) + MAX(B(line),4) + 
+			strlen(ZONE_POSTPEND) + strlen(strtmp) + 4;
+	
+	// allocate logstr
+	logstr = (char *) malloc(logstr_len);
+	MALLOC_CHECK(logstr);
 
-		snprintf(logstr, logstr_len, "%s%s%s", 
-			zone,ZONE_POSTPEND,strtmp);
-	}else{
-		logstr = strdup(strtmp);
-	}
+	// create logstr (all data wanted by the user)
+	if (preamble == NULL)
+		snprintf(logstr,logstr_len,"%s%s%s",zone,ZONE_POSTPEND,strtmp);
+	else
+		snprintf(logstr,logstr_len,"%s(%s,%4d)%s%s",
+			preamble,filename,line,ZONE_POSTPEND,strtmp);
 
 #ifndef WIN32
-	// I want to log in syslog file 
 	if (do_syslog) {
+		// syslog adds date and process name
 		syslog(LOG_DEBUG, logstr);
 	} else {
 #endif
-		if(syslogmode){
-			// insert name, date and time values
-			struct tm *newtime = NULL;
-			time_t aclock;
-			char timestr[30];	//see the manpage
-			regmatch_t p;
+		
+		// syslog adds date and process name, here we have to do it
+		// by hand
+		
+		struct tm *newtime = NULL;
+		time_t aclock;
+		char timestr[30];	//see the manpage
+		regmatch_t p;
 
-			/* Get time in seconds */
-			time(&aclock);
-			/* Convert time to struct tm form  */
-			newtime = localtime(&aclock);
+		/* Get time in seconds */
+		time(&aclock);
+		/* Convert time to struct tm form  */
+		newtime = localtime(&aclock);
 
-			free(strtmp);
-			strtmp = (char *) malloc(MAX_LOG_STRING + 1);
-			memset(strtmp, '\0', MAX_LOG_STRING + 1);
+		free(strtmp);
+		strtmp = (char *) malloc(MAX_LOG_STRING + 1);
+		memset(strtmp, '\0', MAX_LOG_STRING + 1);
 
-			strncpy(timestr, asctime(newtime), 30);
+		strncpy(timestr, asctime(newtime), 30);
 
-			/* remove the \n at the end */
-			p = regfind(timestr, "\n");
-			if (p.begin != -1)
-				timestr[p.begin] = '\0';
+		/* remove the \n at the end */
+		p = regfind(timestr, "\n");
+		if (p.begin != -1)
+			timestr[p.begin] = '\0';
 
-			snprintf(strtmp, MAX_LOG_STRING, "%s %s: %s", timestr,
-				 OPENLOG_NAME, logstr);
-		}else{
-			free(strtmp);
-			strtmp = strdup(logstr);
-		}
+		rc = snprintf(strtmp, MAX_LOG_STRING, "%s %s: %s", timestr,
+			 OPENLOG_NAME, logstr);
+	
+		// put an endline if the string was truncated
+		if (rc >= MAX_LOG_STRING-1 && strtmp[MAX_LOG_STRING-2] != '\n')
+		{	printf("XXX\n");	strtmp[MAX_LOG_STRING-2] = '\n';}
 
 		fprintf(fd, "%s", strtmp);
 		fflush(fd);

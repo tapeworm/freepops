@@ -363,45 +363,31 @@ function init(pstate)
 
   -- Browser
   --
-  if freepops.dofile("browser.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end
+  require("browser")
 	
   -- MIME Parser/Generator
   --
-  if freepops.dofile("mimer.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end	
+  require("mimer")
 
   -- Common module
   --
-  if freepops.dofile("common.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end
+  require("common")
 
   -- xml2table module
   --
-  if freepops.dofile("xml2table.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end
+  require("xml2table")
 
   -- table2xml module
   --
-  if freepops.dofile("table2xml.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end
+  require("table2xml")
 
   -- plugins2xml module
   --
-  if freepops.dofile("plugins2xml.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end
+  require("plugins2xml")
 	
   -- version comparer module
   --
-  if freepops.dofile("version_comparer.lua") == nil then 
-    return POPSERVER_ERR_UNKNOWN 
-  end
+  require("version_comparer")
 
   -- Run a sanity check
   --

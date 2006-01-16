@@ -1,3 +1,15 @@
+- added support for 'installation' file (like the 'interface' one) to specify in a sinple way where to install files (see the browser_lua modules for example)
+- reorganized some modules using a non flat structure (browser, lxp, soap) 
+- manual updated concerning the new lua5.1 module system
+- some fixes to Makefiles needed to support a non-flat LUA directory
+- moved all official plugins to the lua5.1 module system (using 'require')
+- moved all LUA modules to the lua5.1 module system (using 'module')
+- moved freepops.lua to the lua5.1 module system (old freepops.dofile is deprecated and the globals loadlib and loadfile are not redefined anymore).  freepops.dofile should be used only by the C core, while the LUA modules should user 'module' to declare a module and 'require' to import one. To manually load an external file freepops.find and loadfile/loadlib can be used.  dofile is redefined using first require, then the old freepops.dofile.
+- moved all C modules to the lua5.1 module system (unsing legacy header compat-5.1.h)
+- implemented luasoap/http.lua on top of browser.lua and not luasocket
+- updated luaexpat to 1.0.1
+- added luasoap
+- added compat-5.1
 19/11/2005 0.0.96
 - added a fix for strerror_r on OSX
 - added zibo86 https trough proxy patch (many thanks!)

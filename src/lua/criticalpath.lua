@@ -11,8 +11,8 @@ PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "criticalpath.lua"
 PLUGIN_REQUIRE_VERSION = "0.0.31"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=criticalpath.lua"
-PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=criticalpath.lua"
+PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {"@canada.com"}

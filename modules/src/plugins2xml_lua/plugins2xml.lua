@@ -117,6 +117,7 @@ private.extractor_function = function(file)
 		end)
 		table.insert(t[i],content)
 	end
+	local file = freepops.find(file)
 	local f, err = loadfile(file)
 	local G = {}
 	if f ~= nil then

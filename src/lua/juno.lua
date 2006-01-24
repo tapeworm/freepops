@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8g"
+PLUGIN_VERSION = "0.0.8h"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.27"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -580,8 +580,10 @@ function getAttachmentTable(cbInfo, data)
     if (filename == "Message") then
       filename = "Message.htm"
     end
+    url = internalState.strMailServer .. "/" .. url
+    filename = getFilename(url, filename)
     log.dbg("Found Attachment, File: " .. filename .. " - Url: " .. url)
-    attachments[filename] = internalState.strMailServer .. "/" .. url
+    attachments[filename] = url
     table.setn(attachments, table.getn(attachments) + 1)
   end
   
@@ -701,6 +703,25 @@ function getContentType(url)
   local _, _, x = string.find(h,
                 "[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")
   return (x or "unknown/unknown")
+end
+
+function getFilename(url, filename)
+  local browser = internalState.browser
+  if (string.find(filename, "%.%.%.$") == nil) then
+    return filename
+  end
+
+  local h, err = browser:get_head(url, {}, true)
+  if (err ~= nil) then
+    log.dbg(err)
+    return filename
+  end
+
+  local _, _, x = string.find(h, 'filename= "([^"]+)"')
+  if (x == nil) then
+    return filename
+  end
+  return x
 end
 
 -- ************************************************************************** --

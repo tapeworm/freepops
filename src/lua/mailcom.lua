@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9e"
+PLUGIN_VERSION = "0.0.9f"
 PLUGIN_NAME = "mail.com"
-PLUGIN_REQUIRE_VERSION = "0.0.17"
+PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=mailcom.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

@@ -23,9 +23,9 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.6"
+PLUGIN_VERSION = "0.0.7"
 PLUGIN_NAME = "RSS/RDF aggregator"
-PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=aggregator.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

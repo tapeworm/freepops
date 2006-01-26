@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2a"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "netscape.net"
-PLUGIN_REQUIRE_VERSION = "0.0.21"
+PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=netscape.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"

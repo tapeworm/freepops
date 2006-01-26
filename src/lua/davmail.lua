@@ -7,9 +7,9 @@
 --  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "DAVMAIL"
-PLUGIN_REQUIRE_VERSION = "0.0.15"
+PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=owa.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

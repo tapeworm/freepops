@@ -8,9 +8,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.7c"
+PLUGIN_VERSION = "0.1.8"
 PLUGIN_NAME = "yahoo.com"
-PLUGIN_REQUIRE_VERSION = "0.0.27"
+PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=yahoo.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

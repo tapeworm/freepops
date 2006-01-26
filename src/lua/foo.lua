@@ -8,9 +8,9 @@
 --  Written by Me <Me@myhouse>
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "Foo web mail"
-PLUGIN_REQUIRE_VERSION = "0.0.15"
+PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/"
 PLUGIN_HOMEPAGE = "http://www.freepops.org"

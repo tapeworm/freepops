@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9"
+PLUGIN_VERSION = "0.0.9a"
 PLUGIN_NAME = "aol.com"
-PLUGIN_REQUIRE_VERSION = "0.0.21"
+PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=aol.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"

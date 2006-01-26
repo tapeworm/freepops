@@ -29,7 +29,7 @@
 -- single string, all required
 PLUGIN_VERSION = "0.2.5"
 PLUGIN_NAME = "Libero.IT"
-PLUGIN_REQUIRE_VERSION = "0.0.14"
+PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=libero.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

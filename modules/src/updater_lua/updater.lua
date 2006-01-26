@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "updater"
-PLUGIN_REQUIRE_VERSION = "0.0.31"
+PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=updater.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
@@ -528,11 +528,33 @@ function saInit()
   --
   saLog(PLUGIN_NAME .. "(" .. PLUGIN_VERSION ..") Started!")
 
-  assert(freepops.loadlib("browser.lua"))()
-  assert(freepops.loadlib("xml2table.lua"))()
-  assert(freepops.loadlib("table2xml.lua"))()
-  assert(freepops.loadlib("plugins2xml.lua"))() 
-  assert(freepops.loadlib("version_comparer.lua"))() 
+  -- Browser
+  --
+  require("browser")
+	
+  -- MIME Parser/Generator
+  --
+  require("mimer")
+
+  -- Common module
+  --
+  require("common")
+
+  -- xml2table module
+  --
+  require("xml2table")
+
+  -- table2xml module
+  --
+  require("table2xml")
+
+  -- plugins2xml module
+  --
+  require("plugins2xml")
+	
+  -- version comparer module
+  --
+  require("version_comparer")
 
   -- Import the freepops name space allowing for us to use the status messages
   --

@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.8"
+PLUGIN_VERSION = "0.1.9"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -74,6 +74,11 @@ pulling messages.  Set the value to 1.]]
 		en = [[
 Parameter is used to force the plugin to empty the bulk folder when it is done
 pulling messages.  Set the value to 1.]]
+		}	
+	},
+	{name = "maxmsgs", description = {
+		en = [[
+Parameter is used to force the plugin to only download a maximum number of messages. ]]
 		}	
 	},
 }
@@ -222,6 +227,31 @@ local globals = {
   strYahooBr = "br",  -- Brazil
   strYahooMx = "mx",  -- Mexico
 
+  -- New Interface Strings
+  --
+
+  -- SOAP Urls
+  --
+  strSoapCmd = "%s%s?m=%s&wssid=%s", 
+  strCmdAttach = "%sym/cgdownload/?box=%s&MsgId=%s&bodyPart=%s&download=1",
+
+  -- SOAP Constants
+  --
+  strGre_Gve = "8",
+  strGre_Gid = "cg",
+
+  -- Patterns
+  --
+  strRegExpMailServerNew = '(http://[^/]+/)dc/',
+
+  -- Data Recognization on login
+  --
+  strRegExpCrumbNew = "wssid : '([^']+)'",
+  strRegExpWebSrvUrl = "webserviceUrl: '([^']+)'", 
+
+  -- Folder names
+  --
+  strBulkNew = "%40B%40Bulk",
 }
 
 -- ************************************************************************** --
@@ -244,7 +274,14 @@ internalState = {
   bEmptyTrash = false,
   bEmptyBulk = false,
   msgids = {},
-  strStatCache = nil
+  strStatCache = nil,
+  statLimit = nil,
+
+  -- New Interface pieces
+  --
+  bNewGUI = false,
+  strWebSrvUrl = nil,
+  strGSS = nil,
 }
 
 -- ************************************************************************** --
@@ -350,6 +387,23 @@ function hash()
          (internalState.strView or "")
 end
 
+-- Check to see if the GUI is the new one
+--
+function checkForNewGUI(browser, body)
+  local _, _, server = string.find(browser:whathaveweread(), globals.strRegExpMailServerNew)
+  if (server ~= nil) then 
+    log.dbg("Detected New Version of the Yahoo interface!\n")
+    log.raw("Detected New Version of the Yahoo interface!\n")
+    log.dbg("Yahoo Mail Server: " .. server .. "\n")
+
+    internalState.strMailServer = server
+    internalState.bNewGUI = true
+    return true
+  end
+
+  return false
+end
+
 -- Issue the command to login to Yahoo
 --
 function loginYahoo()
@@ -362,9 +416,9 @@ function loginYahoo()
     return POPSERVER_ERR_OK
   end
 
-  -- Create a browser to do the dirty work
+  -- Create a browser to do the dirty work (It must be set to IE 6.0)
   --
-  internalState.browser = browser.new()
+  internalState.browser = browser.new("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; {02ABE9F9-C33D-95EA-0C84-0B70CD0AC3F8}; .NET CLR 1.1.4322)")
   local SSLEnabled = browser.ssl_enabled()
 
   -- Define some local variables
@@ -420,14 +474,19 @@ function loginYahoo()
 
   body, err = browser:post_uri(url, post)
 
-  -- Error checking
-  --
+  local bNewGui = checkForNewGUI(browser, body)
 
-  -- No connection
+  if (bNewGui == true) then
+    return loginNewYahoo(browser, body) 
+  end
+
+  -- Do some error checking
   --
-  if body == nil then
+  if (body == nil) then
+    -- No connection
+    --
     log.error_print("Login Failed: Unable to make connection")
-    return POPSERVER_ERR_AUTH
+    return POPSERVER_ERR_NETWORK
   end
 
   -- Check for invalid password
@@ -443,16 +502,12 @@ function loginYahoo()
 
   -- Extract the mail server
   --
-  _, _, str = string.find(body, globals.strRegExpMailServer)
+  local _, _, str = string.find(body, globals.strRegExpMailServer)
   if str == nil then
     log.error_print("Login Failed: Unable to find mail server")
     return POPSERVER_ERR_UNKNOWN
   else
     internalState.strMailServer = str
-
-    -- DEBUG Message
-    --
-    log.dbg("Yahoo Mail Server: " .. str .. "\n")
   end
 
   -- If we are using HTTPS, we need to look for the meta-refresh link
@@ -461,9 +516,65 @@ function loginYahoo()
     _, _, str = string.find(body, globals.strRegExpMetarefresh)
     if (str ~= nil) then
       body, err = browser:get_uri(str)
+      
+      -- Here's the other check (SSL) for the beta interface
+      --
+      bNewGui = checkForNewGUI(browser, body)
+      if (bNewGui == true) then
+        return loginNewYahoo(browser, body) 
+      end
     end
   end
     
+  -- DEBUG Message
+  --
+  log.dbg("Yahoo Mail Server: " .. internalState.strMailServer .. "\n")
+
+  -- Note that we have logged in successfully
+  --
+  internalState.bLoginDone = true
+	
+  -- Debug info
+  --
+  log.dbg("Created session (ID: " .. hash() .. ", User: " .. 
+    internalState.strUser .. "@" .. internalState.strDomain .. ")\n")
+
+  -- Return Success
+  --
+  return POPSERVER_ERR_OK
+end
+
+-- Login into the new yahoo
+--
+function loginNewYahoo(browser, body) 
+  -- Let's get the crumb value
+  --
+  local _, _, str = string.find(body, globals.strRegExpCrumbNew)
+  if str == nil then
+    log.error_print("Yahoo - unable to parse out crumb value.  Deletion will fail.")
+    log.raw("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: " .. 
+      body)
+    return POPSERVER_ERR_UNKNOWN
+  end
+  internalState.strCrumb = str
+
+  -- Get the Web Service Url
+  --
+  local _, _, str = string.find(body, globals.strRegExpWebSrvUrl)
+  if str == nil then
+    log.error_print("Yahoo - unable to parse out web service Url.")
+    log.raw("Yahoo - unable to parse out web service value.  Body: " .. 
+      body)
+    return POPSERVER_ERR_UNKNOWN
+  end
+  internalState.strWebSrvUrl = str
+
+  -- Get metadata
+  --
+  if (getUserMetaData() == 1 or getUserData() == 1 or getFolderList() == 1) then
+    return POPSERVER_ERR_UNKNOWN
+  end
+
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true
@@ -495,19 +606,29 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   --
   local browser = internalState.browser
   local uidl = get_mailmessage_uidl(pstate, msg)
-  local msgid = internalState.msgids[uidl]
-  
-  local hdrUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
-    internalState.strMBox, msgid, "HEADER");
-  local bodyUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
-    internalState.strMBox, msgid, "TEXT");
+  local size = get_mailmessage_size(pstate, msg)
+  local msgid = nil
+  local hdrUrl = nil
+  local bodyUrl = nil
+  if internalState.bNewGUI == false then
+    msgid = internalState.msgids[uidl]
+    hdrUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
+      internalState.strMBox, msgid, "HEADER");
+    bodyUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
+      internalState.strMBox, msgid, "TEXT");
 
-  log.raw("hdrUrl = " .. hdrUrl)
-  log.raw("bodyUrl = " .. bodyUrl)
+    log.raw("hdrUrl = " .. hdrUrl)
+    log.raw("bodyUrl = " .. bodyUrl)
+  end
 
   -- Get the header
   --
-  local headers, _ = browser:get_uri(hdrUrl)
+  local headers
+  if internalState.bNewGUI then
+    headers = getMsgHdr(pstate, uidl)
+  else
+    headers, _ = browser:get_uri(hdrUrl)
+  end
 
   -- Define a structure to pass between the callback calls
   --
@@ -534,9 +655,19 @@ function downloadYahooMsg(pstate, msg, nLines, data)
 
     -- Lines Received - Not really used for anything
     --
-    nLinesReceived = 0
+    nLinesReceived = 0,
+
+    -- attachments table
+    --
+    attachments = {},
+    inlineids = {}, 
+
+    -- Text
+    --
+    strHtml = nil,
+    strText = nil,
   }
-	
+
   -- Define the callback
   --
   local cb = downloadMsg_cb(cbInfo, data)
@@ -547,23 +678,44 @@ function downloadYahooMsg(pstate, msg, nLines, data)
 
   -- Send the headers first to the callback
   --
-  cb(headers) 
+  if (internalState.bNewGUI ~= true) then
+    cb(headers) 
+  else
+    headers = string.gsub(headers, "\n", "\r\n")
+    headers = string.gsub(headers, "\r\n$", "")
+  end
 
   -- Start the download on the body
   -- 
   if nLines ~= 0 then
-    local f, _ = browser:pipe_uri(bodyUrl,cb)
-    if not f then
-      -- An empty message.  Send the headers anyway
-      --
-      log.dbg("Empty message")
-    else
-      -- Just send an extra carriage return
-      --
-      log.dbg("Message Body has been processed.")
-      if (cbInfo.strBuffer ~= "\r\n") then
-        log.dbg("Message doesn't end in CRLF, adding to prevent client timeout.")
-        popserver_callback("\r\n\0", data)
+    if (internalState.bNewGUI) then
+      headers = mimer.remove_lines_in_proper_mail_header(headers, {"content%-type",
+		"content%-disposition", "mime%-version", "boundary"})
+
+      getMsgBody(pstate, uidl, size, cbInfo)
+      mimer.pipe_msg(
+        headers, 
+        cbInfo.strText, 
+        cbInfo.strHtml, 
+        internalState.strMailServer, 
+        cbInfo.attachments, browser, 
+        function(s)
+          popserver_callback(s,data)
+        end, cbInfo.inlineids)
+    else 
+      local f, _ = browser:pipe_uri(bodyUrl,cb)
+      if not f then
+        -- An empty message.  Send the headers anyway
+        --
+        log.dbg("Empty message")
+      else
+        -- Just send an extra carriage return
+        --
+        log.dbg("Message Body has been processed.")
+        if (cbInfo.strBuffer ~= "\r\n") then
+          log.dbg("Message doesn't end in CRLF, adding to prevent client timeout.")
+          popserver_callback("\r\n\0", data)
+        end
       end
     end
   end
@@ -571,16 +723,21 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   -- Do we need to mark the message as unread?
   --
   if internalState.bMarkMsgAsUnread == true then
-    local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
-      internalState.strMBox, msgid);
-    local str, _ = browser:get_uri(cmdUrl) 
-    _, _, str = string.find(str, globals.strMsgMarkUnreadPat)
-    if str == nil then
-      log.warn("Unable to get the url for marking message as unread.")
+    if internalState.bNewGUI then
+      log.dbg("Marking as message: " .. uidl .. " as unread");
+      markMsgUnread(uidl)
     else
-      cmdUrl = internalState.strMailServer .. str;
-      log.dbg("Marking as message: " .. msgid .. " as unread, url: " .. cmdUrl);
-      browser:get_uri(cmdUrl) -- We don't care about the results.
+      local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
+        internalState.strMBox, msgid);
+      local str, _ = browser:get_uri(cmdUrl) 
+      _, _, str = string.find(str, globals.strMsgMarkUnreadPat)
+      if str == nil then
+        log.warn("Unable to get the url for marking message as unread.")
+      else
+        cmdUrl = internalState.strMailServer .. str;
+        log.dbg("Marking as message: " .. msgid .. " as unread, url: " .. cmdUrl);
+        browser:get_uri(cmdUrl) -- We don't care about the results.
+      end
     end
   end
 
@@ -646,6 +803,384 @@ function downloadMsg_cb(cbInfo, data)
     
     return len, nil
   end
+end
+
+function getMsgCallBack(cbInfo, body)
+  -- Do some cleanup
+  --
+  body = string.gsub(body, "\r\n", "\n")
+  body = string.gsub(body, "\n", "\r\n")
+   
+  -- Perform our "TOP" actions
+  --
+  if (cbInfo.nLinesRequested ~= -2) then
+    body = cbInfo.strHack:tophack(body, cbInfo.nLinesRequested)
+
+    -- Check to see if we are done and if so, update things
+    --
+    if cbInfo.strHack:check_stop(cbInfo.nLinesRequested) then
+      if (string.sub(body, -2, -1) ~= "\r\n") then
+        body = body .. "\r\n"
+      end
+    end
+  end
+
+  return body
+end
+
+-- ************************************************************************** --
+--  SOAP functions
+-- ************************************************************************** --
+
+function getUserMetaData()
+  local browser = internalState.browser
+  local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
+    internalState.strWebSrvUrl, "GetMetaData", internalState.strCrumb)
+
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "GetMetaData", 
+      {
+        {
+          tag = "param1",
+            { tag = "greq", 
+              attr = { ["gve"] = globals.strGre_Gve },
+                { tag = "gid", globals.strGre_Gid }
+            }
+        },
+      })
+
+  -- The response means nothing right now
+  --
+  return 0
+end
+
+function getUserData()
+  local browser = internalState.browser
+  local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
+    internalState.strWebSrvUrl, "GetUserData", internalState.strCrumb)
+
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "GetUserData", 
+      {
+        {
+          tag = "param1",
+            { tag = "greq", 
+              attr = { ["gve"] = globals.strGre_Gve },
+                { tag = "gid", globals.strGre_Gid }
+            }
+        },
+      })
+
+  -- Need to grab the gres, gss element
+  --
+  local str = nil
+  for i, elem in ipairs (ent[2]) do
+    if (elem["tag"] == "gss") then
+      str = elem[1]
+    end
+  end
+
+  if (str == nil) then
+    log.error_print("Unable to parse out the gss value.")
+    return 1
+  end
+  internalState.strGSS = str
+
+  return 0
+end
+
+function getFolderList()
+  local browser = internalState.browser
+  local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
+    internalState.strWebSrvUrl, "ListFolders", internalState.strCrumb)
+
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "ListFolders", 
+      {
+        {
+          tag = "param1",
+            { tag = "greq", 
+              attr = { ["gve"] = globals.strGre_Gve },
+                { tag = "gid", globals.strGre_Gid },
+                { tag = "gss", internalState.strGSS }
+            },
+            { tag = "resetunseen", "true" } 
+        },
+      })
+
+  return 0
+end
+
+function getSTATList(pstate)
+  local browser = internalState.browser
+  local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
+    internalState.strWebSrvUrl, "LstMsgs", internalState.strCrumb)
+  local nMaxMsgs = 999 
+  if internalState.statLimit ~= nil then
+    nMaxMsgs = internalState.statLimit
+  end
+
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "LstMsgs", 
+      {
+        { tag = "param1",
+            attr = {
+              ["startMid"] = "0",
+              ["numMid"] = nMaxMsgs,
+              ["startInfo"] = "0",
+              ["numInfo"] = nMaxMsgs,
+              ["startBody"] = "0",
+              ["numBody"] = "0",
+            },
+            { tag = "greq", 
+              attr = { ["gve"] = globals.strGre_Gve },
+                { tag = "gid", globals.strGre_Gid },
+                { tag = "gss", internalState.strGSS }
+            },
+            { tag = "sortKey", "date" }, 
+            { tag = "sortOrder", "down" }, 
+            { tag = "flags", "" }, 
+            { tag = "fi",
+                attr = { ["fname"] = internalState.strMBox }, 
+                ""
+            },
+          }, 
+      })
+
+
+  -- Initialize our state
+  --
+  local nMsgs = 0
+  local nTotMsgs = 0
+  set_popstate_nummesg(pstate, nMsgs)
+
+  -- Parse the message id's and sizes
+  --
+  for i, elem in ipairs (ent) do
+    if (type(elem) == "table" and elem["tag"] == "minfo") then
+      local attrs = elem["attr"]
+      local size = attrs["msize"]     
+
+      local subelem = elem[1]
+      if (subelem["tag"] ~= "mid") then
+        log.error_print("Unable to parse out the message id")
+        return POPSERVER_ERR_NETWORK
+      end
+      local uidl = subelem[1]
+
+      -- Save the information
+      --
+      nMsgs = nMsgs + 1
+      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+      set_popstate_nummesg(pstate, nMsgs)
+      set_mailmessage_size(pstate, nMsgs, size)
+      set_mailmessage_uidl(pstate, nMsgs, uidl)
+    end
+  end
+		
+  internalState.bStatDone = true
+  return POPSERVER_ERR_OK
+end
+
+function getMsgHdr(pstate, uidl)
+  local browser = internalState.browser
+  local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
+    internalState.strWebSrvUrl, "GetMessageRawHeader", internalState.strCrumb)
+
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "GetMessageRawHeader", 
+      {
+        { tag = "param1",
+            { tag = "greq", 
+              attr = { ["gve"] = globals.strGre_Gve },
+                { tag = "gid", globals.strGre_Gid },
+                { tag = "gss", internalState.strGSS }
+            },
+            { tag = "mid", uidl }, 
+            { tag = "fi",
+                attr = { ["fname"] = internalState.strMBox }, 
+                ""
+            },
+          }, 
+      })
+
+  -- Get the header
+  --
+  local header = nil
+  for i, elem in ipairs (ent) do
+    if (type(elem) == "table" and elem["tag"] == "mhd") then
+      header = elem[1]
+    end
+  end
+
+  -- Make sure we have a valid header
+  --
+  if (header == nil) then 
+    log.error_print("Invalid header!")
+    return nil
+  end
+
+  return header
+end
+
+function getMsgBody(pstate, uidl, size, cbInfo)
+  local browser = internalState.browser
+  local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
+    internalState.strWebSrvUrl, "GetMessageBodyPart", internalState.strCrumb)
+
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "GetMessageBodyPart", 
+      {
+        { tag = "param1",
+            { tag = "greq", 
+              attr = { ["gve"] = globals.strGre_Gve, ["gdk"] = "1" },
+                { tag = "gid", globals.strGre_Gid },
+                { tag = "gss", internalState.strGSS }
+            },
+            { tag = "mid", uidl }, 
+            { tag = "truncateAt", 999999999 }, 
+            { tag = "fi",
+                attr = { ["fname"] = internalState.strMBox }, 
+                ""
+            },
+          }, 
+      })
+
+  -- Get the parts
+  --
+  local part = nil
+  for i, elem in ipairs (ent[2]) do
+    if (type(elem) == "table" and elem["tag"] == "part") then
+      part = elem
+      local attrs = elem["attr"]
+      local subtype = attrs["subType"]
+      if (subtype == "plain") then
+        local textElem = elem[1]
+        local text = textElem[1]
+        cbInfo.strText = getMsgCallBack(cbInfo, text)
+      elseif (subtype == "html") then
+        local textElem = elem[1]
+        local text = textElem[1]
+        text = string.gsub(text, "(</[^>]+>) ", "%1\r\n") 
+        cbInfo.strHtml = getMsgCallBack(cbInfo, text)
+      else
+        local partId = attrs["partId"]
+        local file = attrs["dispParams"]
+        local contentId = attrs["contentId"]
+        if (file ~= nil) then
+          file = string.gsub(file, "^.-=", "")
+          url = string.format(globals.strCmdAttach, internalState.strMailServer,
+             internalState.strMBox, uidl, partId)
+          cbInfo.attachments[file] = url
+          table.setn(cbInfo.attachments, table.getn(cbInfo.attachments) + 1)
+          if (contentId ~= nil) then
+            contentId = string.sub(contentId, 2, -2)
+            cbInfo.inlineids[file] = contentId
+            table.setn(cbInfo.inlineids, table.getn(cbInfo.inlineids) + 1)
+          end
+        end
+      end
+    end
+  end
+
+  return 0
+end
+
+function markMsgUnread(uidl)
+  local browser = internalState.browser
+  local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
+    internalState.strWebSrvUrl, "SetMessageFlag", internalState.strCrumb)
+
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "SetMessageFlag", 
+      {
+        { tag = "param1",
+            { tag = "greq", 
+              attr = { ["gve"] = globals.strGre_Gve },
+                { tag = "gid", globals.strGre_Gid },
+                { tag = "gss", internalState.strGSS }
+            },
+            { tag = "mid", uidl }, 
+            { tag = "fi",
+                attr = { ["fname"] = internalState.strMBox }, 
+                ""
+            },
+            { tag = "flag",
+                attr = { ["seen"] = "0" }, 
+                ""
+            },
+          }, 
+      })
+end
+
+function emptyFolder(folderName)
+  local browser = internalState.browser
+  local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
+    internalState.strWebSrvUrl, "EmptyFolder", internalState.strCrumb)
+
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "EmptyFolder", 
+      {
+        {
+          tag = "param1",
+            { tag = "greq", 
+              attr = { ["gve"] = globals.strGre_Gve },
+                { tag = "gid", globals.strGre_Gid },
+                { tag = "gss", internalState.strGSS }
+            },
+            { tag = "fi",
+                attr = { ["fname"] = folderName }, 
+                ""
+            },
+        },
+      })
+
+  return 0
+end
+
+function deleteMsgs(pstate)
+  local browser = internalState.browser
+  local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
+    internalState.strWebSrvUrl, "MoveMsgs", internalState.strCrumb)
+
+  local param = { tag = "param1" }
+
+  -- Cycle through the messages and see if we need to delete any of them
+  -- 
+  local cnt = get_popstate_nummesg(pstate)
+  local dcnt = 0
+
+  for i = 1, cnt do
+    if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
+      local uidl = get_mailmessage_uidl(pstate, i)
+      table.insert(param, { tag = "mid", uidl })
+      dcnt = dcnt + 1
+    end
+  end
+  if dcnt == 0 then
+    return 0
+  end
+
+  table.insert(param, { tag = "greq", 
+              attr = { ["gve"] = globals.strGre_Gve },
+                { tag = "gid", globals.strGre_Gid },
+                { tag = "gss", internalState.strGSS }
+            })
+  table.insert(param, { tag = "fi",
+                attr = { ["fname"] = internalState.strMBox }, 
+                ""
+            })
+  table.insert(param, { tag = "tofi",
+                attr = { ["fname"] = globals.strTrash }, 
+                ""
+            })
+  
+
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "MoveMsgs", 
+      { param })
+
+  return 0
 end
 
 -- ************************************************************************** --
@@ -774,6 +1309,15 @@ function user(pstate, username)
     internalState.bEmptyBulk = true
   end
 
+  -- If the flag maxmsgs is set,
+  -- STAT will limit the number of messages to the flag
+  --
+  val = (freepops.MODULE_ARGS or {}).maxmsgs or 0
+  if tonumber(val) > 0 then
+    log.dbg("Yahoo: A max of " .. val .. " messages will be downloaded.")
+    internalState.statLimit = tonumber(val)
+  end
+
   return POPSERVER_ERR_OK
 end
 
@@ -845,6 +1389,26 @@ function quit_update(pstate)
   local retCode = stat(pstate)
   if retCode ~= POPSERVER_ERR_OK then 
     return retCode 
+  end
+
+  if (internalState.bNewGUI == true) then
+    deleteMsgs(pstate)
+
+    if internalState.bEmptyTrash == true then
+      emptyFolder(globals.strTrash)
+    end  
+
+    if internalState.bEmptyBulk == true then
+      emptyFolder(globals.strBulkNew)
+    end
+
+    session.save(hash(), serialize_state(), session.OVERWRITE)
+    session.unlock(hash())
+
+    log.dbg("Session saved - Account: " .. internalState.strUser .. 
+      "@" .. internalState.strDomain .. "\n")
+
+    return POPSERVER_ERR_OK
   end
 
   -- Local Variables
@@ -962,6 +1526,12 @@ function stat(pstate)
     return POPSERVER_ERR_OK
   end
 
+  -- If we are using the new gui, use the new stat method
+  --
+  if internalState.bNewGUI then
+    return getSTATList(pstate)
+  end
+
   -- Local variables
   -- 
   local browser = internalState.browser
@@ -1007,10 +1577,6 @@ function stat(pstate)
       return false, nil
     end
 
-    -- Remove out the attachment link
-    --
-    --subBody = string.gsub(subBody, '<a href="[^"]+"><img[^>]+></a>', "")
-
     -- Tokenize out the message ID and size for each item in the list
     --    
     local items = mlex.match(subBody, globals.strMsgLineLitPattern, globals.strMsgLineAbsPattern)
@@ -1028,6 +1594,10 @@ function stat(pstate)
     for i = 1, cnt do
       local msgid = items:get(0, i - 1)
       local size = items:get(1, i - 1)
+
+      if (internalState.statLimit ~= nil and nMsgs >= internalState.statLimit) then
+        return true, nil
+      end
 
       if not msgid or not size then
         log.say("Yahoo Module needs to fix it's individual message list pattern matching.\n")
@@ -1080,6 +1650,10 @@ function stat(pstate)
   -- change the command url
   --
   local function funcCheckForMorePages(body) 
+    if internalState.statLimit ~= nil and internalState.statLimit >= nMsgs then
+      return true
+    end
+
     -- Look in the body and see if there is a link for a previous page
     -- If so, change the URL
     --
@@ -1241,7 +1815,12 @@ function init(pstate)
   -- Common module
   --
   require("common")
-	
+
+  -- Soap
+  --
+  require("soap/http")
+  require("soap/soap")
+
   -- Run a sanity check
   --
   freepops.set_sanity_checks()

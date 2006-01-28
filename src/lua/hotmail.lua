@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.4"
+PLUGIN_VERSION = "0.1.4a"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -241,7 +241,7 @@ end
 function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
-         (string.sub(internalState.strMBox, -5) or "")
+         (internalState.strMBoxName or "")
 end
 
 function getPage(browser, url)
@@ -764,10 +764,12 @@ function user(pstate, username)
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
   if mbox == nil then
+    internalState.strMBoxName = "Inbox"
     internalState.strMBox = globals.strInbox
     return POPSERVER_ERR_OK
   end
 
+  internalState.strMBoxName = mbox
   local _, _, start = string.find(mbox, globals.strJunkPat)
   if start ~= nil then
     internalState.strMBox = globals.strJunk
@@ -795,7 +797,6 @@ function user(pstate, username)
   -- Defaulting to the inbox
   --
   log.say("Custom mailbox set to: " .. mbox .. ".\n")
-  internalState.strMBoxName = mbox
   internalState.strMBox = globals.strInbox
   return POPSERVER_ERR_OK
 end

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.4a"
+PLUGIN_VERSION = "0.1.4b"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -23,8 +23,14 @@ PLUGIN_DOMAINS = { "@hotmail.com","@msn.com","@webtv.com",
       }
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
-		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox, gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
-		en=[[The folder you want to interact with. Default is Inbox, other values are: Junk, Trash, Draft, Sent.]]}
+		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox.]],
+		en=[[The folder you want to interact with. Default is Inbox.]]}
+	},
+	{name = "emptyjunk", description = {
+		en = [[
+Parameter is used to force the plugin to empty the junk folder when it is done
+pulling messages.  Set the value to 1.]]
+		}	
 	},
 	{name = "emptytrash", description = {
 		it = [[ Viene usato per forzare il plugin a svuotare il cestino quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
@@ -38,6 +44,11 @@ pulling messages.  Set the value to 1.]]
 		en = [[ Parameter is used to have the plugin mark all messages that it
 pulls as unread.  If the value is 1, the behavior is turned on.]]
 		}
+	},
+	{name = "maxmsgs", description = {
+		en = [[
+Parameter is used to force the plugin to only download a maximum number of messages. ]]
+		}	
 	},
 }
 PLUGIN_DESCRIPTIONS = {
@@ -54,10 +65,6 @@ the forum instead of emailing the author(s).]]
 
 -- Domains supported:  hotmail.com, msn.com, webtv.com, charter.com, compaq.net,
 --                     passport.com
-
--- TODO
--- 
--- - Support user defined mailboxes.  For now, we support: Inbox, Junk, Sent, Drafts, Trash
 
 -- ************************************************************************** --
 --  Global Strings
@@ -79,6 +86,7 @@ local globals = {
   --
   strRetLoginBadLogin = "(memberservices)",
   strRetLoginSessionExpired = "(Sign in)",
+  strRetLoginSessionExpiredLive = "(new HM%._)",
   strRetStatBusy = "(form name=.hotmail.)",
   
   -- Regular expression to extract the mail server
@@ -101,10 +109,16 @@ local globals = {
   -- Image server pattern
   --
   strImgServerPattern = 'img src="(http://[^/]*)/spacer.gif"',
+  strImgServerLivePattern = 'img src="(http://[^/]*)/mail/',
+
+  -- Trash Folder pattern
+  -- 
+  strPatLiveTrashId = 'i_trash%.gif"</td><td><a href=/mail/mail%.aspx%?Control=[^&]+&FolderID=([^>]+)>',
 
   -- Folder id pattern
   --
   strFolderPattern = '<a href="[^"]+curmbox=([^&]+)&[^"]+" >', 
+  strFolderLivePattern = '<a href=/mail/mail%.aspx%?Control=Inbox&FolderID=([^<]+)>', 
 
   -- Pattern to determine if we have no messages
   --
@@ -128,6 +142,10 @@ local globals = {
   --
   strMsgListGoodBody = 'i%.p%.attach%.gif',
 
+  -- Pattern used in the Live interface to get the message info
+  --
+  strMsgLivePattern = 'new HM%.__0%("([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
+
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
   --
@@ -137,30 +155,27 @@ local globals = {
   --
   strNewFolderPattern = "(curmbox=0)",
   strFolderPrefix = "00000000-0000-0000-0000-000",
-
   strInbox = "F000000001",
-  strJunk =  "F000000005",
-  strTrash = "F000000004",
-  strDraft = "F000000003",
-  strSent =  "F000000002",
-
-  strInboxPat = "([iI]nbox)",
-  strJunkPat = "([Jj]unk)",
-  strSentPat = "([Ss]ent)",
-  strDraftPat = "([Dd]rafts)",
-  strTrashPat = "([Tt]rash)",
 
   -- Command URLS
   --
   strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s",
+  strCmdMsgListLive = "http://%s/mail/mail.fpp?cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,14,,&ptid=0&a=", 
   strCmdMsgListNextPage = "&page=%d&wo=",
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
+  strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=", 
+  strCmdDeletePostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d=%s,%s,[%s],null,null,1,false,Date",
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
+  strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s",
   strCmdEmptyTrash = "http://%s/cgi-bin/dofolders?_HMaction=DoEmpty&curmbox=F000000004&a=%s&i=F000000004",
   strCmdLogout = "http://%s/cgi-bin/logout",
   strCmdFolders = "http://%s/cgi-bin/folders?&curmbox=F000000001&a=%s",
+  strCmdMsgUnreadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=", 
+  strCmdMsgUnreadLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MarkMessages&d=false,[%s]",
+  strCmdEmptyTrashLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.EmptyFolder&ptid=0&a=", 
+  strCmdEmptyTrashLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=EmptyFolder&d=%s,0",
 }
 
 -- ************************************************************************** --
@@ -180,8 +195,13 @@ internalState = {
   strMBox = nil,
   strMBoxName = nil,
   bEmptyTrash = false,
+  bEmptyJunk = false,
   loginTime = nil,
   bMarkMsgAsUnread = false,
+  bLiveGUI = false,
+  strTrashId = nil,
+  strJunkId = nil,
+  statLimit = nil,
 }
 
 -- ************************************************************************** --
@@ -309,7 +329,7 @@ function loginHotmail()
     return POPSERVER_ERR_NETWORK
   end
 
-  -- The login page returns a page where a form needs to be asubmitted.  We'll do it
+  -- The login page returns a page where a form needs to be submitted.  We'll do it
   -- manually.  Extract the form elements and post the data
   -- 
   _, _, url = string.find(body, globals.strLoginPostUrlPattern1)
@@ -378,14 +398,6 @@ function loginHotmail()
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_NETWORK
   end
-
-  -- Save the mail server
-  --
-  internalState.strMailServer = browser:wherearewe()
-
-  -- DEBUG Message
-  --
-  log.dbg("Hotmail Server: " .. internalState.strMailServer .. "\n")
   
   -- Extract the crumb - This is needed for deletion of items
   --
@@ -401,9 +413,31 @@ function loginHotmail()
     log.dbg("Hotmail Crumb value: " .. str .. "\n")
   end
 
+  -- Check to see if we are using the new interface and are redirecting.
+  --
+  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+  if url ~= nil then
+    log.dbg("Hotmail: Detected LIVE version.")
+    body, err = browser:get_uri(url)
+    internalState.bLiveGUI = true
+  end  
+
+  -- Save the mail server
+  --
+  internalState.strMailServer = browser:wherearewe()
+
+  -- DEBUG Message
+  --
+  log.dbg("Hotmail Server: " .. internalState.strMailServer .. "\n")
+
   -- Find the image server
   --
-  _, _, str = string.find(body, globals.strImgServerPattern)
+  if (internalState.bLiveGUI == true) then
+    _, _, str = string.find(body, globals.strImgServerLivePattern)
+  else
+    _, _, str = string.find(body, globals.strImgServerPattern)
+  end
+  
   if str ~= nil then
     internalState.strImgServer = str
     log.dbg("Hotmail image server: " .. str)
@@ -428,17 +462,47 @@ function loginHotmail()
 
   -- If we haven't set the folder yet, then it is a custom one and we need to grab it
   --
-  if (internalState.strMBoxName ~= nil) then
+  internalState.strMBoxName = string.gsub(internalState.strMBoxName, '%-', "%%-")
+  if (internalState.strMBox == nil and internalState.bLiveGUI == false) then
     local url = string.format(globals.strCmdFolders, internalState.strMailServer, 
       internalState.strCrumb)
     body, err = browser:get_uri(url)
     _, _, str = string.find(body, globals.strFolderPattern .. internalState.strMBoxName .. "</a>")
     if (str == nil) then
-      log.error_print(globals.strLoginFailed)
+      log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
       return POPSERVER_ERR_NETWORK
     else
       internalState.strMBox = str
-      log.dbg("Hotmail - Using custom folder (" .. internalState.strMBox .. ")")
+      log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
+    end
+  elseif (internalState.strMBox == nil and internalState.bLiveGUI == true) then 
+    _, _, str = string.find(body, globals.strFolderLivePattern .. internalState.strMBoxName)
+    if (str == nil) then
+      log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
+      return POPSERVER_ERR_NETWORK
+   else
+      internalState.strMBox = str
+      log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
+    end
+  end
+
+  -- Get the ID of the trash folder
+  --
+  if (internalState.bLiveGUI) then
+    local i = 1
+    for id in string.gfind(body, globals.strPatLiveTrashId) do
+      if (i == 2) then
+        internalState.strTrashId = id
+        log.dbg("Hotmail - trash folder id: " .. id)
+      else
+        internalState.strJunkId = id
+        log.dbg("Hotmail - junk folder id: " .. id)
+      end
+      i = i + 1
+    end
+
+    if internalState.strTrashId == nil then
+      log.error_print("Unable to detect the folder id for the trash.  Deletion may fail.")
     end
   end
 
@@ -476,6 +540,9 @@ function downloadMsg(pstate, msg, nLines, data)
     uidl, internalState.strMBox, internalState.strCrumb);
   local markReadUrl = url
   url = url .. globals.strCmdMsgViewRaw
+  if (internalState.bLiveGUI == true) then
+    url = string.format(globals.strCmdMsgViewLive, internalState.strMailServer, uidl)
+  end
 
   -- Debug Message
   --
@@ -544,9 +611,14 @@ function downloadMsg(pstate, msg, nLines, data)
 
   -- Mark the message as read
   --
-  if internalState.bMarkMsgAsUnread == false then
+  if internalState.bMarkMsgAsUnread == false and internalState.bLiveGUI == false then
     log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as being done.")
     browser:get_head(markReadUrl)
+  elseif internalState.bMarkMsgAsUnread == true and internalState.bLiveGUI == true then
+    log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as unread.")
+    url = string.format(globals.strCmdMsgUnreadLive, internalState.strMailServer)
+    local post = string.format(globals.strCmdMsgUnreadLivePost, uidl)
+    browser:post_uri(url, post)
   end
 
   log.raw("Message: " .. cbInfo.cb_uidl .. ", Completed!")
@@ -649,6 +721,8 @@ function cleanupHeaders(headers, cbInfo)
   headers = string.gsub(headers, "%s+$", "\n")
   headers = headers .. "\n";
   headers = string.gsub(headers, "\n\n", "\n")
+  headers = string.gsub(headers, "\r\n", "\n")
+  headers = string.gsub(headers, "\n", "\r\n")
 
   --
   -- some checking...
@@ -684,7 +758,6 @@ function cleanupHeaders(headers, cbInfo)
 
   return headers 
 end
-
 
 function cleanupBody(body, cbInfo)
   -- check to see whether the end of message has already been seen...
@@ -751,6 +824,15 @@ function user(pstate, username)
     internalState.bEmptyTrash = true
   end
 
+  -- If the flag emptyjunk is set to 1 ,
+  -- the trash will be emptied on 'quit'
+  --
+  local val = (freepops.MODULE_ARGS or {}).emptyjunk or 0
+  if val == "1" then
+    log.dbg("Hotmail: Junk folder will be emptied on exit.")
+    internalState.bEmptyJunk = true
+  end
+
   -- If the flag markunread=1 is set, then we will mark all messages
   -- that we pull as unread when done.
   --
@@ -760,44 +842,28 @@ function user(pstate, username)
     internalState.bMarkMsgAsUnread = true
   end
 
+  -- If the flag maxmsgs is set,
+  -- STAT will limit the number of messages to the flag
+  --
+  val = (freepops.MODULE_ARGS or {}).maxmsgs or 0
+  if tonumber(val) > 0 then
+    log.dbg("Hotmail: A max of " .. val .. " messages will be downloaded.")
+    internalState.statLimit = tonumber(val)
+  end
+
   -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
+  mbox = curl.unescape(mbox)
   if mbox == nil then
     internalState.strMBoxName = "Inbox"
     internalState.strMBox = globals.strInbox
     return POPSERVER_ERR_OK
+  else
+    internalState.strMBoxName = mbox
+    log.say("Using Custom mailbox set to: " .. internalState.strMBoxName .. ".\n")
   end
 
-  internalState.strMBoxName = mbox
-  local _, _, start = string.find(mbox, globals.strJunkPat)
-  if start ~= nil then
-    internalState.strMBox = globals.strJunk
-    return POPSERVER_ERR_OK
-  end
-
-  _, _, start = string.find(mbox, globals.strSentPat)
-  if start ~= nil then
-    internalState.strMBox = globals.strSent
-    return POPSERVER_ERR_OK
-  end
-
-  _, _, start = string.find(mbox, globals.strTrashPat)
-  if start ~= nil then
-    internalState.strMBox = globals.strTrash
-    return POPSERVER_ERR_OK
-  end
-
-  _, _, start = string.find(mbox, globals.strDraftPat)
-  if start ~= nil then
-    internalState.strMBox = globals.strDraft
-    return POPSERVER_ERR_OK
-  end
-
-  -- Defaulting to the inbox
-  --
-  log.say("Custom mailbox set to: " .. mbox .. ".\n")
-  internalState.strMBox = globals.strInbox
   return POPSERVER_ERR_OK
 end
 
@@ -878,13 +944,14 @@ function quit_update(pstate)
   local dcnt = 0
   local postBase = string.format(globals.strCmdDeletePost, internalState.strMBox)
   local post = postBase
+  local uidls = ""
 
   -- Cycle through the messages and see if we need to delete any of them
   -- 
   for i = 1, cnt do
-    if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
-      post = post .. "&" .. get_mailmessage_uidl(pstate, i) .. "=on"
+    if internalState.bLiveGUI == false and get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
       dcnt = dcnt + 1
+      post = post .. "&" .. get_mailmessage_uidl(pstate, i) .. "=on"
 
       -- Send out in a batch of 5
       --
@@ -900,22 +967,35 @@ function quit_update(pstate)
         dcnt = 0
         post = postBase
       end
+    elseif internalState.bLiveGUI == true and get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
+      if i > 1 then
+        uidls = uidls .. "," .. get_mailmessage_uidl(pstate, i)
+      else
+        uidls = get_mailmessage_uidl(pstate, i)
+      end
+      dcnt = dcnt + 1
     end
   end
 
   -- Send whatever is left over
   --
-  if dcnt > 0 and dcnt < 5 then
+  if dcnt > 0 and internalState.bLiveGUI == false then
     log.dbg("Sending Delete URL: " .. cmdUrl .. "Post Data: " .. post .. "\n")
     local body, err = browser:post_uri(cmdUrl, post)
     if not body or err then
       log.error_print("Unable to delete messages.\n")
     end
+  elseif dcnt > 0 and internalState.bLiveGUI then
+    cmdUrl = string.format(globals.strCmdDeleteLive, internalState.strMailServer)
+    post = string.format(globals.strCmdDeletePostLive, internalState.strMBox, 
+      internalState.strTrashId, uidls)
+    log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)
+    browser:post_uri(cmdUrl, post)
   end
 
   -- Empty the trash
   --
-  if internalState.bEmptyTrash then
+  if internalState.bEmptyTrash and internalState.bLiveGUI == false then
     if internalState.strCrumb ~= '' then
       cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer,internalState.strCrumb)
       log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
@@ -925,6 +1005,26 @@ function quit_update(pstate)
       end
     else
       log.error_print("Cannot empty trash - crumb not found\n")
+    end
+  elseif internalState.bEmptyTrash and internalState.bLiveGUI then
+    cmdUrl = string.format(globals.strCmdEmptyTrashLive, internalState.strMailServer)
+    local post = string.format(globals.strCmdEmptyTrashLivePost, internalState.strTrashId)
+    log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
+    local body, err = browser:post_uri(cmdUrl, post)
+    if not body or err then
+      log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
+    end
+  end
+
+  -- Empty the Trash
+  --
+  if internalState.bEmptyJunk and internalState.bLiveGUI then
+    cmdUrl = string.format(globals.strCmdEmptyTrashLive, internalState.strMailServer)
+    local post = string.format(globals.strCmdEmptyTrashLivePost, internalState.strJunkId)
+    log.dbg("Sending Empty Junk URL: " .. cmdUrl .."\n")
+    local body, err = browser:post_uri(cmdUrl, post)
+    if not body or err then
+      log.error_print("Error when trying to empty the junk folder with url: ".. cmdUrl .."\n")
     end
   end
 
@@ -958,6 +1058,81 @@ function quit_update(pstate)
   return POPSERVER_ERR_OK
 end
 
+-- Stat command for the live gui
+--
+function LiveStat(pstate) 
+  -- Local variables
+  -- 
+  local browser = internalState.browser
+  local nMsgs = 0
+  local nTotMsgs = 0;
+  local nMaxMsgs = 999 
+  if internalState.statLimit ~= nil then
+    nMaxMsgs = internalState.statLimit
+  end  
+
+  local cmdUrl = string.format(globals.strCmdMsgListLive, internalState.strMailServer,
+    internalState.strMBox, nMaxMsgs, nMaxMsgs)
+
+  -- Debug Message
+  --
+  log.dbg("Stat URL: " .. cmdUrl .. "\n");
+		
+  -- Initialize our state
+  --
+  set_popstate_nummesg(pstate, nMsgs)
+
+  -- Iterate over the messages
+  --
+  local body, err = browser:get_uri(cmdUrl)
+
+  -- Let's make sure the session is still valid
+  --
+  local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpiredLive)
+  if strSessExpr == nil then
+    -- Invalidate the session
+    --
+    internalState.bLoginDone = nil
+    session.remove(hash())
+    log.raw("Session Expired - Last page loaded: " .. cmdUrl .. ", Body: " .. body)
+
+    -- Try Logging back in
+    --
+    local status = loginHotmail()
+    if status ~= POPSERVER_ERR_OK then
+      return POPSERVER_ERR_NETWORK
+    end
+	
+    -- Reset the local variables		
+    --
+    browser = internalState.browser
+    cmdUrl = string.format(globals.strCmdMsgListLive, internalState.strMailServer,
+      internalState.strMBox)
+
+    -- Retry to load the page
+    --
+    body, err = browser:get_uri(cmdUrl)
+  end
+
+  -- Go through the list of messages
+  --
+  for uidl, size in string.gfind(body, globals.strMsgLivePattern) do
+    nMsgs = nMsgs + 1
+    log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+    set_popstate_nummesg(pstate, nMsgs)
+    set_mailmessage_size(pstate, nMsgs, size)
+    set_mailmessage_uidl(pstate, nMsgs, uidl)
+  end
+
+  -- Update our state
+  --
+  internalState.bStatDone = true
+
+  -- Function completed successfully
+  --
+  return POPSERVER_ERR_OK
+end
+
 -- Stat command - Get the number of messages and their size
 --
 function stat(pstate)
@@ -966,6 +1141,10 @@ function stat(pstate)
   --
   if internalState.bStatDone then
     return POPSERVER_ERR_OK
+  end
+
+  if internalState.bLiveGUI then
+    return LiveStat(pstate)
   end
 
   -- Local variables

@@ -854,12 +854,12 @@ function user(pstate, username)
   -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
-  mbox = curl.unescape(mbox)
   if mbox == nil then
     internalState.strMBoxName = "Inbox"
     internalState.strMBox = globals.strInbox
     return POPSERVER_ERR_OK
   else
+    mbox = curl.unescape(mbox)
     internalState.strMBoxName = mbox
     log.say("Using Custom mailbox set to: " .. internalState.strMBoxName .. ".\n")
   end

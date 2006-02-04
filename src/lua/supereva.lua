@@ -15,7 +15,7 @@ PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=supereva.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org"
-PLUGIN_AUTHORS_NAMES = {"Andrea Dalle Molle","Enrico Tassi","anonymous"}
+PLUGIN_AUTHORS_NAMES = {"Andrea Dalle Molle","Enrico Tassi","Visioning"}
 PLUGIN_AUTHORS_CONTACTS = {"Tund3r (at) fastwebnet (dot) it",
        "gareuselesinge (at) users (dot) sourceforge (dot) net","unknown"}
 PLUGIN_DOMAINS = {"@supereva.it","@supereva.com","@freemail.it","@freeweb.org","@mybox.it","@superdada.com","@cicciociccio.com","@mp4.it","@dadacasa.com","@clarence.com","@concento.it"}

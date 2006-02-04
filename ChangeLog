@@ -1,4 +1,13 @@
-- updated supereva plugin
+04/02/2006 0.0.97
+- yahoo.lua: Added support for the new Yahoo interface. (russell822)
+- es: *** empty log message *** (lisar314)
+- es: Version 0.96 (lisar314)
+- tre.lua: bumped required version to 0.0.97 (gareuselesinge)
+- gmail.lua: added zibo patch (gareuselesinge)
+- yahoo.lua: Remove the quoted-printable encoding header from messages since Yahoo does the decoding on its servers. (russell822)
+- gmail.lua, squirrelmail.lua, yahoo.lua: Updated the version and require version (russell822)
+- gmail.lua, squirrelmail.lua, tre.lua, yahoo.lua: migration of all lua code to the lua5.1 module systemlog.c partially reqritten to make output more comfortablefixed manual according to the 'require' adoption (gareuselesinge)
+- updated supereva plugin (Thanks Visioning)
 - added support for 'installation' file (like the 'interface' one) to specify in a sinple way where to install files (see the browser_lua modules for example)
 - reorganized some modules using a non flat structure (browser, lxp, soap) 
 - manual updated concerning the new lua5.1 module system

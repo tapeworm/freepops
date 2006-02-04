@@ -1,3 +1,4 @@
+- updated supereva plugin
 - added support for 'installation' file (like the 'interface' one) to specify in a sinple way where to install files (see the browser_lua modules for example)
 - reorganized some modules using a non flat structure (browser, lxp, soap) 
 - manual updated concerning the new lua5.1 module system

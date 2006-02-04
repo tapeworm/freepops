@@ -9,15 +9,15 @@
 -- ************************************************************************** --
 
 
-PLUGIN_VERSION = "0.0.8"
+PLUGIN_VERSION = "0.0.9"
 PLUGIN_NAME = "Supereva web mail"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?file=supereva.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org"
-PLUGIN_AUTHORS_NAMES = {"Andrea Dalle Molle","Enrico Tassi"}
+PLUGIN_AUTHORS_NAMES = {"Andrea Dalle Molle","Enrico Tassi","anonymous"}
 PLUGIN_AUTHORS_CONTACTS = {"Tund3r (at) fastwebnet (dot) it",
-	"gareuselesinge (at) users (dot) sourceforge (dot) net"}
+       "gareuselesinge (at) users (dot) sourceforge (dot) net","unknown"}
 PLUGIN_DOMAINS = {"@supereva.it","@supereva.com","@freemail.it","@freeweb.org","@mybox.it","@superdada.com","@cicciociccio.com","@mp4.it","@dadacasa.com","@clarence.com","@concento.it"}
 PLUGIN_PARAMETERS = {
 	{name="onlynew", description={
@@ -51,75 +51,63 @@ end
 --  Constants
 local strings = {
 	
-  login_url = "http://webmail.supereva.it/cgi-bin/login.chm?"..
-  	"username=%s&password=%s",
+  login_url = "http://www.supereva.com/cgi-bin/sn_my/login.chm?"..
+  	"uri=http://webmail.supereva.com/cgi-bin/login.chm&ser=email&username=%s&password=%s",
   
   first = "http://webmail.supereva.it/cgi-bin/main.chm?"..
   	"mailfolder=in&proaction=readmailbox&mlt_msgs=%d",
   
   base = "http://webmail.supereva.it/cgi-bin/",
   
-  body_begin = '</table>\n</td></tr>\n<tr class=px11>',
+  body_begin = '<div id="testomail">',
   
-  body_end = '</td></tr>\n<tr><td height=10 colspan=3></td></tr>',
+  body_end = '</div>\n\n*<div>\n\n*<table width="100%%" border="0" cellpadding="2" cellspacing="0" id="readmsg">',
+
+  body_end_with_attach = '</div>\n\n*<div>\n\n*<div id=allegati>',
   
-  head_begin = '</td></tr>\n<tr valign=top bgcolor="#FFFFFF">\n'..
-  	'<td colspan=2>&nbsp;</td>\n</tr>\n\n',
+  head_begin = '</table>\n<div style="background:#DFEEBD;">',
   
-  head_end = '</tr>\n\n*</table>\n</td></tr>\n<tr class=px11>',
+  head_end = '</div>\n\n*<div id="testomail">',
   
   get_url = "http://webmail.supereva.it/cgi-bin/nrmail03.chm?"..
   	"setflags=yes&msgnum=%s&mailaction=read&mailfolder=in",
   
-  next_page = "mailfolder=in&changefolder=changefolder&"..
-  	"proaction=readmailbox&check_mail=&mlt_msgs=%d",
+  next_page = "mailfolder=in&amp;changefolder=changefolder&amp;"..
+  	"proaction=readmailbox&amp;check_mail=&amp;mlt_msgs=%d",
   
   e = ".*<tr>.*"..
-      "<td>[.*]{b}.*{/b}[.*]</td>.*"..
-      "<td>[.*]{img}.*</td>.*"..
-      "<td>[.*]{img}.*</td>.*"..
-      "<td>[.*]{img}.*</td>.*"..
-      "<td>[.*]{img}.*</td>.*"..
-      "<td>.*<img>.*</td>.*"..
-      "<td>.*<img>.*<A>[.*]{b}[.*]{/b}.*</a>.*</td>.*"..
-      "<td>.*<img>.*</td>.*"..
-      "<td>[.*]{b}[.*]{/b}.*</td>.*"..
-      "<td>.*<img>.*</td>.*"..
-      "<td>[.*]{b}[.*]{/b}.*</td>.*"..
-      "<td>.*<img>.*</td>.*"..
-      "<td>.*</td>.*"..
-      "<td>.*<img>.*</td>.*"..
-      "<td>.*<INPUT>.*</td>.*"..
-      "</tr>",
-
+      "<td><input></td>.*"..
+	"<td>[.*]{img}.*</td>.*"..
+	"<td>[.*]{b}[.*]{font}[.*]{/font}[.*]{/b}.*<A>[.*]{b}[.*]{/b}.*</a>.*</td>.*"..
+	"<td>.*<p>[.*]{img}[.*]{b}[.*]{/b}.*</p>[.*]</td>.*"..
+	"<td>[.*]{b}[.*]{/b}.*</td>.*"..
+	"<td>.*</td>.*"..
+	"</tr>",
    g ="O<O>O"..
-      "<O>[O]{O}O{O}[O]<O>O"..
-      "<O>[O]{O}O<O>O"..
-      "<O>[O]{O}O<O>O"..
-      "<O>[O]{O}O<O>O"..
-      "<O>[O]{O}O<O>O"..
-      "<O>O<O>O<O>O"..
-      "<O>O<O>O<O>[O]{O}[O]{O}O<O>O<O>O"..
-      "<O>O<O>O<O>O"..
-      "<O>[O]{O}[O]{O}O<O>O"..
-      "<O>O<O>O<O>O"..
-      "<O>[O]{O}[O]{O}O<O>O"..
-      "<O>O<O>O<O>O"..
-      "<O>X<O>O"..
-      "<O>O<O>O<O>O"..
-      "<O>O<X>O<O>O"..
-      "<O>",
-   attach_a=".*<tr>.*<td>.*<a>.*</a>.*<A>.*"..
-      "<img>.*</a>.*<br>.*<b>.*</b>.*<br>.*<br>.*</td>.*"..
-      "<td>.*<img>.*<A>.*</a>.*<br>.*<br>.*<img>.*<a>.*"..
-      "</a>.*<sup>.*</sup>.*<br>.*<br>.*<img>.*<a>.*</a>.*"..
-      "<br>.*</td>.*</tr>",
+      "<O><X><O>O"..
+	"<O>[O]{O}O<O>O"..
+	"<O>[O]{O}[O]{O}[O]{O}[O]{O}O<O>[O]{O}[O]{O}O<O>O<O>O"..
+	"<O>O<O>[O]{O}[O]{O}[O]{O}O<O>[O]<O>O"..
+	"<O>[O]{O}[O]{O}O<O>O"..
+	"<O>X<O>O"..
+	"<O>",
+
+
+   attach_a=".*<tr>.*"..
+		"<td>.*<a>.*</a>.*<A>.*"..
+		"<img>.*</a>.*<br>.*<b>.*</b>.*<br>.*<br>.*</td>.*"..
+		"<td>.*<img>.*<a>.*</a>.*<br>.*<br>.*"..
+		"<img>.*<a>.*</a>.*<br>.*<br>.*"..
+		"<img>.*<a>.*</a>.*<br>.*<br>.*</td>.*"..
+		"</tr>",
    
-   attach_b="O<O>O<O>O<O>O<O>O<X>O"..
-      "<O>O<O>O<O>O<O>X<O>O<O>O<O>O<O>O"..
-      "<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O"..
-      "<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O"..
-      "<O>O<O>O<O>"
+   attach_b="O<O>O"..
+		"<O>O<O>O<O>O<X>O"..
+		"<O>O<O>O<O>O<O>X<O>O<O>O<O>O<O>O"..
+		"<O>O<O>O<O>O<O>O<O>O<O>O"..
+		"<O>O<O>O<O>O<O>O<O>O"..
+		"<O>O<O>O<O>O<O>O<O>O<O>O"..
+		"<O>"
 
 }
 
@@ -175,15 +163,10 @@ function init(pstate)
 	log.dbg("FreePOPs plugin '"..
 		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
 
-	-- the serialization module
-	require("serial")
-
-	-- the browser module
-	require("browser")
-
-	-- the common module
-	require("common")
-	require("mimer")
+	require("serial") -- the serialization module
+	require("browser") -- the browser module
+	require("common") -- the common implementation module
+	require("mimer") -- the mimer module
 
 	-- checks on globals
 	freepops.set_sanity_checks()
@@ -231,9 +214,10 @@ function supereva_login()
 		return POPSERVER_ERR_NETWORK
 	end
 	
-  	--print("we received this webpage: ".. file)
+  	-- print("we received this webpage: ".. file)
 	-- search the session ID
-	local id = string.find(file,"Benvenuto nella tua webMail")
+	-- local id = string.find(file,"Benvenuto nella tua webMail")
+	local id = string.find(file,"logout.chm")
 	
 	if id == nil then
 		local _,_,cause = string.find(file,"ATTENZIONE:([A-Za-z%s]-)<")
@@ -386,13 +370,13 @@ function stat(pstate)
 	
 		-- set uidl/size for each message
 		for i=1,x:count() do
-			local _,_,size = string.find(x:get(0,i-1),"(%d+)")
+			local _,_,size = string.find(x:get(1,i-1),"(%d+)")
 			local _,_,size_mult_k = 
-				string.find(x:get(0,i-1),"([Kk])")
+				string.find(x:get(1,i-1),"([Kk])")
 			local _,_,size_mult_m = 
-				string.find(x:get(0,i-1),"([Mm])")
+				string.find(x:get(1,i-1),"([Mm])")
 			local _,_,uidl = 
-				string.find(x:get(1,i-1),'VALUE="([^"]*)"')
+				string.find(x:get(0,i-1),'value="([^"]*)"')
 
 			if size_mult_k ~= nil then
 				size = size * 1024
@@ -520,7 +504,11 @@ function supereva_parse_webmessage(pstate,msg)
 	-- extract the body an the attach
 	local from,to = string.find(f,strings.body_begin)
 
-	local from1,to1 = string.find(f,strings.body_end)
+	local from1,to1 = string.find(f,strings.body_end_with_attach)
+	
+	if to1 == nil then
+		from1,to1 = string.find(f,strings.body_end)
+	end
 
 	local attach = ""
 	local body = ""
@@ -541,14 +529,18 @@ function supereva_parse_webmessage(pstate,msg)
 	local n = x:count()
 	local attach = {}
 	for i = 1,n do
-    		local _,_,url = string.find(x:get(0,n-1),'HREF=..([^"]*)"')
+    		local _,_,url = string.find(x:get(0,i-1),'HREF=..([^"]*)"')
 		url = string.gsub(url,"&amp;", "&")
+		--print("\nattach:"..n.."http://" .. b:wherearewe().."/" .. url)
 		attach[x:get(1,i-1)] = "http://" .. b:wherearewe().."/" .. url
 		table.setn(attach,table.getn(attach) + 1)
 	end
-
+	
+	
 	-- mangles the body
-	local body,body_html = mangle_body(body)
+	--local body,body_html = mangle_body(body)
+	local body_html = body
+	local body = nil
 
 	-- extracts the important part
 	local from,to = string.find(f,strings.head_begin)
@@ -556,6 +548,7 @@ function supereva_parse_webmessage(pstate,msg)
 	local from1,to1 = string.find(f1,strings.head_end)
 
 	local head = string.sub(f1,1,from1-1)
+
 
 	-- mangles the header
 	head = mangle_head(head)
@@ -566,6 +559,7 @@ end
 -- ------------------------------------------------------------------------- --
 -- helper
 function mangle_body(s)
+	
 	local _,_,x = string.find(s,"^%s*(<[Pp][Rr][Ee]>)")
 
 	if x ~= nil then
@@ -576,7 +570,7 @@ function mangle_body(s)
 
 		--s = mimer.remove_lines_in_proper_mail_header(s,
 	       	--{"content%-type",
-              	--"content%-disposition","mime%-version"})
+	      	--"content%-disposition","mime%-version"})
 
 		-- the webmail damages these tags
 		s = mimer.remove_tags(s,
@@ -654,8 +648,7 @@ function mangle_head(s)
 	s = build(to,oggetto,from,cc,data)
 
 	-- not sure it is needed
-        s = mimer.remove_tags(s,
-		{"tt","nobr","a"})
+	s = mimer.remove_tags(s,{"tt","nobr","a"})
 
 	-- ??
 	s = mimer.txt2mail(s)

@@ -6,7 +6,10 @@
 - gmail.lua: added zibo patch (gareuselesinge)
 - yahoo.lua: Remove the quoted-printable encoding header from messages since Yahoo does the decoding on its servers. (russell822)
 - gmail.lua, squirrelmail.lua, yahoo.lua: Updated the version and require version (russell822)
-- gmail.lua, squirrelmail.lua, tre.lua, yahoo.lua: migration of all lua code to the lua5.1 module systemlog.c partially reqritten to make output more comfortablefixed manual according to the 'require' adoption (gareuselesinge)
+- gmail.lua, squirrelmail.lua, tre.lua, yahoo.lua: migration of all lua code
+to the lua5.1 module system
+- log.c partially rewritten to make output more comfortable
+- fixed manual according to the 'require' adoption (gareuselesinge)
 - updated supereva plugin (Thanks Visioning)
 - added support for 'installation' file (like the 'interface' one) to specify in a sinple way where to install files (see the browser_lua modules for example)
 - reorganized some modules using a non flat structure (browser, lxp, soap) 

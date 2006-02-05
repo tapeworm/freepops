@@ -51,7 +51,7 @@ curlopt.h: $(HEADER)
 
 curl_netrcopt.h:$(HEADER)
 	$(H)cat $(HEADER) | grep "^ *CURL_NETRC_[A-Z]*," | \
-		sed -r 's/^ *CURL_(NETRC_[A-Z]*),.*$$/{"\1", (int)CURL_\1},/' \
+		sed 's/^ *CURL_\(NETRC_[A-Z]*\),.*$$/{"\1", (int)CURL_\1},/' \
 		> curl_netrcopt.h
 
 curl_authopt.h:$(HEADER)
@@ -61,7 +61,7 @@ curl_authopt.h:$(HEADER)
 
 curl_form.h: $(HEADER)
 	$(H)cat $(HEADER) | grep "^ *CFINIT" | grep -v "CFINIT(NOTHING)" | \
-		sed -r 's/^ *CFINIT\(([^)]*)\),.*$$/{"FORM_\1",CURLFORM_\1},/' \
+		sed 's/^ *CFINIT(\([^)]*\)),.*$$/{"FORM_\1",CURLFORM_\1},/' \
 		> curl_form.h
 
 

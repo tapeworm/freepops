@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.4c"
+PLUGIN_VERSION = "0.1.4d"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -445,15 +445,6 @@ function loginHotmail()
     internalState.strImgServer = internalState.strMailServer
     log.dbg("Couldn't figure out the image server.  Using the mail server as a default.")
     log.raw("Login failed: Should be logged in right now but am not.  Last page loaded: " .. url .. " with body:\n" .. body);
-  end
-
-  -- See if we are using the new folder id's
-  --
-  _, _, str = string.find(body, globals.strNewFolderPattern)
-  if str ~= nil then
-    internalState.strMBox = globals.strFolderPrefix .. 
-      string.sub(internalState.strMBox, 2, -1) 
-    log.dbg("Hotmail - Using new folder names (" .. internalState.strMBox .. ")")
   end
 
   -- Note the time when we logged in

@@ -63,7 +63,8 @@
  #endif /* ndef strerror_r */
  
  /* macro to check result of send() */
- #define CHECK_RC(rc) (__extension__(\
+ #ifndef OSXSTC
+  #define CHECK_RC(rc) (__extension__(\
 		{\
 		long int __result=0;\
 		if(rc == -1)\
@@ -76,6 +77,23 @@
 			}\
 		__result;\
 		}))
+ #else
+  #define CHECK_RC(rc) (__extension__(\
+		{\
+		long int __result=0;\
+		if(rc == -1)\
+			{\
+			char buff[100];\
+			pthread_mutex_lock(&strerror_lock);\
+			snprintf(buff,100,"%s",strerror(errno));\
+			pthread_mutex_unlock(&strerror_lock);\
+			SAY("%s : %s : %d : (%d)%s\n",\
+				__FILE__,__FUNCTION__,__LINE__,errno,buff);\
+			__result = 1;\
+			}\
+		__result;\
+		}))
+ #endif /* ndef OSXSTC */
 
 #endif /* ndef WIN32 */
 

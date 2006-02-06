@@ -276,6 +276,8 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
+	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/browser
+	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/lxp
 	$(H)mkdir -p ../dist-osx/FreePOPs/script
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
 	$(H)cp osx/Install_resources/FreePOPs osx/Install_resources/StartupParameters.plist osx/Install_resources/freepopsd.plist ../dist-osx/FreePOPs/script
@@ -288,14 +290,17 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua
-	#$(H)cp -a _osx_/freepops-$(VERSION)/src/lua_unofficial ../../../../../dist-osx/FreePOPs/src/
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
+	$(H)cd _osx_/freepops-$(VERSION)/modules/include/browser;\
+		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/browser
+	$(H)cd _osx_/freepops-$(VERSION)/modules/include/lxp;\
+		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/lxp
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/Italian.lproj/ReadMe.txt
-	$(H)rm -rf _osx_
+#	$(H)rm -rf _osx_
 
 dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _osx_
@@ -306,6 +311,8 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
+	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/browser
+	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/lxp
 	$(H)mkdir -p ../dist-osx/FreePOPs/script
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
 	$(H)cp osx/Install_resources/FreePOPs osx/Install_resources/StartupParameters.plist osx/Install_resources/freepopsd.plist ../dist-osx/FreePOPs/script
@@ -318,9 +325,12 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua
-	#$(H)cp -a _osx_/freepops-$(VERSION)/src/lua_unofficial ../../../../../dist-osx/FreePOPs/src/
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
+	$(H)cd _osx_/freepops-$(VERSION)/modules/include/browser;\
+		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/browser
+	$(H)cd _osx_/freepops-$(VERSION)/modules/include/lxp;\
+		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/lxp
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt

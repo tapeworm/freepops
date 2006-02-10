@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.92"
+PLUGIN_VERSION = "0.0.93"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -86,12 +86,12 @@ local tin_string = {
 	-- The capture to understand if the session ended
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
-	--   whearewe, mailbox, username, username, uidl, t, s
+	--   wherearewe(), mailbox, domain, username, username, uidl, t, s
 	save = "http://%s/cp/ps/Mail/Email"..
-		"?sh=&fp=%s&d=virgilio.it&sd=&sc=&an=%s&u=%s&"..
+		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
 		"uid=%s&t=%s&style=&l=it&s=%s&sl=%d",	
 	save_sl = "http://%s/cp/ps/Mail/Email"..
-		"?sh=&fp=%s&d=virgilio.it&sd=&sc=&an=%s&u=%s&"..
+		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
 		"uid=&t=%s&style=&l=it&s=%s&sl=%d",	
 	body_start = [[
 </script>	
@@ -822,7 +822,7 @@ function retr(pstate,msg,data)
 	end
 	-- whearewe, mailbox, username, username, uidl, t, s
 	local uri = string.format(tin_string.save,b:wherearewe(),
-		folder, user, user, uidl, session_id_t, session_id_s,sl)
+		folder, domain, user, user, uidl, session_id_t, session_id_s,sl)
 	
 	-- tell the browser to fetch
 	local head,f,rc = b:get_head_and_body(uri)
@@ -885,7 +885,7 @@ function top(pstate,msg,lines,data)
 	end
 	-- whearewe, mailbox, username, username, uidl, t, s
 	local uri = string.format(tin_string.save,b:wherearewe(),
-		folder, user, user, uidl, session_id_t, session_id_s,sl)
+		folder, domain, user, user, uidl, session_id_t, session_id_s,sl)
 	
 	-- tell the browser to fetch
 	local head,f,rc = b:get_head_and_body(uri)

@@ -403,7 +403,9 @@ function Hidden.continue_or_return(rc,err,t,f,...)
 				return table.concat(t),nil
 			else
 				-- we are in the case of the get_head_and_body
-				return table.concat(t[1]),table.concat(t[2]),nil
+				return 
+					table.concat(t[1] or {}),
+					table.concat(t[2] or {}),nil
 			end
 		else
 			error("Hidden.continue_or_return(_,_,t,...): "..

@@ -22,6 +22,7 @@
 #include <shellapi.h>
 #include <pthread.h>
 #include <winuser.h>
+#include <stdio.h>
 
 #include "regularexp.h"
 #include "win32_resources.h"
@@ -29,6 +30,9 @@
 #define LOG_ZONE "WIN"
 
 #include "config.h"
+
+//#define DEBUG(a...) fprintf(stderr,a)
+#define DEBUG(a...)
 
 #define HIDDEN static
 
@@ -247,7 +251,7 @@ char *str = strdup(arg);
 int position=0,n=0;
 char **argv_win32;
 
-//printf("#%s#\n",arg);
+DEBUG("command line: %s\n",arg);
 
 /* count args */
 position=0;
@@ -330,6 +334,10 @@ do
 while(p.begin != -1);
 
 *argv=argv_win32;
+
+for(position=0 ; position < n ; position ++){
+	DEBUG("arg #%d: %s\n",position,argv_win32[position]);
+}
 
 abort:
 free(str);

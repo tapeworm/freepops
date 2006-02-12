@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.4d"
+PLUGIN_VERSION = "0.1.4e"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -771,6 +771,7 @@ function cleanupBody(body, cbInfo)
 
   -- Clean up the end of line, and replace HTML tags
   --
+  body = string.gsub(body, "\r", "")
   body = string.gsub(body, "\n", "\r\n")
   body = string.gsub(body, "&amp;", "&")
   body = string.gsub(body, "&lt;", "<")
@@ -847,7 +848,6 @@ function user(pstate, username)
   local mbox = (freepops.MODULE_ARGS or {}).folder
   if mbox == nil then
     internalState.strMBoxName = "Inbox"
-    internalState.strMBox = globals.strInbox
     return POPSERVER_ERR_OK
   else
     mbox = curl.unescape(mbox)

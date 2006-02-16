@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.4e"
+PLUGIN_VERSION = "0.1.4f"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -119,6 +119,7 @@ local globals = {
   --
   strFolderPattern = '<a href="[^"]+curmbox=([^&]+)&[^"]+" >', 
   strFolderLivePattern = '<a href=/mail/mail%.aspx%?Control=Inbox&FolderID=([^<]+)>', 
+  strFolderLiveInboxPattern = 'i_inbox%.gif"</td><td><a href=/mail/mail%.aspx%?Control=Inbox&FolderID=([^<]+)>',
 
   -- Pattern to determine if we have no messages
   --
@@ -467,7 +468,11 @@ function loginHotmail()
       log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
     end
   elseif (internalState.strMBox == nil and internalState.bLiveGUI == true) then 
-    _, _, str = string.find(body, globals.strFolderLivePattern .. internalState.strMBoxName)
+    if (internalState.strMBoxName == "Inbox") then
+      _, _, str = string.find(body, globals.strFolderLiveInboxPattern)
+    else
+      _, _, str = string.find(body, globals.strFolderLivePattern .. internalState.strMBoxName)
+    end
     if (str == nil) then
       log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
       return POPSERVER_ERR_NETWORK

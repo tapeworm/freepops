@@ -184,7 +184,7 @@ dist-deb-hackbpo:
 		DR=`echo $$V | cut -d - -f 2`;\
 		UV=`echo $$V | cut -d - -f 1`;\
 		BPOR=`expr $$DR - 1`bpo$$DR;\
-		dch -v $$UV-$$BPOR backports.org release
+		dch -b -v $$UV-$$BPOR backports.org release
 
 dist-deb-woody: deb-preamble dist-deb-hackwoody dist-deb-real
 dist-deb-sarge: deb-preamble dist-deb-hacksarge dist-deb-real

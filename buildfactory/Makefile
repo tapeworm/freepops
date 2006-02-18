@@ -223,31 +223,20 @@ dist-deb-real:
 
 debian-dsc-woody: deb-preamble dist-deb-hackwoody debian-dsc-real
 debian-dsc-sarge: deb-preamble dist-deb-hacksarge debian-dsc-real
-debian-dsc-bpo: deb-preamble dist-deb-hacksarge dist-deb-hackbpo debian-dsc-full
+debian-dsc-bpo: deb-preamble dist-deb-hacksarge dist-deb-hackbpo debian-dsc-real
 debian-dsc-etch: debian-dsc
 debian-dsc-sid: debian-dsc
 
 debian-dsc: deb-preamble debian-dsc-real
 
-debian-dsc-real-pre:
+debian-dsc-real:
 	$(H)mkdir -p ../dist-deb/freepops || true
-	
-debian-dsc-real-post:
+	$(H)cd _deb_/;\
+		dpkg-source -b freepops-$(VERSION)
 	$(H)cp _deb_/*.tar.gz _deb_/*.dsc \
 		_deb_/*.diff.gz ../dist-deb/freepops
 	$(H)# to avoid problems with umask and pbuilder
 	$(H)chmod a+r ../dist-deb/freepops/* 
-
-debian-dsc-real-changes:
-	$(H)cd _deb_/;\
-		dpkg-source -b freepops-$(VERSION)
-		
-debian-dsc-real-changes-full:
-	$(H)cd _deb_/;\
-		dpkg-source -sa -b freepops-$(VERSION)
-	
-debian-dsc-real: debian-dsc-real-pre debian-dsc-real-changes debian-dsc-real-post
-debian-dsc-full: debian-dsc-real-pre debian-dsc-real-changes-full debian-dsc-real-post
 
 dist-slack: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _slack_

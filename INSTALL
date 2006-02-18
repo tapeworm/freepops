@@ -62,6 +62,7 @@ Valid targets in this case are:
   debian-dsc-sarge
   debian-dsc-etch
   debian-dsc-sid
+  debian-dsc-bpo - dsc for the actual stable for backports.org
   dist-rpm	- Red Hat Linux .rpm
   dist-gen	- Gentoo Linux .ebuild
   dist-slack	- Slackware .tgz

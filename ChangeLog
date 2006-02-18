@@ -1,3 +1,4 @@
+- added support for backports.org in buildfactory/Makefile
 - fixed a bug in browser.lua if the body of a redirect is empty (thanks loprix)
 04/02/2006 0.0.97
 - yahoo.lua: Added support for the new Yahoo interface. (russell822)

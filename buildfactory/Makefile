@@ -177,6 +177,14 @@ dist-deb-hackwoody:
 dist-deb-hacksarge:
 	$(H)cd _deb_/freepops-$(VERSION);\
 		cp buildfactory/debian-sarge/* debian/
+		
+dist-deb-hackbpo:
+	$(H)cd _deb_/freepops-$(VERSION);\
+		V=`head -n 1 debian/changelog | sed "s/.*(\([^)]*\)).*/\1/"`;\
+		DR=`echo $$V | cut -d - -f 2`;\
+		UV=`echo $$V | cut -d - -f 1`;\
+		BPOR=`expr $$DR - 1`bpo$$DR;\
+		sed -i "s/($$V)/($$UV-$$BPOR)/" debian/changelog
 
 dist-deb-woody: deb-preamble dist-deb-hackwoody dist-deb-real
 dist-deb-sarge: deb-preamble dist-deb-hacksarge dist-deb-real
@@ -215,6 +223,7 @@ dist-deb-real:
 
 debian-dsc-woody: deb-preamble dist-deb-hackwoody debian-dsc-real
 debian-dsc-sarge: deb-preamble dist-deb-hacksarge debian-dsc-real
+debian-dsc-bpo: deb-preamble dist-deb-hacksarge dist-deb-hackbpo debian-dsc-real
 debian-dsc-etch: debian-dsc
 debian-dsc-sid: debian-dsc
 

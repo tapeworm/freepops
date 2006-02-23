@@ -34,6 +34,18 @@
  #include <sys/types.h>
  #include <errno.h>
  #include <pthread.h>
+ #define CHECK_RC(rc) (__extension__(\
+       	{\
+       	long int __result=0;\
+       	if(rc == -1)\
+       		{\
+       		SAY("%s : %s : %d : (%d)\n",\
+       			__FILE__,__FUNCTION__,__LINE__,WSAGetLastError());\
+       		__result = 1;\
+       		}\
+       	__result;\
+       	}))
+ 
 #else /* #ifndef WIN32 */
  #include <netdb.h>
  #ifndef FREEBSD
@@ -94,8 +106,8 @@
 		__result;\
 		}))
  #endif /* ndef OSXSTC */
-
 #endif /* ndef WIN32 */
+
 
 
 /* unistd GNU macro to avoid EINTR */

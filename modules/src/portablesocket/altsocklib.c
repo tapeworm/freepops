@@ -1,7 +1,7 @@
 /******************************************************************************
  * $Id$
- * This file is part of liberopops (http://liberopops.sf.net)                 *
- * This file is distributed under the terms of GNU GPL license.               *
+ * This file is part of liberopops (http://liberopops.sf.net)		 *
+ * This file is distributed under the terms of GNU GPL license.	       *
  ******************************************************************************/
 
 /******************************************************************************
@@ -99,14 +99,22 @@
 
 
 /* unistd GNU macro to avoid EINTR */
-#define TEMP_FAILURE_RETRY(expression) \
-  (__extension__                                  \
-    ({ long int __result;                              \
-       do __result = (long int) (expression);                      \
-       while (__result == -1L && errno == EINTR);                  \
-       __result; }))
-
-
+#if defined(WIN32) && !defined(CYGWIN)
+  #define TEMP_FAILURE_RETRY(expression) 				\
+    (__extension__							\
+      ({ long int __result;			     		 	\
+	 do __result = (long int) (expression);		      		\
+	 while (__result == -1L && WSAGetLastError() == WSAEINTR);	\
+	 __result; }))
+#else
+  #define TEMP_FAILURE_RETRY(expression)				\
+    (__extension__				  			\
+      ({ long int __result;			      			\
+	 do __result = (long int) (expression);		      		\
+	 while (__result == -1L && errno == EINTR);		  	\
+	 __result; }))
+#endif
+  
 #ifndef MSG_NOSIGNAL
   # define MSG_NOSIGNAL 0
 #endif
@@ -294,12 +302,12 @@ sin.sin_port = htons(port);
     
 if (host != NULL) 
     	{
-        /* get the IP address of the requested host */
+	/* get the IP address of the requested host */
     
 	if ((add = gethostbyname_thsafe(host)) == 0xffffffff)
-        	return -1;
+		return -1;
 
-        sin.sin_addr.s_addr = add;
+	sin.sin_addr.s_addr = add;
 
 	//FIX memory leak for hp
 	
@@ -307,20 +315,20 @@ if (host != NULL)
 		return -1;
 	} 
 else 
-	{                    
+	{		    
 	/* server */
 	int one = 1;
 	
-        /* avoid "bind: socket already in use" msg */
-        if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (char *) &one, 
+	/* avoid "bind: socket already in use" msg */
+	if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (char *) &one, 
 				sizeof(one)) < 0)
 		return -1;
 	
 	/* let you bind different from 0.0.0.0 */
 	sin.sin_addr.s_addr = bind_add.s_addr;
 	
-        /* bind the socket to the port number */
-        if (bind(sd, (struct sockaddr *) &sin, sizeof(sin)) == -1)
+	/* bind the socket to the port number */
+	if (bind(sd, (struct sockaddr *) &sin, sizeof(sin)) == -1)
 	return -1;
     	}
 
@@ -425,28 +433,27 @@ int senddata(int socket, char *buffer, int length)
  * bugs:
  *    - WIN32 implementation should be rewritten using WSASend
  */
-int senddata_raw(int socket,const char *buffer, int length)
-{
+int senddata_raw(int socket,const char *buffer, int length) {
 #if !(defined(WIN32) && !defined(CYGWIN))
-    int rc;
-    
-    for(rc=0;rc < length;)
-	{
-	rc = TEMP_FAILURE_RETRY(
-		send(socket,&buffer[rc],length-rc,MSG_NOSIGNAL));
-	if(CHECK_RC(rc))
-		return -1;
+	int rc;
+
+	for(rc=0;rc < length;) {
+		rc = TEMP_FAILURE_RETRY(
+			send(socket,&buffer[rc],length-rc,MSG_NOSIGNAL));
+		if(CHECK_RC(rc))
+			return -1;
 	}
-    
-    return length;
+
+	return length;
 #endif
 #if defined(WIN32) && !defined(CYGWIN)
 	int rc;
 	
-	for(rc=0;rc < length;)
-		{
+	for(rc=0;rc < length;) {
 		rc = TEMP_FAILURE_RETRY(send(socket, buffer, length-rc, 0));
-		}
+		if(CHECK_RC(rc))
+			return -1;
+	}
 	return length;
 #endif
 }
@@ -471,48 +478,48 @@ int recvdata(int socket, char *buffer, int maxsize)
      *bufe = recvbuffer;
     char *dst = buffer;
     static enum {
-        stData, stCr, stCopy
+	stData, stCr, stCopy
     } state = stData;
     while (dst - buffer < maxsize) {
-        if (bufp == bufe) {
-            int length = recv(socket, recvbuffer, sizeof(recvbuffer), 0);
-            if (length < 0)
+	if (bufp == bufe) {
+	    int length = recv(socket, recvbuffer, sizeof(recvbuffer), 0);
+	    if (length < 0)
 	    	{
 		if (dst - buffer > 0)
-                    return dst - buffer;
-                else
-                    return length;
+		    return dst - buffer;
+		else
+		    return length;
 		}
-            bufp = recvbuffer;
-            bufe = recvbuffer + length;
-            if (length == 0) {
+	    bufp = recvbuffer;
+	    bufe = recvbuffer + length;
+	    if (length == 0) {
 				*dst= 0;
-                break;
+		break;
 			}
-        }
-        switch (state) {
-            case stData:
-                if (*bufp == '\r') {
-                    state = stCr;
-                    bufp++;
-                } else
-                    *dst++ = *bufp++;
-                break;
-            case stCr:
-                if (*bufp == '\n') {
-                    state = stData;
-                    bufp++;
-                    return dst - buffer;
-                } else {
-                    state = stCopy;
-                    *dst++ = '\r';
-                }
-                break;
-            case stCopy:
-                *dst = *bufp++;
-                state = stData;
-                break;
-        }
+	}
+	switch (state) {
+	    case stData:
+		if (*bufp == '\r') {
+		    state = stCr;
+		    bufp++;
+		} else
+		    *dst++ = *bufp++;
+		break;
+	    case stCr:
+		if (*bufp == '\n') {
+		    state = stData;
+		    bufp++;
+		    return dst - buffer;
+		} else {
+		    state = stCopy;
+		    *dst++ = '\r';
+		}
+		break;
+	    case stCopy:
+		*dst = *bufp++;
+		state = stData;
+		break;
+	}
     }
 	buffer[maxsize-1] = '\0';
     return maxsize;
@@ -547,70 +554,70 @@ int recvstring(int socket, char *buffer, int maxsize, recvbuffer_t *rb)
 {
     char *dst = buffer;
     static enum {
-        stData, stCr, stCopy
+	stData, stCr, stCopy
     } state = stData;
 
     while (dst - buffer < maxsize -	1)
     	{
-        if (rb->bufp == rb->bufe)
+	if (rb->bufp == rb->bufe)
 		{
-        	int length;
+		int length;
 		
 		length = recv(socket, rb->recvbuffer, rb->size, MSG_NOSIGNAL);
-            	
-            	if (length < 0)
+	    	
+	    	if (length < 0)
 	    		{
 			if (dst - buffer > 0)
 				{
 				*dst = '\0';
-	                	return dst - buffer;
-	                	}
+				return dst - buffer;
+				}
 			else 	
 				{
 				buffer[0] = '\0';
-	                    	return length;
+			    	return length;
 				}
 			}
-	        rb->bufp = rb->recvbuffer;
-        	rb->bufe = rb->recvbuffer + length;
+		rb->bufp = rb->recvbuffer;
+		rb->bufe = rb->recvbuffer + length;
 
-	        if (length == 0)
-        	    	{
+		if (length == 0)
+		    	{
 			*dst = '\0';
-		        break;
+			break;
 			}
-        	}
-        switch (state)
-        	{
-	        case stData:
-                	if (*rb->bufp == '\r')
-                		{
-		                state = stCr;
-        		        rb->bufp++;
-                		}
-               		else
-                		*dst++ = *rb->bufp++;
+		}
+	switch (state)
+		{
+		case stData:
+			if (*rb->bufp == '\r')
+				{
+				state = stCr;
+				rb->bufp++;
+				}
+	       		else
+				*dst++ = *rb->bufp++;
 
-                	break;
-            	case stCr:
-                	if (*rb->bufp == '\n')
-                		{
-		        	state = stData;
-        		        rb->bufp++;
+			break;
+	    	case stCr:
+			if (*rb->bufp == '\n')
+				{
+				state = stData;
+				rb->bufp++;
 				*dst = '\0';
-                    		return dst - buffer;
-		               	}
+		    		return dst - buffer;
+			       	}
 			else
 				{
-			        state = stCopy;
-        			*dst++ = '\r';
-	                	}
-        	       break;
-	        case stCopy:
-                	*dst = *rb->bufp++;
-                	state = stData;
-	                break;
-        	}
+				state = stCopy;
+				*dst++ = '\r';
+				}
+		       break;
+		case stCopy:
+			*dst = *rb->bufp++;
+			state = stData;
+			break;
+		}
     }
 
 buffer[maxsize-1] = '\0';
@@ -621,16 +628,16 @@ int recvstring_with_timeout(int socket, char *buffer, int maxsize, recvbuffer_t 
 {
     char *dst = buffer;
     static enum {
-        stData, stCr, stCopy
+	stData, stCr, stCopy
     } state = stData;
 
     while (dst - buffer < maxsize -	1)
     	{
 		
-        if (rb->bufp == rb->bufe)
+	if (rb->bufp == rb->bufe)
 		{
-            int length;
-        	
+	    int length;
+		
 		fd_set fds;
 		int n;
 		struct timeval tv;
@@ -651,60 +658,60 @@ int recvstring_with_timeout(int socket, char *buffer, int maxsize, recvbuffer_t 
 		// data must be here, so do a normal recv()
 
 		length = recv(socket, rb->recvbuffer, rb->size, MSG_NOSIGNAL);
-            	
-            	if (length < 0)
+	    	
+	    	if (length < 0)
 	    		{
 			if (dst - buffer > 0)
 				{
 				*dst = '\0';
-	                	return dst - buffer;
-	                	}
+				return dst - buffer;
+				}
 			else 	
 				{
 				buffer[0] = '\0';
-	                    	return length;
+			    	return length;
 				}
 			}
-	        rb->bufp = rb->recvbuffer;
-        	rb->bufe = rb->recvbuffer + length;
+		rb->bufp = rb->recvbuffer;
+		rb->bufe = rb->recvbuffer + length;
 
-	        if (length == 0)
-        	    	{
+		if (length == 0)
+		    	{
 			*dst = '\0';
-		        break;
+			break;
 			}
-        	}
-        switch (state)
-        	{
-	        case stData:
-                	if (*rb->bufp == '\r')
-                		{
-		                state = stCr;
-        		        rb->bufp++;
-                		}
-               		else
-                		*dst++ = *rb->bufp++;
+		}
+	switch (state)
+		{
+		case stData:
+			if (*rb->bufp == '\r')
+				{
+				state = stCr;
+				rb->bufp++;
+				}
+	       		else
+				*dst++ = *rb->bufp++;
 
-                	break;
-            	case stCr:
-                	if (*rb->bufp == '\n')
-                		{
-		        	state = stData;
-        		        rb->bufp++;
+			break;
+	    	case stCr:
+			if (*rb->bufp == '\n')
+				{
+				state = stData;
+				rb->bufp++;
 				*dst = '\0';
-                    		return dst - buffer;
-		               	}
+		    		return dst - buffer;
+			       	}
 			else
 				{
-			        state = stCopy;
-        			*dst++ = '\r';
-	                	}
-        	       break;
-	        case stCopy:
-                	*dst = *rb->bufp++;
-                	state = stData;
-	                break;
-        	}
+				state = stCopy;
+				*dst++ = '\r';
+				}
+		       break;
+		case stCopy:
+			*dst = *rb->bufp++;
+			state = stData;
+			break;
+		}
     }
 
 buffer[maxsize-1] = '\0';

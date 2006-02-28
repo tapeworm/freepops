@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9a"
+PLUGIN_VERSION = "0.0.9b"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -209,12 +209,13 @@ function serialize_state()
 		internalState.browser:serialize("internalState.browser")
 end
 
--- Computes the hash of our state.  Concate the user, domain and mailbox.
+-- Computes the hash of our state.  Concate the user, domain, mailbox and password
 --
 function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
-         (internalState.strMBox or "")
+         (internalState.strMBox or "") .. "~" ..
+	 internalState.strPassword -- this asserts strPassword ~= nil
 end
 
 -- Issue the command to login to AOL
@@ -397,8 +398,8 @@ function loginAOL()
 	
   -- Debug info
   --
-  log.dbg("Created session (ID: " .. hash() .. ", User: " .. 
-    internalState.strUser .. "@" .. internalState.strDomain .. ")\n")
+  log.dbg("Created session for " .. 
+    internalState.strUser .. "@" .. internalState.strDomain .. "\n")
 
   -- Return Success
   --

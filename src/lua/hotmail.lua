@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.4f"
+PLUGIN_VERSION = "0.1.4g"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -257,12 +257,13 @@ function serialize_state()
 		internalState.browser:serialize("internalState.browser")
 end
 
--- Computes the hash of our state.  Concate the user, domain and mailbox.
+-- Computes the hash of our state.  Concate the user, domain, mailbox and password
 --
 function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
-         (internalState.strMBoxName or "")
+         (internalState.strMBoxName or "") .. "~"  ..
+	 internalState.strPassword -- this asserts strPassword ~= nil
 end
 
 function getPage(browser, url)
@@ -508,8 +509,8 @@ function loginHotmail()
 	
   -- Debug info
   --
-  log.dbg("Created session (ID: " .. hash() .. ", User: " .. 
-    internalState.strUser .. "@" .. internalState.strDomain .. ")\n")
+  log.dbg("Created session for " .. 
+    internalState.strUser .. "@" .. internalState.strDomain .. "\n")
 
   -- Return Success
   --

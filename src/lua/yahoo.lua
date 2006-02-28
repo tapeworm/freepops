@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9"
+PLUGIN_VERSION = "0.1.9a"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -378,13 +378,14 @@ function serialize_state()
 		internalState.browser:serialize("internalState.browser")
 end
 
--- Computes the hash of our state.  Concate the user, domain and mailbox.
+-- Computes the hash of our state.  Concate the user, domain, mailbox and password
 --
 function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
          (internalState.strMBox or "") .. "~" ..
-         (internalState.strView or "")
+         (internalState.strView or "") .. "~" ..
+	 internalState.strPassword -- this asserts strPassword ~= nil
 end
 
 -- Check to see if the GUI is the new one
@@ -536,8 +537,8 @@ function loginYahoo()
 	
   -- Debug info
   --
-  log.dbg("Created session (ID: " .. hash() .. ", User: " .. 
-    internalState.strUser .. "@" .. internalState.strDomain .. ")\n")
+  log.dbg("Created session for " .. 
+    internalState.strUser .. "@" .. internalState.strDomain .. "\n")
 
   -- Return Success
   --
@@ -581,8 +582,8 @@ function loginNewYahoo(browser, body)
 	
   -- Debug info
   --
-  log.dbg("Created session (ID: " .. hash() .. ", User: " .. 
-    internalState.strUser .. "@" .. internalState.strDomain .. ")\n")
+  log.dbg("Created session for " .. 
+    internalState.strUser .. "@" .. internalState.strDomain .. "\n")
 
   -- Return Success
   --

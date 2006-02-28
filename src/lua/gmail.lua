@@ -10,7 +10,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.43"
+PLUGIN_VERSION = "0.0.43a"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -260,7 +260,7 @@ end
 function key()
 	return (internal_state.strUserName or "")..
 		("gmail.com")..
-		(internal_state.strPassword or "")..
+		internal_state.strPassword.. -- this asserts strPassword ~= nil
 		(internal_state.strFolder or "")..
 		(internal_state.strActions or "")
 end

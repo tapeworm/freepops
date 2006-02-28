@@ -1,3 +1,5 @@
+- added password field to the key()/hash() function of a bunch of lua plugins.
+This fixes a potential security problem.
 - added Kevin Edwards patch to altsocklib.c (should definitively fix the
 looping problem)
 - added support for backports.org in buildfactory/Makefile

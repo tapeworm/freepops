@@ -53,6 +53,7 @@ doc: all
 	$(H)bin/luadoc  \
 		$(PWD)/html_lua/*_luadoc.lua \
 		$(PWD)/include/*.lua \
+		$(PWD)/include/*/*.lua \
 		$(PWD)/../src/lua/freepops.lua \
 		-d $(PWD)/html_lua/
 	$(H)rm $(PWD)/html_lua/*_luadoc.lua

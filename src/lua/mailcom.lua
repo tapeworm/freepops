@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9g"
+PLUGIN_VERSION = "0.0.9h"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -129,7 +129,7 @@ local globals = {
 
   -- Get the mail server for Mail.com
   --
-  strRegExpMailServer = '(http://[^/]*)/scripts',
+  strRegExpMailServer = '(http://[^/]*)/scripts/',
   
   -- Used by Stat to pull out the message ID and the size
   --

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.4g"
+PLUGIN_VERSION = "0.1.4h"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -105,21 +105,24 @@ local globals = {
   -- Get the crumb value that is needed for every command
   --
   strRegExpCrumb = '&a=([^"&]*)[&"]',
+  strRegExpCrumbLive = '<web:param name="SessionIdHash" value="([^"]+)"></web:param>',                    
+
 
   -- Image server pattern
   --
   strImgServerPattern = 'img src="(http://[^/]*)/spacer.gif"',
   strImgServerLivePattern = 'img src="(http://[^/]*)/mail/',
 
-  -- Trash Folder pattern
+  -- Junk and Trash Folder pattern
   -- 
-  strPatLiveTrashId = 'i_trash%.gif"</td><td><a href=/mail/mail%.aspx%?Control=[^&]+&FolderID=([^>]+)>',
+  strPatLiveTrashId = 'i_trash%.gif" /></div>[^<]+<div class="[^"]+"><a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)">',
+  strPatLiveJunkId = 'i_junkEmail%.gif" /></div>[^<]+<div class="[^"]+"><a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)">',
 
   -- Folder id pattern
   --
   strFolderPattern = '<a href="[^"]+curmbox=([^&]+)&[^"]+" >', 
-  strFolderLivePattern = '<a href=/mail/mail%.aspx%?Control=Inbox&FolderID=([^<]+)>', 
-  strFolderLiveInboxPattern = 'i_inbox%.gif"</td><td><a href=/mail/mail%.aspx%?Control=Inbox&FolderID=([^<]+)>',
+  strFolderLivePattern = '<a href="/mail/mail.aspx%?Control=Inbox&FolderID=([^"]+)">',
+  strFolderLiveInboxPattern = 'i_inbox%.gif" /></div>[^<]+<div class="[^"]+"><a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)">',
 
   -- Pattern to determine if we have no messages
   --
@@ -145,7 +148,7 @@ local globals = {
 
   -- Pattern used in the Live interface to get the message info
   --
-  strMsgLivePattern = 'new HM%.__0%("([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
+  strMsgLivePattern = 'new HM%.__0%("([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -161,11 +164,12 @@ local globals = {
   -- Command URLS
   --
   strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s",
-  strCmdMsgListLive = "http://%s/mail/mail.fpp?cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,14,,&ptid=0&a=", 
   strCmdMsgListNextPage = "&page=%d&wo=",
+  strCmdMsgListLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.GetFolderData&ptid=0&a=%s", 
+  strCmdMsgListPostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,,&MailToken=",
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
-  strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=", 
+  strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=%s", 
   strCmdDeletePostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d=%s,%s,[%s],null,null,1,false,Date",
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
@@ -401,9 +405,23 @@ function loginHotmail()
     return POPSERVER_ERR_NETWORK
   end
   
+  -- Check to see if we are using the new interface and are redirecting.
+  --
+  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+  if url ~= nil then
+    log.dbg("Hotmail: Detected LIVE version.")
+    body, err = browser:get_uri(url)
+    internalState.bLiveGUI = true
+  end  
+
   -- Extract the crumb - This is needed for deletion of items
   --
-  _, _, str = string.find(body, globals.strRegExpCrumb)
+  if (internalState.bLiveGUI == true) then
+    _, _, str = string.find(body, globals.strRegExpCrumbLive)
+  else
+    _, _, str = string.find(body, globals.strRegExpCrumb)
+  end
+
   if str == nil then
     log.error_print("Can't get the 'a' value. This will lead to problems!")
     internalState.strCrumb = ""
@@ -414,15 +432,6 @@ function loginHotmail()
     -- 
     log.dbg("Hotmail Crumb value: " .. str .. "\n")
   end
-
-  -- Check to see if we are using the new interface and are redirecting.
-  --
-  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
-  if url ~= nil then
-    log.dbg("Hotmail: Detected LIVE version.")
-    body, err = browser:get_uri(url)
-    internalState.bLiveGUI = true
-  end  
 
   -- Save the mail server
   --
@@ -486,20 +495,19 @@ function loginHotmail()
   -- Get the ID of the trash folder
   --
   if (internalState.bLiveGUI) then
-    local i = 1
-    for id in string.gfind(body, globals.strPatLiveTrashId) do
-      if (i == 2) then
-        internalState.strTrashId = id
-        log.dbg("Hotmail - trash folder id: " .. id)
-      else
-        internalState.strJunkId = id
-        log.dbg("Hotmail - junk folder id: " .. id)
-      end
-      i = i + 1
+    _, _, str = string.find(body, globals.strPatLiveTrashId) 
+    if str ~= nil then
+      internalState.strTrashId = str
+      log.dbg("Hotmail - trash folder id: " .. str)
+    else
+      log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
     end
-
-    if internalState.strTrashId == nil then
-      log.error_print("Unable to detect the folder id for the trash.  Deletion may fail.")
+    _, _, str = string.find(body, globals.strPatLiveTrashId) 
+    if str ~= nil then
+      internalState.strJunkId = str
+      log.dbg("Hotmail - junk folder id: " .. str)
+    else
+      log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
     end
   end
 
@@ -983,7 +991,7 @@ function quit_update(pstate)
       log.error_print("Unable to delete messages.\n")
     end
   elseif dcnt > 0 and internalState.bLiveGUI then
-    cmdUrl = string.format(globals.strCmdDeleteLive, internalState.strMailServer)
+    cmdUrl = string.format(globals.strCmdDeleteLive, internalState.strMailServer, internalState.strCrumb)
     post = string.format(globals.strCmdDeletePostLive, internalState.strMBox, 
       internalState.strTrashId, uidls)
     log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)
@@ -1069,7 +1077,8 @@ function LiveStat(pstate)
   end  
 
   local cmdUrl = string.format(globals.strCmdMsgListLive, internalState.strMailServer,
-    internalState.strMBox, nMaxMsgs, nMaxMsgs)
+    internalState.strCrumb)
+  local post = string.format(globals.strCmdMsgListPostLive, internalState.strMBox, nMaxMsgs, nMaxMsgs)
 
   -- Debug Message
   --
@@ -1081,7 +1090,7 @@ function LiveStat(pstate)
 
   -- Iterate over the messages
   --
-  local body, err = browser:get_uri(cmdUrl)
+  local body, err = browser:post_uri(cmdUrl, post)
 
   -- Let's make sure the session is still valid
   --
@@ -1104,7 +1113,7 @@ function LiveStat(pstate)
     --
     browser = internalState.browser
     cmdUrl = string.format(globals.strCmdMsgListLive, internalState.strMailServer,
-      internalState.strMBox)
+      internalState.strCrumb)
 
     -- Retry to load the page
     --

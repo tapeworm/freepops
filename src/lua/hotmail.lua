@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.4h"
+PLUGIN_VERSION = "0.1.5"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -74,6 +74,7 @@ local globals = {
   -- Server URL
   --
   strLoginUrl = "http://www.hotmail.com/",
+  strDefaultLoginPostUrl = "https://loginnet.passport.com/ppsecure/post.srf",
 
   -- Login strings
   -- TODO: Define the HTTPS version
@@ -215,7 +216,7 @@ internalState = {
 
 -- Set to true to enable Raw Logging
 --
-local ENABLE_LOGRAW = false
+local ENABLE_LOGRAW = true
 
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
@@ -359,9 +360,12 @@ function loginHotmail()
   _, _, url = string.find(body, pattern)
   local _, _, str = string.find(body, globals.strLoginPostUrlPattern4)
   local _, _, str2 = string.find(body, globals.strLoginPostUrlPattern5)
-  if (url == nil or str == nil or str2 == nil) then
+  if (str == nil or str2 == nil) then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_NETWORK
+  end
+  if (url == nil) then 
+    url = globals.strDefaultLoginPostUrl 
   end
   url = url .. "?" .. str 
 

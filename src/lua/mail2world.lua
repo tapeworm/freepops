@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2a"
+PLUGIN_VERSION = "0.0.2b"
 PLUGIN_NAME = "mail2world.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -143,8 +143,8 @@ end
 function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
-         (internalState.strMBox or "") .. "~"  .
-	 internalState.strPassword -- this asserts strPassword ~= nil
+         (internalState.strMBox or "") .. "~"  ..
+	 internalState.strPassword      -- this asserts strPassword ~= nil
 end
 
 -- Issue the command to login

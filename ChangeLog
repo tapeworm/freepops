@@ -1,3 +1,4 @@
+11/03/2006 0.0.98
 - fixed a bug in cookie.lua about the capture of cookie names (Thanks to
 Matteo Turconi)
 - documentation of all lua modules is now generated (with last release some

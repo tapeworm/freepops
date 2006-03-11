@@ -18,7 +18,7 @@ end
 table.foreach(comments,function(k,v)
 	filename = ""
 	already = {}
-	for _,x in v do
+	for _,x in pairs(v) do
 		if already[x] == nil then
  			filename = filename .. x .. ", "
 			already[x] = true

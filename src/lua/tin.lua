@@ -826,8 +826,12 @@ function retr(pstate,msg,data)
 	
 	-- tell the browser to fetch
 	local head,f,rc = b:get_head_and_body(uri)
-	local _,_,ctype = string.find(head,
-		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")		
+	local found,_,ctype = string.find(head,
+		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:"..
+		"%s*[^;\r]+;%s*[Cc][Hh][Aa][Rr][Ss][Ee][Tt]=\"?([^\"\r]*)")
+	if found == nil then
+		ctype = "iso-8859-1"
+	end
 	
 	if f == nil then
 		log.error_print("Asking for "..uri.."\n")
@@ -889,8 +893,13 @@ function top(pstate,msg,lines,data)
 	
 	-- tell the browser to fetch
 	local head,f,rc = b:get_head_and_body(uri)
-	local _,_,ctype = string.find(head,
-		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")		
+	local found,_,ctype = string.find(head,
+		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:"..
+		"%s*[^;\r]+;%s*[Cc][Hh][Aa][Rr][Ss][Ee][Tt]=\"?([^\"\r]*)")
+	if found == nil then
+		ctype = "iso-8859-1"
+	end
+	
 	if f == nil then
 		log.error_print("Asking for "..uri.."\n")
 		log.error_print(rc.."\n")

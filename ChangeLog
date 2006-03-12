@@ -1,3 +1,4 @@
+- fixed a bug in mimer.lua about the Content-type header definition
 11/03/2006 0.0.98
 - fixed a bug in cookie.lua about the capture of cookie names (Thanks to
 Matteo Turconi)

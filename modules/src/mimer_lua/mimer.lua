@@ -455,14 +455,14 @@ function Private.send_alternative(text_encoding,body,body_html,send_cb)
 	if rc ~= nil then return rc end
 	
 	rc = send_cb("--"..boundary.."\r\n"..
-		"Content-Type: text/plain charset=\""..text_encoding.."\"\r\n"..
+		"Content-Type: text/plain; charset=\""..text_encoding.."\"\r\n"..
 		"Content-Transfer-Encoding: quoted-printable\r\n"..
 		"\r\n"..
 		body)
 	if rc ~= nil then return rc end
 	
 	rc = send_cb("--"..boundary.."\r\n"..
-		"Content-Type: text/html charset=\""..text_encoding.."\"\r\n"..
+		"Content-Type: text/html; charset=\""..text_encoding.."\"\r\n"..
 		"Content-Transfer-Encoding: quoted-printable\r\n"..
 		"\r\n"..
 		body_html)

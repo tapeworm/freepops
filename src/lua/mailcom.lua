@@ -292,7 +292,8 @@ function login()
   local url = "";
   local post = string.format(globals.strLoginPostData, username, domain, password, domain)
 
-  if (domain == "email.com" or domain == "iname.com") then
+  if (domain == "email.com" or domain == "iname.com" or domain ==  
+"mail.org") then
     url = string.format(globals.strLoginPage, "www", "mail.com")
   elseif (domain == "usa.com") then
     url = string.format(globals.strLoginPage, "mail", "usa.com")

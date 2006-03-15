@@ -1,3 +1,4 @@
+- libero.lua: updated webmail server addresses
 - tin.lua: fixed encoding problems
 - fixed a bug in mimer.lua about the Content-type header definition
 11/03/2006 0.0.98

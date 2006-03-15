@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.5"
+PLUGIN_VERSION = "0.2.6"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"

@@ -63,7 +63,9 @@ freepops.MODULES_MAP["yahoo.com.br"] 	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.es"] 	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.de"]        = {name="yahoo.lua"} 
 freepops.MODULES_MAP["yahoo.dk"]        = {name="yahoo.lua"} 
-freepops.MODULES_MAP["rocketmail.com"]  = {name="yahoo.lua"} 
+freepops.MODULES_MAP["rocketmail.com"]  = {name="yahoo.lua"}
+freepops.MODULES_MAP["talk21.com"]  = {name="yahoo.lua"}
+ 
 
 -- hotmail
 freepops.MODULES_MAP["hotmail.com"]		= {name="hotmail.lua"}

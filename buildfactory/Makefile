@@ -287,6 +287,7 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/browser
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/lxp
+	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/soap
 	$(H)mkdir -p ../dist-osx/FreePOPs/script
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
 	$(H)cp osx/Install_resources/FreePOPs osx/Install_resources/StartupParameters.plist osx/Install_resources/freepopsd.plist ../dist-osx/FreePOPs/script
@@ -305,6 +306,8 @@ dist-osx: freepops-$(VERSION).tar.gz
 		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/browser
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include/lxp;\
 		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/lxp
+	$(H)cd _osx_/freepops-$(VERSION)/modules/include/luasoap;\
+		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/soap
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt
@@ -322,6 +325,7 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/browser
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/lxp
+	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/soap
 	$(H)mkdir -p ../dist-osx/FreePOPs/script
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
 	$(H)cp osx/Install_resources/FreePOPs osx/Install_resources/StartupParameters.plist osx/Install_resources/freepopsd.plist ../dist-osx/FreePOPs/script
@@ -340,6 +344,8 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/browser
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include/lxp;\
 		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/lxp
+	$(H)cd _osx_/freepops-$(VERSION)/modules/include/luasoap;\
+		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/soap
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt

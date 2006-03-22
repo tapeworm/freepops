@@ -1,3 +1,4 @@
+- fixed paths for launchd plists on Mac OS X Tiger (Thanks to jacobolus)
 - libero.lua: updated webmail server addresses
 - tin.lua: fixed encoding problems
 - fixed a bug in mimer.lua about the Content-type header definition

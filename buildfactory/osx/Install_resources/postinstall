@@ -15,9 +15,9 @@ if [ ! "`uname -r`" = "8.0.0" ]; then
 	cat "$1/Contents/Resources/FreePOPs" | sed s:DIR=:DIR=\""$2"/FreePOPs\": > /Library/StartupItems/FreePOPs/FreePOPs
 	chmod 755 /Library/StartupItems/FreePOPs/FreePOPs
 else
-	cat "$1/Contents/Resources/freepopsd.plist" | sed s:/Applications/FreePOPs/:$2/FreePOPs/: > /System/Library/LaunchDaemons/freepopsd.plist
-	chmod 644 /System/Library/LaunchDaemons/freepopsd.plist
-	chown root:wheel /System/Library/LaunchDaemons/freepopsd.plist
+	cat "$1/Contents/Resources/freepopsd.plist" | sed s:/Applications/FreePOPs/:$2/FreePOPs/: > /Library/LaunchDaemons/freepopsd.plist
+	chmod 644 /Library/LaunchDaemons/freepopsd.plist
+	chown root:wheel /Library/LaunchDaemons/freepopsd.plist
 fi
 
 exit 0

@@ -1,3 +1,15 @@
+freepops (0.0.99-1) unstable; urgency=low
+
+  *  new upstream release
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sun, 26 Mar 2006 14:30:55 +0200
+
+freepops (0.0.98-2) unstable; urgency=low
+
+  * bad package (actually the sarge backport) uploaded 
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sun, 12 Mar 2006 18:32:03 +0100
+
 freepops (0.0.98-1) unstable; urgency=low
 
   * new upstream release 

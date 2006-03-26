@@ -12,6 +12,7 @@ ifeq "" "$(SRC)"
 	SRC=$(shell ls *.c *.pkg 2> /dev/null)
 endif
 
+ifneq ($(MAKECMDGOALS),clean)
 CDEPFILES=$(shell ls *.c 2> /dev/null)
 ifneq "$(CDEPFILES)" "" 
 	-include $(CDEPFILES:%.c=.%.d)
@@ -25,7 +26,7 @@ endif
 RCDEPFILES=$(shell ls *.rc 2> /dev/null)
 ifneq "$(RCDEPFILES)" "" 
 	-include $(RCDEPFILES:%.rc=.%.d)
-	
+endif
 endif
 
 OBJ=$(strip $(subst .c,.o,$(subst .pkg,.o,$(SRC))) $(RCDEPFILES:%.rc=%.o))
@@ -51,7 +52,7 @@ SHARED_TGT=
 endif
 
 #rules ####################################################
-all: $(CDEPFILES:%.c=.%.d) $(LDEPFILES:%.pkg=.%.d) $(RCDEPFILES:%.rc=.%.d) $(LIBRARY) $(SHARED_TGT)
+all: $(LIBRARY) $(SHARED_TGT)
 	$(H)echo -n
 
 clean:
@@ -116,5 +117,5 @@ $(SHARED): $(OBJ)
 	$(H)echo -n " compiling $< -> "
 	$(H)$(WINDRES) -i $< -o $@
 	$(H)echo "$@"
-	
 
+#eof

@@ -11,6 +11,7 @@ SRC=$(shell ls *.c *.pkg 2> /dev/null)
 
 OBJ=$(subst .c,.o,$(subst .pkg,.o,$(SRC)))
 
+ifneq ($(MAKECMDGOALS),clean)
 CDEPFILES=$(shell ls *.c 2> /dev/null)
 ifneq "$(CDEPFILES)" "" 
 	-include $(CDEPFILES:%.c=.%.d)
@@ -19,6 +20,7 @@ endif
 LDEPFILES=$(shell ls *.pkg 2> /dev/null)
 ifneq "$(LDEPFILES)" "" 
 	-include $(LDEPFILES:%.pkg=.%.d)
+endif
 endif
 
 #flags #######################################################

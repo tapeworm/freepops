@@ -79,7 +79,7 @@ LicenseBkColor /windows
 LicenseData "COPYING.txt"
 LicenseForceSelection radiobuttons \
 	"I like free software and I accept this license." \
-	"I only use proprietary software, I'll never install this crap."
+	"I only use proprietary software, I'll never install this rubbish."
 
 ; The text to prompt the user to enter a directory
 DirText "Choose a directory to install FreePOPs:"

@@ -16,7 +16,7 @@ File Readme di FreePOPs (Italiano)
 Questo pacchetto contiene la distribuzione pre-compilata di FreePOPs per 
 sistemi Mac OS X. Per usarla, dovrebbe bastare installarla; verranno copiati 
 due file in /Library/StartupItems/FreePOPs/ (oppure un file freepopsd.plist in 
-/System/Library/LaunchDaemons se usate Mac OS X Tiger) che faranno partire 
+/Library/LaunchDaemons se usate Mac OS X Tiger) che faranno partire 
 automaticamente FreePOPs ad ogni avvio del sistema.
 
 Se cio' non dovesse accadere potete copiare manualmente i file contenuti nella 
@@ -30,7 +30,7 @@ FreePOPs e' installato (ad es. /Applications/FreePOPs).
 
 Se desiderate far partire FreePOPs solo manualmente dovrete eliminare i file 
 nella directory /Library/StartupItems/FreePOPs (o cancellare 
-/System/Library/LaunchDaemons/freepopsd.plist su Mac OS X Tiger - non gli altri 
+/Library/LaunchDaemons/freepopsd.plist su Mac OS X Tiger - non gli altri 
 eventualmente presenti nella directory); aprite un Terminale, spostatevi 
 nella directory dove avete installato FreePOPs e lanciate il comando 
 ./freepopsd, con le opzioni che preferite.
@@ -56,7 +56,7 @@ FreePOPs Readme file (English)
 
 This package contains the pre-compiled distribution of FreePOPs for Mac OS X 
 systems. To use it you should just have to install it; two files will be copied 
-in /Library/StartupItems/FreePOPs (or one file in /System/Library/LaunchDaemons 
+in /Library/StartupItems/FreePOPs (or one file in /Library/LaunchDaemons 
 if you use Mac OS X Tiger) that will run FreePOPs automatically at every 
 system boot.
 
@@ -72,7 +72,7 @@ FreePOPs) by adding the path FreePOPs is installed into after the equals sign
 
 If you want to run FreePOPs only manually you will have to delete the files in 
 the /Library/StartupItems directory (or freepopsd.plist in 
-/System/Library/LaunchDaemons/ under Mac OS X Tiger - don't delete the other 
+/Library/LaunchDaemons/ under Mac OS X Tiger - don't delete the other 
 files in that directory if there are any); run a Terminal, move to the 
 directory you've installed FreePOPs into then run ./freepopsd, with your 
 favorite command line options.

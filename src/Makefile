@@ -38,6 +38,10 @@ ifeq "$(OS)" "Darwin"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"src/lua_unofficial/\"
 else
+ifeq "$(OS)" "Darwin-static"
+	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
+	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"src/lua_unofficial/\"
+else
 #ifeq "$(OS)" "BeOS"
 #	CFLAGS+= -DFREEPOPSLUA_PATH=\"$HOME/config/settings/freepops/lua/\"
 #	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"$HOME/config/settings/freepops/lua_unofficial/\"
@@ -46,6 +50,7 @@ else
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"$(PREFIX)share/freepops/lua_unofficial/\"
 #endif
+endif
 endif
 endif
 
@@ -128,11 +133,17 @@ ifeq "$(OS)" "Darwin"
 		-lcrypto -ldl -lssl -lcrypto -lz 
 else
 ifeq "$(OS)" "Darwin-static"
+	OSXLIBDL=-ldl
+	ifneq "$(shell find /usr/local/lib/ -iname libdl.a)" ""
+	  OSXLIBDL=/usr/local/lib/libdl.a
+	endif
+	ifneq "$(shell find /sw/lib/ -iname libdl.a)" ""
+	  OSXLIBDL=/sw/lib/libdl.a
+	endif
 	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
-		/usr/local/lib/libdl.a /sw/lib/libcurl.a \
-		/sw/lib/libssl.a /sw/lib/libcrypto.a \
-		/sw/lib/libexpat.a \
-		-L/usr/lib -lgetopt -lm -lpthread -lz
+		$(OSXLIBDL) /sw/lib/libcurl.a \
+		/sw/lib/libssl.a /sw/lib/libcrypto.a /sw/lib/libexpat.a \
+		-L/usr/lib -lgetopt -lm -lpthread -lz -bind_at_load -noprebind
 else
 ifeq "$(OS)" "OpenBSD"
 	LIBSTOLINK+= getopt
@@ -195,6 +206,7 @@ $(BINARY): $(OBJ) $(addsuffix .a,$(addprefix ../modules/lib/lib,$(LIBS)))
 	$(H)$(RANLIB) $(addsuffix .a,$(addprefix ../modules/lib/lib,$(filter-out mlex_lua,$(LIBSTOLINK))))
 	$(H)$(CC) -o $(BINARY) $(OBJ) $(LDFLAGS) 
 	$(H)echo "$(BINARY)"
+	$(H)echo $(DYNLIBS)
 	
 .%.d:%.c
 	$(H)echo " building dep for $<"

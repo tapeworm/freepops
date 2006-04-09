@@ -12,8 +12,8 @@ ifeq "" "$(SRC)"
 	SRC=$(shell ls *.c *.pkg 2> /dev/null)
 endif
 
-ifneq ($(MAKECMDGOALS),clean)
 CDEPFILES=$(shell ls *.c 2> /dev/null)
+ifneq ($(MAKECMDGOALS),clean)
 ifneq "$(CDEPFILES)" "" 
 	-include $(CDEPFILES:%.c=.%.d)
 endif

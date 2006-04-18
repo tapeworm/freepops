@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9h"
+PLUGIN_VERSION = "0.0.9i"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -122,7 +122,7 @@ local globals = {
   -- Expressions to pull out of returned HTML from mail.com corresponding to a problem
   --
   strRetLoginBadPassword = "(Invalid username[^p]+password.)",
-  strRetLoginSessionExpired = "( [Mm]essage)",
+  strRetLoginSessionExpired = '(onClick="ReportSpam)',
 
   -- Regular expression to extract the mail server
   --

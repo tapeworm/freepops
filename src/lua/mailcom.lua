@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9i"
+PLUGIN_VERSION = "0.0.9j"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -145,6 +145,11 @@ local globals = {
   --
   strInbox = "INBOX",
 
+  -- The amount of time that the session should time out at.
+  -- This is expressed in seconds
+  --
+  nSessionTimeout = 14400,  -- 4 hours!
+
   -- Command URLS
   --
   strCmdOptions = "%s/scripts/mail/options.cgi",
@@ -155,6 +160,7 @@ local globals = {
   strCmdDelete = "%s/scripts/mail/mailbox.mail", 
   strCmdDeletePost = "folder=%s&order=Oldest&changeview=0&mview=a&mstart=1&delete_selected=yes&move_selected=&flag_selected=&flags=&views=a&folder_name=&selectAllBox=off&matchfield=fr&mpat=&",
   strCmdEmptyTrash = "%s/scripts/mail/Outblaze.mail?emptytrash=1&current_folder=Trash",
+  strCmdLogout = "%s/scripts/mail/Outblaze.mail?logout=1&.noframe=1",
 }
 -- ************************************************************************** --
 --  State - Declare the internal state of the plugin.  It will be serialized and remembered.
@@ -172,6 +178,7 @@ internalState = {
   strMBox = nil,
   bEmptyTrash = false,
   bOptionOverride = false,
+  loginTime = nil,
 }
 
 -- ************************************************************************** --
@@ -345,6 +352,10 @@ function login()
   --
   log.dbg("Created session for " .. 
     internalState.strUser .. "@" .. internalState.strDomain .. "\n")
+
+  -- Note the time when we logged in
+  --
+  internalState.loginTime = os.clock();
 
   -- Return Success
   --
@@ -669,6 +680,25 @@ function quit_update(pstate)
     cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer)
     log.dbg("Emptying the trash with URL: " .. cmdUrl .. "\n")
     local body, err = browser:get_uri(cmdUrl)
+  end
+
+  -- Should we force a logout.  If this session runs for more than a day, things
+  -- stop working
+  --
+  local currTime = os.clock()
+  local diff = currTime - internalState.loginTime
+  if diff > globals.nSessionTimeout then 
+    cmdUrl = string.format(globals.strCmdLogout, internalState.strMailServer)
+    log.dbg("Sending Logout URL: " .. cmdUrl .. "\n")
+    local body, err = getPage(browser, cmdUrl)
+ 
+    log.dbg("Logout forced to keep mail.com session fresh and tasty!  Yum!\n")
+    log.dbg("Session removed - Account: " .. internalState.strUser .. 
+      "@" .. internalState.strDomain .. "\n")
+    log.raw("Session removed (Forced by mail.com timer) - Account: " .. internalState.strUser .. 
+      "@" .. internalState.strDomain) 
+    session.remove(hash())
+    return POPSERVER_ERR_OK
   end
 
   -- Save and then Free up the session

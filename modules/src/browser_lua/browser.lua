@@ -150,6 +150,12 @@ function Hidden.build_header(self,url,exhed)
 		table.insert(head,"Cookie: "..cook)
 	end
 	if u.host ~= nil then
+		-- This is a terrible hack.  I had to put it so that hotmail would work.  The
+		-- grammar that hotmail uses differs from the one described in cookie.lua.
+		--
+		if (string.find(u.host, "hotmail") ~= nil) then
+			u.host = string.gsub(u.host, "%?.*$", "")
+		end
 		table.insert(head,"Host: "..u.host)
 	end
 	self.curl:setopt(curl.OPT_HTTPHEADER,head)
@@ -590,15 +596,15 @@ function Private.pipe_uri_with_header(self,url,cb_h,cb_b,exhed)
 end
 
 function Private.show(self)
-	print("browser:\n\tcookies:")
+	log.dbg("browser:\n\tcookies:")
 	table.foreach(self.cookies,function(_,c)
-		table.foreach(c,function(a,b) print("\t\t"..a.."="..b) end)
-		print("\n")
+		table.foreach(c,function(a,b) log.dbg("\t\t"..a.."="..b) end)
+		log.dbg("\n")
 	end)
-	print("\treferrer:\n\t\t" .. (self.referrer or ""))
-	print("\tproxy:\n\t\t" .. (self.proxy or ""))
-	print("\tproxyauth:\n\t\t" .. (self.proxyauth or ""))
-	print("\tuseragent:\n\t\t" .. (self.useragent or ""))
+	log.dbg("\treferrer:\n\t\t" .. (self.referrer or ""))
+	log.dbg("\tproxy:\n\t\t" .. (self.proxy or ""))
+	log.dbg("\tproxyauth:\n\t\t" .. (self.proxyauth or ""))
+	log.dbg("\tuseragent:\n\t\t" .. (self.useragent or ""))
 end
 
 function Private.init_curl(self)

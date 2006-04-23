@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5a"
+PLUGIN_VERSION = "0.1.5b"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -73,8 +73,8 @@ the forum instead of emailing the author(s).]]
 local globals = {
   -- Server URL
   --
-  strLoginUrl = "http://www.hotmail.com/",
-  strDefaultLoginPostUrl = "https://loginnet.passport.com/ppsecure/post.srf",
+  strLoginUrl = "http://mail.live.com/",
+  strDefaultLoginPostUrl = "https://login.live.com/ppsecure/post.srf",
 
   -- Login strings
   -- TODO: Define the HTTPS version
@@ -408,14 +408,25 @@ function loginHotmail()
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_NETWORK
   end
-  
+
+  -- One more redirect
+  --  
+  local oldurl = url
+  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+  if url == nil then
+    log.error_print(globals.strLoginFailed)
+    log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(1):\n" .. body);
+    return POPSERVER_ERR_NETWORK
+  end
+  body, err = browser:get_uri(url)
+
   -- Check to see if we are using the new interface and are redirecting.
   --
   _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
   if url ~= nil then
-    log.dbg("Hotmail: Detected LIVE version.")
-    body, err = browser:get_uri(url)
+    log.dbg("Hotmail: Detected LIVE version.") 
     internalState.bLiveGUI = true
+    body, err = browser:get_uri(url)
   end  
 
   -- Extract the crumb - This is needed for deletion of items

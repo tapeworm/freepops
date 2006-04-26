@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5b"
+PLUGIN_VERSION = "0.1.5c"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -100,8 +100,9 @@ local globals = {
   strLoginPostUrlPattern3='g_DO."%s".="([^"]+)"',
   strLoginPostUrlPattern4='var g_QS="([^"]+)";',
   strLoginPostUrlPattern5='name="PPFT" id="[^"]+" value="([^"]+)"',
+  strLoginPostUrlPattern6='id="fmHF" action="([^"]*)"',
   strLoginDoneReloadToHMHome1='URL=([^"]+)"',
-  strLoginDoneReloadToHMHome2='top%.location%.replace%("([^"]+)"',
+  strLoginDoneReloadToHMHome2='%.location%.replace%("([^"]+)"',
 
   -- Get the crumb value that is needed for every command
   --
@@ -217,7 +218,6 @@ internalState = {
 -- Set to true to enable Raw Logging
 --
 local ENABLE_LOGRAW = false
-
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
 local EOL = "\r\n"
@@ -409,23 +409,55 @@ function loginHotmail()
     return POPSERVER_ERR_NETWORK
   end
 
+  -- The login page returns a page where a form needs to be submitted.  We'll do it
+  -- manually.  Extract the form elements and post the data
+  -- 
+  _, _, url = string.find(body, globals.strLoginPostUrlPattern1)
+  local postdata = nil
+  local name, value  
+  for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
+    value = curl.escape(value)
+    if postdata ~= nil then
+      postdata = postdata .. "&" .. name .. "=" .. value  
+    else
+      postdata = name .. "=" .. value 
+    end
+  end
+  body, err = browser:post_uri(url, postdata)
+
   -- One more redirect
   --  
   local oldurl = url
   _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
   if url == nil then
     log.error_print(globals.strLoginFailed)
-    log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(1):\n" .. body);
+    log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
     return POPSERVER_ERR_NETWORK
   end
   body, err = browser:get_uri(url)
 
   -- Check to see if we are using the new interface and are redirecting.
   --
-  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+  _, _, url = string.find(body, globals.strLoginPostUrlPattern6)
   if url ~= nil then
     log.dbg("Hotmail: Detected LIVE version.") 
     internalState.bLiveGUI = true
+    for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
+      value = curl.escape(value)
+      if postdata ~= nil then
+        postdata = postdata .. "&" .. name .. "=" .. value  
+      else
+        postdata = name .. "=" .. value 
+      end
+    end
+    body, err = browser:post_uri(url, postdata)
+
+    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+    if url == nil then
+      log.error_print(globals.strLoginFailed)
+      log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(4):\n" .. body);
+      return POPSERVER_ERR_NETWORK
+    end
     body, err = browser:get_uri(url)
   end  
 

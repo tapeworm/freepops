@@ -1,12 +1,13 @@
 ---
--- Do not use this directly. 
--- browser uses this module for his internal purpose. 
+-- Do not use this directly.
+-- browser uses this module for his internal purpose.
 -- Only one function is available to the end user.
+-- Incorporating jbobowski Gmail fix posted 26 April 2006.
 
 local Private = {}
 
 --============================================================================--
--- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
+-- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL
 --============================================================================--
 
 --<==========================================================================>--
@@ -29,9 +30,9 @@ Private.cookie_av={
 	"domain",
 	"path",
 	"comment",
-	
---	"secure", 
---	commented since the parser is too greedy and eats with 
+
+--	"secure",
+--	commented since the parser is too greedy and eats with
 --	this rules also something like "aaa_secure" (plugin name).
 --	not only a "secure" attribute.
 
@@ -53,17 +54,17 @@ Private.left_table = {}
 
 -- puts in left_table the map: name -> expression_to_capture_name_value
 -- used for catching the left part of an equality,
--- consider that the left_table["domain"] will capture 
+-- consider that the left_table["domain"] will capture
 -- "([Dd][Oo][Mm][Aa][Ii][Nn])" that will be used to find the first part of
 -- a string like:
 -- DOMAIN = VALUE
-table.foreach(Private.cookie_av,function(_,v) 
-	Private.left_table[v] = Private.create_match(v) 
+table.foreach(Private.cookie_av,function(_,v)
+	Private.left_table[v] = Private.create_match(v)
 	end)
 Private.left_table["name"]=Private.value.name
 
 -- eat generates functions that will be called on the cookie string s and
--- the storage table t, these eating functions will put in 
+-- the storage table t, these eating functions will put in
 -- t[name] the capture
 function Private.eat(name,value)
 	return function(s,t)
@@ -79,7 +80,7 @@ end
 
 function Private.eat2(name1,name2,value)
 	return function(s,t)
-		local b,e,l,r = 
+		local b,e,l,r =
 			string.find(s,Private.left_table[name1].."%s*"..value)
 		if b then
 			t[name1]=l
@@ -92,7 +93,7 @@ end
 
 -- temp table used to build the following one
 Private.types = {}
-table.foreach(Private.cookie_av,function(_,v) 
+table.foreach(Private.cookie_av,function(_,v)
 	Private.types[v] = Private.value[v] or Private.value["token"]
 	end)
 Private.types["name"] = Private.value["token"]
@@ -100,7 +101,7 @@ Private.types["name"] = Private.value["token"]
 -- this table will contains the eaters funcions for all the elements in the
 -- cookie grammar, see cookie_av
 Private.syntax = {}
-table.foreach(Private.cookie_av,function(_,v) 
+table.foreach(Private.cookie_av,function(_,v)
 	Private.syntax[v] = Private.eat(v,Private.types[v])
 	end)
 Private.syntax["name"] = Private.eat2("name","value",Private.types["name"])
@@ -108,7 +109,7 @@ Private.syntax["name"] = Private.eat2("name","value",Private.types["name"])
 --<==========================================================================>--
 -- helper functions
 
--- given a host h and a string s, this returns a table with all the cookie 
+-- given a host h and a string s, this returns a table with all the cookie
 -- fields plus host h
 function Private.parse_cookie(s,h)
 	local t = {}
@@ -132,21 +133,27 @@ function Private.parse_cookie(s,h)
 	return t
 end
 
+ -- checks if the cookie has to be purged
+ function Private.is_expired(c)
+     local date = os.time()
 
--- checks if the cookie has to be purged
-function Private.is_expired(c)
-	local date = os.time()
-	if c["max-age"] then
-		if c["max-age"] > date then
-			return true
+     if c["expires"] ~= nil then
+         if c["expires"] < date then
+             return true
+         end
+     end
+
+     if c["max-age"] then
+         if c["max-age"] > date then
+             return true
 		end
-	end	
-	
+	end
+
 	-- this should not be necessary, but...
 	if c["expires"] ~= nil and type(c["expires"]) == "string" then
 		c["expires"] = getdate.toint(c["expires"])
 	end
-	
+
 	if c["expires"] and c["timestamp"] then
 		if os.difftime(date,c["timestamp"]) > c["expires"] then
 			return true
@@ -193,7 +200,7 @@ module("browser.cookie")
 function parse_cookies(s,h)
 	if s then
 		local r = {}
-		table.insert(r,Private.parse_cookie(s,h)) 
+		table.insert(r,Private.parse_cookie(s,h))
 		return r
 	else
 		return nil
@@ -227,7 +234,7 @@ end
 -- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
 -- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
 --
--- begin of code taken from luasocket by Diego Nehab 
+-- begin of code taken from luasocket by Diego Nehab
 -- this code is part of url.lua, released under the MIT license
 --
 -- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
@@ -247,7 +254,7 @@ end
 -- Returns
 --   table with the following fields, where RFC naming conventions have
 --   been preserved:
---     scheme, authority, userinfo, user, password, host, port, 
+--     scheme, authority, userinfo, user, password, host, port,
 --     path, params, query, fragment
 -- Obs:
 --   the leading '/' in {/<path>} is considered part of <path>
@@ -262,7 +269,7 @@ function parse_url(url, default)
     -- get fragment
     url = string.gsub(url, "#(.*)$", function(f) parsed.fragment = f end)
     -- get scheme
-    url = string.gsub(url, "^([%w][%w%+%-%.]*)%:", 
+    url = string.gsub(url, "^([%w][%w%+%-%.]*)%:",
         function(s) parsed.scheme = s end)
     -- get authority
     url = string.gsub(url, "^//([^/]*)", function(n) parsed.authority = n end)
@@ -275,14 +282,14 @@ function parse_url(url, default)
     if not authority then return parsed end
     authority = string.gsub(authority,"^([^@]*)@",
         function(u) parsed.userinfo = u end)
-    authority = string.gsub(authority, ":([^:]*)$", 
+    authority = string.gsub(authority, ":([^:]*)$",
         function(p) parsed.port = p end)
     if authority ~= "" then parsed.host = authority end
     local userinfo = parsed.userinfo
     if not userinfo then return parsed end
-    userinfo = string.gsub(userinfo, ":([^:]*)$", 
+    userinfo = string.gsub(userinfo, ":([^:]*)$",
         function(p) parsed.password = p end)
-    parsed.user = userinfo 
+    parsed.user = userinfo
     return parsed
 end
 
@@ -290,7 +297,7 @@ end
 -- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
 -- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
 --
--- end of code taken from luasocket by Diego Nehab 
+-- end of code taken from luasocket by Diego Nehab
 -- this code is part of url.lua, released under the MIT license
 --
 -- WARING WARING  WARING WARING WARING WARING WARING WARING WARING WARING WARING
@@ -320,14 +327,14 @@ function get(t,res,domain,host)
 		   l >= 0 and
 		   (domain_match("."..domain,c["domain"]) or c.host == host)
 			then
-			--search if there is no othe cookie in r 
+			--search if there is no othe cookie in r
 			--with the same name
 			local dup = false
 			table.foreachi(r,function(_,v)
 				if v.c.name == c.name then dup = true end
 			end)
 			if not dup then
-				table.insert(r,{c=c,l=l})	
+				table.insert(r,{c=c,l=l})
 			end
 		end
 	end)
@@ -335,7 +342,7 @@ function get(t,res,domain,host)
 	local s = ""
 	table.foreach(r,function(_,w)
                 if w.c.name then
-		        s = s .. "; " .. w.c.name .. "=" .. w.c.value 
+		        s = s .. "; " .. w.c.name .. "=" .. w.c.value
                 end
 	--	if w.c.domain then
 	--		s = s .. '; $Domain = "' .. w.c.domain .. '"'
@@ -360,4 +367,3 @@ function clean_expired(t)
 	end
 	end)
 end
-

@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@debian.org>
 Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl3-gnutls-dev (>= 7.15.0-2), flex, bison, po-debconf
 Build-Depends-Indep: tetex-extra, gs-common
-Standards-Version: 3.6.2
+Standards-Version: 3.7.0
 
 Package: freepops
 Architecture: any

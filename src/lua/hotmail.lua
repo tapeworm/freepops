@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5c"
+PLUGIN_VERSION = "0.1.5d"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -74,6 +74,7 @@ local globals = {
   -- Server URL
   --
   strLoginUrl = "http://mail.live.com/",
+
   strDefaultLoginPostUrl = "https://login.live.com/ppsecure/post.srf",
 
   -- Login strings
@@ -428,11 +429,14 @@ function loginHotmail()
   -- One more redirect
   --  
   local oldurl = url
-  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome1)
   if url == nil then
-    log.error_print(globals.strLoginFailed)
-    log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
-    return POPSERVER_ERR_NETWORK
+    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+    if url == nil then
+      log.error_print(globals.strLoginFailed)
+      log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
+      return POPSERVER_ERR_NETWORK
+    end
   end
   body, err = browser:get_uri(url)
 

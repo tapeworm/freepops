@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9j"
+PLUGIN_VERSION = "0.0.9k"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -503,6 +503,7 @@ function cleanupHeaders(headers)
   headers = string.gsub(headers, "<!%-%-.-%-%->", "")
   headers = string.gsub(headers, "<!%-%-.*$", "")
   headers = string.gsub(headers, "\n", "")
+  headers = string.gsub(headers, "\t<", "<")
   headers = string.gsub(headers, "\t", " ")
   headers = string.gsub(headers, "<[Ss][Ee][Ll][Ee][Cc][Tt][^>]+>(.-)</[Ss][Ee][Ll][Ee][Cc][Tt]>", "")
   headers = string.gsub(headers, "<script[^>]+>(.-)</script>", "")
@@ -527,6 +528,8 @@ function cleanupHeaders(headers)
   headers = string.gsub(headers, "%[Save Address%]%[Block Sender%]", "\n")  
   headers = string.gsub(headers, "Save Address Block Sender ", "\n")  
   headers = string.gsub(headers, "%[This Is Spam%]\n", "")
+  headers = string.gsub(headers, "Block Sender", "")
+  headers = string.gsub(headers, "Save Address", "")
   headers = string.gsub(headers, "This Is Spam", "")
   headers = string.gsub(headers, "Previous | Next", "")  
   headers = string.gsub(headers, "\n\n", "\n")

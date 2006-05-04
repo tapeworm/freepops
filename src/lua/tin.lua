@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.94"
+PLUGIN_VERSION = "0.0.95"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -747,14 +747,29 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "\\&quot;", "\"")
 	head = string.gsub(head, "&lt;", "<")
 	head = string.gsub(head, "&gt;", ">")
-	head = mimer.remove_lines_in_proper_mail_header(head, {"content%-type"})
 	head = string.gsub(head, "\r([^\n])", 
 		function(capture) return "\r\n" .. capture end)
 	
-	-- extract body
+	-- locate body
 	local _, begin_body = string.find(data, tin_string.body_start)
 	local end_body, _ = string.find(data, tin_string.body_end)
-	body_html = string.sub(data, begin_body + 1, end_body - 1)
+
+	-- check if it is a plain text message
+	local found = string.find(head,
+		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
+		"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
+	if found == nil then
+		head = mimer.remove_lines_in_proper_mail_header(head,
+			{"content%-type"})
+		body_html = string.sub(data, begin_body + 1, end_body - 1)
+	else
+		body = string.sub(data, begin_body + 1, end_body - 1)
+		body = string.gsub(body, "<br/>", "\r\n");
+		body = string.gsub(body, "<a href[^>]*>", "");
+		body = string.gsub(body, "</a>", "");
+		body = string.gsub(body, "&lt;", "<")
+		body = string.gsub(body, "&gt;", ">")
+	end
 	
 	-- extract attachments
 	local x = mlex.match(data, tin_string.attachE, tin_string.attachG) 

@@ -1,3 +1,4 @@
+- tin.lua: correctly handle plain text messages
 - added fixes for Mac OS X 10.2 Jaguar
 - fixed paths for launchd plists on Mac OS X Tiger (Thanks to jacobolus)
 - libero.lua: updated webmail server addresses

@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.95"
+PLUGIN_VERSION = "0.0.96"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -764,11 +764,16 @@ function tin_parse_webmessage(wherearewe, data)
 		body_html = string.sub(data, begin_body + 1, end_body - 1)
 	else
 		body = string.sub(data, begin_body + 1, end_body - 1)
+                body = string.gsub(body, "^%s+", "")
+                body = string.gsub(body, "%s+$", "")
 		body = string.gsub(body, "<br/>", "\r\n");
 		body = string.gsub(body, "<a href[^>]*>", "");
 		body = string.gsub(body, "</a>", "");
 		body = string.gsub(body, "&lt;", "<")
 		body = string.gsub(body, "&gt;", ">")
+                body = string.gsub(body, "&quot;", "\"")
+                body = string.gsub(body, "&#39;", "'")
+                body = string.gsub(body, "&amp;", "&")
 	end
 	
 	-- extract attachments

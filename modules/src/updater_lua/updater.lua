@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "updater"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -35,11 +35,11 @@ the forum instead of emailing the author(s).]]
 local globals = {
   -- STAT URL
   --
-  strSTATUrl = "http://cvs.sourceforge.net/viewcvs.py/freepops/freepops/src/lua/",
+  strSTATUrl = "http://freepops.cvs.sourceforge.net/freepops/freepops/src/lua/",
 
   -- RETR URL
   --
-  strRETRUrl = "http://cvs.sourceforge.net/viewcvs.py/*checkout*/freepops/freepops/src/lua/%s?rev=%s",
+  strRETRUrl = "http://freepops.cvs.sourceforge.net/*checkout*/freepops/freepops/src/lua/%s?revision=%s",
 
   -- FreePOPs URL
   --
@@ -47,7 +47,7 @@ local globals = {
 
   -- Plugin pattern
   -- 
-  strPluginPat = 'a name="[^"]+" href="/viewcvs.py/freepops/freepops/src/lua/([^%?]+)%?rev=([^&]+)&view=log">',
+  strPluginPat = 'href="/freepops/freepops/src/lua/([^%?]+)%?revision=([^&]+)&amp;view=markup"',
 
   -- Version Pattern
   --

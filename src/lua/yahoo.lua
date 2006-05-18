@@ -676,7 +676,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   -- Remove the quote-printed encoding line from the header
   --
   headers = string.gsub(headers, "Content%-Transfer%-Encoding: quoted%-printable%s+", "");
-  headers = string.gsub(headers, "charset=%"UTF%-8%", "charset=%"us%-ascii%"");
+  --headers = string.gsub(headers, "charset=%"UTF%-8%", "charset=%"us%-ascii%"");
 
   -- Send the headers first to the callback
   --

@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9a"
+PLUGIN_VERSION = "0.1.9b"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -20,7 +20,7 @@ PLUGIN_AUTHORS_CONTACTS =
          "ncocchiaro (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
                   "@yahoo.co.in", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
-                  "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com"
+                  "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com", "@yahoo.com.au",
 }
 
 PLUGIN_PARAMETERS = {
@@ -676,6 +676,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   -- Remove the quote-printed encoding line from the header
   --
   headers = string.gsub(headers, "Content%-Transfer%-Encoding: quoted%-printable%s+", "");
+  headers = string.gsub(headers, "charset=%"UTF%-8%", "charset=%"us%-ascii%"");
 
   -- Send the headers first to the callback
   --
@@ -957,6 +958,11 @@ function getSTATList(pstate)
 
   -- Parse the message id's and sizes
   --
+  if (ipairs == nil) then
+    internalState.bStatDone = true
+    return POPSERVER_ERR_OK
+  end
+
   for i, elem in ipairs (ent) do
     if (type(elem) == "table" and elem["tag"] == "minfo") then
       local attrs = elem["attr"]

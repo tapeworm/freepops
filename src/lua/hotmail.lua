@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5d"
+PLUGIN_VERSION = "0.1.5f"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -101,14 +101,18 @@ local globals = {
   strLoginPostUrlPattern3='g_DO."%s".="([^"]+)"',
   strLoginPostUrlPattern4='var g_QS="([^"]+)";',
   strLoginPostUrlPattern5='name="PPFT" id="[^"]+" value="([^"]+)"',
-  strLoginPostUrlPattern6='id="fmHF" action="([^"]*)"',
   strLoginDoneReloadToHMHome1='URL=([^"]+)"',
   strLoginDoneReloadToHMHome2='%.location%.replace%("([^"]+)"',
+
+  -- Pattern to detect if we are using the live version
+  --
+  strLiveCheckPattern = '(function NewMessageGo)',
+  strLiveMainPagePattern = '<frame name="main" src="([^"]+)"',
 
   -- Get the crumb value that is needed for every command
   --
   strRegExpCrumb = '&a=([^"&]*)[&"]',
-  strRegExpCrumbLive = '<web:param name="SessionIdHash" value="([^"]+)"></web:param>',                    
+  strRegExpCrumbLive = '"sessionidhash" : "([^"]+)"',                    
 
 
   -- Image server pattern
@@ -151,7 +155,7 @@ local globals = {
 
   -- Pattern used in the Live interface to get the message info
   --
-  strMsgLivePattern = 'new HM%.__0%("([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
+  strMsgLivePattern = 'new HM%.__22%([^%)]+%)%), "([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -166,6 +170,8 @@ local globals = {
 
   -- Command URLS
   --
+  strCmdBaseLive = "http://%s/mail/",
+  strCmdBrowserIgnoreLive = "http://%s/mail/mail.aspx?skipbrowsercheck=true",
   strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s",
   strCmdMsgListNextPage = "&page=%d&wo=",
   strCmdMsgListLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.GetFolderData&ptid=0&a=%s", 
@@ -173,7 +179,7 @@ local globals = {
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
   strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=%s", 
-  strCmdDeletePostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d=%s,%s,[%s],null,null,1,false,Date",
+  strCmdDeletePostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d=%s,%s,[%s],[{%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C99999999999990000,null}],null,null,1,false,Date",
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
   strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s",
@@ -219,6 +225,7 @@ internalState = {
 -- Set to true to enable Raw Logging
 --
 local ENABLE_LOGRAW = false
+
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
 local EOL = "\r\n"
@@ -410,60 +417,40 @@ function loginHotmail()
     return POPSERVER_ERR_NETWORK
   end
 
-  -- The login page returns a page where a form needs to be submitted.  We'll do it
-  -- manually.  Extract the form elements and post the data
-  -- 
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern1)
-  local postdata = nil
-  local name, value  
-  for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
-    value = curl.escape(value)
-    if postdata ~= nil then
-      postdata = postdata .. "&" .. name .. "=" .. value  
-    else
-      postdata = name .. "=" .. value 
-    end
-  end
-  body, err = browser:post_uri(url, postdata)
-
-  -- One more redirect
-  --  
-  local oldurl = url
-  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome1)
-  if url == nil then
-    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
-    if url == nil then
-      log.error_print(globals.strLoginFailed)
-      log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
-      return POPSERVER_ERR_NETWORK
-    end
-  end
-  body, err = browser:get_uri(url)
-
   -- Check to see if we are using the new interface and are redirecting.
   --
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern6)
-  if url ~= nil then
+  local _, _, str = string.find(body, globals.strLiveCheckPattern)
+  local folderBody = body
+  if str ~= nil then
     log.dbg("Hotmail: Detected LIVE version.") 
-    internalState.bLiveGUI = true
-    for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
-      value = curl.escape(value)
-      if postdata ~= nil then
-        postdata = postdata .. "&" .. name .. "=" .. value  
-      else
-        postdata = name .. "=" .. value 
-      end
-    end
-    body, err = browser:post_uri(url, postdata)
-
-    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
-    if url == nil then
+    str = string.format(globals.strCmdBrowserIgnoreLive, browser:wherearewe())
+    body, err = browser:get_uri(str)
+    _, _, str = string.find(body, globals.strLiveMainPagePattern)
+    if str ~= nil then
+      str = string.format(globals.strCmdBaseLive, browser:wherearewe()) .. str
+      body, err = browser:get_uri(str)
+    else
       log.error_print(globals.strLoginFailed)
-      log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(4):\n" .. body);
+      log.raw("Login failed: Trying to get session id and got something we weren't expecting:\n" .. body);
       return POPSERVER_ERR_NETWORK
     end
+
+    internalState.bLiveGUI = true
+  else
+    -- One more redirect
+    --  
+    local oldurl = url
+    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome1)
+    if url == nil then
+      _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+      if url == nil then
+        log.error_print(globals.strLoginFailed)
+        log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
+        return POPSERVER_ERR_NETWORK
+      end
+    end
     body, err = browser:get_uri(url)
-  end  
+  end
 
   -- Extract the crumb - This is needed for deletion of items
   --
@@ -530,9 +517,9 @@ function loginHotmail()
     end
   elseif (internalState.strMBox == nil and internalState.bLiveGUI == true) then 
     if (internalState.strMBoxName == "Inbox") then
-      _, _, str = string.find(body, globals.strFolderLiveInboxPattern)
+      _, _, str = string.find(folderBody, globals.strFolderLiveInboxPattern)
     else
-      _, _, str = string.find(body, globals.strFolderLivePattern .. internalState.strMBoxName)
+      _, _, str = string.find(folderBody, globals.strFolderLivePattern .. internalState.strMBoxName)
     end
     if (str == nil) then
       log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
@@ -546,14 +533,14 @@ function loginHotmail()
   -- Get the ID of the trash folder
   --
   if (internalState.bLiveGUI) then
-    _, _, str = string.find(body, globals.strPatLiveTrashId) 
+    _, _, str = string.find(folderBody, globals.strPatLiveTrashId) 
     if str ~= nil then
       internalState.strTrashId = str
       log.dbg("Hotmail - trash folder id: " .. str)
     else
       log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
     end
-    _, _, str = string.find(body, globals.strPatLiveTrashId) 
+    _, _, str = string.find(folderBody, globals.strPatLiveJunkId) 
     if str ~= nil then
       internalState.strJunkId = str
       log.dbg("Hotmail - junk folder id: " .. str)

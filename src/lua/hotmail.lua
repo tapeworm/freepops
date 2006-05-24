@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5e"
+PLUGIN_VERSION = "0.1.5e1"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -505,7 +505,9 @@ function loginHotmail()
       internalState.strCrumb)
     body, err = browser:get_uri(url)
     _, _, str = string.find(body, globals.strFolderPattern .. internalState.strMBoxName .. "</a>")
-    if (str == nil) then
+    if (domain == "msn.com") then
+      internalState.strMBox = globals.strInbox
+    elseif (str == nil) then
       log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
       return POPSERVER_ERR_NETWORK
     else

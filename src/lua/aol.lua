@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9b"
+PLUGIN_VERSION = "0.0.9c"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -50,7 +50,7 @@ and your real password as the password.]]
 local globals = {
   -- Server URL
   -- 
-  strLoginUrlAOL = "http://webmail.aol.com",
+  strLoginUrlAOL = "http://my.screenname.aol.com/_cqr/login/login.psp?sitedomain=registration.aol.com&authLev=1&siteState=OrigUrl%3Dhttp%253a%252f%252fregistration%252eaol%252ecom%252fmail%253fs%255furl%253dhttp%25253a%25252f%25252fwebmail%25252eaol%25252ecom%25252f%25255fcqr%25252fLoginSuccess%25252easpx%25253fsitedomain%25253dsns%25252ewebmail%25252eaol%25252ecom%252526siteState%25253dver%2525253a1%252525252c0%25252526ld%2525253awebmail%25252eaol%25252ecom%25252526pv%2525253aAOL%25252526lc%2525253aen%25252dus%25252526ud%2525253aaol%25252ec",
   strLoginUrlNetscape = "http://mail.netscape.com",
 
   -- Login strings
@@ -258,25 +258,6 @@ function loginAOL()
   -- Retrieve the login page.
   --
   local body, err = browser:get_uri(url)
-
-  -- No connection
-  --
-  if body == nil then
-    log.error_print("Login Failed: Unable to make connection")
-    return POPSERVER_ERR_NETWORK
-  end
-
-  _, _, url = string.find(body, globals.strLoginWebmailRedirect)
-
-  if (url == nil) then
-    log.error_print("Unable to figure out the redirect on the welcome page.")
-    return POPSERVER_ERR_UNKNOWN
-  end
-  body, err = browser:get_uri(url)
-
-  -- We need to add a cookie.
-  --
-  browser:add_cookie(url, "cookies=cookies; path=/")
 
   -- No connection
   --

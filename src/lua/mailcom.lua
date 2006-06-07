@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9k"
+PLUGIN_VERSION = "0.1.00"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -70,7 +70,7 @@ PLUGIN_DOMAINS = {"@mail.com","@email.com","@iname.com","@cheerful.com","@consul
 "@webcity.ca","@webmail.lu","@welcomm.ac","@wenxuecity.net","@westham-mail.com","@wimbledon-mail.com",
 "@windrivers.net","@wolves-mail.com","@wongfaye.com","@worldmail.ac","@worldweb.ac","@isleuthmail.com",
 "@x-lab.cc","@xy.com.tw","@yankeeman.com","@yyhmail.com", "@verizonmail.com", "@lycos.com", "@cyberdude.com",
-"@mail.org", "@italymail.com" }
+"@mail.org", "@italymail.com", "@mexico.com" }
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		en = [[
@@ -302,8 +302,8 @@ function login()
   if (domain == "email.com" or domain == "iname.com" or domain ==  
 "mail.org") then
     url = string.format(globals.strLoginPage, "www", "mail.com")
-  elseif (domain == "usa.com") then
-    url = string.format(globals.strLoginPage, "mail", "usa.com")
+  elseif (domain == "usa.com" or domain == "mexico.com") then
+    url = string.format(globals.strLoginPage, "mail", domain)
   elseif (domain == "lycos.com") then
     url = string.format(globals.strLoginPage3, "mail", "lycos.com")
   elseif (domain == "otakumail.com") then
@@ -500,13 +500,13 @@ function cleanupHeaders(headers)
     return nil
   end  
 
+  headers = string.gsub(headers, "<script[^>]+>(.*)</script>", "")
   headers = string.gsub(headers, "<!%-%-.-%-%->", "")
   headers = string.gsub(headers, "<!%-%-.*$", "")
   headers = string.gsub(headers, "\n", "")
   headers = string.gsub(headers, "\t<", "<")
   headers = string.gsub(headers, "\t", " ")
   headers = string.gsub(headers, "<[Ss][Ee][Ll][Ee][Cc][Tt][^>]+>(.-)</[Ss][Ee][Ll][Ee][Cc][Tt]>", "")
-  headers = string.gsub(headers, "<script[^>]+>(.-)</script>", "")
   headers = string.gsub(headers, "</td></tr>", "\n")
   headers = string.gsub(headers, "<[bB][Rr]>", "\n")
   headers = string.gsub(headers, "<[bB][Rr] />", "\n")
@@ -519,6 +519,7 @@ function cleanupHeaders(headers)
   headers = string.gsub(headers, "To:", "To: ")
   headers = string.gsub(headers, "CC:", "CC: ")
   headers = string.gsub(headers, ";[bB]oundary=", ";\n          boundary=")
+  headers = string.gsub(headers, "var popup=0.+'This message is flagged '%);     }    }","")
   
   -- This part could use some cleanup.  There are usually some links in the 
   -- same line as the From:  line. 

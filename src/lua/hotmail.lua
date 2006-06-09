@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5e1"
+PLUGIN_VERSION = "0.1.5g"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -22,41 +22,41 @@ PLUGIN_DOMAINS = { "@hotmail.com","@msn.com","@webtv.com",
       "@hotmail.com.ar", "@hotmail.co.th", "@hotmail.com.tr"  
       }
 PLUGIN_PARAMETERS = {
-    {name="folder", description={
-        it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox.]],
-        en=[[The folder you want to interact with. Default is Inbox.]]}
-    },
-    {name = "emptyjunk", description = {
-        en = [[
+	{name="folder", description={
+		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox.]],
+		en=[[The folder you want to interact with. Default is Inbox.]]}
+	},
+	{name = "emptyjunk", description = {
+		en = [[
 Parameter is used to force the plugin to empty the junk folder when it is done
 pulling messages.  Set the value to 1.]]
-        }    
-    },
-    {name = "emptytrash", description = {
-        it = [[ Viene usato per forzare il plugin a svuotare il cestino quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
-        en = [[
+		}	
+	},
+	{name = "emptytrash", description = {
+		it = [[ Viene usato per forzare il plugin a svuotare il cestino quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
+		en = [[
 Parameter is used to force the plugin to empty the trash when it is done
 pulling messages.  Set the value to 1.]]
-        }    
-    },
-    {name = "markunread", description = {
-        it = [[ Viene usato per far s&igrave; che il plugin segni come non letti i messaggi che scarica. Se il valore &egrave; 1 questo comportamento viene attivato.]],
-        en = [[ Parameter is used to have the plugin mark all messages that it
+		}	
+	},
+	{name = "markunread", description = {
+		it = [[ Viene usato per far s&igrave; che il plugin segni come non letti i messaggi che scarica. Se il valore &egrave; 1 questo comportamento viene attivato.]],
+		en = [[ Parameter is used to have the plugin mark all messages that it
 pulls as unread.  If the value is 1, the behavior is turned on.]]
-        }
-    },
-    {name = "maxmsgs", description = {
-        en = [[
+		}
+	},
+	{name = "maxmsgs", description = {
+		en = [[
 Parameter is used to force the plugin to only download a maximum number of messages. ]]
-        }    
-    },
+		}	
+	},
 }
 PLUGIN_DESCRIPTIONS = {
-    it=[[
+	it=[[
 Questo plugin vi permette di scaricare la posta da mailbox con dominio della famiglia di @hotmail.com. 
 Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
 nome utente e la vostra vera password come password.]],
-    en=[[
+	en=[[
 This plugin lets you download mail from @hotmail.com and similar mailboxes. 
 To use this plugin you have to use your full email address as the username
 and your real password as the password.  For support, please post a question to
@@ -101,15 +101,22 @@ local globals = {
   strLoginPostUrlPattern3='g_DO."%s".="([^"]+)"',
   strLoginPostUrlPattern4='var g_QS="([^"]+)";',
   strLoginPostUrlPattern5='name="PPFT" id="[^"]+" value="([^"]+)"',
-  strLoginPostUrlPattern6='id="fmHF" action="([^"]*)"',
   strLoginDoneReloadToHMHome1='URL=([^"]+)"',
   strLoginDoneReloadToHMHome2='%.location%.replace%("([^"]+)"',
+
+  -- Pattern to detect if we are using the live version
+  --
+  strLiveCheckPattern = '(function NewMessageGo)',
+  strLiveMainPagePattern = '<frame name="main" src="([^"]+)"',
 
   -- Get the crumb value that is needed for every command
   --
   strRegExpCrumb = '&a=([^"&]*)[&"]',
-  strRegExpCrumbLive = '<web:param name="SessionIdHash" value="([^"]+)"></web:param>',                    
+  strRegExpCrumbLive = '"sessionidhash" : "([^"]+)"',                    
 
+  -- MSN Inbox Folder Id
+  --
+  strPatMSNInboxId = "HMFO%('(%d+)'%)[^>]+><img src=.http://[^/]+/i.p.folder.inbox.gif",
 
   -- Image server pattern
   --
@@ -151,7 +158,7 @@ local globals = {
 
   -- Pattern used in the Live interface to get the message info
   --
-  strMsgLivePattern = 'new HM%.__0%("([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
+  strMsgLivePattern = 'new HM%.__22%([^%)]+%)%), "([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -166,6 +173,8 @@ local globals = {
 
   -- Command URLS
   --
+  strCmdBaseLive = "http://%s/mail/",
+  strCmdBrowserIgnoreLive = "http://%s/mail/mail.aspx?skipbrowsercheck=true",
   strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s",
   strCmdMsgListNextPage = "&page=%d&wo=",
   strCmdMsgListLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.GetFolderData&ptid=0&a=%s", 
@@ -173,7 +182,7 @@ local globals = {
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
   strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=%s", 
-  strCmdDeletePostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d=%s,%s,[%s],null,null,1,false,Date",
+  strCmdDeletePostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d=%s,%s,[%s],[{%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C99999999999990000,null}],null,null,1,false,Date",
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
   strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s",
@@ -219,6 +228,7 @@ internalState = {
 -- Set to true to enable Raw Logging
 --
 local ENABLE_LOGRAW = false
+
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
 local EOL = "\r\n"
@@ -258,9 +268,9 @@ end
 --
 function serialize_state()
   internalState.bStatDone = false;
-    
+	
   return serial.serialize("internalState", internalState) ..
-        internalState.browser:serialize("internalState.browser")
+		internalState.browser:serialize("internalState.browser")
 end
 
 -- Computes the hash of our state.  Concate the user, domain, mailbox and password
@@ -269,7 +279,7 @@ function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
          (internalState.strMBoxName or "") .. "~"  ..
-     internalState.strPassword -- this asserts strPassword ~= nil
+	 internalState.strPassword -- this asserts strPassword ~= nil
 end
 
 function getPage(browser, url)
@@ -316,7 +326,7 @@ function loginHotmail()
   local domain = internalState.strDomain
   local url = globals.strLoginUrl
   local browser = internalState.browser
-    
+	
   -- DEBUG - Set the browser in verbose mode
   --
 --  browser:verbose_mode()
@@ -410,44 +420,40 @@ function loginHotmail()
     return POPSERVER_ERR_NETWORK
   end
 
-  -- One more redirect
-  --  
-  local oldurl = url
-  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome1)
-  if url == nil then
-    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
-    if url == nil then
-      log.error_print(globals.strLoginFailed)
-      log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
-      return POPSERVER_ERR_NETWORK
-    end
-  end
-  body, err = browser:get_uri(url)
-
   -- Check to see if we are using the new interface and are redirecting.
   --
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern6)
-  if url ~= nil then
+  local _, _, str = string.find(body, globals.strLiveCheckPattern)
+  local folderBody = body
+  if str ~= nil then
     log.dbg("Hotmail: Detected LIVE version.") 
-    internalState.bLiveGUI = true
-    for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
-      value = curl.escape(value)
-      if postdata ~= nil then
-        postdata = postdata .. "&" .. name .. "=" .. value  
-      else
-        postdata = name .. "=" .. value 
-      end
-    end
-    body, err = browser:post_uri(url, postdata)
-
-    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
-    if url == nil then
+    str = string.format(globals.strCmdBrowserIgnoreLive, browser:wherearewe())
+    body, err = browser:get_uri(str)
+    _, _, str = string.find(body, globals.strLiveMainPagePattern)
+    if str ~= nil then
+      str = string.format(globals.strCmdBaseLive, browser:wherearewe()) .. str
+      body, err = browser:get_uri(str)
+    else
       log.error_print(globals.strLoginFailed)
-      log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(4):\n" .. body);
+      log.raw("Login failed: Trying to get session id and got something we weren't expecting:\n" .. body);
       return POPSERVER_ERR_NETWORK
     end
+
+    internalState.bLiveGUI = true
+  else
+    -- One more redirect
+    --  
+    local oldurl = url
+    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome1)
+    if url == nil then
+      _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+      if url == nil then
+        log.error_print(globals.strLoginFailed)
+        log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
+        return POPSERVER_ERR_NETWORK
+      end
+    end
     body, err = browser:get_uri(url)
-  end  
+  end
 
   -- Extract the crumb - This is needed for deletion of items
   --
@@ -505,25 +511,27 @@ function loginHotmail()
       internalState.strCrumb)
     body, err = browser:get_uri(url)
     _, _, str = string.find(body, globals.strFolderPattern .. internalState.strMBoxName .. "</a>")
-    if (domain == "msn.com") then
-      internalState.strMBox = globals.strInbox
-    elseif (str == nil) then
+    if (str == nil and domain == "msn.com" and internalState.strMBoxName == "Inbox") then
+      _, _, str = string.find(body, globals.strPatMSNInboxId)
+    end
+    if (str == nil) then
       log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
       return POPSERVER_ERR_NETWORK
     else
       internalState.strMBox = str
       log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
     end
-  elseif (internalState.strMBox == nil and internalState.bLiveGUI == true) then 
+  elseif (internalState.strMBox == nil and internalState.bLiveGUI == true and 
+          internalState.strMBoxName ~= "Junk") then 
     if (internalState.strMBoxName == "Inbox") then
-      _, _, str = string.find(body, globals.strFolderLiveInboxPattern)
+      _, _, str = string.find(folderBody, globals.strFolderLiveInboxPattern)
     else
-      _, _, str = string.find(body, globals.strFolderLivePattern .. internalState.strMBoxName)
+      _, _, str = string.find(folderBody, globals.strFolderLivePattern .. internalState.strMBoxName)
     end
     if (str == nil) then
       log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
       return POPSERVER_ERR_NETWORK
-   else
+    else
       internalState.strMBox = str
       log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
     end
@@ -532,17 +540,20 @@ function loginHotmail()
   -- Get the ID of the trash folder
   --
   if (internalState.bLiveGUI) then
-    _, _, str = string.find(body, globals.strPatLiveTrashId) 
+    _, _, str = string.find(folderBody, globals.strPatLiveTrashId) 
     if str ~= nil then
       internalState.strTrashId = str
       log.dbg("Hotmail - trash folder id: " .. str)
     else
       log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
     end
-    _, _, str = string.find(body, globals.strPatLiveTrashId) 
+    _, _, str = string.find(folderBody, globals.strPatLiveJunkId) 
     if str ~= nil then
       internalState.strJunkId = str
       log.dbg("Hotmail - junk folder id: " .. str)
+      if (internalState.strMBoxName == "Junk") then
+        internalState.strMBox = str
+      end
     else
       log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
     end
@@ -551,7 +562,7 @@ function loginHotmail()
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true
-    
+	
   -- Debug info
   --
   log.dbg("Created session for " .. 
@@ -572,7 +583,7 @@ function downloadMsg(pstate, msg, nLines, data)
   if retCode ~= POPSERVER_ERR_OK then 
     return retCode 
   end
-    
+	
   -- Local Variables
   --
   local browser = internalState.browser
@@ -617,10 +628,10 @@ function downloadMsg(pstate, msg, nLines, data)
 
     -- addition
     cb_uidl = uidl,     --  to provide the uidl for later... 
-    bEndReached = false      -- this is a hack, I know...
+    bEndReached = false  	-- this is a hack, I know...
     -- end of addition
   }
-    
+	
   -- Define the callback
   --
   local cb = downloadMsg_cb(cbInfo, data)
@@ -670,7 +681,7 @@ end
 -- Callback for the retr function
 --
 function downloadMsg_cb(cbInfo, data)
-    
+	
   return function(body, len)
     log.raw("In download callback: " .. cbInfo.cb_uidl)    
 
@@ -737,7 +748,7 @@ function downloadMsg_cb(cbInfo, data)
     -- Send the data up the stream
     --
     popserver_callback(body, data)
-            
+			
     log.raw("out download callback: " .. cbInfo.cb_uidl .. ", Sent: " .. body)    
     return len, nil
   end
@@ -805,7 +816,7 @@ function cleanupBody(body, cbInfo)
   -- check to see whether the end of message has already been seen...
   --
   if (cbInfo.bEndReached == true) then
-    return ("") ;     -- in this case we pass nothing past the end of message
+    return ("") ; 	-- in this case we pass nothing past the end of message
   end
 
   -- Did we reach the end of the message
@@ -936,7 +947,7 @@ function pass(pstate, password)
         "@" .. internalState.strDomain .. "\n")
       return POPSERVER_ERR_LOCKED
     end
-    
+	
     -- Load the session which looks to be a function pointer
     --
     local func, err = loadstring(sessID)
@@ -945,14 +956,14 @@ function pass(pstate, password)
         internalState.strUser .. "@" .. internalState.strDomain .. "): ".. err)
       return loginHotmail()
     end
-        
+		
     log.dbg("Session loaded - Account: " .. internalState.strUser .. 
       "@" .. internalState.strDomain .. "\n")
 
     -- Execute the function saved in the session
     --
     func()
-        
+		
     return POPSERVER_ERR_OK
   else
     -- Create a new session by logging in
@@ -1058,7 +1069,7 @@ function quit_update(pstate)
     end
   end
 
-  -- Empty the Trash
+  -- Empty the Junk Folder
   --
   if internalState.bEmptyJunk and internalState.bLiveGUI then
     cmdUrl = string.format(globals.strCmdEmptyTrashLive, internalState.strMailServer)
@@ -1120,7 +1131,7 @@ function LiveStat(pstate)
   -- Debug Message
   --
   log.dbg("Stat URL: " .. cmdUrl .. "\n");
-        
+		
   -- Initialize our state
   --
   set_popstate_nummesg(pstate, nMsgs)
@@ -1145,8 +1156,8 @@ function LiveStat(pstate)
     if status ~= POPSERVER_ERR_OK then
       return POPSERVER_ERR_NETWORK
     end
-    
-    -- Reset the local variables        
+	
+    -- Reset the local variables		
     --
     browser = internalState.browser
     cmdUrl = string.format(globals.strCmdMsgListLive, internalState.strMailServer,
@@ -1210,7 +1221,7 @@ function stat(pstate)
   -- Debug Message
   --
   log.dbg("Stat URL: " .. cmdUrl .. "\n");
-        
+		
   -- Initialize our state
   --
   set_popstate_nummesg(pstate, nMsgs)
@@ -1236,7 +1247,7 @@ function stat(pstate)
     if cnt == 0 then
       return true, nil
     end 
-        
+		
     -- Cycle through the items and store the msg id and size
     --
     for i = 1, cnt do
@@ -1285,7 +1296,7 @@ function stat(pstate)
 
     -- We are done with this page, increment the counter
     --
-    nPage = nPage + 1        
+    nPage = nPage + 1		
     
     return true, nil
   end 
@@ -1348,8 +1359,8 @@ function stat(pstate)
       if status ~= POPSERVER_ERR_OK then
         return nil, "Session expired.  Unable to recover"
       end
-    
-      -- Reset the local variables        
+	
+      -- Reset the local variables		
       --
       browser = internalState.browser
       cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
@@ -1386,7 +1397,7 @@ function stat(pstate)
     if string.find(body, globals.strMsgListGoodBody) == nil then
       return nil, "Hotmail returned with an invalid page."
     end
-    
+	
     return body, err
   end
 
@@ -1401,11 +1412,11 @@ function stat(pstate)
       "@" .. internalState.strDomain) 
     return POPSERVER_ERR_NETWORK
   end
-    
+	
   -- Update our state
   --
   internalState.bStatDone = true
-    
+	
   -- Check to see that we completed successfully.  If not, return a network
   -- error.  This is the safest way to let the email client now that there is
   -- a problem but that it shouldn't drop the list of known uidls.
@@ -1484,7 +1495,7 @@ function init(pstate)
   -- Import the freepops name space allowing for us to use the status messages
   --
   freepops.export(pop3server)
-    
+	
   -- Load dependencies
   --
 
@@ -1495,7 +1506,7 @@ function init(pstate)
   -- Browser
   --
   require("browser")
-    
+	
   -- MIME Parser/Generator
   --
   require("mimer")
@@ -1503,7 +1514,7 @@ function init(pstate)
   -- Common module
   --
   require("common")
-    
+	
   -- Run a sanity check
   --
   freepops.set_sanity_checks()

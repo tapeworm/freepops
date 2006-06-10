@@ -30,8 +30,15 @@ freepops.MODULES_MAP["virgilio.it"]	= {
 	name="tin.lua",
 	args={folder="INBOX"}
 }
-
 freepops.MODULES_MAP["tin.it"]		= {
+	name="tin.lua",
+	args={folder="INBOX"}
+}
+freepops.MODULES_MAP["alice.it"]	= {
+	name="tin.lua",
+	args={folder="INBOX"}
+}
+freepops.MODULES_MAP["tim.it"]		= {
 	name="tin.lua",
 	args={folder="INBOX"}
 }

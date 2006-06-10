@@ -1,3 +1,5 @@
+- tin.lua: added @alice.it and @tim.it
+- tin.lua: fix to use new webmail address (Thanks to rudygonzo)
 - tin.lua: correctly handle plain text messages
 - added fixes for Mac OS X 10.2 Jaguar
 - fixed paths for launchd plists on Mac OS X Tiger (Thanks to jacobolus)

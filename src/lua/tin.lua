@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.96"
+PLUGIN_VERSION = "0.0.97"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -16,7 +16,7 @@ PLUGIN_URL = "http://www.freepops.org/download.php?file=tin.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
-PLUGIN_DOMAINS = {"@tin.it","@virgilio.it"}
+PLUGIN_DOMAINS = {"@tin.it","@virgilio.it","@alice.it","@tim.it"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
@@ -30,9 +30,9 @@ cartella Spam: foo@virgilio.it?folder=Spam]],
 }
 PLUGIN_DESCRIPTIONS = {
 	it="Questo plugin vi per mette di leggere le mail che avete "..
-	   "in una mailbox @virgilio.it , @tin.it . Per usare questo "..
-	   "plugin dovete usare il vostro indirizzo email completo "..
-	   "come user name e la vostra password reale come password.",
+	   "in una mailbox @virgilio.it, @tin.it, @alice.it o @tim.it. "..
+	   "Per usare questo plugin dovete usare il vostro indirizzo email "..
+	   "completo come username e la vostra password reale come password.",
 	en="This plugin is for italian users only."
 }
 
@@ -49,22 +49,22 @@ PLUGIN_DESCRIPTIONS = {
 -- expressions), mlex expressions, mlex get expressions.
 -- 
 local tin_string = {
-	prelogin = "http://communicator.virgilio.it/asp/a3login.asp",
+	prelogin = "http://communicator.alice.it/asp/a3login.asp",
 	prelogin_post = "a3aid=comhpma&"..
 		"a3afep=http://mail.virgilio.it/mail/home/mail_error.html&"..
 		"USER=%s&DOMAIN=%s&"..
 		"PASS=%s&Act_Login.x=%d&Act_Login.y=%d",
 --	login = "http://aaacsc.virgilio.it/piattaformaAAA/controller/"..
 --		"AuthenticationServlet",
-	login = "http://communicator.virgilio.it/asp/login.asp",
+	login = "http://communicator.alice.it/asp/login.asp",
 	login_post= "a3l=%s&a3p=%s&a3st=VCOMM&"..
 		"a3aid=communicator&a3flag=0&"..
-		"a3ep=http://communicator.virgilio.it/asp/login.asp&"..
-		"a3afep=http://communicator.virgilio.it/asp/login.asp&"..
-		"a3se=http://communicator.virgilio.it/asp/login.asp&"..
-		"a3dcep=http://communicator.virgilio.it/asp/homepage.asp?s=005",
+		"a3ep=http://communicator.alice.it/asp/login.asp&"..
+		"a3afep=http://communicator.alice.it/asp/login.asp&"..
+		"a3se=http://communicator.alice.it/asp/login.asp&"..
+		"a3dcep=http://communicator.alice.it/asp/homepage.asp?s=005",
 	-- domain, email, tincctoken
-	login2 = "http://webmail.communicator.virgilio.it/"..
+	login2 = "http://webmail.communicator.alice.it/"..
 		"cp/ps/Main/login/PreLogin?"..
 		"d=%s&sa=webmail&style=&mail=%s&token=%s",
 	login2C = 'src="(/cp/ps/Mail/EmailList[^"]*)"',
@@ -111,7 +111,9 @@ local tin_string = {
 
 tin_domains = {
 	["virgilio.it"] = true,
-	["tin.it"] = true
+	["tin.it"] = true,
+	["alice.it"] = true,
+	["tim.it"] = true
 }
 
 -- ************************************************************************** --
@@ -315,7 +317,7 @@ function geta3p(b, email)
 		sCPTX = hex2ascii(sCPTX)
 		local a3p = dec(sCPTX,2);
 		url = "http://aaacsc.virgilio.it/piattaformaAAA/controller/AuthenticationServlet"
-		post=string.format("a3l=%s&a3p=%s&a3si=-1&percmig=100&a3st=VCOMM&a3aid=comhpma&a3flag=0&a3ep=http://communicator.virgilio.it/asp/login.asp&a3afep=http://communicator.virgilio.it/asp/login.asp&a3se=http://communicator.virgilio.it/asp/login.asp&a3dcep=http://communicator.virgilio.it/asp/homepage.asp?s=005",email,a3p)
+		post=string.format("a3l=%s&a3p=%s&a3si=-1&percmig=100&a3st=VCOMM&a3aid=comhpma&a3flag=0&a3ep=http://communicator.alice.it/asp/login.asp&a3afep=http://communicator.alice.it/asp/login.asp&a3se=http://communicator.alice.it/asp/login.asp&a3dcep=http://communicator.alice.it/asp/homepage.asp?s=005",email,a3p)
 	end
 
 	

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9a"
+PLUGIN_VERSION = "0.0.9b"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -73,7 +73,7 @@ local globals = {
 
   -- Extract the mail server
   --
-  strMailServerPattern = '/([67].*)$',
+  strMailServerPattern = '/([567].*)$',
 
   -- Pattern to determine if we have no messages
   --

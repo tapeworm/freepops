@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5g"
+PLUGIN_VERSION = "0.1.5h"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -158,7 +158,7 @@ local globals = {
 
   -- Pattern used in the Live interface to get the message info
   --
-  strMsgLivePattern = 'new HM%.__22%([^%)]+%)%), "([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
+  strMsgLivePattern = 'new HM%.__[21][28]%([^%)]+[%)]+, "([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -553,7 +553,8 @@ function loginHotmail()
       log.dbg("Hotmail - junk folder id: " .. str)
       if (internalState.strMBoxName == "Junk") then
         internalState.strMBox = str
-      end
+        log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
+     end
     else
       log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
     end

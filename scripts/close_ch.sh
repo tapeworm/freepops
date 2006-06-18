@@ -28,12 +28,17 @@ echo "Please wait... cvs mining is slow..."
 
 grep "^avail|[^,]*|" ../CVSROOT/avail | cut -d "|" -f 2- | sed "s/|/ /" | sed "s/,/ /g" | tr -s "  " " " | awk -f scripts/close_ch.awk -v "day=$DAYS" | scripts/cvschpretty.lua > ChangeLog-CVS
 
+cd ..
+echo freepops/src/lua/*.lua > freepops/ChangeLog-PLUGINS
+cd freepops
+
+cat ChangeLog-PLUGINS | awk -f scripts/close_ch.awk -v "day=$DAYS" | scripts/cvschpretty.lua > ChangeLog-CVS1
 
 # main()
 
 echo "$NEW_DATE $NEW_VERSION" > ChangeLog-Head
-cat ChangeLog-Head ChangeLog-CVS ChangeLog > ChangeLog-Complete
+cat ChangeLog-Head ChangeLog-CVS ChangeLog-CVS1 ChangeLog > ChangeLog-Complete
 mv ChangeLog-Complete ChangeLog
-rm ChangeLog-CVS ChangeLog-Head
+rm ChangeLog-CVS ChangeLog-CVS1 ChangeLog-Head ChangeLog-PLUGINS
 
 

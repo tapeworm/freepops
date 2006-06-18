@@ -1,12 +1,35 @@
 18/06/2006 0.0.99
 - es, fr: more work on patches (gareuselesinge)
+- juno.lua: Fixed an issue where the server url once logged in wasn't being correctly identified. (russell822)
+- mailcom.lua: Added handling for mail.org (russell822)
+- mailcom.lua: Added support for mexico.com (russell822)
+- hotmail.lua: Reinstated the 0.1.5f functionality, plus added support in the live accounts for the folder name of Junk to always resolve to the junk e-mail folder. (russell822)
+- hotmail.lua: If the folder was set to Live mail's junk folder, mail wasn't being picked up. (russell822)
+- tin.lua: remove trailing spaces and correctly show special characters from plaintext messages. (alessiofender)
+- hotmail.lua: Merged the MSN fix into the hotmail fix. (russell822)
+- gmail.lua: A fix for the login change by Gmail. Submitted by Jbobowski, (russell822)
+- libero.lua: Updated webmail server addresses (alessiofender)
+- yahoo.lua: Fix for a nil pointer problem with the beta of yahoo. (russell822)
+- libero.lua: Updated the version number (alessiofender)
+- hotmail.lua: Reverting Hotmail back to 0.1.5e so that it works with msn and live hotmail. (russell822)
+- tin.lua: fixed encoding problems (alessiofender)
+- yahoo.lua: Previous checkin was broken. (russell822)
+- mailcom.lua: The modification forces the session to logout and clear every 4 hours. (russell822)
+- mailcom.lua: Reaction to changes of the header format on the mail.com website. (russell822)
+- tin.lua: Correctly handle plain text messages (alessiofender)
+- hotmail.lua: Updated the login function to work through mail.live.com. (russell822)
+- mailcom.lua: An attempt to fix the session expired problem. (russell822)
+- aol.lua: Reaction to changes in the login process by AOL/AIM. (russell822)
+- hotmail.lua: Another change to adapt to hotmail's login page change. (russell822)
+- hotmail.lua: Temporary solution to get msn.com addresses working again. (russell822)
+- hotmail.lua: An update to the change in interface with LIVE. (russell822)
+- hotmail.lua: Turn off raw logging. (russell822)
+- tin.lua: You must also update mimer.lua for this patch to take effect (alessiofender)
 - tin.lua: added @alice.it and @tim.it
 - tin.lua: fix to use new webmail address (Thanks to rudygonzo)
 - tin.lua: correctly handle plain text messages
 - added fixes for Mac OS X 10.2 Jaguar
 - fixed paths for launchd plists on Mac OS X Tiger (Thanks to jacobolus)
-- libero.lua: updated webmail server addresses
-- tin.lua: fixed encoding problems
 - fixed a bug in mimer.lua about the Content-type header definition
 11/03/2006 0.0.98
 - fixed a bug in cookie.lua about the capture of cookie names (Thanks to

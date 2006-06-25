@@ -58,7 +58,8 @@ all: $(LIBRARY) $(SHARED_TGT)
 clean:
 	$(H)rm -f  $(CDEPFILES:%.c=.%.d) $(OBJ) \
 		$(LDEPFILES:%.pkg=.%.d) $(LDEPFILES:%.pkg=%.c) \
-		$(LDEPFILES:%.pkg=%.h) $(RCDEPFILES:%.rc=.%.d) *.a *.c~ *.so
+		$(LDEPFILES:%.pkg=%.h) $(RCDEPFILES:%.rc=.%.d) *.a *.c~ *.so \
+		lib$(TARGET) $(LIBRARY) $(SHARED)
 
 	
 #############################################

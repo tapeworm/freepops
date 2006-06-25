@@ -1,0 +1,2 @@
+http.lua=soap/http.lua
+soap.lua=soap/soap.lua

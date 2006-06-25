@@ -140,7 +140,7 @@ HIDDEN void usage(const char *progname) {
 "\t\t\t[-t|--threads num]\n"
 "\t\t\t[-d|--daemonize]\n"
 "\t\t\t[-l|--logmode (syslog|filename|stdout)]\n"
-"\t\t\t[-x|--toxml pluginfile]\n"
+"\t\t\t[-x|--toxml file]\n"
 "\t\t\t[-e|--execute scriptfile [args...]]\n"
 "\t\t\t[--fpat|--force-proxy-auth-type (basic|digest|ntlm|gss)]\n"
 #if defined(WIN32)
@@ -407,8 +407,11 @@ HIDDEN int execute(const char* scriptfile, const char* stdoutname){
 	
 	// main 
 	e = luay_callv(l, "|d", "main", args, args_len , &rc);
-	if (e) 
+	if (e) {
+		fprintf(stderr,"The main function raised an error\n");
+		luay_printstack(l);
 		return e;
+	}
 	// end redirection 
 	if (stdoutname != NULL) {
 		fclose(stdout);

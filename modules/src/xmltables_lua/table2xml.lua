@@ -16,6 +16,13 @@
 -- in LUA, so use the <tt>__</tt> for attributes. See the xml2table 
 -- documentation for more infos about Txml.
 
+MODULE_VERSION = "0.0.1"
+MODULE_NAME = "table2xml"
+MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_LICENSE = "GNU/GPL"
+MODULE_URL = "http://www.freepops.org/download.php?file=table2xml.lua"
+MODULE_HOMEPAGE = "http://www.freepops.org/"
+
 local Private = {}
 
 --============================================================================--

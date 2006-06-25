@@ -4,6 +4,13 @@
 -- Only one function is available to the end user.
 -- Incorporating jbobowski Gmail fix posted 26 April 2006.
 
+MODULE_VERSION = "0.0.1"
+MODULE_NAME = "cookie"
+MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_LICENSE = "GNU/GPL"
+MODULE_URL = "http://www.freepops.org/download.php?file=cookie.lua"
+MODULE_HOMEPAGE = "http://www.freepops.org/"
+
 local Private = {}
 
 --============================================================================--

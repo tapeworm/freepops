@@ -3,6 +3,13 @@
 --
 -- This module implements the HTTPMAIL protocol on top of the browser
 -- module and the xml2table/table2xml modules.
+
+MODULE_VERSION = "0.0.1"
+MODULE_NAME = "httpmail"
+MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_LICENSE = "GNU/GPL"
+MODULE_URL = "http://www.freepops.org/download.php?file=httpmail.lua"
+MODULE_HOMEPAGE = "http://www.freepops.org/"
  
 require("xml2table")
 require("table2xml")

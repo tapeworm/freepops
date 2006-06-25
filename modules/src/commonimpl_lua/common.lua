@@ -3,6 +3,13 @@
 -- These functions need a <B>stat(pstate)</B> 
 -- that checks if it called more than once.
 
+MODULE_VERSION = "0.0.1"
+MODULE_NAME = "common"
+MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_LICENSE = "GNU/GPL"
+MODULE_URL = "http://www.freepops.org/download.php?file=common.lua"
+MODULE_HOMEPAGE = "http://www.freepops.org/"
+
 module("common")
 
 --============================================================================--

@@ -1,3 +1,10 @@
+- fixed the manpage for the command line option -x
+- fixed the manual for the command line option -x
+- changed the command line description for -x
+- fixed plugin2xml.lua to generate XML also for modules
+- fixed luay.c, luay_callv used not to set the returned values
+- fixed homepage_updater to handle modules (and not only plugins)
+- added MODULE_* metadatas to every module
 18/06/2006 0.0.99
 - es, fr: more work on patches (gareuselesinge)
 - juno.lua: Fixed an issue where the server url once logged in wasn't being correctly identified. (russell822)

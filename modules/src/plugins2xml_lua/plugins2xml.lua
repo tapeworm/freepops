@@ -3,6 +3,12 @@
 -- This modules extracs and generates XML from the plugins.
 --
 
+MODULE_VERSION = "0.0.1"
+MODULE_NAME = "plugins2xml"
+MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_LICENSE = "GNU/GPL"
+MODULE_URL = "http://www.freepops.org/download.php?file=plugins2xml.lua"
+MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 --============================================================================--
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
@@ -18,11 +24,44 @@ local require_list =
 
 function private.sanity_check(G)
 	-- check required
+	local is_a_module = nil
 	table.foreachi(require_list,function(_,v)
-		if G["PLUGIN_"..v] == nil then
-			error("PLUGIN_" .. v .. " is required")
+		if G["PLUGIN_"..v] == nil and G["MODULE_"..v] == nil then
+			if is_a_module == true then
+				error("MODULE_" .. v .. " is required")
+			elseif is_a_module == false then
+				error("PLUGIN_" .. v .. " is required")
+			else
+				error("PLUGIN_"..v.." or MODULE_"..v..
+					" is required")
+			end
 		end
+		if (is_a_module == true and G["PLUGIN_"..v] ~= nil) or
+		   (is_a_module == false and G["MODULE_"..v] ~= nil) then
+			error("only MODULE_* or PLUGIN_*, not both")
+		elseif is_a_module == nil then
+			is_a_module = G["MODULE_"..v] ~= nil
+		end
+
 	end)
+	if is_a_module then 
+		local f = function(s) 
+			return "Field "..s.." not allowed in module" 
+		end
+		assert(G.MODULE_AUTHORS_NAMES == nil,f("MODULE_AUTHORS_NAMES"))
+		assert(G.MODULE_AUTHORS_CONTACTS==nil,f("MODULE_AUTHORS_CONTACTS"))
+		assert(G.MODULE_DOMAINS == nil,f("MODULE_DOMAINS"))
+		assert(G.MODULE_REGEXES == nil,f("MODULE_REGEXES"))
+		assert(G.MODULE_DESCRIPTIONS == nil,f("MODULE_DESCRIPTIONS"))
+		assert(G.MODULE_PARAMETERS == nil,f("MODULE_PARAMETERS"))
+		assert(G.PLUGIN_AUTHORS_NAMES == nil,f("PLUGIN_AUTHORS_NAMES"))
+		assert(G.PLUGIN_AUTHORS_CONTACTS==nil,f("PLUGIN_AUTHORS_CONTACTS"))
+		assert(G.PLUGIN_DOMAINS == nil,f("PLUGIN_DOMAINS"))
+		assert(G.PLUGIN_REGEXES == nil,f("PLUGIN_REGEXES"))
+		assert(G.PLUGIN_DESCRIPTIONS == nil,f("PLUGIN_DESCRIPTIONS"))
+		assert(G.PLUGIN_PARAMETERS == nil,f("PLUGIN_PARAMETERS"))
+		return true 
+	end
 	-- author(s)
 	assert(	G.PLUGIN_AUTHORS_NAMES ~= nil and 
 		G.PLUGIN_AUTHORS_CONTACTS ~= nil and
@@ -109,6 +148,15 @@ private.extractor_function = function(file)
 		{tag_name = "descriptions"},
 		{tag_name = "parameters"}
 	}
+	local module_Txml = 
+	{tag_name = "module",
+		{tag_name = "name"},
+		{tag_name = "version"},
+		{tag_name = "require_version"},
+		{tag_name = "license"},
+		{tag_name = "url"},
+		{tag_name = "homepage"},
+	}
 	local function add_node_content(t,content,field)
 		local i = table.foreachi(t,function(i,v)
 			if v.tag_name == field then
@@ -119,7 +167,11 @@ private.extractor_function = function(file)
 	end
 	local file = freepops.find(file)
 	local f, err = loadfile(file)
-	local G = {}
+	local G = {
+		-- fake environment to just set global variables
+		require = function() end,
+		module = function() end
+	}
 	if f ~= nil then
 		setfenv(f,G)
 		f()
@@ -128,14 +180,25 @@ private.extractor_function = function(file)
 	end
 	assert(private.sanity_check(G),"Sanity checks failed")
 	-- add required
+	local prefix = nil
+	local xml = nil
+	if G["PLUGIN_NAME"] == nil then 
+		prefix = "MODULE_" 
+		xml = module_Txml
+	else 
+		prefix = "PLUGIN_" 
+		xml = plugin_Txml
+	end
+
 	table.foreachi(require_list,function(_,v)
-		add_node_content(plugin_Txml,
-		{G["PLUGIN_"..string.upper(v)]},string.lower(v))
+		add_node_content(xml,
+		{G[prefix..string.upper(v)]},string.lower(v))
 	end)
 	-- add author(s)
+	G.PLUGIN_AUTHORS_NAMES = G.PLUGIN_AUTHORS_NAMES or {}
 	table.foreachi(G.PLUGIN_AUTHORS_NAMES,function(i,name)
 		local contact = G.PLUGIN_AUTHORS_CONTACTS[i]
-		add_node_content(plugin_Txml,
+		add_node_content(xml,
 			{tag_name = "author",
 				{tag_name = "name", {name}},
 				{tag_name = "contact", {contact}},
@@ -144,20 +207,21 @@ private.extractor_function = function(file)
 	-- add domains
 	if(G.PLUGIN_DOMAINS~=nil) then
 		table.foreachi(G.PLUGIN_DOMAINS,function(i,name)
-			add_node_content(plugin_Txml,
+			add_node_content(xml,
 				{tag_name = "domain",{name}},"domains")
 		end)
 	end
 	-- add domains(regex)
 	if (G.PLUGIN_REGEXES ~= nil) then
 		table.foreachi(G.PLUGIN_REGEXES,function(i,name)
-			add_node_content(plugin_Txml,
+			add_node_content(xml,
 				{tag_name = "regex",{name}},"regexes")
 		end)
 	end
 	-- add descriptions
+	G.PLUGIN_DESCRIPTIONS = G.PLUGIN_DESCRIPTIONS or {}
 	table.foreach(G.PLUGIN_DESCRIPTIONS,function(lang,name)
-		add_node_content(plugin_Txml,
+		add_node_content(xml,
 			{tag_name = "description",
 			 lang=lang,
 			 {name}},"descriptions")
@@ -172,7 +236,7 @@ private.extractor_function = function(file)
 			name = name,
 			{tag_name = "descriptions"}
 		}
-		add_node_content(plugin_Txml,node,"parameters")
+		add_node_content(xml,node,"parameters")
 		table.foreach(description,function(lang,name)
 			add_node_content(node,
 				{tag_name = "description",
@@ -180,7 +244,7 @@ private.extractor_function = function(file)
 				 {name}},"descriptions")
 		end)
 	end)
-	return plugin_Txml
+	return xml
 end
 
 

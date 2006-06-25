@@ -1,3 +1,14 @@
+--============================================================================--
+-- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
+--============================================================================--
+
+MODULE_VERSION = "0.0.1"
+MODULE_NAME = "xml2tex"
+MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_LICENSE = "GNU/GPL"
+MODULE_URL = "http://www.freepops.org/download.php?file=xml2tex.lua"
+MODULE_HOMEPAGE = "http://www.freepops.org/"
+
 require("xml2table")
 
 local private = {}

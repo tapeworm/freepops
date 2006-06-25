@@ -313,7 +313,7 @@ for(i = 0 ; i<len ; i++)
 	}
 
 // count return values
-nret = strlen(&args[i]) -1;
+nret = strlen(args) -1; // -1 is for '|'
 
 //call the function
 #ifdef PRINT_FUNCTIONS

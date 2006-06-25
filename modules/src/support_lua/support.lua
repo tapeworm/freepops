@@ -3,6 +3,13 @@
 -- This module implements some looping primitives, some useful wrappers.
 -- should be used to make code shorter.
 
+MODULE_VERSION = "0.0.1"
+MODULE_NAME = "support"
+MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_LICENSE = "GNU/GPL"
+MODULE_URL = "http://www.freepops.org/download.php?file=support.lua"
+MODULE_HOMEPAGE = "http://www.freepops.org/"
+
 module("support")
 
 --============================================================================--

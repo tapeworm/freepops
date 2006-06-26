@@ -704,6 +704,7 @@ freepops.REJECTED_ADDRESSES = {
 freepops.MODULES_PREFIX = {
 	-- Culd this be a security hole? this VAR is set by FP, but ...
 	-- ... I need to read more about environment ...
+	os.getenv("FREEPOPSLUA_PATH_UPDATES") or "./",
 	os.getenv("FREEPOPSLUA_PATH") or "./",
 	"./lua/",
 	"./",

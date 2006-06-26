@@ -160,10 +160,13 @@ lua_State* bootstrap(const char * username, struct popstate_t* p){
 				return NULL;
 				}
 			putenv("FREEPOPSLUA_PATH=./");
+			putenv("FREEPOPSLUA_PATH_UPDATES=./");
 			}
 		putenv("FREEPOPSLUA_PATH=src/lua/");
+		putenv("FREEPOPSLUA_PATH_UPDATES=src/lua_updates/");
 	} else	{
 		putenv("FREEPOPSLUA_PATH="FREEPOPSLUA_PATH);
+		putenv("FREEPOPSLUA_PATH_UPDATES="FREEPOPSLUA_PATH_UPDATES);
 	}
 
 	rc = lua_pcall(l, 0, LUA_MULTRET, 0);

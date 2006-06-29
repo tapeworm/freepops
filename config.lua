@@ -656,6 +656,10 @@ freepops.MODULES_MAP["linuxgazette.net"] 	= {
 	args={host="http://linuxgazette.net/lg.rss"}
 }
 
+-- Updater
+--
+freepops.MODULES_MAP["updater"] = {name="updater.lua"}
+
 -- -------------------------------------------------------------------------- --
 -- 2) Policy
 --

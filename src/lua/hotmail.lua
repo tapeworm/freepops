@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5h"
+PLUGIN_VERSION = "0.1.5i"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -290,7 +290,7 @@ function getPage(browser, url)
     if (body == nil) then
       log.raw("Tried to load: " .. url .. " and got error: " .. err)
     elseif (string.find(body, "We are experiencing higher than normal volume") == nil and 
-        string.find(body, "<[Hh][Tt][Mm][Ll]>") ~= nil and
+        string.find(body, "<[Hh][Tt][Mm][Ll]") ~= nil and
         string.find(body, "MSN Hotmail %- ERROR") == nil) then
       return body, err
     end
@@ -326,7 +326,7 @@ function loginHotmail()
   local domain = internalState.strDomain
   local url = globals.strLoginUrl
   local browser = internalState.browser
-	
+    
   -- DEBUG - Set the browser in verbose mode
   --
 --  browser:verbose_mode()
@@ -349,19 +349,20 @@ function loginHotmail()
 
   -- The login page returns a page where a form needs to be submitted.  We'll do it
   -- manually.  Extract the form elements and post the data
-  -- 
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern1)
+  -- It is not needed since June 30th. 
+  --
+  --_, _, url = string.find(body, globals.strLoginPostUrlPattern1)
   local postdata = nil
   local name, value  
-  for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
-    value = curl.escape(value)
-    if postdata ~= nil then
-      postdata = postdata .. "&" .. name .. "=" .. value  
-    else
-      postdata = name .. "=" .. value 
-    end
-  end
-  body, err = browser:post_uri(url, postdata)
+  --for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
+  --  value = curl.escape(value)
+  --  if postdata ~= nil then
+  --    postdata = postdata .. "&" .. name .. "=" .. value  
+  --  else
+  --    postdata = name .. "=" .. value 
+  --  end
+  --end
+  --body, err = browser:post_uri(url, postdata)
 
   -- Hotmail will return with the login page.  This page supports a slew of domains.
   -- Pull out the place where we need to post the login information.  Post the form
@@ -563,7 +564,7 @@ function loginHotmail()
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true
-	
+    
   -- Debug info
   --
   log.dbg("Created session for " .. 

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.00"
+PLUGIN_VERSION = "0.1.01"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -70,7 +70,7 @@ PLUGIN_DOMAINS = {"@mail.com","@email.com","@iname.com","@cheerful.com","@consul
 "@webcity.ca","@webmail.lu","@welcomm.ac","@wenxuecity.net","@westham-mail.com","@wimbledon-mail.com",
 "@windrivers.net","@wolves-mail.com","@wongfaye.com","@worldmail.ac","@worldweb.ac","@isleuthmail.com",
 "@x-lab.cc","@xy.com.tw","@yankeeman.com","@yyhmail.com", "@verizonmail.com", "@lycos.com", "@cyberdude.com",
-"@mail.org", "@italymail.com", "@mexico.com" }
+"@mail.org", "@italymail.com", "@mexico.com", "@india.com" }
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		en = [[
@@ -479,7 +479,8 @@ end
 
 function getPage(browser, url)
   local body, err = browser:get_uri(url)
-  if string.find(body, "(session is sponsored by)") ~= nil then
+  if (string.find(body, "(session is sponsored by)") ~= nil or 
+     string.find(body, "(<b>Remove these ads</b>)")) then
     body, err = browser:get_uri(url)
   end
   return body, err  

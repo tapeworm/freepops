@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9c"
+PLUGIN_VERSION = "0.0.9d"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -86,7 +86,7 @@ local globals = {
 
   -- Pattern to extract the version of webmail
   --
-  strVersionPattern = 'var VERSION[ ]?=[ ]?"([^"]+)";',
+  strVersionPattern = 'var gSuccessPath = "/(%d+)/',
 
   -- Extract the server to post the login data to
   --
@@ -128,10 +128,10 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "http://%s/GetMessageList.aspx?user=%s&page=%d&folder=%s&previousFolder=&stateToken=&newMailToken=&version=%s",
+  strCmdMsgList = "http://%s/%s/%s/en-us/GetMessageList.aspx?user=%s&page=%d&folder=%s&previousFolder=&stateToken=&newMailToken=&version=%s",
   strCmdDelete = "http://%s/%s/%s/en-us/RPC/messageAction.aspx?folder=%s&action=delete&user=%s&version=%s", --&uid=X",
   strCmdMsgView = "http://%s/%s/%s/en-us/Mail/rfc822.aspx?user=%s&folder=%s&uid=%s",
-  strCmdWelcome = "http://%s/MessageList.aspx",
+  strCmdWelcome = "http://%s/%s/%s/en-us/MessageList.aspx",
 
   -- Site IDs
   --
@@ -164,7 +164,7 @@ internalState = {
 
 -- Set to true to enable Raw Logging
 --
-local ENABLE_LOGRAW = false
+local ENABLE_LOGRAW = true
 
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
@@ -363,7 +363,7 @@ function loginAOL()
 
   -- Get the webmail version
   --
-  url = string.format(globals.strCmdWelcome, internalState.strMailServer)
+  url = string.format(globals.strCmdWelcome, internalState.strMailServer, internalState.strVersion, internalState.strBrand)
   body, err = browser:get_uri(url)
   _, _, str = string.find(body, globals.strVersionPattern)
   if (str == nil) then 
@@ -710,7 +710,8 @@ function stat(pstate)
   -- 
   local browser = internalState.browser
   local nMsgs = 0
-  local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer, internalState.strUserId,
+  local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer, 
+    internalState.strVersion, internalState.strBrand, internalState.strUserId,
     1, internalState.strMBox, internalState.strVersion);
   local baseUrl = cmdUrl
 

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.5i"
+PLUGIN_VERSION = "0.1.6a"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -125,14 +125,14 @@ local globals = {
 
   -- Junk and Trash Folder pattern
   -- 
-  strPatLiveTrashId = 'i_trash%.gif" /></div>[^<]+<div class="[^"]+"><a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)">',
-  strPatLiveJunkId = 'i_junkEmail%.gif" /></div>[^<]+<div class="[^"]+"><a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)">',
+  strPatLiveTrashId = '<a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i_trash.gif" />',
+  strPatLiveJunkId = '<a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i_junkEmail.gif" />',
 
   -- Folder id pattern
   --
   strFolderPattern = '<a href="[^"]+curmbox=([^&]+)&[^"]+" >', 
-  strFolderLivePattern = '<a href="/mail/mail.aspx%?Control=Inbox&FolderID=([^"]+)">',
-  strFolderLiveInboxPattern = 'i_inbox%.gif" /></div>[^<]+<div class="[^"]+"><a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)">',
+  strFolderLivePattern = '<a href="/mail/mail.aspx%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i[^"]+" /><span[^>]+>',
+  strFolderLiveInboxPattern = '<a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i_inbox.gif" />',
 
   -- Pattern to determine if we have no messages
   --
@@ -158,7 +158,8 @@ local globals = {
 
   -- Pattern used in the Live interface to get the message info
   --
-  strMsgLivePattern = 'new HM%.__[21][28]%([^%)]+[%)]+, "([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
+  --strMsgLivePattern = 'new HM%.__[21][28]%([^%)]+[%)]+, "([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
+  strMsgLivePattern = ',"([^"]+)","[^"]+","[^"]+",[^,]+,[^,]+,[^,]+,[^,]+,"([^"]+)"',
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -182,7 +183,8 @@ local globals = {
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
   strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=%s", 
-  strCmdDeletePostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d=%s,%s,[%s],[{%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C99999999999990000,null}],null,null,1,false,Date",
+--  strCmdDeletePostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d=%s,%s,[%s],[{%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C99999999999990000,null}],null,null,1,false,Date",
+  strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
   strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s",
@@ -1042,6 +1044,8 @@ function quit_update(pstate)
     end
   elseif dcnt > 0 and internalState.bLiveGUI then
     cmdUrl = string.format(globals.strCmdDeleteLive, internalState.strMailServer, internalState.strCrumb)
+    uidls = string.gsub(uidls, ",", '","')
+    uidls = '"' .. uidls .. '"'
     post = string.format(globals.strCmdDeletePostLive, internalState.strMBox, 
       internalState.strTrashId, uidls)
     log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)

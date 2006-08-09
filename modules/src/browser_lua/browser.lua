@@ -153,9 +153,11 @@ function Hidden.build_header(self,url,exhed)
 			table.insert(head,"Referer: "..self.referrer)
 		end
 	end
-	if cook ~= nil then
-		table.insert(head,"Cookie: "..cook)
-	end
+        if cook ~= nil then
+           -- the excite website adds "\r\n" to the cookies...
+           if string.find(cook,"\r\n$") then cook =string.sub(cook,1,-3) end
+           table.insert(head,"Cookie: "..cook)
+        end
 	if u.host ~= nil then
 		-- This is a terrible hack.  I had to put it so that hotmail would work.  The
 		-- grammar that hotmail uses differs from the one described in cookie.lua.
@@ -309,6 +311,25 @@ function Hidden.parse_header(self,gl_h,url)
 		table.foreach(gl_h,print)
 		return Hidden.error("malformed HTTP header line: "..gl_h[1])
 	end
+        -- HTTP 1xx or HTTPS proxy tunnel
+        if string.byte(ret,1) == string.byte("1",1) or
+                Hidden.is_https_proxy_tunnel(self, url, ret) then
+                local gl_h1 = {} -- to not lose the real header
+                local end_of_1xx = false
+                for i=1,table.getn(gl_h) do
+                       if end_of_1xx then
+                             table.insert(gl_h1,gl_h[i])
+                       end
+                       if gl_h[i] == "\r\n" then
+                             end_of_1xx = true
+                       end
+                end
+                if gl_h1[1] ~= nil then
+                       return Hidden.parse_header(self,gl_h1,url)
+                --else
+                       --return Hidden.error("Malformed HTTP/1.x 1xx header")
+                end
+        end
 	-- HTTP 2xx
 	if string.byte(ret,1) == string.byte("2",1) then
 		if self.followRefreshHeader == true then

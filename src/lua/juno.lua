@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9b"
+PLUGIN_VERSION = "0.0.9c"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -576,7 +576,7 @@ function getAttachmentTable(cbInfo, data)
   --
   for url, filename in 
     string.gfind(body,
-      [[href=['"](8%?folder=[^'"]+attachId=[0-9]+)[^'"]*['"][^>]+>.-Name = "([^"]+)"]]) 
+      [[href=['"](21%?folder=[^'"]+attachId=[0-9]+)[^'"]*['"][^>]+>.-Name = "([^"]+)"]]) 
   do
     if (filename == "Message") then
       filename = "Message.htm"
@@ -600,12 +600,12 @@ function findInlineAttachments(attachments, cbInfo)
   local cnt = 0
 
   -- Find inline images and sounds
-  for url in string.gfind(body, [[[Ss][Rr][Cc]="(8[^"]+)"]]) do
+  for url in string.gfind(body, [[[Ss][Rr][Cc]="(21[^"]+)"]]) do
     attachurl = internalState.strMailServer .. "/" .. url
     filename = "juno_attach_" .. cnt .. "." .. getExtension(attachurl)
     attachId = cbInfo.strMessageId .. "." .. cnt
 
-    cbInfo.strBody = string.gsub(cbInfo.strBody, url, attachId)
+    cbInfo.strBody = string.gsub(cbInfo.strBody, string.sub(url, 4), attachId)
     log.dbg("Found inline Attachment, File: " .. filename .. " - Url: " .. url)
 
     attachments[filename] = attachurl
@@ -618,7 +618,7 @@ function findInlineAttachments(attachments, cbInfo)
   -- Fixing a weird lua bug where it won't replace a string with a ? in it and
   -- add the 
   --
-  cbInfo.strBody = string.gsub(cbInfo.strBody, [[src="8.]], 'src="cid:')
+  cbInfo.strBody = string.gsub(cbInfo.strBody, [[src="21.]], 'src="cid:')
 
   return inlineids
 end

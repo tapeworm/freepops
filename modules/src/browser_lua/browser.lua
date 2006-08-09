@@ -358,24 +358,6 @@ function Hidden.parse_header(self,gl_h,url)
 	-- HTTP 5xx
 	elseif string.byte(ret,1) == string.byte("5",1) then
 		return Hidden.errorcode(ret)
-	-- HTTP 1xx or HTTPS proxy tunnel
-	elseif string.byte(ret,1) == string.byte("1",1) or 
-	   Hidden.is_https_proxy_tunnel(self, url, ret) then
-		local gl_h1 = {} -- to not lose the real header
-		local end_of_1xx = false
-		for i=1,table.getn(gl_h) do
-			if end_of_1xx then
-				table.insert(gl_h1,gl_h[i])
-			end
-			if gl_h[i] == "\r\n" then
-				end_of_1xx = true
-			end
-		end
-		if gl_h1[1] ~= nil then
-			return Hidden.parse_header(self,gl_h1,url)
-		else
-			return Hidden.error("Malformed HTTP/1.x 1xx header")
-		end
 	else
 		return Hidden.error("Unsupported HTTP "..ret.." code")
 	end

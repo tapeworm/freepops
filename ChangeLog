@@ -1,3 +1,5 @@
+- added patch from Rostislav Kandilarov to create /dev/random and /dev/urandom
+in the chroot jail
 - fixed the manpage for the command line option -x
 - fixed the manual for the command line option -x
 - changed the command line description for -x

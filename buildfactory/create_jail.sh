@@ -83,6 +83,10 @@ echo "nogroup:x:65534:" > etc/group
 
 #make /dev/null
 mknod -m 0666 dev/null c 1 3
+#make /dev/random
+mknod -m 0444 dev/random c 1 8
+#make /dev/urandom
+mknod -m 0444 dev/urandom c 1 9
 
 #copy freepops files
 cp $FPBIN usr/bin/

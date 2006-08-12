@@ -1,3 +1,5 @@
+- added support for foo@plugin.lua when plugin.lua is in the UNOFFICIAL
+directory
 - added patch from Rostislav Kandilarov to create /dev/random and /dev/urandom
 in the chroot jail
 - fixed the manpage for the command line option -x

@@ -345,8 +345,11 @@ function freepops.choose_module(d)
 	if not found then 
 		local _,_,x = string.find(d,"^(%w+%.lua)$")
 		if x ~= nil then
+			-- to allow "inline" modules to be in the UNOFFICIAL dir
+			local u_pref = freepops.MODULES_PREFIX_UNOFFICIAL
+			local path = freepops.find(x) or freepops.find(x,u_pref)
 			found, where, name, args = 
-				true, "inline", x, {}
+				true, "inline", path, {}
 		end
 	end	
 	-- 4th: check if an unofficial plugin matches verbatim
@@ -363,10 +366,13 @@ function freepops.choose_module(d)
 end
 
 ---
--- Searches a file in $CWD + MODULES_PREFIX and returns the full path or nil.
+-- Searches a file in $CWD + prefixes and returns the full path or nil.
+-- XXX $CWD should be removed, what happens if $CWD is writable by all? XXX
 -- @param file string The ifle name.
+-- @param prefixes table a list of prefixes, default to MODULES_PREFIX.
 -- @return string The full path or nil.
-function freepops.find(file)
+function freepops.find(file, prefixes)
+	prefixes = prefixes or freepops.MODULES_PREFIX
 	local try = function(_,path)
 		local f,_ = io.open(path..file,"r")
 		if f ~= nil then
@@ -378,7 +384,7 @@ function freepops.find(file)
 	if try(foo,"") ~= nil then
 		return file
 	end
-	return table.foreach(freepops.MODULES_PREFIX,try)
+	return table.foreach(prefixes,try)
 end
 
 ---

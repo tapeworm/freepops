@@ -552,7 +552,7 @@ function freepops.is_version_ge(version1, version2)
 		return false
 	end
 	if p_x == nil or p_y == nil or p_z == nil then
-		log.error_print("Wrong plugin REQIORE_VERSION string format.")
+		log.error_print("Wrong plugin REQUIRE_VERSION string format.")
 		log.error_print("It must be X.Y.Z (numbers only).")
 		return false
 	end

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6a"
+PLUGIN_VERSION = "0.1.6b"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -71,6 +71,10 @@ the forum instead of emailing the author(s).]]
 -- ************************************************************************** --
 
 local globals = {
+  -- Max password length in the login page
+  --
+  nMaxPasswordLen = 16,
+
   -- Server URL
   --
   strLoginUrl = "http://mail.live.com/",
@@ -81,7 +85,7 @@ local globals = {
   -- TODO: Define the HTTPS version
   --
   strLoginPostData = "login=%s&domain=%s&passwd=%s&sec=&mspp_shared=&PwdPad=%s&PPSX=Pas&LoginOptions=3",
-  strLoginPaddingFull = "xxxxxxxxxxxxxxxx",
+  strLoginPaddingFull = string.rep("x", 16), -- see nMaxPasswordLen
   strLoginFailed = "Login Failed - Invalid User name and/or password",
 
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem
@@ -383,7 +387,7 @@ function loginHotmail()
   end
   url = url .. "?" .. str 
 
-  local padding = string.sub(globals.strLoginPaddingFull, 0, 16 - passwordlen)
+  local padding = string.sub(globals.strLoginPaddingFull, 0, globals.nMaxPasswordLen - passwordlen)
   postdata = string.format(globals.strLoginPostData, username, domain, curl.escape(password), padding)
   postdata = postdata .. "&PPFT=" .. str2
 
@@ -929,6 +933,11 @@ end
 function pass(pstate, password)
   -- Store the password
   --
+  -- truncate password if longer than nMaxPasswordLen characters to mimic broken web page behavior
+  if string.len(password) > globals.nMaxPasswordLen then
+    password = string.sub(password, 0, globals.nMaxPasswordLen)
+  end
+  
   internalState.strPassword = password
 
   -- Get a session

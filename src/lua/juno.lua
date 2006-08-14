@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9c"
+PLUGIN_VERSION = "0.0.9e"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -61,7 +61,7 @@ local globals = {
   -- Expressions to pull out of returned HTML from Yahoo corresponding to a problem
   --
   strRetLoginBadPassword = "(Sign in to Email on the Web)",
-  strRetLoginSessionExpired = "(SessionTimedOut.html)",
+  strRetLoginSessionExpired = '(_isOfflineSession = "no";)',
 
   -- Regular expression to extract the mail server
   --
@@ -1034,7 +1034,7 @@ function stat(pstate)
     -- Is the session expired
     --
     local _,_,strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
-    if strSessExpr ~= nil then
+    if strSessExpr == nil then
       -- Invalidate the session
       --
       internalState.bLoginDone = nil

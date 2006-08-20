@@ -42,6 +42,10 @@ freepops.MODULES_MAP["tim.it"]		= {
 	name="tin.lua",
 	args={folder="INBOX"}
 }
+freepops.MODULES_MAP["atlantide.it"]		= {
+	name="tin.lua",
+	args={folder="INBOX"}
+}
 
 -- lycos
 freepops.MODULES_MAP["lycos.co.uk"]	= {name="davmail.lua"}

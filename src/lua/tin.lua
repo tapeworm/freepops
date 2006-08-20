@@ -16,7 +16,7 @@ PLUGIN_URL = "http://www.freepops.org/download.php?file=tin.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
-PLUGIN_DOMAINS = {"@tin.it","@virgilio.it","@alice.it","@tim.it"}
+PLUGIN_DOMAINS = {"@tin.it","@virgilio.it","@alice.it","@tim.it","@atlantide.it"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
@@ -113,7 +113,8 @@ tin_domains = {
 	["virgilio.it"] = true,
 	["tin.it"] = true,
 	["alice.it"] = true,
-	["tim.it"] = true
+	["tim.it"] = true,
+	["atlantide.it"] = true
 }
 
 -- ************************************************************************** --

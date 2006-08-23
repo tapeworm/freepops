@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6b"
+PLUGIN_VERSION = "0.1.6c"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -85,7 +85,7 @@ local globals = {
   -- TODO: Define the HTTPS version
   --
   strLoginPostData = "login=%s&domain=%s&passwd=%s&sec=&mspp_shared=&PwdPad=%s&PPSX=Pas&LoginOptions=3",
-  strLoginPaddingFull = string.rep("x", 16), -- see nMaxPasswordLen
+  strLoginPaddingFull = "xxxxxxxxxxxxxxxx",
   strLoginFailed = "Login Failed - Invalid User name and/or password",
 
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem

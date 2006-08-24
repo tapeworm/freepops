@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "updater"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -445,7 +445,7 @@ function getLocalVersionInfo(plugin)
     local verInfo = {
       version = "0.0.0",
       requireVersion = "0.0.0",
-      path = freepops.getLuaPath() .. plugin
+      --path = freepops.getLuaPath() .. plugin
     }
     return verInfo
   end

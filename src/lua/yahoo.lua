@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9c"
+PLUGIN_VERSION = "0.1.9d"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -235,6 +235,7 @@ local globals = {
   --
   strSoapCmd = "%s%s?m=%s&wssid=%s", 
   strCmdAttach = "%sym/cgdownload/?box=%s&MsgId=%s&bodyPart=%s&download=1",
+  strRedirectNew = 'content="0; url=([^"]+)">',
 
   -- SOAP Constants
   --
@@ -302,7 +303,7 @@ internalState = {
 
 -- Set to true to enable Raw Logging
 --
-local ENABLE_LOGRAW = false
+local ENABLE_LOGRAW = true
 
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
@@ -479,6 +480,13 @@ function loginYahoo()
     post = string.format(globals.strLoginPostData, intFlag, username, password, uVal)
   end
   body, err = browser:post_uri(url, post)
+
+  -- Check for redirect
+  --
+  local _, _, str = string.find(body, globals.strRedirectNew)
+  if (str ~= nil) then
+    body, err = browser:get_uri(str)
+  end
 
   local bNewGui = checkForNewGUI(browser, body)
 

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.01"
+PLUGIN_VERSION = "0.1.02"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -480,7 +480,7 @@ end
 function getPage(browser, url)
   local body, err = browser:get_uri(url)
   if (string.find(body, "(session is sponsored by)") ~= nil or 
-     string.find(body, "(<b>Remove these ads</b>)")) then
+     string.find(body, '("Remove these ads")')) then
     body, err = browser:get_uri(url)
   end
   return body, err  

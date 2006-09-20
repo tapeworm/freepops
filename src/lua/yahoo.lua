@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9b"
+PLUGIN_VERSION = "0.1.9c"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -106,11 +106,12 @@ local globals = {
   strLoginPage = "http://login.yahoo.com",
   strLoginHTTP = "http://login.yahoo.com/config/login",   
   strLoginHTTPs = "https://login.yahoo.com/config/login",   
-  strLoginPostData = ".tries=1&.src=ym&.intl=%s&login=%s&passwd=%s&.persistent=y",
+  strLoginPostData = ".tries=1&.src=ym&.intl=%s&login=%s&passwd=%s&.persistent=y&.v=0&.chkP=Y&.u=%s",
   strLoginPostDataMD5 = ".tries=1&.src=ym&.intl=%s&login=%s&passwd=%s&.hash=1"..
-                        "&.md5=1&.js=1&.challenge=%s&.persistent=y",
+                        "&.md5=1&.js=1&.challenge=%s&.persistent=y&.v=0&.chkP=Y&.u=%s",
   strLoginFailed = "Login Failed - Invalid User name and password",
   strLoginChallenge = 'name="%.challenge" value="([^"]-)"',
+  strLoginU = 'name="%.u" value="([^"]-)"',
 
   -- Expressions to pull out of returned HTML from Yahoo corresponding to a problem
   --
@@ -431,7 +432,7 @@ function loginYahoo()
   local url = globals.strLoginHTTP
   local browser = internalState.browser
   local post
-  local challengeCode
+  local challengeCode, uVal
 
   -- Handle rocketmail
   --
@@ -462,17 +463,21 @@ function loginYahoo()
   
   if body ~= nil then
     _, _, challengeCode = string.find(body, globals.strLoginChallenge)
+    _, _, uVal = string.find(body, globals.strLoginU)
+  end
+
+  if (uVal == nil) then
+    uVal = ""
   end
 
   if challengeCode ~= nil then
     password = crypto.bin2hex(crypto.md5(password))
     password = crypto.bin2hex(crypto.md5(password .. challengeCode))
     post = string.format(globals.strLoginPostDataMD5, intFlag, username,
-                         password, challengeCode)
+                         password, challengeCode, uVal)
   else -- if we didn't get the challenge code, then login in cleartext
-    post = string.format(globals.strLoginPostData, intFlag, username, password)
+    post = string.format(globals.strLoginPostData, intFlag, username, password, uVal)
   end
-
   body, err = browser:post_uri(url, post)
 
   local bNewGui = checkForNewGUI(browser, body)
@@ -506,6 +511,7 @@ function loginYahoo()
   local _, _, str = string.find(body, globals.strRegExpMailServer)
   if str == nil then
     log.error_print("Login Failed: Unable to find mail server")
+    log.raw("Unable to find mail server: " .. body)
     return POPSERVER_ERR_UNKNOWN
   else
     internalState.strMailServer = str

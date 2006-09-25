@@ -16,6 +16,7 @@
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
+
 #include "luay.h"
 
 #include "luabox.h"
@@ -25,7 +26,7 @@
 #include "mlex_lua.h"
 #include "stringhack_lua.h"
 #include "session_lua.h"
-#include "curl_lua.h"
+#include "lua-curl.h"
 #include "getdate_lua.h"
 #include "psock_lua.h"
 #include "base64_lua.h"
@@ -44,12 +45,16 @@ static int (*opening_functions[LUABOX_LAST])(lua_State*) = {
             luaopen_string,
             luaopen_math,
             luaopen_debug,
+#if LUA_VERSION_NUM > 500
+	    luaopen_package,
+#else
             luaopen_loadlib,
+#endif
             luaopen_pop3server,
             luaopen_mlex,
             luaopen_stringhack,
             luaopen_session,
-            luacurl_open,
+            luaopen_curl,
             luaopen_psock,
             luaopen_base64,
             luaopen_getdate,

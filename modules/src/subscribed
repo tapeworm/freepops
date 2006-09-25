@@ -36,7 +36,8 @@ MK_TEMPLATE=	luabind \
 		updater_lua	\
 		version_comparer_lua \
 		xml2tex_lua \
-		luasoap
+		luasoap	\
+		dpipe_lua
 
 MK_TEMPL_CTRIB=	lua \
 		pthread \

@@ -1,4 +1,4 @@
-MODULES-Common= lua		\
+MODULES-Common= $(LUALUA)	\
 		luacompat	\
 		luay		\
 		luabind 	\
@@ -22,7 +22,7 @@ MODULES-Common= lua		\
 		support_lua	\
 		getdate		\
 		getdate_lua	\
-		curl_lua	\
+		$(LUACRUL)	\
 		browser_lua	\
 		stringhack_lua	\
 		portablesocket_lua \
@@ -30,17 +30,18 @@ MODULES-Common= lua		\
 		mimer_lua	\
 		commonimpl_lua	\
 		regularexp_lua 	\
-		luaexpat	\
+		$(LUAEXPAT)	\
 		xmltables_lua	\
 		httpmail_lua	\
 		crypto_lua	\
-		luafilesystem 	\
+		$(LUAFILESYSTEM) \
 		luadoc		\
 		plugins2xml_lua	\
 		version_comparer_lua \
 		updater_lua	\
 		xml2tex_lua \
-		luasoap
+		luasoap \
+		dpipe_lua
 	
 MODULES-Windows-pre=regex pthread 
 MODULES-Windows-post=winsystray

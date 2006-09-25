@@ -79,7 +79,7 @@ LIBS=		crypto_lua	\
                 browser_lua     \
                 getdate_lua     \
                 getdate         \
-                curl_lua        \
+                $(LUACURL)      \
                 support_lua     \
                 mlex_lua        \
                 log_lua         \
@@ -101,11 +101,11 @@ LIBS=		crypto_lua	\
                 regularexp      \
                 oscompatibility \
 		luabind		\
-		luaexpat	\
-		luafilesystem	\
+		$(LUAEXPAT)	\
+		$(LUAFILESYSTEM) \
                 luay            \
 		luacompat-5.1	\
-                lua             \
+                $(LUALUA)       #\
                 lualib          
 		
 EXCLUDELIBS=	serialize_lua \
@@ -114,7 +114,7 @@ EXCLUDELIBS=	serialize_lua \
 		
 LIBSTOLINK=$(filter-out $(EXCLUDELIBS),$(LIBS))
 
-LDFLAGS=$(FORCE_LINK)
+LDFLAGS+=$(FORCE_LINK)
 		
 ifeq "$(OS)" "Windows"
   ifeq "$(SSL)" "openssl"

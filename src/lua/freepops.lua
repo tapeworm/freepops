@@ -20,7 +20,7 @@ freepops.MODULE_ARGS = nil
 ---
 -- List of loaded so/dll/lua libs.
 -- XXX DEPRECATED XXX 
---   we use compat-5.1 'require' system
+--   we use lua5.1 'require' system
 --   we temporarily add a metatable to print a warning
   freepops.LOADED = {}
   local real_freepops_dot_LOADED = {}
@@ -713,7 +713,8 @@ function freepops.bootstrap()
 	end
 	table.foreach(freepops.MODULES_PREFIX,path_to_compat51_path)
 	table.foreach(freepops.MODULES_PREFIX_UNOFFICIAL,path_to_compat51_path)
-	freepops.dofile("compat-5.1.lua")
+	--freepops.dofile("compat-5.1.lua")
+	package.path=LUA_PATH..";"..package.path
 	
 	-- standard lua modules that must be loaded
 	if require("support") == nil then return 1 end

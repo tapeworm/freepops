@@ -16,7 +16,6 @@
 #include "lua.h"
 #include "luabind.h"
 #include "lauxlib.h"
-#include "compat-5.1.h"
 
 #include <stdlib.h>
 #define CRYPTO_ALGO_MD "crypto.ALGO_md.type"

@@ -78,6 +78,7 @@ LIBS=		crypto_lua	\
 		stringhack_lua	\
                 browser_lua     \
                 getdate_lua     \
+                dpipe_lua	\
                 getdate         \
                 $(LUACURL)      \
                 support_lua     \
@@ -104,9 +105,7 @@ LIBS=		crypto_lua	\
 		$(LUAEXPAT)	\
 		$(LUAFILESYSTEM) \
                 luay            \
-		luacompat-5.1	\
-                $(LUALUA)       #\
-                lualib          
+                $(LUALUA:%=%5.1) 
 		
 EXCLUDELIBS=	serialize_lua \
 		browser_lua \

@@ -358,25 +358,6 @@ HIDDEN void start_logging(char* logfile,int verbosity) {
 	SAY("freepops started with loglevel %d on a %s machine.\n",verbosity,
 		((unsigned short)1 != htons(1))?"little endian":"big endian");
 }
-
-HIDDEN void my_putenv(const char* a, const char* b) {
-	char * tmp = calloc(1024,sizeof(char));
-
-	if(b == NULL)
-		return;
-
-	snprintf(tmp,1024,"%s=%s",a,b);
-
-	/* on some system this is not a proper leak since tmp is used (not
-	 * copyed) in the environment.
-	 *
-	 * valgrind says this is the correct thing to do, so I prefer calling
-	 * this memory leak function only in the main, outside loops. so, even
-	 * memory is "lost" it is not a memory leak.
-	 */
-	putenv(tmp);
-}
-
 /*** LUA INTERPRETER BOOTSTRAPPING (for using FP as luafull) *****************/
 
 /* start the interpreter */
@@ -418,6 +399,24 @@ HIDDEN int execute(const char* scriptfile, const char* stdoutname){
 	}
 	
 	return rc;
+}
+
+void my_putenv(const char* a, const char* b) {
+	char * tmp = calloc(1024,sizeof(char));
+
+	if(b == NULL)
+		return;
+
+	snprintf(tmp,1024,"%s=%s",a,b);
+
+	/* on some system this is not a proper leak since tmp is used (not
+	 * copyed) in the environment.
+	 *
+	 * valgrind says this is the correct thing to do, so I prefer calling
+	 * this memory leak function only in the main, outside loops. so, even
+	 * memory is "lost" it is not a memory leak.
+	 */
+	putenv(tmp);
 }
 
 /*** THE MAIN HAS YOU *********************************************************/

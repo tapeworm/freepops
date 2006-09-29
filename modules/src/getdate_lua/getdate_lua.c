@@ -16,7 +16,6 @@
 #include <lua.h>
 
 #include "getdate.h"
-#include "compat-5.1.h"
 
 static int L_getdate(lua_State* L){
 const char * s = luaL_checkstring(L,1);

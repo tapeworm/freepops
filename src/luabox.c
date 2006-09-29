@@ -34,22 +34,13 @@
 #include "lxplib.h"
 #include "crypto_lua.h"
 #include "lfs.h"
+#include "dpipe_lua.h"
 
 #include "log.h"
 #define LOG_ZONE "LUABOX"
 
 static int (*opening_functions[LUABOX_LAST])(lua_State*) = {
-            luaopen_base,
-            luaopen_table,
-            luaopen_io,
-            luaopen_string,
-            luaopen_math,
-            luaopen_debug,
-#if LUA_VERSION_NUM > 500
-	    luaopen_package,
-#else
-            luaopen_loadlib,
-#endif
+	    NULL, /* LUABOX_STANDARD are managed difrently */
             luaopen_pop3server,
             luaopen_mlex,
             luaopen_stringhack,
@@ -62,7 +53,8 @@ static int (*opening_functions[LUABOX_LAST])(lua_State*) = {
             luaopen_lxp,
             luaopen_log,
             luaopen_crypto,
-	    luaopen_lfs
+	    luaopen_lfs,
+	    luaopen_dpipe
         };
 
 lua_State* luabox_genbox(unsigned long intial_stuff){
@@ -76,10 +68,13 @@ void luabox_addtobox(lua_State* box,unsigned long stuff){
     long int i;
     for ( i = 0 ; i < LUABOX_LAST ; i++) {
         int j = 1<<i;
-        if (j & stuff) {
+	if (j == LUABOX_STANDARD && j & stuff) {
+	    lua_gc(box, LUA_GCSTOP, 0);
+	    luaL_openlibs(box);
+	    lua_gc(box, LUA_GCRESTART, 0);
+	} else if (j & stuff) {
             opening_functions[i](box);
 	    luay_emptystack(box);	
 	}
     }
 }
-

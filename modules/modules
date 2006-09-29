@@ -1,5 +1,4 @@
 MODULES-Common= $(LUALUA)	\
-		luacompat	\
 		luay		\
 		luabind 	\
 		oscompatibility	\
@@ -22,7 +21,7 @@ MODULES-Common= $(LUALUA)	\
 		support_lua	\
 		getdate		\
 		getdate_lua	\
-		$(LUACRUL)	\
+		$(LUACURL)	\
 		browser_lua	\
 		stringhack_lua	\
 		portablesocket_lua \

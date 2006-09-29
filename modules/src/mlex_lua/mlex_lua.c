@@ -6,8 +6,6 @@
 #include "mlex.h"
 #include "list.h"
 
-#include "compat-5.1.h"
-
 // returns and checks a stringhack from the stack
 static void** check_mlex(lua_State*L)
 {

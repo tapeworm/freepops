@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim:ts=4:
 
 usage() {
 cat << EOT
@@ -213,7 +214,7 @@ SSL=gnutls
 }
 ###############################################
 LUAEXPAT=luaexpat
-LUACURL=curl_lua
+LUACURL=luacurl
 LUALUA=lua
 LUAFILESYSTEM=luafilesystem
 
@@ -310,6 +311,10 @@ while [ ! -z "$1" ]; do
 			HLDFLAGS="$HLDFLAGS `pkg-config lua5.1-filesystem --libs`"
 			CFLAGS="$HCFLAGS `pkg-config lua5.1-filesystem --cflags`"
 			LDFLAGS="$HLDFLAGS `pkg-config lua5.1-filesystem --libs`"
+		;;
+		*)
+			usage
+			exit 1
 		;;
 	esac
 	shift

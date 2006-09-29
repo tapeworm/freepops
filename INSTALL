@@ -8,7 +8,7 @@ Compilation and installation
 
 To complile and install FreePOPs, use these commands:
 
- ./configure.sh <system>
+ ./configure.sh <system> [flags ...]
  make <target>
  
 Available systems:
@@ -27,6 +27,12 @@ Available systems:
   win-gnutls   - to cross-compile for win on a linux host with mingw32msvc
                  using gnutls libraries instead of openssl
 	
+Available flags (that require pkg-config):
+  -luaexpat       use system lua5.1-expat
+  -luacurl        use system lua5.1-curl
+  -luafilesystem  use system lua5.1-filesystem
+  -lua            use system lua5.1
+
 Valid targets are:
   all		- build it (remember to ./configure.sh first)
   clean		- clean the source tree

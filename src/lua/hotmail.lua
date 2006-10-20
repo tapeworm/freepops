@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6c"
+PLUGIN_VERSION = "0.1.6d"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -111,7 +111,8 @@ local globals = {
   -- Pattern to detect if we are using the live version
   --
   strLiveCheckPattern = '(function NewMessageGo)',
-  strLiveMainPagePattern = '<frame name="main" src="([^"]+)"',
+  strLiveMainPagePattern = '<frame.-name="main" src="([^"]+)"',
+--'<frame name="main" src="([^"]+)"',
 
   -- Get the crumb value that is needed for every command
   --
@@ -163,7 +164,8 @@ local globals = {
   -- Pattern used in the Live interface to get the message info
   --
   --strMsgLivePattern = 'new HM%.__[21][28]%([^%)]+[%)]+, "([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
-  strMsgLivePattern = ',"([^"]+)","[^"]+","[^"]+",[^,]+,[^,]+,[^,]+,[^,]+,"([^"]+)"',
+  strMsgLivePatternOld = ',"([^"]+)","[^"]+","[^"]+",[^,]+,[^,]+,[^,]+,[^,]+,"([^"]+)"',
+  strMsgLivePattern = 'class=.-SizeCell.->([^<]+)</div>.-new Array%(new HM%.__[^%(]+%("([^"]+)',
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -183,12 +185,15 @@ local globals = {
   strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s",
   strCmdMsgListNextPage = "&page=%d&wo=",
   strCmdMsgListLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.GetFolderData&ptid=0&a=%s", 
-  strCmdMsgListPostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,,&MailToken=",
+  strCmdMsgListPostLiveOld = "cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,,&MailToken=",
+  strCmdMsgListPostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,"","",true,false&v=1&mt=',
+
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
   strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=%s", 
 --  strCmdDeletePostLive = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d=%s,%s,[%s],[{%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C99999999999990000,null}],null,null,1,false,Date",
-  strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
+  strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
+  strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=',
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
   strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s",
@@ -1058,7 +1063,12 @@ function quit_update(pstate)
     post = string.format(globals.strCmdDeletePostLive, internalState.strMBox, 
       internalState.strTrashId, uidls)
     log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)
-    browser:post_uri(cmdUrl, post)
+    local body, err = browser:post_uri(cmdUrl, post)
+    if (body == nil) then -- M7 Only - DELETE SOON!
+      post = string.format(globals.strCmdDeletePostLiveOls, internalState.strMBox, 
+        internalState.strTrashId, uidls)
+      local body, err = browser:post_uri(cmdUrl, post)
+    end
   end
 
   -- Empty the trash
@@ -1154,6 +1164,12 @@ function LiveStat(pstate)
   -- Iterate over the messages
   --
   local body, err = browser:post_uri(cmdUrl, post)
+  if (body == nil) then
+    -- Use the M7 way -- REMOVE THIS AT SOME POINT!
+    --
+    post = string.format(globals.strCmdMsgListPostLiveOld, internalState.strMBox, nMaxMsgs, nMaxMsgs)
+    body, err = browser:post_uri(cmdUrl, post)
+  end
 
   -- Let's make sure the session is still valid
   --
@@ -1183,11 +1199,31 @@ function LiveStat(pstate)
     body, err = browser:get_uri(cmdUrl)
   end
 
-  -- Go through the list of messages
+  -- Go through the list of messages (M7 - DELETE SOON!)
   --
-  for uidl, size in string.gfind(body, globals.strMsgLivePattern) do
+  for uidl, size in string.gfind(body, globals.strMsgLivePatternOld) do
     nMsgs = nMsgs + 1
     log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+    set_popstate_nummesg(pstate, nMsgs)
+    set_mailmessage_size(pstate, nMsgs, size)
+    set_mailmessage_uidl(pstate, nMsgs, uidl)
+  end
+
+  -- Go through the list of messages (M8)
+  --
+  --for uidl, size in string.gfind(body, globals.strMsgLivePattern) do
+  for size, uidl in string.gfind(body, globals.strMsgLivePattern) do
+    nMsgs = nMsgs + 1
+    log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+
+    local _, _, kbUnit = string.find(size, "([Kk])")
+    _, _, size = string.find(size, "([%d]+) [KkMm]")
+    if not kbUnit then 
+      size = math.max(tonumber(size), 0) * 1024 * 1024
+    else
+      size = math.max(tonumber(size), 0) * 1024
+    end
+
     set_popstate_nummesg(pstate, nMsgs)
     set_mailmessage_size(pstate, nMsgs, size)
     set_mailmessage_uidl(pstate, nMsgs, uidl)

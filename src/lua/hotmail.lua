@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6d"
+PLUGIN_VERSION = "0.1.6e"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -165,7 +165,8 @@ local globals = {
   --
   --strMsgLivePattern = 'new HM%.__[21][28]%([^%)]+[%)]+, "([^"]+)", "[^"]+", "[^"]+", [^,]+, [^,]+, [^,]+, [^,]+, "([^"]+)"',
   strMsgLivePatternOld = ',"([^"]+)","[^"]+","[^"]+",[^,]+,[^,]+,[^,]+,[^,]+,"([^"]+)"',
-  strMsgLivePattern = 'class=.-SizeCell.->([^<]+)</div>.-new Array%(new HM%.__[^%(]+%("([^"]+)',
+  strMsgLivePattern1 = 'class=.-SizeCell.->([^<]+)</div>',
+  strMsgLivePattern2 = 'new HM%.__[^%(]+%("([^"]+)",[tf][^,"]+,"[^"]+",[^,]+,[^,]+',
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -1211,10 +1212,11 @@ function LiveStat(pstate)
 
   -- Go through the list of messages (M8)
   --
-  --for uidl, size in string.gfind(body, globals.strMsgLivePattern) do
-  for size, uidl in string.gfind(body, globals.strMsgLivePattern) do
-    nMsgs = nMsgs + 1
-    log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+  local cnt = 0
+  local i = 1
+  local sizes = {}
+  for size in string.gfind(body, globals.strMsgLivePattern1) do
+    cnt = cnt + 1
 
     local _, _, kbUnit = string.find(size, "([Kk])")
     _, _, size = string.find(size, "([%d]+) [KkMm]")
@@ -1223,11 +1225,20 @@ function LiveStat(pstate)
     else
       size = math.max(tonumber(size), 0) * 1024
     end
+    sizes[cnt] = size
+log.dbg(cnt .. " - " .. size)
+  end
+
+  for uidl in string.gfind(body, globals.strMsgLivePattern2) do
+    nMsgs = nMsgs + 1
+    log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. sizes[i])
 
     set_popstate_nummesg(pstate, nMsgs)
-    set_mailmessage_size(pstate, nMsgs, size)
+    set_mailmessage_size(pstate, nMsgs, sizes[i])
     set_mailmessage_uidl(pstate, nMsgs, uidl)
+    i = i + 1
   end
+
 
   -- Update our state
   --

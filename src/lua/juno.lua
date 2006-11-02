@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9e"
+PLUGIN_VERSION = "0.0.9f"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -71,9 +71,13 @@ local globals = {
   strLoginPostUrlPattern1='form action="([^"]*)"',
   strLoginPostUrlPattern2='name="([^"]*)" value="([^"]*)"',
 
+  -- Extract the redirect url
+  --
+  strRedirectUrl = "window%.location%.replace%('([^']+)'%)",
+
   -- Extract the mail server
   --
-  strMailServerPattern = '/([567].*)$',
+  strMailServerPattern = '/(new/[567].*)$',
 
   -- Pattern to determine if we have no messages
   --
@@ -83,7 +87,8 @@ local globals = {
   --
   --strMsgListPat = 'var msgnum = "([^"]+)";.-&nbsp;&nbsp;&nbsp;[^&]+&nbsp;.-&nbsp;&nbsp;&nbsp;([^K]+)K&nbsp;',
   strMsgListPat = 'msgNum=([^&]+)&block=.-&nbsp;&nbsp;&nbsp;[^&]+&nbsp;.-&nbsp;&nbsp;&nbsp;([^K]+)K&nbsp;',
-
+  --strMsgListPat = "%[ '([^']+)' , '[^']+' , '[^']+' , '[^']+' , '([^']+)' , '[^']+' , '[^']*' , '[^']+' , '[^']+' , '[^']+' , '[^']+' , '[^']+' , '[^']*'%]",
+                    
   -- Attachment patterns
   --
   strAttachLitPattern = ".*<table>.*<tr>.*<td>.*<img>.*</td>.*<td>.*<a>.*</a>.*</td>.*</tr>.*</table>",
@@ -205,12 +210,20 @@ function login()
     log.error_print("Login Failed: Unable to make connection")
     return POPSERVER_ERR_NETWORK
   end
+
   -- Check for invalid login
   -- 
   local _, _, str = string.find(body, globals.strRetLoginBadPassword)
   if str ~= nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
+  end
+
+  -- Check for the redirect
+  --
+  _, _, str = string.find(body, globals.strRedirectUrl)
+  if str ~= nil then
+    body, err = browser:get_uri(str)
   end
 
   -- Extract the mail server
@@ -236,13 +249,11 @@ function login()
 
     -- Clean up the base url
     --
-    internalState.strMailServer = string.gsub(url, 
-      globals.strMailServerPattern, "")
+    internalState.strMailServer = "http://" .. browser:wherearewe() .. "/webmail"
   else
     -- Clean up the base url
     --
-    internalState.strMailServer = string.gsub(browser:whathaveweread(), 
-      globals.strMailServerPattern, "")  
+    internalState.strMailServer = "http://" .. browser:wherearewe() .. "/webmail"
   end
 
   -- DEBUG Message

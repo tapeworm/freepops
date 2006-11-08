@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6g"
+PLUGIN_VERSION = "0.1.6h"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -130,14 +130,14 @@ local globals = {
 
   -- Junk and Trash Folder pattern
   -- 
-  strPatLiveTrashId = '<a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i_trash.gif" />',
-  strPatLiveJunkId = '<a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i_junkEmail.gif" />',
+  strPatLiveTrashId = '<a href="/mail/[^%?]+%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i_trash.gif" />',
+  strPatLiveJunkId = '<a href="/mail/[^%?]+%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i_junkEmail.gif" />',
 
   -- Folder id pattern
   --
   strFolderPattern = '<a href="[^"]+curmbox=([^&]+)&[^"]+" >', 
-  strFolderLivePattern = '<a href="/mail/mail.aspx%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i[^"]+" /><span[^>]+>',
-  strFolderLiveInboxPattern = '<a href="/mail/mail%.aspx%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i_inbox.gif" />',
+  strFolderLivePattern = '<a href="/mail/[^%?]+%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i[^"]+" /><span[^>]+>',
+  strFolderLiveInboxPattern = '<a href="/mail/[^%?]+%?Control=Inbox&FolderID=([^"]+)"><img src="http://[^.]+.mail.live.com/mail/[^/]+/[^/]+/i_inbox.gif" />',
 
   -- Pattern to determine if we have no messages
   --

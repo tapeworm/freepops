@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6f"
+PLUGIN_VERSION = "0.1.6g"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -1219,7 +1219,7 @@ function LiveStat(pstate)
     cnt = cnt + 1
 
     local _, _, kbUnit = string.find(size, "([Kk])")
-    _, _, size = string.find(size, "([%d%.]+) [KkMm]")
+    _, _, size = string.find(size, "([%d%.,]+) [KkMm]")
     if not kbUnit then 
       size = math.max(tonumber(size), 0) * 1024 * 1024
     else
@@ -1337,7 +1337,7 @@ function stat(pstate)
       -- First figure out the unit (KB or just B)
       --
       local _, _, kbUnit = string.find(size, "([Kk])")
-      _, _, size = string.find(size, "([%d]+)[KkMm]")
+      _, _, size = string.find(size, "([%d%.,]+)[KkMm]")
       if not kbUnit then 
         size = math.max(tonumber(size), 0) * 1024 * 1024
       else

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9f"
+PLUGIN_VERSION = "0.0.9g"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -61,7 +61,7 @@ local globals = {
   -- Expressions to pull out of returned HTML from Yahoo corresponding to a problem
   --
   strRetLoginBadPassword = "(Sign in to Email on the Web)",
-  strRetLoginSessionExpired = '(_isOfflineSession = "no";)',
+  strRetLoginSessionExpired = '(function PerformMailOperation)',
 
   -- Regular expression to extract the mail server
   --

@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9d"
+PLUGIN_VERSION = "0.1.9e"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -233,9 +233,15 @@ local globals = {
 
   -- SOAP Urls
   --
-  strSoapCmd = "%s%s?m=%s&wssid=%s", 
-  strCmdAttach = "%sym/cgdownload/?box=%s&MsgId=%s&bodyPart=%s&download=1",
+  strSoapCmd = "%s%s?m=%s&wssid=%s&appid=YahooMailRC", 
+  --strCmdAttach = "%sya/download?fid=%s&mid=%s&pid=2&tnef=&YY=189019855&newid=1&clean=0&inline=1",
+  strCmdAttach = "%sya/download?fid=%s&mid=%s&pid=%s&tnef=&clean=0&redirectURL=%sdc/virusresults.html%%3Ffrom%%3Ddownload_response%%26ui%%3Diframe%%26YY%%3D1163030279984",
+
+--"%sym/cgdownload/?box=%s&MsgId=%s&bodyPart=%s&download=1",
+--"%sya/download?fid=%s&mid=%s&pid=%s&tnef=&clean=0&",                   
+
   strRedirectNew = 'content="0; url=([^"]+)">',
+  strYahooxlms = "ymws",
 
   -- SOAP Constants
   --
@@ -249,7 +255,7 @@ local globals = {
   -- Data Recognization on login
   --
   strRegExpCrumbNew = "wssid : '([^']+)'",
-  strRegExpWebSrvUrl = "webserviceUrl: '([^']+)'", 
+  strRegExpWebSrvUrl = "webservice[^:]-: '([^']+)'", 
 
   -- Folder names
   --
@@ -303,7 +309,7 @@ internalState = {
 
 -- Set to true to enable Raw Logging
 --
-local ENABLE_LOGRAW = false
+local ENABLE_LOGRAW = true
 
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
@@ -503,6 +509,12 @@ function loginYahoo()
     return POPSERVER_ERR_NETWORK
   end
 
+  local _, _, str = string.find(body, '<input type="text" id="secword" name=".secword"')
+  if (str ~= nil) then
+    log.error_print("Login Failed: Yahoo is using an image verification.  Please login through the web.")
+    return POPSERVER_ERR_NETWORK
+  end
+
   -- Check for invalid password
   -- 
   local _, _, str = string.find(body, globals.strRetLoginBadPassword)
@@ -571,18 +583,22 @@ function loginNewYahoo(browser, body)
       body)
     return POPSERVER_ERR_UNKNOWN
   end
+  log.dbg("Crumb Value: " .. str)
   internalState.strCrumb = str
 
   -- Get the Web Service Url
   --
-  local _, _, str = string.find(body, globals.strRegExpWebSrvUrl)
-  if str == nil then
-    log.error_print("Yahoo - unable to parse out web service Url.")
-    log.raw("Yahoo - unable to parse out web service value.  Body: " .. 
-      body)
-    return POPSERVER_ERR_UNKNOWN
-  end
-  internalState.strWebSrvUrl = str
+--  local _, _, str = string.find(body, globals.strRegExpWebSrvUrl)
+--  if str == nil then
+--    log.error_print("Yahoo - unable to parse out web service Url.")
+--    log.raw("Yahoo - unable to parse out web service value.  Body: " .. 
+--      body)
+--    return POPSERVER_ERR_UNKNOWN
+--    str = "ws/mail/v1/soap"
+--  end
+  -- We used to query for this.
+  --
+  internalState.strWebSrvUrl = "ws/mail/v1/soap"
 
   -- Get metadata
   --
@@ -854,14 +870,10 @@ function getUserMetaData()
     internalState.strWebSrvUrl, "GetMetaData", internalState.strCrumb)
 
   local ns, meth, ent, err = soap.http.call(browser,
-    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "GetMetaData", 
+    url, "urn:yahoo:" .. globals.strYahooxlms, "GetMetaData", 
       {
         {
-          tag = "param1",
-            { tag = "greq", 
-              attr = { ["gve"] = globals.strGre_Gve },
-                { tag = "gid", globals.strGre_Gid }
-            }
+          tag = "param1", ""
         },
       })
 
@@ -875,32 +887,32 @@ function getUserData()
   local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
     internalState.strWebSrvUrl, "GetUserData", internalState.strCrumb)
 
-  local ns, meth, ent, err = soap.http.call(browser,
-    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "GetUserData", 
-      {
-        {
-          tag = "param1",
-            { tag = "greq", 
-              attr = { ["gve"] = globals.strGre_Gve },
-                { tag = "gid", globals.strGre_Gid }
-            }
-        },
-      })
+--  local ns, meth, ent, err = soap.http.call(browser,
+--    url, "urn:yahoo:" .. globals.strYahooxlms, "GetUserData", 
+--      {
+--        {
+--          tag = "param1",
+--            { tag = "greq", 
+--              attr = { ["gve"] = globals.strGre_Gve },
+--                { tag = "gid", globals.strGre_Gid }
+--            }
+--        },
+--      })
 
   -- Need to grab the gres, gss element
   --
-  local str = nil
-  for i, elem in ipairs (ent[2]) do
-    if (elem["tag"] == "gss") then
-      str = elem[1]
-    end
-  end
+--  local str = nil
+--  for i, elem in ipairs (ent[2]) do
+--    if (elem["tag"] == "gss") then
+--      str = elem[1]
+--    end
+--  end
 
-  if (str == nil) then
-    log.error_print("Unable to parse out the gss value.")
-    return 1
-  end
-  internalState.strGSS = str
+--  if (str == nil) then
+--    log.error_print("Unable to parse out the gss value.")
+--    return 1
+--  end
+--  internalState.strGSS = str
 
   return 0
 end
@@ -911,15 +923,10 @@ function getFolderList()
     internalState.strWebSrvUrl, "ListFolders", internalState.strCrumb)
 
   local ns, meth, ent, err = soap.http.call(browser,
-    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "ListFolders", 
+    url, "urn:yahoo:" .. globals.strYahooxlms, "ListFolders", 
       {
         {
           tag = "param1",
-            { tag = "greq", 
-              attr = { ["gve"] = globals.strGre_Gve },
-                { tag = "gid", globals.strGre_Gid },
-                { tag = "gss", internalState.strGSS }
-            },
             { tag = "resetunseen", "true" } 
         },
       })
@@ -930,39 +937,29 @@ end
 function getSTATList(pstate)
   local browser = internalState.browser
   local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
-    internalState.strWebSrvUrl, "LstMsgs", internalState.strCrumb)
+    internalState.strWebSrvUrl, "ListMessages", internalState.strCrumb)
   local nMaxMsgs = 999 
   if internalState.statLimit ~= nil then
     nMaxMsgs = internalState.statLimit
   end
 
-  local ns, meth, ent, err = soap.http.call(browser,
-    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "LstMsgs", 
-      {
-        { tag = "param1",
-            attr = {
-              ["startMid"] = "0",
-              ["numMid"] = nMaxMsgs,
-              ["startInfo"] = "0",
-              ["numInfo"] = nMaxMsgs,
-              ["startBody"] = "0",
-              ["numBody"] = "0",
-            },
-            { tag = "greq", 
-              attr = { ["gve"] = globals.strGre_Gve },
-                { tag = "gid", globals.strGre_Gid },
-                { tag = "gss", internalState.strGSS }
-            },
-            { tag = "sortKey", "date" }, 
-            { tag = "sortOrder", "down" }, 
-            { tag = "flags", "" }, 
-            { tag = "fi",
-                attr = { ["fname"] = internalState.strMBox }, 
-                ""
-            },
-          }, 
-      })
+  local body = {   
+        { tag = "sortKey", "date" }, 
+        { tag = "sortOrder", "down" }, 
+        { tag = "filterBy", "" }, 
+        { tag = "fid", internalState.strMBox }, 
+        { tag = "transform-markup", "remove-javascript" },
+      }
+  body.attr = { 
+        ["startMid"] = "0",
+        ["numMid"] = nMaxMsgs,
+        ["startInfo"] = "0",
+        ["numInfo"] = nMaxMsgs,
+        ["numBody"] = "0",
+  }
 
+  local ns, meth, ent, err = soap.http.call(browser,
+    url, "urn:yahoo:" .. globals.strYahooxlms, "ListMessages", body)
 
   -- Initialize our state
   --
@@ -978,16 +975,10 @@ function getSTATList(pstate)
   end
 
   for i, elem in ipairs (ent) do
-    if (type(elem) == "table" and elem["tag"] == "minfo") then
+    if (type(elem) == "table" and elem["tag"] == "messageInfo") then
       local attrs = elem["attr"]
-      local size = attrs["msize"]     
-
-      local subelem = elem[1]
-      if (subelem["tag"] ~= "mid") then
-        log.error_print("Unable to parse out the message id")
-        return POPSERVER_ERR_NETWORK
-      end
-      local uidl = subelem[1]
+      local size = attrs["size"]     
+      local uidl = attrs["mid"]
 
       -- Save the information
       --
@@ -1008,29 +999,21 @@ function getMsgHdr(pstate, uidl)
   local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
     internalState.strWebSrvUrl, "GetMessageRawHeader", internalState.strCrumb)
 
+  local body = {   
+        { tag = "mid", uidl }, 
+        { tag = "fid", internalState.strMBox }, 
+      }
+
   local ns, meth, ent, err = soap.http.call(browser,
-    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "GetMessageRawHeader", 
-      {
-        { tag = "param1",
-            { tag = "greq", 
-              attr = { ["gve"] = globals.strGre_Gve },
-                { tag = "gid", globals.strGre_Gid },
-                { tag = "gss", internalState.strGSS }
-            },
-            { tag = "mid", uidl }, 
-            { tag = "fi",
-                attr = { ["fname"] = internalState.strMBox }, 
-                ""
-            },
-          }, 
-      })
+    url, "urn:yahoo:" .. globals.strYahooxlms, "GetMessageRawHeader", body)
 
   -- Get the header
   --
   local header = nil
   for i, elem in ipairs (ent) do
-    if (type(elem) == "table" and elem["tag"] == "mhd") then
+    if (type(elem) == "table" and elem["tag"] == "rawheaders") then
       header = elem[1]
+      header = header .. "\n"
     end
   end
 
@@ -1047,52 +1030,50 @@ end
 function getMsgBody(pstate, uidl, size, cbInfo)
   local browser = internalState.browser
   local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
-    internalState.strWebSrvUrl, "GetMessageBodyPart", internalState.strCrumb)
+    internalState.strWebSrvUrl, "GetMessage", internalState.strCrumb)
+
+  local body = {   
+        { tag = "mid", uidl }, 
+        { tag = "fid", internalState.strMBox }, 
+        { tag = "truncateAt", "999999" }, 
+      }
 
   local ns, meth, ent, err = soap.http.call(browser,
-    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "GetMessageBodyPart", 
-      {
-        { tag = "param1",
-            { tag = "greq", 
-              attr = { ["gve"] = globals.strGre_Gve, ["gdk"] = "1" },
-                { tag = "gid", globals.strGre_Gid },
-                { tag = "gss", internalState.strGSS }
-            },
-            { tag = "mid", uidl }, 
-            { tag = "truncateAt", 999999999 }, 
-            { tag = "fi",
-                attr = { ["fname"] = internalState.strMBox }, 
-                ""
-            },
-          }, 
-      })
+    url, "urn:yahoo:" .. globals.strYahooxlms, "GetMessage", body)
 
   -- Get the parts
   --
   local part = nil
-  for i, elem in ipairs (ent[2]) do
+  for i, elem in ipairs (ent[3]) do
     if (type(elem) == "table" and elem["tag"] == "part") then
       part = elem
       local attrs = elem["attr"]
-      local subtype = attrs["subType"]
+      local partId = attrs["partId"]
+      local type = attrs["type"]
+      local subtype = attrs["subtype"]
       if (subtype == "plain") then
         local textElem = elem[1]
         local text = textElem[1]
+        text = text .. "\n"
         cbInfo.strText = getMsgCallBack(cbInfo, text)
       elseif (subtype == "html") then
         local textElem = elem[1]
         local text = textElem[1]
-        text = string.gsub(text, "(</[^>]+>) ", "%1\r\n") 
+        text = string.gsub(text, "&amp;", "&")
+--        text = string.gsub(text, "(</[^>]+>) ", "%1\r\n") 
+        text = text .. "\n"
         cbInfo.strHtml = getMsgCallBack(cbInfo, text)
+      elseif (partId == "HEADER" or partId == "TEXT") then
+        -- no-op
       else
-        local partId = attrs["partId"]
         local file = attrs["dispParams"]
         local contentId = attrs["contentId"]
         if (file ~= nil) then
           file = string.gsub(file, "^.-=", "")
+          local escUidl = string.gsub(uidl, "%+", "%%2B")
           url = string.format(globals.strCmdAttach, internalState.strMailServer,
-             internalState.strMBox, uidl, partId)
-          cbInfo.attachments[file] = url
+             internalState.strMBox, escUidl, partId, internalState.strMailServer)
+          cbInfo.attachments[file] = getRealAttachmentUrl(url)
           table.setn(cbInfo.attachments, table.getn(cbInfo.attachments) + 1)
           if (contentId ~= nil) then
             contentId = string.sub(contentId, 2, -2)
@@ -1110,24 +1091,16 @@ end
 function markMsgUnread(uidl)
   local browser = internalState.browser
   local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
-    internalState.strWebSrvUrl, "SetMessageFlag", internalState.strCrumb)
+    internalState.strWebSrvUrl, "FlagMessages", internalState.strCrumb)
 
   local ns, meth, ent, err = soap.http.call(browser,
-    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "SetMessageFlag", 
+    url, "urn:yahoo:" .. globals.strYahooxlms, "FlagMessages", 
       {
         { tag = "param1",
-            { tag = "greq", 
-              attr = { ["gve"] = globals.strGre_Gve },
-                { tag = "gid", globals.strGre_Gid },
-                { tag = "gss", internalState.strGSS }
-            },
             { tag = "mid", uidl }, 
-            { tag = "fi",
-                attr = { ["fname"] = internalState.strMBox }, 
-                ""
-            },
-            { tag = "flag",
-                attr = { ["seen"] = "0" }, 
+            { tag = "fid", internalState.strMBox }, 
+            { tag = "setFlags",
+                attr = { ["read"] = "0" }, 
                 ""
             },
           }, 
@@ -1140,20 +1113,9 @@ function emptyFolder(folderName)
     internalState.strWebSrvUrl, "EmptyFolder", internalState.strCrumb)
 
   local ns, meth, ent, err = soap.http.call(browser,
-    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "EmptyFolder", 
+    url, "urn:yahoo:" .. globals.strYahooxlms, "EmptyFolder", 
       {
-        {
-          tag = "param1",
-            { tag = "greq", 
-              attr = { ["gve"] = globals.strGre_Gve },
-                { tag = "gid", globals.strGre_Gid },
-                { tag = "gss", internalState.strGSS }
-            },
-            { tag = "fi",
-                attr = { ["fname"] = folderName }, 
-                ""
-            },
-        },
+            { tag = "fid", folderName }, 
       })
 
   return 0
@@ -1162,9 +1124,11 @@ end
 function deleteMsgs(pstate)
   local browser = internalState.browser
   local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
-    internalState.strWebSrvUrl, "MoveMsgs", internalState.strCrumb)
+    internalState.strWebSrvUrl, "MoveMessages", internalState.strCrumb)
 
-  local param = { tag = "param1" }
+  local param = { }
+  table.insert(param, { tag = "sourceFid", internalState.strMBox })
+  table.insert(param, { tag = "destinationFid", globals.strTrash })
 
   -- Cycle through the messages and see if we need to delete any of them
   -- 
@@ -1182,27 +1146,27 @@ function deleteMsgs(pstate)
     return 0
   end
 
-  table.insert(param, { tag = "greq", 
-              attr = { ["gve"] = globals.strGre_Gve },
-                { tag = "gid", globals.strGre_Gid },
-                { tag = "gss", internalState.strGSS }
-            })
-  table.insert(param, { tag = "fi",
-                attr = { ["fname"] = internalState.strMBox }, 
-                ""
-            })
-  table.insert(param, { tag = "tofi",
-                attr = { ["fname"] = globals.strTrash }, 
-                ""
-            })
-  
-
   local ns, meth, ent, err = soap.http.call(browser,
-    url, "urn:yahoo:" .. internalState.strWebSrvUrl, "MoveMsgs", 
-      { param })
+    url, "urn:yahoo:" .. globals.strYahooxlms, "MoveMessages", 
+      param)
 
   return 0
 end
+
+-- Utility Function
+--
+function getRealAttachmentUrl(url)
+  local browser = internalState.browser
+  local h, err = browser:get_head(url, {}, true)
+  if (err ~= nil) then
+    log.dbg(err)
+    return nil
+  end
+  local _, _, x = string.find(h,
+                "[Ll][Oo][Cc][Aa][Tt][Ii][Oo][Nn]%s*:%s*([^\r]*)")
+  return (x or nil)
+end
+
 
 -- ************************************************************************** --
 --  Pop3 functions that must be defined

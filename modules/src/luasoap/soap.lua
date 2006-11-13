@@ -4,13 +4,6 @@
 -- $Id$
 ---------------------------------------------------------------------
 
-MODULE_VERSION = "0.0.1"
-MODULE_NAME = "soap.lua"
-MODULE_REQUIRE_VERSION = "0.0.99"
-MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=soap.lua"
-MODULE_HOMEPAGE = "http://www.freepops.org/"
-
 require"lxp.lom"
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
@@ -112,7 +105,7 @@ local header_template = {
 local function insert_header (obj, header)
 	-- removes old header
 	if obj[2] then
-		tremove (obj, 1)
+--		tremove (obj, 1)
 	end
 	if header then
 		header_template[1] = header
@@ -151,6 +144,14 @@ function encode (namespace, method, entries, header)
 	for i = 1, max (getn(body), getn(entries)) do
 		body[i] = entries[i]
 	end
+
+      -- Added by Russell Schwager - Pass any top level attributes that may exist
+      --
+      body.attr = {}
+      if (entries.attr ~= nil) then
+            body.attr = entries.attr
+      end
+
 	-- Sets method (actually, the table's tag) and namespace.
 	body.tag = (namespace and "m:" or "")..method
 	body.attr["xmlns:m"] = namespace

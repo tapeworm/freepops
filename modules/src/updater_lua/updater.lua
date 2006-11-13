@@ -2,12 +2,12 @@
 --  FreePOPs plugin-check webmail interface
 --  
 --  Released under the GNU/GPL license
---  Written by Russell Schwager <russells@despammed.com>
+--  Written by Russell Schwager <russell822@yahoo.com>
 -- ************************************************************************** --
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.5"
+PLUGIN_VERSION = "0.0.6"
 PLUGIN_NAME = "updater"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -408,16 +408,18 @@ end
 function replacePlugin(plugin, newLua, versionInfo)
   -- Remove any old backups, and then backup the current file.
   --
-  local backupName = versionInfo.path .. ".bak"
-  os.remove(backupName)
-  local fptr, err = io.open(versionInfo.path, "r")
-  if (fptr ~= nil) then
-    fptr:close()
-    local status, err = os.rename(versionInfo.path, backupName)
-    if (status == nil or err ~= nil) then
-      log.error_print("Unable to backup the plugin: " .. plugin .. 
-        ".  The plugin will not be updated, Error: " .. (err or "none"))
-      return 1
+  if (versionInfo.path ~= nil) then
+    local backupName = versionInfo.path .. ".bak"
+    os.remove(backupName)
+    local fptr, err = io.open(versionInfo.path, "r")
+    if (fptr ~= nil) then
+      fptr:close()
+      local status, err = os.rename(versionInfo.path, backupName)
+      if (status == nil or err ~= nil) then
+        log.error_print("Unable to backup the plugin: " .. plugin .. 
+          ".  The plugin will not be updated, Error: " .. (err or "none"))
+        return 1
+      end
     end
   end
 

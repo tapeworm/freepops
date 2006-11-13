@@ -92,6 +92,7 @@ freepops.MODULES_MAP["charter.com"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["compaq.net"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["passport.com"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["messengeruser.com"]	= {name="hotmail.lua"}
+freepops.MODULES_MAP["live.com"]		= {name="hotmail.lua"}
 
 -- aol
 freepops.MODULES_MAP["aol.com"]		= {name="aol.lua"}

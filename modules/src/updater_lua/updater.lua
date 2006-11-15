@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.6"
+PLUGIN_VERSION = "0.0.6a"
 PLUGIN_NAME = "updater"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -408,7 +408,7 @@ end
 function replacePlugin(plugin, newLua, versionInfo)
   -- Remove any old backups, and then backup the current file.
   --
-  if (versionInfo.path ~= nil) then
+  if (versionInfo.backupOldFile == true) then
     local backupName = versionInfo.path .. ".bak"
     os.remove(backupName)
     local fptr, err = io.open(versionInfo.path, "r")
@@ -447,7 +447,8 @@ function getLocalVersionInfo(plugin)
     local verInfo = {
       version = "0.0.0",
       requireVersion = "0.0.0",
-      --path = freepops.getLuaPath() .. plugin
+      path = freepops.getLuaPath() .. plugin,
+      backupOldFile = false
     }
     return verInfo
   end
@@ -459,7 +460,8 @@ function getLocalVersionInfo(plugin)
   local verInfo = {
     version = version,
     requireVersion = requireVersion,
-    path = file
+    path = file,
+    backupOldFile = true
   }
 
   return verInfo

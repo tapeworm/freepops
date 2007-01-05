@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9g"
+PLUGIN_VERSION = "0.0.9h"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -61,7 +61,7 @@ local globals = {
   -- Expressions to pull out of returned HTML from Yahoo corresponding to a problem
   --
   strRetLoginBadPassword = "(Sign in to Email on the Web)",
-  strRetLoginSessionExpired = '(function PerformMailOperation)',
+  strRetLoginSessionExpired = '(var tofield = document.ComposeForm.To.value.length;)',
 
   -- Regular expression to extract the mail server
   --
@@ -224,6 +224,8 @@ function login()
   _, _, str = string.find(body, globals.strRedirectUrl)
   if str ~= nil then
     body, err = browser:get_uri(str)
+  else
+    log.dbg("Unable to figure out server: " .. body)
   end
 
   -- Extract the mail server

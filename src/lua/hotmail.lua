@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6h"
+PLUGIN_VERSION = "0.1.6i"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -291,6 +291,7 @@ function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
          (internalState.strMBoxName or "") .. "~"  ..
+         (internalState.statLimit or "") .. "~"  ..
 	 internalState.strPassword -- this asserts strPassword ~= nil
 end
 
@@ -669,7 +670,7 @@ function downloadMsg(pstate, msg, nLines, data)
   -- Handle whatever is left in the buffer
   --
   local body = cbInfo.strBuffer
-  if (string.len(body) > 0) then
+  if (string.len(body) > 0 and cbInfo.nLinesReceived == -2) then
     log.raw("Message: " .. cbInfo.cb_uidl .. ", left over buffer being processed: " .. body)
     body = cleanupBody(body, cbInfo)
     body = cbInfo.strHack:dothack(body) .. "\0"
@@ -1204,10 +1205,12 @@ function LiveStat(pstate)
   --
   for uidl, size in string.gfind(body, globals.strMsgLivePatternOld) do
     nMsgs = nMsgs + 1
-    log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
-    set_popstate_nummesg(pstate, nMsgs)
-    set_mailmessage_size(pstate, nMsgs, size)
-    set_mailmessage_uidl(pstate, nMsgs, uidl)
+    if (nMsgs <= nMaxMsgs) then  
+      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+      set_popstate_nummesg(pstate, nMsgs)
+      set_mailmessage_size(pstate, nMsgs, size)
+      set_mailmessage_uidl(pstate, nMsgs, uidl)
+    end
   end
 
   -- Go through the list of messages (M8)
@@ -1217,7 +1220,6 @@ function LiveStat(pstate)
   local sizes = {}
   for size in string.gfind(body, globals.strMsgLivePattern1) do
     cnt = cnt + 1
-
     local _, _, kbUnit = string.find(size, "([Kk])")
     _, _, size = string.find(size, "([%d%.,]+) [KkMm]")
     if not kbUnit then 
@@ -1226,19 +1228,19 @@ function LiveStat(pstate)
       size = math.max(tonumber(size), 0) * 1024
     end
     sizes[cnt] = size
-log.dbg(cnt .. " - " .. size)
   end
 
   for uidl in string.gfind(body, globals.strMsgLivePattern2) do
     nMsgs = nMsgs + 1
-    log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. sizes[i])
+    if (nMsgs <= nMaxMsgs) then
+      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. sizes[i])
 
-    set_popstate_nummesg(pstate, nMsgs)
-    set_mailmessage_size(pstate, nMsgs, sizes[i])
-    set_mailmessage_uidl(pstate, nMsgs, uidl)
-    i = i + 1
+      set_popstate_nummesg(pstate, nMsgs)
+      set_mailmessage_size(pstate, nMsgs, sizes[i])
+      set_mailmessage_uidl(pstate, nMsgs, uidl)
+      i = i + 1
+    end
   end
-
 
   -- Update our state
   --
@@ -1346,7 +1348,7 @@ function stat(pstate)
 
       -- Save the information
       --
-      if bUnique == true then
+      if bUnique == true and ((nMsgs < nTotMsgs and nTotMsgs ~= 0) or nTotMsgs == 0) then
         nMsgs = nMsgs + 1
         log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
         set_popstate_nummesg(pstate, nMsgs)
@@ -1451,6 +1453,14 @@ function stat(pstate)
         end
         nTotMsgs = tonumber(nTotMsgs)
       end
+
+      if internalState.statLimit ~= nil then
+        local nMaxMsgs = internalState.statLimit
+        if (nTotMsgs > nMaxMsgs) then
+          nTotMsgs = nMaxMsgs
+        end
+      end  
+
       log.dbg("Total messages in message list: " .. nTotMsgs)
     end
 

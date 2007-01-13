@@ -11,7 +11,7 @@ PLUGIN_VERSION = "0.0.3a"
 PLUGIN_NAME = "netscape.net"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=netscape.lua"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?module=netscape.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
@@ -240,7 +240,7 @@ function loginAOL()
   -- The login page sends us to a page that tests cookies and javascript.  We
   -- don't run javascript and thus must do the work here of pulling out the URL that
   -- the javascript would redirect too.
-  _, _, url = string.find(body, globals.strLoginPageParamsPattern)
+  url = string.match(body, globals.strLoginPageParamsPattern)
   if (url == nil) then
     log.error_print("Unable to figure out the redirect on the login page.")
     return POPSERVER_ERR_UNKNOWN
@@ -250,7 +250,7 @@ function loginAOL()
   -- We are now at the signin page.  Let's pull out the action of the signin form and
   -- all the hidden variables.  When done, we'll post the data along with the user and password.
   -- 
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern1)
+  url = string.match(body, globals.strLoginPostUrlPattern1)
   local postdata = nil
   local name, value  
   for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
@@ -269,7 +269,7 @@ function loginAOL()
   -- We'll be redirected back to a page which redirects us to a non-ssl
   -- page.
   --
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern4)
+  url = string.match(body, globals.strLoginPostUrlPattern4)
   if url == nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH  
@@ -281,17 +281,17 @@ function loginAOL()
   -- care at all about the results of the get's other than the cookies...YUM!.
   for value in string.gfind(body, globals.strLoginRetUrlPattern1) do
     local body2, err2 = browser:get_uri(value)
-    local _, _, cval = string.find(body2, 'hl0ckVal="([^"]+)"')
+    local cval = string.match(body2, 'hl0ckVal="([^"]+)"')
     if (cval ~= nil) then
       browser:add_cookie(value, "MC_CMP_ESKX=" .. cval .."; domain=.aol.com; path=/")
     end
-    _, _, cval = string.find(body2, 'hckVal="([^"]+)"')
+    cval = string.match(body2, 'hckVal="([^"]+)"')
     if (cval ~= nil) then
       browser:add_cookie(value, "MC_CMP_ESK=" .. cval .. "; domain=.aol.com; path=/")
     end
   end
 
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern3)
+  url = string.match(body, globals.strLoginPostUrlPattern3)
   local postdata = nil
   local name, value  
   for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
@@ -316,7 +316,7 @@ function loginAOL()
 
   -- We should be logged in now! Let's check and make sure.
   --
-  local _, _, str = string.find(body, globals.strRetLoginGoodLogin)
+  local str = string.match(body, globals.strRetLoginGoodLogin)
   if str == nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
@@ -484,19 +484,19 @@ function user(pstate, username)
     return POPSERVER_ERR_OK
   end
 
-  _, _, start = string.find(mbox, globals.strSentPat)
+  start = string.match(mbox, globals.strSentPat)
   if start ~= nil then
     internalState.strMBox = globals.strSentNetscape
     return POPSERVER_ERR_OK
   end
 
-  _, _, start = string.find(mbox, globals.strTrashPat)
+  start = string.match(mbox, globals.strTrashPat)
   if start ~= nil then
     internalState.strMBox = globals.strTrashNetscape
     return POPSERVER_ERR_OK
   end
 
-  _, _, start = string.find(mbox, globals.strDraftPat)
+  start = string.match(mbox, globals.strDraftPat)
   if start ~= nil then
     internalState.strMBox = globals.strDraftNetscape
     return POPSERVER_ERR_OK
@@ -701,7 +701,7 @@ function stat(pstate)
     -- Look in the body and see if there is a link for a previous page
     -- If so, change the URL
     --
-    local _, _, nextURL = string.find(body, globals.strMsgListPrevPagePattern)
+    local nextURL = string.match(body, globals.strMsgListPrevPagePattern)
     if nextURL ~= nil then
       cmdUrl = "http://" .. internalState.strMailServer .. "/" .. nextURL
       return false
@@ -726,7 +726,7 @@ function stat(pstate)
 
     -- Is the session expired
     --
-    local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionNotExpired)
+    local strSessExpr = string.match(body, globals.strRetLoginSessionNotExpired)
     if strSessExpr ~= nil then
       -- Debug logging
       --

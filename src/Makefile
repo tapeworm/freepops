@@ -26,22 +26,29 @@ endif
 #flags #######################################################
 CFLAGS+= -I. -I../modules/include 
 
+ifneq "$(FLTKUI)" ""
+	CFLAGS+= -DFLTKUI
+endif
+
 ifneq "$(OS)" "Windows"
 	CFLAGS+= $(shell curl-config --cflags)
 endif
 
 ifeq "$(OS)" "Windows"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"lua/\"
+	CFLAGS+= -DFREEPOPSLUA_CPATH=\"c/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UPDATES=\"lua_updates/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"lua_unofficial/\"
 else
 ifeq "$(OS)" "Darwin"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
+	CFLAGS+= -DFREEPOPSLUA_CPATH=\"c/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UPDATES=\"src/lua_updates/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"src/lua_unofficial/\"
 else
 ifeq "$(OS)" "Darwin-static"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
+	CFLAGS+= -DFREEPOPSLUA_CPATH=\"c/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UPDATES=\"src/lua_updates/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"src/lua_unofficial/\"
 else
@@ -52,8 +59,9 @@ else
 #
 #else
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
+	CFLAGS+= -DFREEPOPSLUA_CPATH=\"$(PREFIX)lib/freepops/\"
 	CFLAGS+= -DFREEPOPSLUA_PATH_UPDATES=\"/var/lib/freepops/lua_updates/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"$(PREFIX)share/freepops/lua_unofficial/\"
+	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"/var/lib/freepops/lua_unofficial/\"
 #endif
 endif
 endif
@@ -199,7 +207,8 @@ all: $(CDEPFILES:%.c=.%.d) $(LDEPFILES:%.pkg=.%.d) $(BINARY)
 clean:
 	$(H)rm -f $(CDEPFILES:%.c=.%.d) $(OBJ)\
 		$(LDEPFILES:%.pkg=.%.d) $(LDEPFILES:%.pkg=%.c) \
-		$(LDEPFILES:%.pkg=%.h) $(BINARY)
+		$(LDEPFILES:%.pkg=%.h) $(BINARY) \
+		lua_updates/* lua_unofficial/*
 
 	
 #############################################
@@ -208,7 +217,16 @@ $(BINARY): $(OBJ) $(addsuffix .a,$(addprefix ../modules/lib/lib,$(LIBS)))
 	$(H)echo -n " linking "
 #	$(H)$(RANLIB) ../modules/lib/libgetdate.a ../modules/lib/liblua.a
 	$(H)$(RANLIB) $(addsuffix .a,$(addprefix ../modules/lib/lib,$(filter-out mlex_lua,$(LIBSTOLINK))))
+ifeq "$(OS)" "Windows"
+	mkdir libfp
+	cp $(addsuffix .a,$(addprefix ../modules/lib/lib,$(LIBSTOLINK))) libfp
+	cd libfp; for X in *.a; do ar x $$X; done
+	cd libfp; $(DLLTOOL) -e ../exports.o -l ../libfp.lib *.o
+	$(CC) -o libfp.dll -shared exports.o libfp/*o `echo $(LDFLAGS)|sed 's/-l[^ ]*//'`
+	$(CC) -o $(BINARY) $(OBJ) -L. -lfp -lwsock32 -l$(CURLNAME)
+else
 	$(H)$(CC) -o $(BINARY) $(OBJ) $(LDFLAGS) 
+endif
 	$(H)echo "$(BINARY)"
 	$(H)echo $(DYNLIBS)
 	

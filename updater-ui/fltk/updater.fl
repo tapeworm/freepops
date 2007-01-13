@@ -1,0 +1,148 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+i18n_type 1 
+i18n_include <libintl.h> 
+i18n_function gettext 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <lua.hpp>} {} 
+
+decl {\#include "linker.h"} {} 
+
+decl {\#include <Fl/fl_message.H>} {} 
+
+decl {bool updater_fast_quit;} {public
+} 
+
+decl {void quit_program(void);} {} 
+
+decl {void automata_next(void);} {} 
+
+Function {make_main_window()} {open
+} {
+  Fl_Window updater_main_win {
+    label {FreePOPs updater}
+    callback {quit_program();} open
+    xywh {391 314 600 400} type Double visible
+  } {
+    Fl_Wizard updater_wiz_main {open
+      xywh {10 80 580 270}
+    } {
+      Fl_Group updater_grp_page_html {open
+        xywh {20 90 564 250}
+      } {
+        Fl_Help_View updater_hlp_page_html {
+          xywh {20 90 560 250}
+        }
+      }
+      Fl_Group updater_grp_page_select {open
+        xywh {20 90 560 250} align 65 hide
+      } {
+        Fl_Check_Browser updater_chkbrw_select {
+          label {Select the modules to update} selected
+          xywh {20 110 560 225} type Multi labelfont 2 labelsize 16 align 1
+        }
+      }
+      Fl_Group updater_grp_page_download {open
+        xywh {20 90 560 250} labelsize 16 hide
+      } {
+        Fl_Progress updater_prg_page_download {
+          label {Downloading: plugin list}
+          xywh {50 200 500 30} box THIN_DOWN_BOX labelfont 2 labelsize 16 align 5
+        }
+      }
+    }
+    Fl_Button updater_btn_quit {
+      label Quit
+      callback {quit_program();}
+      xywh {10 360 110 30} align 64
+    }
+    Fl_Button updater_btn_next {
+      label {Next   @->}
+      callback {automata_next();}
+      xywh {480 360 110 30} shortcut 0xff0d align 64
+    }
+    Fl_Group {} {open
+      xywh {0 0 600 70} box FLAT_BOX color 7
+    } {
+      Fl_Box updater_box_logo {
+        image {logo.bmp} xywh {0 0 190 70}
+      }
+      Fl_Box updater_box_title {
+        label {Step 0 / Welcome}
+        xywh {210 10 380 50} labelfont 1 labelsize 20 align 84
+      }
+    }
+  }
+} 
+
+decl {\#define PAGE_DOWNLOAD updater_grp_page_download} {} 
+
+decl {\#define PAGE_HTML updater_grp_page_html} {} 
+
+decl {\#define PAGE_SELECT updater_grp_page_select} {} 
+
+Function {lock()} {open private return_type void
+} {
+  code {updater_btn_next->deactivate();
+updater_btn_quit->deactivate();} {}
+} 
+
+Function {unlock()} {open private return_type void
+} {
+  code {updater_btn_next->activate();
+updater_btn_quit->activate();} {}
+} 
+
+Function {updater_failure()} {open return_type void
+} {
+  code {updater_btn_next->deactivate();
+updater_btn_next->hide();
+updater_btn_quit->activate();
+updater_fast_quit = true;} {}
+} 
+
+Function {automata_next()} {open private return_type void
+} {
+  code {static int updater_state = 0;
+int n_states = 5;
+Fl_Group* pages[] = {
+	PAGE_HTML, PAGE_DOWNLOAD, PAGE_SELECT, PAGE_DOWNLOAD, PAGE_HTML
+};
+const char * titles[] = {
+	gettext("Step 0 / Welcome"),
+	gettext("Step 1 / Metadata download"),
+	gettext("Step 2 / Selection"),
+	gettext("Step 3 / Update"),
+	gettext("Step 4 / Report"),
+};
+
+updater_state = (updater_state + 1) % n_states;
+
+updater_wiz_main->value(pages[updater_state]);
+updater_box_title->label(titles[updater_state]);
+
+if (updater_state == 1) {
+	lock();	updater_download_metadata(); unlock();
+} 
+if (updater_state == 3) {
+	lock(); 
+	updater_download(); 
+	if (updater_chkbrw_select->nchecked() == 0)
+		automata_next();
+	unlock();
+} 
+if (updater_state == 4) {
+	// it is not a failure but it behaves the same way
+	updater_failure();
+}} {}
+} 
+
+Function {quit_program()} {open private
+} {
+  code {if (updater_fast_quit || 
+    fl_choice(gettext("Update not yet completed.\\nDo you really want to quit?"),gettext("No"),gettext("Yes, quit!"),NULL)) {
+	updater_main_win->hide();
+	delete updater_main_win;
+}} {}
+} 

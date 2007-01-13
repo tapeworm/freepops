@@ -7,10 +7,10 @@ MODULE_VERSION = "0.0.1"
 MODULE_NAME = "support"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=support.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=support.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
-module("support")
+module("support",package.seeall)
 
 --============================================================================--
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
@@ -135,7 +135,7 @@ function do_extract(t,field,exp)
 			return nil,"Unable to capture "..exp..
 				" the data was nil"
 		end
-		local _,_,r = string.find(s,exp)
+		local r = string.match(s,exp)
 		if not r then
 			print("Unable to capture "..exp..
 				" the data was " ..s)

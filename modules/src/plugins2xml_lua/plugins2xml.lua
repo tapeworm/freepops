@@ -7,7 +7,7 @@ MODULE_VERSION = "0.0.1"
 MODULE_NAME = "plugins2xml"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=plugins2xml.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=plugins2xml.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 --============================================================================--
@@ -165,16 +165,17 @@ private.extractor_function = function(file)
 		end)
 		table.insert(t[i],content)
 	end
-	local file = freepops.find(file)
+	local file = assert(freepops.find(file),"Unable to find "..file)
 	local f, err = loadfile(file)
-	local G = {
+	local G
+	G = {
 		-- fake environment to just set global variables
 		require = function() end,
-		module = function() end
+		module = function() end,
 	}
 	if f ~= nil then
 		setfenv(f,G)
-		f()
+		pcall(f)
 	else
 		error(err)
 	end
@@ -270,5 +271,6 @@ function main(files)
 	return 0
 end
 
+return plugins2xml
 
 -- eof

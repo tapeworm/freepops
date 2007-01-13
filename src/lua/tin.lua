@@ -12,7 +12,7 @@ PLUGIN_VERSION = "0.0.97"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=tin.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=tin.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
@@ -166,7 +166,7 @@ function check_sanity(name,domain,pass)
 		log.error_print("username must be from 3 to 30 chars")
 		return false
 	end
-	local _,_,x = string.find(name,"([^0-9a-z%.%_%-])")
+	local x = string.match(name,"([^0-9a-z%.%_%-])")
 	if x ~= nil then
 		log.error_print("username contains invalid character "..x.."\n")
 		return false
@@ -175,7 +175,7 @@ function check_sanity(name,domain,pass)
 		log.error_print("password must be from 4 to 24 chars")
 		return false
 	end
-	local _,_,x = string.find(pass,"[^0-9A-Za-z%.%_%-אטילעש]")
+	local x = string.match(pass,"[^0-9A-Za-z%.%_%-אטילעש]")
 	if x ~= nil then
 		log.error_print("password contains invalid character "..x.."\n")
 		return false
@@ -372,9 +372,9 @@ function tin_login()
 		log.error_print("Error getting "..url..": "..err)
 		return POPSERVER_ERR_AUTH
 	end
-	local _,_, capt = string.find(body, tin_string.login2C)
-	local _,_,t = string.find(capt, tin_string.login2Ct) 
-	local _,_,s = string.find(capt, tin_string.login2Cs) 
+	local capt = string.match(body, tin_string.login2C)
+	local t = string.match(capt, tin_string.login2Ct) 
+	local s = string.match(capt, tin_string.login2Cs) 
 	
 	internal_state.session_id_s = s
 	internal_state.session_id_t = t
@@ -578,10 +578,10 @@ function stat(pstate)
 
 			-- arrange message size
 			local k,m = nil,nil
-			_,_,k = string.find(size,"([Kk][Bb])")
-			_,_,m = string.find(size,"([Mm][Bb])")
-			_,_,size = string.find(size,"([%.%d]+)")
-			_,_,uidl = string.find(uidl,'uid=([%d]+)')
+			k = string.match(size,"([Kk][Bb])")
+			m = string.match(size,"([Mm][Bb])")
+			size = string.match(size,"([%.%d]+)")
+			uidl = string.match(uidl,'uid=([%d]+)')
 
 			if not uidl or not size then
 				return nil,"Unable to parse page"
@@ -652,7 +652,7 @@ function stat(pstate)
 			return f,err
 		end
 		
-		local _,_,c = string.find(f,tin_string.timeoutC)
+		local c = string.match(f,tin_string.timeoutC)
 		if c ~= nil then
 			internal_state.login_done = nil
 			session.remove(key())
@@ -742,7 +742,7 @@ function tin_parse_webmessage(wherearewe, data)
 	assert(x:count() > 0,"Unable to mlex "..data )
 	local headers = x:get(0,0)
 	assert(headers ~= nil, "Unable to mlex " .. data)
-	local _, _, head = string.find(headers, 'var%s*hd%s*=%s*"([^"]+)"%s*;')
+	local head = string.match(headers, 'var%s*hd%s*=%s*"([^"]+)"%s*;')
 	head = string.gsub(head, "\\n\\n", "")
 	head = string.gsub(head, "\\r", "\r")
 	head = string.gsub(head, "\\n", "\n")
@@ -785,9 +785,9 @@ function tin_parse_webmessage(wherearewe, data)
 		local url = x:get(0,i-1)
 		local name = x:get(1,i-1)
 
-		local _, _, name = string.find(name, "^(.*) %(")
+		local name = string.match(name, "^(.*) %(")
 
-		local _, _, url = string.find(url, 
+		local url = string.match(url, 
 			"href%s*=%s*'(/cp/ps/Mail/ViewAttachment[^']*)'")
 		
 		attach[name] = "http://"..wherearewe..url

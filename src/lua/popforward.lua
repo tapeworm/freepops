@@ -15,7 +15,7 @@ PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "POPforward"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=popforward.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=popforward.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Enrico Tassi"}
 PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge (at) users (.) sourceforge (.) net"}
@@ -178,7 +178,7 @@ function user(pstate,username)
 		return POPSERVER_ERR_AUTH
 	end
 	
-	local _,_,host,port=string.find(freepops.MODULE_ARGS.host,"(.*):(%d+)")
+	local host,port=string.match(freepops.MODULE_ARGS.host,"(.*):(%d+)")
 	if host == nil then
 		host = freepops.MODULE_ARGS.host
 	end

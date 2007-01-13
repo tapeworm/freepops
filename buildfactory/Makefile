@@ -34,19 +34,21 @@ dist-win-e-zip-step1:
 
 dist-win-e-zip-step2-openssl:
 	$(H)cd _win_/freepops-$(VERSION);\
-		./configure.sh win;\
+		./configure.sh win -fltk-ui;\
 		$(MAKE) all; \
 		#$(MAKE) manual
 		
 dist-win-e-zip-step2-gnutls:
 	$(H)cd _win_/freepops-$(VERSION);\
-		./configure.sh win-gnutls;\
+		./configure.sh win-gnutls -fltk-ui;\
 		$(MAKE) all; \
 		#$(MAKE) manual
 
 dist-win-e-zip-step3:
 	$(H)$(MAKE) -C win CONFIG=../_win_/freepops-$(VERSION)/config
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
+	$(H)cp _win_/freepops-$(VERSION)/src/libfp.dll  _win_/freepops
+	$(H)cp _win_/freepops-$(VERSION)/updater-ui/fltk/*dll _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/LUA/
@@ -80,12 +82,14 @@ dist-win-e-zip-step4-openssl:
 	  DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d= -f2`;\
 		cp $$DLLPATH/libcurl.dll _win_/freepops/libcurl.dll;\
 		cp $$DLLPATH/libexpat.dll _win_/freepops/libexpat.dll;\
+		cp $$DLLPATH/libintl-8.dll _win_/freepops/;\
 		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll
 dist-win-e-zip-step4-gnutls:
 	$(H)\
 	  DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d= -f2`;\
 		cp $$DLLPATH/libcurl.dll _win_/freepops/libcurl.dll;\
 		cp $$DLLPATH/libexpat.dll _win_/freepops/libexpat.dll;\
+		cp $$DLLPATH/libintl-8.dll _win_/freepops/;\
 		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll; \
 		cp $$DLLPATH/libgnutls.dll _win_/freepops/libgnutls.dll;\
 		cp $$DLLPATH/libgcrypt.dll _win_/freepops/libgcrypt.dll;\
@@ -115,7 +119,8 @@ dist-win-e-zip-step5:
 
 	$(H)cd _win_/freepops/;\
 		cp LUA/config.lua .;\
-		mkdir LUA_UNOFFICIAL
+		mkdir LUA_UNOFFICIAL;\
+		mkdir LUA_UPDATES
 	#$(H)cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/
 	#$(H)cp _win_/freepops-$(VERSION)/doc/manual-it.pdf _win_/freepops/
 	
@@ -200,7 +205,7 @@ deb-preamble: freepops-$(VERSION).tar.gz
 	$(H)cp freepops-$(VERSION).tar.gz \
 		_deb_/freepops_$(VERSION).orig.tar.gz
 	$(H)cd _deb_/freepops-$(VERSION);\
-		cp -r buildfactory/debian .
+		cp -fr buildfactory/debian .
 
 dist-deb-real: 
 	$(H)cd _deb_/freepops-$(VERSION);\

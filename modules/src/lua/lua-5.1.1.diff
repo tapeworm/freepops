@@ -1,0 +1,235 @@
+diff -ruN lua-5.1.1.orig/Makefile lua-5.1.1/Makefile
+--- lua-5.1.1.orig/Makefile	2006-06-02 12:53:38.000000000 +0200
++++ lua-5.1.1/Makefile	2006-09-25 22:36:25.000000000 +0200
+@@ -1,129 +1,102 @@
+-# makefile for installing Lua
+-# see INSTALL for installation instructions
+-# see src/Makefile and src/luaconf.h for further customization
+-
+-# == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
+-
+-# Your platform. See PLATS for possible values.
+-PLAT= none
+-
+-# Where to install. The installation starts in the src directory, so take care
+-# if INSTALL_TOP is not an absolute path. (Man pages are installed from the
+-# doc directory.)
+-#
+-INSTALL_TOP= /usr/local
+-INSTALL_BIN= $(INSTALL_TOP)/bin
+-INSTALL_INC= $(INSTALL_TOP)/include
+-INSTALL_LIB= $(INSTALL_TOP)/lib
+-INSTALL_MAN= $(INSTALL_TOP)/man/man1
+-INSTALL_LMOD= $(INSTALL_TOP)/share/lua/$V
+-INSTALL_CMOD= $(INSTALL_TOP)/lib/lua/$V
+-
+-# How to install. You may prefer "install" instead of "cp" if you have it.
+-# To remove debug information from binaries, use "install -s" in INSTALL_EXEC.
+-#
+-INSTALL_EXEC= $(CP)
+-INSTALL_DATA= $(CP)
+-#INSTALL_EXEC= $(INSTALL) -m 0755
+-#INSTALL_DATA= $(INSTALL) -m 0644
+-
+-# Utilities.
+-CP= cp
+-FIND= find
+-INSTALL= install
+-MKDIR= mkdir
+-RANLIB= ranlib
+-
+-# == END OF USER SETTINGS. NO NEED TO CHANGE ANYTHING BELOW THIS LINE =========
+-
+-# Convenience platforms targets.
+-PLATS= aix ansi bsd generic linux macosx mingw posix solaris
+-
+-# What to install.
+-TO_BIN= lua luac
+-TO_INC= lua.h luaconf.h lualib.h lauxlib.h ../etc/lua.hpp
+-TO_LIB= liblua.a
+-TO_MAN= lua.1 luac.1
+-
+-# Lua version and release.
+-V= 5.1
+-R= 5.1.1
+-
+-all:	$(PLAT)
+-
+-$(PLATS) clean:
+-	cd src && $(MAKE) $@
+-
+-test:	dummy
+-	src/lua test/hello.lua
+-
+-install: dummy
+-	cd src && $(MKDIR) -p $(INSTALL_BIN) $(INSTALL_INC) $(INSTALL_LIB) $(INSTALL_MAN) $(INSTALL_LMOD) $(INSTALL_CMOD)
+-	cd src && $(INSTALL_EXEC) $(TO_BIN) $(INSTALL_BIN)
+-	cd src && $(INSTALL_DATA) $(TO_INC) $(INSTALL_INC)
+-	cd src && $(INSTALL_DATA) $(TO_LIB) $(INSTALL_LIB)
+-	cd doc && $(INSTALL_DATA) $(TO_MAN) $(INSTALL_MAN)
+-#	$(RANLIB) $(INSTALL_LIB)/$(TO_LIB)
+-
+-local:
+-	$(MAKE) install INSTALL_TOP=.. INSTALL_EXEC="cp -p" INSTALL_DATA="cp -p"
+-
+-none:
+-	@echo "Please do"
+-	@echo "   make PLATFORM"
+-	@echo "where PLATFORM is one of these:"
+-	@echo "   $(PLATS)"
+-	@echo "See INSTALL for complete instructions."
+-
+-# make may get confused with test/ and INSTALL in a case-insensitive OS
+-dummy:
+-
+-# echo config parameters
+-echo:
+-	@echo ""
+-	@echo "These are the parameters currently set in src/Makefile to build Lua $R:"
+-	@echo ""
+-	@cd src && $(MAKE) -s echo
+-	@echo ""
+-	@echo "These are the parameters currently set in Makefile to install Lua $R:"
+-	@echo ""
+-	@echo "PLAT = $(PLAT)"
+-	@echo "INSTALL_TOP = $(INSTALL_TOP)"
+-	@echo "INSTALL_BIN = $(INSTALL_BIN)"
+-	@echo "INSTALL_INC = $(INSTALL_INC)"
+-	@echo "INSTALL_LIB = $(INSTALL_LIB)"
+-	@echo "INSTALL_MAN = $(INSTALL_MAN)"
+-	@echo "INSTALL_LMOD = $(INSTALL_LMOD)"
+-	@echo "INSTALL_CMOD = $(INSTALL_CMOD)"
+-	@echo "INSTALL_EXEC = $(INSTALL_EXEC)"
+-	@echo "INSTALL_DATA = $(INSTALL_DATA)"
+-	@echo ""
+-	@echo "See also src/luaconf.h ."
+-	@echo ""
+-
+-# echo private config parameters
+-pecho:
+-	@echo "V = $(V)"
+-	@echo "R = $(R)"
+-	@echo "TO_BIN = $(TO_BIN)"
+-	@echo "TO_INC = $(TO_INC)"
+-	@echo "TO_LIB = $(TO_LIB)"
+-	@echo "TO_MAN = $(TO_MAN)"
+-
+-# echo config parameters as Lua code
+-# uncomment the last sed expression if you want nil instead of empty strings
+-lecho:
+-	@echo "-- installation parameters for Lua $R"
+-	@echo "VERSION = '$V'"
+-	@echo "RELEASE = '$R'"
+-	@$(MAKE) echo | grep = | sed -e 's/= /= "/' -e 's/$$/"/' #-e 's/""/nil/'
+-	@echo "-- EOF"
+-
+-# show what has changed since we unpacked
+-newer:
+-	@$(FIND) . -newer MANIFEST -type f
+-
+-# list targets that do not create files (but not all makes understand .PHONY)
+-.PHONY: all $(PLATS) clean test install local none dummy echo pecho lecho newer
+-
+-# (end of Makefile)
++include $(CONFIG)
++ifneq "$(OS)" "Windows"
++  ifneq "$(OS)" "Cygwin"
++	CFLAGS += -DUSE_DLOPEN=1
++  endif
++endif
++ifneq "$(OS)" "Darwin"
++ ifneq "$(OS)" "Darwin-static"
++  ifneq "$(OS)" "OpenBSD"
++   ifneq "$(OS)" "FreeBSD"
++    ifneq "$(OS)" "Solaris"
++	CPFLAGS+= -a
++	LDFLAGS+= -Wl,-E
++	HLDFLAGS+= -Wl,-E
++    endif
++   endif
++  endif
++ endif
++endif
++
++CFLAGS += -I../src -I. -DUSE_POPEN=1
++ifeq "$(OS)" "OpenBSD"
++	LDFLAGS+= -L../src/ -llua5.1-host -lm
++else
++  ifeq "$(OS)" "Cygwin"
++	LDFLAGS+= -L../src/ -llua5.1-host -lm
++  else
++    ifeq "$(OS)" "BeOS"
++	LDFLAGS+= -L../src/ -llua5.1-host -ldl
++    else
++	LDFLAGS+= -L../src/ -llua5.1-host -lm -ldl
++    endif
++  endif
++endif
++HCFLAGS += -I../../include -I../include -I. -I.. -DUSE_POPEN=1
++ifeq "$(OS)" "FreeBSD"
++	HLDFLAGS+= -L../src/ -llua5.1-host -lm
++else
++ ifeq "$(OS)" "OpenBSD"
++ 	HLDFLAGS+= -L../src/ -llua5.1-host -lm
++ else
++   ifeq "$(OS)" "Cygwin"
++ 	HLDFLAGS+= -L../src/ -llua5.1-host -lm
++   else
++     ifeq "$(OS)" "BeOS"
++ 	  HLDFLAGS+= -L../src/ -llua5.1-host -ldl
++     else
++       ifeq "$(OS)" "Solaris"
++ 	    HLDFLAGS+= -L../src/ -llua5.1-host -lsocket -lnsl -lm
++       else
++ 	    HLDFLAGS+= -L../src/ -llua5.1-host -lm -ldl
++       endif
++     endif
++   endif
++ endif
++endif
++
++H=@
++
++CORE_O=	lapi.o lcode.o ldebug.o ldo.o ldump.o lfunc.o lgc.o llex.o lmem.o \
++	lobject.o lopcodes.o lparser.o lstate.o lstring.o ltable.o ltm.o  \
++	lundump.o lvm.o lzio.o
++LIB_O=	lauxlib.o lbaselib.o ldblib.o liolib.o lmathlib.o loslib.o ltablib.o \
++	lstrlib.o loadlib.o linit.o
++O=$(CORE_O) $(LIB_O)
++
++all: bin/lua
++	$(H)echo -n
++
++bin/lua:
++	$(H)echo -n ' building liblua5.1... '
++	$(H)cd src ; 					\
++		$(CC) $(CFLAGS) -c  *.c ; 		\
++		$(AR) rc liblua5.1.a $(O); 		\
++		$(RANLIB) liblua5.1.a ;			\
++		rm -f $(O)
++	$(H)echo "done."
++
++	$(H)if test "$(HCC)" = "$(CC)" ; then			\
++		cd src ; 					\
++			ln -s liblua5.1.a liblua5.1-host.a ;	\
++	else							\
++		echo -n ' building host liblua5.1... ';		\
++		cd src ; 					\
++			$(HCC) $(HCFLAGS) -c *.c ; 		\
++			$(HAR) rc liblua5.1-host.a $(O) ; 	\
++			$(HRANLIB) liblua5.1-host.a ;		\
++			rm -f $(O);				\
++		echo "done.";					\
++	fi
++
++	$(H)echo -n ' building lua... '
++	$(H)cd src/;					\
++		$(HCC) $(HCFLAGS) -o lua lua.o $(HLDFLAGS)
++	$(H)echo "done."
++
++	$(H)cp src/lua.h src/luaconf.h src/lauxlib.h src/lualib.h etc/lua.hpp\
++		$(PREFIX)/include
++	$(H)cp src/lua $(PREFIX)/bin
++	$(H)cp $(CPFLAGS) src/*.a $(PREFIX)/lib
++clean:
++	$(H)rm -f lib/* bin/*

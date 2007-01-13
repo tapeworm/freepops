@@ -1,6 +1,6 @@
-diff -ruN luadoc.orig/analyze.lua luadoc/analyze.lua
---- luadoc.orig/analyze.lua	2005-06-29 10:11:23.000000000 +0200
-+++ luadoc/analyze.lua	2005-06-29 10:15:19.000000000 +0200
+diff -ruN luadoc/analyze.lua luadoc.new/analyze.lua
+--- luadoc/analyze.lua	2001-11-19 11:55:34.000000000 +0100
++++ luadoc.new/analyze.lua	2006-10-30 22:03:06.000000000 +0100
 @@ -20,10 +20,10 @@
  
  function Gappend (field)
@@ -115,6 +115,24 @@ diff -ruN luadoc.orig/analyze.lua luadoc/analyze.lua
              end)
           else
              source = gsub (source, find, rep)
+@@ -244,7 +244,7 @@
+ 
+ function copy_table (tab)
+ 	local t = {}
+-	for i, v in tab do
++	for i, v in pairs(tab) do
+ 		t[i] = v
+ 	end
+ 	return t
+@@ -257,7 +257,7 @@
+ -- @see tab2str#t2s.
+ 
+ function write_doc (doc_table, filter_table)
+-   dofile "tab2str.lua"
++   dofile "/home/tassi/Projects/freepops/svn/freepops/modules/bin/luafiles//tab2str.lua"
+    write (t2s (doc_table, "   "))
+ end
+ 
 @@ -271,7 +271,7 @@
  
  function analyze (in_file, desc_file, out_file)
@@ -124,9 +142,9 @@ diff -ruN luadoc.orig/analyze.lua luadoc/analyze.lua
     -- load source string.
     readfrom (in_file)
     local source = read ("*a")
-diff -ruN luadoc.orig/cmp.lua luadoc/cmp.lua
---- luadoc.orig/cmp.lua	2005-06-29 10:11:23.000000000 +0200
-+++ luadoc/cmp.lua	2005-06-29 10:15:19.000000000 +0200
+diff -ruN luadoc/cmp.lua luadoc.new/cmp.lua
+--- luadoc/cmp.lua	2002-08-14 15:14:32.000000000 +0200
++++ luadoc.new/cmp.lua	2006-10-30 22:03:06.000000000 +0100
 @@ -11,6 +11,9 @@
  	table = 1,
  	["function"] = 1,
@@ -265,7 +283,15 @@ diff -ruN luadoc.orig/cmp.lua luadoc/cmp.lua
  	end
     end
  end
-@@ -249,7 +252,7 @@
+@@ -242,14 +245,14 @@
+ 	{ "author", Citemize ("Author", "<br>") },
+ 	{ "copyright", Citemize ("Copyright", "<br>") },
+ 	{ "date", Citemize ("Date", "<br>") },
+-	;
++	
+ 	internal = {
+ 		MakeTitle,
+ 		{ "name", anchor (Ctags ("code", "b")) },
  		{ "param_list", Ctags ("code") },
  		{ "value", Citemize_first ("=", "<br>") },
  		"<ul>\n",
@@ -274,7 +300,13 @@ diff -ruN luadoc.orig/cmp.lua luadoc/cmp.lua
  		{ "description", Write },
  		{ "param", List_table ("Parameters") },
  		"<br>\n",
-@@ -262,13 +265,13 @@
+@@ -257,25 +260,25 @@
+ 		{ "see", List_each_link ("See also") },
+ 		"</ul>\n",
+ 		"<p>\n",
+-		;
++		
+ 		order_field = { "section", "name" },
  		anchor_field = { "name" },
  	},
  	internal_index = {
@@ -287,13 +319,22 @@ diff -ruN luadoc.orig/cmp.lua luadoc/cmp.lua
 +		"</p><p style=\"margin:0 0 0 20;border-style:none\">\n",
  		{ "resume", Write },
 -		"</dd>\n",
+-		;
 +		"</p>\n",
- 		;
++		
  		order_field = { "section", "name" },
  		link_field = { "name" },
-diff -ruN luadoc.orig/compose.lua luadoc/compose.lua
---- luadoc.orig/compose.lua	2005-06-29 10:11:23.000000000 +0200
-+++ luadoc/compose.lua	2005-06-29 10:15:19.000000000 +0200
+ 	},
+ 	file_index = {
+ 		MakeIndex,
+-		;
++		
+ 		internal = {},
+ 		internal_index = {
+ 			{ "out_file", link_abs_1 },
+diff -ruN luadoc/compose.lua luadoc.new/compose.lua
+--- luadoc/compose.lua	2001-11-19 11:55:45.000000000 +0100
++++ luadoc.new/compose.lua	2006-10-30 22:03:06.000000000 +0100
 @@ -38,7 +38,7 @@
        	elseif not r1 then
        	   return 1
@@ -312,20 +353,38 @@ diff -ruN luadoc.orig/compose.lua luadoc/compose.lua
     CMP.out_format = html		-- !!!!!
     --CMP.out_table = {}
     --CMP.resolve_anchoring (in_tab, CMP.out_format)
-diff -ruN luadoc.orig/luadoc-compatibility.lua luadoc/luadoc-compatibility.lua
---- luadoc.orig/luadoc-compatibility.lua	1970-01-01 01:00:00.000000000 +0100
-+++ luadoc/luadoc-compatibility.lua	2005-06-29 10:15:19.000000000 +0200
-@@ -0,0 +1,50 @@
+diff -ruN luadoc/conf.lua luadoc.new/conf.lua
+--- luadoc/conf.lua	1970-01-01 01:00:00.000000000 +0100
++++ luadoc.new/conf.lua	2006-10-30 22:03:06.000000000 +0100
+@@ -0,0 +1,2 @@
++freepops.MODULES_PREFIX = {"/home/tassi/Projects/freepops/svn/freepops/modules/bin/luafiles/"}
++freepops.MODULES_PREFIX_UNOFFICIAL = {}
+diff -ruN luadoc/luadoc-compatibility.lua luadoc.new/luadoc-compatibility.lua
+--- luadoc/luadoc-compatibility.lua	1970-01-01 01:00:00.000000000 +0100
++++ luadoc.new/luadoc-compatibility.lua	2006-11-05 20:57:12.000000000 +0100
+@@ -0,0 +1,62 @@
 +function tinsert(t,i)
 +	return table.insert(t,i)
 +end
 +
 +function strsub(...)
-+	return string.sub(unpack(arg))
++	return string.sub(...)
 +end
 +
-+function gsub(...)
-+	return string.gsub(unpack(arg))
++function gsub(s,e,f)
++	local g = f
++	if type(f) == "function" then
++		g = function(...) 
++			local rc = f(...)
++			if not rc then 
++				--print("capita ",...)
++				return "" 
++			else 
++				return rc 
++			end
++		end
++	end
++	return string.gsub(s,e,g)
 +end
 +
 +function writeto(s)
@@ -352,7 +411,7 @@ diff -ruN luadoc.orig/luadoc-compatibility.lua luadoc/luadoc-compatibility.lua
 +end
 +
 +function getn(t)
-+	return table.getn(t)
++	return #t
 +end
 +
 +function date(d)
@@ -366,17 +425,18 @@ diff -ruN luadoc.orig/luadoc-compatibility.lua luadoc/luadoc-compatibility.lua
 +function strlower(s)
 +	return string.lower(s)
 +end
-diff -ruN luadoc.orig/luadoc.lua luadoc/luadoc.lua
---- luadoc.orig/luadoc.lua	2005-06-29 10:11:23.000000000 +0200
-+++ luadoc/luadoc.lua	2005-06-29 10:18:18.000000000 +0200
-@@ -1,12 +1,14 @@
+diff -ruN luadoc/luadoc.lua luadoc.new/luadoc.lua
+--- luadoc/luadoc.lua	2001-11-19 11:54:59.000000000 +0100
++++ luadoc.new/luadoc.lua	2006-10-30 22:03:06.000000000 +0100
+@@ -1,12 +1,13 @@
  #!/usr/local/bin/lua -f
  
-+dofile("luadoc-compatibility.lua")
++dofile "/home/tassi/Projects/freepops/svn/freepops/modules/bin/luafiles//luadoc-compatibility.lua"
 +
  -- Load modules.
- --LUADOC_HOME = "/usr/local/luadoc"
- LUADOC_HOME = "."
+---LUADOC_HOME = "/usr/local/luadoc"
+-LUADOC_HOME = "."
++LUADOC_HOME = "/home/tassi/Projects/freepops/svn/freepops/modules/bin/luafiles/"
  LUADOC_SUB = LUADOC_HOME.."/sub.lua"
  LUADOC_CMP = LUADOC_HOME.."/cmp.lua"
 -assert (dofile (LUADOC_HOME.."/analyze.lua"))
@@ -386,10 +446,35 @@ diff -ruN luadoc.orig/luadoc.lua luadoc/luadoc.lua
  
  -- Print version number.
  function print_version ()
-diff -ruN luadoc.orig/Makefile luadoc/Makefile
---- luadoc.orig/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ luadoc/Makefile	2005-06-29 10:15:19.000000000 +0200
-@@ -0,0 +1,14 @@
+@@ -72,7 +73,9 @@
+ function process_options (arg)
+ 	local files = {}
+ 	local options = DEFAULT_OPTIONS
+-	for i = 1, getn(arg) do
++	local i = 0
++	while i < getn(arg) do
++		i = i + 1
+ 		local argi = arg[i]
+ 		if strsub (argi, 1, 1) ~= '-' then
+ 			tinsert (files, argi)
+@@ -94,6 +97,7 @@
+ end 
+ 
+ -- Process options.
++function main(arg)
+ local argc = getn(arg)
+ if argc < 1 then
+ 	print_help ()
+@@ -115,3 +119,5 @@
+ if (getn(files) > 0) and (not options.noindexpage) then
+ 	index (options.output_dir)
+ end
++return 0
++end
+diff -ruN luadoc/Makefile luadoc.new/Makefile
+--- luadoc/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ luadoc.new/Makefile	2006-10-30 22:03:06.000000000 +0100
+@@ -0,0 +1,15 @@
 +include $(CONFIG)
 +
 +all: $(PREFIX)/bin/luadoc
@@ -397,16 +482,17 @@ diff -ruN luadoc.orig/Makefile luadoc/Makefile
 +
 +$(PREFIX)/bin/luadoc:
 +	@mkdir $(PREFIX)/bin/luafiles || true
++	@sed -i "s?@@LUADOC_HOME@@?$(PREFIX)/bin/luafiles/?" *.lua
 +	@cp *.lua $(PREFIX)/bin/luafiles
-+	@echo -e "#!/bin/sh\ncd $(PREFIX)/bin/luafiles/;$(PREFIX)/bin/lua $(PREFIX)/bin/luafiles/luadoc.lua \$$@" \
++	@echo -e "#!/bin/sh\ncd $(PREFIX)/..;src/freepopsd -e $(PREFIX)/bin/luafiles/luadoc.lua \$$@" \
 +		> $(PREFIX)/bin/luadoc
 +	@chmod a+rx $(PREFIX)/bin/luadoc
 +	
 +clean:
 +.PHONY: all
-diff -ruN luadoc.orig/sub.lua luadoc/sub.lua
---- luadoc.orig/sub.lua	2005-06-29 10:11:23.000000000 +0200
-+++ luadoc/sub.lua	2005-06-29 10:15:19.000000000 +0200
+diff -ruN luadoc/sub.lua luadoc.new/sub.lua
+--- luadoc/sub.lua	2001-11-19 12:15:00.000000000 +0100
++++ luadoc.new/sub.lua	2006-10-30 22:03:06.000000000 +0100
 @@ -117,7 +117,7 @@
  		function (tab)
  		   if tab.param_list and tab.param then

@@ -1,5 +1,19 @@
 #!/bin/bash
 
+### BEGIN INIT INFO
+# Provides:          freepops
+# Required-Start:    $all
+# Required-Stop:     $all
+# Should-Start:      
+# Should-Stop:       
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starts the freepopsd (* > pop3) daemon.
+# Description:       Starts freepopsd, an everthing to pop3
+#                    converter, usually used as a webmail to
+#                    pop3 converter.
+### END INIT INFO
+
 # lsb functions, to use those ugly colors.. 
 . /lib/lsb/init-functions
 
@@ -75,6 +89,16 @@ stop_freepopsd () {
 	rm $PIDFILE
 }
 
+status_freepopsd () {
+	P=`cat $PIDFILE`
+	N=`ps -e | grep "^$P " | grep $DAEMON | wc -l`
+	if [ $N > 0 ]; then
+		echo freepops is running with pid $P.
+	else
+		echo freepops is dead.
+	fi
+}
+
 ### real code ###
 
 case "$1" in
@@ -89,9 +113,12 @@ case "$1" in
 	sleep 1
 	start_freepopsd
 	;;
+  status)
+  	status_freepopsd
+  	;;
   *)
 	N=/etc/init.d/freepops
-	echo "Usage: $N {start|stop|restart}" >&2
+	echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
 	exit 1
 	;;
 esac

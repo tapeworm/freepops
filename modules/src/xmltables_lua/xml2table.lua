@@ -103,7 +103,7 @@ MODULE_VERSION = "0.0.1"
 MODULE_NAME = "xml2table"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=xml2table.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=xml2table.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 local Private = {}
@@ -205,8 +205,8 @@ function Private.map_namespaces(t,m,abbr)
 	-- find namespaces abbreviations
 	table.foreach(t, function (k,v) 
 		if type(k) ~= "number" then
-			local _,_,tok =  string.find(k,"^xmlns:(%w+)")
-			local _,_,c = string.find(k,"^(xmlns)")
+			local tok =  string.match(k,"^xmlns:(%w+)")
+			local c = string.match(k,"^(xmlns)")
 			if c then
 				if tok then
 					abbr[tok] = m[v] 
@@ -217,7 +217,7 @@ function Private.map_namespaces(t,m,abbr)
 		end
 	end)
 
-	local _,_,x,tok =  string.find(t.tag_name,"^(%w+):(%w+)")
+	local x,tok =  string.match(t.tag_name,"^(%w+):(%w+)")
 	local replace = abbr[x] or m[x]
 
 	if replace ~= nil or abbr["_"] ~= nil then
@@ -237,7 +237,7 @@ end
 -- extern function
 --==========================================================================--
 
-module("xml2table")
+module("xml2table",package.seeall)
 
 ---
 -- Converts XML data in a table.

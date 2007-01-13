@@ -11,7 +11,7 @@ PLUGIN_VERSION = "0.0.2b"
 PLUGIN_NAME = "mail2world.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=mail2world.lua"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?module=mail2world.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
@@ -194,7 +194,7 @@ function login()
     return POPSERVER_ERR_NETWORK
   end
 
-  local _, _, str = string.find(body, globals.strRetGoodLogin)
+  local str = string.match(body, globals.strRetGoodLogin)
   if str ~= nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
@@ -206,7 +206,7 @@ function login()
 
   -- Find the next page to go to.  We need to extract some info
   --
-  _, _, str = string.find(body, globals.strLoginGoodNextPage1)
+  str = string.match(body, globals.strLoginGoodNextPage1)
   if (str == nil) then
     log.error_print("Mail2World's login page has changed.  Alert the author.")
     return POPSERVER_ERR_NETWORK
@@ -216,7 +216,7 @@ function login()
 
   -- Find the next page to go to.  We need to extract some info
   --
-  _, _, str = string.find(body, globals.strLoginGoodNextPage2)
+  str = string.match(body, globals.strLoginGoodNextPage2)
   if (str == nil) then
     log.error_print("Mail2World's login page has changed.  Alert the author.")
     return POPSERVER_ERR_NETWORK
@@ -229,7 +229,7 @@ function login()
   
   -- Extract the GUID - This is needed for everything
   --
-  _, _, str = string.find(body, globals.strRegExpGUID)
+  str = string.match(body, globals.strRegExpGUID)
   if str == nil then
     log.error_print("Can't get the 'GUID' value. This will lead to problems!")
     internalState.strGUID = ""
@@ -554,8 +554,8 @@ function stat(pstate)
       -- Convert the size from it's string (4KB or 2MB) to bytes
       -- First figure out the unit (KB or just B)
       --
-      local _, _, kbUnit = string.find(size, "([Kk])")
-      _, _, size = string.find(size, "([%d]+)[KkMm]")
+      local kbUnit = string.match(size, "([Kk])")
+      size = string.match(size, "([%d]+)[KkMm]")
       if not kbUnit then 
         size = math.max(tonumber(size), 0) * 1024 * 1024
       else
@@ -604,7 +604,7 @@ function stat(pstate)
 
     -- Is the session expired
     --
-    local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
+    local strSessExpr = string.match(body, globals.strRetLoginSessionExpired)
     if strSessExpr == nil then
       -- Invalidate the session
       --
@@ -635,7 +635,7 @@ function stat(pstate)
     -- Get the total number of messages
     --
     if nTotPages == 0 then
-      local _, _, strTotPages = string.find(body, globals.strNumPagesPat)
+      local strTotPages = string.match(body, globals.strNumPagesPat)
 
       if strTotPages ~= nil then
         nTotPages = tonumber(strTotPages)

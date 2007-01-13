@@ -68,7 +68,7 @@ for(i=lua_gettop(s) ; i > 0 ; i-- )
 		break;
 		case LUA_TBOOLEAN:
 			fprintf(stderr," %s\n",
-				lua_toboolean(s,i)==0?"true":"false");
+				lua_toboolean(s,i)==0?"false":"true");
 		break;
 		case LUA_TNIL:
 			fprintf(stderr," nil\n");
@@ -278,7 +278,8 @@ if(rc != 0)
 if(nret > 0)
 	for(i++;args[i] != '\0';i++)
 		{
-		luay_poparg(s,args[i],vargs);
+		if (args[i] != '.')
+			luay_poparg(s,args[i],vargs);
 		}
 
 // empty the stack (needed for the c function)

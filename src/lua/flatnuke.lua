@@ -27,7 +27,7 @@ PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "flatnuke"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=kernel.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=kernel.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
 PLUGIN_AUTHORS_CONTACTS = {"simone_vellei (at) users (.) sourceforge (.) net"}
@@ -140,7 +140,7 @@ internal_state = {
 -- Extracts the account name of a mailaddress
 --
 function get_name(s)
-	local _,_,d = string.find(s,"([_%.%a%d]+)@[_%.%a%d]+")
+	local d = string.match(s,"([_%.%a%d]+)@[_%.%a%d]+")
 	return d
 end
 
@@ -173,7 +173,7 @@ end
 -- Build a mail header
 --
 function build_mail_header(title,uidl)
-	_,_,uidl=string.find(uidl,"/(%d*).xml")
+	uidl=string.match(uidl,"/(%d*).xml")
 	return 
 	"Message-Id: <"..uidl..">\r\n"..
 	"To: "..internal_state.name.."@"..internal_state.password.."\r\n"..
@@ -215,10 +215,10 @@ function retr_or_top(pstate,msg,data,lines)
 	end
 
 	--get it
-	local _,_,title=string.find(s,flatnuke_string.titleC)
-	local _,_,header=string.find(s,flatnuke_string.headerC)
-	local _,_,body=string.find(s,flatnuke_string.bodyC)
-	local _,_,patch=string.find(s,flatnuke_string.patchC)
+	local title=string.match(s,flatnuke_string.titleC)
+	local header=string.match(s,flatnuke_string.headerC)
+	local body=string.match(s,flatnuke_string.bodyC)
+	local patch=string.match(s,flatnuke_string.patchC)
 
 	-- FreePOPs patches
 	if(patch ~= nil) then
@@ -364,7 +364,7 @@ function stat(pstate)
 
 			--fucking default size
 			local size=1000
-			_,_,uidl = string.find(uidl,"about=\"(.*)\"")
+			uidl = string.match(uidl,"about=\"(.*)\"")
 
 			if not uidl or not size then
 				return nil,"Unable to parse uidl"

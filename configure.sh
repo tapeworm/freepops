@@ -30,12 +30,16 @@ Flags (need pkg-config as provided in Debian):
 	-luafilesystem  use system lua5.1-filesystem 
 	-lua            use system lua5.1
 
+Flags (need fltk-config):
+	-fltk-ui        build the fltk updater user interface
+
 EOT
 
 }
 
 set_default() {
 CC=gcc
+CXX=g++
 LD=ld
 AR=ar
 STRIP=strip
@@ -59,6 +63,9 @@ WHERE=/usr/local/
 TAR=tar
 PATCH=patch
 SSL=openssl
+FLTKUI=
+FLTKCFLAGS=
+FLTKLDFLAGS=
 }
 
 set_linux() {
@@ -153,12 +160,14 @@ firstpref=/usr/bin/i586-mingw32msvc-
 defpref=/usr/local/cross-tools/i386-mingw32msvc/bin/
 if test -x ${firstpref}gcc; then
 	CC=${firstpref}gcc
+	CXX=${firstpref}g++
 	DLLPATH=/usr/i586-mingw32msvc/bin/
 	INCLUDEPATH=/usr/i586-mingw32msvc/include/
 	LDFLAGSDL=
 	CURLNAME=curl
 else
 	CC=${defpref}gcc
+	CXX=${defpref}g++
 	DLLPATH=/usr/local/cross-tools/i386-mingw32msvc/bin/
 	INCLUDEPATH=/usr/local/cross-tools/i386-mingw32msvc/include/
 	LDFLAGSDL=-ldl
@@ -312,6 +321,16 @@ while [ ! -z "$1" ]; do
 			CFLAGS="$HCFLAGS `pkg-config lua5.1-filesystem --cflags`"
 			LDFLAGS="$HLDFLAGS `pkg-config lua5.1-filesystem --libs`"
 		;;
+		-fltk-ui)
+			FLTKUI=1
+			if [ "$OS" != "Windows" ]; then
+				FLTKCFLAGS=`fltk-config --cflags`
+				FLTKLDFLAGS=`fltk-config --ldflags`
+			else
+				FLTKCFLAGS=""
+				FLTKLDFLAGS=" -lfltk -lintl -lgdi32 -lwsock32 -lole32 -luuid -L ../../src/ -lfp"
+			fi
+		;;
 		*)
 			usage
 			exit 1
@@ -323,6 +342,7 @@ done
 
 cat > config << EOT
 CC=$CC
+CXX=$CXX
 LD=$LD
 AR=$AR
 STRIP=$STRIP
@@ -356,5 +376,9 @@ LUAEXPAT=$LUAEXPAT
 LUACURL=$LUACURL
 LUALUA=$LUALUA
 LUAFILESYSTEM=$LUAFILESYSTEM
+
+FLTKUI=$FLTKUI
+FLTKCFLAGS=$FLTKCFLAGS
+FLTKLDFLAGS=$FLTKLDFLAGS
 EOT
 

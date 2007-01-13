@@ -52,7 +52,7 @@ install-common:
 	dh_testroot
 	dh_clean -k 
 	dh_installdirs
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops WHERE=/usr/
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops/ WHERE=/usr/
 	mv $(CURDIR)/debian/freepops/usr/share/doc/freepops/*.pdf \
 		$(CURDIR)/debian/freepops-doc/usr/share/doc/freepops-doc/ \
 		|| true

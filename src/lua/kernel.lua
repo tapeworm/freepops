@@ -12,7 +12,7 @@ PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "kernel.org Changelog viewer"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=kernel.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=kernel.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
 PLUGIN_AUTHORS_CONTACTS = {"simone_vellei (at) users (.) sourceforge (.) net"}
@@ -122,7 +122,7 @@ b = nil
 -- Extracts the account name of a mailaddress
 --
 function get_name(s)
-	local _,_,d = string.find(s,"([_%.%a%d]+)@[_%.%a%d]+")
+	local d = string.match(s,"([_%.%a%d]+)@[_%.%a%d]+")
 	return d
 end
 
@@ -165,15 +165,15 @@ function retr_or_top(pstate,msg,data,lines)
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	
 	local b = internal_state.b
-	local _,_,uri=string.find(uidl,"UTC(.*)")
+	local uri=string.match(uidl,"UTC(.*)")
 	uidl=string.gsub(uidl,uri,"")
 	--yyyy-mm-dd hh:mm
 	--mm/dd/yyyy hh:mm:ss 
-	local _,_,year=string.find(uidl,"(%d*)%-")
-	local _,_,month=string.find(uidl,year.."%-(%d*)%-")
-	local _,_,day=string.find(uidl,year.."%-"..month.."%-(%d*)")
-	local _,_,hour=string.find(uidl,day.." (%d*):")
-	local _,_,mins=string.find(uidl,hour..":(%d*)")
+	local year=string.match(uidl,"(%d*)%-")
+	local month=string.match(uidl,year.."%-(%d*)%-")
+	local day=string.match(uidl,year.."%-"..month.."%-(%d*)")
+	local hour=string.match(uidl,day.." (%d*):")
+	local mins=string.match(uidl,hour..":(%d*)")
 	local dd=month.."/"..day.."/"..year.." "                           
 	..hour..":"..mins..":00"
 	
@@ -189,7 +189,7 @@ function retr_or_top(pstate,msg,data,lines)
 									
 
 	--build it
-	local _,_,title=string.find(uri,".*/(.*)")
+	local title=string.match(uri,".*/(.*)")
 	local s = build_mail_header(title,dd) .. 
 		body.. "\r\n"
 
@@ -335,7 +335,7 @@ function stat(pstate)
 			local uidl = strtmp
 			local b = internal_state.b
 			local header=b:get_head(strtmp2)
-			local _,_,size=string.find(header,
+			local size=string.match(header,
 				"Content--Length: (%d*)");
 
 			if not uidl or not size then

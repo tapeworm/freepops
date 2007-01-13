@@ -31,7 +31,7 @@ PLUGIN_VERSION = "0.2.7"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=libero.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=libero.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 
 -- list of strings, one required, one contact for each author
@@ -463,9 +463,9 @@ function stat(pstate)
 
 			-- arrange message size
 			local k = nil
-			_,_,k = string.find(size,"([Kk][Bb])")
-			_,_,size = string.find(size,"(%d+)")
-			_,_,uidl = string.find(uidl,"value=\"(%d+)\"")
+			k = string.match(size,"([Kk][Bb])")
+			size = string.match(size,"(%d+)")
+			uidl = string.match(uidl,"value=\"(%d+)\"")
 			size = tonumber(size) + 2
 			if k ~= nil then
 				size = size * 1024
@@ -509,7 +509,7 @@ function stat(pstate)
 			return f,err
 		end
 
-		local _,_,c = string.find(f,libero_string.timeoutC)
+		local c = string.match(f,libero_string.timeoutC)
 		if c ~= nil then
 			internal_state.login_done = nil
 			session.remove(key())

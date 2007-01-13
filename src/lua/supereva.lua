@@ -13,7 +13,7 @@ PLUGIN_VERSION = "0.0.9"
 PLUGIN_NAME = "Supereva web mail"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=supereva.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=supereva.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org"
 PLUGIN_AUTHORS_NAMES = {"Andrea Dalle Molle","Enrico Tassi","Visioning"}
 PLUGIN_AUTHORS_CONTACTS = {"Tund3r (at) fastwebnet (dot) it",
@@ -220,7 +220,7 @@ function supereva_login()
 	local id = string.find(file,"logout.chm")
 	
 	if id == nil then
-		local _,_,cause = string.find(file,"ATTENZIONE:([A-Za-z%s]-)<")
+		local cause = string.match(file,"ATTENZIONE:([A-Za-z%s]-)<")
 		log.error_print(cause or "Unable to catch error details")
 		return POPSERVER_ERR_AUTH
 	else
@@ -370,7 +370,7 @@ function stat(pstate)
 	
 		-- set uidl/size for each message
 		for i=1,x:count() do
-			local _,_,size = string.find(x:get(1,i-1),"(%d+)")
+			local size = string.match(x:get(1,i-1),"(%d+)")
 			local _,_,size_mult_k = 
 				string.find(x:get(1,i-1),"([Kk])")
 			local _,_,size_mult_m = 
@@ -387,7 +387,7 @@ function stat(pstate)
 
 			-- add only new/ mails or bot new/ and cur/
 			if supereva_globals.onlynew then
-				local _,_,x = string.find(uidl,"^(new)")
+				local x = string.match(uidl,"^(new)")
 				if x ~= nil then
 					local num = get_popstate_nummesg(pstate)
 					num = math.max ( num , 0 )
@@ -529,7 +529,7 @@ function supereva_parse_webmessage(pstate,msg)
 	local n = x:count()
 	local attach = {}
 	for i = 1,n do
-    		local _,_,url = string.find(x:get(0,i-1),'HREF=..([^"]*)"')
+    		local url = string.match(x:get(0,i-1),'HREF=..([^"]*)"')
 		url = string.gsub(url,"&amp;", "&")
 		--print("\nattach:"..n.."http://" .. b:wherearewe().."/" .. url)
 		attach[x:get(1,i-1)] = "http://" .. b:wherearewe().."/" .. url
@@ -560,7 +560,7 @@ end
 -- helper
 function mangle_body(s)
 	
-	local _,_,x = string.find(s,"^%s*(<[Pp][Rr][Ee]>)")
+	local x = string.match(s,"^%s*(<[Pp][Rr][Ee]>)")
 
 	if x ~= nil then
 		local base = "http://" .. supereva_globals.browser:wherearewe()

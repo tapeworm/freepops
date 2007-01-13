@@ -11,7 +11,7 @@ PLUGIN_VERSION = "0.1.02"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=mailcom.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=mailcom.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = 
@@ -255,7 +255,7 @@ function postToLoginPage(browser, url, post, attempt)
 
   -- Check for invalid login/password
   -- 
-  local _, _, str = string.find(body, globals.strRetLoginBadPassword)
+  local str = string.match(body, globals.strRetLoginBadPassword)
   if str ~= nil then
     log.error_print("Login Failed: Invalid username/Password")
     return POPSERVER_ERR_AUTH
@@ -263,7 +263,7 @@ function postToLoginPage(browser, url, post, attempt)
 
   -- Extract the mail server
   --
-  _, _, str = string.find(body, globals.strRegExpMailServer)
+  str = string.match(body, globals.strRegExpMailServer)
   if str == nil then
     log.error_print("Login Failed: Unable to detect mail server - Attempt: " .. attempt)
     return POPSERVER_ERR_UNKNOWN
@@ -492,9 +492,9 @@ function cleanupHeaders(headers)
   --
   local origHeaders = headers
   if (internalState.strDomain == "otakumail.com") then
-    _, _, headers = string.find(headers, "(From:.-)</font></td></tr>")
+    headers = string.match(headers, "(From:.-)</font></td></tr>")
   else
-    _, _, headers = string.find(headers, '(From:.-)ml_header')
+    headers = string.match(headers, '(From:.-)ml_header')
   end
   if (headers == nil) then
     log.dbg("Unable to parse out message body headers!")
@@ -806,7 +806,7 @@ function stat(pstate)
 
     -- Is the session expired
     --
-    local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
+    local strSessExpr = string.match(body, globals.strRetLoginSessionExpired)
     if strSessExpr == nil then
       -- Invalidate the session
       --
@@ -834,9 +834,9 @@ function stat(pstate)
     -- Get the total number of messages
     --
     if nTotMsgs == 0 then
-      _, _, nTotMsgs = string.find(body, globals.strMsgListCntPattern)
+      nTotMsgs = string.match(body, globals.strMsgListCntPattern)
       if nTotMsgs == nil then -- Try a different pattern
-        _, _, nTotMsgs = string.find(body, globals.strMsgListCntPattern2)
+        nTotMsgs = string.match(body, globals.strMsgListCntPattern2)
       end
 
       if nTotMsgs == nil then

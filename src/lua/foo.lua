@@ -103,7 +103,7 @@ function pass(pstate,password)
 	--print("we received this webpage: ".. file)
 
 	-- search the session ID
-	local _,_,id = string.find(file,"session_id=(%w+)")
+	local id = string.match(file,"session_id=(%w+)")
 
 	if id == nil then 
 		return POPSERVER_ERR_AUTH
@@ -174,10 +174,10 @@ function stat(pstate)
 	set_popstate_nummesg(pstate,x:count())
 
 	for i=1,x:count() do
-		local _,_,size = string.find(x:get(0,i-1),"(%d+)")
-		local _,_,size_mult_k = string.find(x:get(0,i-1),"([Kk][Bb])")
-		local _,_,size_mult_m = string.find(x:get(0,i-1),"([Mm][Bb])")
-		local _,_,uidl = string.find(x:get(1,i-1),"check_(%d+)")
+		local size = string.match(x:get(0,i-1),"(%d+)")
+		local size_mult_k = string.match(x:get(0,i-1),"([Kk][Bb])")
+		local size_mult_m = string.match(x:get(0,i-1),"([Mm][Bb])")
+		local uidl = string.match(x:get(1,i-1),"check_(%d+)")
 
 		if size_mult_k ~= nil then
 			size = size * 1024

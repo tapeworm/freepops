@@ -8,14 +8,14 @@ MODULE_VERSION = "0.0.1"
 MODULE_NAME = "serial"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=serial.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=serial.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 --============================================================================--
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
 --============================================================================--
 
-module("serial")
+module("serial",package.seeall)
 
 -- It is used internally!
 local function serialize_val(val)

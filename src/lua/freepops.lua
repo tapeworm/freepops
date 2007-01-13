@@ -107,8 +107,7 @@ local pop3_methods = {
 -- @param mailaddress string for example pippo@libero.it?param=value.
 -- @return string The text between @ and (?|$). In our example 'libero.it'.
 function freepops.get_domain(mailaddress)
-	local _,_,ad = string.find(mailaddress,"[^@]+@([^?]+).*")
-	return ad
+	return string.match(mailaddress,"[^@]+@([^?]+).*")
 end
 
 ---
@@ -116,8 +115,7 @@ end
 -- @param mailaddress string for example pippo@libero.it?param=value.
 -- @return string The text between ^ and @. in our example pippo.
 function freepops.get_name(mailaddress)
-	local _,_,ad = string.find(mailaddress,"([^@]+)@[^?]+.*")
-	return ad
+	return string.match(mailaddress,"([^@]+)@[^?]+.*")
 end
 
 ---
@@ -125,7 +123,7 @@ end
 -- @param mailaddress string for example pippo@libero.it?par1=val1&par2=val2.
 -- @return table in our example {par1=val1 ; par2=val2}.
 function freepops.get_args(mailaddress)
-	local _,_,ad = string.find(mailaddress,"[^@]+@[^?%s]+([?%s].*)")
+	local ad = string.match(mailaddress,"[^@]+@[^?%s]+([?%s].*)")
 	local args = {}
 	local function extract_arg(s)
 		local from,to = string.find(s,"=")
@@ -343,7 +341,7 @@ function freepops.choose_module(d)
 	
 	-- 3rd: check if the mailaddress is a plugin name
 	if not found then 
-		local _,_,x = string.find(d,"^(%w+%.lua)$")
+		local x = string.match(d,"^(%w+%.lua)$")
 		if x ~= nil then
 			-- to allow "inline" modules to be in the UNOFFICIAL dir
 			local u_pref = freepops.MODULES_PREFIX_UNOFFICIAL
@@ -369,22 +367,34 @@ end
 -- Searches a file in $CWD + prefixes and returns the full path or nil.
 -- XXX $CWD should be removed, what happens if $CWD is writable by all? XXX
 -- @param file string The ifle name.
--- @param prefixes table a list of prefixes, default to MODULES_PREFIX.
--- @return string The full path or nil.
-function freepops.find(file, prefixes)
-	prefixes = prefixes or freepops.MODULES_PREFIX
-	local try = function(_,path)
-		local f,_ = io.open(path..file,"r")
+-- @return string The full path or nil, then the package.path entry, then 
+--         the namespace if any ("a.b.lua" -> ".../a.lua", ".../?.lua", "a" .
+function freepops.find(file)
+	local name = string.gsub(file,"%.lua$","")
+	name = string.gsub(name,"%.","/")
+	local namespace = string.match(name,"^([^/]*)/") or ""
+	local try = function(path)
+		local file = string.gsub(path,'?',name)
+		local f,_ = io.open(file,"r")
 		if f ~= nil then
 			io.close(f)
-			return path..file
+			return file
 		end
 	end
-        local foo
-	if try(foo,"") ~= nil then
-		return file
+	local function fix_namespace(path, namespace)
+		local _,n = string.gsub(path,'?','?')
+		for i = 2,n do
+			namespace = name ..'/'..namespace
+		end
+		return namespace
 	end
-	return table.foreach(prefixes,try)
+
+	local rc = try('?.lua')
+	if rc ~= nil then return rc, '?.lua', fix_namespace('?.lua',namespace) end
+	for p in string.gmatch(package.path, "([^;][^;]*);") do
+		rc = try(p)
+		if rc ~= nil then return rc, p, fix_namespace(p,namespace) end
+	end
 end
 
 ---
@@ -394,8 +404,7 @@ function freepops.dofile(file)
 	local got = freepops.find(file)
 	if got == nil then
 		log.error_print(string.format("Unable to find '%s'\n",file))
-		log.error_print(string.format("Path is '%s'\n",
-			table.concat(freepops.MODULES_PREFIX,":")))
+		log.error_print(string.format("Path is '%s'\n",package.path))
 		return nil
 	else
 		__dofile(got)
@@ -447,7 +456,9 @@ end
 
 ---
 -- uses freepops' dofile instead of the standard one.
-dofile = function(f) return require(f) or freepops.dofile(f) end
+dofile = function(f) 
+	return (pcall(function() require(f) end) or freepops.dofile(f)) 
+end
 
 ---
 -- Load needed module for handling domain.
@@ -551,8 +562,8 @@ end
 -- @return boolean true if version1 >= version2.
 function freepops.is_version_ge(version1, version2)
 	local match = "(%d+)%.(%d+)%.(%d+)"
-	local _,_,fp_x,fp_y,fp_z = string.find(version1, match)
-	local _,_,p_x,p_y,p_z = string.find(version2, match)
+	local fp_x,fp_y,fp_z = string.match(version1, match)
+	local p_x,p_y,p_z = string.match(version2, match)
 	if fp_x == nil or fp_y == nil or fp_z == nil then
 		log.error_print("Wrong FreePOPs version string format")
 		return false
@@ -671,7 +682,7 @@ function freepops.match_address(a,t)
 	local rc = table.foreach(t,function(k,v)
 		-- what is this? boh...
 		local capt = "^(" .. v .. ")$"
-		local _,_,x = string.find(a,capt)
+		local x = string.match(a,capt)
 		if x ~= nil then 
 			why = v
 			return true
@@ -713,11 +724,16 @@ function freepops.bootstrap()
 	end
 	table.foreach(freepops.MODULES_PREFIX,path_to_compat51_path)
 	table.foreach(freepops.MODULES_PREFIX_UNOFFICIAL,path_to_compat51_path)
-	--freepops.dofile("compat-5.1.lua")
 	package.path=LUA_PATH..";"..package.path
+	LUA_CPATH=""
+	table.foreach(freepops.MODULES_CPREFIX, function(_,p)
+		 LUA_CPATH=LUA_CPATH .. p .. "?.so;"
+		 LUA_CPATH=LUA_CPATH .. p .. "?.dll;"
+	end)
+	package.cpath=LUA_CPATH..";"..package.cpath
 	
 	-- standard lua modules that must be loaded
-	if require("support") == nil then return 1 end
+	require("support")
 
 	return 0 -- OK
 end

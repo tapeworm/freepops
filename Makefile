@@ -30,13 +30,14 @@ help:
 	$(H)$(MAKE) all
 	
 
-all : modules src 
+all : modules src updater-ui-fltk
 	$(H)echo -n
 
 clean: 
 	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)echo "cleaning freepopsd"
 	$(H)$(MAKE) -C src clean CONFIG=$(PWD)/config || true
+	$(H)$(MAKE) -C updater-ui/fltk clean CONFIG=$(PWD)/config || true
 	$(H)$(MAKE) -C modules clean CONFIG=$(PWD)/config || true
 	$(H)$(MAKE) -C buildfactory clean CONFIG=$(PWD)/config || true
 	$(H)rm -f core* *-stamp dh_clean
@@ -58,36 +59,57 @@ install: all
 	$(H)mkdir -p $(PREFIX)
 	$(H)mkdir -p $(PREFIX)bin
 	$(H)mkdir -p $(PREFIX)share/freepops/lua/
-	$(H)mkdir -p $(PREFIX)share/freepops/lua_unofficial/
+	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_unofficial/
+	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/
 	$(H)mkdir -p $(PREFIX)share/doc/freepops/
 	$(H)mkdir -p $(PREFIX)share/man/man1/
-	$(H)mkdir -p $(DESTDIR)/etc/freepops
-	$(H)cp src/freepopsd$(EXECSUFFIX) $(PREFIX)bin
+	$(H)mkdir -p $(DESTDIR)etc/freepops
+	$(H)if [ ! -z "$(FLTKUI)" ]; then \
+		mkdir -p $(PREFIX)lib/freepops/; \
+		cp updater-ui/fltk/updater_fltk$(SHAREDEXTENSION) \
+			$(PREFIX)lib/freepops/; \
+		cp updater-ui/fltk/freepops-updater-fltk $(PREFIX)bin; \
+	fi
+	$(H)cp updater-ui/dialog/freepops-updater-dialog $(PREFIX)bin
+	$(H)cp src/freepopsd$(EXEEXTENSION) $(PREFIX)bin
 	$(H)cp src/lua/*.lua modules/include/*.lua config.lua \
 		$(PREFIX)share/freepops/lua/
 	$(H)for D in modules/include/*/; do\
-		N=`ls $$D/*.lua $$D/*/*.lua $$D/*/*/*.lua 2>/dev/null | wc -l`;\
+		N=`ls $$D/*.lua 2>/dev/null | wc -l`;\
 		if [ $$N -gt 0 ]; then \
 			cp -r $$D $(PREFIX)share/freepops/lua/;\
+			mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/`basename $$D`;\
 		fi;\
 	done
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
+	$(H)cp doc/freepops-updater-dialog.1  $(PREFIX)share/man/man1/
+	$(H)if [ ! -z "$(FLTKUI)" ]; then \
+		cp doc/freepops-updater-fltk.1  $(PREFIX)share/man/man1/;\
+	fi
 	$(H)cp doc/manual*.pdf  $(PREFIX)share/doc/freepops/ 2>/dev/null ||\
 		cp doc/MANUAL.txt  $(PREFIX)share/doc/freepops/ 2>/dev/null || \
 		true
-	$(H)cp config.lua $(DESTDIR)/etc/freepops/
+	$(H)cp config.lua $(DESTDIR)etc/freepops/
 
 uninstall:
-	$(H)rm -f $(DESTDIR)/etc/freepops/config.lua
+	$(H)rm -f $(DESTDIR)etc/freepops/config.lua
 	$(H)rm -f $(PREFIX)share/doc/freepops/manual.ps
 	$(H)rm -f $(PREFIX)share/doc/freepops/manual-it.ps
 	$(H)rm -f $(PREFIX)share/man/man1/freepopsd.1
 	$(H)rm -f $(PREFIX)share/freepops/lua/*
-	$(H)rm -f $(PREFIX)bin/freepopsd$(EXECSUFFIX)
-	$(H)rmdir $(DESTDIR)/etc/freepops
+	$(H)rm -f $(DESTDIR)var/lib/freepops/lua_unofficial/*
+	$(H)rm -f $(DESTDIR)var/lib/freepops/lua_updates/*
+	$(H)rm -f $(DESTDIR)var/lib/freepops/lua_updates/*/*
+	$(H)rm -f $(PREFIX)lib/freepops/*
+	$(H)rm -f $(PREFIX)bin/freepopsd$(EXEEXTENSION)
+	$(H)rmdir $(DESTDIR)etc/freepops
 	$(H)rmdir $(PREFIX)share/man/man1/
 	$(H)rmdir $(PREFIX)share/doc/freepops/
 	$(H)rmdir $(PREFIX)share/freepops/lua/
+	$(H)rmdir $(DESTDIR)var/lib/freepops/lua_unofficial/
+	$(H)rmdir $(DESTDIR)var/lib/freepops/lua_updates/*/
+	$(H)rmdir $(DESTDIR)var/lib/freepops/lua_updates/
+	$(H)rmdir $(PREFIX)lib/freepops/
 	$(H)rmdir $(PREFIX)share/freepops/
 	$(H)-rmdir $(PREFIX)bin
 	$(H)-rmdir $(PREFIX)
@@ -106,6 +128,7 @@ tgz-dist:
 		rm freepops.tgz;\
 		cd $$BASE; $(MAKE) realclean; cd ..;\
 		find $$BASE -name CVS -exec rm -fr \{\} \; 2>/dev/null;\
+		find $$BASE -name .svn -exec rm -fr \{\} \; 2>/dev/null;\
 		echo "removing non-free doc files (like RFCs and contracts)";\
 		cd $$BASE;\
 		for X in doc/rfc/rfc*.txt; do \
@@ -119,7 +142,7 @@ tgz-dist:
 		mv $$BASE freepops-$(VERSION) || true;\
 		$(TAR) -cf freepops-$(VERSION).tar freepops-$(VERSION);\
 		gzip -f9 freepops-$(VERSION).tar;\
-		rm -r freepops-$(VERSION)
+		rm -rf freepops-$(VERSION)
 	
 buildfactory:
 	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
@@ -136,6 +159,14 @@ src: config
 	$(H)$(MAKE) -C src all CONFIG="$(PWD)/config" PREFIX="$(PREFIX)" \
 		FORCE_LINK="$(FORCE_LINK)"
 
+updater-ui-fltk:config
+ifneq "$(FLTKUI)" ""
+	$(H)echo "building updater-ui/fltk"
+	$(H)$(MAKE) -C updater-ui/fltk all CONFIG="$(PWD)/config"
+else
+	$(H)echo -n
+endif
+
 doc/manual.pdf doc/manual-it.pdf: doc/manual/manual.tex doc/manual/manual-it.tex
 	$(H)$(MAKE) -C doc/manual/
 
@@ -148,7 +179,7 @@ config:
 
 
 
-.PHONY: modules src doc buildfactory
+.PHONY: modules src doc buildfactory updater-ui-fktl
 
 
 

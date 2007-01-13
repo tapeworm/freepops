@@ -1,0 +1,184 @@
+#!/bin/bash
+
+#set -x
+#set -e
+
+# the return value of functions
+RC=""
+
+# XXX should be written at config time
+CORE='src/freepopsd'
+FREEPOPS="$CORE -e updater.lua php"
+PREAMBLE="dialog --backtitle FreePOPs_Updater"
+GAUGE='--defaultno --gauge %s 10 70'
+MESSAGE="--title %s --msgbox %s 10 70"
+CHECKLIST="--defaultno --separate-output --output-fd 1 --checklist %s 19 78 10" 
+SWAP=no
+# -d zenity -g '--progress --text=%s --auto-close' -m '--info --title=%s --text=%s' -c '--list --checklist --print-column=1 --column= --column=name --column=description --text=%s' -s
+
+# command line argument parsing ##############################################
+
+function usage(){
+cat <<EOT
+Usage: freepops-updater-dialog options
+
+valid options are:
+	-d command	To specify an alternative command dialog
+
+EOT
+exit 1
+}
+
+function parse_args() {
+	while [ $# -ge 1 ]; do
+		case "$1" in
+			-d) 
+				if [ -z "$2" ]; then usage; fi
+				PREAMBLE="$2"
+				shift 
+			;;
+			-g)
+				if [ -z "$2" ]; then usage; fi
+				GAUGE="$2"
+				shift 
+			;;
+			-m)
+				if [ -z "$2" ]; then usage; fi
+				MESSAGE="$2"
+				shift 
+			;;
+			-c)
+				if [ -z "$2" ]; then usage; fi
+				CHECKLIST="$2"
+				shift 
+			;;
+			-s)
+				SWAP=yes
+			;;
+			*) 
+				usage 
+			;;
+		esac
+		shift
+	done
+}
+
+# tempfile handling, with garbage collection #################################
+TODELETE=`tempfile`
+
+function erase_tmp_files() {
+  rm -f `cat $TODELETE` $TODELETE
+}
+
+function mk_temp(){
+  local tmp=`tempfile`
+  echo $tmp >> $TODELETE
+  echo $tmp
+}
+
+trap erase_tmp_files EXIT SIGTERM SIGCHLD
+
+# widgets ###################################################################
+
+# text : string 
+# items : file which lines are 'name desciption on/off'
+# RC: file which lines are name
+function checklist() {
+	local text="$1"
+	local items="$2"
+
+	local CMD=`mk_temp`
+	echo -n $PREAMBLE > $CMD
+	printf -- " $CHECKLIST " "$text"  >> $CMD
+	cat $items >> $CMD
+
+	/bin/bash $CMD
+}
+
+# title, message : string
+function message(){
+	local title="$1"
+	local message="$2"
+	local CMD=`mk_temp`
+
+	echo -n $PREAMBLE > $CMD
+	printf -- " $MESSAGE " "$title" "$message" >> $CMD
+	/bin/bash $CMD
+}
+
+# helper to access the metadata of a plugin ##################################
+function field(){
+	local data=$1
+	local name=$2
+
+	grep "^$2" $1 | sed "s/^$2 *: *//"
+}
+
+# the main has you ###########################################################
+function main(){
+parse_args "$@"
+local MODULES=`mk_temp`
+$FREEPOPS list_modules official > $MODULES
+local N=`wc -l $MODULES | cut -d ' ' -f 1`
+local I=0
+local -a METADATA
+local CHECKLIST_INPUT=`mk_temp`
+local FAILED=`mk_temp`
+local perc=0
+local CMD=`mk_temp`
+echo -n $PREAMBLE > $CMD
+printf -- " $GAUGE " "'Checking for updates...'" >> $CMD
+(for M in `cat $MODULES`; do
+	((perc=$I \* 100 / $N))
+	echo $perc
+	METADATA=`mk_temp`
+	$FREEPOPS fetch_module_metadata $M > $METADATA 2>/dev/null
+	local VREQ=`field $METADATA require_version`
+	local VLOC=`field $METADATA local_version`
+	local VUPS=`field $METADATA version`
+	local URL=`field $METADATA url`
+	local SHOULD=`field $METADATA should_update`
+	local CAN=`field $METADATA can_update`
+	local WHY=`field $METADATA why_cannot_update`
+	if [ "$CAN" = "true" ]; then
+		if [ "$SHOULD" = "true" ]; then
+			if [ "$SWAP" = "yes" ]; then
+			echo -n on $M "'$VLOC -> $VUPS'" ' ' >> $CHECKLIST_INPUT
+			else
+			echo -n $M "'$VLOC -> $VUPS'" on ' ' >> $CHECKLIST_INPUT
+			fi
+		else
+			M=$M
+		fi
+	else	
+		if [ "$SHOULD" = "true" ]; then
+			echo -n "$M: $WHY\n" >> $FAILED
+		else
+			M=$M
+		fi
+	fi
+	((I=I+1))
+done) | /bin/bash $CMD
+
+if [ -s $CHECKLIST_INPUT ]; then
+	local SELECTED=`mk_temp`
+	checklist "'Select the plugins to update.'" $CHECKLIST_INPUT > $SELECTED
+
+	for X in `cat $SELECTED`; do
+		$FREEPOPS fetch_module $X 'true' 
+	done
+
+else
+	message "'No updates available'" "'Nothing to update!'"
+fi
+
+if [ -s $FAILED ]; then
+	message "'Some modules cannot be updated!'" "'`cat $FAILED`'"
+fi
+
+}
+
+# here we go! ###############################################################
+main "$@"
+
+# eof

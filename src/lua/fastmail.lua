@@ -11,7 +11,7 @@ PLUGIN_VERSION = "0.0.2a"
 PLUGIN_NAME = "fastmail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=fastmail.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=fastmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
@@ -254,7 +254,7 @@ function login()
 
   -- Find the action link
   -- 
-  _, _, url = string.find(body, globals.strFormActionPat)
+  url = string.match(body, globals.strFormActionPat)
   if (url == nil) then
     log.error_print("Login Failed: Unable to find the url to log into")
     log.raw("Login Failed: Unable to find the url to log into");
@@ -266,7 +266,7 @@ function login()
 
   -- We should be logged in now!
   --
-  local _, _, str = string.find(body, globals.strRetLoginBadLogin)
+  local str = string.match(body, globals.strRetLoginBadLogin)
   if str ~= nil then
     log.error_print(globals.strLoginFailed)
     log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(1):\n" .. body);
@@ -283,7 +283,7 @@ function login()
   -- Get the folder ID
   --
   local strPat = string.format(globals.strMBoxIDPat, internalState.strMBox)
-  _, _, str = string.find(body, strPat)
+  str = string.match(body, strPat)
   if str ~= nil then
     internalState.strMBoxID = str
     log.dbg("Fastmail - Mailbox (" .. internalState.strMBox .. ") ID: " .. str)
@@ -297,7 +297,7 @@ function login()
   --
   if internalState.bEmptyTrash then
     strPat = string.format(globals.strMBoxIDPat, globals.strTrash)
-    _, _, str = string.find(body, strPat)
+    str = string.match(body, strPat)
     if str ~= nil then
       internalState.strTrashID = str
       log.dbg("Fastmail - Mailbox (" .. globals.strTrash .. ") ID: " .. str)
@@ -310,7 +310,7 @@ function login()
   -- Get the session ID and the udm values
   --
   local url = browser:whathaveweread()
-  _, _, str = string.find(url, globals.strUstPat)
+  str = string.match(url, globals.strUstPat)
   if str ~= nil then
     internalState.strUst = str
     log.dbg("Fastmail - Ust value: " .. str)
@@ -320,7 +320,7 @@ function login()
     return POPSERVER_ERR_UNKNOWN
   end
 
-  _, _, str = string.find(url, globals.strUdmPat)
+  str = string.match(url, globals.strUdmPat)
   if str ~= nil then
     internalState.strUdm = str
     log.dbg("Fastmail - Udm Value: " .. str)
@@ -476,19 +476,19 @@ function user(pstate, username)
     return POPSERVER_ERR_OK
   end
 
-  _, _, start = string.find(mbox, globals.strSentPat)
+  start = string.match(mbox, globals.strSentPat)
   if start ~= nil then
     internalState.strMBox = globals.strSent
     return POPSERVER_ERR_OK
   end
 
-  _, _, start = string.find(mbox, globals.strTrashPat)
+  start = string.match(mbox, globals.strTrashPat)
   if start ~= nil then
     internalState.strMBox = globals.strTrash
     return POPSERVER_ERR_OK
   end
 
-  _, _, start = string.find(mbox, globals.strDraftPat)
+  start = string.match(mbox, globals.strDraftPat)
   if start ~= nil then
     internalState.strMBox = globals.strDraft
     return POPSERVER_ERR_OK
@@ -676,7 +676,7 @@ function stat(pstate)
   local function funcProcess(body)
     -- Find out if there are any messages
     -- 
-    local _, _, nomesg = string.find(body, globals.strMsgListNoMsgPat)
+    local nomesg = string.match(body, globals.strMsgListNoMsgPat)
     if (nomesg ~= nil) then
       return true, nil
     end
@@ -706,13 +706,13 @@ function stat(pstate)
 
       -- Get the message id.  It's in the format of "MSG[numbers].[number(s)]".
       --
-      _, _, uidl = string.find(uidl, 'MSignal=MR%-%*%*([^"]+)"')
+      uidl = string.match(uidl, 'MSignal=MR%-%*%*([^"]+)"')
 
       -- Convert the size from it's string (4KB or 2MB) to bytes
       -- First figure out the unit (KB or just B)
       --
-      local _, _, kbUnit = string.find(size, "([Kk])")
-      _, _, size = string.find(size, "([%d]+)[KkMm]")
+      local kbUnit = string.match(size, "([Kk])")
+      size = string.match(size, "([%d]+)[KkMm]")
       if not kbUnit then 
         size = math.max(tonumber(size), 0) * 1024 * 1024
       else
@@ -773,7 +773,7 @@ function stat(pstate)
 
     -- Is the session expired
     --
-    local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
+    local strSessExpr = string.match(body, globals.strRetLoginSessionExpired)
     if strSessExpr == nil then
       -- Invalidate the session
       --
@@ -804,7 +804,7 @@ function stat(pstate)
     -- Get the total number of messages
     --
     if nTotMsgs == 0 then
-      local _, _, strTotMsgs = string.find(body, globals.strMsgListCntPattern)
+      local strTotMsgs = string.match(body, globals.strMsgListCntPattern)
       if strTotMsgs == nil then
         nTotMsgs = 0
       else 

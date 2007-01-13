@@ -83,7 +83,6 @@ typedef void (*sighandler_t)(int);
 
 int verbose_output=0;
 int daemonize = 0;
-char *configfile = NULL;
 char *logfile = NULL;
 char **args = NULL;
 int args_len = 0;
@@ -101,13 +100,12 @@ HIDDEN void add_to_args(const char * arg){
 }
 
 /*** usage ********************************************************************/
-#define GETOPT_STRING "-b:p:P:A:c:u:t:l:s:dhVvwknx:e:"
+#define GETOPT_STRING "-b:p:P:A:u:t:l:s:dhVvwknx:e:"
 HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
 				 { "port", required_argument, NULL, 'p' },
 				 { "proxy", required_argument, NULL, 'P' },
 				 { "auth", required_argument, NULL, 'A' },
 				 { "useragent", required_argument, NULL, 'u' },
-				 { "config", required_argument, NULL, 'c' },
 				 { "threads", required_argument, NULL, 't' },
 				 { "help" , no_argument , NULL, 'h'},
 				 { "version" , no_argument , NULL , 'V'},
@@ -133,7 +131,6 @@ HIDDEN void usage(const char *progname) {
 "\t\t\t[-p|--port portnumber] \n"
 "\t\t\t[-P|--proxy proxyaddress:proxyport] \n"
 "\t\t\t[-A|--auth username:password] \n"
-"\t\t\t[-c|--config configfile] \n"
 "\t\t\t[-u|--useragent useragent] \n"
 "\t\t\t[-v|--verbose [-v| --verbose]]\n"
 "\t\t\t[-w|--veryverbose]\n"
@@ -470,7 +467,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	logfile = strdup(LOGFILE); //means stdout
 	
 /*** ARGUMENTS PARSING ***/
-	while (
+	while (script == NULL && /* all arguments left are for the script*/
 	(res=getopt_long(argc,argv,GETOPT_STRING,opts,NULL))!= -1){
 		if (res == 'p') {
 			/* --port */
@@ -513,13 +510,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				exit(1);
 			}
 			proxyauth = strdup(optarg);
-		} else if (res == 'c') {
-			/* --config */
-			if (configfile != NULL) {
-				usage(argv[0]);
-				exit(1);
-			}
-			configfile = strdup(optarg);
 		} else if (res == 'u') {
 			/* --useragent */
 			if (useragent != NULL) {
@@ -606,6 +596,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	#endif			
 		} else if (res == 'x') {
 			/* --toxml */
+			int i;
 		#ifdef WIN32
 			int len = strlen(optarg) + 5;
 			char *outname = calloc(len,sizeof(char));
@@ -620,12 +611,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			free(script);
 			script=strdup(PLUGIN2XML);
 			add_to_args(optarg);
+			for (i=optind;i<argc;i++){
+				add_to_args(argv[i]);
+			}
 		} else if (res == 'e'){
 			/* --execute */
+			int i;
 			free(script);
 			script=strdup(optarg);
 			free(execute_stdout);
 			execute_stdout=NULL;
+			for (i=optind;i<argc;i++){
+				add_to_args(argv[i]);
+			}
 		} else if (res == 1){
 			/* extra arguments */
 			add_to_args(optarg);

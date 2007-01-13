@@ -12,7 +12,7 @@ PLUGIN_VERSION = "0.0.2"
 PLUGIN_NAME = "SquirrelMail"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=squirrelmail.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=squirrelmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Eddi De Pieri"}
 PLUGIN_AUTHORS_CONTACTS = {"dpeddi (at) users (.) sourceforge (.) net"}
@@ -234,7 +234,7 @@ end
 --
 --
 function mangle_body(s)
-	local _,_,x = string.find(s,"^%s*(<[Pp][Rr][Ee]>)")
+	local x = string.match(s,"^%s*(<[Pp][Rr][Ee]>)")
 	if x ~= nil then
 		local base = "http://" .. internal_state.b:wherearewe()
 		s = mimer.html2txtmail(s,base)
@@ -322,7 +322,7 @@ function squirrelmail_parse_webmessage(pstate,msg)
 	
 	for i = 1,n do
 		--print("addo fino a " .. n)
-		local _,_,url = string.find(x:get(0,n-1),'HREF="..([^"]*)"')
+		local url = string.match(x:get(0,n-1),'HREF="..([^"]*)"')
 		url = string.gsub(url,"&amp;", "&")
 		attach[x:get(1,i-1)] = "http://" .. b:wherearewe() .. squirrelmail_string.partial_path .. url
 		--print (attach[x:get(1,i-1)] .. " ------ " ..  "http://" .. b:wherearewe() .. squirrelmail_string.partial_path .. url)
@@ -507,11 +507,11 @@ function stat(pstate)
 
 			-- arrange message size
 --			local k,m = nil,nil
---			_,_,k = string.find(size,"([Kk][Bb])")
---			_,_,m = string.find(size,"([Mm][Bb])")
-			_,_,size = string.find(size,"([%.%d]+)")
---			_,_,uidl = string.find(uidl,'CHECK_([%d]+)')
-			_,_,uidl = string.find(uidl,'value=([%d]+)')
+--			k = string.match(size,"([Kk][Bb])")
+--			m = string.match(size,"([Mm][Bb])")
+			size = string.match(size,"([%.%d]+)")
+--			uidl = string.match(uidl,'CHECK_([%d]+)')
+			uidl = string.match(uidl,'value=([%d]+)')
 
 			if not uidl or not size then
 				return nil,"Unable to parse page"
@@ -535,7 +535,7 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s) 
-		local _,_,nex = string.find(s,squirrelmail_string.nextC)
+		local nex = string.match(s,squirrelmail_string.nextC)
 		if nex ~= nil then
 			uri = string.format(squirrelmail_string.next,b:wherearewe(),squirrelmail_string.partial_path,nex)
 			-- continue the loop
@@ -553,7 +553,7 @@ function stat(pstate)
 			return f,err
 		end
 
-		local _,_,c = string.find(f,squirrelmail_string.session_errorC)
+		local c = string.match(f,squirrelmail_string.session_errorC)
 		if c ~= nil then
 			internal_state.login_done = nil
 			session.remove(key())

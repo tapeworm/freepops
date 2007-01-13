@@ -1,3 +1,11 @@
+freepops (0.2.0-1) unstable; urgency=low
+
+  * new upstream release: package splitted to separate the updaters, some of
+    them are X11 dependent from the simple server that is still a simple
+    daemon non dependent on X11.
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Tue, 17 Oct 2006 23:53:11 +0200
+
 freepops (0.0.99-1) unstable; urgency=low
 
   *  new upstream release

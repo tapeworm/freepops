@@ -7,7 +7,7 @@ MODULE_VERSION = "0.0.1"
 MODULE_NAME = "mimer"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=mimer.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=mimer.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 
@@ -76,9 +76,9 @@ Private.html_tags = {
 		end
 		local _,x = nil,nil
 		if string.byte(s,stop+1) == string.byte('"') then
-			_,_,x = string.find(string.sub(s,stop+2,-1),'^([^"]*)')
+			x = string.match(string.sub(s,stop+2,-1),'^([^"]*)')
 		else
-			_,_,x = string.find(string.sub(s,stop+1,-1),'^([^ ]*)')
+			x = string.match(string.sub(s,stop+1,-1),'^([^ ]*)')
 		end
 		x = x or "link"
 		if string.sub(x,1,1) == '/' then
@@ -353,7 +353,7 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 			-- FIXME, may be an incorrect URL and not a 200 HTTP
 			
 			-- try to extract the content type
-			local _,_,x = string.find(h or "",
+			local x = string.match(h or "",
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")
 			if x ~= nil then
 				content_type = x
@@ -423,7 +423,7 @@ function Private.attach_it_old(browser,boundary,send_cb)
 
 		local h,err = browser:get_head(uri,{},true)
 
-		local _,_,x = string.find(h or "",
+		local x = string.match(h or "",
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")
 
 		x = x or "application/octet-stream"
@@ -482,7 +482,7 @@ end
 
 -- ------------------------------------------------------------------------- --
 function Private.token_of(c)
-	local _,_,x,y = string.find(c,"^%s*([/!]?)%s*(%a+)%s*")
+	local x,y = string.match(c,"^%s*([/!]?)%s*(%a+)%s*")
 	return (x or "") .. (y or "")
 end
 
@@ -520,7 +520,7 @@ function Private.html2txt(s,base_uri,html_coded,html_tags,all)
 end
 
 --<==========================================================================>--
-module("mimer")
+module("mimer",package.seeall)
 
 ---
 -- Builds a MIME encoded message and pipes it to send_cb.
@@ -734,7 +734,7 @@ function remove_lines_in_proper_mail_header(s,p)
 			
 		if not skip then
 			local match = table.foreach(p,function(k,m)
-				local _,_,x = string.find (l,
+				local x = string.match (l,
 					Private.domatch("^(",m,")"))
 				if x ~= nil then
 					return true

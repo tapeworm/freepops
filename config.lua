@@ -721,6 +721,12 @@ freepops.MODULES_PREFIX = {
 	"./src/lua/",
 	"./modules/include/",
 	"./modules/lib/"}
+
+freepops.MODULES_CPREFIX = {
+	os.getenv("FREEPOPSLUA_CPATH") or "./",
+	"./c/",
+	"./",
+	"./updater-ui/fltk/" }
 	
 -- Really interesting for the geek user.
 -- These paths are searched for unofficial plugins

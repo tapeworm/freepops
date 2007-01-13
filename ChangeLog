@@ -1,9 +1,20 @@
+- added freepops-updater-dialog that provides a textual interface to the updater
+- added freepops-updater-fltk to call freepopsd -e updater.lua fltk, a special backend that runs the graphical updater
+- fixed luabox to use package.preload and require for C modules 'statically' linked 
+- addded the special 'fltk' backend that starts the fltk gui (since there is
+no lua binding for fltk, the main has to be in C and calls lua funtions when
+needed, as the dialog frontend does, but not calling them internally since the
+C main is a .so the is loaded by freepops and the run() function is called,
+and thus all the updater lua API can be accessed directly)
+- completely reorganized the updater code: updater_(cvs|php).lua are the two backends that provide the same interface, updater_common.lua provides some common helpers for both backends and the mangler for using the backends from the command line and the documentation, updater.lua is now in src/lua/ as all plugins and uses the cvs backend and provides a minimal main() that allows to call the backends from the command line and receiving their output mangled by updater_common.  - added documentation for the -n switch
+- added to configure.sh options to use system lua, luacurl, luaexpat and luafilesystem
+- moved all lua modules to lua5.1 package system with package.seall
+- moved all plugins and modules to lua5.1 string.match
+- updated luabox.c to lua5.1 way of loading standard libraries (STOP the gc)
 - libero.lua: mlex to identify the message list enhanced once again
 - added atlantide.it domain to tin.lua (Thanks to Ivan Piasini)
-- added support for foo@plugin.lua when plugin.lua is in the UNOFFICIAL
-directory
-- added patch from Rostislav Kandilarov to create /dev/random and /dev/urandom
-in the chroot jail
+- added support for foo@plugin.lua when plugin.lua is in the UNOFFICIAL directory
+- added patch from Rostislav Kandilarov to create /dev/random and /dev/urandom in the chroot jail
 - fixed the manpage for the command line option -x
 - fixed the manual for the command line option -x
 - changed the command line description for -x

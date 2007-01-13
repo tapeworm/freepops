@@ -11,7 +11,7 @@ PLUGIN_VERSION = "0.0.9h"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=juno.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=juno.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells@despammed.com"}
@@ -213,7 +213,7 @@ function login()
 
   -- Check for invalid login
   -- 
-  local _, _, str = string.find(body, globals.strRetLoginBadPassword)
+  local str = string.match(body, globals.strRetLoginBadPassword)
   if str ~= nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
@@ -221,7 +221,7 @@ function login()
 
   -- Check for the redirect
   --
-  _, _, str = string.find(body, globals.strRedirectUrl)
+  str = string.match(body, globals.strRedirectUrl)
   if str ~= nil then
     body, err = browser:get_uri(str)
   else
@@ -235,7 +235,7 @@ function login()
   -- The login page sometimes returns a page where a form needs to be submitted.  
   -- We'll do it manually.  Extract the form elements and post the data
   -- 
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern1)
+  url = string.match(body, globals.strLoginPostUrlPattern1)
   if url ~= nil then
     url = internalState.strMailServer .. url
     local postdata = nil
@@ -367,7 +367,7 @@ function downloadMsg(pstate, msg, nLines, data)
 
   -- Cleanup the body if necessary
   --
-  local _, _, str = string.find(cbInfo.strBody, "^(<pre>)")
+  local str = string.match(cbInfo.strBody, "^(<pre>)")
   if str ~= nil then
     cbInfo.strBody = cleanupPreHtml(cbInfo.strBody, false)
   end
@@ -375,7 +375,7 @@ function downloadMsg(pstate, msg, nLines, data)
     
   -- Pipe this through the mimer
   --
-  --_, _, str = string.find(cbInfo.strBody, "(<[Hh][Tt][Mm][Ll]>)")
+  --str = string.match(cbInfo.strBody, "(<[Hh][Tt][Mm][Ll]>)")
   local strBody, strHtml
   if str == nil then
     strBody = nil
@@ -415,7 +415,7 @@ function downloadMsg_cb(cbInfo, data)
       -- Get rid of the text before the <pre>
       --
       if cbInfo.nMode == 0 then
-        _, _, body = string.find(body, "<pre>(.*)")
+        body = string.match(body, "<pre>(.*)")
         if body == nil or string.len(body) == 0 then
           return len, nil
         end
@@ -425,8 +425,8 @@ function downloadMsg_cb(cbInfo, data)
       -- Stop getting the headers at the </pre>
       --
       if cbInfo.nMode < 2 then
-        local _, _, str = string.find(body, "(.*)</pre>")
-        local _, _, str2 = string.find(body, "</pre>(.*)")
+        local str = string.match(body, "(.*)</pre>")
+        local str2 = string.match(body, "</pre>(.*)")
         if str ~= nil then
           body = cbInfo.strHeaders .. str
           body = processHeaders(body, cbInfo)
@@ -501,7 +501,7 @@ function processHeaders(body, cbInfo)
           
   -- Figure out if we have attachments
   --
-  local _, _, strMimeBoundary = string.find(body, '(boundary=)')
+  local strMimeBoundary = string.match(body, '(boundary=)')
   if strMimeBoundary ~= nil then
     cbInfo.bHasAttach = true
   else
@@ -510,14 +510,14 @@ function processHeaders(body, cbInfo)
   
   -- Is this a multipart-alternative message?
   --
-  local _, _, strAlternate = string.find(body, '(multipart/alternative)')
+  local strAlternate = string.match(body, '(multipart/alternative)')
   if strAlternate ~= nil then
     cbInfo.bHasAlt = true
   end
 
   -- Get the message id
   --
-  local _, _, strMessageId = string.find(body, "[Mm][Ee][Ss][Ss][Aa][Gg][Ee]%-I[dD]: <([^>]+)>")
+  local strMessageId = string.match(body, "[Mm][Ee][Ss][Ss][Aa][Gg][Ee]%-I[dD]: <([^>]+)>")
   if strMessageId ~= nil then
     cbInfo.strMessageId = strMessageId
   end
@@ -714,7 +714,7 @@ function getContentType(url)
     log.dbg(err)
     return "unknown/unknown"
   end
-  local _, _, x = string.find(h,
+  local x = string.match(h,
                 "[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")
   return (x or "unknown/unknown")
 end
@@ -731,7 +731,7 @@ function getFilename(url, filename)
     return filename
   end
 
-  local _, _, x = string.find(h, 'filename= "([^"]+)"')
+  local x = string.match(h, 'filename= "([^"]+)"')
   if (x == nil) then
     return filename
   end
@@ -969,7 +969,7 @@ function stat(pstate)
   local function funcProcess(body)
     -- Find out if there are any messages
     -- 
-    local _, _, nomesg = string.find(body, globals.strMsgListNoMsgPat)
+    local nomesg = string.match(body, globals.strMsgListNoMsgPat)
     if (nomesg ~= nil) then
       return true, nil
     end
@@ -994,7 +994,7 @@ function stat(pstate)
 
       -- Convert the size from it's string (4K) to bytes
       --
-      --_, _, size = string.find(size, globals.strSizePattern)
+      --size = string.match(size, globals.strSizePattern)
       size = math.max(tonumber(size), 0) * 1024
 
       -- Save the information
@@ -1020,7 +1020,7 @@ function stat(pstate)
     -- Look in the body and see if there is a link for a next page
     -- If so, change the URL
     --
-    local _, _, nextURL = string.find(body, globals.strMsgListNextPagePattern)
+    local nextURL = string.match(body, globals.strMsgListNextPagePattern)
     if nextURL ~= nil then
       nPage = nPage + 1
       cmdUrl = baseUrl .. "&block=" .. nPage
@@ -1046,7 +1046,7 @@ function stat(pstate)
 
     -- Is the session expired
     --
-    local _,_,strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
+    local strSessExpr = string.match(body, globals.strRetLoginSessionExpired)
     if strSessExpr == nil then
       -- Invalidate the session
       --

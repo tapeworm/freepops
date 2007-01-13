@@ -12,7 +12,7 @@ PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "Tre"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=tre.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=tre.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Eddi De Pieri"}
 PLUGIN_AUTHORS_CONTACTS = {"dpeddi (at) users (.) sourceforge (.) net"}
@@ -301,7 +301,7 @@ end
 --
 --
 function mangle_body(s)
-	local _,_,x = string.find(s,"^%s*(<[Pp][Rr][Ee]>)")
+	local x = string.match(s,"^%s*(<[Pp][Rr][Ee]>)")
 	if x ~= nil then
 		local base = "http://" .. internal_state.b:wherearewe()
 		s = mimer.html2txtmail(s,base)
@@ -344,7 +344,7 @@ function tre_parse_webmessage(pstate,msg)
 	local f,rc = b:get_uri(uri)
 
 	-- extract the body
-	local _,_,body = string.find(f,tre_string.bodyC)
+	local body = string.match(f,tre_string.bodyC)
 
 	log.dbg("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
 	log.dbg("DEBUG: Parsing message")
@@ -370,11 +370,11 @@ function tre_parse_webmessage(pstate,msg)
 
 	for i = 1,n do
 		log.dbg("addo " .. i .. " fino a " .. n)
-		local _,_,k = string.find(x:get(0,i-1),'([A-Za-z]+):.*')
+		local k = string.match(x:get(0,i-1),'([A-Za-z]+):.*')
 
 		log.dbg("DEBUG:" .. k)
 
-		local _,_,v = string.find(mimer.html2txtplain(x:get(1,i-1)),'^[%s%t]*(.*)')
+		local v = string.match(mimer.html2txtplain(x:get(1,i-1)),'^[%s%t]*(.*)')
 
 		log.dbg("DEBUG:" .. x:get(1,i-1))
 		if k == "Da" then
@@ -412,9 +412,9 @@ function tre_parse_webmessage(pstate,msg)
 	
 	for i = 1,n do
 		log.dbg("addo fino a " .. n)
-		local _,_,url = string.find(x:get(1,i-1),'href="([^"]*)"')
+		local url = string.match(x:get(1,i-1),'href="([^"]*)"')
 		url = string.gsub(url,"&amp;", "&")
-		local _,_,fname = string.find(x:get(0,i-1),'^[%s%t]*(.*)')
+		local fname = string.match(x:get(0,i-1),'^[%s%t]*(.*)')
 		attach[mimer.html2txtplain(fname)] = "http://".. b:wherearewe() .. "/cgi-bin/" .. url
 		log.dbg("DEBUG: attacchment url " .. attach[mimer.html2txtplain(fname)] )
 		table.setn(attach,table.getn(attach) + 1)
@@ -600,10 +600,10 @@ function stat(pstate)
 
 			-- arrange message size
 			local k,m = nil,nil
-			_,_,k = string.find(size,"([Kk][Bb])")
-			_,_,m = string.find(size,"([Mm][Bb])")
-			_,_,size = string.find(size,"([%.%d]+)")
-			_,_,uidl = string.find(uidl,'viewmessage([%d]+)')
+			k = string.match(size,"([Kk][Bb])")
+			m = string.match(size,"([Mm][Bb])")
+			size = string.match(size,"([%.%d]+)")
+			uidl = string.match(uidl,'viewmessage([%d]+)')
 
 			if not uidl or not size then
 				return nil,"Unable to parse page"
@@ -627,7 +627,7 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s) 
-                local _,_,from,to,last = string.find(s,tre_string.nextC)
+                local from,to,last = string.match(s,tre_string.nextC)
                 if last == nil or to == nil then
 		    return true
 --                    error("unable to capture last or to")
@@ -651,7 +651,7 @@ function stat(pstate)
 			return f,err
 		end
 
-		local _,_,c = string.find(f,tre_string.session_errorC)
+		local c = string.match(f,tre_string.session_errorC)
 		if c ~= nil then
 			internal_state.login_done = nil
 			session.remove(key())

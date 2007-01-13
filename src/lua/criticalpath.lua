@@ -11,7 +11,7 @@ PLUGIN_VERSION = "0.0.3a"
 PLUGIN_NAME = "criticalpath.lua"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?file=criticalpath.lua"
+PLUGIN_URL = "http://freepops.sourceforge.net/download.php?module=criticalpath.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
@@ -180,7 +180,7 @@ function login()
 
   -- Get the View State
   --
-  local _, _, str = string.find(body, globals.strViewStatePat)
+  local str = string.match(body, globals.strViewStatePat)
   if str == nil then
     log.error_print(globals.strLoginFailedVS)
     return POPSERVER_ERR_NETWORK
@@ -206,7 +206,7 @@ log.dbg(url .. " - " .. post)
   for i = 1, 2 do
     -- Find the next page to go to.  We need to extract some info
     --
-    _, _, str = string.find(body, globals.strLoginGoodNextPage)
+    str = string.match(body, globals.strLoginGoodNextPage)
     if (str == nil) then
       log.error_print(globals.strLoginFailed)
       return POPSERVER_ERR_AUTH
@@ -220,19 +220,19 @@ log.dbg(url .. " - " .. post)
 
   -- Get the pieces that make up the crumb
   --
-  _, _, str = string.find(body, globals.strRegExpToken)
+  str = string.match(body, globals.strRegExpToken)
   if str == nil then
     log.error_print(globals.strLoginFailedRegExp .. "ut")
     return POPSERVER_ERR_NETWORK
   end
   internalState.strCrumb = str
-  _, _, str = string.find(body, globals.strRegExpPlan)
+  str = string.match(body, globals.strRegExpPlan)
   if str == nil then
     log.error_print(globals.strLoginFailedRegExp .. "planname")
     return POPSERVER_ERR_NETWORK
   end
   internalState.strCrumb = internalState.strCrumb .. str
-  _, _, str = string.find(body, globals.strRegExpIpa)
+  str = string.match(body, globals.strRegExpIpa)
   if str == nil then
     log.error_print(globals.strLoginFailedRegExp .. "ipa")
     return POPSERVER_ERR_NETWORK
@@ -590,7 +590,7 @@ function stat(pstate)
 
     -- Is the session expired
     --
-    local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
+    local strSessExpr = string.match(body, globals.strRetLoginSessionExpired)
     if strSessExpr == nil then
       -- Invalidate the session
       --
@@ -621,7 +621,7 @@ function stat(pstate)
     -- Get the total number of messages
     --
     if nTotPages == 0 then
-      local _, _, strTotPages = string.find(body, globals.strNumPagesPat)
+      local strTotPages = string.match(body, globals.strNumPagesPat)
 
       if strTotPages ~= nil then
         nTotPages = tonumber(strTotPages)

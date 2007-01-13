@@ -1,0 +1,57 @@
+diff -ruN luaexpat-1.0.2.orig/Makefile luaexpat-1.0.2/Makefile
+--- luaexpat-1.0.2.orig/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ luaexpat-1.0.2/Makefile	2006-09-26 18:46:08.000000000 +0200
+@@ -0,0 +1,35 @@
++include $(CONFIG)
++
++WARNS = -Wall -pedantic \
++        -Waggregate-return \
++        -Wcast-align \
++        -Wmissing-prototypes \
++        -Wstrict-prototypes \
++        -Wnested-externs \
++        -Wpointer-arith \
++        -Wshadow \
++        -Wwrite-strings
++
++
++CFLAGS += $(WARNS) -I$(PREFIX)/include -I. 
++
++LDFLAGS+= -L../lib/ -L../../lib/ -lexpat
++
++H=@
++
++all: libluaexpat.a
++	$(H)echo -n
++
++libluaexpat.a : src/lxplib.c
++	$(H)echo " compiling lxplib.c -> lxplib.o"
++	$(H)$(CC) $(CFLAGS) -c  src/lxplib.c -o src/lxplib.o -I src/
++	$(H)echo " linking libluaexpat.a"
++	$(H)$(AR) rc libluaexpat.a src/lxplib.o 1>/dev/null		
++	$(H)cp src/lxplib.h $(PREFIX)/include
++	$(H)mkdir -p $(PREFIX)/include/lxp/
++	$(H)cp src/lxp/lom.lua $(PREFIX)/include/lxp/
++	$(H)cp $(CPFLAGS) libluaexpat.a $(PREFIX)/lib
++
++clean:
++	$(H)rm -f *.a *.o
++.PHONY: all
+diff -ruN luaexpat-1.0.2.orig/src/lxplib.c luaexpat-1.0.2/src/lxplib.c
+--- luaexpat-1.0.2.orig/src/lxplib.c	2006-03-20 20:55:53.000000000 +0100
++++ luaexpat-1.0.2/src/lxplib.c	2006-09-26 18:46:23.000000000 +0200
+@@ -13,7 +13,13 @@
+ 
+ #include "lua.h"
+ #include "lauxlib.h"
+-#include "compat-5.1.h"
++static int luaL_findstring (const char *name, const char *const list[]) {
++  int i;
++  for (i=0; list[i]; i++)
++    if (strcmp(list[i], name) == 0)
++      return i;
++  return -1;  /* name not found */
++}
+ 
+ 
+ #include "lxplib.h"

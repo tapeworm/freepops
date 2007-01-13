@@ -6,7 +6,7 @@ MODULE_VERSION = "0.0.1"
 MODULE_NAME = "xml2tex"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=xml2tex.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=xml2tex.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 require("xml2table")
@@ -86,14 +86,14 @@ function main(arg)
 		os.exit(1)
 	end
 
-	_,_,filename = string.find(arg[1],"(.*).xml")
+	filename = string.match(arg[1],"(.*).xml")
 
 	if filename == nil then
 		print("filename must be 'pluginname.lua.xml'")
 		os.exit(1)
 	end
 
-	_,_,filename1 = string.find(filename,".*/([^/]+)")
+	filename1 = string.match(filename,".*/([^/]+)")
 
 	plugin_name = filename1 or filename
 

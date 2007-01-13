@@ -27,7 +27,7 @@ PLUGIN_VERSION = "0.0.7"
 PLUGIN_NAME = "RSS/RDF aggregator"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=aggregator.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=aggregator.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
 PLUGIN_AUTHORS_CONTACTS = {"simone_vellei (at) users (.) sourceforge (.) net"}
@@ -132,7 +132,7 @@ internal_state = {
 -- Extracts the account name of a mailaddress
 --
 function get_name(s)
-	local _,_,d = string.find(s,"([_%.%a%d]+)@[_%.%a%d]+")
+	local d = string.match(s,"([_%.%a%d]+)@[_%.%a%d]+")
 	return d
 end
 
@@ -212,11 +212,11 @@ end
 function hackw3cdate(mydate)
 	--Wed, 01 Sep 2004 15:50:29
 	--1997-07-16T19:20:30.45+01:00
-	local _,_,year=string.find(mydate,"(%d*)%-")
-	local _,_,month=string.find(mydate,year.."%-(%d*)%-")
-	local _,_,day=string.find(mydate,year.."%-"..month.."%-(%d*)")
-	local _,_,hour=string.find(mydate,"T(%d*):")
-	local _,_,mins=string.find(mydate,hour..":(%d*)")
+	local year=string.match(mydate,"(%d*)%-")
+	local month=string.match(mydate,year.."%-(%d*)%-")
+	local day=string.match(mydate,year.."%-"..month.."%-(%d*)")
+	local hour=string.match(mydate,"T(%d*):")
+	local mins=string.match(mydate,hour..":(%d*)")
 	mydate=getdate.toint(month.."/"..day.."/"..year.." "..hour..":"
 	..mins..":00")
 	return(os.date("%a, %d %b %Y %H:%M:%S",mydate))
@@ -247,16 +247,16 @@ function retr_or_top(pstate,msg,data,lines)
 		s2=string.sub(s2,ends2+3)
 	end
 									
-	local _,_,title=string.find(chunk,rss_string.titleC)
+	local title=string.match(chunk,rss_string.titleC)
 	title=string.gsub(title,"<!%[CDATA%[","")
  	title=string.gsub(title,"%]%]>","")
 
-	local _,_,header=string.find(chunk,rss_string.linkC)
+	local header=string.match(chunk,rss_string.linkC)
 	if ((header == nil) or (header == "")) then
-		_,_,header=string.find(chunk,rss_string.link2C)
+		header=string.match(chunk,rss_string.link2C)
 	end
 	
-	local _,_,body=string.find(chunk,rss_string.descC)
+	local body=string.match(chunk,rss_string.descC)
 	if (body ~= nil) then
 		body=string.gsub(body,"<!%[CDATA%[","")
 		body=string.gsub(body,"%]%]>","")
@@ -264,7 +264,7 @@ function retr_or_top(pstate,msg,data,lines)
 	
 	--this is enabled in 
 	-- xmlns:content="http://purl.org/rss/1.0/modules/content/"
-	local _,_,content=string.find(chunk,rss_string.contentC)
+	local content=string.match(chunk,rss_string.contentC)
 	-- content contains description
 	if ((content ~= nil) and (body ~= nil)) then
 		body=content
@@ -272,11 +272,11 @@ function retr_or_top(pstate,msg,data,lines)
  		body=string.gsub(body,"%]%]>","")
 	end
 	
-	local _,_,mydate=string.find(chunk,rss_string.dateC)
+	local mydate=string.match(chunk,rss_string.dateC)
 	
 	-- is it W3C date?
 	if (mydate == nil) then
-		 _,_,mydate=string.find(chunk,rss_string.dcdateC)
+		 mydate=string.match(chunk,rss_string.dcdateC)
 		 if (mydate ~= nil) then
 		 	--Wed, 01 Sep 2004 15:50:29
 			--1997-07-16T19:20:30.45+01:00
@@ -407,7 +407,7 @@ function stat(pstate)
 		--	
 		-- sets global var rss
 		rss=s
-		_,_,charset=string.find(rss,rss_string.charsetC)
+		charset=string.match(rss,rss_string.charsetC)
 		if (charset == nil) then
 			charset = "utf-8"
 		end
@@ -437,9 +437,9 @@ function stat(pstate)
 			local chunk=string.sub(s2,starts2,ends2)
 			s2=string.sub(s2,ends2+3)
 			
-			local _,_,uidl = string.find(chunk,rss_string.linkC)
+			local uidl = string.match(chunk,rss_string.linkC)
 			if ((uidl == nil) or (uidl=="")) then
-				 _,_,uidl = string.find(chunk,rss_string.link2C)
+				 uidl = string.match(chunk,rss_string.link2C)
 			end
 			--fucking default size
 			local size=2048

@@ -33,6 +33,9 @@ Available flags (that require pkg-config):
   -luafilesystem  use system lua5.1-filesystem
   -lua            use system lua5.1
 
+Available flags (that require fltk-config):
+  -fltk-ui        build updater user interface
+
 Valid targets are:
   all		- build it (remember to ./configure.sh first)
   clean		- clean the source tree

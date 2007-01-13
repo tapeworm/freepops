@@ -119,7 +119,7 @@ free(ans);
 lua_State* bootstrap(const char * username, struct popstate_t* p){
 	int rc = POPSERVER_ERR_UNKNOWN;
 	lua_State* l;
-	l = luabox_genbox(LUABOX_STANDARD|LUABOX_LOG|LUABOX_LUAFILESYSTEM);
+	l = luabox_genbox(LUABOX_LOG|LUABOX_LUAFILESYSTEM);
 
 	putenv("FREEPOPSLUA_PATH_UNOFFICIAL="FREEPOPSLUA_PATH_UNOFFICIAL);
 	putenv("FREEPOPS_VERSION="VERSION);
@@ -163,9 +163,11 @@ lua_State* bootstrap(const char * username, struct popstate_t* p){
 			putenv("FREEPOPSLUA_PATH_UPDATES=./");
 			}
 		putenv("FREEPOPSLUA_PATH=src/lua/");
+		putenv("FREEPOPSLUA_CPATH=updater-ui/fltk/");
 		putenv("FREEPOPSLUA_PATH_UPDATES=src/lua_updates/");
 	} else	{
 		putenv("FREEPOPSLUA_PATH="FREEPOPSLUA_PATH);
+		putenv("FREEPOPSLUA_CPATH="FREEPOPSLUA_CPATH);
 		putenv("FREEPOPSLUA_PATH_UPDATES="FREEPOPSLUA_PATH_UPDATES);
 	}
 

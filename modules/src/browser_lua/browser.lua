@@ -59,11 +59,11 @@
 -- <B>ssl_init_stuff()</B> : some stuff for SSL<BR/>
 --<BR/>
 
-MODULE_VERSION = "0.0.1"
-MODULE_NAME = "browser"
+MODULE_VERSION = "0.1.0"
+MODULE_NAME = "browser.browser"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=browser.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=browser.browser.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 require("curl")
@@ -128,7 +128,7 @@ end
 function Hidden.find_in_header(t,s)
 	local capture = "^("..s..")"
 	return table.foreachi(t,function (k,v) 
-		local _,_,x = string.find(v,capture)
+		local x = string.match(v,capture)
 		if x ~= nil then
 			return v
 		end
@@ -181,7 +181,7 @@ function Hidden.cookie_and_referer(self,url,gl_h)
 	self.referrer = url
 
 	table.foreach(gl_h,function(_,l)
-		local _,_,content = string.find(l,
+		local content = string.match(l,
 			"^[Ss][Ee][Tt]%-[Cc][Oo][Oo][Kk][Ii][Ee]%s*:%s*(.*)")
 		if content ~= nil then
 			local c = cookie.parse_cookies(content,u.host)
@@ -239,7 +239,7 @@ end
 -- gets the field Location: in a header table
 function Hidden.get_location(gl_h,url)
 	return table.foreach(gl_h,function(_,l)
-		local _,_,location = string.find(l,
+		local location = string.match(l,
 			"[Ll][Oo][Cc][Aa][Tt][Ii][Oo][Nn]%s*:%s*([^\r\n]*)")
 		if location ~= nil then
 			-- ah ah ah, what do you think? the RFC says that
@@ -272,7 +272,7 @@ end
 -- gets the field Refresh:'s URL in a header table
 function Hidden.get_refresh_location(gl_h)
 	return table.foreach(gl_h,function(_,l)
-		local _,_,location = string.find(l,
+		local location = string.match(l,
 			"[Rr][Ee][Ff][Rr][Ee][Ss][Hh]%s*:%s*[%d]+;[Uu][Rr][Ll]=([^\r\n]*)")
 		return location
 	end)
@@ -305,7 +305,7 @@ function Hidden.parse_header(self,gl_h,url)
 	if gl_h[1] == nil then
 		return Hidden.error("malformed HTTP header line: nil")
 	end
-	local _,_,ret = string.find(gl_h[1],"[^%s]+%s+(%d%d%d)")
+	local ret = string.match(gl_h[1],"[^%s]+%s+(%d%d%d)")
 	if ret == nil then
 		--print("STRANGE HEADER!")
 		table.foreach(gl_h,print)
@@ -447,7 +447,7 @@ function Hidden.mangle_location(self,loc)
 		local part_path = nil
 		local u = cookie.parse_url(self.referrer)
 		if u ~= nil then
-	                _,_,part_path = string.find(u.path or "/","(.*/)")
+	                part_path = string.match(u.path or "/","(.*/)")
 		end
                 loc = (part_path or "/") .. loc
 	end
@@ -465,6 +465,7 @@ end
 --<==========================================================================>--
 
 function Private.get_uri(self,url,exhed)
+	assert(url ~= nil,"get_uri can't be called on a nil uri")
 	local gl_b,gl_h = {},{}
 	
 	self.curl:setopt(curl.OPT_HTTPGET,1)
@@ -493,6 +494,7 @@ function Private.get_head_and_body(self,url,exhed)
 end
 
 function Private.custom_get_uri(self,url,custom,exhed)
+	assert(url ~= nil,"custom_get_uri can't be called on a nil uri")
 	local gl_b,gl_h = {},{}
 	
 	self.curl:setopt(curl.OPT_CUSTOMREQUEST,custom)
@@ -522,6 +524,7 @@ function Private.custom_post_uri(self,url,custom,post,exhed)
 end
 
 function Private.post_uri(self,url,post,exhed)
+	assert(url ~= nil,"post_uri can't be called on a nil uri")
 	local gl_b,gl_h = {},{}
 	
 	self.curl:setopt(curl.OPT_POST,1)
@@ -719,7 +722,7 @@ end
 
 --<==========================================================================>--
 
-module("browser")
+module("browser",package.seeall)
 
 ---
 -- Creates a new object.
@@ -758,7 +761,7 @@ end
 -- @return boolean.
 function ssl_enabled()
 	local s = curl.version()
-	local _,_,x = string.find(s,"([SsTt][SsLl][LlSs])")
+	local x = string.match(s,"([SsTt][SsLl][LlSs])")
 	return x ~= nil
 end
 

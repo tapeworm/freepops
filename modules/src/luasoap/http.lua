@@ -2,10 +2,10 @@
 -- this file is released under the same license as LUA 5.0 (MIT)
 
 MODULE_VERSION = "0.0.1"
-MODULE_NAME = "http.lua"
+MODULE_NAME = "soap.http"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=http.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=soap.http.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 require("browser") 

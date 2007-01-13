@@ -6,7 +6,7 @@ MODULE_VERSION = "0.0.1"
 MODULE_NAME = "version_comparer"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=version_comparer.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=version_comparer.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 
@@ -64,7 +64,7 @@ end
 
 --============================================================================--
 
-module("version_comparer")
+module("version_comparer",package.seeall)
 
 ---
 -- Compare version1 and version2.

@@ -229,7 +229,7 @@ end
 --
 --
 function mangle_body(s)
-	local _,_,x = string.find(s,"^%s*(<[Pp][Rr][Ee]>)")
+	local x = string.match(s,"^%s*(<[Pp][Rr][Ee]>)")
 	if x ~= nil then
 		local base = "http://" .. internal_state.b:wherearewe()
 		s = mimer.html2txtmail(s,base)
@@ -305,7 +305,7 @@ function lycos_parse_webmessage(pstate,msg)
 	
 	for i = 1,n do
 		--print("addo fino a " .. n)
-		local _,_,url = string.find(x:get(0,n-1),'href="([^"]*)"')
+		local url = string.match(x:get(0,n-1),'href="([^"]*)"')
 		attach[x:get(1,n-1)] = "http://" .. b:wherearewe() .. url
 		table.setn(attach,table.getn(attach) + 1)
 	end
@@ -499,7 +499,7 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s) 
-		local _,_,nex = string.find(s,lycos_string.nextC)
+		local nex = string.match(s,lycos_string.nextC)
 		if nex ~= nil then
 			uri = string.format(
 				lycos_string.next,
@@ -521,14 +521,14 @@ function stat(pstate)
 			return f,err
 		end
 
-		--local _,_,real_uri = string.find(f,lycos_string.loginC)
+		--local real_uri = string.match(f,lycos_string.loginC)
 
 		--local f,err = b:get_uri("http://" .. b:wherearewe() .. real_uri)
 		--if f == nil then
 		--	return f,err
 		--end
 
-		local _,_,c = string.find(f,lycos_string.session_errorC)
+		local c = string.match(f,lycos_string.session_errorC)
 		if c ~= nil then
 			internal_state.login_done = nil
 			session.remove(key())

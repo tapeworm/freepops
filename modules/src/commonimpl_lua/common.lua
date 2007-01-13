@@ -7,10 +7,10 @@ MODULE_VERSION = "0.0.1"
 MODULE_NAME = "common"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=common.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=common.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
-module("common")
+module("common",package.seeall)
 
 --============================================================================--
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  

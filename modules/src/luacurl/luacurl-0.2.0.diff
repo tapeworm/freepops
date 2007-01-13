@@ -1,0 +1,171 @@
+diff -ruN luacurl-0.2.0.orig/find_curl.sh luacurl-0.2.0/find_curl.sh
+--- luacurl-0.2.0.orig/find_curl.sh	1970-01-01 01:00:00.000000000 +0100
++++ luacurl-0.2.0/find_curl.sh	2006-09-26 09:21:09.000000000 +0200
+@@ -0,0 +1,31 @@
++#!/bin/bash
++
++ERRORMSG="unable_to_find_curl.h_you_should_edit_by_hand_the_curl_lua/Makefile"
++
++PREFIX=`curl-config --prefix`
++if [ -z "$PREFIX" ]; then
++	PATHS=`locate \*curl.h`
++	N=0
++	for X in $PATHS; do
++		N=`expr $N + 1`
++	done
++	if [ $N != 1 ]; then
++		echo $ERRORMSG
++	else
++		echo $PATHS
++	fi
++	
++else
++	HEADER="$PREFIX/include/curl/curl.h"
++	if [ -e $HEADER ]; then
++		echo $HEADER
++	else
++		HEADER="$PREFIX/include/curl.h"
++		if [ -e $HEADER ]; then
++			echo $HEADER
++		else
++			echo $ERRORMSG
++		fi
++	fi
++
++fi
+diff -ruN luacurl-0.2.0.orig/Makefile luacurl-0.2.0/Makefile
+--- luacurl-0.2.0.orig/Makefile	2006-09-02 18:21:29.000000000 +0200
++++ luacurl-0.2.0/Makefile	2006-09-26 09:21:57.000000000 +0200
+@@ -1,104 +1,35 @@
+-# TODO: support for abi&libtool, installation of lua-curl.h
++include $(CONFIG)
+ 
+-LIBNAME=liblua5.1-curl
+-LIBTOOL=libtool --silent --tag=CC
+-HEADER=/usr/include/curl/curl.h
+-PREFIX=/usr/local/
+-#LUA=lua50
+-LUA=lua5.1
+-LUADOC= luadoc
+-VERSION_INFO=0:0:0
+-
+-CONSTANTS:= curlopt.h curl_netrcopt.h curl_form.h curl_authopt.h 
+-CURL_CFLAGS:= $(shell curl-config --cflags 2>/dev/null)
+-CURL_LDFLAGS:= $(shell curl-config --libs 2>/dev/null)
+-REALSO:=$(LIBNAME).so.$(subst :,.,$(VERSION_INFO))
+-
+-# ------------------------------ lua5.1 stuff ---------------------------------
+-ifeq "$(LUA)" "lua5.1"
+-LUA_CFLAGS := $(shell pkg-config lua5.1 --cflags)
+-# This retrieves the name of the libtool convenience library for Lua
+-# (e.g. "/usr/lib/liblua5.1.la") used by --mode=link.
+-LUA_LIBTOOL_S := $(shell pkg-config lua5.1 --variable=libtool_lib)
+-LUA_LIBTOOL_D := $(LUA_LIBTOOL_S)
+-# this is the path where you'll eventually install the module
+-LUA_RPATH:=$(shell pkg-config lua5.1 --define-variable=prefix=$(PREFIX) \
+-	--variable=INSTALL_CMOD)
+-# this is the path where you'll eventually install the C header file
+-LUA_HPATH:=$(shell pkg-config lua5.1 --define-variable=prefix=$(PREFIX) \
+-	--variable=includedir)/lua5.1
+-LUA_DPATH:=$(PREFIX)/share/doc/luacurl/
+-LUA_LPATH:=$(PREFIX)/lib/
+-OBJS:= lua-curl.lo luabind.lo
++H=@
++LIBRARY=lib$(TARGET)$(STATICEXTENSION)
++ifeq "$(OS)" "Windows"
++	HEADER:=$(INCLUDEPATH)/curl/curl.h
++else
++	HEADER:=$(shell sh find_curl.sh)
++	# if this fails hack here #########################################
++	# HEADER=your path here
++	###################################################################
+ endif
++CONSTANTS:= curlopt.h curl_netrcopt.h curl_form.h curl_authopt.h 
++CURL_CFLAGS:= $(shell pkg-config libcurl --cflags 2>/dev/null)
++CURL_LDFLAGS:= $(shell pkg-config libcurl --libs 2>/dev/null)
+ 
+-# ------------------------------ lua50 stuff ---------------------------------
+-ifeq "$(LUA)" "lua50"
+-LUA_CFLAGS := $(shell pkg-config lua50 --cflags) 
+-LUA_LIBTOOL_D := $(shell pkg-config lualib50 --libs)
+-LUA_LIBTOOL_S := -llua50 -llualib50
+-LUA_RPATH:= $(PREFIX)/lib/lua/50/
+-LUA_HPATH:=$(PREFIX)/include/lua50/
+-LUA_DPATH:=$(PREFIX)/share/doc/luacurl/
+-LUA_LPATH:=$(PREFIX)/lib/
+-#compat-5.1.[ch] are not provided in this package
+-OBJS:= lua-curl.lo luabind.lo compat-5.1.lo
+-endif
++CFLAGS+=$(CURL_CFLAGS) -I$(PREFIX)/include
++LDFLAGS+=$(CURL_LDFLAGS)
++
++all: $(LIBRARY)
++	$(H)echo -n
+ 
+-# ------------------------- Here the Makefile --------------------------------
+-all: $(LIBNAME).la
+-constants:$(CONSTANTS)
+-doc: doc/curl.html
+-doc/curl.html: lua-curl.luadoc
+-	cp lua-curl.luadoc doc/curl.lua
+-	$(LUADOC) -d `pwd`/doc/ `pwd`/doc/*.lua
+-	rm -f doc/*.lua doc/index.html
+-
+-%.lo: %.c
+-	$(LIBTOOL) --mode=compile $(CC) -c -Wall -O2 $(LUA_CFLAGS) $<
+-
+-# link objects to make static and dynamic libraries.  The .so will be
+-# left in "./.libs/".  Note that the Lua library and its dependencies are
+-# not called out on the link line since they are assumed to be part of
+-# whatever our library is linked to.  We want to avoid duplicate library
+-# copies, which is a waste of space and can cause run-time problems.
+-$(LIBNAME).la curl.so: constants $(OBJS)
+-	$(LIBTOOL) --mode=link $(CC) \
+-		-rpath $(LUA_RPATH) -o $(LIBNAME).la \
+-		-version-info $(VERSION_INFO) \
+-		$(CURL_LDFLAGS) $(OBJS)
+-	ln -sf ./.libs/$(REALSO) curl.so
+-
+-# If all went well, we can dynamically load the module into Lua.  The
+-# following will load the library into the interpreter and call a function.
+-test: curl.so
+-	@echo "************************* lua dynamic ***************************"
+-	$(LUA) -l curl test.lua
+-	@echo "*****************************************************************"
+-
+-# install static and dynamic libraries for module to global location
+-install: $(LIBNAME).la
+-	mkdir -p $(LUA_RPATH)
+-	mkdir -p $(LUA_LPATH)
+-	$(LIBTOOL) --mode=install install $(LIBNAME).la \
+-		$(LUA_LPATH)/$(LIBNAME).la
+-	$(LIBTOOL) --finish $(LUA_LPATH)
+-	cd $(LUA_RPATH);\
+-		ln -s /$(subst $(DESTDIR),,$(LUA_LPATH))/$(REALSO) curl.so
+-	mkdir -p $(LUA_HPATH)
+-	$(LIBTOOL) --mode=install install lua-curl.h $(LUA_HPATH)/lua-curl.h
+-	mkdir -p $(LUA_DPATH)
+-	$(LIBTOOL) --mode=install install doc/curl.html $(LUA_DPATH)/curl.html
+-
+-clean:
+-	$(RM) -f *.o *.lo *.la *.so app doc/index.html doc/*.lua
+-	$(RM) -rf ./.libs/
+-	$(RM) -f $(CONSTANTS) static-stamp dynamic-stamp
+-
+-dist: clean
+-	DIR=`basename $$PWD`;\
+-		cd ..;\
+-		tar -cvzf $$DIR.tar.gz -X $$DIR/exclude-dist $$DIR
++$(LIBRARY): $(CONSTANTS) 
++	$(H)echo -n " compiling lua-curl.c -> "
++	$(H)$(CC) $(CFLAGS) -c lua-curl.c
++	$(H)echo "lua-curl.o"
++	$(H)echo -n " linking "
++	$(H)$(AR) -r $(LIBRARY) lua-curl.o 2>/dev/null
++	$(H)$(RANLIB) $(LIBRARY)
++	$(H)echo "$(LIBRARY)"
++	$(H)cp lua-curl.h $(PREFIX)/include
++	$(H)cp $(LIBRARY) $(PREFIX)/lib || true
+ 
+ # Constants genereated starting from the cURL headers:
+ 

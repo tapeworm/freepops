@@ -36,7 +36,7 @@
 //@{
 //!Wrapper for logging
 #define LOGIT(a,b,c,d,e...) {logit(a,b,c,d,e);}
-//! Wrapper for module init
+//! Wrapper for module init, logfile will be freed
 #define LOG_INIT(logfile) {log_init(logfile);}
 //! Wrapper for module shutdown
 #define LOG_END() {log_end();}
@@ -87,7 +87,7 @@
  */ 
 int logit(char* zone, char* preamble, char*filename,int line,char *str, ...);
 
-//! initialize the log module
+//! initialize the log module, logfile will be freed
 int log_init(char* logfile);
 
 //! shut down the module

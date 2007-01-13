@@ -5,10 +5,10 @@
 -- Incorporating jbobowski Gmail fix posted 26 April 2006.
 
 MODULE_VERSION = "0.0.1"
-MODULE_NAME = "cookie"
+MODULE_NAME = "browser.cookie"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=cookie.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=browser.cookie.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 local Private = {}
@@ -201,7 +201,7 @@ end
 
 --<==========================================================================>--
 
-module("browser.cookie")
+module("browser.cookie",package.seeall)
 
 -- parse
 function parse_cookies(s,h)
@@ -268,34 +268,48 @@ end
 -----------------------------------------------------------------------------
 function parse_url(url, default)
     -- initialize default parameters
-    local parsed = default or {}
+    local parsed = {}
+    for i,v in pairs(default or parsed) do parsed[i] = v end
     -- empty url is parsed to nil
-    if not url or url == "" then return nil end
+    if not url or url == "" then return nil, "invalid url" end
     -- remove whitespace
-    url = string.gsub(url, "%s", "")
+    -- url = string.gsub(url, "%s", "")
     -- get fragment
-    url = string.gsub(url, "#(.*)$", function(f) parsed.fragment = f end)
+    url = string.gsub(url, "#(.*)$", function(f)
+        parsed.fragment = f
+        return ""
+    end)
     -- get scheme
     url = string.gsub(url, "^([%w][%w%+%-%.]*)%:",
-        function(s) parsed.scheme = s end)
+        function(s) parsed.scheme = s; return "" end)
     -- get authority
-    url = string.gsub(url, "^//([^/]*)", function(n) parsed.authority = n end)
+    url = string.gsub(url, "^//([^/]*)", function(n)
+        parsed.authority = n
+        return ""
+    end)
     -- get query stringing
-    url = string.gsub(url, "%?(.*)", function(q) parsed.query = q end)
+    url = string.gsub(url, "%?(.*)", function(q)
+        parsed.query = q
+        return ""
+    end)
     -- get params
-    url = string.gsub(url, "%;(.*)", function(p) parsed.params = p end)
+    url = string.gsub(url, "%;(.*)", function(p)
+        parsed.params = p
+        return ""
+    end)
+    -- path is whatever was left
     if url ~= "" then parsed.path = url end
     local authority = parsed.authority
     if not authority then return parsed end
     authority = string.gsub(authority,"^([^@]*)@",
-        function(u) parsed.userinfo = u end)
+        function(u) parsed.userinfo = u; return "" end)
     authority = string.gsub(authority, ":([^:]*)$",
-        function(p) parsed.port = p end)
+        function(p) parsed.port = p; return "" end)
     if authority ~= "" then parsed.host = authority end
     local userinfo = parsed.userinfo
     if not userinfo then return parsed end
     userinfo = string.gsub(userinfo, ":([^:]*)$",
-        function(p) parsed.password = p end)
+        function(p) parsed.password = p; return "" end)
     parsed.user = userinfo
     return parsed
 end

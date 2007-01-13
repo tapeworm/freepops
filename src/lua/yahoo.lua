@@ -12,7 +12,7 @@ PLUGIN_VERSION = "0.1.9e"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=yahoo.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=yahoo.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
@@ -309,7 +309,7 @@ internalState = {
 
 -- Set to true to enable Raw Logging
 --
-local ENABLE_LOGRAW = true
+local ENABLE_LOGRAW = false
 
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
@@ -399,7 +399,7 @@ end
 -- Check to see if the GUI is the new one
 --
 function checkForNewGUI(browser, body)
-  local _, _, server = string.find(browser:whathaveweread(), globals.strRegExpMailServerNew)
+  local server = string.match(browser:whathaveweread(), globals.strRegExpMailServerNew)
   if (server ~= nil) then 
     log.dbg("Detected New Version of the Yahoo interface!\n")
     log.raw("Detected New Version of the Yahoo interface!\n")
@@ -469,8 +469,8 @@ function loginYahoo()
   local body, err = browser:get_uri(globals.strLoginPage)
   
   if body ~= nil then
-    _, _, challengeCode = string.find(body, globals.strLoginChallenge)
-    _, _, uVal = string.find(body, globals.strLoginU)
+    challengeCode = string.match(body, globals.strLoginChallenge)
+    uVal = string.match(body, globals.strLoginU)
   end
 
   if (uVal == nil) then
@@ -489,7 +489,7 @@ function loginYahoo()
 
   -- Check for redirect
   --
-  local _, _, str = string.find(body, globals.strRedirectNew)
+  local str = string.match(body, globals.strRedirectNew)
   if (str ~= nil) then
     body, err = browser:get_uri(str)
   end
@@ -509,7 +509,7 @@ function loginYahoo()
     return POPSERVER_ERR_NETWORK
   end
 
-  local _, _, str = string.find(body, '<input type="text" id="secword" name=".secword"')
+  local str = string.match(body, '<input type="text" id="secword" name=".secword"')
   if (str ~= nil) then
     log.error_print("Login Failed: Yahoo is using an image verification.  Please login through the web.")
     return POPSERVER_ERR_NETWORK
@@ -517,7 +517,7 @@ function loginYahoo()
 
   -- Check for invalid password
   -- 
-  local _, _, str = string.find(body, globals.strRetLoginBadPassword)
+  local str = string.match(body, globals.strRetLoginBadPassword)
   if str ~= nil then
     log.raw("------ Returned Page saying invalid password ------\n")
     log.raw(body)
@@ -528,7 +528,7 @@ function loginYahoo()
 
   -- Extract the mail server
   --
-  local _, _, str = string.find(body, globals.strRegExpMailServer)
+  local str = string.match(body, globals.strRegExpMailServer)
   if str == nil then
     log.error_print("Login Failed: Unable to find mail server")
     log.raw("Unable to find mail server: " .. body)
@@ -540,7 +540,7 @@ function loginYahoo()
   -- If we are using HTTPS, we need to look for the meta-refresh link
   -- returned by the login response and go to it.
   if (challengeCode ~= nil) then
-    _, _, str = string.find(body, globals.strRegExpMetarefresh)
+    str = string.match(body, globals.strRegExpMetarefresh)
     if (str ~= nil) then
       body, err = browser:get_uri(str)
       
@@ -576,7 +576,7 @@ end
 function loginNewYahoo(browser, body) 
   -- Let's get the crumb value
   --
-  local _, _, str = string.find(body, globals.strRegExpCrumbNew)
+  local str = string.match(body, globals.strRegExpCrumbNew)
   if str == nil then
     log.error_print("Yahoo - unable to parse out crumb value.  Deletion will fail.")
     log.raw("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: " .. 
@@ -762,7 +762,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
       local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
         internalState.strMBox, msgid);
       local str, _ = browser:get_uri(cmdUrl) 
-      _, _, str = string.find(str, globals.strMsgMarkUnreadPat)
+      str = string.match(str, globals.strMsgMarkUnreadPat)
       if str == nil then
         log.warn("Unable to get the url for marking message as unread.")
       else
@@ -1218,23 +1218,23 @@ function user(pstate, username)
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder or globals.strInbox
   if mbox ~= globals.strInbox then
-    local _, _, str = string.find(globals.strInboxPat, "(" .. mbox .. ")")
+    local str = string.match(globals.strInboxPat, "(" .. mbox .. ")")
     if str ~= nil then
       mbox = globals.strInbox
     else
-      _, _, str = string.find(globals.strBulkPat, "(" .. mbox .. ")")
+      str = string.match(globals.strBulkPat, "(" .. mbox .. ")")
       if str ~= nil then
         mbox = globals.strBulk
       else
-        _, _, str = string.find(globals.strTrashPat, "(" .. mbox .. ")")
+        str = string.match(globals.strTrashPat, "(" .. mbox .. ")")
         if str ~= nil then
           mbox = globals.strTrash
         else
-          _, _, str = string.find(globals.strSentPat, "(" .. mbox .. ")")
+          str = string.match(globals.strSentPat, "(" .. mbox .. ")")
           if str ~= nil then
             mbox = globals.strSent
           else
-            _, _, str = string.find(globals.strDraftPat, "(" .. mbox .. ")")
+            str = string.match(globals.strDraftPat, "(" .. mbox .. ")")
             if str ~= nil then 
               mbox = globals.strDraft
             end
@@ -1249,11 +1249,11 @@ function user(pstate, username)
   -- Get the view to use in STAT (ALL, UNREAD or FLAG)
   --
   local strView = (freepops.MODULE_ARGS or {}).view or "All"
-  local _, _, str = string.find(strView, globals.strViewAllPat)
+  local str = string.match(strView, globals.strViewAllPat)
   if str ~= nil then
     internalState.strView = globals.strViewAll
   else
-    _, _, str = string.find(strView, globals.strViewUnreadPat)
+    str = string.match(strView, globals.strViewUnreadPat)
     if str ~= nil then
       internalState.strView = globals.strViewUnread
     else
@@ -1424,7 +1424,7 @@ function quit_update(pstate)
 
   -- Let's get the crumb value
   --
-  local _, _, strCrumb = string.find(internalState.strStatCache, globals.strRegExpCrumb)
+  local strCrumb = string.match(internalState.strStatCache, globals.strRegExpCrumb)
   if strCrumb == nil then
     log.error_print("Yahoo - unable to parse out crumb value.  Deletion will fail.")
     log.raw("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: " .. 
@@ -1446,7 +1446,7 @@ function quit_update(pstate)
    
     -- Get the url to post to
     --
-    _, _, cmdUrl = string.find(internalState.strStatCache, globals.strDeletePostPat)
+    cmdUrl = string.match(internalState.strStatCache, globals.strDeletePostPat)
     if (cmdUrl == nil) then 
       log.error_print("Yahoo - unable to parse out delete url.  Deletion will fail.")
       log.raw("Yahoo - unable to parse out delete url.  Deletion will fail, Body: " .. 
@@ -1463,7 +1463,7 @@ function quit_update(pstate)
 
   -- Empty the trash
   --
-  local _, _, strAll = string.find(internalState.strStatCache, globals.strEmptyAllPat)
+  local strAll = string.match(internalState.strStatCache, globals.strEmptyAllPat)
   if internalState.bEmptyTrash then
     if strAll ~= nil then
       cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer) .. strAll
@@ -1549,14 +1549,14 @@ function stat(pstate)
   local function funcProcess(body)
     -- Find out if there are any messages
     -- 
-    local _, _, nomesg = string.find(body, globals.strMsgListNoMsgPat)
+    local nomesg = string.match(body, globals.strMsgListNoMsgPat)
     if (nomesg == nil) then
       return true, nil
     end
 
     -- Find only the HTML containing the message list
     --
-    local _, _, subBody = string.find(body, globals.strMsgListHTMLPattern)
+    local subBody = string.match(body, globals.strMsgListHTMLPattern)
     if (subBody == nil) then
       log.say("Yahoo Module needs to fix it's message list pattern matching.\n")
       return false, nil
@@ -1592,7 +1592,7 @@ function stat(pstate)
       -- Get the message id.  It's a series of a numbers followed by
       -- an underscore repeated.  
       --
-      _, _, msgid = string.find(msgid, globals.strMsgIDPattern) --'value="([%d-_]+)"')
+      msgid = string.match(msgid, globals.strMsgIDPattern) --'value="([%d-_]+)"')
       local uidl = string.gsub(msgid, "_[^_]-_[^_]-_", "_000_000_", 1);
       uidl = string.sub(uidl, 1, 60)
 
@@ -1607,8 +1607,8 @@ function stat(pstate)
       -- Convert the size from it's string (4k or 821b) to bytes
       -- First figure out the unit (KB or just B)
       --
-      local _, _, kbUnit = string.find(size, "([Kk])")
-      _, _, size = string.find(size, "([%d]+)[KkbB]")
+      local kbUnit = string.match(size, "([Kk])")
+      size = string.match(size, "([%d]+)[KkbB]")
       if not kbUnit then 
         size = math.max(tonumber(size), 0)
       else
@@ -1642,7 +1642,7 @@ function stat(pstate)
     -- Look in the body and see if there is a link for a previous page
     -- If so, change the URL
     --
-    local _, _, nextURL = string.find(body, globals.strMsgListPrevPagePattern)
+    local nextURL = string.match(body, globals.strMsgListPrevPagePattern)
     if nextURL ~= nil then
       cmdUrl = internalState.strMailServer .. nextURL
       return false
@@ -1667,7 +1667,7 @@ function stat(pstate)
 
     -- Is the session expired
     --
-    local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
+    local strSessExpr = string.match(body, globals.strRetLoginSessionExpired)
     if strSessExpr ~= nil then
       -- Invalidate the session
       --

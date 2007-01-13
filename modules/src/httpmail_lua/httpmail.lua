@@ -8,7 +8,7 @@ MODULE_VERSION = "0.0.1"
 MODULE_NAME = "httpmail"
 MODULE_REQUIRE_VERSION = "0.0.99"
 MODULE_LICENSE = "GNU/GPL"
-MODULE_URL = "http://www.freepops.org/download.php?file=httpmail.lua"
+MODULE_URL = "http://www.freepops.org/download.php?module=httpmail.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
  
 require("xml2table")
@@ -124,7 +124,7 @@ Private.R_folder_content_xml =
 
 --<=========================================================================>--
 	
-module("httpmail")
+module("httpmail",package.seeall)
 
 ---
 -- Resources mentioned in the answer.

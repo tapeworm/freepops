@@ -17,7 +17,7 @@ PLUGIN_VERSION = "0.0.44"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL	= "http://www.freepops.org/download.php?file=gmail.lua"
+PLUGIN_URL	= "http://www.freepops.org/download.php?module=gmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Rami Kattan", "EoinK"}
 PLUGIN_AUTHORS_CONTACTS = {"rkattan (at) gmail (.) com", "eoin.pops (at) gmail (.) com"}
@@ -198,7 +198,7 @@ function check_sanity(name,pass)
 		log.error_print("username must be from 6 to 30 chars")
 		return false
 	end
-	local _, _, x = string.find(name,"([^0-9A-Za-z%.%_%-])")
+	local x = string.match(name,"([^0-9A-Za-z%.%_%-])")
 	if x ~= nil then
 		log.error_print("username contains invalid character "..x.."\n")
 		return false
@@ -207,7 +207,7 @@ function check_sanity(name,pass)
 		log.error_print("password must be from 6 to 24 chars")
 		return false
 	end
-	local _, _, x = string.find(pass,"[^0-9A-Za-z%.%_%-אטילעש]")
+	local x = string.match(pass,"[^0-9A-Za-z%.%_%-אטילעש]")
 	if x ~= nil then
 		log.error_print("password contains invalid character "..x.."\n")
 		return false
@@ -306,7 +306,7 @@ function gmail_login()
 
 	-- Check for invalid password
 	-- 
-	local _, _, str = string.find(body, globals.strLoginFailed)
+	local str = string.match(body, globals.strLoginFailed)
 	if str ~= nil then
 		log.error_print("Login Failed: Invalid Password")
 		return POPSERVER_ERR_AUTH
@@ -315,7 +315,7 @@ function gmail_login()
 	local str = string.find(body, "<title>  Redirecting  </title>")
 	if str ~= nil then
 		local pattern = "<meta content=\"0; url='(.*)'"
-		local _, _, st2 = string.find(body, pattern)
+		local st2 = string.match(body, pattern)
 		st2 = string.gsub(st2, "&amp;", "&")
 
 		local body2, err2 = b:get_uri(st2)
@@ -342,19 +342,19 @@ end
 function auto_learn(s)
 	local correction = ""
 	
-	local _, _, x = string.find(s,"[^\r\n](\r\n)[^\r\n]")
+	local x = string.match(s,"[^\r\n](\r\n)[^\r\n]")
 	if x ~= nil then
 		-- no correction
 		correction = nil
 		--print("correnction nil")
 	end
-	local _, _, x = string.find(s,"[^\r\n](\r)[^\r\n]")
+	local x = string.match(s,"[^\r\n](\r)[^\r\n]")
 	if x ~= nil then
 		-- \r -> \r\n 
 		correction = "\r"
 		--print("correnction \\r")
 	end
-	local _, _, x = string.find(s,"[^\r\n](\n)[^\r\n]")
+	local x = string.match(s,"[^\r\n](\n)[^\r\n]")
 	if x ~= nil then
 		-- \n -> \r\n
 		correction = "\n"
@@ -652,7 +652,7 @@ function stat(pstate)
 			if not GetNew or (GetNew and iNew == "1") then
 				-- Check for conversations
 				--
-				_, _, subThreads = string.find(sFrom, "%((%d+)%)$")
+				subThreads = string.match(sFrom, "%((%d+)%)$")
 
 				-- TODO: before adding message, check also if sender is self
 				--	  important for threads...
@@ -732,7 +732,7 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s)
-		local _, _, iStart, iShow, iTotal = string.find(s, globals.strCmdMsgListChkNext)
+		local iStart, iShow, iTotal = string.match(s, globals.strCmdMsgListChkNext)
 
 		if (iStart == nil) then iStart = "0" end
 		if (iShow  == nil) then iShow  = "0" end

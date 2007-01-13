@@ -4,6 +4,13 @@
 -- $Id$
 ---------------------------------------------------------------------
 
+MODULE_VERSION = "0.0.1"
+MODULE_NAME = "soap.soap"
+MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_LICENSE = "GNU/GPL"
+MODULE_URL = "http://www.freepops.org/download.php?module=soap.soap.lua"
+MODULE_HOMEPAGE = "http://www.freepops.org/"
+
 require"lxp.lom"
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type

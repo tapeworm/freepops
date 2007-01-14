@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2a"
+PLUGIN_VERSION = "0.0.2b"
 PLUGIN_NAME = "fastmail.com"
-PLUGIN_REQUIRE_VERSION = "0.0.97"
+PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=fastmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

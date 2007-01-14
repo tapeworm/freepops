@@ -27,9 +27,9 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.7"
+PLUGIN_VERSION = "0.2.8"
 PLUGIN_NAME = "Libero.IT"
-PLUGIN_REQUIRE_VERSION = "0.0.97"
+PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=libero.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

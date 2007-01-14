@@ -126,7 +126,10 @@ dist-win-e-zip-step5:
 	$(H)cd _win_/freepops/;\
 		cp LUA/config.lua .;\
 		mkdir LUA_UNOFFICIAL;\
-		mkdir LUA_UPDATES
+		mkdir LUA_UPDATES;\
+		mkdir LUA_UPDATES/BROWSER;\
+		mkdir LUA_UPDATES/LXP;\
+		mkdir LUA_UPDATES/SOAP;\
 	#$(H)cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/
 	#$(H)cp _win_/freepops-$(VERSION)/doc/manual-it.pdf _win_/freepops/
 	

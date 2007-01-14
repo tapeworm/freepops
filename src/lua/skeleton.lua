@@ -7,7 +7,7 @@
 --  Written by --put Name here-- <--put email here-->
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "---put version here---"
+PLUGIN_VERSION = "---put_version_here---"
 PLUGIN_NAME = "---put name here---"
 PLUGIN_REQUIRE_VERSION = "---fill---"
 PLUGIN_LICENSE = "GNU/GPL"

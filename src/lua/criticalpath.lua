@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.3a"
+PLUGIN_VERSION = "0.0.3b"
 PLUGIN_NAME = "criticalpath.lua"
-PLUGIN_REQUIRE_VERSION = "0.0.97"
+PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?module=criticalpath.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

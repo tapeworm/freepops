@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2b"
+PLUGIN_VERSION = "0.0.2d"
 PLUGIN_NAME = "mail2world.com"
-PLUGIN_REQUIRE_VERSION = "0.0.97"
+PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?module=mail2world.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"

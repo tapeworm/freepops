@@ -8,9 +8,9 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "Lycos.IT (this plugin doesn't work!)"
-PLUGIN_REQUIRE_VERSION = "0.0.97"
+PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "-------"
 PLUGIN_HOMEPAGE = "---------"

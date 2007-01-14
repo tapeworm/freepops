@@ -74,13 +74,11 @@ install: all
 	$(H)cp src/freepopsd$(EXEEXTENSION) $(PREFIX)bin
 	$(H)cp src/lua/*.lua modules/include/*.lua config.lua \
 		$(PREFIX)share/freepops/lua/
-	$(H)for D in modules/include/*/; do\
-		N=`ls $$D/*.lua 2>/dev/null | wc -l`;\
-		if [ $$N -gt 0 ]; then \
-			cp -r $$D $(PREFIX)share/freepops/lua/;\
-			mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/`basename $$D`;\
-		fi;\
-	done
+	# keep these in sync with win32 installer
+	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/lxp
+	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/browser
+	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/soap
+
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
 	$(H)cp doc/freepops-updater-dialog.1  $(PREFIX)share/man/man1/
 	$(H)if [ ! -z "$(FLTKUI)" ]; then \

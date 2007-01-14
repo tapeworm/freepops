@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6h"
+PLUGIN_VERSION = "0.1.6i"
 PLUGIN_NAME = "hotmail.com"
-PLUGIN_REQUIRE_VERSION = "0.0.97"
+PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=hotmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

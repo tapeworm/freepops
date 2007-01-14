@@ -9,9 +9,9 @@
 -- ************************************************************************** --
 
 
-PLUGIN_VERSION = "0.0.9"
+PLUGIN_VERSION = "0.0.10"
 PLUGIN_NAME = "Supereva web mail"
-PLUGIN_REQUIRE_VERSION = "0.0.97"
+PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=supereva.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org"

@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: freepops 0.0.29-1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-12-23 16:43+0100\n"
+"Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
+"POT-Creation-Date: 2007-01-14 18:35+0100\n"
 "PO-Revision-Date: 2005-06-15 14:32+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
@@ -15,30 +15,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
-#.Type: boolean
-#.Description
-#:../freepops.templates:3
+#. Type: boolean
+#. Description
+#: ../freepops.templates:1001
 msgid "Start freepopsd automatically after each boot?"
 msgstr "Tự động khởi chạy trình freepopsd sau mỗi lần khởi động máy không?"
 
-#.Type: boolean
-#.Description
-#:../freepops.templates:3
+#. Type: boolean
+#. Description
+#: ../freepops.templates:1001
 msgid ""
 "The FreePOPs daemon can be started automatically after each boot for you. By "
 "default it will bind on port 2000, but you can change this behaviour "
 "editing /etc/default/freepops"
-msgstr "Có thể tự động khởi chạy trình nền (dæmon) FreePOPS sau khi khởi động máy, sau mỗi lần khởi động. Mặc định là trình nền này sẽ đóng kết đến cổng 2000, nhưng mà bạn có thể thay đổi hành vi này bằng cách sửa đổi tập tin «/etc/default/freepops»."
+msgstr ""
+"Có thể tự động khởi chạy trình nền (dæmon) FreePOPS sau khi khởi động máy, "
+"sau mỗi lần khởi động. Mặc định là trình nền này sẽ đóng kết đến cổng 2000, "
+"nhưng mà bạn có thể thay đổi hành vi này bằng cách sửa đổi tập tin «/etc/"
+"default/freepops»."
 
-#.Type: boolean
-#.Description
-#:../freepops.templates:11
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
 msgid "Create a chroot jail for freepops?"
 msgstr "Tạo một tù gốc khác (chroot jail) cho trình freepops không?"
 
-#.Type: boolean
-#.Description
-#:../freepops.templates:11
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
 msgid ""
 "FreePOPs can be launched in a chrooted environment to improve security. The "
 "jail will be created in /var/lib/freepops/chroot-jail/. This will also "
@@ -46,4 +50,31 @@ msgid ""
 "launch freepopsd. This is perfectly integrated with the init script, so you "
 "have to change nothing to automatically start freepopsd at boot. This "
 "feature is mostly untested, you are warned."
-msgstr "Có thể khởi chạy trình FreePOPs trong một môi trường chroot để tiến bộ sự bảo mật. Sẽ tạo tù ấy trong «/var/lib/freepops/chroot-jail/». Sẽ cũng tạo một tập lệnh «start.sh» (tập lệnh hệ vỏ «bắt đầu») vào gốc tù, mà nên được dùng để khởi chạy trình nền freepopsd. Tập lệnh này có được hợp nhất hoàn thành với tập lệnh init (lúc khởi động), vì vậy bạn không cần thay đổi gì để tự động khởi chạy trình nền freepopsd vào lúc khởi động máy. Tuy nhiên, chưa thử ra tính năng nhiều: hãy cẩn thận."
+msgstr ""
+"Có thể khởi chạy trình FreePOPs trong một môi trường chroot để tiến bộ sự "
+"bảo mật. Sẽ tạo tù ấy trong «/var/lib/freepops/chroot-jail/». Sẽ cũng tạo "
+"một tập lệnh «start.sh» (tập lệnh hệ vỏ «bắt đầu») vào gốc tù, mà nên được "
+"dùng để khởi chạy trình nền freepopsd. Tập lệnh này có được hợp nhất hoàn "
+"thành với tập lệnh init (lúc khởi động), vì vậy bạn không cần thay đổi gì để "
+"tự động khởi chạy trình nền freepopsd vào lúc khởi động máy. Tuy nhiên, chưa "
+"thử ra tính năng nhiều: hãy cẩn thận."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid "Remove local updates on upgrade?"
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"freepops-updater-fltk or freepops-updater-dialog can install local updates "
+"in  /var/lib/freepops/lua_updates. These updates are usually integrated in "
+"the next freepops release or can be downloaded again running the updater, so "
+"they can be safely removed.  Modules placed in /var/lib/freepops/lua_updates "
+"have higher priority than the ones in /usr/share/frepops/lua; if you don't "
+"remove them you may end up running outdated modules. Anyway the system "
+"administrator may use this mechanism to freeze some local  modifications "
+"with respect to FreePOPs updates."
+msgstr ""

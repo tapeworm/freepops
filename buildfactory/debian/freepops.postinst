@@ -54,7 +54,14 @@ case "$1" in
 			uniq > /etc/default/freepops
 	fi
 	rm $TMPFILE
-	
+
+	# clean of updates
+	db_get freepops/updates
+	if [ "$RET" = true ]; then
+		rm /var/lib/freeopos/lua_updates/*.lua
+		rm /var/lib/freeopos/lua_updates/*/*.lua
+	fi
+
 	# init script..........
 	db_get freepops/init
 	if [ "$RET" = true ]; then

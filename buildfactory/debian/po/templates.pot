@@ -1,22 +1,14 @@
-#
-#    Translators, if you are not familiar with the PO format, gettext
-#    documentation is worth reading, especially sections dedicated to
-#    this format, e.g. by running:
-#         info -n '(gettext)PO Files'
-#         info -n '(gettext)Header Entry'
-#
-#    Some information specific to po-debconf are available at
-#            /usr/share/doc/po-debconf/README-trans
-#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
-#
-#    Developers do not need to manually edit POT or PO files.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-12-23 16:43+0100\n"
+"Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
+"POT-Creation-Date: 2007-01-14 18:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,13 +18,13 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:3
+#: ../freepops.templates:1001
 msgid "Start freepopsd automatically after each boot?"
 msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:3
+#: ../freepops.templates:1001
 msgid ""
 "The FreePOPs daemon can be started automatically after each boot for you. By "
 "default it will bind on port 2000, but you can change this behaviour "
@@ -41,13 +33,13 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:11
+#: ../freepops.templates:2001
 msgid "Create a chroot jail for freepops?"
 msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:11
+#: ../freepops.templates:2001
 msgid ""
 "FreePOPs can be launched in a chrooted environment to improve security. The "
 "jail will be created in /var/lib/freepops/chroot-jail/. This will also "
@@ -55,4 +47,24 @@ msgid ""
 "launch freepopsd. This is perfectly integrated with the init script, so you "
 "have to change nothing to automatically start freepopsd at boot. This "
 "feature is mostly untested, you are warned."
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid "Remove local updates on upgrade?"
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"freepops-updater-fltk or freepops-updater-dialog can install local updates "
+"in  /var/lib/freepops/lua_updates. These updates are usually integrated in "
+"the next freepops release or can be downloaded again running the updater, so "
+"they can be safely removed.  Modules placed in /var/lib/freepops/lua_updates "
+"have higher priority than the ones in /usr/share/frepops/lua; if you don't "
+"remove them you may end up running outdated modules. Anyway the system "
+"administrator may use this mechanism to freeze some local  modifications "
+"with respect to FreePOPs updates."
 msgstr ""

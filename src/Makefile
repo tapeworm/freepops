@@ -197,7 +197,7 @@ clean:
 	$(H)rm -f $(CDEPFILES:%.c=.%.d) $(OBJ)\
 		$(LDEPFILES:%.pkg=.%.d) $(LDEPFILES:%.pkg=%.c) \
 		$(LDEPFILES:%.pkg=%.h) $(BINARY) \
-		lua_updates/* lua_unofficial/*
+		lua_updates/*lua lua_updates/*/*lua lua_unofficial/*lua
 
 	
 #############################################

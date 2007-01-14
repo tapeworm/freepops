@@ -58,8 +58,9 @@ case "$1" in
 	# clean of updates
 	db_get freepops/updates
 	if [ "$RET" = true ]; then
-		rm /var/lib/freeopos/lua_updates/*.lua
-		rm /var/lib/freeopos/lua_updates/*/*.lua
+		echo Removing local updates in /var/lib/freeopos/lua_updates/
+		rm -f /var/lib/freepops/lua_updates/*.lua
+		rm -f /var/lib/freepops/lua_updates/*/*.lua
 	fi
 
 	# init script..........

@@ -207,14 +207,15 @@ $(BINARY): $(OBJ) $(addsuffix .a,$(addprefix ../modules/lib/lib,$(LIBS)))
 #	$(H)$(RANLIB) ../modules/lib/libgetdate.a ../modules/lib/liblua.a
 	$(H)$(RANLIB) $(addsuffix .a,$(addprefix ../modules/lib/lib,$(filter-out mlex_lua,$(LIBSTOLINK))))
 ifeq "$(OS)" "Windows"
-	$(H)mkdir libfp
+	$(H)mkdir libfp || true
 	$(H)cp $(addsuffix .a,$(addprefix ../modules/lib/lib,$(LIBSTOLINK))) \
 		libfp
 	$(H)cd libfp; for X in *.a; do ar x $$X; done
 	$(H)cd libfp; $(DLLTOOL) -e ../exports.o -l ../libfp.lib *.o
 	$(H)$(CC) -o libfp.dll -shared exports.o libfp/*o \
-		`echo $(LDFLAGS)|sed 's/-l[^ ]*//'`
-	$(H)$(CC) -o $(BINARY) $(OBJ) -L. -lfp -lwsock32 -l$(CURLNAME)
+		`echo $(LDFLAGS)|sed 's/$(addprefix -l,$(LIBSTOLINK))//'`
+	$(H)$(CC) -o $(BINARY) $(OBJ) -L. \
+		-lfp `echo $(LDFLAGS)|sed 's/$(addprefix -l,$(LIBSTOLINK))//'`
 else
 	$(H)$(CC) -o $(BINARY) $(OBJ) $(LDFLAGS) 
 endif

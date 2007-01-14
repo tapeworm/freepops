@@ -78,7 +78,6 @@ install: all
 	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/lxp
 	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/browser
 	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/soap
-
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
 	$(H)cp doc/freepops-updater-dialog.1  $(PREFIX)share/man/man1/
 	$(H)if [ ! -z "$(FLTKUI)" ]; then \

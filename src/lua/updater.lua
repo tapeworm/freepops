@@ -39,6 +39,7 @@ internalState = {
   browser = nil,
   bClearCache = false,
   excludedPlugins = {},
+  pluginsData = {},
 }
 
 -- ************************************************************************** --
@@ -58,25 +59,27 @@ function makeHeader(plugin, version)
     "Message-Id: <" .. plugin .. "~" .. version .. ">\r\n"..
     "To: user-of-freepops@donot-reply.org\r\n" ..
     "Date: ".. makeDate() .. "\r\n" ..
-    "Subject: FreePops plugin update - " .. plugin .. ", Version " .. version .. "\r\n" ..
+    "Subject: FreePOPs module update - "..
+    	plugin..", Version "..version.."\r\n" ..
     "From: freepops-plugin-updater@donot-reply.org\r\n"..
-    "User-Agent: freepops ".. PLUGIN_NAME .. " plugin ".. PLUGIN_VERSION .."\r\n"
+    "User-Agent: freepops "..PLUGIN_NAME.." plugin "..PLUGIN_VERSION.."\r\n"
 end
 
 -- Build a mail body
 --
-function makeBody(plugin, version, nStatus, cause)
-  local str = "FreePOPs User,\r\n\r\nAn official plugin: " .. 
-    plugin .. " (Version: " ..  version .. ") has been detected.  "
+function makeBody(plugin, data, nStatus, cause)
+  local str = "FreePOPs User,\r\n\r\nA new version of the official module " .. 
+    plugin .. " (Version: " ..  data.version .. ") has been detected. "
 
   if nStatus then
-    str = str .. "It has been installed successfully."
+    str = str .. "It has been successfully downloaded from "..
+      data.url .. " and installed in "..data.local_path.."."
   else
     str = str .. "The plugin cannot be installed: " .. cause
   end
 
-  str = str .. "  If you have any questions, please see " ..
-    "the FreePOPs home page at " .. globals.strFreePOPsURL .. 
+  str = str .. "\r\n\r\nIf you have any questions, please see " ..
+    "the FreePOPs home page at http://www.freepops.org" .. 
     "\r\n\r\nThank you for using the program,\r\n\r\n" ..
     "The FreePOPs Team\r\n"
 
@@ -167,23 +170,29 @@ function stat(pstate)
 
   -- Fetch the list of plugins
   --
-  local plist = updater_cvs.list_modules("official",browser)
+  local plist = updater_php.list_modules("official",browser)
   if plist == nil then
     return POPSERVER_ERR_UNKNOWN
   end
 
-  for plugin, ver in pairs(plist) do
+  local pdata = {}
+  for _,plugin in pairs(plist) do
+    pdata[plugin]=updater_php.fetch_module_metadata(plugin,"official")
+  end
+
+  for plugin, data in pairs(pdata) do
     local size = 10240  -- Hard coded for 10k
-    local uidl = plugin .. "~" .. ver
+    local uidl = plugin .. "~" .. data.version
 
     if internalState.excludedPlugins[plugin] ~= true then
       -- Save the information
       --
       nMsgs = nMsgs + 1
-      log.dbg("Processed Plugin - Filename: " .. plugin .. ", Ver: " .. ver)
+      log.dbg("Processed Plugin - Filename: "..plugin..", Ver: "..data.version)
       set_popstate_nummesg(pstate, nMsgs)
       set_mailmessage_size(pstate, nMsgs, size)
       set_mailmessage_uidl(pstate, nMsgs, uidl)
+      internalState.pluginsData[plugin] = data
     end
   end
 
@@ -254,38 +263,28 @@ function retr(pstate, msg, data)
   local uidl = get_mailmessage_uidl(pstate, msg)
   local plugin = string.match(uidl, "([^~]+)~") 
   local version = string.match(uidl, "~(.*)")
+  local metadata = internalState.pluginsData[plugin]
+  local nStatus = metadata.can_update and metadata.should_update
+  local cause = metadata.why_cannot_update
   
-  local body = updater_cvs.fetch_module(plugin, replace, version,browser)
-
-  if body == nil then
-    return POPSERVER_ERR_UNKNOWN
-  else
-
-    local newVersion, requiredVersion = getNewVersion(body, plugin)
-    local oldVersion = updater_common.getLocalVersion(plugin)
-    local nStatus, cause = 
-      updater_common.checkForUpdate(plugin,requiredVersion,newVersion,oldVersion)
-    local path = updater_common.update_path_for(plugin)
-
   -- Replace the plugin
   --
   if nStatus then
-    nStatus,cause = updater_common.replace_module(plugin, body, path)
+    nStatus,cause = updater_php.fetch_module(plugin,"true","official",browser)
   end
 
   -- Alert the user -- XXX move away
   --
   mimer.pipe_msg(
     makeHeader(plugin, version), 
-    makeBody(plugin, version, nStatus,cause), 
+    makeBody(plugin, metadata, nStatus,cause), 
     nil, 
-    strFreePOPsURL, 
+    "http://www.freepops.org/", 
     nil, browser, 
     function(s)
       popserver_callback(s, data)
     end, {})
     return POPSERVER_ERR_OK
-  end
 end
 
 -- Top Command (like retr)
@@ -336,6 +335,10 @@ function init(pstate)
   -- version comparer module
   --
   require("version_comparer")
+
+  -- the updater engine
+  --
+  require "updater_php"
 
   -- Run a sanity check
   --

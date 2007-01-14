@@ -153,6 +153,7 @@ local operations = {
 local list_modules_doc = [[
 parameters: 
 	(official|contrib) : The type of module / default official
+	browser object: Lua browser object / default create a new one
 
 answer: A list of "module: string(1)" lines]]
 local fetch_module_metadata_doc = [[
@@ -178,6 +179,7 @@ parameters:
 	string : The name of the module
 	(true|false) : Install the module / default print it
 	(official|contrib) : The type of module / default official
+	browser object: Lua browser object / default create a new one
 
 answer:
 	If an error occurred: "error: string"

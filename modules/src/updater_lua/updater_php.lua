@@ -27,9 +27,9 @@ module("updater_php")
 -- Returns a list of module names that are available upstream.
 -- @param kind string official of contrib.
 -- @return table the list of modules, or nil plus an error message.
-function list_modules(kind)
+function list_modules(kind,b)
 	kind = kind or "official"
-	local b = browser.new()
+	local b = b or browser.new()
 	local url = string.format(list_URL,kind)
 	local data, err = b:get_uri(url)
 	if data == nil then
@@ -84,19 +84,18 @@ end
 -- @param name string the module name.
 -- @param substitute boolean true to substitute it, that is putting hte new version somewhere that overrides the original one.
 -- @return string "" if substitute and no errors in writing, nil, err if some error occurred, a huge string if not substitute and no errors.
-function fetch_module(name,substitute,kind)
+function fetch_module(name,substitute,kind,b)
 	kind = kind or "official"
 	local typ
 	if kind == "official" then typ = "module" else typ = "contrib" end
-	local b = browser.new()
+	local b = b or browser.new()
 	local url = string.format(getfile_URL,typ,name)
 	local data,err = b:get_uri(url)
 	if not data then return nil, "Fetching: "..url.."\n"..err end
 	if substitute == "true" then
 		local path = uc.update_path_for(name)
-    		-- XXX check the return code
-		uc.replace_module(name,data,path)
-		return ""
+		local ok, err = uc.replace_module(name,data,path)
+		if ok then return "" else return nil, err end
 	else
 		return data
 	end

@@ -359,7 +359,7 @@ function freepops.choose_module(d)
 			found, where, name, args = true, wh, unoff, {}
 		end
 	end
-	
+
 	return name, args, where 
 end
 

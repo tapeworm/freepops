@@ -129,7 +129,7 @@ diff -ruN luadoc/analyze.lua luadoc.new/analyze.lua
  
  function write_doc (doc_table, filter_table)
 -   dofile "tab2str.lua"
-+   dofile "/home/tassi/Projects/freepops/svn/freepops/modules/bin/luafiles//tab2str.lua"
++   dofile "@@LUADOC_HOME@@/tab2str.lua"
     write (t2s (doc_table, "   "))
  end
  
@@ -357,7 +357,7 @@ diff -ruN luadoc/conf.lua luadoc.new/conf.lua
 --- luadoc/conf.lua	1970-01-01 01:00:00.000000000 +0100
 +++ luadoc.new/conf.lua	2006-10-30 22:03:06.000000000 +0100
 @@ -0,0 +1,2 @@
-+freepops.MODULES_PREFIX = {"/home/tassi/Projects/freepops/svn/freepops/modules/bin/luafiles/"}
++freepops.MODULES_PREFIX = {"@@LUADOC_HOME@@"}
 +freepops.MODULES_PREFIX_UNOFFICIAL = {}
 diff -ruN luadoc/luadoc-compatibility.lua luadoc.new/luadoc-compatibility.lua
 --- luadoc/luadoc-compatibility.lua	1970-01-01 01:00:00.000000000 +0100
@@ -431,12 +431,12 @@ diff -ruN luadoc/luadoc.lua luadoc.new/luadoc.lua
 @@ -1,12 +1,13 @@
  #!/usr/local/bin/lua -f
  
-+dofile "/home/tassi/Projects/freepops/svn/freepops/modules/bin/luafiles//luadoc-compatibility.lua"
++dofile "@@LUADOC_HOME@@/luadoc-compatibility.lua"
 +
  -- Load modules.
 ---LUADOC_HOME = "/usr/local/luadoc"
 -LUADOC_HOME = "."
-+LUADOC_HOME = "/home/tassi/Projects/freepops/svn/freepops/modules/bin/luafiles/"
++LUADOC_HOME = "@@LUADOC_HOME@@"
  LUADOC_SUB = LUADOC_HOME.."/sub.lua"
  LUADOC_CMP = LUADOC_HOME.."/cmp.lua"
 -assert (dofile (LUADOC_HOME.."/analyze.lua"))

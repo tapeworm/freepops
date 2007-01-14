@@ -3,8 +3,14 @@ freepops (0.2.0-1) unstable; urgency=low
   * new upstream release: package splitted to separate the updaters, some of
     them are X11 dependent from the simple server that is still a simple
     daemon non dependent on X11.
+  * added debconf template to ask the user if locally installed updates in
+    /var/lib/freepops/lua_updates have to be removed on upgrade (in the
+    postinst script).
+  * added it.po translation fo the debconf template.
+  * fixed ancient bug of removing /var/lib/freepops in the prerm script
+    even if these directories belong to the package.
 
- -- Enrico Tassi <gareuselesinge@debian.org>  Tue, 17 Oct 2006 23:53:11 +0200
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sun, 14 Jan 2007 19:17:20 +0100
 
 freepops (0.0.99-1) unstable; urgency=low
 

@@ -29,6 +29,7 @@ dist-zip-gnutls: dist-win-e-zip-gnutls
 
 dist-win-e-zip-step1:
 	$(H)mkdir -p _win_/freepops/LUA/
+	$(H)mkdir -p _win_/freepops/C/
 	$(H)[ -d _win_/freepops-$(VERSION) ] || \
 		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _win_
 
@@ -48,7 +49,8 @@ dist-win-e-zip-step3:
 	$(H)$(MAKE) -C win CONFIG=../_win_/freepops-$(VERSION)/config
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/src/libfp.dll  _win_/freepops
-	$(H)cp _win_/freepops-$(VERSION)/updater-ui/fltk/*dll _win_/freepops
+	$(H)cp _win_/freepops-$(VERSION)/updater-ui/fltk/updater_fltk.dll \
+		_win_/freepops/C
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/LUA/
@@ -97,13 +99,17 @@ dist-win-e-zip-step4-gnutls:
 
 dist-win-e-zip-step5:
 	$(H)STRIP=`grep ^STRIP _win_/freepops-$(VERSION)/config|cut -d = -f 2`;\
-		$$STRIP _win_/freepops/*.exe _win_/freepops/*.dll
+		$$STRIP _win_/freepops/*.exe \
+			_win_/freepops/*.dll \
+			_win_/freepops/C/*.dll
 
 	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \
 		_win_/freepops/freepops.nsi
 
 	$(H)xpm2wico -f freepops-setup.xpm _win_/freepops/freepops-setup.ico
 	$(H)xpm2wico -f freepops-remove.xpm _win_/freepops/freepops-remove.ico
+	$(H)xpm2wico -f ../updater-ui/fltk/freepops-updater-fltk-32.xpm \
+		_win_/freepops/freepops-updater.ico
 
 	# NSIS is now a debian package :)
 	#

@@ -37,31 +37,21 @@ endif
 ifeq "$(OS)" "Windows"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"lua/\"
 	CFLAGS+= -DFREEPOPSLUA_CPATH=\"c/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UPDATES=\"lua_updates/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"lua_unofficial/\"
 else
 ifeq "$(OS)" "Darwin"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
 	CFLAGS+= -DFREEPOPSLUA_CPATH=\"c/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UPDATES=\"src/lua_updates/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"src/lua_unofficial/\"
 else
 ifeq "$(OS)" "Darwin-static"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
 	CFLAGS+= -DFREEPOPSLUA_CPATH=\"c/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UPDATES=\"src/lua_updates/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"src/lua_unofficial/\"
 else
 #ifeq "$(OS)" "BeOS"
 #	CFLAGS+= -DFREEPOPSLUA_PATH=\"$HOME/config/settings/freepops/lua/\"
-#	CFLAGS+= -DFREEPOPSLUA_PATH_UPDATES=\"$HOME/config/settings/freepops/lua_updates/\"
-#	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"$HOME/config/settings/freepops/lua_unofficial/\"
-#
+#	CFLAGS+= -DFREEPOPSLUA_PATH=\"$HOME/config/settings/freepops/c/\"
 #else
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"$(PREFIX)share/freepops/lua/\"
 	CFLAGS+= -DFREEPOPSLUA_CPATH=\"$(PREFIX)lib/freepops/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UPDATES=\"/var/lib/freepops/lua_updates/\"
-	CFLAGS+= -DFREEPOPSLUA_PATH_UNOFFICIAL=\"/var/lib/freepops/lua_unofficial/\"
 #endif
 endif
 endif
@@ -71,7 +61,6 @@ ifeq "$(OS)" "Cygwin"
 	CFLAGS+= -I/usr/include
 endif
 
-#CURL_LD_FLAGS=$(shell curl-config --libs || true)
 ifeq "$(CURL_LD_FLAGS)" ""
 	CURL_LD_FLAGS= -lcurl
 endif
@@ -218,12 +207,14 @@ $(BINARY): $(OBJ) $(addsuffix .a,$(addprefix ../modules/lib/lib,$(LIBS)))
 #	$(H)$(RANLIB) ../modules/lib/libgetdate.a ../modules/lib/liblua.a
 	$(H)$(RANLIB) $(addsuffix .a,$(addprefix ../modules/lib/lib,$(filter-out mlex_lua,$(LIBSTOLINK))))
 ifeq "$(OS)" "Windows"
-	mkdir libfp
-	cp $(addsuffix .a,$(addprefix ../modules/lib/lib,$(LIBSTOLINK))) libfp
-	cd libfp; for X in *.a; do ar x $$X; done
-	cd libfp; $(DLLTOOL) -e ../exports.o -l ../libfp.lib *.o
-	$(CC) -o libfp.dll -shared exports.o libfp/*o `echo $(LDFLAGS)|sed 's/-l[^ ]*//'`
-	$(CC) -o $(BINARY) $(OBJ) -L. -lfp -lwsock32 -l$(CURLNAME)
+	$(H)mkdir libfp
+	$(H)cp $(addsuffix .a,$(addprefix ../modules/lib/lib,$(LIBSTOLINK))) \
+		libfp
+	$(H)cd libfp; for X in *.a; do ar x $$X; done
+	$(H)cd libfp; $(DLLTOOL) -e ../exports.o -l ../libfp.lib *.o
+	$(H)$(CC) -o libfp.dll -shared exports.o libfp/*o \
+		`echo $(LDFLAGS)|sed 's/-l[^ ]*//'`
+	$(H)$(CC) -o $(BINARY) $(OBJ) -L. -lfp -lwsock32 -l$(CURLNAME)
 else
 	$(H)$(CC) -o $(BINARY) $(OBJ) $(LDFLAGS) 
 endif
@@ -233,20 +224,6 @@ endif
 .%.d:%.c
 	$(H)echo " building dep for $<"
 	$(H)$(CC) $(CFLAGS) -MM $< > $@;
-
-.%.d:%.pkg
-	$(H)echo " building dep for $<"
-	$(H)echo "$(subst .pkg,.o,$<) : $< " > $@ 
-
-%.o:%.pkg
-	$(H)echo -n " processing $< -> "
-	$(H)$(PREFIX)/bin/tolua++ -S -H $(subst .pkg,.h,$<) -o $(subst .pkg,.c,$<) $<
-	$(H)echo "$(subst .pkg,.c,$<)"
-	$(H)echo -n " compiling $(subst .pkg,.c,$<) -> "
-	$(H)$(CC) $(CFLAGS) -c $(subst .pkg,.c,$<) || \
-		(mv -f $(subst .pkg,.c,$<) $(subst .pkg,.c,$<)~;exit 1)
-	$(H)mv -f $(subst .pkg,.c,$<) $(subst .pkg,.c,$<)~ 
-	$(H)echo "$@"
 
 %.o:%.c
 	$(H)echo -n " compiling $< -> "

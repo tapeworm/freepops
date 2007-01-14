@@ -95,8 +95,10 @@ Section "FreePOPs (required)"
   File "*.dll"
   File "*.txt"
   File "*.vbs"
+  File "*.ico"
   File "LUA/config.lua"
   File /r "LUA"
+  File /r "C"
   CreateDirectory $INSTDIR\LUA_UNOFFICIAL
   CreateDirectory $INSTDIR\LUA_UPDATES
   ; Write the installation path into the registry
@@ -124,6 +126,9 @@ Section "Start Menu Shortcuts"
   SetOverwrite off
   CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs.lnk" \
   	"$INSTDIR\freepopsd.exe" "" "$INSTDIR\freepopsd.exe" 0
+  CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs-updater.lnk" \
+  	"$INSTDIR\freepopsd.exe" "-e updater.lua fltk" \
+	"$INSTDIR\freepops-updater.ico"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Debug\FreePOPs -vv (verbose log).lnk" \
   	"$INSTDIR\freepopsd.exe" "-vv" "$INSTDIR\freepopsd.exe" 0
 
@@ -193,8 +198,11 @@ Section "Uninstall"
   Delete $INSTDIR\*.pdf
   Delete $INSTDIR\*.lua
   Delete $INSTDIR\*.vbs
+  Delete $INSTDIR\*.ico
   Delete $INSTDIR\LUA\*.lua
+  Delete $INSTDIR\C\*.dll
   RMDir $INSTDIR\LUA
+  RMDir $INSTDIR\C
   ; remove shortcuts, if any.
   Delete "$SMPROGRAMS\FreePOPs\*.*"
   Delete "$SMPROGRAMS\FreePOPs\Debug\*.*"

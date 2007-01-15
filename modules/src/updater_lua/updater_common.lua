@@ -160,6 +160,7 @@ local fetch_module_metadata_doc = [[
 parameters: 
 	string : The name of the module
 	(official|contrib) : The type of module / default official
+	browser object: Lua browser object / default create a new one
 
 answer: 
 	"version: string"

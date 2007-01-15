@@ -177,7 +177,7 @@ function stat(pstate)
 
   local pdata = {}
   for _,plugin in pairs(plist) do
-    pdata[plugin]=updater_php.fetch_module_metadata(plugin,"official")
+    pdata[plugin]=updater_php.fetch_module_metadata(plugin,"official",browser)
   end
 
   for plugin, data in pairs(pdata) do

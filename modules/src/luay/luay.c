@@ -126,6 +126,12 @@ switch(x)\
 		lua_pushlightuserdata(s,p);\
 		}\
 	break;\
+	case 'v':\
+		{\
+		int v = va_arg(vargs,int);\
+		lua_pushvalue(s,v);\
+		}\
+	break;\
 	default:\
 		goto error;\
 	break;\
@@ -187,6 +193,7 @@ switch(x)\
 		*p = lua_touserdata(s,base+1);\
 		}\
 	break;\
+	case 'v': break;\
 	default:\
 		goto error;\
 	break;\
@@ -277,10 +284,7 @@ if(rc != 0)
 // pop returns
 if(nret > 0)
 	for(i++;args[i] != '\0';i++)
-		{
-		if (args[i] != '.')
-			luay_poparg(s,args[i],vargs);
-		}
+		luay_poparg(s,args[i],vargs);
 
 // empty the stack (needed for the c function)
 lua_remove(s,base);

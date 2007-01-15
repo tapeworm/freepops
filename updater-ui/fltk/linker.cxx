@@ -33,14 +33,6 @@ extern "C" {
 static lua_State* L;
 
 void updater_init(lua_State*l){
-	/* log_set_verbosity(verbosity);
-	LOG_INIT(strdup("stdout"));
-	L = bootstrap(NULL,NULL);
-	if (L == NULL) {
-		fl_alert(_("Unable to initialize FreePOPs. Quitting."));
-		exit(1);
-	}
-	*/
 	L=l;
 	luay_call(L,"s|","require","updater_common");
 	luay_call(L,"s|","require","updater_php");
@@ -63,6 +55,7 @@ void updater_init(lua_State*l){
 static int upgradable;
 static int metadata;
 static int modules;
+static int browser;
 
 // used if failed fetching the plugin metadata
 static void push_fake_metadata(lua_State* L, const char* string){
@@ -79,18 +72,20 @@ static void push_fake_metadata(lua_State* L, const char* string){
 	lua_setfield(L,TAB,"can_update");
 }
 
-// leaves on the stack 3 tables
+// leaves on the stack 3 tables and a browser object
 void updater_download_metadata(){
 	lua_pop(L,lua_gettop(L));
 	updater_prg_page_download->value(0);
 	updater_prg_page_download->copy_label(_("Downloading: plugin list"));
 	Fl::check();
+	// the browser object
+	val(BROWSER, luay_call(L,"|","browser.new"));
 	// the table to contain all metadata
 	val(METADATA,lua_newtable(L));
 	// the table to contain al modules that can be updated
 	val(UPGRADABLE,lua_newtable(L));
 	// te table that lists all plugin names
-	int rc = luay_call(L,"s|..","updater_php.list_modules","official");
+	int rc = luay_call(L,"s|vv","updater_php.list_modules","official");
 	if (rc != 0 || lua_isnil(L,-2)) {
 		fl_alert(_("Unable to download the module list:\n%s"),
 			lua_tostring(L,-1));
@@ -112,8 +107,8 @@ void updater_download_metadata(){
 		lua_pop(L,1);
 		// redraw
 		Fl::check(); 
-		int rc = luay_call(L,"s|..","updater_php.fetch_module_metadata",
-			lua_tostring(L,-1));
+		int rc = luay_call(L,"ssv|vv","updater_php.fetch_module_metadata",
+			lua_tostring(L,-1),"official",BROWSER);
 		if (rc != 0 || lua_isnil(L,-2)) {
 			push_fake_metadata(L,lua_tostring(L,-1));
 			lua_pushnil(L); // fake error message
@@ -162,6 +157,7 @@ void updater_download_metadata(){
 	upgradable=UPGRADABLE;
 	metadata=METADATA;
 	modules=MODULES;
+	browser=BROWSER;
 }
 
 void updater_download(){
@@ -189,8 +185,8 @@ void updater_download(){
 				lua_setfield(L,REPORT,lua_tostring(L,NAME));
 			} else {
 				// try the update
-				int rc = luay_call(L,"ss|..", "updater_php.fetch_module",
-					lua_tostring(L,NAME),"true");
+				int rc = luay_call(L,"sssv|vv", "updater_php.fetch_module",
+					lua_tostring(L,NAME),"true","official",browser);
 				if (rc != 0 || lua_isnil(L,-2)) {
 					fl_alert(_("Error downloading %s:\n%s"),
 						lua_tostring(L,NAME),lua_tostring(L,-1));

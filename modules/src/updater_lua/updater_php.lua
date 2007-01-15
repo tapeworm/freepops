@@ -26,6 +26,7 @@ module("updater_php")
 --- 
 -- Returns a list of module names that are available upstream.
 -- @param kind string official of contrib.
+-- @param b browser the browser, a new one is created if nil.
 -- @return table the list of modules, or nil plus an error message.
 function list_modules(kind,b)
 	kind = kind or "official"
@@ -46,12 +47,14 @@ end
 ---
 -- Get all infos regarding a module.
 -- @param name string a module name.
+-- @param kind string official of contrib.
+-- @param b browser the browser, a new one is created if nil.
 -- @return table with the following fields: version require_version url local_path local_version can_update why_cannot_update should_update. 
-function fetch_module_metadata(name,kind)
+function fetch_module_metadata(name,kind,b)
 	kind = kind or "official"
 	local typ
 	if kind == "official" then typ = "module" else typ = "contrib" end
-	local b = browser.new()
+	local b = b or browser.new()
 	local url = string.format(getxml_URL,typ,name)
 	local body, err = b:get_uri(url)
 	if not body then return nil, err end
@@ -83,6 +86,8 @@ end
 -- Downloads the module.
 -- @param name string the module name.
 -- @param substitute boolean true to substitute it, that is putting hte new version somewhere that overrides the original one.
+-- @param kind string official of contrib.
+-- @param b browser the browser, a new one is created if nil.
 -- @return string "" if substitute and no errors in writing, nil, err if some error occurred, a huge string if not substitute and no errors.
 function fetch_module(name,substitute,kind,b)
 	kind = kind or "official"

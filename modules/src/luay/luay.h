@@ -21,7 +21,8 @@
  *  \param args is a formt string. It tells both passed arguments and 
  *  	expected arguments. The '|' is used as a separator for in/out 
  *  	parameters. Type specifyers are d for int, s for char*, p for
- *  	void*(lightuserdata), f for double, b for bool. 
+ *  	void*(lightuserdata), f for double, b for bool, v for lua value
+ *  	(as stack position, as output the value is left as is).
  *  	An example of format string is
  *  	"spf|dp" says that the function takes a string, a userdata and a 
  *  	double(lua_Number) and return an integer(trucated lua_Number) and 

@@ -78,6 +78,24 @@ install: all
 	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/lxp
 	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/browser
 	$(H)mkdir -p $(DESTDIR)var/lib/freepops/lua_updates/soap
+	$(H)mkdir -p $(PREFIX)share/freepops/lua/lxp/
+	$(H)mkdir -p $(PREFIX)share/freepops/lua/browser/
+	$(H)mkdir -p $(PREFIX)share/freepops/lua/soap/
+	$(H)if [ -d modules/include/lxp/ ]; then \
+		for X in modules/include/lxp/*.lua; do \
+			cp $$X $(PREFIX)share/freepops/lua/lxp/; \
+		done; \
+	fi
+	$(H)if [ -d modules/include/browser/ ]; then \
+		for X in modules/include/browser/*.lua; do \
+			cp $$X $(PREFIX)share/freepops/lua/browser/; \
+		done; \
+	fi	
+	$(H)if [ -d modules/include/soap/ ]; then \
+		for X in modules/include/soap/*.lua; do \
+			cp $$X $(PREFIX)share/freepops/lua/soap/; \
+		done; \
+	fi
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
 	$(H)cp doc/freepops-updater-dialog.1  $(PREFIX)share/man/man1/
 	$(H)if [ ! -z "$(FLTKUI)" ]; then \

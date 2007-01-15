@@ -7,7 +7,7 @@
 RC=""
 
 # XXX should be written at config time
-CORE='src/freepopsd'
+CORE='freepopsd'
 FREEPOPS="$CORE -e updater.lua php"
 PREAMBLE="dialog --backtitle FreePOPs_Updater"
 GAUGE='--defaultno --gauge %s 10 70'
@@ -118,7 +118,13 @@ function field(){
 function main(){
 parse_args "$@"
 local MODULES=`mk_temp`
-$FREEPOPS list_modules official > $MODULES
+local ERR=`mk_temp`
+$FREEPOPS list_modules official > $MODULES 2>$ERR
+if [ $? != 0 ]; then
+	echo "Error fetching modules list"
+	cat $ERR
+	exit 1
+fi
 local N=`wc -l $MODULES | cut -d ' ' -f 1`
 local I=0
 local -a METADATA
@@ -132,7 +138,13 @@ printf -- " $GAUGE " "'Checking for updates...'" >> $CMD
 	((perc=$I \* 100 / $N))
 	echo $perc
 	METADATA=`mk_temp`
-	$FREEPOPS fetch_module_metadata $M > $METADATA 2>/dev/null
+	local ERR=`mk_temp`
+	$FREEPOPS fetch_module_metadata $M > $METADATA 2>$ERR
+	if [ $? != 0 ]; then
+		echo "Error fetching '$M' metadata" 
+		cat $ERR
+		exit 1
+	fi
 	local VREQ=`field $METADATA require_version`
 	local VLOC=`field $METADATA local_version`
 	local VUPS=`field $METADATA version`
@@ -165,7 +177,13 @@ if [ -s $CHECKLIST_INPUT ]; then
 	checklist "'Select the plugins to update.'" $CHECKLIST_INPUT > $SELECTED
 
 	for X in `cat $SELECTED`; do
-		$FREEPOPS fetch_module $X 'true' 
+		local ERR=`mk_temp`
+		$FREEPOPS fetch_module $X 'true' 2>$ERR
+		if [ $? != 0 ]; then
+			echo "Error fetching '$M'" 
+			cat $ERR
+			exit 1
+		fi
 	done
 
 else

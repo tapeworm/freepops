@@ -218,13 +218,10 @@ dist-deb-real:
 	$(H)cp _deb_/*.tar.gz _deb_/*.deb _deb_/*.dsc _deb_/*.changes \
 		_deb_/*.diff.gz ../dist-deb/freepops
 	$(H)lintian -vi ../dist-deb/freepops/*.changes ||true
-	$(H)cd ../dist-deb/freepops/; \
-		echo -e "freepops optional mail\nfreepops-doc optional mail" \
-			> overridefile
 	$(H)cd ../dist-deb/freepops/;\
-		dpkg-scanpackages . overridefile > Packages
+		dpkg-scanpackages . /dev/null > Packages
 	$(H)cd ../dist-deb/freepops/;\
-		dpkg-scansources . overridefile > Sources
+		dpkg-scansources . /dev/null > Sources
 	$(H)cd ../dist-deb/freepops/;gzip -f Packages Sources
 
 	$(H)rm -rf _deb_

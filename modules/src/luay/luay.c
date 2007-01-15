@@ -198,7 +198,8 @@ switch(x)\
 		goto error;\
 	break;\
 	}\
-lua_remove(s,base+1);\
+if (x != 'v') \
+	lua_remove(s,base+1);\
 }\
 
 #define PREAMBLE \

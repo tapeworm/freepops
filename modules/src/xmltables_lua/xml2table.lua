@@ -101,7 +101,7 @@
 
 MODULE_VERSION = "0.0.1"
 MODULE_NAME = "xml2table"
-MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
 MODULE_URL = "http://www.freepops.org/download.php?module=xml2table.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"

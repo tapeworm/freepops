@@ -61,7 +61,7 @@
 
 MODULE_VERSION = "0.1.0"
 MODULE_NAME = "browser.browser"
-MODULE_REQUIRE_VERSION = "0.0.99"
+MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
 MODULE_URL = "http://www.freepops.org/download.php?module=browser.browser.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"

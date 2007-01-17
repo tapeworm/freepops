@@ -1138,7 +1138,7 @@ diff -ruN pthreads-w32-2-7-0-release/Makefile pthreads-w32-2-7-0-release-new/Mak
 +
 +%.o:%.c		 
 +	@echo -n " compiling $< -> "
-+	@$(CC) -c -o $@ $(CFLAGS) $(CLEANUP_FLAGS) $<
++	@$(CC) -c -o $@ $(CFLAGS) $(MACHOARCH) $(CLEANUP_FLAGS) $<
 +	@echo "$@"
 +
 +%.o:%.rc
@@ -1162,4 +1162,3 @@ diff -ruN pthreads-w32-2-7-0-release/Makefile pthreads-w32-2-7-0-release-new/Mak
 +sync.o:	sync.c $(SYNC_SRCS) $(INCL)
 +tsd.o:	tsd.c $(TSD_SRCS) $(INCL)
 +version.o:	version.rc $(INCL)
-Binary files pthreads-w32-2-7-0-release/.Makefile.swp and pthreads-w32-2-7-0-release-new/.Makefile.swp differ

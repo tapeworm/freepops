@@ -1,7 +1,7 @@
 diff -ruN lua-5.1.1.orig/Makefile lua-5.1.1/Makefile
 --- lua-5.1.1.orig/Makefile	2006-06-02 12:53:38.000000000 +0200
 +++ lua-5.1.1/Makefile	2006-09-25 22:36:25.000000000 +0200
-@@ -1,129 +1,102 @@
+@@ -1,129 +1,29 @@
 -# makefile for installing Lua
 -# see INSTALL for installation instructions
 -# see src/Makefile and src/luaconf.h for further customization
@@ -132,61 +132,6 @@ diff -ruN lua-5.1.1.orig/Makefile lua-5.1.1/Makefile
 -
 -# (end of Makefile)
 +include $(CONFIG)
-+ifneq "$(OS)" "Windows"
-+  ifneq "$(OS)" "Cygwin"
-+	CFLAGS += -DUSE_DLOPEN=1
-+  endif
-+endif
-+ifneq "$(OS)" "Darwin"
-+ ifneq "$(OS)" "Darwin-static"
-+  ifneq "$(OS)" "OpenBSD"
-+   ifneq "$(OS)" "FreeBSD"
-+    ifneq "$(OS)" "Solaris"
-+	CPFLAGS+= -a
-+	LDFLAGS+= -Wl,-E
-+	HLDFLAGS+= -Wl,-E
-+    endif
-+   endif
-+  endif
-+ endif
-+endif
-+
-+CFLAGS += -I../src -I. -DUSE_POPEN=1
-+ifeq "$(OS)" "OpenBSD"
-+	LDFLAGS+= -L../src/ -llua5.1-host -lm
-+else
-+  ifeq "$(OS)" "Cygwin"
-+	LDFLAGS+= -L../src/ -llua5.1-host -lm
-+  else
-+    ifeq "$(OS)" "BeOS"
-+	LDFLAGS+= -L../src/ -llua5.1-host -ldl
-+    else
-+	LDFLAGS+= -L../src/ -llua5.1-host -lm -ldl
-+    endif
-+  endif
-+endif
-+HCFLAGS += -I../../include -I../include -I. -I.. -DUSE_POPEN=1
-+ifeq "$(OS)" "FreeBSD"
-+	HLDFLAGS+= -L../src/ -llua5.1-host -lm
-+else
-+ ifeq "$(OS)" "OpenBSD"
-+ 	HLDFLAGS+= -L../src/ -llua5.1-host -lm
-+ else
-+   ifeq "$(OS)" "Cygwin"
-+ 	HLDFLAGS+= -L../src/ -llua5.1-host -lm
-+   else
-+     ifeq "$(OS)" "BeOS"
-+ 	  HLDFLAGS+= -L../src/ -llua5.1-host -ldl
-+     else
-+       ifeq "$(OS)" "Solaris"
-+ 	    HLDFLAGS+= -L../src/ -llua5.1-host -lsocket -lnsl -lm
-+       else
-+ 	    HLDFLAGS+= -L../src/ -llua5.1-host -lm -ldl
-+       endif
-+     endif
-+   endif
-+ endif
-+endif
 +
 +H=@
 +
@@ -197,39 +142,21 @@ diff -ruN lua-5.1.1.orig/Makefile lua-5.1.1/Makefile
 +	lstrlib.o loadlib.o linit.o
 +O=$(CORE_O) $(LIB_O)
 +
-+all: bin/lua
++all: src/liblua5.1.a
 +	$(H)echo -n
 +
-+bin/lua:
++src/liblua5.1.a:
 +	$(H)echo -n ' building liblua5.1... '
 +	$(H)cd src ; 					\
-+		$(CC) $(CFLAGS) -c  *.c ; 		\
++		$(CC) $(CFLAGS) $(MACHOARCH) $(LUAFLAGS) -c  *.c ; 		\
 +		$(AR) rc liblua5.1.a $(O); 		\
 +		$(RANLIB) liblua5.1.a ;			\
 +		rm -f $(O)
 +	$(H)echo "done."
-+
-+	$(H)if test "$(HCC)" = "$(CC)" ; then			\
-+		cd src ; 					\
-+			ln -s liblua5.1.a liblua5.1-host.a ;	\
-+	else							\
-+		echo -n ' building host liblua5.1... ';		\
-+		cd src ; 					\
-+			$(HCC) $(HCFLAGS) -c *.c ; 		\
-+			$(HAR) rc liblua5.1-host.a $(O) ; 	\
-+			$(HRANLIB) liblua5.1-host.a ;		\
-+			rm -f $(O);				\
-+		echo "done.";					\
-+	fi
-+
-+	$(H)echo -n ' building lua... '
-+	$(H)cd src/;					\
-+		$(HCC) $(HCFLAGS) -o lua lua.o $(HLDFLAGS)
-+	$(H)echo "done."
-+
 +	$(H)cp src/lua.h src/luaconf.h src/lauxlib.h src/lualib.h etc/lua.hpp\
 +		$(PREFIX)/include
-+	$(H)cp src/lua $(PREFIX)/bin
-+	$(H)cp $(CPFLAGS) src/*.a $(PREFIX)/lib
++	
++	$(H)cp src/*.a $(PREFIX)/lib
 +clean:
-+	$(H)rm -f lib/* bin/*
++	$(H)rm -f src/*.a src/*.o
++

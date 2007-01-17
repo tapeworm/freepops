@@ -64,7 +64,7 @@ diff -rNu luafilesystem-1.0b-old/Makefile luafilesystem-1.0b/Makefile
 +
 +libluafilesystem.a : lfs.c
 +	$(H)echo " compiling lfs.c -> lfs.o"
-+	$(H)$(CC) $(CFLAGS) -c  lfs.c 
++	$(H)$(CC) $(CFLAGS) $(MACHOARCH) -c  lfs.c 
 +	$(H)echo " linking libluafilesystem.a"
 +	$(H)$(AR) rc libluafilesystem.a lfs.o 1>/dev/null		
 +	$(H)cp lfs.h $(PREFIX)/include

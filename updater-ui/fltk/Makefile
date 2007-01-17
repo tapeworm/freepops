@@ -5,7 +5,7 @@ CFLAGS+=$(FLTKCFLAGS) -I. -I../../modules/include -fPIC
 LDFLAGS=$(FLTKLDFLAGS) 
 %.o:%.cxx
 	$(H)echo -n " compiling $< -> "
-	$(H)$(CXX) $(CFLAGS) -c $< -o $@
+	$(H)$(CXX) $(CFLAGS) $(MACHOARCH) -c $< -o $@
 	$(H)echo "$@"
 
 SO=updater_fltk$(SHAREDEXTENSION)

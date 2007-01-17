@@ -158,7 +158,7 @@ diff -ruN luacurl-0.2.0.orig/Makefile luacurl-0.2.0/Makefile
 -		tar -cvzf $$DIR.tar.gz -X $$DIR/exclude-dist $$DIR
 +$(LIBRARY): $(CONSTANTS) 
 +	$(H)echo -n " compiling lua-curl.c -> "
-+	$(H)$(CC) $(CFLAGS) -c lua-curl.c
++	$(H)$(CC) $(CFLAGS) $(MACHOARCH) -c lua-curl.c
 +	$(H)echo "lua-curl.o"
 +	$(H)echo -n " linking "
 +	$(H)$(AR) -r $(LIBRARY) lua-curl.o 2>/dev/null

@@ -66,11 +66,14 @@ SSL=openssl
 FLTKUI=
 FLTKCFLAGS=
 FLTKLDFLAGS=
+MACHOARCH=
+LUAFLAGS=
 }
 
 set_linux() {
 set_default
 OS=Linux
+LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
 set_linux_gnutls() {
@@ -79,6 +82,7 @@ CFLAGS="$CFLAGS -DCRYPTO_IMPLEMENTATION=1"
 HCFLAGS="$HCFLAGS -DCRYPTO_IMPLEMENTATION=1"
 SSL=gnutls
 OS=Linux
+LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
 set_linux_slack() {
@@ -86,6 +90,7 @@ set_default
 CFLAGS="-O2 -g3 -march=i486 -Wall -DHAVE_CONFIG_H -I$PWD"
 WHERE=/usr/
 OS=Linux
+LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
 set_osx() {
@@ -95,6 +100,10 @@ CFLAGS="$CFLAGS -I/sw/include -DMACOSX"
 HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX"
 LDFLAGS="$LDFLAGS -bind_at_load -framework Carbon"
 HLDFLAGS="$HLDFLAGS -bind_at_load"
+LUAFLAGS=" -DLUA_USE_MACOSX "
+if [ `uname -r` = '8.8.3' ]; then
+	MACHOARCH=" -arch i386 -arch=ppc "
+fi
 }
 
 set_osx_static() {
@@ -104,6 +113,10 @@ CFLAGS="$CFLAGS -I/sw/include -DMACOSX -DOSXSTC"
 HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX -DOSXSTC"
 LDFLAGS="$LDFLAGS -L/sw/lib -bind_at_load -noprebind -framework Carbon"
 HLDFLAGS="$HLDFLAGS -L/sw/lib -bind_at_load -noprebind"
+LUAFLAGS=" -DLUA_USE_MACOSX "
+if [ `uname -r` = '8.8.3' ]; then
+	MACHOARCH=" -arch i386 -arch=ppc "
+fi
 }
 
 set_solaris() {
@@ -114,6 +127,7 @@ LDFLAGS="$LDFLAGS -L/usr/local/lib -lnsl -lsocket"
 MAKE="gmake SHELL=/bin/bash"
 TAR=gtar
 PATCH=gpatch
+LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
 set_fbsd() {
@@ -122,6 +136,7 @@ OS=FreeBSD
 CFLAGS="$CFLAGS -DMACOSX -DFREEBSD -I/usr/local/include"
 LDFLAGS="$LDFLAGS -L/usr/local/lib" 
 MAKE=gmake
+LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
 set_obsd() {
@@ -129,6 +144,7 @@ set_default
 OS=OpenBSD
 CFLAGS="$CFLAGS -DMACOSX"
 MAKE=gmake
+LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
 set_beos() {
@@ -139,6 +155,7 @@ LDFLAGS="$LDFLAGS -L/boot/home/config/lib/"
 HCFLAGS="$HCFLAGS -DBEOS -I/boot/home/config/include/ "
 HLDFLAGS="$HLDFLAGS -L/boot/home/config/lib/"
 WHERE=/boot/home/config/
+LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
 set_cygwin() {
@@ -150,6 +167,7 @@ HCFLAGS="$CFLAGS -DWIN32 -D_WIN32 -DCYGWIN -mwindows " # -mno-cygwin -mms-bitfie
 LDFLAGS="$LDFLAGS -mwindows " # -mno-cygwin -mms-bitfields
 HLDFLAGS="$LDFLAGS -mwindows " # -mno-cygwin -mms-bitfields
 OS=Cygwin
+LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
 set_win() {
@@ -213,6 +231,7 @@ else
 	DLLTOOL=${defpref}dlltool
 fi
 OS=Windows
+LUAFLAGS=" -DLUA_WIN"
 }
 
 set_win_gnutls() {
@@ -380,5 +399,9 @@ LUAFILESYSTEM=$LUAFILESYSTEM
 FLTKUI=$FLTKUI
 FLTKCFLAGS=$FLTKCFLAGS
 FLTKLDFLAGS=$FLTKLDFLAGS
+
+MACHOARCH=$MACHOARCH
+LUAFLAGS=$LUAFLAGS
+
 EOT
 

@@ -217,7 +217,7 @@ ifeq "$(OS)" "Windows"
 	$(H)$(CC) -o $(BINARY) $(OBJ) -L. \
 		-lfp `echo $(LDFLAGS)|sed 's/$(addprefix -l,$(LIBSTOLINK))//'`
 else
-	$(H)$(CC) -o $(BINARY) $(OBJ) $(LDFLAGS) 
+	$(H)$(CC) -o $(BINARY) $(MACHOARCH) $(OBJ) $(LDFLAGS) 
 endif
 	$(H)echo "$(BINARY)"
 	$(H)echo $(DYNLIBS)
@@ -228,7 +228,7 @@ endif
 
 %.o:%.c
 	$(H)echo -n " compiling $< -> "
-	$(H)$(CC) $(CFLAGS) -c $<
+	$(H)$(CC) $(CFLAGS) $(MACHOARCH) -c $<
 	$(H)echo "$@"
 
 	

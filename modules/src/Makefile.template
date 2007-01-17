@@ -111,7 +111,7 @@ $(SHARED): $(OBJ)
 
 %.o:%.c
 	$(H)echo -n " compiling $< -> "
-	$(H)$(CC) $(CFLAGS) -c $<
+	$(H)$(CC) $(CFLAGS) $(MACHOARCH) -c $<
 	$(H)echo "$@"
 
 %.o:%.rc	

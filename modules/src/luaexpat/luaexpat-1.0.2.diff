@@ -26,7 +26,7 @@ diff -ruN luaexpat-1.0.2.orig/Makefile luaexpat-1.0.2/Makefile
 +
 +libluaexpat.a : src/lxplib.c
 +	$(H)echo " compiling lxplib.c -> lxplib.o"
-+	$(H)$(CC) $(CFLAGS) -c  src/lxplib.c -o src/lxplib.o -I src/
++	$(H)$(CC) $(CFLAGS) $(MACHOARCH) -c  src/lxplib.c -o src/lxplib.o -I src/
 +	$(H)echo " linking libluaexpat.a"
 +	$(H)$(AR) rc libluaexpat.a src/lxplib.o 1>/dev/null		
 +	$(H)cp src/lxplib.h $(PREFIX)/include

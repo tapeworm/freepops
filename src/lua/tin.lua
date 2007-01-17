@@ -752,6 +752,12 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "&gt;", ">")
 	head = string.gsub(head, "\r([^\n])", 
 		function(capture) return "\r\n" .. capture end)
+	head = string.gsub(head, "Ã ", "à")
+	head = string.gsub(head, "Ã¨", "è")
+	head = string.gsub(head, "Ã©", "é")
+	head = string.gsub(head, "Ã¬", "ì")
+	head = string.gsub(head, "Ã²", "ò")
+	head = string.gsub(head, "Ã¹", "ù")
 	
 	-- locate body
 	local _, begin_body = string.find(data, tin_string.body_start)
@@ -777,6 +783,12 @@ function tin_parse_webmessage(wherearewe, data)
                 body = string.gsub(body, "&quot;", "\"")
                 body = string.gsub(body, "&#39;", "'")
                 body = string.gsub(body, "&amp;", "&")
+		body = string.gsub(body, "Ã ", "à")
+		body = string.gsub(body, "Ã¨", "è")
+		body = string.gsub(body, "Ã©", "é")
+		body = string.gsub(body, "Ã¬", "ì")
+		body = string.gsub(body, "Ã²", "ò")
+		body = string.gsub(body, "Ã¹", "ù")
 	end
 	
 	-- extract attachments

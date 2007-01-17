@@ -19,7 +19,7 @@ local format, strfind = string.format, string.find
 local max = math.max
 local parse = lxp.lom.parse
 
-module (arg and arg[1])
+module ("soap.soap")
 
 _COPYRIGHT = "Copyright (C) 2004 Kepler Project"
 _DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"

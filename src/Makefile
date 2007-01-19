@@ -129,7 +129,7 @@ ifeq "$(OS)" "Windows"
 else
 ifeq "$(OS)" "Darwin"
 	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
-		-lgetopt -lm \
+		-lm \
 	 	-lpthread -L/usr/lib -L/sw/lib /sw/lib/libexpat.a -lcurl \
 		-lcrypto -ldl -lssl -lcrypto -lz 
 else
@@ -144,7 +144,7 @@ ifeq "$(OS)" "Darwin-static"
 	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
 		$(OSXLIBDL) /sw/lib/libcurl.a \
 		/sw/lib/libssl.a /sw/lib/libcrypto.a /sw/lib/libexpat.a \
-		-L/usr/lib -lgetopt -lm -lpthread -lz -bind_at_load -noprebind
+		-L/usr/lib -lgetopt -lm -lpthread /sw/lib/libz.a
 else
 ifeq "$(OS)" "OpenBSD"
 	LIBSTOLINK+= getopt

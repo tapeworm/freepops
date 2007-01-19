@@ -98,11 +98,9 @@ set_default
 OS=Darwin
 CFLAGS="$CFLAGS -I/sw/include -DMACOSX"
 HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX"
-LDFLAGS="$LDFLAGS -bind_at_load -framework Carbon"
-HLDFLAGS="$HLDFLAGS -bind_at_load"
 LUAFLAGS=" -DLUA_USE_MACOSX "
 if [ `uname -r` = '8.8.3' ]; then
-	MACHOARCH=" -arch i386 -arch=ppc "
+	MACHOARCH=" -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.3"
 fi
 }
 
@@ -111,11 +109,11 @@ set_default
 OS=Darwin-static
 CFLAGS="$CFLAGS -I/sw/include -DMACOSX -DOSXSTC"
 HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX -DOSXSTC"
-LDFLAGS="$LDFLAGS -L/sw/lib -bind_at_load -noprebind -framework Carbon"
-HLDFLAGS="$HLDFLAGS -L/sw/lib -bind_at_load -noprebind"
+LDFLAGS="$LDFLAGS -L/sw/lib" 
+HLDFLAGS="$HLDFLAGS -L/sw/lib"
 LUAFLAGS=" -DLUA_USE_MACOSX "
 if [ `uname -r` = '8.8.3' ]; then
-	MACHOARCH=" -arch i386 -arch=ppc "
+	MACHOARCH=" -arch i386 -arch ppc -mmacosx-version-min=10.3"
 fi
 }
 

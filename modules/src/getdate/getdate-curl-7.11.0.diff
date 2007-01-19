@@ -12,7 +12,7 @@ diff -ruN getdate-curl-7.11.0/Makefile getdate-curl-7.11.0-new/Makefile
 +$(LIBRARY): getdate.y
 +	$(H)echo " compiling getdate.y -> getdate.o"
 +	$(H)bison -o getdate.c -p gd_ getdate.y
-+	$(H)$(CC) $(CFLAGS) $(MACHOARCH)-c getdate.c
++	$(H)$(CC) $(CFLAGS) $(MACHOARCH) -c getdate.c
 +	$(H)echo " linking $(LIBRARY)"
 +	$(H)$(AR) r $(LIBRARY) getdate.o 1>/dev/null 2>/dev/null
 +	$(H)cp $(LIBRARY) $(PREFIX)/lib

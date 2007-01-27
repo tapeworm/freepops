@@ -130,7 +130,7 @@ else
 ifeq "$(OS)" "Darwin"
 	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
 		-lm \
-	 	-lpthread -L/usr/lib -L/sw/lib /sw/lib/libexpat.a -lcurl \
+	 	-lpthread -L/usr/lib /Users/enricotassi/freepops/lib/lib/libexpat.a -lcurl \
 		-lcrypto -ldl -lssl -lcrypto -lz 
 else
 ifeq "$(OS)" "Darwin-static"

@@ -93,15 +93,38 @@ OS=Linux
 LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
-set_osx() {
+set_osx_default() {
 set_default
 OS=Darwin
 CFLAGS="$CFLAGS -I/sw/include -DMACOSX"
 HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX"
 LUAFLAGS=" -DLUA_USE_MACOSX "
-if [ `uname -r` = '8.8.3' ]; then
-	MACHOARCH=" -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.3"
-fi
+}
+
+set_osx_i386(){
+set_osx_default
+MACHOARCH=" -arch i386 -isysroot /Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
+LDFLAGS="$LDFLAGS -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
+EXEEXTENSION=.i386-10.4
+}
+set_osx_ppc64(){
+set_osx_default
+MACHOARCH=" -arch ppc64 -isysroot /Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
+LDFLAGS="$LDFLAGS -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
+EXEEXTENSION=.ppc64-10.4
+}
+set_osx_x86_64(){
+set_osx_default
+MACHOARCH=" -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
+LDFLAGS="$LDFLAGS -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
+EXEEXTENSION=.x86_64-10.4
+}
+
+set_osx_ppc(){
+set_osx_default
+MACHOARCH=" -arch ppc -isysroot /Developer/SDKs/MacOSX10.3.9.sdk/ -mmacosx-version-min=10.3"
+LDFLAGS="$LDFLAGS -Wl,-syslibroot,/Developer/SDKs/MacOSX10.3.9.sdk/ -mmacosx-version-min=10.3"
+EXEEXTENSION=.ppc-10.3
 }
 
 set_osx_static() {
@@ -284,8 +307,17 @@ case $1 in
 	fbsd)
 		set_fbsd
 	;;
-	osx)
-		set_osx
+	osx-i386)
+		set_osx_i386
+	;;
+	osx-ppc)
+		set_osx_ppc
+	;;
+	osx-x86_64)
+		set_osx_x86_64
+	;;
+	osx-ppc64)
+		set_osx_ppc64
 	;;
 	osx-static)
 		set_osx_static

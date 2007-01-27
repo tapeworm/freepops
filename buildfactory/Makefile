@@ -286,7 +286,10 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _osx_
 	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
 		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _osx_
-	$(H)cd _osx_/freepops-$(VERSION); ./configure.sh osx; $(MAKE) all
+	$(H)for X in i386 ppc; do \
+	  cd _osx_/freepops-$(VERSION); make realclean; ./configure.sh osx-$$X; $(MAKE) all; cp src/freepopsd.$$X* ..; \
+	done
+	$(H)lipo -create -output _osx_/freepops-$(VERSION)/src/freepopsd _osx_/freepopsd.*
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial

@@ -3,7 +3,7 @@
 # http://www.freepops.org
 # Author: Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
 
-if [ ! "`uname -r`" = "8.0.0" ]; then
+if [ ! "`defaults read loginwindow SystemVersionStampAsString | cut -f2 -d.`" = "4" ]; then
 	if [ ! -d /Library/StartupItems/ ] ; then
 		mkdir -m 775 -p /Library/StartupItems
 	fi

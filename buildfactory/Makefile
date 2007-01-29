@@ -293,7 +293,9 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
-	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
+	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_updates/browser
+	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_updates/lxp
+	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_updates/soap
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/browser
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/lxp
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/soap
@@ -331,7 +333,9 @@ dist-osx-static: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
-	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include
+	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_updates/browser
+	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_updates/lxp
+	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_updates/soap
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/browser
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/lxp
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/soap

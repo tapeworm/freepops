@@ -12,7 +12,8 @@ Available options:
 	linux-gnutls	to compile on a linux host and install in /usr/local
 			using gnutls and not openssl
 	linux-slack	to compile on a linux slack box (installs in /usr)
-	osx		to compile on a darwin host
+	osx-i386	to compile on a darwin host (Xcode 2.4.1 + custom expat)
+	osx-ppc		to compile on a darwin host (Xcode 2.4.1 + custom expat)
 	osx-static	to compile on a darwin host with some static libs
 	obsd		to compile on a openbsd host
 	fbsd 		to compile on a freebsd host

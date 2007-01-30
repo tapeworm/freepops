@@ -1,3 +1,12 @@
+Compile on osx with Xcode 2.4.1
+===============================
+
+Build a custom expat for Xcode 2.4.1 sdks with the script: 
+ 
+ scripts/compile-expat-universal.sh
+
+Then ./configure.sh osx-ARCH. If you like to build a universal binary
+use make -C buildfactory osx
 
 Cross compile for win32 
 =======================

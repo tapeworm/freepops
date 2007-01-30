@@ -17,7 +17,8 @@ Available systems:
   linux-gnutls - to compile on a linux host and install in /usr/local
                  using gnutls libraries instead of openssl
   linux-slack  - to compile on a linux host and install in /usr
-  osx          - to compile on a darwin host
+  osx-i386     - to compile on a darwin host (Xcode 2.4.1 + custom expat)
+  osx-ppc      - to compile on a darwin host (Xcode 2.4.1 + custom expat)
   obsd         - to compile on an OpenBSD host
   fbsd         - to compile on an FreeBSD host
   beos         - to compile on a beos host
@@ -77,7 +78,7 @@ Valid targets in this case are:
   dist-slack	- Slackware .tgz
   dist-tgz	- Source .tar.gz
   dist-obsd	- OpenBSD
-  dist-osx	- Mac OS X 10.3 and above
+  dist-osx	- Mac OS X 10.3 ppc and 10.4 intel
   dist-osx-static	- Mac OS X 10.2 (static package)
 
 Enjoy!

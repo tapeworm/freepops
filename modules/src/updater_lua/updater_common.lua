@@ -37,7 +37,12 @@ function lines(s) return string.gmatch(s,"[^\n][^\n]*") end
 -- @return string The path.
 function update_path_for(name)
 	local s,_,namespace = freepops.find(name)
-	assert(s ~= nil,"Unable to find "..name)
+	if s == nil then
+		log.error_print("Unable to find "..name)
+		log.error_print("Assuming it was a toplevel module")
+		s = name..".lua"
+		namespace=""
+	end
 	local name = string.match(s,"([^/]*%.lua)$")
 
 	if namespace ~= "" then namespce = "/" .. namespace end 

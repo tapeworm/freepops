@@ -185,6 +185,10 @@ void updater_download(){
 				lua_setfield(L,REPORT,lua_tostring(L,NAME));
 			} else {
 				// try the update
+				/* for debugging: 
+				 *   luay_printstack(L); 
+				 *   fprintf(stderr, "NAME:%d browser:%d\n",NAME,browser); 
+				 */
 				int rc = luay_call(L,"sssv|vv", "updater_php.fetch_module",
 					lua_tostring(L,NAME),"true","official",browser);
 				if (rc != 0 || lua_isnil(L,-2)) {

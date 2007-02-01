@@ -79,7 +79,7 @@ void updater_download_metadata(){
 	updater_prg_page_download->copy_label(_("Downloading: plugin list"));
 	Fl::check();
 	// the browser object
-	val(BROWSER, luay_call(L,"|","browser.new"));
+	val(BROWSER, luay_call(L,"|v","browser.new"));
 	// the table to contain all metadata
 	val(METADATA,lua_newtable(L));
 	// the table to contain al modules that can be updated

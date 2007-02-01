@@ -84,6 +84,11 @@ void updater_download_metadata(){
 	val(METADATA,lua_newtable(L));
 	// the table to contain al modules that can be updated
 	val(UPGRADABLE,lua_newtable(L));
+	/* debug:
+	 *   luay_printstack(L);
+	 *   fprintf(stderr,"BROWSER: %d METADATA: %d UPGRADABLE: %d\n",
+	 *   	BROWSER,METADATA,UPGRADABLE);
+	 */   
 	// te table that lists all plugin names
 	int rc = luay_call(L,"s|vv","updater_php.list_modules","official");
 	if (rc != 0 || lua_isnil(L,-2)) {

@@ -1,0 +1,138 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package.
+
+	rm -f config
+	./configure.sh linux-gnutls -fltk-ui
+
+	touch configure-stamp
+
+
+build: build-stamp
+build-manual: build-manual-stamp
+
+build-stamp: configure-stamp 
+	dh_testdir
+
+	# Add here commands to compile the package.
+	$(MAKE) all WHERE=/usr/
+
+	touch build-stamp
+
+build-manual-stamp: build-stamp
+	dh_testdir
+
+	# Add here commands to compile the package.
+	$(MAKE) manual WHERE=/usr/
+
+	touch build-manual-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp build-manual-stamp
+
+	# Add here commands to clean up after the build process.
+	-$(MAKE) realclean
+
+	dh_clean 
+	debconf-updatepo
+
+install-common:
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops/ WHERE=/usr/
+	mv $(CURDIR)/debian/freepops/usr/share/doc/freepops/*.pdf \
+		$(CURDIR)/debian/freepops-doc/usr/share/doc/freepops-doc/ 
+	mv $(CURDIR)/debian/freepops/usr/lib/freepops/*.so \
+		$(CURDIR)/debian/freepops-updater-fltk/usr/lib/freepops/
+	mv $(CURDIR)/debian/freepops/usr/share/man/man1/freepops-updater-fltk.1\
+		$(CURDIR)/debian/freepops-updater-fltk/usr/share/man/man1/
+	mv $(CURDIR)/debian/freepops/usr/bin/freepops-updater-fltk \
+		$(CURDIR)/debian/freepops-updater-fltk/usr/bin
+	cp  updater-ui/fltk/freepops-updater-fltk-32.xpm \
+		$(CURDIR)/debian/freepops-updater-fltk/usr/share/pixmaps/
+
+install-manual: build-manual install-common
+
+install: build install-common
+	#create the /etc/freepops/freepops.conf file
+	DESTDIR=$(CURDIR)/debian/freepops; 			\
+	FILE=$$DESTDIR/etc/default/freepops; 			\
+	 echo "#####################################">  $$FILE;	\
+	 echo "# configuration file for freepopsd.">> $$FILE;	\
+	 echo "#                                    ">> $$FILE; \
+	 echo "# man freepopsd for more info.     ">> $$FILE; 	\
+	 echo "DAEMON=\"/usr/bin/freepopsd\"">> $$FILE;		\
+	 echo "DAEMON_OPTS=\" -n\"">> $$FILE; 		\
+	 echo "PIDFILE=\"/var/run/freepops.pid\"">> $$FILE; 	\
+	 echo "CHROOTED_DAEMON_OPTS=\" -n -s nobody.nogroup\"">> $$FILE
+
+	# install the icon
+	DESTDIR=$(CURDIR)/debian/freepops; 	\
+	 cp modules/src/winsystray/freepops-32.xpm $$DESTDIR/usr/share/pixmaps/
+	
+	DESTDIR=$(CURDIR)/debian/freepops;      \
+	 cp buildfactory/create_jail.sh $$DESTDIR/usr/lib/freepops
+
+	# install menu entries
+#	DESTDIR=$(CURDIR)/debian/freepops; 	\
+#	 cp debian/freepops.desktop $$DESTDIR/usr/share/applications/
+	DESTDIR=$(CURDIR)/debian/freepops-updater-fltk; 	\
+	 cp debian/freepops-updater-fltk.desktop $$DESTDIR/usr/share/applications/
+#	DESTDIR=$(CURDIR)/debian/freepops-updater-fltk; 	\
+#	 cp debian/freepops-updater-fltk-kde.desktop $$DESTDIR/usr/share/applications/
+
+# Build architecture-independent files here.
+binary-indep: build build-manual install-manual
+	dh_testdir -i
+	dh_testroot -i
+	dh_installchangelogs ChangeLog -i
+	dh_installdocs -i
+	dh_installexamples -i
+	dh_installdebconf -i
+	dh_installinit -n -i
+	dh_installman -i
+	dh_link -i
+	dh_strip -i
+	dh_compress -X.pdf -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir -a
+	dh_testroot -a
+	dh_installchangelogs ChangeLog -a
+	dh_installdocs -a
+	dh_installexamples -a
+	dh_installmenu -a
+	dh_installdebconf -a
+	dh_installinit -n -a
+	dh_installman -a
+	dh_link -a
+	dh_strip -a
+	dh_compress -X.pdf -a
+	dh_fixperms -a
+	dh_installdeb -a
+	dh_shlibdeps -a
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

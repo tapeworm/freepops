@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=FreePOPs Updater
+Comment=Check for updates and installs them
+Comment[it]=Controlla gli aggiornamenti e li installa
+Exec=gksu freepops-updater-fltk
+Icon=freepops-updater-fltk-32.xpm
+Terminal=false
+Type=Application
+#NotShowIn=KDE
+StartupNotify=true
+X-KDE-SubstituteUID=true
+Categories=Application;Network;

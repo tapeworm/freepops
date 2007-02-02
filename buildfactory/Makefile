@@ -194,10 +194,15 @@ dist-deb-hackbpo:
 		BPOR=`expr $$DR - 1`bpo$$DR;\
 		dch -D sarge-backports -b -v $$UV-$$BPOR backports.org release
 
+dist-deb-hackubuntu:
+	$(H)cd _deb_/freepops-$(VERSION);\
+		cp buildfactory/debian-ubuntu/* debian/
+
 dist-deb-woody: deb-preamble dist-deb-hackwoody dist-deb-real
 dist-deb-sarge: deb-preamble dist-deb-hacksarge dist-deb-real
 dist-deb-sid: dist-deb
 dist-deb-etch: dist-deb
+dist-deb-ubuntu: deb-preamble dist-deb-hackubuntu dist-deb-real
 	
 dist-deb: deb-preamble dist-deb-real
 
@@ -231,6 +236,7 @@ debian-dsc-sarge: deb-preamble dist-deb-hacksarge debian-dsc-real
 debian-dsc-bpo: deb-preamble dist-deb-hacksarge dist-deb-hackbpo debian-dsc-real
 debian-dsc-etch: debian-dsc
 debian-dsc-sid: debian-dsc
+debian-dsc-ubuntu: deb-preamble dist-deb-hackubuntu debian-dsc-real
 
 debian-dsc: deb-preamble debian-dsc-real
 

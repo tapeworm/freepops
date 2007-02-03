@@ -9,5 +9,4 @@ Terminal=false
 Type=Application
 #NotShowIn=KDE
 StartupNotify=true
-X-KDE-SubstituteUID=true
 Categories=Application;Network;

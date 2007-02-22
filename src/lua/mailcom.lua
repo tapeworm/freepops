@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.03"
+PLUGIN_VERSION = "0.1.04"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -70,7 +70,7 @@ PLUGIN_DOMAINS = {"@mail.com","@email.com","@iname.com","@cheerful.com","@consul
 "@webcity.ca","@webmail.lu","@welcomm.ac","@wenxuecity.net","@westham-mail.com","@wimbledon-mail.com",
 "@windrivers.net","@wolves-mail.com","@wongfaye.com","@worldmail.ac","@worldweb.ac","@isleuthmail.com",
 "@x-lab.cc","@xy.com.tw","@yankeeman.com","@yyhmail.com", "@verizonmail.com", "@lycos.com", "@cyberdude.com",
-"@mail.org", "@italymail.com", "@mexico.com", "@india.com" }
+"@mail.org", "@italymail.com", "@mexico.com", "@india.com", "@u2club.com" }
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		en = [[
@@ -114,6 +114,7 @@ local globals = {
   strLoginPage2 = "http://%s.%s/scripts/common/login.main",
   strLoginPage3 = "http://%s.%s/scripts/lycos/lyproxy.main",
   strLoginPage4 = "http://super.japan.com/scripts/common/ss_main.cgi",
+  strLoginPage5 = "http://super.popstarmail.org/scripts/common/ss_main.cgi",
   strLoginPostData = "show_frame=Enter&mail_language=us&action=login&login=%s%%40%s&password=%s&domain=%s&siteselected=normal&",
   strLoginPostData2 = "show_frame=Enter&mail_language=us&action=login&login=%s&password=%s&domain=%s&siteselected=normal&",
 
@@ -311,6 +312,8 @@ function login()
     url = string.format(globals.strLoginPage2, "www", "otakumail.com")
   elseif (domain == "japan.com") then
     url = globals.strLoginPage4
+  elseif (domain == "wongfaye.com" or domain == "u2club.com") then
+    url = globals.strLoginPage5
   else
     url = string.format(globals.strLoginPage, "www", domain)
   end

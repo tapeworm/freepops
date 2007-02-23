@@ -160,6 +160,7 @@ freepops.MODULES_MAP["mad.scientist.com"]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["playful.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["poetic.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["popstar.com"]		= {name="mailcom.lua"}
+freepops.MODULES_MAP["popstarmail.org"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["saintly.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["seductive.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["soon.com"]		= {name="mailcom.lua"}

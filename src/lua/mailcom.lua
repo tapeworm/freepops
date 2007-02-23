@@ -22,7 +22,7 @@ PLUGIN_DOMAINS = {"@mail.com","@email.com","@iname.com","@cheerful.com","@consul
 "@bikerider.com","@catlover.com","@cliffhanger.com","@cutey.com",
 "@doglover.com","@gardener.com","@hot-shot.com","@inorbit.com",
 "@loveable.com","@mad.scientist.com","@playful.com","@poetic.com",
-"@popstar.com","@saintly.com","@seductive.com","@soon.com",
+"@popstar.com","@popstarmail.org","@saintly.com","@seductive.com","@soon.com",
 "@whoever.com","@winning.com","@witty.com","@yours.com","@africamail.com",
 "@arcticmail.com","@asia.com","@australiamail.com","@europe.com",
 "@japan.com","@samerica.com","@usa.com","@berlin.com","@dublin.com",

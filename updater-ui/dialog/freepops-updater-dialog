@@ -197,6 +197,11 @@ fi
 }
 
 # here we go! ###############################################################
+if [ ! -x /usr/bin/dialog ]; then
+	echo 'dialog' utility not found.
+	echo Please install the pachage dialog.
+	exit 1
+fi
 main "$@"
 
 # eof

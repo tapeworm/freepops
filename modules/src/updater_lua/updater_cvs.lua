@@ -2,6 +2,8 @@
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
 --============================================================================--
 
+--- XXX This modules is unfinished, and probably unneeded XXX ---
+
 MODULE_VERSION = "0.0.1"
 MODULE_NAME = "updater_cvs"
 MODULE_REQUIRE_VERSION = "0.2.0"

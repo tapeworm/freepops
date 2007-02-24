@@ -1,3 +1,8 @@
+24/02/2007 0.2.0
+- es: Binary images in Spanish (lisar314)
+- es, fr: removed a bunch of solete repositories in download.php (gareuselesinge)
+- es: traslated images es (gareuselesinge)
+- es, fr: removed rpm generic support that was broken and not maintainable (gareuselesinge)
 - fixed debian package, the graphical updater is in a separate package to not require X for the simple daemon. Added and entry in the menu system using su-to-root for the updater with fltk 
 - added freepops-updater-dialog that provides a textual interface to the updater
 - added freepops-updater-fltk to call freepopsd -e updater.lua fltk, a special backend that runs the graphical updater

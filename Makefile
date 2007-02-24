@@ -101,9 +101,8 @@ install: all
 	$(H)if [ ! -z "$(FLTKUI)" ]; then \
 		cp doc/freepops-updater-fltk.1  $(PREFIX)share/man/man1/;\
 	fi
-	$(H)cp doc/manual*.pdf  $(PREFIX)share/doc/freepops/ 2>/dev/null ||\
-		cp doc/MANUAL.txt  $(PREFIX)share/doc/freepops/ 2>/dev/null || \
-		true
+	$(H)cp doc/manual*.pdf  $(PREFIX)share/doc/freepops/ || true
+	$(H)cp doc/MANUAL.txt  $(PREFIX)share/doc/freepops/ || true
 	$(H)cp config.lua $(DESTDIR)etc/freepops/
 
 uninstall:

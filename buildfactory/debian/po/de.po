@@ -1,0 +1,62 @@
+# translation of freepops to german
+# Copyright (C) 2007 Alwin Meschede
+# This file is distributed under the same license as the freepops package.
+#
+# Alwin Meschede <ameschede@gmx.de>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: freepops\n"
+"Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
+"POT-Creation-Date: 2006-10-19 18:15+0200\n"
+"PO-Revision-Date: 2007-02-19 12:44+0100\n"
+"Last-Translator: Alwin Meschede <ameschede@gmx.de>\n"
+"Language-Team: german <debian-l10n-german@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:1001
+msgid "Start freepopsd automatically after each boot?"
+msgstr "freepopsd automatisch beim Hochfahren starten?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:1001
+msgid ""
+"The FreePOPs daemon can be started automatically after each boot for you. By "
+"default it will bind on port 2000, but you can change this behaviour "
+"editing /etc/default/freepops"
+msgstr ""
+"Der FreePOPs-Dienst kann bei jedem Hochfahren Ihres Rechners automatisch "
+"gestartet werden. Standardmäßig wird er an den Port 2000 gebunden, aber Sie "
+"können dies durch Editieren von /etc/default/freepops ändern."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid "Create a chroot jail for freepops?"
+msgstr "Ein chroot jail für freepops erstellen?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid ""
+"FreePOPs can be launched in a chrooted environment to improve security. The "
+"jail will be created in /var/lib/freepops/chroot-jail/. This will also "
+"create a start.sh script in the root of the jail that should be used to "
+"launch freepopsd. This is perfectly integrated with the init script, so you "
+"have to change nothing to automatically start freepopsd at boot. This "
+"feature is mostly untested, you are warned."
+msgstr ""
+"Zur Verbesserung der Sicherheit kann FreePOPs in einer gechrooteten Umgebung "
+"gestartet werden. Das jail wird in /var/lib/freepops/chroot-jail/ erzeugt. "
+"Dabei wird auch ein Skript start.sh im Wurzelverzeichnis des jails abgelegt, "
+"mit dem freepopsd gestartet werden sollte. Dies ist vollständig in das "
+"init-Skript integriert, so dass Sie nichts ändern müssen um freepopsd "
+"automatisch beim Hochfahren zu starten. Diese Fähigkeit ist größtenteils "
+"ungetestet. Sie sind hiermit gewarnt."
+

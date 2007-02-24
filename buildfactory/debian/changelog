@@ -1,4 +1,4 @@
-freepops (0.2.0-1) unstable; urgency=low
+freepops (0.2.0~rc1-1) experimental; urgency=low
 
   * new upstream release: package splitted to separate the updaters, some of
     them are X11 dependent from the simple server that is still a simple
@@ -6,7 +6,8 @@ freepops (0.2.0-1) unstable; urgency=low
   * added debconf template to ask the user if locally installed updates in
     /var/lib/freepops/lua_updates have to be removed on upgrade (in the
     postinst script).
-  * added it.po translation fo the debconf template.
+  * added it.po translation to the debconf template.
+  * added de.po translation (Closes: #411484)
   * fixed ancient bug of removing /var/lib/freepops in the prerm script
     even if these directories belong to the package.
 

@@ -373,7 +373,9 @@ function main(args)
 	table.remove(args,1)
 
 	if mode == "cvs" then 
-		updater = require "updater_cvs"
+		print("The cvs backend is unfinished, and probably not needed.")
+		return 1
+		-- updater = require "updater_cvs"
 	elseif mode == "php" then
 		updater = require "updater_php"
 	elseif mode == "fltk" then

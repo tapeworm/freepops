@@ -227,6 +227,7 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 SectionEnd
 
+; If installation succedes, ask to read the manal
 Function .onInstSuccess
   MessageBox MB_YESNO|MB_ICONQUESTION \
   	"Installation complete.  Do you want to read the PDF manual now?" \
@@ -234,6 +235,29 @@ Function .onInstSuccess
     ExecShell "open" "http://www.freepops.org/it/files/manual.pdf" \
     	SW_SHOWNORMAL
   NoReadme:
+FunctionEnd
+
+; If already installed, uninstall it
+Function .onInit
+ 
+  ReadRegStr $R0 HKLM \
+  "Software\Microsoft\Windows\CurrentVersion\Uninstall\FreePOPs" \
+  "UninstallString"
+  StrCmp $R0 "" done
+ 
+  MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+  "FreePOPs is already installed. $\n$\nPlease close it, and click `OK` to remove the \
+  previous version or `Cancel` to cancel this upgrade." \
+  IDOK uninst
+  Abort
+  
+;Run the uninstaller
+uninst:
+  ClearErrors
+  Exec $INSTDIR\uninst.exe
+  
+done:
+ 
 FunctionEnd
 
 ; eof

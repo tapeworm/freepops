@@ -1,0 +1,632 @@
+File ReadMe di FreePOPs
+
+Questo pacchetto contiene la distribuzione pre-compilata di FreePOPs per sistemi Mac OS X. Per usarla, dovrebbe bastare installarla; verranno copiati due file in /Library/StartupItems/FreePOPs (o uno in /Library/LaunchDaemons se usate Mac OS X Tiger) che faranno partire automaticamente FreePOPs ad ogni avvio del sistema.
+
+Se cio' non dovesse accadere potete copiare manualmente i file contenuti nella directory "script" (presente dove avete installato FreePOPs) nel percorso detto sopra; se usate Mac OS X Tiger dovrete copiare il file freepopsd.plist, altrimenti gli altri due. In freepopsd.plist dovrete cambiare ogni occorrenza di /Applications/FreePOPs con il percorso reale in cui avete installato FreePOPs; se usate Mac OS X Panther o Jaguar dovrete cambiare nel file chiamato FreePOPs la riga che dice "DIR=" aggiungendo dopo il segno di uguaglianza la directory dove FreePOPs e' installato (ad es. /Applications/FreePOPs).
+
+Se desiderate far partire FreePOPs solo manualmente dovrete eliminare i file nella directory /Library/StartupItems/FreePOPs (o solo freepopsd.plist in /Library/LaunchDaemons su Mac OS Tiger - non cancellate gli altri file eventualmente presenti nella directory); aprite un Terminale, spostatevi nella directory dove avete installato FreePOPs e lanciate il comando ./freepopsd, con le opzioni che preferite.
+
+In caso di problemi nell'aggiornamento da versioni precedenti consigliamo di cancellare a mano la directory con la versione precedente e anche il file /Library/Receipts/FreePOPs-x.y.z.pkg (x.y.z e' la versione precedente di FreePOPs installata).
+
+Gli utenti di LiberoPOPs troveranno utile l'howto per la migrazione da LP a FP allegato.
+
+Per favore ricordatevi di generare un log verboso con le opzioni '-w -l log.txt' se avete bisogno di chiedere aiuto agli sviluppatori o di segnalare un bug.
+Per chiedere assistenza, DOPO aver letto la documentazione inclusa, potete guardare:
+
+- Sito ufficiale su http://www.freepops.org
+- Un tutorial per principianti su http://www.freepops.org/it/tutorial/index.shtml
+- Forum degli utenti su http://freepops.diludovico.it/
+- Manuali completi su:
+  http://www.freepops.org/it/files/manual-it.pdf (IT version)
+  http://www.freepops.org/it/files/manual.pdf    (EN version)
+
+
+ChangeLog:
+
+24/02/2007 0.2.0
+- es: Binary images in Spanish (lisar314)
+- es, fr: removed a bunch of solete repositories in download.php (gareuselesinge)
+- es: traslated images es (gareuselesinge)
+- es, fr: removed rpm generic support that was broken and not maintainable (gareuselesinge)
+- fixed debian package, the graphical updater is in a separate package to not require X for the simple daemon. Added and entry in the menu system using su-to-root for the updater with fltk 
+- added freepops-updater-dialog that provides a textual interface to the updater
+- added freepops-updater-fltk to call freepopsd -e updater.lua fltk, a special backend that runs the graphical updater
+- fixed luabox to use package.preload and require for C modules 'statically' linked 
+- addded the special 'fltk' backend that starts the fltk gui (since there is
+no lua binding for fltk, the main has to be in C and calls lua funtions when
+needed, as the dialog frontend does, but not calling them internally since the
+C main is a .so the is loaded by freepops and the run() function is called,
+and thus all the updater lua API can be accessed directly)
+- completely reorganized the updater code: updater_(cvs|php).lua are the two backends that provide the same interface, updater_common.lua provides some common helpers for both backends and the mangler for using the backends from the command line and the documentation, updater.lua is now in src/lua/ as all plugins and uses the cvs backend and provides a minimal main() that allows to call the backends from the command line and receiving their output mangled by updater_common.  - added documentation for the -n switch
+- added to configure.sh options to use system lua, luacurl, luaexpat and luafilesystem
+- moved all lua modules to lua5.1 package system with package.seall
+- moved all plugins and modules to lua5.1 string.match
+- updated luabox.c to lua5.1 way of loading standard libraries (STOP the gc)
+- libero.lua: mlex to identify the message list enhanced once again
+- added atlantide.it domain to tin.lua (Thanks to Ivan Piasini)
+- added support for foo@plugin.lua when plugin.lua is in the UNOFFICIAL directory
+- added patch from Rostislav Kandilarov to create /dev/random and /dev/urandom in the chroot jail
+- fixed the manpage for the command line option -x
+- fixed the manual for the command line option -x
+- changed the command line description for -x
+- fixed plugin2xml.lua to generate XML also for modules
+- fixed luay.c, luay_callv used not to set the returned values
+- fixed homepage_updater to handle modules (and not only plugins)
+- added MODULE_* metadatas to every module
+18/06/2006 0.0.99
+- es, fr: more work on patches (gareuselesinge)
+- juno.lua: Fixed an issue where the server url once logged in wasn't being correctly identified. (russell822)
+- mailcom.lua: Added handling for mail.org (russell822)
+- mailcom.lua: Added support for mexico.com (russell822)
+- hotmail.lua: Reinstated the 0.1.5f functionality, plus added support in the live accounts for the folder name of Junk to always resolve to the junk e-mail folder. (russell822)
+- hotmail.lua: If the folder was set to Live mail's junk folder, mail wasn't being picked up. (russell822)
+- tin.lua: remove trailing spaces and correctly show special characters from plaintext messages. (alessiofender)
+- hotmail.lua: Merged the MSN fix into the hotmail fix. (russell822)
+- gmail.lua: A fix for the login change by Gmail. Submitted by Jbobowski, (russell822)
+- libero.lua: Updated webmail server addresses (alessiofender)
+- yahoo.lua: Fix for a nil pointer problem with the beta of yahoo. (russell822)
+- libero.lua: Updated the version number (alessiofender)
+- hotmail.lua: Reverting Hotmail back to 0.1.5e so that it works with msn and live hotmail. (russell822)
+- tin.lua: fixed encoding problems (alessiofender)
+- yahoo.lua: Previous checkin was broken. (russell822)
+- mailcom.lua: The modification forces the session to logout and clear every 4 hours. (russell822)
+- mailcom.lua: Reaction to changes of the header format on the mail.com website. (russell822)
+- tin.lua: Correctly handle plain text messages (alessiofender)
+- hotmail.lua: Updated the login function to work through mail.live.com. (russell822)
+- mailcom.lua: An attempt to fix the session expired problem. (russell822)
+- aol.lua: Reaction to changes in the login process by AOL/AIM. (russell822)
+- hotmail.lua: Another change to adapt to hotmail's login page change. (russell822)
+- hotmail.lua: Temporary solution to get msn.com addresses working again. (russell822)
+- hotmail.lua: An update to the change in interface with LIVE. (russell822)
+- hotmail.lua: Turn off raw logging. (russell822)
+- tin.lua: You must also update mimer.lua for this patch to take effect (alessiofender)
+- tin.lua: added @alice.it and @tim.it
+- tin.lua: fix to use new webmail address (Thanks to rudygonzo)
+- tin.lua: correctly handle plain text messages
+- added fixes for Mac OS X 10.2 Jaguar
+- fixed paths for launchd plists on Mac OS X Tiger (Thanks to jacobolus)
+- fixed a bug in mimer.lua about the Content-type header definition
+11/03/2006 0.0.98
+- fixed a bug in cookie.lua about the capture of cookie names (Thanks to
+Matteo Turconi)
+- documentation of all lua modules is now generated (with last release some
+lua placed in subdirs were missing)
+- added password field to the key()/hash() function of a bunch of lua plugins.
+This fixes a potential security problem.
+- added Kevin Edwards patch to altsocklib.c (should definitively fix the
+looping problem)
+- added support for backports.org in buildfactory/Makefile
+- fixed a bug in browser.lua if the body of a redirect is empty (thanks loprix)
+04/02/2006 0.0.97
+- yahoo.lua: Added support for the new Yahoo interface. (russell822)
+- es: *** empty log message *** (lisar314)
+- es: Version 0.96 (lisar314)
+- tre.lua: bumped required version to 0.0.97 (gareuselesinge)
+- gmail.lua: added zibo patch (gareuselesinge)
+- yahoo.lua: Remove the quoted-printable encoding header from messages since Yahoo does the decoding on its servers. (russell822)
+- gmail.lua, squirrelmail.lua, yahoo.lua: Updated the version and require version (russell822)
+- gmail.lua, squirrelmail.lua, tre.lua, yahoo.lua: migration of all lua code
+to the lua5.1 module system
+- log.c partially rewritten to make output more comfortable
+- fixed manual according to the 'require' adoption (gareuselesinge)
+- updated supereva plugin (Thanks Visioning)
+- added support for 'installation' file (like the 'interface' one) to specify in a sinple way where to install files (see the browser_lua modules for example)
+- reorganized some modules using a non flat structure (browser, lxp, soap) 
+- manual updated concerning the new lua5.1 module system
+- some fixes to Makefiles needed to support a non-flat LUA directory
+- moved all official plugins to the lua5.1 module system (using 'require')
+- moved all LUA modules to the lua5.1 module system (using 'module')
+- moved freepops.lua to the lua5.1 module system (old freepops.dofile is deprecated and the globals loadlib and loadfile are not redefined anymore).  freepops.dofile should be used only by the C core, while the LUA modules should user 'module' to declare a module and 'require' to import one. To manually load an external file freepops.find and loadfile/loadlib can be used.  dofile is redefined using first require, then the old freepops.dofile.
+- moved all C modules to the lua5.1 module system (unsing legacy header compat-5.1.h)
+- implemented luasoap/http.lua on top of browser.lua and not luasocket
+- updated luaexpat to 1.0.1
+- added luasoap
+- added compat-5.1
+19/11/2005 0.0.96
+- added a fix for strerror_r on OSX
+- added zibo86 https trough proxy patch (many thanks!)
+- es: *** empty log message *** (lisar314)
+- fr: *** empty log message *** (fvancaen)
+- freepopsd.vbs: Updated version number (alessiofender)
+- es, fr: fix (gareuselesinge)
+- added max count for bad pop3 commands (10) befor connection closing. Should
+easily avoid the problem of clients looping sending \r\n that wastes CPU.
+- popserver.c is now case insensitive (as RFC says)
+- added yahoo.dk to config.lua
+- fixed typos in SERVICE.it.txt and SERVICE.en.txt
+- fixed bad stas in tin.lua
+- fixed socklen_t undefined bug in Mac OS X 10.2
+- fixed an ancient bug in the logger initialization call (syslogmode was one
+only with -v and not -w)
+- fixed \r and not \r\n in tin.lua
+- fixed mail2world url
+- restored pthread-win32 since they are not broken
+- fixed a bug in gcrypt initialization
+- atted to the source tree a recent pthread-win32 release (that seems broken)
+- added thread callbacks initialization for gcrypt
+- fixed the FreePOPs website link in the Windows start menu shortcut
+- freepopsd.vbs: added -update option to run the updater prior to run FreePOPs
+26/10/2005 0.0.95
+- criticalpath.lua is now an official plugin (thanks russell822)
+- fastmail.lua is now an official plugin (thanks russell822)
+- removed some ERROR_ABORT from mlex.c
+- libero.lua: mlex to identify the message list enhanced again
+- yahoo.lua: Needed to deal with some scoping issues with local variables and how it relates to the updater. (russell822)
+- yahoo.lua: Fixed the markasunread functionality which wasn't working. (russell822)
+- es: *** empty log message *** (lisar314)
+- yahoo.lua: Rewrite of the delete functionality (russell822)
+- gmail.lua: Reaction to a change by gmail. (russell822)
+- es: fixed ending tag typo (alessiofender)
+- yahoo.lua: Added support for btinternet and talk21 (russell822)
+- es, fr: fix (gareuselesinge)
+- fr: changed html entities to corresponding characters (alessiofender)
+- yahoo.lua: Fixed emptrytrash and emptybulk (russell822)
+- es, fr: added kubuntu links (gareuselesinge)
+- es, fr: added sarge link to download-linuxadded frank to aboutremoved "sf has broken statistics" (gareuselesinge)
+- es: removed md5sumsfiles from es FAQ (gareuselesinge)
+- es, fr: News splitted on more pages (alessiofender)
+- mimer now optionally get the text_encoding (default iso-8859-1) so that utf8
+webmails can be threated correctly
+- added get_head_and_body method to browser
+- fixed a bug in httpmail.lua involving non quoted & characters in XML data
+- win32 version build against gnutls and not openssl
+- fixed chroot jail creation (some libs missing, thanks Gabriele Giacone)
+- asses sv debconf translation
+- libero.lua: new mlex to better identify the message list 
+- libero.lua: the plugin chooses from more web servers
+- changed predefined link for FreePOPs RSS in aggregator
+- fixed chroot jail creation (/etc/freepops/config.lua was not created)
+- changed debian copyright with the new FSF address
+- relaxed mlex checking to not call abort but fail more gracefully
+- added patch for building on Solaris (thanks Alfredo Pena)
+- changed manual to GPL license to allow it to stay in Debian/etch
+- init script for debian is now lsb-compliant
+- changed debian init script shell to bash
+- fixed some typo in xml2table.lua
+13/07/2005 0.0.31
+- fixed config.lua com.uk -> co.uk
+- yahoo.lua: Fixed an issue where the yahoo new mail indicator wasn't being reset after a session. Also, fixed an error when a yahoo session expires and it regenerates the base url in STAT. (russell822)
+- juno.lua: Added the resetheaders parameter to turn off full headers during QUIT. Also, removed the sorting options from the message list which aren't needed. (russell822)
+- es: *** empty log message *** (lisar314)
+- es, fr: changed gentoo (no more ebuild provided) (gareuselesinge)
+- fr: *** empty log message *** (fvancaen)
+- mailcom.lua: added domain 'italymail.com' to mailcom.lua plugin (alessiofender)
+- added patch for libero.it (thanks Oreste Salerno)
+- Gentoo init script now uses -s option to drop privileges (by Daniel Black)
+- fixed std file permissions in the tarball (should help Gentoo)
+- fixed debian init script
+- fixed error message if you type just quit (thanks rami)
+- luabind and curl_lua are now double licensed under GPL and MIT to make the
+LUA community happy.
+29/06/2005 0.0.30
+- removed luafull
+- moved xml2tex to modules/ and now is executed with -e (no more luafull)
+- mail2world.lua is now official
+- fixed libero multipage stat
+- aol.lua, mailcom.lua: changed homepage to http://www.freepops.org (alessiofender)
+- es: *** empty log message *** (lisar314)
+- fr: *** empty log message *** (fvancaen)
+- aol.lua: fixed aol change to aol.com domain (russell822)
+- mailcom.lua: A small tweak to fix minor received: header line issues with tabs being replaced by nothing when they should be replaced by a space. (russell822)
+- gmail.lua: language fixes (ncocchiaro)
+- es, fr: fix (gareuselesinge)
+- gmail.lua: Updated the URL's to reflect gmail's changes and changed the require version so that ssl errors don't appear from a bad curl dependency. (russell822)
+- gmail.lua: Fixed few conversation bugs, and added the getnew feature. (rkattan)
+- gmail.lua: Fixed few bugs due to changes in gmail web pages (rkattan)
+- mailcom.lua: fixed some minor issues with lycos.com (russell822)
+- added support for jubii.dk to the davmail plugin
+- new .spec file for mandriva
+- added much docs in freepops.lua
+- added a snapshot of updater.lua
+- moved -x to the new -e stuff (code cleanup in engine.c and freepops.c)
+- added some patches for BEOS (thanks Michle)
+- added -e to interpret a lua script
+- in Windows, try to automatically change the working directory if the 
+command line provides some kind of path
+- fixed some stuff for debian
+- moved to a complede vanilla debian box for windoz crosscompilation (the old
+and good SDL crosscompiler is not used anymore. RIP)
+05/06/2005 0.0.29
+- es: *** empty log message *** (lisar314)
+- mailcom.lua: fixed issues with operamail and ambigious match (russell822)
+- fr: *** empty log message *** (fvancaen)
+- aol.lua: Made a minor tweak for aim. (russell822)
+- fr: convenience zip chapter (fvancaen)
+- fr: freepops is now part of debian (fvancaen)
+- es: fixed rss (gareuselesinge)
+- es, fr: removed statistics (gareuselesinge)
+- mailcom.lua: Fixed an issue with multipage stat having issues due to ad pages (russell822)
+- es, fr: added zip (gareuselesinge)
+- es: Updated download-linux.shtml (lisar314)
+- es, fr: fixed download linux (gareuselesinge)
+- gmail.lua, squirrelmail.lua, tre.lua, yahoo.lua, hotmail.lua, aol.lua, , mailcom.lua, netscape.lua: Changed FreePOPs homepage address to http://www.freepops.org (alessiofender)
+- es, fr: Changed FreePOPs homepage to http://www.freepops.org (alessiofender)
+- updated manual
+- added juno.lua to official plugins
+- cosmetic change to the pop3server, now the timout error is handled in pretty
+way
+- added support for PLUGIN_REGEXES in plugin header  and regex = true in config.lua
+- apdated slackaware requires
+- fixed debian/rules to build the manual only when requested
+- fixed config.lua (added mail.org)
+29/05/2005 0.0.28
+- hotmail.lua: Reacted to changes from MSFT (russell822)
+- es: *** empty log message *** (lisar314)
+- es: fixed rss (gareuselesinge)
+- aol.lua: added aim.com support (russell822)
+- mailcom.lua: added supported for iname.com (russell822)
+- yahoo.lua, hotmail.lua, aol.lua, netscape.lua: description translations in italian updated (ncocchiaro)
+- aol.lua: fix (gareuselesinge)
+- hotmail.lua: fixed a minor login issue (russell822)
+- : fixed qpr_io_slave (gareuselesinge)
+- mailcom.lua: Fixed an issue with usa.com (russell822)
+- yahoo.lua: updated required core version (ncocchiaro)
+- mailcom.lua: fixed wrong download url (gareuselesinge)
+- aol.lua: fixed aim folder names (russell822)
+- added cs and fr translations to debian template
+- fixed bugs fordebian package (now binary-indep builds the -doc package)
+- fixed hotmail.lua and aol.lua, added new netscape.lua (russell822)
+- fixed long description of freepops-doc in debian/control
+- fixed wrongs uk domains in config.lua
+- added yahoo.dk domain to config.lua file
+- fixed compilation issue (-lcurses) on suse linux enterprise server 9 (thanks
+eddi)
+- fixed pipe_uri and pipe_uri_with_header adding mangle_location and continue_or_return
+- fixed mimer quoted_printable_io_slave that was returning a wrong len
+09/04/2005 0.0.27
+- hotmail.lua: A check to make sure that the stat page returned by hotmail is valid. (russell822)
+- es: fixed rss (ncocchiaro)
+- aol.lua: Updated AOL to handle the new interface. (russell822)
+- es: *** empty log message *** (lisar314)
+- hotmail.lua: Fixed a bunch of issues related to messages downloading as errors and more accurate stat counts for western languages. (russell822)
+- updated some code to make gcc4.0-amd64 happy
+- changed string find patten in serialize.lua (thanks flabdablet)
+- fixed typos in popserver.c (ncocchiaro)
+05/03/2005 0.0.26
+- Mac OS X startup dir bug fixed (ncocchiaro)
+- : fixed inline (gareuselesinge)
+- es: *** empty log message *** (lisar314)
+- yahoo.lua: fix multi-page stat and too long uidl's (russell822)
+- fr: *** empty log message *** (fvancaen)
+- es, fr: Updated slackware link (alessiofender)
+- yahoo.lua: fixed some syntax problems and try to fix the multipage stat. (russell822)
+- fr: accents (fvancaen)
+- yahoo.lua: fixed crumb not being detected. (russell822)
+- fr: temporary (fvancaen)
+- es: fixed rss (gareuselesinge)
+- yahoo.lua: Fixed a Top x 0 command (russell822)
+- fixed mimer (thanks Russell)
+- fixed bug in crypto_lua.c (missing #include)
+30/01/2005 0.0.25
+- libero.lua: Fixed to reflect webmail changes
+- yahoo.lua: traduzione descrizione in italiano (ncocchiaro)
+- tre.lua: another purge fix... (dpeddi)
+- yahoo.lua: Fixed a variety of bugs including missing ending crlf and dealing with changing msgids (russell822)
+- es, fr: changed slackware link (alessiofender)
+- freepopsd.vbs: added rojous patch to delete log files from freepopsd.vbs (gareuselesinge)
+- tre.lua: fixed problem with purge (dpeddi)
+- fr: added fr website (gareuselesinge)
+- fr: *** empty log message *** (fvancaen)
+- es, fr: fixed rss (gareuselesinge)
+- es: *** empty log message *** (lisar314)
+- yahoo.lua: Some minor tweaks to yahoo. (russell822)
+- fixed Location handling in case a non rfc conformin web server (IIS)
+sends a relativeURI instead an absoluteURI
+- added @unforgettable.com to mailcom (thanks tranx)
+- fixed bad &nbsp; in httpmail.lua (thanks Charlie)
+- double - in the manual are now separated by a \hspace{1mm}
+- removed rfcs and contracts from the default tarball since they are not
+conforming to DFSG.
+- added command 'status' to RPM init script
+- added Rojous patch to freepopsd.vbs to clean log files
+- fixed "no more log file names available" bug
+- added concento.it and clarence.com (thanks m_root and Olizad)
+- fixed bad &iexcl; in httpmail.lua (thanks Javier)
+- patch for FreeBSD compilation problems (thanks Filippo Natali)
+- fixed debian builds and debs, now hopefully conforming to debian policy
+25/12/2004 0.0.23
+- updated kernel.lua plugin
+- es: *** empty log message *** (lisar314)
+- tre.lua: Added folder parameter, now use curl for basic auth, added support for three.com.au and others (To be tested) (dpeddi)
+- hotmail.lua: added mailcom and fixed hotmail.it (gareuselesinge)
+- tre.lua: Bugfix, From/To/Cc should be parsed correctly, initial support for e-mail from vocal mailbox (dpeddi)
+- tre.lua: Date should be now in an RFC format (dpeddi)
+- tre.lua: Cleaned email body from three html tags (dpeddi)
+- hotmail.lua: added co.uk, co.jp, de domains to hotmail (gareuselesinge)
+- aol.lua: Fixed some netscape issues in STAT and DELE. Also urlencode the password. (russell822)
+- es: fixed rss (gareuselesinge)
+- yahoo.lua: fixed CRLF substitution bug (ingenuus)
+- gmail.lua, es: fix (gareuselesinge)
+- es: Noticias (lisar314)
+- tre.lua: added purge flag (default yes) to remove files from trash on exit (dpeddi)
+- es: changed slackware link (alessiofender)
+- tre.lua: activated log.dbg instead of print (dpeddi)
+- hotmail.lua: added a session timeout (russell822)
+- added hotmail.it support
+- added mailcom.lua to official plugins
+- fixed supereva X-Priority
+- new mimer attach_it implementation (no HEAD request required)
+- supereva to the manual
+- fixed gmail login in case of failure
+- implemented the fallback of HEAD to GET,Range:bytes=0-1
+- fixed weakness in mimer and browser if HEAD returns 500: internal server err
+- moved windows to openssl-0.9.7e 
+- new functrions in mimer and common modules to better support supereva
+- added supereva.lua to official plugins
+- fixed gmail.lua STAT issue (thanks to kzero22)
+- fixed debian init script to remove pid file
+- changed web links in the manual to www.freepops.org
+- fixed dependencies to build debian package
+- more slack patch
+- added hotmail.de , hotmail.co.uk , hotmail.co.jp support
+- implemented PLUGIN_REQUIRE_VERSION
+- slack patch applied
+18/11/2004 0.0.21
+- fixed S_ISSOCK for BeOS in luafilesystem
+- curl.unescape
+- yahoo.lua: tweaked the status update process (russell822)
+- es: *** empty log message *** (lisar314)
+- aol.lua: Fix for new UI (russell822)
+- README.FPM.en.txt, README.FPM.it.txt, freepopsd.vbs: Versione 1.4 di FreePOPs & Mailv. 1.4 Corretti bug minori. (p3g4sus)
+- hotmail.lua: another try for the old mailbox format (russell822)
+- hotmail.lua: Some tweaks to make it more language independent and emptytrash (russell822)
+- README.FPM.en.txt, README.FPM.it.txt: Readme v. 1.6:Aggiunta la sezione dei requisiti che aiuta a risolvere il runtime error 800A01B0 (p3g4sus)
+- yahoo.lua: doc in it e yahoo.es (ncocchiaro)
+- README.FPM.en.txt, README.FPM.it.txt: Applicate Misure antispam sui readme (p3g4sus)
+- gmail.lua: corretta descrizione del plugin in it e en (ncocchiaro)
+- es: fixed rss (gareuselesinge)
+- yahoo.lua: added emptying bulk and junk folder, updated some patterns, fixed problem with yahoo new mail indicator. (russell822)
+- hotmail.lua: Added support for the new folder format (russell822)
+- gmail.lua, yahoo.lua: fix (gareuselesinge)
+- added luafilesystem bindings (from http://keplerproject.org)
+- added lua_unofficial directory scanning for unofficial plugins
+- added freepops.safe_extract_domains(file) to extract the domains supported
+by a plugin (should be used to implement the LUA_UNOFFICIAL auto scan)
+- added startup script to mac os x
+- improved installer on mac os x
+- fixed path issue in mac os x
+- fixed gmail description
+- hack for "secure" cookie
+- fixed problem in cookie (thanks russell)
+- added slackware patch by Lorenzo Buzzi
+- linux_usr configure.sh target (to have a good make install)
+- fixed jail in sid
+- fixed popforward.lua (thanks Rojous and CWP)
+- added crypto HMAC routine to lua
+- added contributors to AUTHORS and the win32 popup
+- updated yahoo domains
+- added some verbosity to psock.lua
+23/10/2004 0.0.20
+- aol.lua: Changed the references to netscape.com to netscape.net (russell822)
+- es: fixed news namespace (alessiofender)
+- es: fixed rss (gareuselesinge)
+- hotmail.lua: Added a buffer to better escape &...; chars (russell822)
+- yahoo.lua: a tweak on the new line substitution (russell822)
+- es: *** empty log message *** (lisar314)
+- README.FPM.en.txt, README.FPM.it.txt, freepopsd.vbs: Versione 1.1 dello script FreePOPs & Mailv. 1.1 Corretto un bug che non faceva funzionare lo script quando il client di default era indicato nel registro di windows senza le virgolette (") (p3g4sus)
+- es: I have finished the traslation of the tutorial into Spanish. (lisar314)
+- aol.lua: fix (gareuselesinge)
+- es: Incredimail in Spanish (lisar314)
+- yahoo.lua: Fixed a bug with markunread (russell822)
+- hotmail.lua: Fixed regexp for mac (russell822)
+- README.FPM.en.txt, README.FPM.it.txt, freepopsd.vbs: Versione 1.3 di
+FreePOPs & Mail:v. 1.3 Ora lo script non legge piu' ogni volta il percorso del mail client da avviare dal registro di Windows. Legge il registro (e crea il file di configurazione) solo quando non esiste il file "fpm.ini". Quando questo esiste, il mail client da avviare viene letto al suo interno. Questo permette di personalizzare il mail client da avviare. (p3g4sus)
+- es: news (lisar314)
+- es: News (lisar314)
+- fixed mimer.lua bug
+- added close_ch.sh script to automatically build the ChageLog from contributors
+- fixed manual for --no-icon (thanks pegasus)
+- win moved to curl 7.12.1 (should fix some proxy bugs and close some TODO)
+- netscape.com -> netscape.net in config.lua
+08/10/2004 0.0.19 fix release (win feature release)
+- added pegasus manual to win installer
+- finished win service with manual alinks
+- fixed aggregator.lua
+- added FreePOPsService.exe to the win distribution, not completely working.
+- fixed debian chroot jail (thanks Alessandro B.).
+- added win32 script to starf FP & OE. (thanks pegasus).
+- fixed win32 XML generation, now freepopsd.exe -x gmail.lua creates a
+gmail.lua.xml file instead of writing the XML to stdout.txt
+- libero_login now made with a POST, since some proxy logs in clear the GET
+parameters. Thanks Roberto F.
+- added --no-icon win32 flag
+- fissato uninstall win32
+27/09/2004 0.0.18 fix release
+- updated plugins by russell
+- fixed bad bug in dothack()
+- fixed potential bug in log.c
+- more work on BeOS, should build properly now.
+- fixed log.c bug in BeOS porting (thanks ...)
+- fixed win32 exit function
+- fixed a bit more the rpm
+19/09/2004 0.0.17 fix release
+- fixed XML generation. no more escaped entities
+- fixed out of boud RETR don't send . bug (thanks ramik for submitting)
+- fix per yahoo (ramik)
+- fix for gmail: modified dele actions for default folders, fix for message
+marking, fix for passwords with special characters, modified action for spam
+folder. (thanks ramik)
+- added Mac OS X Jaguar support
+- added fn:patch tag support to flatnuke plugin
+- added crypto (md5 and bin2hex) bindings
+- error in liber.lua (comments) (thanks emaury)
+- fixed popforward
+- now the popserver disconnects after 60 seconds of client inactivity (this is
+RFC compliant, even if the rfc says we should wait more maybe, and the NOP
+pop3 command is used to avoid timeouts.
+- added --fpat to force proxy auth method
+- some stuff that may fix win32 shutdown problems
+- fixed dothack bug
+- gmail \r\r\n and \r\n\n issue fixed
+- gmail has an auto learn \r-\n-issue procedure and fix
+- fixed hotmail and yahoo (thanks russell)
+08/09/2004 0.0.16 major feature release
+- fixed the gmail plugin and added some parameters (thanks rami)
+- owa.lua moved to davmail.lua
+- fixed ebuild (thanks er_capoccia)
+- added support for w3c date format in aggregator.lua
+- httpmail now uses iso-8859-1 instead of utf8 since Windows-1252 is 8 bit
+- added support for charset encoding in aggregator.lua
+- added support for content tag in aggregator.lua
+- added suport for host=hostname:port to popforward.lua
+- added the pipe and pipe_limit options to popforward.lua
+- added the io.dpopen lua primitive unter unix
+- some pretty stuff for make
+- added -x, --toxml to export plugin description to XML
+- fixed building tgz-dist from the sources (not from CVS)
+- fixed owa.lua double stat() (thanks hetfield)
+- added owa.lua for httpmail based webmails
+- added some methods to browser to easily implement DAV
+- added httpmail-DAV implementation
+- fixed gmail.lua \r\n issue
+- added luaexpat bindings
+- added aol.lua (thanks to russell)
+- adedd the arrow winsystray stuff (thanks russells)
+- added option -k to kill the running freepopsd
+- fixed URL decoding for plugin parameters and added support for space
+represented as + character
+- added standard folders support for yahoo.it
+- added yahoo.it support to yahoo.lua
+- added linuxgazette.net aggregator domains
+08/08/2004 0.0.14 fix release
+- fixed gmail login procedure
+- fixed some stuff in cookie.lua
+- added yahoo.lua (thanks russell)
+- fixed bug in libero.lua (local b = internal_state.b missing before
+b:verbose_mode(), submitted by Negrore)
+- lycos parsing message workaround (should be fixed)
+- bug in lycos TOP fixed
+- libero.lua adopted to use common.lua top and retr_cb
+- tin.lua adopted to use common.lua top and retr_cb
+- common.lua now includes a common TOP implementarion and the classical
+retr_cb and top_cb factories.
+- finished FreeBSD porting
+26/07/2004 0.0.13 fix release
+- fixed manual (thanks er_capoccia)
+- fixed rpm /etc/init.d script (thanks domfe)
+- the win32 install no more overwrites the start menu entry (preserves the user options)
+- added to browser the NTLM and other auth type if SSL is found
+- added folder support to libero.lua
+- fixed libero.lua TOP function
+- added scripts/cvs2changelog.lua to generate changelog for the contibuted
+plugins
+- added folder parameter to tin.lua plugin
+- fixed aggregator plugin to respect RSS 2.0 specifications
+- added args parser
+- added freepops-doc debian package
+- fixed last cygwin issue
+- fixed gmail TOP
+- fixed cygwin build target (partially)
+- porting freepops to OpenBSD
+- added cvs_acl to allow contributors commit
+- fixed bug in browser.lua (u could be nil but indexed)
+- added b:ssl_init_stuff() and b:verbose_mode()
+- complete fix to browser.lua that now supports rotten cookies (thanks Eddi)
+09/07/2004 0.0.12 fix release
+- added link tag support to aggregator plugin
+- added spam/AV tutorial to the manual
+- added some gmail fixes
+- added LAN tutorial to the manual
+- added some extra checks to browser's mangle location
+08/07/2004 0.0.11 feature/fix release (never released officially)
+- added base tutorials to manual
+- added pubDate tag support to aggregator plugin
+- added gmail.lua to manual + various fixes
+- added man page to manual
+- added FAQ to manual
+- fixed man page
+- fixed old bug in popstate.c in wrong index check in array acess
+- fixed bug introduced in fixing the fix for popserver rfc compliace
+- added kerneltrap.org and linux.kerneltrap.org aggregator domains
+- fixed aggregator.lua and flatnuke.lua 
+- added reject/accept policy section in config.lua
+- added # chkconfig to rpm rc file (thanks domfe)
+- fixed bug introduced in fixing popserver rfc compliace
+- added plugin tutorial to the manual
+- fixed bug in aggregator.lua
+- fixed bug in mimer (thanks nickshw for bugreporting)
+- regularexp lua bindings added
+- workaround for the tin TOP. (not fixed, probable bug in stringhack.tophack)
+- fixed popserver rfc compliace issue (stat/list/uidl doesn't show messages
+marked for deletion) thanks ramik for bugreporting
+- fixed bug in browser.lua
+- fixed tin.lua issue
+28/06/2004 0.0.10 fix release
+- added freepops.need_sll() that asserts SSL is present 
+(call it after loading browser in the init function of the plugin)
+- added browser.ssl_enabled() to check is SSL is available
+- fixed bug in engine.c (thanks to ramik)
+- added fflush to luay.c (thanks to ramik)
+- fixed bug in lycos (thanks to Francesco)
+27/06/2004 0.0.9 fix release
+- now win32 dist can include SSL enabled curl
+- added browser:get_cookie(name) 
+- added sanity checks functions to plugins
+- common.lua now implements the commonly used uidl* list* dele rset noop
+- fixed tin.lua for messages bigger than 1MB
+- fixed proxy Host: problem
+- added header to each source file
+- fixed file descriptor leak in log.c (log_rotate)
+22/06/2004 0.0.8 fix release
+- now lycos deletes messages from the trash
+- doc to kernel.lua
+- fixed some lycos issues
+20/06/2004 0.0.7 fix release
+- fixed gentoo (thanks Er Capoccia)
+- added some shortcuts to the win32 installer
+- fixed curl_lua
+19/06/2004 0.0.6 fix release
+- fixed some lycos problems 
+- documented lycos.lua in the manual
+15/06/2004 0.0.5 feature release
+- proxy fixed
+- added kernel.org plugin (kernel.lua)
+- aggregator.lua now encodes uidl strings
+- added mimer module
+- fixed bug in base64
+- fixed bug in browser
+- lycos.it webmail support
+- fixed mlex.c bug
+- fixed a tin webmail reference to a libero function
+07/06/2004 0.0.4 fix/source-reorganization release
+- added pkg file for Mac OS X
+- documentation for new modules
+- badguy feature added to tin.lua
+- added luabind module (factorization of useful functions in bindings)
+- completely removed tolua++
+- bindings for getdate made by hand
+- bindings for popserver made bt hand
+- fixed curl_lua for truncating a connection in the callback
+- session_lua now are made by hand, no more tolua++
+- log_lua now are made by hand, no more tolua++
+- all webmail now share the same get_name and get_domain functions
+- fixed stupid fetchmail top bug
+- log used to write liberopopsd :)
+- fixed "-" in the username
+- proxy AUTH issue workaround (not able to make CURLAUTH_ANY work)
+28/05/2004 0.0.3 bomb! feature release
+- updated the doc
+- fixed libero webmail to new mlex and new libero webmail (nobody
+noticed it has changed so much? probably because the old mlex continued
+to work properly, but it was a lucky case!)
+- added tin webmail
+- improved mlex.c with <script> correct handling
+- fixed http redirection 
+- fixed browser cookie generation
+19/05/2004 0.0.2 feature release [never released]
+- added browser:get_head(url,extraheader) method
+- fixed Makefile verbosity
+- fixed chroot jail for curl
+- fixed aggregator.lua (thanks to bimbosuper)
+- added games.gamespot.com and news.gamespot.com aggregator domains
+- updated the website with FAQ section
+- documentation for curl_lua and psock
+- moved popforward from luasocket to psock (poor but works)
+- added portablesocket_lua module
+- updated libero.lua to new browser.lua
+- updated serialize.lua to support "self serializing" objects
+- updates support.lua to support new browser.lua
+- updated browser.lua do cURL
+- moved to cURL
+- added curl_lua module
+01/05/2004 0.0.1 first public release

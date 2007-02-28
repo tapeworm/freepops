@@ -1,0 +1,9 @@
+#!/bin/bash
+# FreePOPs postflight script
+# http://www.freepops.org
+# Author: Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+
+SystemStarter stop FreePOPs
+SystemStarter start FreePOPs
+
+exit 0

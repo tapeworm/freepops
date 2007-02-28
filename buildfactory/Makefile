@@ -283,7 +283,9 @@ dist-slack: freepops-$(VERSION).tar.gz
 		rm -rf usr
 	$(H)rm -rf _slack_
 	
-dist-osx: freepops-$(VERSION).tar.gz
+dist-osx: dist-osx-build dist-osx-finalyze
+
+dist-osx-build: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _osx_
 	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
 		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _osx_
@@ -337,10 +339,18 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog \
 		>> osx/Install_resources/Italian.lproj/ReadMe.txt
 	$(H)rm -rf _osx_
+	$(H)rm -rf ../dist-osx/FreePOPs.app
 	$(H)mv ../dist-osx/FreePOPs ../dist-osx/FreePOPs.app
+
+dist-osx-finalyze: ../dist-osx/FreePOPs.app
 	$(H)$(MAKE) -C osx/popup-fltk/
+	$(H)mkdir -p ../dist-osx/FreePOPs.app/Contents/MacOS
+	$(H)mkdir -p ../dist-osx/FreePOPs.app/Contents/Resources
+	$(H)cp osx/Info.plist ../dist-osx/FreePOPs.app/Contents
+	$(H)cp osx/freepops.icns ../dist-osx/FreePOPs.app/Contents/Resources
 	$(H)cp osx/popup-fltk/fmessage ../dist-osx/FreePOPs.app/Contents/MacOS/
 	$(H)cp osx/start-stop-freepopsd ../dist-osx/FreePOPs.app/Contents/MacOS/
+	$(H)$(MAKE) -C osx/popup-fltk/ clean
 
 dist-obsd:
 	$(H)cd ..;./configure.sh obsd || true

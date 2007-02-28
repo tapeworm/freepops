@@ -12,7 +12,7 @@ help:
 	$(H)echo
 	$(H)echo "here we build all the distributed packages"
 	$(H)echo
-	$(H)echo "Targets are: all dist-{osx,osx-static,win,deb,rpm,gen,tgz,obsd,zip}"
+	$(H)echo "Targets are: all dist-{osx,win,deb,rpm,gen,tgz,obsd,zip}"
 	$(H)echo
 
 all: dist-deb dist-rpm dist-win-e-zip #dist-gen dist-slack
@@ -36,14 +36,12 @@ dist-win-e-zip-step1:
 dist-win-e-zip-step2-openssl:
 	$(H)cd _win_/freepops-$(VERSION);\
 		./configure.sh win -fltk-ui;\
-		$(MAKE) all; \
-		#$(MAKE) manual
+		$(MAKE) all
 		
 dist-win-e-zip-step2-gnutls:
 	$(H)cd _win_/freepops-$(VERSION);\
 		./configure.sh win-gnutls -fltk-ui;\
-		$(MAKE) all; \
-		#$(MAKE) manual
+		$(MAKE) all
 
 dist-win-e-zip-step3:
 	$(H)$(MAKE) -C win CONFIG=../_win_/freepops-$(VERSION)/config
@@ -111,11 +109,6 @@ dist-win-e-zip-step5:
 	$(H)xpm2wico -f ../updater-ui/fltk/freepops-updater-fltk-32.xpm \
 		_win_/freepops/freepops-updater.ico
 
-	# NSIS is now a debian package :)
-	#
-	#$(H)cd _win_/freepops/;\
-	#	wine /usr/local/NSIS/makensis.exe freepops.nsi
-	#
 	$(H)cd _win_/freepops/; makensis freepops.nsi
 	
 	$(H)mkdir ../dist-win || true
@@ -124,8 +117,6 @@ dist-win-e-zip-step5:
 	# end of installer 
 
 	$(H)cd _win_/freepops/; cp LUA/config.lua .
-	#$(H)cp _win_/freepops-$(VERSION)/doc/manual.pdf _win_/freepops/
-	#$(H)cp _win_/freepops-$(VERSION)/doc/manual-it.pdf _win_/freepops/
 	
 	$(H)cd _win_/freepops/; rm freepops-setup.ico
 	$(H)cd _win_/freepops/; rm freepops-remove.ico
@@ -272,10 +263,14 @@ dist-slack: freepops-$(VERSION).tar.gz
 		gzip usr/man/man1/freepopsd.1; \
 		rm usr/doc/freepops/MANUAL.txt; \
 		mv usr/doc/freepops usr/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/AUTHORS usr/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/COPYING usr/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/ChangeLog usr/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/README usr/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/AUTHORS \
+			usr/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/COPYING \
+			usr/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/ChangeLog \
+			usr/doc/freepops-$(VERSION); \
+		cp ../_slack_/freepops-$(VERSION)/README \
+			usr/doc/freepops-$(VERSION); \
 		chown -R root.root .; \
 		chmod 755 .; \
 		chown root.bin usr/bin ; \
@@ -292,10 +287,15 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p _osx_
 	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
 		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _osx_
-	$(H)for X in i386 ppc; do \
-	  cd _osx_/freepops-$(VERSION); make realclean; ./configure.sh osx-$$X; $(MAKE) all; cp src/freepopsd.$$X* ..; \
-	done
-	$(H)lipo -create -output _osx_/freepops-$(VERSION)/src/freepopsd _osx_/freepopsd.*
+	$(H)cd _osx_/freepops-$(VERSION);\
+	  for X in i386 ppc; do \
+	    make realclean; \
+	    ./configure.sh osx-$$X; \
+	    $(MAKE) all; \
+	    cp src/freepopsd.$$X* ..; \
+	  done
+	$(H)lipo -create -output _osx_/freepops-$(VERSION)/src/freepopsd \
+		_osx_/freepopsd.*
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
@@ -307,7 +307,11 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/soap
 	$(H)mkdir -p ../dist-osx/FreePOPs/script
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
-	$(H)cp osx/Install_resources/FreePOPs osx/Install_resources/StartupParameters.plist osx/Install_resources/freepopsd.plist ../dist-osx/FreePOPs/script
+	$(H)cp osx/Install_resources/FreePOPs \
+	       osx/Install_resources/StartupParameters.plist \
+	       osx/Install_resources/freepopsd.plist \
+	       osx/Install_resources/postflight \
+		../dist-osx/FreePOPs/script
 	$(H)cd _osx_/freepops-$(VERSION);\
 		cp COPYING AUTHORS ChangeLog config.lua ../../../dist-osx/FreePOPs/
 	$(H)cd _osx_/freepops-$(VERSION)/doc;\
@@ -326,112 +330,12 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include/soap;\
 		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/soap
 	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
-	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/English.lproj/ReadMe.txt
+	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog \
+		>> osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt
-	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/Italian.lproj/ReadMe.txt
-#	$(H)rm -rf _osx_
-
-dist-osx-static: freepops-$(VERSION).tar.gz
-	$(H)mkdir -p _osx_
-	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
-		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _osx_
-	$(H)cd _osx_/freepops-$(VERSION); ./configure.sh osx-static; $(MAKE) all
-	$(H)mkdir -p ../dist-osx/FreePOPs/doc
-	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
-	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
-	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_updates/browser
-	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_updates/lxp
-	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_updates/soap
-	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/browser
-	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/lxp
-	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/soap
-	$(H)mkdir -p ../dist-osx/FreePOPs/script
-	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
-	$(H)cp osx/Install_resources/FreePOPs osx/Install_resources/StartupParameters.plist osx/Install_resources/freepopsd.plist ../dist-osx/FreePOPs/script
-	$(H)cd _osx_/freepops-$(VERSION);\
-		cp COPYING AUTHORS ChangeLog config.lua ../../../dist-osx/FreePOPs/
-	$(H)cd _osx_/freepops-$(VERSION)/doc;\
-		cp LP-FP-HOWTO.txt MANUAL.txt ../../../../dist-osx/FreePOPs/doc/
-	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd;\
-		cp freepopsd ../../../../dist-osx/FreePOPs/src/
-	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
-	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
-		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua
-	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
-		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
-	$(H)cd _osx_/freepops-$(VERSION)/modules/include/browser;\
-		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/browser
-	$(H)cd _osx_/freepops-$(VERSION)/modules/include/lxp;\
-		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/lxp
-	$(H)cd _osx_/freepops-$(VERSION)/modules/include/soap;\
-		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/soap
-	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
-	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/English.lproj/ReadMe.txt
-	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt
-	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog >> osx/Install_resources/Italian.lproj/ReadMe.txt
+	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog \
+		>> osx/Install_resources/Italian.lproj/ReadMe.txt
 	$(H)rm -rf _osx_
-
-# osx-app
-# This is currently broken, DO NOT USE
-# 
-# 
-osx-app: freepops-$(VERSION).tar.gz Info.plist
-	$(H)mkdir -p _osx_
-	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
-		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _osx_
-	$(H)cd _osx_/freepops-$(VERSION);\
-		./configure.sh osx;\
-	$(H)cd _osx_;$(MAKE) all
-	$(H)mkdir -p osx/FreePOPs.app/Contents/MacOS
-	$(H)mkdir -p osx/FreePOPs.app/Contents/Resources/Italian.lproj
-	$(H)mkdir -p osx/FreePOPs.app/Contents/Resources/English.lproj
-	$(H)mkdir -p osx/FreePOPs.app/Contents/Resources/SharedSupport
-	$(H)cp osx/Info.plist osx/FreePOPs.app/Contents/
-	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd;\
-		cp freepopsd ../../../osx/FreePOPs.app/Contents/MacOS/
-	$(H)cp _osx_/freepops-$(VERSION)/src/lua/*.lua osx/FreePOPs.app/Contents/Resources/
-	$(H)cp _osx_/freepops-$(VERSION)/modules/include/*.lua osx/FreePOPs.app/Contents/Resources/
-	$(H)cp _osx_/freepops-$(VERSION)/*.lua osx/FreePOPs.app/Contents/Resources/
-	$(H)echo "APPL????" > osx/FreePOPs.app/Contents/PkgInfo
-	$(H)cp osx/freepops.icns osx/FreePOPs.app/Contents/Resources
-	$(H)rm -f osx/Info.plist
-	$(H)rm -rf _osx_
-
-Info.plist:
-	$(H)echo "<?xml version="1.0" encoding="UTF-8"?>" > osx/Info.plist
-	$(H)echo "<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">" >> osx/Info.plist
-	$(H)echo "<plist version="1.0">" >> osx/Info.plist
-	$(H)echo "<dict>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleDevelopmentRegion</key>" >> osx/Info.plist
-	$(H)echo "	<string>English</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleDisplayName</key>" >> osx/Info.plist
-	$(H)echo "	<string>FreePOPs</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleExecutable</key>" >> osx/Info.plist
-	$(H)echo "	<string>freepopsd</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleGetInfoString</key>" >> osx/Info.plist
-	$(H)echo "	<string>$(VERSION), Copyright 2004 Alessio Caprari, Nicola Cocchiaro, Enrico Tassi, Simone Vellei</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleIconFile</key>" >> osx/Info.plist
-	$(H)echo "	<string>freepops.icns</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleIdentifier</key>" >> osx/Info.plist
-	$(H)echo "	<string>net.sf.freepops</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleInfoDictionaryVersion</key>" >> osx/Info.plist
-	$(H)echo "	<string>6.0</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleName</key>" >> osx/Info.plist
-	$(H)echo "	<string>FreePOPs</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundlePackageType</key>" >> osx/Info.plist
-	$(H)echo "	<string>APPL</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleSignature</key>" >> osx/Info.plist
-	$(H)echo "	<string>????</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleShortVersionString</key>" >> osx/Info.plist
-	$(H)echo "	<string>$(VERSION)</string>" >> osx/Info.plist
-	$(H)echo "	<key>CFBundleVersion</key>" >> osx/Info.plist
-	$(H)echo "	<string>$(VERSION)</string>" >> osx/Info.plist
-	$(H)echo "	<key>NSPrincipalClass</key>" >> osx/Info.plist
-	$(H)echo "	<string>NSApplication</string>" >> osx/Info.plist
-	$(H)echo "	<key>NSHumanReadableCopyright</key>" >> osx/Info.plist
-	$(H)echo "	<string>Copyright 2004 Alessio Caprari, Nicola Cocchiaro, Enrico Tassi, Simone Vellei</string>" >> osx/Info.plist
-	$(H)echo "</dict>" >> osx/Info.plist
-	$(H)echo "</plist>" >> osx/Info.plist
 
 dist-obsd:
 	$(H)cd ..;./configure.sh obsd || true
@@ -450,3 +354,5 @@ freepops-$(VERSION).tar.gz:
 	$(H)$(MAKE) -C .. tgz-dist
 	$(H)mv ../dist-tgz/freepops-$(VERSION).tar.gz .
 	$(H)rm -rf ../dist-tgz
+
+# eof

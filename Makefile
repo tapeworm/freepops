@@ -37,12 +37,15 @@ clean:
 	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)echo "cleaning freepopsd"
 	$(H)$(MAKE) -C src clean CONFIG=$(PWD)/config || true
-	$(H)$(MAKE) -C updater-ui/fltk clean CONFIG=$(PWD)/config || true
 	$(H)$(MAKE) -C modules clean CONFIG=$(PWD)/config || true
 	$(H)$(MAKE) -C buildfactory clean CONFIG=$(PWD)/config || true
 	$(H)rm -f core* *-stamp dh_clean
 	$(H)rm -f doc/manual.ps doc/manual.pdf\
 		doc/manual-it.ps doc/manual-it.pdf
+ifneq "$(FLTKUI)" ""
+	$(H)$(MAKE) -C updater-ui/fltk clean CONFIG=$(PWD)/config || true
+endif
+
 distclean: clean
 	$(H)rm -fr dist-*
 	$(H)$(MAKE) -C doc/manual clean
@@ -159,13 +162,11 @@ tgz-dist:
 		rm -rf freepops-$(VERSION)
 	
 buildfactory:
-	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)$(MAKE) -C buildfactory all CONFIG=$(PWD)/config
 	
 #>----------------------------------------------------------------------------<#
 
 modules: config
-	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)$(MAKE) -C modules all CONFIG="$(PWD)/config"
 	
 src: config

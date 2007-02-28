@@ -482,7 +482,7 @@ diff -ruN luadoc/Makefile luadoc.new/Makefile
 +
 +$(PREFIX)/bin/luadoc:
 +	@mkdir $(PREFIX)/bin/luafiles || true
-+	@sed -i "s?@@LUADOC_HOME@@?$(PREFIX)/bin/luafiles/?" *.lua
++	@sed -i "s?@@LUADOC_HOME@@?$(PREFIX)/bin/luafiles/?" *.lua || echo luadoc will not work
 +	@cp *.lua $(PREFIX)/bin/luafiles
 +	@echo -e "#!/bin/sh\ncd $(PREFIX)/..;src/freepopsd -e $(PREFIX)/bin/luafiles/luadoc.lua \$$@" \
 +		> $(PREFIX)/bin/luadoc

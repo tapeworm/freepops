@@ -313,7 +313,8 @@ dist-osx: freepops-$(VERSION).tar.gz
 	       osx/Install_resources/postflight \
 		../dist-osx/FreePOPs/script
 	$(H)cd _osx_/freepops-$(VERSION);\
-		cp COPYING AUTHORS ChangeLog config.lua ../../../dist-osx/FreePOPs/
+		cp COPYING AUTHORS ChangeLog config.lua \
+		../../../dist-osx/FreePOPs/
 	$(H)cd _osx_/freepops-$(VERSION)/doc;\
 		cp LP-FP-HOWTO.txt MANUAL.txt ../../../../dist-osx/FreePOPs/doc/
 	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd;\
@@ -336,6 +337,7 @@ dist-osx: freepops-$(VERSION).tar.gz
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog \
 		>> osx/Install_resources/Italian.lproj/ReadMe.txt
 	$(H)rm -rf _osx_
+	$(H)mv ../dist-osx/FreePOPs ../dist-osx/FreePOPs.app
 
 dist-obsd:
 	$(H)cd ..;./configure.sh obsd || true

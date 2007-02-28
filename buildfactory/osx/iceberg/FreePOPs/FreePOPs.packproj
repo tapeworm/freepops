@@ -180,6 +180,111 @@
 										</dict>
 										<dict>
 											<key>Children</key>
+											<array>
+												<dict>
+													<key>Children</key>
+													<array/>
+													<key>GID</key>
+													<integer>80</integer>
+													<key>Path</key>
+													<string>../../../../dist-osx/FreePOPs.app/Contents/Info.plist</string>
+													<key>Path Type</key>
+													<integer>2</integer>
+													<key>Privileges</key>
+													<integer>420</integer>
+													<key>Type</key>
+													<integer>3</integer>
+													<key>UID</key>
+													<integer>0</integer>
+												</dict>
+												<dict>
+													<key>Children</key>
+													<array>
+														<dict>
+															<key>Children</key>
+															<array/>
+															<key>GID</key>
+															<integer>80</integer>
+															<key>Path</key>
+															<string>../../../../dist-osx/FreePOPs.app/Contents/MacOS/freepopsd</string>
+															<key>Path Type</key>
+															<integer>2</integer>
+															<key>Privileges</key>
+															<integer>493</integer>
+															<key>Type</key>
+															<integer>3</integer>
+															<key>UID</key>
+															<integer>0</integer>
+														</dict>
+													</array>
+													<key>Expanded</key>
+													<true/>
+													<key>GID</key>
+													<integer>80</integer>
+													<key>Path</key>
+													<string>../../../../dist-osx/FreePOPs.app/Contents/MacOS</string>
+													<key>Path Type</key>
+													<integer>2</integer>
+													<key>Privileges</key>
+													<integer>493</integer>
+													<key>Type</key>
+													<integer>3</integer>
+													<key>UID</key>
+													<integer>0</integer>
+												</dict>
+												<dict>
+													<key>Children</key>
+													<array>
+														<dict>
+															<key>Children</key>
+															<array/>
+															<key>GID</key>
+															<integer>80</integer>
+															<key>Path</key>
+															<string>../../../../dist-osx/FreePOPs.app/Contents/Resources/freepops.icns</string>
+															<key>Path Type</key>
+															<integer>2</integer>
+															<key>Privileges</key>
+															<integer>420</integer>
+															<key>Type</key>
+															<integer>3</integer>
+															<key>UID</key>
+															<integer>0</integer>
+														</dict>
+													</array>
+													<key>Expanded</key>
+													<true/>
+													<key>GID</key>
+													<integer>80</integer>
+													<key>Path</key>
+													<string>../../../../dist-osx/FreePOPs.app/Contents/Resources</string>
+													<key>Path Type</key>
+													<integer>2</integer>
+													<key>Privileges</key>
+													<integer>493</integer>
+													<key>Type</key>
+													<integer>3</integer>
+													<key>UID</key>
+													<integer>0</integer>
+												</dict>
+											</array>
+											<key>Expanded</key>
+											<true/>
+											<key>GID</key>
+											<integer>80</integer>
+											<key>Path</key>
+											<string>../../../../dist-osx/FreePOPs.app/Contents</string>
+											<key>Path Type</key>
+											<integer>2</integer>
+											<key>Privileges</key>
+											<integer>493</integer>
+											<key>Type</key>
+											<integer>3</integer>
+											<key>UID</key>
+											<integer>0</integer>
+										</dict>
+										<dict>
+											<key>Children</key>
 											<array/>
 											<key>GID</key>
 											<integer>80</integer>

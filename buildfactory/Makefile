@@ -338,6 +338,9 @@ dist-osx: freepops-$(VERSION).tar.gz
 		>> osx/Install_resources/Italian.lproj/ReadMe.txt
 	$(H)rm -rf _osx_
 	$(H)mv ../dist-osx/FreePOPs ../dist-osx/FreePOPs.app
+	$(H)$(MAKE) -C osx/popup-fltk/
+	$(H)cp osx/popup-fltk/fmessage ../dist-osx/FreePOPs.app/Contents/MacOS/
+	$(H)cp osx/start-stop-freepopsd ../dist-osx/FreePOPs.app/Contents/MacOS/
 
 dist-obsd:
 	$(H)cd ..;./configure.sh obsd || true

@@ -136,7 +136,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/AUTHORS</string>
+											<string>../../../../dist-osx/FreePOPs.app/AUTHORS</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -152,7 +152,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/ChangeLog</string>
+											<string>../../../../dist-osx/FreePOPs.app/ChangeLog</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -168,7 +168,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/config.lua</string>
+											<string>../../../../dist-osx/FreePOPs.app/config.lua</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -184,7 +184,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/COPYING</string>
+											<string>../../../../dist-osx/FreePOPs.app/COPYING</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -203,7 +203,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/doc/LP-FP-HOWTO.txt</string>
+													<string>../../../../dist-osx/FreePOPs.app/doc/LP-FP-HOWTO.txt</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -219,7 +219,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/doc/MANUAL.txt</string>
+													<string>../../../../dist-osx/FreePOPs.app/doc/MANUAL.txt</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -235,7 +235,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/doc</string>
+											<string>../../../../dist-osx/FreePOPs.app/doc</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -251,7 +251,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/freepopsd</string>
+											<string>../../../../dist-osx/FreePOPs.app/freepopsd</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -276,7 +276,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>Path</key>
-																	<string>../../../../dist-osx/FreePOPs/modules/include/browser/browser.lua</string>
+																	<string>../../../../dist-osx/FreePOPs.app/modules/include/browser/browser.lua</string>
 																	<key>Path Type</key>
 																	<integer>2</integer>
 																	<key>Privileges</key>
@@ -292,7 +292,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>Path</key>
-																	<string>../../../../dist-osx/FreePOPs/modules/include/browser/cookie.lua</string>
+																	<string>../../../../dist-osx/FreePOPs.app/modules/include/browser/cookie.lua</string>
 																	<key>Path Type</key>
 																	<integer>2</integer>
 																	<key>Privileges</key>
@@ -308,7 +308,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/browser</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/browser</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -324,7 +324,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/common.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/common.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -340,7 +340,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/httpmail.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/httpmail.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -359,7 +359,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>Path</key>
-																	<string>../../../../dist-osx/FreePOPs/modules/include/lxp/lom.lua</string>
+																	<string>../../../../dist-osx/FreePOPs.app/modules/include/lxp/lom.lua</string>
 																	<key>Path Type</key>
 																	<integer>2</integer>
 																	<key>Privileges</key>
@@ -375,7 +375,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/lxp</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/lxp</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -391,7 +391,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/mimer.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/mimer.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -407,7 +407,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/plugins2xml.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/plugins2xml.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -423,7 +423,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/serial.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/serial.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -442,7 +442,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>Path</key>
-																	<string>../../../../dist-osx/FreePOPs/modules/include/soap/http.lua</string>
+																	<string>../../../../dist-osx/FreePOPs.app/modules/include/soap/http.lua</string>
 																	<key>Path Type</key>
 																	<integer>2</integer>
 																	<key>Privileges</key>
@@ -458,7 +458,7 @@
 																	<key>GID</key>
 																	<integer>80</integer>
 																	<key>Path</key>
-																	<string>../../../../dist-osx/FreePOPs/modules/include/soap/soap.lua</string>
+																	<string>../../../../dist-osx/FreePOPs.app/modules/include/soap/soap.lua</string>
 																	<key>Path Type</key>
 																	<integer>2</integer>
 																	<key>Privileges</key>
@@ -474,7 +474,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/soap</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/soap</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -490,7 +490,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/support.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/support.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -506,7 +506,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/table2xml.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/table2xml.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -522,7 +522,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/updater_common.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/updater_common.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -538,7 +538,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/updater_cvs.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/updater_cvs.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -554,7 +554,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/updater_php.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/updater_php.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -570,7 +570,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/version_comparer.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/version_comparer.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -586,7 +586,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/xml2table.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/xml2table.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -602,7 +602,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/modules/include/xml2tex.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/modules/include/xml2tex.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -618,7 +618,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/modules/include</string>
+													<string>../../../../dist-osx/FreePOPs.app/modules/include</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -634,7 +634,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/modules</string>
+											<string>../../../../dist-osx/FreePOPs.app/modules</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -650,7 +650,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/README-osx.txt</string>
+											<string>../../../../dist-osx/FreePOPs.app/README-osx.txt</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -669,7 +669,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/script/FreePOPs</string>
+													<string>../../../../dist-osx/FreePOPs.app/script/FreePOPs</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -685,7 +685,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/script/freepopsd.plist</string>
+													<string>../../../../dist-osx/FreePOPs.app/script/freepopsd.plist</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -701,7 +701,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/script/postflight</string>
+													<string>../../../../dist-osx/FreePOPs.app/script/postflight</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -717,7 +717,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/script/StartupParameters.plist</string>
+													<string>../../../../dist-osx/FreePOPs.app/script/StartupParameters.plist</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -733,7 +733,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/script</string>
+											<string>../../../../dist-osx/FreePOPs.app/script</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -752,7 +752,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/src/freepopsd</string>
+													<string>../../../../dist-osx/FreePOPs.app/src/freepopsd</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -771,7 +771,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/aggregator.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/aggregator.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -787,7 +787,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/aol.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/aol.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -803,7 +803,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/criticalpath.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/criticalpath.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -819,7 +819,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/davmail.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/davmail.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -835,7 +835,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/fastmail.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/fastmail.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -851,7 +851,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/flatnuke.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/flatnuke.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -867,7 +867,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/foo.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/foo.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -883,7 +883,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/freepops.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/freepops.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -899,7 +899,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/gmail.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/gmail.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -915,7 +915,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/hotmail.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/hotmail.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -931,7 +931,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/juno.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/juno.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -947,7 +947,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/kernel.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/kernel.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -963,7 +963,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/libero.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/libero.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -979,7 +979,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/lycos.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/lycos.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -995,7 +995,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/mail2world.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/mail2world.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1011,7 +1011,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/mailcom.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/mailcom.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1027,7 +1027,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/netscape.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/netscape.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1043,7 +1043,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/popforward.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/popforward.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1059,7 +1059,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/skeleton.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/skeleton.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1075,7 +1075,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/squirrelmail.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/squirrelmail.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1091,7 +1091,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/supereva.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/supereva.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1107,7 +1107,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/tin.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/tin.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1123,7 +1123,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/tre.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/tre.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1139,7 +1139,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/updater.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/updater.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1155,7 +1155,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua/yahoo.lua</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua/yahoo.lua</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1171,7 +1171,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/src/lua</string>
+													<string>../../../../dist-osx/FreePOPs.app/src/lua</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -1189,7 +1189,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/src/lua_unofficial</string>
+													<string>../../../../dist-osx/FreePOPs.app/src/lua_unofficial</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -1210,7 +1210,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua_updates/browser</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua_updates/browser</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1228,7 +1228,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua_updates/lxp</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua_updates/lxp</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1246,7 +1246,7 @@
 															<key>GID</key>
 															<integer>80</integer>
 															<key>Path</key>
-															<string>../../../../dist-osx/FreePOPs/src/lua_updates/soap</string>
+															<string>../../../../dist-osx/FreePOPs.app/src/lua_updates/soap</string>
 															<key>Path Type</key>
 															<integer>2</integer>
 															<key>Privileges</key>
@@ -1262,7 +1262,7 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs/src/lua_updates</string>
+													<string>../../../../dist-osx/FreePOPs.app/src/lua_updates</string>
 													<key>Path Type</key>
 													<integer>2</integer>
 													<key>Privileges</key>
@@ -1278,7 +1278,7 @@
 											<key>GID</key>
 											<integer>80</integer>
 											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs/src</string>
+											<string>../../../../dist-osx/FreePOPs.app/src</string>
 											<key>Path Type</key>
 											<integer>2</integer>
 											<key>Privileges</key>
@@ -1294,7 +1294,7 @@
 									<key>GID</key>
 									<integer>80</integer>
 									<key>Path</key>
-									<string>../../../../dist-osx/FreePOPs</string>
+									<string>../../../../dist-osx/FreePOPs.app</string>
 									<key>Path Type</key>
 									<integer>2</integer>
 									<key>Privileges</key>
@@ -1768,7 +1768,7 @@ Copyright 2004 - Alessio Caprari, Nicola Cocchiaro, Enrico Tassi, Simone Vellei<
 					<key>CFBundleGetInfoString</key>
 					<string>FreePOPs 0.2.0</string>
 					<key>CFBundleIconFile</key>
-					<string></string>
+					<string>freepops.icns</string>
 					<key>CFBundleIconFile Path Type</key>
 					<integer>2</integer>
 					<key>CFBundleIdentifier</key>

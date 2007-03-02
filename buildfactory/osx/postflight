@@ -1,0 +1,3 @@
+#!/bin/bash
+
+chown -R $USER $2/FreePOPs.app

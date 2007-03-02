@@ -1686,18 +1686,18 @@
 					<key>IFInstallationScriptsPostflight</key>
 					<dict>
 						<key>Path</key>
-						<string></string>
+						<string>../../postflight</string>
 						<key>Path Type</key>
 						<integer>2</integer>
 						<key>Status</key>
-						<false/>
+						<true/>
 					</dict>
 					<key>IFInstallationScriptsPostinstall</key>
 					<dict>
 						<key>Path</key>
 						<string></string>
 						<key>Path Type</key>
-						<integer>2</integer>
+						<integer>1</integer>
 						<key>Status</key>
 						<false/>
 					</dict>
@@ -1770,7 +1770,7 @@ Copyright 2004 - Alessio Caprari, Nicola Cocchiaro, Enrico Tassi, Simone Vellei<
 					<key>IFPkgFlagAllowBackRev</key>
 					<true/>
 					<key>IFPkgFlagAuthorizationAction</key>
-					<integer>0</integer>
+					<integer>2</integer>
 					<key>IFPkgFlagFollowLinks</key>
 					<true/>
 					<key>IFPkgFlagIsRequired</key>

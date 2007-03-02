@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9f"
+PLUGIN_VERSION = "0.1.9g"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -719,35 +719,38 @@ function downloadYahooMsg(pstate, msg, nLines, data)
 
   -- Start the download on the body
   -- 
-  if nLines ~= 0 then
-    if (internalState.bNewGUI) then
-      headers = mimer.remove_lines_in_proper_mail_header(headers, {"content%-type",
+  if (internalState.bNewGUI) then
+    headers = mimer.remove_lines_in_proper_mail_header(headers, {"content%-type",
 		"content%-disposition", "mime%-version", "boundary"})
 
+
+    if nLines == 0 then
+      cbInfo.strText = ""
+    else
       getMsgBody(pstate, uidl, size, cbInfo)
-      mimer.pipe_msg(
-        headers, 
-        cbInfo.strText, 
-        cbInfo.strHtml, 
-        internalState.strMailServer, 
-        cbInfo.attachments, browser, 
-        function(s)
-          popserver_callback(s,data)
-        end, cbInfo.inlineids)
-    else 
-      local f, _ = browser:pipe_uri(bodyUrl,cb)
-      if not f then
-        -- An empty message.  Send the headers anyway
-        --
-        log.dbg("Empty message")
-      else
-        -- Just send an extra carriage return
-        --
-        log.dbg("Message Body has been processed.")
-        if (cbInfo.strBuffer ~= "\r\n") then
-          log.dbg("Message doesn't end in CRLF, adding to prevent client timeout.")
-          popserver_callback("\r\n\0", data)
-        end
+    end
+    mimer.pipe_msg(
+      headers, 
+      cbInfo.strText, 
+      cbInfo.strHtml, 
+      internalState.strMailServer, 
+      cbInfo.attachments, browser, 
+      function(s)
+        popserver_callback(s,data)
+      end, cbInfo.inlineids)
+  elseif (nLines ~= 0) then  
+    local f, _ = browser:pipe_uri(bodyUrl,cb)
+    if not f then
+      -- An empty message.  Send the headers anyway
+      --
+      log.dbg("Empty message")
+    else
+      -- Just send an extra carriage return
+      --
+      log.dbg("Message Body has been processed.")
+      if (cbInfo.strBuffer ~= "\r\n") then
+        log.dbg("Message doesn't end in CRLF, adding to prevent client timeout.")
+        popserver_callback("\r\n\0", data)
       end
     end
   end

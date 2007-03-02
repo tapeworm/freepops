@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9e"
+PLUGIN_VERSION = "0.0.9f"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -64,8 +64,8 @@ local globals = {
 
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem
   --
-  strRetLoginGoodLogin = 'gTargetHost = "([^"]+)"';
-  strRetLoginGoodLoginAim = 'gPreferredHost = "([^"]+)"';
+  strRetLoginGoodLogin = 'var AV_PAGE="http://([^/]+)/';
+  strRetLoginGoodLoginAim = 'g.-Host = "([^"]+)"';
   strRetLoginSessionNotExpired = "(mail session has expired)",
   
   -- Regular expression to extract the mail server
@@ -86,7 +86,7 @@ local globals = {
 
   -- Pattern to extract the version of webmail
   --
-  strVersionPattern = 'var gSuccessPath = "/(%d+)/',
+  strVersionPattern = 'var VERSION="([^"]+)"',
 
   -- Extract the server to post the login data to
   --

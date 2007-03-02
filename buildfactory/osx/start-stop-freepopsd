@@ -1,5 +1,6 @@
-#!/bin/sh
-cd /Applications/FreePOPs.app/
+#!/bin/bash
+
+cd `dirname $0`/../../
 if [ -e pid.txt ]; then
 	kill `cat pid.txt`
 	rm -f pid.txt

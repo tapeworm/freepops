@@ -790,89 +790,6 @@
 													<key>GID</key>
 													<integer>80</integer>
 													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs.app/script/FreePOPs</string>
-													<key>Path Type</key>
-													<integer>2</integer>
-													<key>Privileges</key>
-													<integer>493</integer>
-													<key>Type</key>
-													<integer>3</integer>
-													<key>UID</key>
-													<integer>0</integer>
-												</dict>
-												<dict>
-													<key>Children</key>
-													<array/>
-													<key>GID</key>
-													<integer>80</integer>
-													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs.app/script/freepopsd.plist</string>
-													<key>Path Type</key>
-													<integer>2</integer>
-													<key>Privileges</key>
-													<integer>420</integer>
-													<key>Type</key>
-													<integer>3</integer>
-													<key>UID</key>
-													<integer>0</integer>
-												</dict>
-												<dict>
-													<key>Children</key>
-													<array/>
-													<key>GID</key>
-													<integer>80</integer>
-													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs.app/script/postflight</string>
-													<key>Path Type</key>
-													<integer>2</integer>
-													<key>Privileges</key>
-													<integer>493</integer>
-													<key>Type</key>
-													<integer>3</integer>
-													<key>UID</key>
-													<integer>0</integer>
-												</dict>
-												<dict>
-													<key>Children</key>
-													<array/>
-													<key>GID</key>
-													<integer>80</integer>
-													<key>Path</key>
-													<string>../../../../dist-osx/FreePOPs.app/script/StartupParameters.plist</string>
-													<key>Path Type</key>
-													<integer>2</integer>
-													<key>Privileges</key>
-													<integer>420</integer>
-													<key>Type</key>
-													<integer>3</integer>
-													<key>UID</key>
-													<integer>0</integer>
-												</dict>
-											</array>
-											<key>Expanded</key>
-											<true/>
-											<key>GID</key>
-											<integer>80</integer>
-											<key>Path</key>
-											<string>../../../../dist-osx/FreePOPs.app/script</string>
-											<key>Path Type</key>
-											<integer>2</integer>
-											<key>Privileges</key>
-											<integer>493</integer>
-											<key>Type</key>
-											<integer>3</integer>
-											<key>UID</key>
-											<integer>0</integer>
-										</dict>
-										<dict>
-											<key>Children</key>
-											<array>
-												<dict>
-													<key>Children</key>
-													<array/>
-													<key>GID</key>
-													<integer>80</integer>
-													<key>Path</key>
 													<string>../../../../dist-osx/FreePOPs.app/src/freepopsd</string>
 													<key>Path Type</key>
 													<integer>2</integer>
@@ -1758,82 +1675,31 @@
 				<key>Additional Resources</key>
 				<dict>
 					<key>English</key>
-					<array>
-						<dict>
-							<key>Path</key>
-							<string>../../Install_resources/English.lproj/InstallationCheck.strings</string>
-							<key>Path Type</key>
-							<integer>2</integer>
-							<key>Status</key>
-							<true/>
-						</dict>
-					</array>
+					<array/>
 					<key>International</key>
-					<array>
-						<dict>
-							<key>Path</key>
-							<string>../../Install_resources/FreePOPs</string>
-							<key>Path Type</key>
-							<integer>2</integer>
-							<key>Status</key>
-							<false/>
-						</dict>
-						<dict>
-							<key>Path</key>
-							<string>../../Install_resources/freepopsd.plist</string>
-							<key>Path Type</key>
-							<integer>2</integer>
-							<key>Status</key>
-							<false/>
-						</dict>
-						<dict>
-							<key>Path</key>
-							<string>../../Install_resources/InstallationCheck</string>
-							<key>Path Type</key>
-							<integer>2</integer>
-							<key>Status</key>
-							<false/>
-						</dict>
-						<dict>
-							<key>Path</key>
-							<string>../../Install_resources/StartupParameters.plist</string>
-							<key>Path Type</key>
-							<integer>2</integer>
-							<key>Status</key>
-							<false/>
-						</dict>
-					</array>
+					<array/>
 					<key>Italian</key>
-					<array>
-						<dict>
-							<key>Path</key>
-							<string>../../Install_resources/Italian.lproj/InstallationCheck.strings</string>
-							<key>Path Type</key>
-							<integer>2</integer>
-							<key>Status</key>
-							<true/>
-						</dict>
-					</array>
+					<array/>
 				</dict>
 				<key>Installation Scripts</key>
 				<dict>
 					<key>IFInstallationScriptsPostflight</key>
 					<dict>
 						<key>Path</key>
-						<string>../../Install_resources/postflight</string>
+						<string></string>
 						<key>Path Type</key>
 						<integer>2</integer>
 						<key>Status</key>
-						<true/>
+						<false/>
 					</dict>
 					<key>IFInstallationScriptsPostinstall</key>
 					<dict>
 						<key>Path</key>
-						<string>../../Install_resources/postinstall</string>
+						<string></string>
 						<key>Path Type</key>
 						<integer>2</integer>
 						<key>Status</key>
-						<true/>
+						<false/>
 					</dict>
 					<key>IFInstallationScriptsPostupgrade</key>
 					<dict>

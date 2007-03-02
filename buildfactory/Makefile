@@ -307,9 +307,9 @@ dist-osx-build: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/browser
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/lxp
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/soap
-	$(H)mkdir -p ../dist-osx/FreePOPs/script
+	$(H)#mkdir -p ../dist-osx/FreePOPs/script
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
-	$(H)cp osx/Install_resources/FreePOPs \
+	$(H)#cp osx/Install_resources/FreePOPs \
 	       osx/Install_resources/StartupParameters.plist \
 	       osx/Install_resources/freepopsd.plist \
 	       osx/Install_resources/postflight \
@@ -327,15 +327,19 @@ dist-osx-build: freepops-$(VERSION).tar.gz
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/modules/include
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include/browser;\
-		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/browser
+		cp *.lua \
+		../../../../../../dist-osx/FreePOPs/modules/include/browser
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include/lxp;\
 		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/lxp
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include/soap;\
-		cp *.lua ../../../../../../dist-osx/FreePOPs/modules/include/soap
-	$(H)cat osx/ReadMe.en.txt > osx/Install_resources/English.lproj/ReadMe.txt
+		cp *.lua \
+		../../../../../../dist-osx/FreePOPs/modules/include/soap
+	$(H)cat osx/ReadMe.en.txt > \
+		osx/Install_resources/English.lproj/ReadMe.txt
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog \
 		>> osx/Install_resources/English.lproj/ReadMe.txt
-	$(H)cat osx/ReadMe.it.txt > osx/Install_resources/Italian.lproj/ReadMe.txt
+	$(H)cat osx/ReadMe.it.txt > \
+		osx/Install_resources/Italian.lproj/ReadMe.txt
 	$(H)cat _osx_/freepops-$(VERSION)/ChangeLog \
 		>> osx/Install_resources/Italian.lproj/ReadMe.txt
 	$(H)rm -rf _osx_
@@ -349,8 +353,14 @@ dist-osx-finalyze: ../dist-osx/FreePOPs.app
 	$(H)cp osx/Info.plist ../dist-osx/FreePOPs.app/Contents
 	$(H)cp osx/freepops.icns ../dist-osx/FreePOPs.app/Contents/Resources
 	$(H)cp osx/popup-fltk/fmessage ../dist-osx/FreePOPs.app/Contents/MacOS/
-	$(H)cp osx/start-stop-freepopsd ../dist-osx/FreePOPs.app/Contents/MacOS/
+	$(H)cp osx/start-stop-freepopsd \
+		 ../dist-osx/FreePOPs.app/Contents/MacOS/
 	$(H)$(MAKE) -C osx/popup-fltk/ clean
+	$(H)freeze osx/iceberg/FreePOPs/FreePOPs.packproj
+	$(H)mv osx/iceberg/FreePOPs/build/freepops.pkg ../dist-osx
+	$(H)cd ../dist-osx; zip -r freepops-$(VERSION).pkg.zip freepops.pkg
+	$(H)rm -rf ../dist-osx/freepops.pkg
+	$(H)rm -rf ../dist-osx/FreePOPs.app
 
 dist-obsd:
 	$(H)cd ..;./configure.sh obsd || true

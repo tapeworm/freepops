@@ -2,11 +2,19 @@
 
 cd `dirname $0`/../../
 if [ -e pid.txt ]; then
-	kill `cat pid.txt`
-	rm -f pid.txt
-	Contents/MacOS/fmessage 'FreePOPs stopped.'
-else
-	src/freepopsd -v -b 127.0.0.1 -l log.txt &
-	echo $! > pid.txt
-	Contents/MacOS/fmessage 'FreePOPs started. To stop it, double click again on it.' 
+	PID=`cat pid.txt`
+	N=`ps ax | grep $PID | grep freepopsd | cut -f 1 -d ' '`
+	if [ ! -z "$N" ]; then
+		kill `cat pid.txt`
+		rm -f pid.txt
+		Contents/MacOS/fmessage 'FreePOPs stopped.'
+		exit 0
+	fi
 fi
+	
+#src/freepopsd -w -b 127.0.0.1 -l log.txt &
+src/freepopsd -b 127.0.0.1 &
+echo $! > pid.txt
+Contents/MacOS/fmessage 'FreePOPs started. To stop it, double click again.' 
+
+# eof

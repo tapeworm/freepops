@@ -70,6 +70,8 @@ function check_if_updatable(module, reqversion, newversion, oldvers)
     rc = 1
   end
 
+  log.dbg("compare_versions("..newversion..","..oldvers..") = "..rc)
+
   -- A new version is available, check the require version
   --
   if (rc == 1) then
@@ -81,7 +83,7 @@ function check_if_updatable(module, reqversion, newversion, oldvers)
     end
   -- The version is the same.
   --
-  elseif (rc == 0) then
+  elseif (rc <= 0) then
     return true, false, "Already at the newest version"
   end
 

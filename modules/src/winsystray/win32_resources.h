@@ -30,9 +30,9 @@ FreePOPs core and some plugins are developed by:\n\
 	Alessio Caprari\n\
 	Nicola Cocchiaro\n\
 	Simone Vellei\n\
+	Russell Schwager\n\
 \n\
 Really important contributions like code, plugins, translations from:\n\
-	Russell Schwager\n\
 	Rami Kattan\n\
 	Pegasus\n\
 	Eddi De Pieri\n\

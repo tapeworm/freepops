@@ -3,7 +3,6 @@ Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@debian.org>
 Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl3-dev, flex, bison, po-debconf
-Build-Depends-Indep: tetex-extra, gs-common
 Standards-Version: 3.6.2
 
 Package: freepops
@@ -15,15 +14,3 @@ Description: POP3 interface to several webmails
  .
  freepopsd can also be used as RSS aggregator and POP3 forwarder.
 
-Package: freepops-doc
-Section: doc
-Architecture: all
-Depends: 
-Description: freepops user/developer manual
- freepopsd is a POP3 daemon that translates local POP3 commands
- to remote HTTP requests to the supported webmail sites.
- .
- freepopsd can also be used as RSS aggregator and POP3 forwarder.
- .
- This is the manual in PDF format for freepops.
- 

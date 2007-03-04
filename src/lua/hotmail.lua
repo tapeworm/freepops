@@ -9,9 +9,9 @@
 --
 PLUGIN_VERSION = "0.1.6k"
 PLUGIN_NAME = "hotmail.com"
-PLUGIN_REQUIRE_VERSION = "0.0.97"
+PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://www.freepops.org/download.php?file=hotmail.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=hotmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager", "D. Milne" }
 PLUGIN_AUTHORS_CONTACTS = {"russell822 (at) yahoo (.) com", "drmilne (at) safe-mail (.) net"}
@@ -367,9 +367,9 @@ function loginHotmail()
   -- to login.
   --
   local pattern = string.format(globals.strLoginPostUrlPattern3, domain)
-  _, _, url = string.find(body, pattern)
-  local _, _, str = string.find(body, globals.strLoginPostUrlPattern4)
-  local _, _, str2 = string.find(body, globals.strLoginPostUrlPattern5)
+  url = string.match(body, pattern)
+  local str = string.match(body, globals.strLoginPostUrlPattern4)
+  local str2 = string.match(body, globals.strLoginPostUrlPattern5)
   if (str == nil or str2 == nil) then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_NETWORK
@@ -394,9 +394,9 @@ function loginHotmail()
   -- We should be logged in now!  Unfortunately, we aren't done.  Hotmail returns a page
   -- that should auto-reload in a browser but not in curl.  It's the URL for Hotmail Today.
   --
-  _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome1)
+  url = string.match(body, globals.strLoginDoneReloadToHMHome1)
   if url == nil then
-    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+    url = string.match(body, globals.strLoginDoneReloadToHMHome2)
     if url == nil then
       log.error_print(globals.strLoginFailed)
       log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(1):\n" .. body);
@@ -404,7 +404,7 @@ function loginHotmail()
     end
   end
 
-  _, _, str = string.find(url, globals.strRetLoginBadLogin)
+  str = string.match(url, globals.strRetLoginBadLogin)
   if str ~= nil then
     log.error_print(globals.strLoginFailed)
     log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(2):\n" .. body);
@@ -419,23 +419,23 @@ function loginHotmail()
     return POPSERVER_ERR_NETWORK
   end
 
-  -- Check to see if we are using a classic account
-  --
-  local _, _, str = string.find(body, globals.strClassicCheckPattern)
-  if str ~= nil then
-    log.dbg("Hotmail: Detected Classic version.") 
-    body, err = browser:get_uri("http://www.hotmail.com")
-  end 
+   -- Check to see if we are using a classic account
+   --
+   local str = string.match(body, globals.strClassicCheckPattern)
+   if str ~= nil then
+     log.dbg("Hotmail: Detected Classic version.") 
+     body, err = browser:get_uri("http://www.hotmail.com")
+   end 
 
   -- Check to see if we are using the new interface and are redirecting.
   --
-  _, _, str = string.find(body, globals.strLiveCheckPattern)
+  str = string.match(body, globals.strLiveCheckPattern)
   local folderBody = body
   if str ~= nil then
     log.dbg("Hotmail: Detected LIVE version.") 
     str = string.format(globals.strCmdBrowserIgnoreLive, browser:wherearewe())
     body, err = browser:get_uri(str)
-    _, _, str = string.find(body, globals.strLiveMainPagePattern)
+    str = string.match(body, globals.strLiveMainPagePattern)
     if str ~= nil then
       str = string.format(globals.strCmdBaseLive, browser:wherearewe()) .. str
       body, err = browser:get_uri(str)
@@ -450,9 +450,9 @@ function loginHotmail()
     -- One more redirect
     --  
     local oldurl = url
-    _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome1)
+    url = string.match(body, globals.strLoginDoneReloadToHMHome1)
     if url == nil then
-      _, _, url = string.find(body, globals.strLoginDoneReloadToHMHome2)
+      url = string.match(body, globals.strLoginDoneReloadToHMHome2)
       if url == nil then
         log.error_print(globals.strLoginFailed)
         log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
@@ -466,10 +466,10 @@ function loginHotmail()
   --
   local user = nil
   if (internalState.bLiveGUI == true) then
-    _, _, str = string.find(body, globals.strRegExpCrumbLive)
-    _, _, user = string.find(body, globals.strRegExpUser)
+    str = string.match(body, globals.strRegExpCrumbLive)
+    user = string.match(body, globals.strRegExpUser)
   else
-    _, _, str = string.find(body, globals.strRegExpCrumb)
+    str = string.match(body, globals.strRegExpCrumb)
   end
 
   if str == nil then
@@ -505,9 +505,9 @@ function loginHotmail()
   -- Find the image server
   --
   if (internalState.bLiveGUI == true) then
-    _, _, str = string.find(body, globals.strImgServerLivePattern)
+    str = string.match(body, globals.strImgServerLivePattern)
   else
-    _, _, str = string.find(body, globals.strImgServerPattern)
+    str = string.match(body, globals.strImgServerPattern)
   end
   
   if str ~= nil then
@@ -530,9 +530,9 @@ function loginHotmail()
     local url = string.format(globals.strCmdFolders, internalState.strMailServer, 
       internalState.strCrumb)
     body, err = browser:get_uri(url)
-    _, _, str = string.find(body, globals.strFolderPattern .. internalState.strMBoxName .. "</a>")
+    str = string.match(body, globals.strFolderPattern .. internalState.strMBoxName .. "</a>")
     if (str == nil and domain == "msn.com" and internalState.strMBoxName == "Inbox") then
-      _, _, str = string.find(body, globals.strPatMSNInboxId)
+      str = string.match(body, globals.strPatMSNInboxId)
     end
     if (str == nil) then
       log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
@@ -544,11 +544,11 @@ function loginHotmail()
   elseif (internalState.bLiveGUI == true) then 
     -- Get some folder id's
     --
-    local _, _, inboxId = string.find(body, globals.strFolderLiveInboxPattern)
+    local inboxId = string.match(body, globals.strFolderLiveInboxPattern)
 
     -- Get the trash folder id and the junk folder id
     --
-    _, _, str = string.find(body, globals.strPatLiveTrashId) 
+    str = string.match(body, globals.strPatLiveTrashId) 
     if str ~= nil then
       internalState.strTrashId = str
       log.dbg("Hotmail - trash folder id: " .. str)
@@ -556,14 +556,14 @@ function loginHotmail()
       log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
     end
 
-    _, _, str = string.find(body, globals.strPatLiveJunkId) 
+    str = string.match(body, globals.strPatLiveJunkId) 
     if str ~= nil then
       internalState.strJunkId = str
       log.dbg("Hotmail - junk folder id: " .. str)
     else
       log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
     end
-
+ 
     if (internalState.strMBoxName == "Inbox") then
       str = inboxId
     elseif (internalState.strMBoxName == "Junk") then
@@ -601,7 +601,7 @@ function getFolderId(inboxId)
     internalState.strCrumb, internalState.strUserId)
   local post = string.format(globals.strCmdMsgListPostLive, inboxId, 0, 0)
   local body, err = internalState.browser:post_uri(cmdUrl, post)
-  local _, _, str = string.find(body, globals.strFolderLivePattern .. internalState.strMBoxName)
+  local str = string.match(body, globals.strFolderLivePattern .. internalState.strMBoxName)
   return str
 end
 
@@ -795,7 +795,7 @@ function cleanupHeaders(headers, cbInfo)
   local bMissingID = false    -- when no Message-ID -field seems to have been automatically generated ?
   local bodyrest = ""
 
-  _, _, headers, bodyrest = string.find(headers, "^(.-)\r*\n%s*\r*\n(.*)$" )
+  headers, bodyrest = string.match(headers, "^(.-)\r*\n%s*\r*\n(.*)$" )
 
   if (headers == nil) then
     log.dbg("Hotmail: unable to parse out message headers.  Extra headers will not be used.")
@@ -1191,7 +1191,7 @@ function LiveStat(pstate)
 
   -- Let's make sure the session is still valid
   --
-  local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpiredLive)
+  local strSessExpr = string.match(body, globals.strRetLoginSessionExpiredLive)
   if strSessExpr ~= nil then
     -- Invalidate the session
     --
@@ -1234,8 +1234,8 @@ function LiveStat(pstate)
   local sizes = {}
   for size in string.gfind(body, globals.strMsgLivePattern1) do
     cnt = cnt + 1
-    local _, _, kbUnit = string.find(size, "([Kk])")
-    _, _, size = string.find(size, "([%d%.,]+) [KkMm]")
+    local kbUnit = string.match(size, "([Kk])")
+    size = string.match(size, "([%d%.,]+) [KkMm]")
     if not kbUnit then 
       size = math.max(tonumber(size), 0) * 1024 * 1024
     else
@@ -1309,7 +1309,7 @@ function stat(pstate)
   local function funcProcess(body)
     -- Find out if there are any messages
     -- 
-    local _, _, nomesg = string.find(body, globals.strMsgListNoMsgPat)
+    local nomesg = string.match(body, globals.strMsgListNoMsgPat)
     if (nomesg ~= nil) then
       return true, nil
     end
@@ -1339,7 +1339,7 @@ function stat(pstate)
 
       -- Get the message id.  It's in the format of "MSG[numbers].[number(s)]".
       --
-      _, _, uidl = string.find(uidl, 'name="([^"]+)"')
+      uidl = string.match(uidl, 'name="([^"]+)"')
 
       local bUnique = true
       for j = 0, nMsgs do
@@ -1352,8 +1352,8 @@ function stat(pstate)
       -- Convert the size from it's string (4KB or 2MB) to bytes
       -- First figure out the unit (KB or just B)
       --
-      local _, _, kbUnit = string.find(size, "([Kk])")
-      _, _, size = string.find(size, "([%d%.,]+)[KkMm]")
+      local kbUnit = string.match(size, "([Kk])")
+      size = string.match(size, "([%d%.,]+)[KkMm]")
       if not kbUnit then 
         size = math.max(tonumber(size), 0) * 1024 * 1024
       else
@@ -1423,7 +1423,7 @@ function stat(pstate)
 
     -- Is the session expired
     --
-    local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
+    local strSessExpr = string.match(body, globals.strRetLoginSessionExpired)
     if strSessExpr ~= nil then
       -- Invalidate the session
       --
@@ -1455,13 +1455,13 @@ function stat(pstate)
     -- Get the total number of messages
     --
     if nTotMsgs == 0 then
-      local _, _, strTotMsgs = string.find(body, globals.strMsgListCntPattern)
+      local strTotMsgs = string.match(body, globals.strMsgListCntPattern)
       if strTotMsgs == nil then
         nTotMsgs = 0
       else 
         -- The number of messages can be in one of two patterns
         --
-        _, _, nTotMsgs = string.find(strTotMsgs, globals.strMsgListCntPattern2)
+        nTotMsgs = string.match(strTotMsgs, globals.strMsgListCntPattern2)
         if (nTotMsgs == nil) then
           nTotMsgs = 0
         end

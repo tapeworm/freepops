@@ -1,4 +1,6 @@
-24/02/2007 0.2.0
+4/03/2007 0.2.0
+- new osx .app
+- new osx installer made using iceberg 
 - es: Binary images in Spanish (lisar314)
 - es, fr: removed a bunch of solete repositories in download.php (gareuselesinge)
 - es: traslated images es (gareuselesinge)

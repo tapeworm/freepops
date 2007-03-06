@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6k"
+PLUGIN_VERSION = "0.1.6l"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -100,7 +100,7 @@ local globals = {
   
   -- Extract the server to post the login data to
   --
-  strLoginPostUrlPattern1='action="([^"]*)"',
+  strLoginPostUrlPattern1='action="([^"]+)"',
   strLoginPostUrlPattern2='type=["]?hidden["]? name="([^"]*)".* value="([^"]*)"',
   strLoginPostUrlPattern3='g_DO."%s".="([^"]+)"',
   strLoginPostUrlPattern4='var g_QS="([^"]+)";',
@@ -391,6 +391,22 @@ function loginHotmail()
       return POPSERVER_ERR_NETWORK
   end
 
+  -- The login page returns a page where a form needs to be submitted.  We'll do it
+  -- manually.  Extract the form elements and post the data
+  --
+  _, _, url = string.find(body, globals.strLoginPostUrlPattern1)
+  local postdata = nil
+  local name, value  
+  for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do
+    value = curl.escape(value)
+    if postdata ~= nil then
+      postdata = postdata .. "&" .. name .. "=" .. value  
+    else
+      postdata = name .. "=" .. value 
+    end
+  end
+  body, err = browser:post_uri(url, postdata)
+ 
   -- We should be logged in now!  Unfortunately, we aren't done.  Hotmail returns a page
   -- that should auto-reload in a browser but not in curl.  It's the URL for Hotmail Today.
   --

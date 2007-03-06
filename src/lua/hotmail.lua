@@ -394,7 +394,7 @@ function loginHotmail()
   -- The login page returns a page where a form needs to be submitted.  We'll do it
   -- manually.  Extract the form elements and post the data
   --
-  _, _, url = string.find(body, globals.strLoginPostUrlPattern1)
+  url = string.match(body, globals.strLoginPostUrlPattern1)
   local postdata = nil
   local name, value  
   for name, value in string.gfind(body, globals.strLoginPostUrlPattern2) do

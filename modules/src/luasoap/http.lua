@@ -9,14 +9,14 @@ MODULE_URL = "http://www.freepops.org/download.php?module=soap.http.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
 require("browser") 
-require("soap")
+require("soap.soap")
 
 module("soap.http")
 
 function call(browser, url, namespace, method, entries, headers)
 	local rc, err = 
 		browser:post_uri(url,
-			soap.encode (namespace, method, entries, headers),
+			soap.soap.encode (namespace, method, entries, headers),
 			{ "Content-type: text/xml", 
 			  "SOAPAction: " .. method })
 	if rc ~= nil then

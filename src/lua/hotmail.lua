@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.6l"
+PLUGIN_VERSION = "0.1.7"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -405,7 +405,9 @@ function loginHotmail()
       postdata = name .. "=" .. value 
     end
   end
-  body, err = browser:post_uri(url, postdata)
+  if (postdata ~= nil) then
+    body, err = browser:post_uri(url, postdata)
+  end
  
   -- We should be logged in now!  Unfortunately, we aren't done.  Hotmail returns a page
   -- that should auto-reload in a browser but not in curl.  It's the URL for Hotmail Today.

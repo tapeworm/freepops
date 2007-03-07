@@ -588,7 +588,7 @@ function loginNewYahoo(browser, body)
 
   -- Get the Web Service Url
   --
---  local _, _, str = string.find(body, globals.strRegExpWebSrvUrl)
+--  local str = string.match(body, globals.strRegExpWebSrvUrl)
 --  if str == nil then
 --    log.error_print("Yahoo - unable to parse out web service Url.")
 --    log.raw("Yahoo - unable to parse out web service value.  Body: " .. 
@@ -1165,7 +1165,7 @@ function getRealAttachmentUrl(url)
     log.dbg(err)
     return nil
   end
-  local _, _, x = string.find(h,
+  local x = string.match(h,
                 "[Ll][Oo][Cc][Aa][Tt][Ii][Oo][Nn]%s*:%s*([^\r]*)")
   return (x or nil)
 end

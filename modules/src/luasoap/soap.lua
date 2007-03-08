@@ -4,7 +4,7 @@
 -- $Id$
 ---------------------------------------------------------------------
 
-MODULE_VERSION = "0.0.1"
+MODULE_VERSION = "0.0.2"
 MODULE_NAME = "soap.soap"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -19,7 +19,7 @@ local format, strfind = string.format, string.find
 local max = math.max
 local parse = lxp.lom.parse
 
-module ("soap.soap")
+module ("soap")
 
 _COPYRIGHT = "Copyright (C) 2004 Kepler Project"
 _DESCRIPTION = "LuaSOAP provides a very simple API that convert Lua tables to and from XML documents"
@@ -152,7 +152,8 @@ function encode (namespace, method, entries, header)
 		body[i] = entries[i]
 	end
 
-      -- Added by Russell Schwager - Pass any top level attributes that may exist
+      -- Added by Russell Schwager 
+      --  Pass any top level attributes that may exist
       --
       body.attr = {}
       if (entries.attr ~= nil) then

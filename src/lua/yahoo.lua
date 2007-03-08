@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9g"
+PLUGIN_VERSION = "0.1.9h"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -1806,8 +1806,7 @@ function init(pstate)
 
   -- Soap
   --
-  require("soap/http")
-  require("soap/soap")
+  require("soap.http")
 
   -- Run a sanity check
   --

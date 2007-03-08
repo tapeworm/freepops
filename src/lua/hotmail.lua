@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.7"
+PLUGIN_VERSION = "0.1.7a"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -187,13 +187,13 @@ local globals = {
   strCmdMsgListNextPage = "&page=%d&wo=",
   strCmdMsgListLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.GetFolderData&ptid=0&a=%s&au=%s", 
   strCmdMsgListPostLiveOld = "cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,,&MailToken=",
-  strCmdMsgListPostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,"","",true,false&v=1&mt=',
+  strCmdMsgListPostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,"","",true,false&v=1&mt=%s',
 
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
   strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=%s&au=%s", 
   strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
-  strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=',
+  strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
   strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s",
@@ -231,6 +231,7 @@ internalState = {
   strJunkId = nil,
   statLimit = nil,
   strUserId = nil,
+  strMT = "",
 }
 
 -- ************************************************************************** --
@@ -509,7 +510,15 @@ function loginHotmail()
   
     -- Debug Message
     -- 
-    log.dbg("Hotmail Authuser value: " .. str .. "\n")
+    log.dbg("Hotmail Authuser value: " .. user .. "\n")
+  end
+
+  -- Get the MT cookie value
+  --
+  local cookie = browser:get_cookie('mt')
+  if (cookie ~= nil) then
+    internalState.strMT = cookie.value
+    log.dbg("Hotmail mt value: " .. cookie.value)
   end
 
   -- Save the mail server
@@ -617,7 +626,7 @@ end
 function getFolderId(inboxId) 
   local cmdUrl = string.format(globals.strCmdMsgListLive, internalState.strMailServer,
     internalState.strCrumb, internalState.strUserId)
-  local post = string.format(globals.strCmdMsgListPostLive, inboxId, 0, 0)
+  local post = string.format(globals.strCmdMsgListPostLive, inboxId, 0, 0, internalState.strMT)
   local body, err = internalState.browser:post_uri(cmdUrl, post)
   local str = string.match(body, globals.strFolderLivePattern .. internalState.strMBoxName)
   return str
@@ -1097,7 +1106,7 @@ function quit_update(pstate)
     uidls = string.gsub(uidls, ",", '","')
     uidls = '"' .. uidls .. '"'
     post = string.format(globals.strCmdDeletePostLive, internalState.strMBox, 
-      internalState.strTrashId, uidls)
+      internalState.strTrashId, uidls, internalState.strMT)
     log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)
     local body, err = browser:post_uri(cmdUrl, post)
     if (body == nil) then -- M7 Only - DELETE SOON!
@@ -1187,7 +1196,7 @@ function LiveStat(pstate)
 
   local cmdUrl = string.format(globals.strCmdMsgListLive, internalState.strMailServer,
     internalState.strCrumb, internalState.strUserId)
-  local post = string.format(globals.strCmdMsgListPostLive, internalState.strMBox, nMaxMsgs, nMaxMsgs)
+  local post = string.format(globals.strCmdMsgListPostLive, internalState.strMBox, nMaxMsgs, nMaxMsgs, internalState.strMT)
 
   -- Debug Message
   --
@@ -1206,6 +1215,7 @@ function LiveStat(pstate)
     post = string.format(globals.strCmdMsgListPostLiveOld, internalState.strMBox, nMaxMsgs, nMaxMsgs)
     body, err = browser:post_uri(cmdUrl, post)
   end
+  log.raw(body)
 
   -- Let's make sure the session is still valid
   --

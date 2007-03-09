@@ -203,12 +203,18 @@ Section "Uninstall"
   Delete $INSTDIR\*.vbs
   Delete $INSTDIR\*.ico
   Delete $INSTDIR\LUA\*.lua
+  Delete $INSTDIR\LUA\LXP\*.lua
+  Delete $INSTDIR\LUA\BROWSER\*.lua
+  Delete $INSTDIR\LUA\SOAP\*.lua
   Delete $INSTDIR\C\*.dll
   Delete $INSTDIR\LUA_UNOFFICIAL\*.lua
   Delete $INSTDIR\LUA_UPDATES\*.lua
   Delete $INSTDIR\LUA_UPDATES\LXP\*.lua
   Delete $INSTDIR\LUA_UPDATES\BROWSER\*.lua
   Delete $INSTDIR\LUA_UPDATES\SOAP\*.lua
+  RMDir $INSTDIR\LUA\LXP
+  RMDir $INSTDIR\LUA\SOAP
+  RMDir $INSTDIR\LUA\BROWSER
   RMDir $INSTDIR\LUA
   RMDir $INSTDIR\C
   RMDir $INSTDIR\LUA_UNOFFICIAL

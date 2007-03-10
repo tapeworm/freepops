@@ -1,3 +1,4 @@
+- fixed osx startup script
 - fixed soap module declaration
 - fixed win32 uninstall procedure
 4/03/2007 0.2.0

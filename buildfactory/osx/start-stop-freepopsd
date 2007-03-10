@@ -3,8 +3,7 @@
 cd `dirname $0`/../../
 if [ -e pid.txt ]; then
 	PID=`cat pid.txt`
-	N=`ps ax | grep $PID | grep freepopsd | awk '{print $1}'`
-	if [ ! -z "$N" ]; then
+	if ps ax | grep $PID | grep -q freepopsd; then
 		kill `cat pid.txt`
 		rm -f pid.txt
 		Contents/MacOS/fmessage 'FreePOPs stopped.'

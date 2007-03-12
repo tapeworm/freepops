@@ -11,6 +11,8 @@ MODULE_LICENSE = "GNU/GPL"
 MODULE_URL = "http://www.freepops.org/download.php?module=updater_cvs.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
 
+error("The cvs backend is unfinished, and probably not needed.")
+
 local updater_common = require "updater_common"
 local browser = require "browser"
 local xml2table = require("xml2table")

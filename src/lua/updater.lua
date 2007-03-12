@@ -42,6 +42,9 @@ internalState = {
   pluginsData = {},
 }
 
+-- the updater_$BACKEND
+updater = nil
+
 -- ************************************************************************** --
 --  {{{ Helper functions
 -- ************************************************************************** --
@@ -170,14 +173,14 @@ function stat(pstate)
 
   -- Fetch the list of plugins
   --
-  local plist = updater_php.list_modules("official",browser)
+  local plist = updater.list_modules("official",browser)
   if plist == nil then
     return POPSERVER_ERR_UNKNOWN
   end
 
   local pdata = {}
   for _,plugin in pairs(plist) do
-    pdata[plugin]=updater_php.fetch_module_metadata(plugin,"official",browser)
+    pdata[plugin]=updater.fetch_module_metadata(plugin,"official",browser)
   end
 
   for plugin, data in pairs(pdata) do
@@ -270,7 +273,7 @@ function retr(pstate, msg, data)
   -- Replace the plugin
   --
   if nStatus then
-    nStatus,cause = updater_php.fetch_module(plugin,"true","official",browser)
+    nStatus,cause = updater.fetch_module(plugin,"true","official",browser)
   end
 
   -- Alert the user -- XXX move away
@@ -338,7 +341,7 @@ function init(pstate)
 
   -- the updater engine
   --
-  require "updater_php"
+  updater = require "updater_php"
 
   -- Run a sanity check
   --
@@ -358,51 +361,133 @@ end
 -- }}}
 -- ************************************************************************** --
 
+function interactive()
+	local err, fltk = pcall(require,"updater_fltk")
+	
+	if err == false then
+		return "The fltk updater is not instealled"
+	end
+
+	fltk.run()
+
+	return "No message for the interactive updater"
+end
+
+function batch(...)
+	local b = browser.new()	
+	local report = {}
+
+	-- arg parsing
+	local plist = {}
+	if select("#",...) > 0 then
+		if select(1,...) == 'only' then
+			for x in string.gmatch(select(2,...),"([^,]+)") do 
+				table.insert(plist,x)
+			end
+		else
+			return updater_usage(select(1,...))
+		end
+	end
+
+	-- local shortcuts
+	local get_mdata = updater.fetch_module_metadata
+	local get_data = updater.fetch_module
+	local list = updater.list_modules
+	--local log = function(s) table.insert(report,s) end
+	local log = print
+
+	-- list plugins
+	local type = "official"
+	if #plist == 0 then
+		plist = list(type,b)
+	end
+
+  	local pdata, err =  {}, nil
+  	for _,mod in ipairs(plist) do
+    		pdata[mod], err = get_mdata(mod,type,b)
+		if pdata[mod] == nil then
+			log("Error: metadata for "..mod..": "..(err or ""))
+		else
+			log("Fetched metadata for "..mod)
+		end
+	end
+
+	for _,mod in ipairs(plist) do
+		if pdata[mod].can_update and pdata[mod].should_update then
+			local rc, err = get_data(mod,"true",type,b)
+			if rc == nil then
+				log("Error: data for "..mod..": "..(err or ""))
+			else
+			 	log("Fetched data for "..mod)
+			end
+		else
+			log("Skip "..mod..": "..pdata[mod].why_cannot_update)
+		end
+	end
+
+	return table.concat(report)
+end
+
+function updater_usage(op)
+	updater_common.common_usage(nil,op)
+	updater_common.print_err([[
+
+Extra operations:
+
+Operation: batch
+parameters:
+	only string : a comma separated list of modules / default all modules
+
+answer:
+	a human readable report
+
+Operation: interactive
+parameters:
+
+answer:
+
+Examples:
+	freepopsd -e updater.lua php list_modules official
+	freepopsd -e updater.lua php interactive
+	freepopsd -e updater.lua php batch only hotmail,updater
+]])
+end
 
 -- main is called only by freepopsd -e, in that case the pop3 interface is not
 -- used, but updater.cvs or updater.php are.
 function main(args)
 	require "updater_common"
 
-	local updater = {}
-	local mode = args[1]
-	if not mode or (mode ~= "cvs" and mode ~= "php" and mode ~= "fltk") then
-		updater_common.usage(mode)
+	local backend = args[1]
+	if not backend then
+		updater_usage()
 		return 1
 	end
 	table.remove(args,1)
 
-	if mode == "cvs" then 
-		print("The cvs backend is unfinished, and probably not needed.")
+	local err
+	err, updater = pcall(require,"updater_"..backend)
+	if err == false then
+		print("Unable to load the updater_"..backend.." module.")
+		print(updater)
 		return 1
-		-- updater = require "updater_cvs"
-	elseif mode == "php" then
-		updater = require "updater_php"
-	elseif mode == "fltk" then
-		local err
-		err, updater = pcall(require,"updater_fltk")
-		if err == false then
-			print("Unable to load the updater_fltk module.")
-			print([[
-Your distribution may split the freepops package, separating te fltk updater
-that requires the X windows system from the simple freepopsd daemon that
-doesn't.]])
-			return 1
-		else
-			return updater.run()
-		end
-	else
-		error("Bad mode: "..mode or "")
 	end
 
 	local op = args[1]
-	local fun = updater[op] or updater_common[op]
+	local local_ops = {
+		["interactive"] = interactive, 
+		["batch"] = batch
+	}
+
+	local fun = local_ops[op] or updater[op] or updater_common[op]
 	if fun == nil then
-		updater_common.usage(mode,op)
+		updater_usage(op)
 		return 2
 	end
 	table.remove(args,1)
 
-	updater_common.mangler[op](fun(unpack(args)))
+	local printer = updater_common.mangler[op] or print
+
+	printer(fun(unpack(args)))
 	return 0
 end

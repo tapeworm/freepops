@@ -201,23 +201,25 @@ local instructions = {
 }
 
 ---
+-- prints to stderr
+function print_err(s) io.stderr:write(s..'\n') end
+
+---
 -- Prints to stderr the comand line syntax of updater.
-function usage(stuff,errors)
-	local function err(s) io.stderr:write(s..'\n') end
+function common_usage(cmd, stuff, errors)
+	cmd = cmd or "freepopsd -e updater.lua"
+	local err = print_err
 	err("")
 	err("Arguments specified and accepted: "..(stuff or ""))
 	err("Arguments specified and rejected: "..(errors or ""))
 	err("")
-	err("Usage: freepopsd -e updater.lua backend operation args...")
+	err("Usage: "..cmd.." backend operation args...")
 	err("")
 	err("Backends:")
-	err("\tcvs")
+	err("\tcvs\tNot implemented")
 	err("\tphp")
 	err("")
-	err("Backends (special):")
-	err("\tfltk")
-	err("")
-	err("List of supported operations follow:")
+	err("Standard operations:")
 	for _,op in ipairs(operations) do
 		err("")
 		err("Operation: "..op)

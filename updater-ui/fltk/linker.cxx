@@ -34,8 +34,6 @@ static lua_State* L;
 
 void updater_init(lua_State*l){
 	L=l;
-	luay_call(L,"s|","require","updater_common");
-	luay_call(L,"s|","require","updater_php");
 	luaL_Buffer B;
 	luaL_buffinit(L,&B);
 	luaL_addstring(&B,"<html><head><title>");
@@ -90,7 +88,7 @@ void updater_download_metadata(){
 	 *   	BROWSER,METADATA,UPGRADABLE);
 	 */   
 	// te table that lists all plugin names
-	int rc = luay_call(L,"s|vv","updater_php.list_modules","official");
+	int rc = luay_call(L,"s|vv","updater.list_modules","official");
 	if (rc != 0 || lua_isnil(L,-2)) {
 		fl_alert(_("Unable to download the module list:\n%s"),
 			lua_tostring(L,-1));
@@ -112,7 +110,7 @@ void updater_download_metadata(){
 		lua_pop(L,1);
 		// redraw
 		Fl::check(); 
-		int rc = luay_call(L,"ssv|vv","updater_php.fetch_module_metadata",
+		int rc = luay_call(L,"ssv|vv","updater.fetch_module_metadata",
 			lua_tostring(L,-1),"official",BROWSER);
 		if (rc != 0 || lua_isnil(L,-2)) {
 			push_fake_metadata(L,lua_tostring(L,-1));
@@ -194,7 +192,7 @@ void updater_download(){
 				 *   luay_printstack(L); 
 				 *   fprintf(stderr, "NAME:%d browser:%d\n",NAME,browser); 
 				 */
-				int rc = luay_call(L,"sssv|vv", "updater_php.fetch_module",
+				int rc = luay_call(L,"sssv|vv", "updater.fetch_module",
 					lua_tostring(L,NAME),"true","official",browser);
 				if (rc != 0 || lua_isnil(L,-2)) {
 					fl_alert(_("Error downloading %s:\n%s"),

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-freepopsd -e updater.lua fltk
+freepopsd -e updater.lua fltk interactive

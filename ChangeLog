@@ -1,3 +1,4 @@
+- moved win32 gnutls to 1.6.1
 - fixed osx startup script
 - fixed soap module declaration
 - fixed win32 uninstall procedure

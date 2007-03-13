@@ -132,18 +132,19 @@ end
 ---
 -- Gives the local version of a moule.
 -- @param module string The module name.
--- @return string The version if available, 0.0.0 if not.
+-- @return string The version if available, 0.0.0 if not; and
+--  the path of the file or nil if not present.
 function get_local_version(module)
   local file = freepops.find(module)
 
   -- The module isn't installed
   --
   if file == nil then
-    return "0.0.0"
+    return "0.0.0", nil
   else
     local txml = plugins2xml.extract(file)
     local version = txml.version._content
-    return version
+    return version, file
   end
 end
 
@@ -174,6 +175,7 @@ answer:
 	"require_version: string"
 	"url: string"
 	"local_path: string"
+	"local_path_old: string"
 	"local_version: string" 
 	"can_update: (true|false)"
 	"why_cannot_update: string"
@@ -181,7 +183,8 @@ answer:
 	
 local_path is not the path where the module is but where the update should be
 placed. In the local_version line the version may be absent if the module is
-not present.]]
+not present. local_path_old is the path of the file whose version is
+local_version]]
 local fetch_module_doc = [[
 parameters:
 	string : The name of the module
@@ -240,6 +243,7 @@ mangler = {
 	  print("require_version: ".. t.require_version)
 	  print("url: ".. t.url)
 	  print("local_path: ".. t.local_path)
+	  print("local_path_old: ".. t.local_path_old)
 	  print("local_version: ".. t.local_version)
 	  print("why_cannot_update: ".. t.why_cannot_update)
 	  print("can_update: ".. tostring(t.can_update))

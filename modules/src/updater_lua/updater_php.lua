@@ -65,7 +65,7 @@ function fetch_module_metadata(name,kind,b)
 	local reqversion = txml.require_version._content
 	local url = txml.url._content
 
-	local localversion = uc.get_local_version(name)
+	local localversion, path = uc.get_local_version(name)
 
 	local file = uc.update_path_for(name)
 	local check_update, should, why_cannot = 
@@ -75,6 +75,7 @@ function fetch_module_metadata(name,kind,b)
 	  ["require_version"]=reqversion,
 	  ["url"]=url,
 	  ["local_path"]=file,
+	  ["local_path_old"]=path or "",
 	  ["local_version"]=localversion,
 	  ["why_cannot_update"]=why_cannot,
 	  ["should_update"]=should,

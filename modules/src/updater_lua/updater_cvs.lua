@@ -127,12 +127,14 @@ function fetch_module_metadata(name,browser)
   local path = updater_common.update_path_for(name)
   local check_update, should, why_cannot = 
     uc.check_if_updatable(name,reqversion,version,localversion)
+  local local_version, path_old = updater_common.get_local_version(name)
   return {
     ["version"]=newVersion,
     ["require_version"]=requiredVersion,
     ["url"]=string.format(strRETRUrl,name,plugs[name]),
     ["local_path"]=path,
-    ["local_version"]=updater_common.get_local_version(name),
+    ["local_path_old"]=path_old or "",
+    ["local_version"]=local_version,
     ["why_cannot_update"]=why_cannot,
     ["should_update"]=should,
     ["can_update"]=check_update,

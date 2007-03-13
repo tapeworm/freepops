@@ -429,14 +429,14 @@ function batch(...)
 end
 
 function updater_usage(op)
-	updater_common.common_usage(nil,op)
+	updater_common.common_usage(nil,nil,op)
 	updater_common.print_err([[
 
 Extra operations:
 
 Operation: batch
 parameters:
-	only string : a comma separated list of modules / default all modules
+	string : a comma separated list of modules / default all modules
 
 answer:
 	a human readable report

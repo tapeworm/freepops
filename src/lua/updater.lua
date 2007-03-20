@@ -364,13 +364,24 @@ end
 function interactive()
 	local err, fltk = pcall(require,"updater_fltk")
 	
-	if err == false then
-		return "The fltk updater is not instealled"
+	if err == false or fltk == nil or 
+	   type(fltk) ~= "table" or fltk.run == nil 
+	then
+		return [[
+The fltk updater is not instealled or cannot be loaded.
+
+Note that our distribution may split the freepops package, separating the fltk
+updater, that requires the X windows system, from the simple freepopsd daemon,
+that doesn't.
+
+The error message reported by the loader follows:
+]]..(fltk or "no message")
 	end
 
+	-- run the interactive fltk updater
 	fltk.run()
 
-	return "No message for the interactive updater"
+	return ""
 end
 
 function batch(...)
@@ -378,12 +389,10 @@ function batch(...)
 	local report = {}
 
 	-- arg parsing
-	local plist = {}
+	local plist = nil
 	if select("#",...) > 0 then
 		if select(1,...) == 'only' then
-			for x in string.gmatch(select(2,...),"([^,]+)") do 
-				table.insert(plist,x)
-			end
+			plist = select(2,...)
 		else
 			return updater_usage(select(1,...))
 		end
@@ -393,39 +402,37 @@ function batch(...)
 	local get_mdata = updater.fetch_module_metadata
 	local get_data = updater.fetch_module
 	local list = updater.list_modules
-	--local log = function(s) table.insert(report,s) end
 	local log = print
 
 	-- list plugins
 	local type = "official"
-	if #plist == 0 then
-		plist = list(type,b)
+	if plist == nil then
+		plist = table.concat(list(type,b), ",")
 	end
 
-  	local pdata, err =  {}, nil
-  	for _,mod in ipairs(plist) do
-    		pdata[mod], err = get_mdata(mod,type,b)
-		if pdata[mod] == nil then
-			log("Error: metadata for "..mod..": "..(err or ""))
-		else
-			log("Fetched metadata for "..mod)
-		end
+  	local pdata, err =  nil, nil
+    	pdata, err = get_mdata(plist,type,b)
+	if pdata == nil then
+		log("Error: metadata: "..(err or ""))
+	else
+		log("Fetched metadata for: "..plist)
 	end
 
-	for _,mod in ipairs(plist) do
-		if pdata[mod].can_update and pdata[mod].should_update then
-			local rc, err = get_data(mod,"true",type,b)
+	for _,mod in ipairs(pdata) do
+		local name = mod.module_name
+		if mod.can_update and mod.should_update then
+			local rc, err = get_data(name,"true",type,b)
 			if rc == nil then
-				log("Error: data for "..mod..": "..(err or ""))
+				log("Error: data for "..name..": "..(err or ""))
 			else
-			 	log("Fetched data for "..mod)
+			 	log("Fetched data for "..name)
 			end
 		else
-			log("Skip "..mod..": "..pdata[mod].why_cannot_update)
+			log("Skip "..name..": "..mod.why_cannot_update)
 		end
 	end
 
-	return table.concat(report)
+	return ""
 end
 
 function updater_usage(op)

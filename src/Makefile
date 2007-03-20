@@ -41,12 +41,10 @@ else
 ifeq "$(OS)" "Darwin"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
 	CFLAGS+= -DFREEPOPSLUA_CPATH=\"c/\"
-	LIBEXPAT_STATIC_PATH=/Users/enricotassi/freepops/lib/lib
 else
 ifeq "$(OS)" "Darwin-static"
 	CFLAGS+= -DFREEPOPSLUA_PATH=\"src/lua/\"
 	CFLAGS+= -DFREEPOPSLUA_CPATH=\"c/\"
-	LIBEXPAT_STATIC_PATH=/Users/enricotassi/freepops/lib/lib
 else
 #ifeq "$(OS)" "BeOS"
 #	CFLAGS+= -DFREEPOPSLUA_PATH=\"$HOME/config/settings/freepops/lua/\"
@@ -145,7 +143,8 @@ ifeq "$(OS)" "Darwin-static"
 	endif
 	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
 		$(OSXLIBDL) /sw/lib/libcurl.a \
-		/sw/lib/libssl.a /sw/lib/libcrypto.a $(LIBEXPAT_STATIC_PATH)/libexpat.a \
+		/sw/lib/libssl.a /sw/lib/libcrypto.a \
+		$(LIBEXPAT_STATIC_PATH)/libexpat.a \
 		-L/usr/lib -lgetopt -lm -lpthread /sw/lib/libz.a
 else
 ifeq "$(OS)" "OpenBSD"

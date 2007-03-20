@@ -27,7 +27,10 @@ $(SO): updater.o main.o linker.o
 	$(H)echo " building dep for $<"
 	$(H)$(CXX) $(CFLAGS) -MM $< > $@;
 
--include .updater.d .main.d .linker.d
+ifneq ($(MAKECMDGOALS),clean)
+	-include .updater.d .main.d .linker.d
+endif
 
 clean:
+	$(H)echo cleaning updater_fltk
 	$(H)rm -f *.o $(SO) .*.d

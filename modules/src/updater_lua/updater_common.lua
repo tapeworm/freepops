@@ -166,20 +166,23 @@ parameters:
 answer: A list of "module: string(1)" lines]]
 local fetch_module_metadata_doc = [[
 parameters: 
-	string : The name of the module
-	(official|contrib) : The type of module / default official
+	string : The name of the modules, separated by comma
+	(official|contrib) : The type of modules / default official
 	browser object: Lua browser object / default create a new one
 
 answer: 
-	"version: string"
-	"require_version: string"
-	"url: string"
-	"local_path: string"
-	"local_path_old: string"
-	"local_version: string" 
-	"can_update: (true|false)"
-	"why_cannot_update: string"
-	"should_update: (true|false)" 
+	A list of records separated by a blank line. Records have this shape:
+
+		"module_name: string"
+		"version: string"
+		"require_version: string"
+		"url: string"
+		"local_path: string"
+		"local_path_old: string"
+		"local_version: string" 
+		"can_update: (true|false)"
+		"why_cannot_update: string"
+		"should_update: (true|false)" 
 	
 local_path is not the path where the module is but where the update should be
 placed. In the local_version line the version may be absent if the module is
@@ -237,17 +240,21 @@ mangler = {
 	  if t == nil then print("error: " .. err);return end
 	  table.foreach(t,function(_,v) print(v) end) 
   end,
-  ["fetch_module_metadata"] = function(t, err)
-	  if t == nil then print("error: " .. err);return end
-	  print("version: ".. t.version)
-	  print("require_version: ".. t.require_version)
-	  print("url: ".. t.url)
-	  print("local_path: ".. t.local_path)
-	  print("local_path_old: ".. t.local_path_old)
-	  print("local_version: ".. t.local_version)
-	  print("why_cannot_update: ".. t.why_cannot_update)
-	  print("can_update: ".. tostring(t.can_update))
-	  print("should_update: ".. tostring(t.should_update))
+  ["fetch_module_metadata"] = function(l, err)
+	  if l == nil then print("error: " .. err);return end
+	  for _,t in ipairs(l) do
+		  print("module_name: ".. t.module_name)
+		  print("version: ".. t.version)
+		  print("require_version: ".. t.require_version)
+		  print("url: ".. t.url)
+		  print("local_path: ".. t.local_path)
+		  print("local_path_old: ".. t.local_path_old)
+		  print("local_version: ".. t.local_version)
+		  print("why_cannot_update: ".. t.why_cannot_update)
+		  print("can_update: ".. tostring(t.can_update))
+		  print("should_update: ".. tostring(t.should_update))
+		  print("")
+	  end
   end,
   ["fetch_module"] = function(s,err)
 	  if s == nil then print("error: "..err);return end

@@ -585,9 +585,15 @@ function freepops.is_version_ge(version1, version2)
 end
 
 ---
+-- Gives back the version string of freepops
+function freepops.version()
+	return os.getenv("FREEPOPS_VERSION")
+end
+
+---
 -- Checks if this FreePOPs version is enough for the plugin.
 function freepops.enough_new(plugin_version_string)
-	local fp_version_string = os.getenv("FREEPOPS_VERSION")
+	local fp_version_string = freepops.version()
 	return freepops.is_version_ge(fp_version_string, 
 						plugin_version_string)
 end

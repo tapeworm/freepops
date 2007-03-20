@@ -73,6 +73,9 @@ for(i=lua_gettop(s) ; i > 0 ; i-- )
 		case LUA_TNIL:
 			fprintf(stderr," nil\n");
 		break;
+		case LUA_TTABLE:
+			fprintf(stderr," array part is %lu\n",lua_objlen(s,i));
+		break;
 		default:
 			fprintf(stderr," ??\n");
 		break;

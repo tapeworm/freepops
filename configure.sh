@@ -34,6 +34,10 @@ Flags (need pkg-config as provided in Debian):
 Flags (need fltk-config):
 	-fltk-ui        build the fltk updater user interface
 
+Flags:
+	-expat-lib-dir  looks for libexpat.a in this path (osx only), default
+	                is \$PWD/../lib/lib/
+
 EOT
 
 }
@@ -69,6 +73,7 @@ FLTKCFLAGS=
 FLTKLDFLAGS=
 MACHOARCH=
 LUAFLAGS=
+LIBEXPAT_STATIC_PATH=$PWD/../lib/lib/
 }
 
 set_linux() {
@@ -381,6 +386,10 @@ while [ ! -z "$1" ]; do
 				FLTKLDFLAGS=" -lfltk -lintl -lgdi32 -lwsock32 -lole32 -luuid -L ../../src/ -lfp"
 			fi
 		;;
+		-expat-lib-dir)
+			shift
+			LIBEXPAT_STATIC_PATH="$1"
+		;;
 		*)
 			usage
 			exit 1
@@ -434,5 +443,6 @@ FLTKLDFLAGS=$FLTKLDFLAGS
 MACHOARCH=$MACHOARCH
 LUAFLAGS=$LUAFLAGS
 
+LIBEXPAT_STATIC_PATH=$LIBEXPAT_STATIC_PATH
 EOT
 

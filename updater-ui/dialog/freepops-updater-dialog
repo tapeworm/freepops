@@ -7,7 +7,7 @@
 RC=""
 
 # XXX should be written at config time
-CORE='freepopsd'
+CORE='src/freepopsd'
 FREEPOPS="$CORE -e updater.lua php"
 PREAMBLE="dialog --backtitle FreePOPs_Updater"
 GAUGE='--defaultno --gauge %s 10 70'
@@ -117,6 +117,18 @@ function field(){
 # the main has you ###########################################################
 function main(){
 parse_args "$@"
+local AWK=`mk_temp`
+cat > $AWK <<EOT
+BEGIN { RS = "\n\n+"; FS = "\n"; }
+{ 
+  cmd = "mktemp -t tmp.freepops." NR ".XXXXXXXX";
+  RS = "\n"; 
+  cmd | getline tmp; 
+  RS = "\n\n+"; 
+  print \$0 > tmp; 
+  print tmp; 
+}
+EOT
 local MODULES=`mk_temp`
 local ERR=`mk_temp`
 $FREEPOPS list_modules official > $MODULES 2>$ERR
@@ -127,24 +139,25 @@ if [ $? != 0 ]; then
 fi
 local N=`wc -l $MODULES | cut -d ' ' -f 1`
 local I=0
-local -a METADATA
 local CHECKLIST_INPUT=`mk_temp`
 local FAILED=`mk_temp`
+M=`cat $MODULES | tr -s '\n' ' ' | sed 's/ /,/g'`
+FILES=`$FREEPOPS fetch_module_metadata $M 2>$ERR | awk -f $AWK`
+if [ $? != 0 ]; then
+	echo "Error fetching '$M' metadata" 
+	cat $ERR
+	exit 1
+fi
+# register temp files to the garbage collector
+echo $FILES >> $TODELETE
 local perc=0
 local CMD=`mk_temp`
 echo -n $PREAMBLE > $CMD
 printf -- " $GAUGE " "'Checking for updates...'" >> $CMD
-(for M in `cat $MODULES`; do
+(for METADATA in $FILES; do
 	((perc=$I \* 100 / $N))
 	echo $perc
-	METADATA=`mk_temp`
-	local ERR=`mk_temp`
-	$FREEPOPS fetch_module_metadata $M > $METADATA 2>$ERR
-	if [ $? != 0 ]; then
-		echo "Error fetching '$M' metadata" 
-		cat $ERR
-		exit 1
-	fi
+	local M=`field $METADATA module_name`
 	local VREQ=`field $METADATA require_version`
 	local VLOC=`field $METADATA local_version`
 	local VUPS=`field $METADATA version`

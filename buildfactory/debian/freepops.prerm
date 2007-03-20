@@ -25,10 +25,14 @@ case "$1" in
 	JAIL_SCRIPT=/usr/lib/freepops/create_jail.sh
 	JAIL_DIR=`/bin/sh $JAIL_SCRIPT get-dir`
 	rm -rf $JAIL_DIR
+
+	rm -f /var/lib/freepops/lua_updates/*.bak
+	rm -f /var/lib/freepops/lua_updates/*/*.bak
     ;;
 	
     failed-upgrade)
-        ;;
+
+    ;;
     *)
         echo "prerm called with unknown argument \`$1'" >&2
         exit 1

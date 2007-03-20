@@ -75,7 +75,7 @@ install: build install-common
 	 echo "#                                    ">> $$FILE; \
 	 echo "# man freepopsd for more info.     ">> $$FILE; 	\
 	 echo "DAEMON=\"/usr/bin/freepopsd\"">> $$FILE;		\
-	 echo "DAEMON_OPTS=\" -n\"">> $$FILE; 		\
+	 echo "DAEMON_OPTS=\" -n -s nobody.nogroup\"">> $$FILE; \
 	 echo "PIDFILE=\"/var/run/freepops.pid\"">> $$FILE; 	\
 	 echo "CHROOTED_DAEMON_OPTS=\" -n -s nobody.nogroup\"">> $$FILE
 

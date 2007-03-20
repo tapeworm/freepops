@@ -1,3 +1,13 @@
+freepops (0.2.1-1) unstable; urgency=low
+
+  * New upstream release
+  * Changed default options, now the daemon lower his rights to
+    nobody.nogroup (Closes: #XXXXX)
+  * Removed .bak files eventually created in /var/lib/freepops in the prerm
+    script.
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sun, 18 Mar 2007 11:47:56 +0100
+
 freepops (0.2.0-1) unstable; urgency=low
 
   * new upstream release: package splitted to separate the updaters, some of

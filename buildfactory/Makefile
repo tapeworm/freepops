@@ -1,3 +1,8 @@
+# This file contains only scripts to build packages supported by the 
+# upstream authors that are: win, osx, debian, tar.gz
+# other scripts are included at the end, but are not supported by the 
+# upstream authors
+
 ifeq ($(CONFIG),)
  include ../config
 else
@@ -22,10 +27,13 @@ clean:
 	$(H)cd osx;rm -rf FreePOPs.app
 	$(H)cd win;rm -rf *.exe
 
-dist-win: dist-win-e-zip-openssl
-dist-zip: dist-win-e-zip-openssl
+
+dist-win: dist-win-e-zip-gnutls
+dist-zip: dist-win-e-zip-gnutls
 dist-win-gnutls: dist-win-e-zip-gnutls
 dist-zip-gnutls: dist-win-e-zip-gnutls
+dist-win-openssl: dist-win-e-zip-openssl
+dist-zip-openssl: dist-win-e-zip-openssl
 
 dist-win-e-zip-step1:
 	$(H)mkdir -p _win_/freepops/LUA/
@@ -61,11 +69,11 @@ dist-win-e-zip-step3:
 		fi;\
 	done
 	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/LUA/
-	$(H)cp _win_/freepops-$(VERSION)/buildfactory/freepopsd.vbs \
+	$(H)cp _win_/freepops-$(VERSION)/buildfactory/win/freepopsd.vbs \
 		_win_/freepops/
-	$(H)cp _win_/freepops-$(VERSION)/buildfactory/README.FPM.*.txt \
+	$(H)cp _win_/freepops-$(VERSION)/buildfactory/win/README.FPM.*.txt \
 		_win_/freepops/
-	$(H)cp _win_/freepops-$(VERSION)/buildfactory/SERVICE.*.txt \
+	$(H)cp _win_/freepops-$(VERSION)/buildfactory/win/SERVICE.*.txt \
 		_win_/freepops/	
 	$(H)cp win/*.exe _win_/freepops/
 
@@ -91,7 +99,7 @@ dist-win-e-zip-step4-gnutls:
 		cp $$DLLPATH/libexpat.dll _win_/freepops/libexpat.dll;\
 		cp $$DLLPATH/libintl-8.dll _win_/freepops/;\
 		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll; \
-		cp $$DLLPATH/libgnutls.dll _win_/freepops/libgnutls.dll;\
+		cp $$DLLPATH/libgnutls-13.dll _win_/freepops/libgnutls-13.dll;\
 		cp $$DLLPATH/libgcrypt.dll _win_/freepops/libgcrypt.dll;\
 		cp $$DLLPATH/libgpg-error.dll _win_/freepops/libgpg-error.dll
 
@@ -101,11 +109,11 @@ dist-win-e-zip-step5:
 			_win_/freepops/*.dll \
 			_win_/freepops/C/*.dll
 
-	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.nsi.in > \
+	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' win/freepops.nsi.in > \
 		_win_/freepops/freepops.nsi
 
-	$(H)xpm2wico -f freepops-setup.xpm _win_/freepops/freepops-setup.ico
-	$(H)xpm2wico -f freepops-remove.xpm _win_/freepops/freepops-remove.ico
+	$(H)xpm2wico -f win/freepops-setup.xpm _win_/freepops/freepops-setup.ico
+	$(H)xpm2wico -f win/freepops-remove.xpm _win_/freepops/freepops-remove.ico
 	$(H)xpm2wico -f ../updater-ui/fltk/freepops-updater-fltk-32.xpm \
 		_win_/freepops/freepops-updater.ico
 
@@ -154,22 +162,6 @@ dist-win-e-zip-gnutls: freepops-$(VERSION).tar.gz \
 	dist-win-e-zip-step5 \
 	dist-win-e-zip-step6-gnutls 
 
-dist-rpm: freepops-$(VERSION).tar.gz
-	$(H)mkdir -p _rpm_/build
-	$(H)mkdir -p _rpm_/tmp
-	$(H)sed 's/\%FREEPOPSVERSION/$(VERSION)/' freepops.spec.in > \
-		_rpm_/freepops.spec
-	$(H)cp freepops-$(VERSION).tar.gz _rpm_
-	$(H)rpmbuild --rcfile rpmrc -ba _rpm_/freepops.spec
-	$(H)mkdir ../dist-rpm || true
-	$(H)cp _rpm_/*.rpm ../dist-rpm
-	$(H)rm -rf _rpm_
-	
-dist-gen:
-	mkdir -p ../dist-gen || true
-	@cp freepops.ebuild.gz \
-		../dist-gen/freepops-$(VERSION).ebuild.gz
-	
 dist-deb-hackwoody:
 	$(H)cd _deb_/freepops-$(VERSION);\
 		cp buildfactory/debian-woody/* debian/
@@ -241,48 +233,6 @@ debian-dsc-real:
 	$(H)chmod a+r ../dist-deb/freepops/* 
 	$(H)rm -rf _deb_
 
-dist-slack: freepops-$(VERSION).tar.gz
-	$(H)mkdir -p _slack_
-	$(H)mkdir -p dist-slack
-	$(H)[ -d _slack_/freepops-$(VERSION) ] || \
-		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _slack_
-	$(H)cd _slack_/freepops-$(VERSION); \
-		./configure.sh linux-slack; \
-		$(MAKE) all; \
-		$(MAKE) install DESTDIR="../../dist-slack/"
-	$(H)cd dist-slack; \
-		strip usr/bin/freepopsd; \
-		mkdir -p install; \
-		cp ../slackware/slack-desc install; \
-		cp ../slackware/slack-required install; \
-		mkdir -p etc/rc.d; \
-		cp ../slackware/freepops.conf etc/freepops; \
-		cp ../slackware/rc.freepops etc/rc.d; \
-		mv usr/share/man usr/man; \
-		mv usr/share/doc usr/doc; \
-		gzip usr/man/man1/freepopsd.1; \
-		rm usr/doc/freepops/MANUAL.txt; \
-		mv usr/doc/freepops usr/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/AUTHORS \
-			usr/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/COPYING \
-			usr/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/ChangeLog \
-			usr/doc/freepops-$(VERSION); \
-		cp ../_slack_/freepops-$(VERSION)/README \
-			usr/doc/freepops-$(VERSION); \
-		chown -R root.root .; \
-		chmod 755 .; \
-		chown root.bin usr/bin ; \
-		chmod 755 etc/rc.d/rc.freepops; \
-		chmod 644 usr/share/freepops/lua/*; \
-		rm -rf usr/share/freepops/lua_unofficial; \
-		makepkg --chown n freepops-$(VERSION)-i386-1.tgz; \
-		rm -rf etc; \
-		rm -rf install; \
-		rm -rf usr
-	$(H)rm -rf _slack_
-	
 dist-osx: dist-osx-build dist-osx-finalyze
 
 dist-osx-build: freepops-$(VERSION).tar.gz
@@ -362,14 +312,6 @@ dist-osx-finalyze: ../dist-osx/FreePOPs.app
 	$(H)rm -rf ../dist-osx/freepops-$(VERSION).pkg
 	$(H)rm -rf ../dist-osx/FreePOPs.app
 
-dist-obsd:
-	$(H)cd ..;./configure.sh obsd || true
-	$(H)cd ..;$(MAKE) install
-	$(H)cd openbsd;pkg_create -f CONTENTS -c COMMENT -d DESC \
-	-D DISPLAY freepops-$(VERSION)
-	$(H)gzip openbsd/freepops-$(VERSION)
-	$(H)mv openbsd/freepops-$(VERSION).gz freepops-$(VERSION).tgz
-
 dist-tgz: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p dist-tgz
 	$(H)mv freepops-$(VERSION).tar.gz dist-tgz
@@ -379,5 +321,10 @@ freepops-$(VERSION).tar.gz:
 	$(H)$(MAKE) -C .. tgz-dist
 	$(H)mv ../dist-tgz/freepops-$(VERSION).tar.gz .
 	$(H)rm -rf ../dist-tgz
+
+include openbsd/Makefile
+include slackware/Makefile
+include gentoo/Makefile
+include rpm/Makefile
 
 # eof

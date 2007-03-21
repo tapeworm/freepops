@@ -79,7 +79,7 @@ install: build
 	 cp modules/src/winsystray/freepops-32.xpm $$DESTDIR/usr/share/pixmaps/
 
 	DESTDIR=$(CURDIR)/debian/freepops;      \
-	 cp buildfactory/create_jail.sh $$DESTDIR/usr/lib/freepops
+	 cp scripts/create_jail.sh $$DESTDIR/usr/lib/freepops
 
 	# .po stuff
 	#DESTDIR=$(CURDIR)/debian/freepops; 	\

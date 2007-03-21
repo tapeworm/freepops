@@ -40,13 +40,4 @@ Cross compile for win32
   /usr/local/NSIS (http://nsis.sf.net)
 
   You need unix2dos (debian sysutils), xpm2wico (debian xpm2wico),
-  flex, bison.
-
-
-Distro-cross Debian build
-=========================
-
-  Istall pbuilder, checkout (cvs is cvs.sf.net:/cvsroot/freepops/) the 
-  packages module and do a meke debian (it expects that freepops and 
-  packages are brother directories.
 

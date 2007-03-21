@@ -70,7 +70,7 @@ install: build install-common
 	
 	mkdir -p $(CURDIR)/debian/freepops/usr/lib/freepops
 	DESTDIR=$(CURDIR)/debian/freepops;      \
-	 cp buildfactory/create_jail.sh $$DESTDIR/usr/lib/freepops
+	 cp scripts/create_jail.sh $$DESTDIR/usr/lib/freepops
 
 binary-indep: 
 

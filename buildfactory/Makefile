@@ -242,7 +242,7 @@ dist-osx-build: freepops-$(VERSION).tar.gz
 	$(H)cd _osx_/freepops-$(VERSION);\
 	  for X in i386 ppc; do \
 	    make realclean; \
-	    ./configure.sh osx-$$X; \
+	    ./configure.sh osx-$$X -expat-lib-dir $$PWD/../../../../lib/lib/; \
 	    $(MAKE) all; \
 	    cp src/freepopsd.$$X* ..; \
 	  done

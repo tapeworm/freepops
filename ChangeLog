@@ -1,5 +1,18 @@
+24/03/2007 0.2.1
+- es, fr: Added link to the Fedora package pageAdded distro icons (alessiofender)
+- README.FPM.en.txt, README.FPM.it.txt, freepopsd.vbs: reorganization of buildfactory mess, now only the upstream supported builds arein the main Makefile. This Makefile includes at the end other Makefilesavailable in subdirs like gentoo/openbsd. All fils relative to distros are intheis relative directory, except the jail building script that should be movedin scripts. (gareuselesinge)
+- hotmail.lua: Get msn working again. (russell822)
+- hotmail.lua: Fix live mail not retreiving messages. (russell822)
+- yahoo.lua: fixed wrong require and module declaration statement. yahoo should beworking now. (gareuselesinge)
+- updater.lua: added local_path_old to plugin metadata: (gareuselesinge)
+- hotmail.lua: Replace a string.find with string.match. (russell822)
+- freepops.lua, updater.lua: updater now supports fetching all metadata in one step.better prettyprinting of tables in luay.c to ease debuggingfltk, lua and shell updater fixed to use all-in-one metadata fetching facility.configure.sh can now se the path for libexpat.a on osx (no more hardocded)config.h bumped to 0.2.1 (gareuselesinge)
+- hotmail.lua: Fixed broken 0.1.6l (russell822)
+- yahoo.lua: replace a string.find with string.match (russell822)
+- updater.lua: tentative fix to updater to support batch and interactive mode (gareuselesinge)
 - housekeeping in buildfactory, INSTALL, README and BUILD
 - moved win32 gnutls to 1.6.1
+- moved win32 openssl to 0.9.7m
 - fixed osx startup script
 - fixed soap module declaration
 - fixed win32 uninstall procedure

@@ -5,11 +5,10 @@ if [ -e pid.txt ]; then
 	PID=`cat pid.txt`
 	if ps ax | grep $PID | grep -q freepopsd; then
 		kill $PID
-		rm -f pid.txt
 		Contents/MacOS/fmessage 'FreePOPs stopped.'
 		exit 0
 	fi
-	rm pid.txt
+	rm -f pid.txt
 fi
 	
 #src/freepopsd -w -b 127.0.0.1 -l log.txt &

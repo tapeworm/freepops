@@ -56,7 +56,7 @@ dist-win-e-zip-step3:
 	$(H)cp _win_/freepops-$(VERSION)/src/freepopsd.exe _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/src/libfp.dll  _win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/updater-ui/fltk/updater_fltk.dll \
-		_win_/freepops/C
+		_win_/freepops/C/
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/LUA/
@@ -89,6 +89,8 @@ dist-win-e-zip-step4-openssl:
 	$(H)\
 	  DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d= -f2`;\
 		cp $$DLLPATH/libcurl.dll _win_/freepops/libcurl.dll;\
+		cp $$DLLPATH/cryptoeay32.dll _win_/freepops/cryptoeay32.dll;\
+		cp $$DLLPATH/ssleay32.dll _win_/freepops/ssleay32.dll;\
 		cp $$DLLPATH/libexpat.dll _win_/freepops/libexpat.dll;\
 		cp $$DLLPATH/libintl-8.dll _win_/freepops/;\
 		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll

@@ -130,7 +130,7 @@ Section "Start Menu Shortcuts"
   CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs.lnk" \
   	"$INSTDIR\freepopsd.exe" "" "$INSTDIR\freepopsd.exe" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\FreePOPs-updater.lnk" \
-  	"$INSTDIR\freepopsd.exe" "-e updater.lua fltk" \
+  	"$INSTDIR\freepopsd.exe" "-e updater.lua php interactive" \
 	"$INSTDIR\freepops-updater.ico"
   CreateShortCut "$SMPROGRAMS\FreePOPs\Debug\FreePOPs -vv (verbose log).lnk" \
   	"$INSTDIR\freepopsd.exe" "-vv" "$INSTDIR\freepopsd.exe" 0
@@ -234,14 +234,14 @@ Section "Uninstall"
 SectionEnd
 
 ; If installation succedes, ask to read the manal
-Function .onInstSuccess
-  MessageBox MB_YESNO|MB_ICONQUESTION \
-  	"Installation complete.  Do you want to read the PDF manual now?" \
-	IDNO NoReadme
-    ExecShell "open" "http://www.freepops.org/it/files/manual.pdf" \
-    	SW_SHOWNORMAL
-  NoReadme:
-FunctionEnd
+;Function .onInstSuccess
+;  MessageBox MB_YESNO|MB_ICONQUESTION \
+;  	"Installation complete.  Do you want to read the PDF manual now?" \
+;	IDNO NoReadme
+;    ExecShell "open" "http://www.freepops.org/it/files/manual.pdf" \
+;    	SW_SHOWNORMAL
+;  NoReadme:
+;FunctionEnd
 
 ; If already installed, uninstall it
 Function .onInit
@@ -260,7 +260,7 @@ Function .onInit
 ;Run the uninstaller
 uninst:
   ClearErrors
-  Exec $INSTDIR\uninst.exe
+  Exec $INSTDIR\uninstall.exe
   
 done:
  

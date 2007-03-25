@@ -1,4 +1,5 @@
-24/03/2007 0.2.1
+25/03/2007 0.2.1
+- fixed fltk interactive updater
 - es, fr: Added link to the Fedora package page (alessiofender)
 - es, fr: Added distro icons (alessiofender)
 - README.FPM.en.txt, README.FPM.it.txt, freepopsd.vbs: reorganization of buildfactory mess, now only the upstream supported builds arein the main Makefile. This Makefile includes at the end other Makefilesavailable in subdirs like gentoo/openbsd. All fils relative to distros are intheis relative directory, except the jail building script that should be movedin scripts. (gareuselesinge)

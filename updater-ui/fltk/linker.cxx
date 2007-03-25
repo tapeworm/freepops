@@ -30,9 +30,21 @@ extern "C" {
 #define val(name,data) data;int name = lua_gettop(L)
 #define _(x) gettext(x)
 
+//#define DEBUG_UPDATER_FLTK
+
+#ifdef DEBUG_UPDATER_FLTK
+  #define _mark(print_stack) {\
+		fprintf(stderr,"%s: %s: %d\n",__FILE__,__FUNCTION__,__LINE__);\
+		if (print_stack) luay_printstack(L);}
+#else
+  #define _mark(s)
+#endif
+
+
 static lua_State* L;
 
 void updater_init(lua_State*l){
+	_mark(0);
 	L=l;
 	luaL_Buffer B;
 	luaL_buffinit(L,&B);
@@ -48,6 +60,7 @@ void updater_init(lua_State*l){
 	luaL_pushresult(&B);
 	updater_hlp_page_html->value(lua_tostring(L,-1));
 	lua_pop(L,1);
+	_mark(0);
 }
 
 /* ========================================================================= */
@@ -61,6 +74,7 @@ static int name2pos; // name |--> position in the checklist
 // download the metadata of all modules
 // leaves on the stack 3 tables and a browser object
 void updater_download_metadata(){
+	_mark(0);
 	lua_pop(L,lua_gettop(L));
 	updater_prg_page_download->value(0);
 	updater_prg_page_download->copy_label(_("Downloading: plugin list"));
@@ -75,11 +89,11 @@ void updater_download_metadata(){
 	// the table that associate names with positions in the checklist
 	val(NAME2POS,lua_newtable(L));
 
-	/* debug:
-	 *  luay_printstack(L);
-	 *  fprintf(stderr,"BROWSER: %d METADATA: %d UPGRADABLE: %d NAME2POS: %d\n",
-	 *   	BROWSER,METADATA,UPGRADABLE,NAME2POS);
-	 */  
+	_mark(1);
+#ifdef DEBUG_UPDATER_FLTK
+	 fprintf(stderr,"BROWSER: %d METADATA: %d UPGRADABLE: %d NAME2POS: %d\n",
+	   	BROWSER,METADATA,UPGRADABLE,NAME2POS);
+#endif   
 
 	// the table that lists all plugin names
 	int rc = luay_call(L,"s|vv","updater.list_modules","official");
@@ -119,6 +133,7 @@ void updater_download_metadata(){
 		return;
     }
 	lua_pop(L,1); // the erorr message
+	_mark(1);
 
 	for (size_t i = 1; i < lua_objlen(L,-1); i++){
 		val(MDATA,lua_rawgeti(L,-1,i));
@@ -130,6 +145,7 @@ void updater_download_metadata(){
 	lua_pop(L,1); // the table returned by fetch_module_metadata
 	lua_pop(L,1); // the result of table.concat
 	lua_pop(L,1); // the table with the names of the modules
+	_mark(1);
 
 	// change progressbar
 	updater_prg_page_download->value(100);
@@ -174,26 +190,31 @@ void updater_download_metadata(){
 	upgradable=UPGRADABLE;
 	metadata=METADATA;
 	browser=BROWSER;
+	_mark(1);
 }
 
 /* ========================================================================= */
 // download the plugins and generates the report
 void updater_download(){
+	_mark(0);
 	updater_prg_page_download->value(0);
 	int i,done;
 	int checked = updater_chkbrw_select->nchecked();
 	val(REPORT,lua_newtable(L));
 	updater_prg_page_download->copy_label("");
 	
+	_mark(1);
 	i=1;
 	done=0;
 	lua_pushnil(L);
 	while (lua_next(L,metadata) != 0) {
+		_mark(1);
 		lua_pop(L,1); // data is not important, only name is used
 		int NAME = lua_gettop(L);
 
 		// get the position of the module in the checklist
 		lua_getfield(L,name2pos,lua_tostring(L,NAME));
+		_mark(1);
 		lua_Integer position = lua_tointeger(L,-1);
 		lua_pop(L,1);
 
@@ -209,32 +230,35 @@ void updater_download(){
 			// update if possible
 			val(CAN,lua_getfield(L,upgradable,lua_tostring(L,NAME)));
 			if (!lua_toboolean(L,CAN)) {
+				_mark(0);
 				// was selected but it can't be updated
 				lua_pushstring(L,_("Not attempted."));
 				lua_setfield(L,REPORT,lua_tostring(L,NAME));
 			} else {
-				// try the update
-				/* for debugging: 
-				 *   luay_printstack(L); 
-				 *   fprintf(stderr, "NAME:%d browser:%d\n",NAME,browser); 
-				 */
+				_mark(1);
+#ifdef DEBUG_UPDATER_FLTK
+				fprintf(stderr, "NAME:%d browser:%d\n",NAME,browser); 
+#endif
 				int rc = luay_call(L,"vssv|vv", "updater.fetch_module",
 					NAME,"true","official",browser);
 				if (rc != 0 || lua_isnil(L,-2)) {
+					_mark(0);
 					fl_alert(_("Error downloading %s:\n%s"),
 						lua_tostring(L,NAME),lua_tostring(L,-1));
 					lua_setfield(L,REPORT, lua_tostring(L,NAME));
-					lua_pop(L,1); // the first nil returned
+					lua_pop(L,2); // the first nil returned
 				} else {
+					_mark(0);
 					lua_pushstring(L, _("Updated!"));
 					lua_setfield(L,REPORT, lua_tostring(L,NAME));
-					lua_pop(L,1); // the nil error message
+					lua_pop(L,2); // the nil error message
 				}
 			}
 			lua_pop(L,1); // the 'can' field
 			done++;
 		} 
 		i++;
+		_mark(1);
 	}
 	updater_prg_page_download->value(100);
 	updater_prg_page_download->copy_label(_("Done."));
@@ -249,8 +273,10 @@ void updater_download(){
 	luaL_addstring(&B,"</h1><ul>");
 
 	if (updater_chkbrw_select->nchecked() > 0) {
+		_mark(0);
 		lua_pushnil(L);
 		while (lua_next(L,REPORT) != 0) {
+			_mark(1);
 			luaL_addstring(&B,"<li><i>");
 			luaL_addstring(&B,lua_tostring(L,-2));
 			luaL_addstring(&B,"</i>: ");
@@ -259,6 +285,7 @@ void updater_download(){
 			lua_pop(L,1);
 		}
 	} else {
+		_mark(0);
 		luaL_addstring(&B,"<li>");
 		luaL_addstring(&B,_("Did nothing!"));
 		luaL_addstring(&B,"</li>");
@@ -268,6 +295,7 @@ void updater_download(){
 	luaL_pushresult(&B);
 	updater_hlp_page_html->value(lua_tostring(L,-1));
 	lua_pop(L,1); // the buffer content
+	_mark(0);
 }
 
 // vim: ts=4:

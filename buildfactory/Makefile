@@ -164,9 +164,6 @@ dist-win-e-zip-gnutls: freepops-$(VERSION).tar.gz \
 	dist-win-e-zip-step5 \
 	dist-win-e-zip-step6-gnutls 
 
-dist-deb-hackwoody:
-	$(H)cd _deb_/freepops-$(VERSION);\
-		cp buildfactory/debian-woody/* debian/
 dist-deb-hacksarge:
 	$(H)cd _deb_/freepops-$(VERSION);\
 		cp buildfactory/debian-sarge/* debian/
@@ -183,7 +180,6 @@ dist-deb-hackubuntu:
 	$(H)cd _deb_/freepops-$(VERSION);\
 		cp buildfactory/debian-ubuntu/* debian/
 
-dist-deb-woody: deb-preamble dist-deb-hackwoody dist-deb-real
 dist-deb-sarge: deb-preamble dist-deb-hacksarge dist-deb-real
 dist-deb-sid: dist-deb
 dist-deb-etch: dist-deb
@@ -216,7 +212,6 @@ dist-deb-real:
 
 	$(H)rm -rf _deb_
 
-debian-dsc-woody: deb-preamble dist-deb-hackwoody debian-dsc-real
 debian-dsc-sarge: deb-preamble dist-deb-hacksarge debian-dsc-real
 debian-dsc-bpo: deb-preamble dist-deb-hacksarge dist-deb-hackbpo debian-dsc-real
 debian-dsc-etch: debian-dsc

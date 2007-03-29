@@ -60,6 +60,7 @@ freepops.MODULES_MAP["jubii.dk"]	= {name="davmail.lua"}
 
 -- gmail
 freepops.MODULES_MAP["gmail.com"]	= {name="gmail.lua"}
+freepops.MODULES_MAP["googlemail.com"]	= {name="gmail.lua"}
 
 -- yahoo
 freepops.MODULES_MAP["yahoo.com"]	= {name="yahoo.lua"}

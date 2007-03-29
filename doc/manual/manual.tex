@@ -1472,7 +1472,9 @@ function stat(pstate)
 
               local _,_,size = string.find(x:get(0,i-1),"(%d+)")
 
-              local _,_,size_mult_k = string.find(x:get(0,i-1),"([Kk][Bb])")                        local _,_,size_mult_m = string.find(x:get(0,i-1),"([Mm][Bb])")
+              local _,_,size_mult_k = string.find(x:get(0,i-1),"([Kk][Bb])") 
+
+	      local _,_,size_mult_m = string.find(x:get(0,i-1),"([Mm][Bb])")
 
               local _,_,uidl = string.find(x:get(1,i-1),"check_(%d+)")
 
@@ -1785,11 +1787,12 @@ function quit_update(pstate)
 
       for i=1,get_popstate_nummesg(pstate) do                 
 
-             if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then                                            post_data = post_data .. "check_" .. 
+	     if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
 
-                        get_mailmessage_uidl(pstate,i).. "=on&"                             
+	     	post_data = post_data .. "check_" ..
+		     get_mailmessage_uidl(pstate,i).. "=on&" 
 
-                    delete_something = true                 
+		delete_something = true                 
 
              end     
 

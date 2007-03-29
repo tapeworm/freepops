@@ -7,7 +7,7 @@
 RC=""
 
 # XXX should be written at config time
-CORE='src/freepopsd'
+CORE='freepopsd'
 FREEPOPS="$CORE -e updater.lua php"
 PREAMBLE="dialog --backtitle FreePOPs_Updater"
 GAUGE='--defaultno --gauge %s 10 70'

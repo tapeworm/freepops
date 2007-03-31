@@ -1,3 +1,9 @@
+freepops (0.2.2-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 31 Mar 2007 21:33:50 +0200
+
 freepops (0.2.1-1) unstable; urgency=low
 
   * New upstream release

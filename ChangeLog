@@ -1,6 +1,9 @@
-- fixed freepops-updater-fltk
-- changed CORE definition in updater-dialog
-- added googlemail domain
+31/03/2007 0.2.2
+- updater.lua: fix @updater (gareuselesinge)
+- tin.lua: removed obsolete code, attachement should now work (gareuselesinge)
+- fixed freepops-updater-fltk (thanks blackmoon)
+- changed CORE definition in updater-dialog (thanks taganaka)
+- added googlemail domain (thanks beermatt)
 - fixed manual (Thanks fgiunchedi for reporting the bug)
 25/03/2007 0.2.1
 - fixed fltk interactive updater

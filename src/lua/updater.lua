@@ -17,15 +17,15 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
 PLUGIN_DOMAINS = {"@updater"}
 PLUGIN_PARAMETERS = {
+	{name="modlist", description = { en = [[The list of modules to update, separated by ','. Example: aaa@updater?modlist=updater,libero,hotmail]], it = [[La lsita di moduli da controllare, separati da ','. Esempio: aaa@updater?modlist=updater,libero,hotmail]]}}
 }
 PLUGIN_DESCRIPTIONS = {
-	it=[[ <Insert translation here>]],
+	it=[[ Questo plugin permette di aggiornare i moduli lua di freepops. Per funzionare correttamente devi configurare l'account @updater in modo che lasci i messaggi sul server. La prima volta che userai l'account @updater tutti i moduli saranno aggiornati.]],
 	en=[[
 This plugin is used to retrieve updated lua modules for freepops. To use this
 plugin correctly, you need to set the settings for the account created for this
 to 'leave mail on server'.  The first time, you use this account, all the plugins
-will be retrieved.  For support, please post a question to
-the forum instead of emailing the author(s).]]
+will be retrieved.]]
 }
 
 
@@ -40,6 +40,7 @@ internalState = {
   bClearCache = false,
   excludedPlugins = {},
   pluginsData = {},
+  plist = nil,
 }
 
 -- the updater_$BACKEND
@@ -118,6 +119,8 @@ function user(pstate, username, foo)
     internalState.bClearCache = true
   end
 
+  internalState.plist = (freepops.MODULE_ARGS or {}).modlist
+
   -- Add any excluded plugins
   --
   internalState.excludedPlugins["freepops.lua"] = true
@@ -173,15 +176,24 @@ function stat(pstate)
 
   -- Fetch the list of plugins
   --
-  local plist = updater.list_modules("official",browser)
+  local plist = internalState.plist
+  print(plist)
   if plist == nil then
-    return POPSERVER_ERR_UNKNOWN
+	local list, err = updater.list_modules("official",browser)
+	if list == nil then 
+		log.error_print(err)
+		return POPSERVER_ERR_NETWORK 
+	end
+	plist = table.concat(list, ",")
   end
 
   local pdata = {}
-  for _,plugin in pairs(plist) do
-    pdata[plugin]=updater.fetch_module_metadata(plugin,"official",browser)
+  local data, err = updater.fetch_module_metadata(plist,"official",browser)
+  if data == nil then
+	log.error_print(err)
+	return POPSERVER_ERR_NETWORK
   end
+  for _,plugin in ipairs(data) do pdata[plugin.module_name]=plugin end
 
   for plugin, data in pairs(pdata) do
     local size = 10240  -- Hard coded for 10k

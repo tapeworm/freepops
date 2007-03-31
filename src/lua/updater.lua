@@ -7,9 +7,9 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.7"
+PLUGIN_VERSION = "0.2.1"
 PLUGIN_NAME = "updater"
-PLUGIN_REQUIRE_VERSION = "0.2.0"
+PLUGIN_REQUIRE_VERSION = "0.2.1"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://freepops.sourceforge.net/download.php?module=updater.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

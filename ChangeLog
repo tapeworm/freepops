@@ -1,3 +1,4 @@
+- fixed freepops-updater-fltk
 - changed CORE definition in updater-dialog
 - added googlemail domain
 - fixed manual (Thanks fgiunchedi for reporting the bug)

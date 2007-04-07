@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9h"
+PLUGIN_VERSION = "0.1.9i"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -1077,11 +1077,11 @@ function getMsgBody(pstate, uidl, size, cbInfo)
           url = string.format(globals.strCmdAttach, internalState.strMailServer,
              internalState.strMBox, escUidl, partId, internalState.strMailServer)
           cbInfo.attachments[file] = getRealAttachmentUrl(url)
-          table.setn(cbInfo.attachments, table.getn(cbInfo.attachments) + 1)
+          table.insert(cbInfo.attachments, table.getn(cbInfo.attachments) + 1, cbInfo.attachments[file])
           if (contentId ~= nil) then
             contentId = string.sub(contentId, 2, -2)
             cbInfo.inlineids[file] = contentId
-            table.setn(cbInfo.inlineids, table.getn(cbInfo.inlineids) + 1)
+            table.insert(cbInfo.inlineids, table.getn(cbInfo.inlineids) + 1, contentId)
           end
         end
       end
@@ -1247,6 +1247,7 @@ function user(pstate, username)
     end
   end
   
+  mbox = string.gsub(mbox, " ", "+") 
   internalState.strMBox = mbox
 
   -- Get the view to use in STAT (ALL, UNREAD or FLAG)

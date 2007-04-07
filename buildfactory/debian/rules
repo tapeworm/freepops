@@ -53,7 +53,7 @@ install-common:
 	dh_clean -k 
 	dh_installdirs
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops/ WHERE=/usr/
-	mv $(CURDIR)/debian/freepops/usr/share/doc/freepops/*.pdf \
+	-mv $(CURDIR)/debian/freepops/usr/share/doc/freepops/*.pdf \
 		$(CURDIR)/debian/freepops-doc/usr/share/doc/freepops-doc/ 
 	mv $(CURDIR)/debian/freepops/usr/lib/freepops/*.so \
 		$(CURDIR)/debian/freepops-updater-fltk/usr/lib/freepops/

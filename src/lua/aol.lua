@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9f"
+PLUGIN_VERSION = "0.0.9g"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -86,7 +86,7 @@ local globals = {
 
   -- Pattern to extract the version of webmail
   --
-  strVersionPattern = 'var VERSION="([^"]+)"',
+  strVersionPattern = 'var gSuccessPath = "/([^/]+)/', 
 
   -- Extract the server to post the login data to
   --
@@ -363,8 +363,6 @@ function loginAOL()
 
   -- Get the webmail version
   --
-  url = string.format(globals.strCmdWelcome, internalState.strMailServer, internalState.strVersion, internalState.strBrand)
-  body, err = browser:get_uri(url)
   str = string.match(body, globals.strVersionPattern)
   if (str == nil) then 
     internalState.strVersion = "_SRV_1_0_0_12281_"

@@ -1,12 +1,8 @@
 FreePOPs Readme file
 
-This package contains the pre-compiled distribution of FreePOPs for Mac OS X systems. To use it you should just have to install it; two files will be copied in /Library/StartupItems/FreePOPs (or one to /Library/LaunchDaemons if you use Mac OS X Tiger) that will run FreePOPs automatically at every system boot.
+This package contains the pre-compiled distribution of FreePOPs for Mac OS X systems. To use it you should just have to install it and double click on it; this will start FreePOPs in the background (the program icon will NOT stay in the Dock), to stop it you will only need to double click on it again. If you want FreePOPs to start automatically at each system boot, you will just have to add it to the list of startup items in your Mac OS X account preferences.
 
-If that doesn't happen you may manually copy the files contained in the "script" directory (which is where you've installed FreePOPs) in the aforementioned path; if you use Mac OS X Tiger you'll have to copy freepopsd.plist, otherwise you'll copy the other two. In freepopsd.plist you'll have to change every occurrence of /Applications/FreePOPs to the real path where you've installed FreePOps; if you use Mac OS X Panther or Jaguar you will have to change the line that says "DIR=" (in the file named FreePOPs) by adding the path FreePOPs is installed into after the equals sign (for example /Applications/FreePOPs).
-
-If you want to run FreePOPs only manually you will have to delete the files in the /Library/StartupItems directory (or freepopsd.plist in /Library/LaunchDaemons under Mac OS X Tiger - don't delete the other files in the directory, if any); run a Terminal, move to the directory you've installed FreePOPs into then run ./freepopsd, with your favorite command line options.
-
-In case you have problems updating from an older version, delete manually the directory you've installed FreePOPs into as well as the /Library/Receipts/FreePOPs-x.y.z.pkg file (x.y.z is the version of FreePOPs currently installed).
+In case you have problems updating from an older version, drag manually the application to the trash as well as the /Library/Receipts/FreePOPs-x.y.z.pkg file (x.y.z is the version of FreePOPs currently installed).
 
 LiberoPOPs users might find the included LP-to-FP migration howto useful.
 
@@ -23,7 +19,37 @@ To ask for help, AFTER you've read the documentation, you may look at:
 
 ChangeLog:
 
-24/02/2007 0.2.0
+- better fmessage osx utility
+31/03/2007 0.2.2
+- updater.lua: fix @updater (gareuselesinge)
+- tin.lua: removed obsolete code, attachement should now work (gareuselesinge)
+- fixed freepops-updater-fltk (thanks blackmoon)
+- changed CORE definition in updater-dialog (thanks taganaka)
+- added googlemail domain (thanks beermatt)
+- fixed manual (Thanks fgiunchedi for reporting the bug)
+25/03/2007 0.2.1
+- fixed fltk interactive updater
+- es, fr: Added link to the Fedora package page (alessiofender)
+- es, fr: Added distro icons (alessiofender)
+- README.FPM.en.txt, README.FPM.it.txt, freepopsd.vbs: reorganization of buildfactory mess, now only the upstream supported builds arein the main Makefile. This Makefile includes at the end other Makefilesavailable in subdirs like gentoo/openbsd. All fils relative to distros are intheis relative directory, except the jail building script that should be movedin scripts. (gareuselesinge)
+- hotmail.lua: Get msn working again. (russell822)
+- hotmail.lua: Fix live mail not retreiving messages. (russell822)
+- yahoo.lua: fixed wrong require and module declaration statement. yahoo should beworking now. (gareuselesinge)
+- updater.lua: added local_path_old to plugin metadata: (gareuselesinge)
+- hotmail.lua: Replace a string.find with string.match. (russell822)
+- freepops.lua, updater.lua: updater now supports fetching all metadata in one step.better prettyprinting of tables in luay.c to ease debuggingfltk, lua and shell updater fixed to use all-in-one metadata fetching facility.configure.sh can now se the path for libexpat.a on osx (no more hardocded)config.h bumped to 0.2.1 (gareuselesinge)
+- hotmail.lua: Fixed broken 0.1.6l (russell822)
+- yahoo.lua: replace a string.find with string.match (russell822)
+- updater.lua: tentative fix to updater to support batch and interactive mode (gareuselesinge)
+- housekeeping in buildfactory, INSTALL, README and BUILD
+- moved win32 gnutls to 1.6.1
+- moved win32 openssl to 0.9.7m
+- fixed osx startup script (alessiofender, ncocchiaro)
+- fixed soap module declaration
+- fixed win32 uninstall procedure
+4/03/2007 0.2.0
+- new osx .app
+- new osx installer made using iceberg 
 - es: Binary images in Spanish (lisar314)
 - es, fr: removed a bunch of solete repositories in download.php (gareuselesinge)
 - es: traslated images es (gareuselesinge)

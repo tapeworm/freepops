@@ -21,7 +21,7 @@ static Fl_Window *win;
 static Fl_Button *but_a;
 static Fl_Button *but_b;
 static const char *icon_label = "i";
-static const char *but_a_label = "@returnarrow close";
+static const char *but_a_label = "@returnarrow  Close";
 static const char *but_b_label = NULL;
 static const char *msg_label = NULL;
 static int rc;
@@ -36,7 +36,7 @@ static void make_window() {
 	int msg_w, msg_h, used_w=0, used_h=0;
 	fl_font(FL_HELVETICA, 14);
 
-	win = new Fl_Window(410,113,"");
+	win = new Fl_Window(415,118,"");
 
 	if (but_a_label != NULL) {
 		but_a = new Fl_Button(0, 0, 0, 0, but_a_label);
@@ -47,8 +47,9 @@ static void make_window() {
 		msg_w = msg_h = 0;
 		fl_measure(but_a_label, msg_w, msg_h);
   		msg_w += 10; msg_h += 10;
-		msg_h = msg_h * (msg_w / 200 + 1);
-		msg_w = min (msg_w , 200 );
+		int bound = but_b_label?170:340;
+		msg_h = msg_h * (msg_w / bound + 1);
+		msg_w = min (msg_w , bound );
 		but_a->resize(400 - msg_w - used_w, 103 - msg_h, msg_w, msg_h);
 		used_w += 10 + msg_w;
 		used_h = max (used_h , 10 + msg_h);
@@ -61,8 +62,9 @@ static void make_window() {
 		msg_w = msg_h = 0;
 		fl_measure(but_b_label, msg_w, msg_h);
   		msg_w += 10; msg_h += 10;
-		msg_h = msg_h * (msg_w / 200 + 1);
-		msg_w = min (msg_w , 200 );
+		int bound = 340 - used_w;
+		msg_h = msg_h * (msg_w / bound + 1);
+		msg_w = min (msg_w , bound);
 		but_b->resize(400 - msg_w - used_w, 103 - msg_h, msg_w, msg_h);
 		used_w += 10 + msg_w;
 		used_h = max (used_h , 10 + msg_h);
@@ -84,7 +86,7 @@ static void make_window() {
 	win->set_modal();
 	win->hotspot(but_a_label?(Fl_Widget*)but_a:(Fl_Widget*)msg);
 	win->callback(callback);
-	win->border(0);
+	//win->border(0);
 	win->show();
 }
 

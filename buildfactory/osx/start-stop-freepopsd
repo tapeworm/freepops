@@ -13,7 +13,15 @@ fi
 	
 #src/freepopsd -w -b 127.0.0.1 -l log.txt &
 src/freepopsd -b 127.0.0.1 &
+
 echo $! > pid.txt
-Contents/MacOS/fmessage 'FreePOPs started. To stop it, double click again.' 
+if [ ! -e no_startup_message ]; then
+	Contents/MacOS/fmessage -b 'Do not show me this message again' \
+		'FreePOPs started. To stop it, double click again.' 
+	rc=$?
+	if [ $rc = 4 ]; then
+		touch no_startup_message
+	fi
+fi
 
 # eof

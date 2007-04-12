@@ -96,6 +96,14 @@ freepops.MODULES_MAP["passport.com"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["messengeruser.com"]	= {name="hotmail.lua"}
 freepops.MODULES_MAP["live.com"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["live.nl"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["live.be"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["live.ca"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["live.de"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["live.fr"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["live.it"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["live.nl"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["live.co.uk"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["live.com.au"]		= {name="hotmail.lua"}
 
 -- aol
 freepops.MODULES_MAP["aol.com"]		= {name="aol.lua"}

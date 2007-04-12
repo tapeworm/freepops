@@ -1,29 +1,34 @@
 Template: freepops/init
 Type: boolean
 _Description: Start freepopsd automatically after each boot?
- The FreePOPs daemon can be started automatically after each boot for you.
- By default it will bind on port 2000, but you can change this behaviour
- editing /etc/default/freepops
+ The FreePOPs daemon can be started automatically after each boot.
+ By default, it will bind to port 2000. This setting may be changed by
+ editing the /etc/default/freepops file.
 
 Template: freepops/jail
 Type: boolean
 Default: false
 _Description: Create a chroot jail for freepops?
- FreePOPs can be launched in a chrooted environment to improve security.
- The jail will be created in /var/lib/freepops/chroot-jail/. This will also
- create a start.sh script in the root of the jail that should be used to
- launch freepopsd. This is perfectly integrated with the init script, so
- you have to change nothing to automatically start freepopsd at boot. This
- feature is mostly untested, you are warned.
+ FreePOPs can be launched in a chrooted environment to improve the
+ system's security.
+ .
+ The jail will be created in /var/lib/freepops/chroot-jail/.
+ The regular init script will then take care of launching the daemon
+ by calling a script named start.sh atthe root of the chroot jail.
 
 Template: freepops/updates
 Type: boolean
 Default: true
 _Description: Remove local updates on upgrade?
- freepops-updater-fltk or freepops-updater-dialog can install local updates in 
- /var/lib/freepops/lua_updates. These updates are usually integrated in the next
- freepops release or can be downloaded again running the updater, so they can be safely removed. 
- Modules placed in /var/lib/freepops/lua_updates have higher priority than the
- ones in /usr/share/frepops/lua; if you don't remove them you may end up running outdated
- modules. Anyway the system administrator may use this mechanism to freeze some local 
- modifications with respect to FreePOPs updates.
+ The freepops-updater-fltk or freepops-updater-dialog utilities will
+ install local updates in /var/lib/freepops/lua_updates.
+ .
+ Such updates are usually integrated in further FreePOPs releases or
+ can be downloaded again running the updater. Therefore, they
+ may safely be removed when the package is upgraded.
+ .
+ The modules saved in /var/lib/freepops/lua_updates have a higher
+ priority than those from /usr/share/frepops/lua. It is thus
+ recommended to remove them in order to avoid using outdated modules,
+ unless you intend to freeze the local modifications regardless of
+ FreePOPs updates.

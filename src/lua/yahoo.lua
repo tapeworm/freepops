@@ -4,6 +4,7 @@
 --  Released under the GNU/GPL license
 --  Written by Russell Schwager <russells@despammed.com>
 --  yahoo.it added by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
+--  yahoo.ie added by Bruce Williamson <aztrix@yahoo.com>
 -- ************************************************************************** --
 
 -- Globals
@@ -18,7 +19,7 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
 	{"russells (at) despammed (.) com",
          "ncocchiaro (at) users (.) sourceforge (.) net"}
-PLUGIN_DOMAINS = {"@yahoo.com","@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
+PLUGIN_DOMAINS = {"@yahoo.com", "@yahoo.ie", "@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
                   "@yahoo.co.in", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
                   "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com", "@yahoo.com.au",
 }
@@ -1189,7 +1190,9 @@ function user(pstate, username)
 
   -- Figure out the domain specific flags
   --
-  if domain == "yahoo.it" then
+  if domain == "yahoo.ie" then
+    internalState.strIntFlag = globals.strYahooIe
+  elseif domain == "yahoo.it" then
     internalState.strIntFlag = globals.strYahooIt
   elseif domain == "yahoo.ca" then
     internalState.strIntFlag = globals.strYahooCa

@@ -65,6 +65,7 @@ freepops.MODULES_MAP["googlemail.com"]	= {name="gmail.lua"}
 -- yahoo
 freepops.MODULES_MAP["yahoo.com"]	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.com.ar"]	= {name="yahoo.lua"}
+freepops.MODULES_MAP["yahoo.ie"]       	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.it"]       	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.ca"] 	= {name="yahoo.lua"}
 freepops.MODULES_MAP["yahoo.co.in"] 	= {name="yahoo.lua"}

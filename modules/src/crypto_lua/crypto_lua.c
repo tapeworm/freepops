@@ -194,7 +194,9 @@ static const struct L_Tuserdata crypto_ALGO [] = {
 // ====== SHA* =====
 #if CRYPTO_IMPLEMENTATION == CRYPTO_OPENSSL
 	#ifndef OPENSSL_NO_SHA
+	  #ifndef OPENWRT
 	  {"ALGO_sha",EVP_sha},
+	  #endif
 	  {"ALGO_sha1",EVP_sha1},
 	  {"ALGO_dss",EVP_dss},
 	  {"ALGO_dss1",EVP_dss1},

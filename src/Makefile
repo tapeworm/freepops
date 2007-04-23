@@ -189,6 +189,9 @@ endif
 endif
 endif	
 endif
+ifeq "$(OS)" "openwrt"
+	LDFLAGS+=-lcrypto -lssl -lz
+endif
 
 #rules ####################################################
 all: $(CDEPFILES:%.c=.%.d) $(LDEPFILES:%.pkg=.%.d) $(BINARY)

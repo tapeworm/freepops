@@ -1,3 +1,5 @@
+- added flags for openwrt in configure.sh
+- configure.sh variables can be partially overridden setting env variables
 - better fmessage osx utility
 31/03/2007 0.2.2
 - updater.lua: fix @updater (gareuselesinge)

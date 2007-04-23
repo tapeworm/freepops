@@ -43,37 +43,37 @@ EOT
 }
 
 set_default() {
-CC=gcc
-CXX=g++
-LD=ld
-AR=ar
-STRIP=strip
-RANLIB=ranlib
-HCC=$CC
-HLD=$LD
-HAR=$AR
-HSTRIP=$STRIP
-HRANLIB=$RANLIB
-EXEEXTENSION=
-STATICEXTENSION=.a
-SHAREDEXTENSION=.so
-CFLAGS="-O2 -g3 -Wall -DHAVE_CONFIG_H -I$PWD"
-HCFLAGS=$CFLAGS
-LDFLAGS=""
-HLDFLAGS=$LDFLAGS
-WINDRES=windres
-DLLTOOL=dlltool
-MAKE=make
-WHERE=/usr/local/
-TAR=tar
-PATCH=patch
-SSL=openssl
-FLTKUI=
-FLTKCFLAGS=
-FLTKLDFLAGS=
-MACHOARCH=
-LUAFLAGS=
-LIBEXPAT_STATIC_PATH=$PWD/../lib/lib/
+CC=${CC:-gcc}
+CXX=${CXX:-g++}
+LD=${LD:-ld}
+AR=${AR:-ar}
+STRIP=${STRIP:-strip}
+RANLIB=${RANLIB:-ranlib}
+HCC=${HCC:-$CC}
+HLD=${HLD:-$LD}
+HAR=${HAR:-$AR}
+HSTRIP=${HSTRIP:-$STRIP}
+HRANLIB=${HRANLIB:-$RANLIB}
+EXEEXTENSION=${EXEEXTENSION:-""}
+STATICEXTENSION=${STATICEXTENSION:-.a}
+SHAREDEXTENSION=${SHAREDEXTENSION:-.so}
+CFLAGS=${CFLAGS:-"-O2 -g3 -Wall -DHAVE_CONFIG_H -I$PWD"}
+HCFLAGS=${HCFLAGS:-$CFLAGS}
+LDFLAGS=${LDFLAGS:-""}
+HLDFLAGS=${HLDFLAGS:-$LDFLAGS}
+WINDRES=${WINDRES:-windres}
+DLLTOOL=${DLLTOOL:-dlltool}
+MAKE=${MAKE:-make}
+WHERE=${WHERE:-/usr/local/}
+TAR=${TAR:-tar}
+PATCH=${PATCH:-patch}
+SSL=${SSL:-openssl}
+FLTKUI=${FLTKUI:-""}
+FLTKCFLAGS=${FLTKCFLAGS:-""}
+FLTKLDFLAGS=${FLTKLDFLAGS:-""}
+MACHOARCH=${MACHOARCH:-""}
+LUAFLAGS=${LUAFLAGS:-""}
+LIBEXPAT_STATIC_PATH=${LIBEXPAT_STATIC_PATH:-$PWD/../lib/lib/}
 }
 
 set_linux() {
@@ -267,6 +267,13 @@ CFLAGS="$CFLAGS -DCRYPTO_IMPLEMENTATION=1"
 HCFLAGS="$HCFLAGS -DCRYPTO_IMPLEMENTATION=1"
 SSL=gnutls
 }
+
+set_openwrt() {
+set_default
+OS=openwrt
+CFLAGS="$CFLAGS -DOPENWRT"
+}
+
 ###############################################
 LUAEXPAT=luaexpat
 LUACURL=luacurl
@@ -339,6 +346,9 @@ case $1 in
 	;;
 	win-gnutls)
 		set_win_gnutls
+	;;
+	openwrt)
+		set_openwrt
 	;;
 	*)
 		usage

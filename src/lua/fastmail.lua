@@ -2,19 +2,19 @@
 --  FreePOPs @fastmail.com webmail interface
 --  
 --  Released under the GNU/GPL license
---  Written by Russell Schwager <russells@despammed.com>
+--  Written by Russell Schwager <russell822@yahoo.com>
 -- ************************************************************************** --
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2b"
+PLUGIN_VERSION = "0.0.2c"
 PLUGIN_NAME = "fastmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=fastmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
-PLUGIN_AUTHORS_CONTACTS = {"russells (at) despammed (.) com"}
+PLUGIN_AUTHORS_CONTACTS = {"russell822 (at) yahoo (.) com"}
 PLUGIN_DOMAINS = { "@123mail.org", "@150mail.com", "@150ml.com", "@16mail.com",
 "@2-mail.com", "@4email.net", "@50mail.com", "@airpost.net", "@allmail.net", 
 "@bestmail.us", "@cluemail.com", "@elitemail.org", "@emailgroups.net", "@emailplus.org", 
@@ -77,7 +77,7 @@ local globals = {
 
   -- Regular expression to extract the mail server
   --
-  strFormActionPat = '<form action="([^"]+)"',
+  strFormActionPat = '<form name="[^"]+" action="([^"]+)"',
 
   -- Regular expression to get the mailbox id, Ust value and the Udm value
   --

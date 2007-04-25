@@ -25,7 +25,7 @@ Available options:
 	win-gnutls	to cross-compile for win on a linux host with 
 			mingw32msvc using gnutls
 
-Flags (need pkg-config as provided in Debian):
+Flags (need $PKGCONFIG as provided in Debian):
 	-luaexpat       use system lua5.1-expat
 	-luacurl        use system lua5.1-curl 
 	-luafilesystem  use system lua5.1-filesystem 
@@ -280,6 +280,8 @@ LUACURL=luacurl
 LUALUA=lua
 LUAFILESYSTEM=luafilesystem
 
+PKGCONFIG=${PKGCONFIG:-pkg-config}
+
 ##############################################
 if test -z "$1"; then
 	usage
@@ -360,31 +362,31 @@ while [ ! -z "$1" ]; do
 	case $1 in
 		-luaexpat)
 			LUAEXPAT=
-			HCFLAGS="$HCFLAGS `pkg-config lua5.1-expat --cflags`"
-			HLDFLAGS="$HLDFLAGS `pkg-config lua5.1-expat --libs`"
-			CFLAGS="$HCFLAGS `pkg-config lua5.1-expat --cflags`"
-			LDFLAGS="$HLDFLAGS `pkg-config lua5.1-expat --libs`"
+			HCFLAGS="$HCFLAGS `$PKGCONFIG lua5.1-expat --cflags`"
+			HLDFLAGS="$HLDFLAGS `$PKGCONFIG lua5.1-expat --libs`"
+			CFLAGS="$CFLAGS `$PKGCONFIG lua5.1-expat --cflags`"
+			LDFLAGS="$LDFLAGS `$PKGCONFIG lua5.1-expat --libs`"
 		;;
 		-luacurl)
 			LUACURL=
-			HCFLAGS="$HCFLAGS `pkg-config lua5.1-curl --cflags`"
-			HLDFLAGS="$HLDFLAGS `pkg-config lua5.1-curl --libs`"
-			CFLAGS="$HCFLAGS `pkg-config lua5.1-curl --cflags`"
-			LDFLAGS="$HLDFLAGS `pkg-config lua5.1-curl --libs`"
+			HCFLAGS="$HCFLAGS `$PKGCONFIG lua5.1-curl --cflags`"
+			HLDFLAGS="$HLDFLAGS `$PKGCONFIG lua5.1-curl --libs`"
+			CFLAGS="$CFLAGS `$PKGCONFIG lua5.1-curl --cflags`"
+			LDFLAGS="$LDFLAGS `$PKGCONFIG lua5.1-curl --libs`"
 		;;
 		-lua)
 			LUALUA=
-			HCFLAGS="$HCFLAGS `pkg-config lua5.1 --cflags`"
-			HLDFLAGS="$HLDFLAGS `pkg-config lua5.1 --libs`"
-			CFLAGS="$HCFLAGS `pkg-config lua5.1 --cflags`"
-			LDFLAGS="$HLDFLAGS `pkg-config lua5.1 --libs`"
+			HCFLAGS="$HCFLAGS `$PKGCONFIG lua5.1 --cflags`"
+			HLDFLAGS="$HLDFLAGS `$PKGCONFIG lua5.1 --libs`"
+			CFLAGS="$CFLAGS `$PKGCONFIG lua5.1 --cflags`"
+			LDFLAGS="$LDFLAGS `$PKGCONFIG lua5.1 --libs`"
 		;;
 		-luafilesystem)
 			LUAFILESYSTEM=
-			HCFLAGS="$HCFLAGS `pkg-config lua5.1-filesystem --cflags`"
-			HLDFLAGS="$HLDFLAGS `pkg-config lua5.1-filesystem --libs`"
-			CFLAGS="$HCFLAGS `pkg-config lua5.1-filesystem --cflags`"
-			LDFLAGS="$HLDFLAGS `pkg-config lua5.1-filesystem --libs`"
+			HCFLAGS="$HCFLAGS `$PKGCONFIG lua5.1-filesystem --cflags`"
+			HLDFLAGS="$HLDFLAGS `$PKGCONFIG lua5.1-filesystem --libs`"
+			CFLAGS="$CFLAGS `$PKGCONFIG lua5.1-filesystem --cflags`"
+			LDFLAGS="$LDFLAGS `$PKGCONFIG lua5.1-filesystem --libs`"
 		;;
 		-fltk-ui)
 			FLTKUI=1

@@ -1,3 +1,4 @@
+- added /etc/init.d openwrt scripts
 - added flags for openwrt in configure.sh
 - configure.sh variables can be partially overridden setting env variables
 - better fmessage osx utility

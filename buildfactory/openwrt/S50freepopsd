@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ -f /usr/bin/freepopsd ]; then
+  mkdir -p /var/lib/freepops/lua_updates/lxp/
+  mkdir -p /var/lib/freepops/lua_updates/browser/
+  mkdir -p /var/lib/freepops/lua_updates/soap/
+  mkdir -p /var/lib/freepops/lua_unofficial/
+  freepopsd -l syslog -e updater.lua php batch &
+  freepopsd -p 110 -s nobody.nogroup -v -l syslog &
+else
+  logger "$0: freepopsd not found to be installed."
+fi

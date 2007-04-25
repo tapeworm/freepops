@@ -18,54 +18,27 @@ local ipairs = ipairs
 local print = print
 
 local base_URL = "http://www.freepops.org/"
-local list_URL = base_URL.."listmodules.php?type=%s&fp_version=%s"
-local getxml_URL = base_URL.."download.php?xml%s=%s&fp_version=%s"
+local getxml_URL = base_URL.."modules.php?type=%s&fp_version=%s"
 local getfile_URL = base_URL.."download.php?%s=%s.lua&fp_version=%s"
 
 module("updater_php")
 
---- 
--- Returns a list of module names that are available upstream.
--- @param kind string official of contrib.
--- @param b browser the browser, a new one is created if nil.
--- @return table the list of modules, or nil plus an error message.
-function list_modules(kind,b)
-	kind = kind or "official"
-	local b = b or browser.new()
-	local url = string.format(list_URL,kind,freepops.version())
-	local data, err = b:get_uri(url)
-	if data == nil then
-		log.error_print(err)
-		return nil, err
-	end
-	local rc = {}
-	for l in uc.lines(data) do
-		rc[#rc+1] = string.gsub(l,".xml$","")
-	end
-	return rc
-end
-
 ---
 -- Get all infos regarding a module.
--- @param name string a module name(s) separated by comma.
 -- @param kind string official of contrib.
 -- @param b browser the browser, a new one is created if nil.
 -- @return table with the following fields: version require_version url local_path local_version can_update why_cannot_update should_update. 
-function fetch_module_metadata(name,kind,b)
+function fetch_modules_metadata(kind,b)
 	kind = kind or "official"
-	if name == nil then
-		return nil, "fetch_module_metadata: No module name(s) given."
+	local file_typ
+	if kind == "official" then
+		file_typ = 'module' 
+	else 
+		file_typ = 'contrib' 
 	end
-	local typ
-	if kind == "official" then typ = "module" else typ = "contrib" end
+	local fp_version = freepops.version()
 	local b = b or browser.new()
-	local names = ""
-	for x in string.gmatch(name,"([^,]+)") do
-		names = names .. x .. ".xml,"
-	end
-	-- remove last ','
-	names = string.sub(names,1,-2)
-	local url = string.format(getxml_URL,typ,names,freepops.version())
+	local url = string.format(getxml_URL,kind,fp_version)
 	local body, err = b:get_uri(url)
 	if not body then return nil, err end
 
@@ -73,12 +46,11 @@ function fetch_module_metadata(name,kind,b)
 	if txml == nil then return nil, err end
 
 	local mdlist = {}
-	xml2table.forach_son(txml, "metadata",function(txml)
-		local name = txml.name
-		-- first son can be either plugin or module
-		local version = txml[1].version._content
-		local reqversion = txml[1].require_version._content
-		local url = txml[1].url._content
+	xml2table.forach_son(txml, "module",function(txml)
+		local name = txml._content
+		local version = txml['version']
+		local reqversion = txml['require_version']
+		local url = string.format(getfile_URL,file_typ,name,fp_version)
 
 		local localversion, path = uc.get_local_version(name)
 

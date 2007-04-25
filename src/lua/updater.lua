@@ -49,6 +49,12 @@ updater = nil
 -- ************************************************************************** --
 --  {{{ Helper functions
 -- ************************************************************************** --
+	
+function list2set(s)
+	local rc = {}
+	for x in string.gmatch(s,'[^,]+') do rx[x]=true end
+	return rc
+end
 
 -- Build a mail header date string
 --
@@ -119,7 +125,12 @@ function user(pstate, username, foo)
     internalState.bClearCache = true
   end
 
-  internalState.plist = (freepops.MODULE_ARGS or {}).modlist
+  local mlist = (freepops.MODULE_ARGS or {}).modlis
+  if mlist ~= nil then
+	  internalState.plist = list2set(mlist)
+  else
+	  internalState.plist = nil -- all plugins	
+  end
 
   -- Add any excluded plugins
   --
@@ -174,26 +185,17 @@ function stat(pstate)
   --
   set_popstate_nummesg(pstate, nMsgs)
 
-  -- Fetch the list of plugins
-  --
-  local plist = internalState.plist
-  print(plist)
-  if plist == nil then
-	local list, err = updater.list_modules("official",browser)
-	if list == nil then 
-		log.error_print(err)
-		return POPSERVER_ERR_NETWORK 
-	end
-	plist = table.concat(list, ",")
-  end
-
   local pdata = {}
-  local data, err = updater.fetch_module_metadata(plist,"official",browser)
+  local data, err = updater.fetch_modules_metadata("official",browser)
   if data == nil then
 	log.error_print(err)
 	return POPSERVER_ERR_NETWORK
   end
-  for _,plugin in ipairs(data) do pdata[plugin.module_name]=plugin end
+  for _,plugin in ipairs(data) do 
+	  if internalState.plist == nil or internalState.plist[name] then
+	  	pdata[plugin.module_name]=plugin 
+          end
+  end
 
   for plugin, data in pairs(pdata) do
     local size = 10240  -- Hard coded for 10k
@@ -399,45 +401,40 @@ end
 function batch(...)
 	local b = browser.new()	
 	local report = {}
-
 	-- arg parsing
 	local plist = nil
 	if select("#",...) > 0 then
 		if select(1,...) == 'only' then
-			plist = select(2,...)
+			plist = list2set(select(2,...))
 		else
 			return updater_usage(select(1,...))
 		end
 	end
 
 	-- local shortcuts
-	local get_mdata = updater.fetch_module_metadata
+	local get_mdata = updater.fetch_modules_metadata
 	local get_data = updater.fetch_module
-	local list = updater.list_modules
-	local log = print
-
-	-- list plugins
-	local type = "official"
-	if plist == nil then
-		plist = table.concat(list(type,b), ",")
+	local log = function(msg)
+		log.say(msg..'\n')
 	end
+	local type = "official"
 
   	local pdata, err =  nil, nil
-    	pdata, err = get_mdata(plist,type,b)
+    	pdata, err = get_mdata(type,b)
 	if pdata == nil then
 		log("Error: metadata: "..(err or ""))
-	else
-		log("Fetched metadata for: "..plist)
 	end
 
 	for _,mod in ipairs(pdata) do
 		local name = mod.module_name
-		if mod.can_update and mod.should_update then
+		if plist ~= nil and not plist[name] then
+			log("Skip "..name..": not selected for update")
+		elseif mod.can_update and mod.should_update then
 			local rc, err = get_data(name,"true",type,b)
 			if rc == nil then
 				log("Error: data for "..name..": "..(err or ""))
 			else
-			 	log("Fetched data for "..name)
+			 	log("Updated "..name)
 			end
 		else
 			log("Skip "..name..": "..mod.why_cannot_update)
@@ -455,7 +452,7 @@ Extra operations:
 
 Operation: batch
 parameters:
-	string : a comma separated list of modules / default all modules
+	only string : a comma separated list of modules / default all modules
 
 answer:
 	a human readable report
@@ -466,7 +463,7 @@ parameters:
 answer:
 
 Examples:
-	freepopsd -e updater.lua php list_modules official
+	freepopsd -e updater.lua php fetch_modules_metadata
 	freepopsd -e updater.lua php interactive
 	freepopsd -e updater.lua php batch only hotmail,updater
 ]])
@@ -487,8 +484,8 @@ function main(args)
 	local err
 	err, updater = pcall(require,"updater_"..backend)
 	if err == false then
-		print("Unable to load the updater_"..backend.." module.")
-		print(updater)
+		log.error_print("Unable to load the updater_"..backend.." module.")
+		log.error_print(updater)
 		return 1
 	end
 

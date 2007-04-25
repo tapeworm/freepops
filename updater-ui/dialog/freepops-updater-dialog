@@ -7,7 +7,7 @@
 RC=""
 
 # XXX should be written at config time
-CORE='freepopsd'
+CORE=${CORE:-freepopsd}
 FREEPOPS="$CORE -e updater.lua php"
 PREAMBLE="dialog --backtitle FreePOPs_Updater"
 GAUGE='--defaultno --gauge %s 10 70'
@@ -129,27 +129,19 @@ BEGIN { RS = "\n\n+"; FS = "\n"; }
   print tmp; 
 }
 EOT
-local MODULES=`mk_temp`
 local ERR=`mk_temp`
-$FREEPOPS list_modules official > $MODULES 2>$ERR
-if [ $? != 0 ]; then
-	echo "Error fetching modules list"
-	cat $ERR
-	exit 1
-fi
-local N=`wc -l $MODULES | cut -d ' ' -f 1`
 local I=0
 local CHECKLIST_INPUT=`mk_temp`
 local FAILED=`mk_temp`
-M=`cat $MODULES | tr -s '\n' ' ' | sed 's/ /,/g'`
-FILES=`$FREEPOPS fetch_module_metadata $M 2>$ERR | awk -f $AWK`
+FILES=`$FREEPOPS fetch_modules_metadata 2>$ERR | awk -f $AWK`
 if [ $? != 0 ]; then
-	echo "Error fetching '$M' metadata" 
+	echo "Error fetching metadata" 
 	cat $ERR
 	exit 1
 fi
 # register temp files to the garbage collector
 echo $FILES >> $TODELETE
+N=`echo $FILES | wc -w `
 local perc=0
 local CMD=`mk_temp`
 echo -n $PREAMBLE > $CMD
@@ -212,9 +204,14 @@ fi
 # here we go! ###############################################################
 if [ ! -x /usr/bin/dialog ]; then
 	echo 'dialog' utility not found.
-	echo Please install the pachage dialog.
+	echo Please install the dialog package.
 	exit 1
 fi
+if [ ! -x $CORE ]; then
+	echo $CORE not found.
+	exit 1
+fi
+
 main "$@"
 
 # eof

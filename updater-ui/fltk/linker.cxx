@@ -30,7 +30,7 @@ extern "C" {
 #define val(name,data) data;int name = lua_gettop(L)
 #define _(x) gettext(x)
 
-//#define DEBUG_UPDATER_FLTK
+#define DEBUG_UPDATER_FLTK
 
 #ifdef DEBUG_UPDATER_FLTK
   #define _mark(print_stack) {\
@@ -74,10 +74,11 @@ static int name2pos; // name |--> position in the checklist
 // download the metadata of all modules
 // leaves on the stack 3 tables and a browser object
 void updater_download_metadata(){
+	int rc;
 	_mark(0);
 	lua_pop(L,lua_gettop(L));
 	updater_prg_page_download->value(0);
-	updater_prg_page_download->copy_label(_("Downloading: plugin list"));
+	updater_prg_page_download->copy_label(_("Downloading: modules metadata"));
 	Fl::check();
 
 	// the browser object
@@ -95,39 +96,10 @@ void updater_download_metadata(){
 	   	BROWSER,METADATA,UPGRADABLE,NAME2POS);
 #endif   
 
-	// the table that lists all plugin names
-	int rc = luay_call(L,"s|vv","updater.list_modules","official");
+	rc = luay_call(L,"sv|vv","updater.fetch_modules_metadata",
+		"official",BROWSER);
 	if (rc != 0 || lua_isnil(L,-2)) {
-		fl_alert(_("Unable to download the module list:\n%s"),
-			lua_tostring(L,-1));
-		updater_failure();
-		return;
-	}
-	lua_pop(L,1); // the erorr message
-	val(MODULES,);
-
-	val(NAMES,rc=luay_call(L,"vs|v", "table.concat",MODULES,","));
-	if (rc != 0 || lua_isnil(L,NAMES)) {
-		fl_alert(_("Unable to concatenate modules list"));
-		updater_failure();
-		return;
-    }
-	
-	// change progressbar
-	updater_prg_page_download->value(1*100/lua_objlen(L,MODULES));
-
-	// set the lable
-	lua_pushfstring(L,_("Downloading %d metadata records"),
-		lua_objlen(L,MODULES));
-	updater_prg_page_download->copy_label(lua_tostring(L,-1));
-	lua_pop(L,1);
-	// redraw
-	Fl::check(); 
-
-	rc = luay_call(L,"vsv|vv","updater.fetch_module_metadata",
-		NAMES,"official",BROWSER);
-	if (rc != 0 || lua_isnil(L,-2)) {
-		fl_alert(_("Unable to download the module metadata:\n%s"),
+		fl_alert(_("Unable to download the modules metadata:\n%s"),
 			lua_tostring(L,-1));
 		updater_failure();
 		return;
@@ -142,9 +114,7 @@ void updater_download_metadata(){
 		lua_setfield(L,METADATA,lua_tostring(L,NAME));
 		lua_pop(L,2);
 	}
-	lua_pop(L,1); // the table returned by fetch_module_metadata
-	lua_pop(L,1); // the result of table.concat
-	lua_pop(L,1); // the table with the names of the modules
+	lua_pop(L,1); // the table returned by fetch_modules_metadata
 	_mark(1);
 
 	// change progressbar

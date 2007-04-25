@@ -153,20 +153,12 @@ end
 -- {{{ documentation/usage and manglers
 
 local operations = {
-	"list_modules", 
-	"fetch_module_metadata", 
+	"fetch_modules_metadata", 
 	"fetch_module",
 }
 
-local list_modules_doc = [[
+local fetch_modules_metadata_doc = [[
 parameters: 
-	(official|contrib) : The type of module / default official
-	browser object: Lua browser object / default create a new one
-
-answer: A list of "module: string(1)" lines]]
-local fetch_module_metadata_doc = [[
-parameters: 
-	string : The name of the modules, separated by comma
 	(official|contrib) : The type of modules / default official
 	browser object: Lua browser object / default create a new one
 
@@ -201,8 +193,7 @@ answer:
 	If the second parameter was false then the body of the module.]]
 
 local instructions = {
-	["list_modules"] =  list_modules_doc,
-	["fetch_module_metadata"] = fetch_module_metadata_doc,
+	["fetch_modules_metadata"] = fetch_modules_metadata_doc,
 	["fetch_module"] = fetch_module_doc,
 }
 
@@ -222,7 +213,6 @@ function common_usage(cmd, stuff, errors)
 	err("Usage: "..cmd.." backend operation args...")
 	err("")
 	err("Backends:")
-	err("\tcvs\tNot implemented")
 	err("\tphp")
 	err("")
 	err("Standard operations:")
@@ -236,11 +226,7 @@ end
 ---
 -- The table of function to print on stdout the result of the functions.
 mangler = {
-  ["list_modules"] = function(t, err) 
-	  if t == nil then print("error: " .. err);return end
-	  table.foreach(t,function(_,v) print(v) end) 
-  end,
-  ["fetch_module_metadata"] = function(l, err)
+  ["fetch_modules_metadata"] = function(l, err)
 	  if l == nil then print("error: " .. err);return end
 	  for _,t in ipairs(l) do
 		  print("module_name: ".. t.module_name)

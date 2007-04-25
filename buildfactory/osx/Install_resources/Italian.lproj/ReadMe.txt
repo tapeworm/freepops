@@ -19,6 +19,10 @@ Per chiedere assistenza, DOPO aver letto la documentazione inclusa, potete guard
 
 ChangeLog:
 
+- moved all the updater code to the new and small XML metadata file produced by the CGI http://freepops.org/modules.php written by alessiofender
+- added /etc/init.d openwrt scripts
+- added flags for openwrt in configure.sh
+- configure.sh variables can be partially overridden setting env variables
 - better fmessage osx utility
 31/03/2007 0.2.2
 - updater.lua: fix @updater (gareuselesinge)

@@ -5,6 +5,7 @@
 --  Written by Russell Schwager <russells@despammed.com>
 --  yahoo.it added by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
 --  yahoo.ie added by Bruce Williamson <aztrix@yahoo.com>
+--  Contributions by Przemyslaw Wroblewski <przemyslaw.wroblewski@gmail.com>
 -- ************************************************************************** --
 
 -- Globals
@@ -255,7 +256,8 @@ local globals = {
 
   -- Data Recognization on login
   --
-  strRegExpCrumbNew = "wssid : '([^']+)'",
+--  strRegExpCrumbNew = "wssid : '([^']+)'",
+  strRegExpCrumbNew = "wssid[^:]+: '([^']+)'",
   strRegExpWebSrvUrl = "webservice[^:]-: '([^']+)'", 
 
   -- Folder names

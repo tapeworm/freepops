@@ -2,19 +2,19 @@
 --  FreePOPs @netzero/juno webmail interface
 --  
 --  Released under the GNU/GPL license
---  Written by Russell Schwager <russells@despammed.com>
+--  Written by Russell Schwager <russell822@yahoo.com>
 -- ************************************************************************** --
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9j"
+PLUGIN_VERSION = "0.0.9k"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=juno.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
-PLUGIN_AUTHORS_CONTACTS = {"russells@despammed.com"}
+PLUGIN_AUTHORS_CONTACTS = {"russell822@yahoo.com"}
 PLUGIN_DOMAINS = {"@netzero.net","@netzero.com", "@juno.com"}
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
@@ -98,6 +98,11 @@ local globals = {
   --
   strMsgListNextPagePattern = '(>Next%([%d]+%)</a>)',
 
+  -- The amount of time that the session should time out at.
+  -- This is expressed in seconds
+  --
+  nSessionTimeout = 14400,  -- 4 hours!
+
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
   strInbox = "Inbox",
@@ -113,6 +118,7 @@ local globals = {
   strCmdDelete = "%s/7?folder=%s&command=delete&msgList=", 
   strCmdReadOptions = "%s/48",
   strCmdEmptyTrash = "%s/6?command=Empty&folder=Trash",
+  strCmdLogout = "%s/14?type=signOut&GOTO_URL=http://my.juno.com&",
 
 }
 
@@ -132,6 +138,7 @@ internalState = {
   strMBox = nil,
   bEmptyTrash = false,
   bResetHeaders = false,
+  loginTime = nil,
 }
 
 -- ************************************************************************** --
@@ -265,6 +272,10 @@ function login()
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true
+
+  -- Note the time when we logged in
+  --
+  internalState.loginTime = os.clock();
 
   -- Turn on full headers
   --
@@ -916,6 +927,23 @@ function quit_update(pstate)
     log.dbg("Turning off full headers with URL: " .. cmdUrl .. "\n")
     local postdata = "headers=0&command=save&page=5"
     local body, err = browser:post_uri(cmdUrl, postdata)
+  end
+
+  -- Should we force a logout.  If this session runs for more than a day, things
+  -- stop working
+  --
+  local currTime = os.clock()
+  local diff = currTime - internalState.loginTime
+  if diff > globals.nSessionTimeout then 
+    cmdUrl = string.format(globals.strCmdLogout, internalState.strMailServer)
+    log.dbg("Sending Logout URL: " .. cmdUrl .. "\n")
+    local body, err = browser:get_uri(cmdUrl)
+ 
+    log.dbg("Logout forced to keep juno/netzero session fresh and tasty!  Yum!\n")
+    log.dbg("Session removed - Account: " .. internalState.strUser .. 
+      "@" .. internalState.strDomain .. "\n")
+    session.remove(hash())
+    return POPSERVER_ERR_OK
   end
 
   -- Save and then Free up the session

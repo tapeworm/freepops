@@ -7,14 +7,14 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.7a"
+PLUGIN_VERSION = "0.1.81"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=hotmail.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
-PLUGIN_AUTHORS_NAMES = {"Russell Schwager", "D. Milne" }
-PLUGIN_AUTHORS_CONTACTS = {"russell822 (at) yahoo (.) com", "drmilne (at) safe-mail (.) net"}
+PLUGIN_AUTHORS_NAMES = {"Russell Schwager", "D. Milne", "Peter Collingbourne" }
+PLUGIN_AUTHORS_CONTACTS = {"russell822 (at) yahoo (.) com", "drmilne (at) safe-mail (.) net", "pcc03 (at) doc (.) ic (.) ac (.) uk>"}
 PLUGIN_DOMAINS = { "@hotmail.com","@msn.com","@webtv.com",
       "@charter.com", "@compaq.net","@passport.com", 
       "@hotmail.de", "@hotmail.it", "@hotmail.co.uk", 
@@ -107,12 +107,17 @@ local globals = {
   strLoginPostUrlPattern5='name="PPFT" id="[^"]+" value="([^"]+)"',
   strLoginDoneReloadToHMHome1='URL=([^"]+)"',
   strLoginDoneReloadToHMHome2='%.location%.replace%("([^"]+)"',
-
+  strLoginDoneReloadToHMHome3="location='([^']+)'",
+--  strLoginDoneReloadToHMHome3='location=.([^"%']+)',
+  strLoginDoneReloadToHMHome4="img src='([^']+)'",
+  strLoginDoneReloadToReloadPage='window%.location=\'([^\']+)\'',
+ 
   -- Pattern to detect if we are using the live or classic version
   --
   strLiveCheckPattern = '(TodayLight%.aspx)',
   strClassicCheckPattern = '(Windows Live Mail was not able to sign into your account at this time)',
   strLiveMainPagePattern = '<frame.-name="main" src="([^"]+)"',
+  strLiveLightPagePattern = 'href="(StylesheetTodayLight)',
 
   -- Get the crumb value that is needed for every command
   --
@@ -137,8 +142,12 @@ local globals = {
   -- Folder id pattern
   --
   strFolderPattern = '<a href="[^"]+curmbox=([^&]+)&[^"]+" >', 
-  strFolderLivePattern = '__8%("([^"]+)","',
+  strFolderLivePattern = '%("([^"]+)","',
   strFolderLiveInboxPattern = 'sysfldrinbox".-"([^"]+)"',
+  strFolderLiveLightInboxPattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&n=[^"]+"[^>]+><img src=".-i_inbox.gif"',
+  strFolderLiveLightTrashPattern = 'i_trash%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
+  strFolderLiveLightJunkPattern = 'i_junkfolder%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
+  strFolderLiveLightPattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&n=[^"]+" title="',  
 
   -- Pattern to determine if we have no messages
   --
@@ -148,11 +157,13 @@ local globals = {
   --
   strMsgListCntPattern = "<td width=100. align=center>([^<]+)</td><td align=right nowrap>",
   strMsgListCntPattern2 = "([%d]+) [MmNnBbVv][eai]",
+  strMsgListLiveLightCntPattern = '<div class="dItemListHeaderMsgInfo">.- (%d+)</div>',
 
   -- Used by Stat to pull out the message ID and the size
   --
   strMsgLineLitPattern = ".*<tr>.*<td>[.*]{img}.*</td>.*<td>.*<img>.*</td>.*<td>[.*]{img}.*</td>.*<td>.*<input>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
   strMsgLineAbsPattern = "O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
+
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
@@ -167,6 +178,7 @@ local globals = {
   strMsgLivePatternOld = ',"([^"]+)","[^"]+","[^"]+",[^,]+,[^,]+,[^,]+,[^,]+,"([^"]+)"',
   strMsgLivePattern1 = 'class=.-SizeCell.->([^<]+)</div>',
   strMsgLivePattern2 = 'new HM%.__[^%(]+%("([^"]+)",[tf][^,"]+,"[^"]+",[^,]+,[^,]+',
+  strMsgLiveLightPattern = 'ReadMessageId=([^&]+)&[^>]+>.-</a></td>.-<td [^>]+>.-</td>.-<td [^>]+>([^<]+)</td>',
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -185,6 +197,7 @@ local globals = {
   strCmdBrowserIgnoreLive = "http://%s/mail/mail.aspx?skipbrowsercheck=true",
   strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s",
   strCmdMsgListNextPage = "&page=%d&wo=",
+  strCmdMsgListLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s",
   strCmdMsgListLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.GetFolderData&ptid=0&a=%s&au=%s", 
   strCmdMsgListPostLiveOld = "cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,,&MailToken=",
   strCmdMsgListPostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,"","",true,false&v=1&mt=%s',
@@ -194,16 +207,21 @@ local globals = {
   strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=%s&au=%s", 
   strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
   strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
+  strCmdDeleteLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&", 
+  strCmdDeletePostLiveLight = "__VIEWSTATE=&mt=%s&query=&MoveMessageSelector=%s&ToolbarActionItem=MoveMessageSelector&", -- SelectedMessages=%s",
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
-  strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s",
+  strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s&gs=true",
   strCmdEmptyTrash = "http://%s/cgi-bin/dofolders?_HMaction=DoEmpty&curmbox=F000000004&a=%s&i=F000000004",
   strCmdLogout = "http://%s/cgi-bin/logout",
   strCmdFolders = "http://%s/cgi-bin/folders?&curmbox=F000000001&a=%s",
+  strCmdFoldersLiveLight = "http://%s/mail/ManageFoldersLight.aspx",
   strCmdMsgUnreadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=", 
   strCmdMsgUnreadLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MarkMessages&d=false,[%s]",
   strCmdEmptyTrashLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.EmptyFolder&ptid=0&a=&au=%s", 
   strCmdEmptyTrashLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=EmptyFolder&d=%s,0",
+  strCmdEmptyTrashLiveLight = "http://%s/mail/InboxLight.aspx?EmptyFolder=True&FolderID=%s&", 
+  strCmdEmptyTrashLiveLightPost = "__VIEWSTATE=&mt=%s&query=&MoveMessageSelector=&ToolbarActionItem=&InfoPaneActionItem=EmptyFolderConfirmYes",
 }
 
 -- ************************************************************************** --
@@ -219,7 +237,7 @@ internalState = {
   strMailServer = nil,
   strImgServer = nil,
   strDomain = nil,
-  strCrumb = nil,
+  strCrumb = "",
   strMBox = nil,
   strMBoxName = nil,
   bEmptyTrash = false,
@@ -227,10 +245,11 @@ internalState = {
   loginTime = nil,
   bMarkMsgAsUnread = false,
   bLiveGUI = false,
+  bLiveLightGUI = false,
   strTrashId = nil,
   strJunkId = nil,
   statLimit = nil,
-  strUserId = nil,
+  strUserId = "",
   strMT = "",
 }
 
@@ -309,6 +328,10 @@ function getPage(browser, url)
       return body, err
     end
     try = try + 1
+    local newurl = string.match(body, 'Object moved to <a href="([^"]+)"')
+    if (newurl ~= nil) then
+      return getPage(browser, newurl)
+    end
     if (body ~= nil) then
       log.raw("Attempt to load: " .. url .. " failed in attempt: " .. try)
     end
@@ -459,23 +482,42 @@ function loginHotmail()
       str = string.format(globals.strCmdBaseLive, browser:wherearewe()) .. str
       body, err = browser:get_uri(str)
     else
-      log.error_print(globals.strLoginFailed)
-      log.raw("Login failed: Trying to get session id and got something we weren't expecting:\n" .. body);
-      return POPSERVER_ERR_NETWORK
+      str = string.match(body, globals.strLiveLightPagePattern)
+      if (str ~= nil) then
+        log.dbg("Hotmail: Detected LIVE version is in LIGHT mode.")
+        internalState.bLiveLightGUI = true
+      else
+        log.error_print(globals.strLoginFailed)
+        log.raw("Login failed: Trying to get session id and got something we weren't expecting:\n" .. body);
+        return POPSERVER_ERR_NETWORK
+      end
     end
 
     internalState.bLiveGUI = true
   else
-    -- One more redirect
+    -- One or two more redirects
     --  
     local oldurl = url
+    url = string.match(body, globals.strLoginDoneReloadToReloadPage)
+    if url ~= nil then
+      body, err = browser:get_uri(url)
+    end
     url = string.match(body, globals.strLoginDoneReloadToHMHome1)
     if url == nil then
       url = string.match(body, globals.strLoginDoneReloadToHMHome2)
       if url == nil then
-        log.error_print(globals.strLoginFailed)
-        log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
-        return POPSERVER_ERR_NETWORK
+        -- Change suggested by 930     
+        local authimgurl = string.match(body, globals.strLoginDoneReloadToHMHome4)
+          if authimgurl ~= nil then
+            browser:get_uri(authimgurl)
+          end
+        url = string.match(body, globals.strLoginDoneReloadToHMHome3)
+        if url == nil then
+          log.error_print(globals.strLoginFailed)
+          log.raw("Login failed: Sent login info to: " .. (oldurl or "none") .. " and got something we weren't expecting(3):\n" .. body);
+          return POPSERVER_ERR_NETWORK
+        end  
+        -- End change
       end
     end
     body, err = browser:get_uri(url)
@@ -483,34 +525,36 @@ function loginHotmail()
 
   -- Extract the crumb - This is needed for deletion of items
   --
-  local user = nil
-  if (internalState.bLiveGUI == true) then
-    str = string.match(body, globals.strRegExpCrumbLive)
-    user = string.match(body, globals.strRegExpUser)
-  else
-    str = string.match(body, globals.strRegExpCrumb)
-  end
+  if (internalState.bLiveLightGUI ~= true) then
+    local user = nil
+    if (internalState.bLiveGUI == true) then
+      str = string.match(body, globals.strRegExpCrumbLive)
+      user = string.match(body, globals.strRegExpUser)
+    else
+      str = string.match(body, globals.strRegExpCrumb)
+    end
 
-  if str == nil then
-    log.error_print("Can't get the 'a' value. This will lead to problems!")
-    internalState.strCrumb = ""
-  else
-    internalState.strCrumb = str
+    if str == nil then
+      log.error_print("Can't get the 'a' value. This will lead to problems!")
+      internalState.strCrumb = ""
+    else
+      internalState.strCrumb = str
   
-    -- Debug Message
-    -- 
-    log.dbg("Hotmail Crumb value: " .. str .. "\n")
-  end
+      -- Debug Message
+      -- 
+      log.dbg("Hotmail Crumb value: " .. str .. "\n")
+    end
 
-  if user == nil then
-    log.error_print("Can't get the 'authuser' value. This will lead to problems!")
-    internalState.strUserId = ""
-  else
-    internalState.strUserId = user
+    if user == nil then
+      log.error_print("Can't get the 'authuser' value. This will lead to problems!")
+      internalState.strUserId = ""
+    else
+      internalState.strUserId = user
   
-    -- Debug Message
-    -- 
-    log.dbg("Hotmail Authuser value: " .. user .. "\n")
+      -- Debug Message
+      -- 
+      log.dbg("Hotmail Authuser value: " .. user .. "\n")
+    end
   end
 
   -- Get the MT cookie value
@@ -568,7 +612,7 @@ function loginHotmail()
       internalState.strMBox = str
       log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
     end
-  elseif (internalState.bLiveGUI == true) then 
+  elseif (internalState.bLiveGUI == true and internalState.bLiveLightGUI == false) then 
     -- Get some folder id's
     --
     local inboxId = string.match(body, globals.strFolderLiveInboxPattern)
@@ -590,7 +634,7 @@ function loginHotmail()
     else
       log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
     end
- 
+
     if (internalState.strMBoxName == "Inbox") then
       str = inboxId
     elseif (internalState.strMBoxName == "Junk") then
@@ -605,6 +649,42 @@ function loginHotmail()
     else
       internalState.strMBox = str
       log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
+    end
+  elseif (internalState.bLiveGUI == true and internalState.bLiveLightGUI == true) then 
+    local url = string.format(globals.strCmdFoldersLiveLight, internalState.strMailServer)
+    body, err = browser:get_uri(url)
+    local inboxId = string.match(body, globals.strFolderLiveLightInboxPattern)
+
+    if (internalState.strMBoxName == "Inbox") then
+      str = inboxId
+    else
+      str = string.match(body, globals.strFolderLiveLightPattern .. internalState.strMBoxName)
+    end
+
+    if (str == nil) then
+      log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
+      return POPSERVER_ERR_NETWORK
+    else
+      internalState.strMBox = str
+      log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
+    end
+
+    -- Get the trash folder id and the junk folder id
+    --
+    str = string.match(body, globals.strFolderLiveLightTrashPattern) 
+    if str ~= nil then
+      internalState.strTrashId = str
+      log.dbg("Hotmail - trash folder id: " .. str)
+    else
+      log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
+    end
+
+    str = string.match(body, globals.strFolderLiveLightJunkPattern) 
+    if str ~= nil then
+      internalState.strJunkId = str
+      log.dbg("Hotmail - junk folder id: " .. str)
+    else
+      log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
     end
   end
 
@@ -628,7 +708,7 @@ function getFolderId(inboxId)
     internalState.strCrumb, internalState.strUserId)
   local post = string.format(globals.strCmdMsgListPostLive, inboxId, 0, 0, internalState.strMT)
   local body, err = internalState.browser:post_uri(cmdUrl, post)
-  local str = string.match(body, globals.strFolderLivePattern .. internalState.strMBoxName)
+  local str = string.match(body, globals.strFolderLivePattern .. internalState.strMBoxName .. '","i_')
   return str
 end
 
@@ -716,8 +796,15 @@ function downloadMsg(pstate, msg, nLines, data)
   if (string.len(body) > 0 and cbInfo.nLinesReceived == -2) then
     log.raw("Message: " .. cbInfo.cb_uidl .. ", left over buffer being processed: " .. body)
     body = cleanupBody(body, cbInfo)
+    
+    if (cbInfo.bEndReached == false) then
+      log.data("Forcing a CRLF to end the message as it isn't clear the message is ended properly")
+      popserver_callback("\r\n\0", data)
+    end
     body = cbInfo.strHack:dothack(body) .. "\0"
     popserver_callback(body, data)
+  elseif (cbInfo.bEndReached == false and cbInfo.nLinesReceived == -2) then
+      popserver_callback("\r\n\0", data)
   end
 
   -- Mark the message as read
@@ -887,7 +974,7 @@ function cleanupBody(body, cbInfo)
   -- The only parts we care about are within <pre>..</pre>
   --
   body = string.gsub(body, "<pre>[%s]*", "")
-  body = string.gsub(body, "</pre>.-$", "")
+  body = string.gsub(body, "</pre>.-$", "\n")
 
   -- Clean up the end of line, and replace HTML tags
   --
@@ -1061,6 +1148,7 @@ function quit_update(pstate)
   local postBase = string.format(globals.strCmdDeletePost, internalState.strMBox)
   local post = postBase
   local uidls = ""
+  local uidlsLight = ""
 
   -- Cycle through the messages and see if we need to delete any of them
   -- 
@@ -1083,6 +1171,9 @@ function quit_update(pstate)
         dcnt = 0
         post = postBase
       end
+    elseif internalState.bLiveGUI == true and internalState.bLiveLightGUI and get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
+      uidlsLight = "SelectedMessages=" .. get_mailmessage_uidl(pstate, i) .. "&"
+      dcnt = dcnt + 1
     elseif internalState.bLiveGUI == true and get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
       if i > 1 then
         uidls = uidls .. "," .. get_mailmessage_uidl(pstate, i)
@@ -1101,6 +1192,12 @@ function quit_update(pstate)
     if not body or err then
       log.error_print("Unable to delete messages.\n")
     end
+  elseif dcnt > 0 and internalState.bLiveGUI and internalState.bLiveLightGUI == true then
+    cmdUrl = string.format(globals.strCmdDeleteLiveLight, internalState.strMailServer, internalState.strMBox)
+    post = string.format(globals.strCmdDeletePostLiveLight, internalState.strMT, 
+      internalState.strTrashId) .. uidlsLight
+    log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)
+    local body, err = browser:post_uri(cmdUrl, post)
   elseif dcnt > 0 and internalState.bLiveGUI then
     cmdUrl = string.format(globals.strCmdDeleteLive, internalState.strMailServer, internalState.strCrumb, internalState.strUserId)
     uidls = string.gsub(uidls, ",", '","')
@@ -1129,6 +1226,14 @@ function quit_update(pstate)
     else
       log.error_print("Cannot empty trash - crumb not found\n")
     end
+  elseif internalState.bEmptyTrash and internalState.bLiveGUI and internalState.bLiveLightGUI == true then
+    cmdUrl = string.format(globals.strCmdEmptyTrashLiveLight, internalState.strMailServer, internalState.strTrashId)
+    local post = string.format(globals.strCmdEmptyTrashLiveLightPost, internalState.strMT)
+    log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
+    local body, err = browser:post_uri(cmdUrl, post)
+    if not body or err then
+      log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
+    end
   elseif internalState.bEmptyTrash and internalState.bLiveGUI then
     cmdUrl = string.format(globals.strCmdEmptyTrashLive, internalState.strMailServer, internalState.strUserId)
     local post = string.format(globals.strCmdEmptyTrashLivePost, internalState.strTrashId)
@@ -1140,8 +1245,16 @@ function quit_update(pstate)
   end
 
   -- Empty the Junk Folder
-  --
-  if internalState.bEmptyJunk and internalState.bLiveGUI then
+  -- 
+  if internalState.bEmptyJunk and internalState.bLiveGUI and internalState.bLiveLightGUI == true then
+    cmdUrl = string.format(globals.strCmdEmptyTrashLiveLight, internalState.strMailServer, internalState.strJunkId)
+    local post = string.format(globals.strCmdEmptyTrashLiveLightPost, internalState.strMT)
+    log.dbg("Sending Empty Junk URL: " .. cmdUrl .."\n")
+    local body, err = browser:post_uri(cmdUrl, post)
+    if not body or err then
+      log.error_print("Error when trying to empty the junk folder with url: ".. cmdUrl .."\n")
+    end
+  elseif internalState.bEmptyJunk and internalState.bLiveGUI then
     cmdUrl = string.format(globals.strCmdEmptyTrashLive, internalState.strMailServer, internalState.strUserId)
     local post = string.format(globals.strCmdEmptyTrashLivePost, internalState.strJunkId)
     log.dbg("Sending Empty Junk URL: " .. cmdUrl .."\n")
@@ -1264,10 +1377,17 @@ function LiveStat(pstate)
     cnt = cnt + 1
     local kbUnit = string.match(size, "([Kk])")
     size = string.match(size, "([%d%.,]+) [KkMm]")
-    if not kbUnit then 
-      size = math.max(tonumber(size), 0) * 1024 * 1024
+    if (size ~= nil) then
+      size = string.gsub(size, ",", ".")
+    end
+    if size ~= nil and tonumber(size) ~= nil then
+      if not kbUnit then 
+        size = math.max(tonumber(size), 0) * 1024 * 1024
+      else
+        size = math.max(tonumber(size), 0) * 1024
+      end
     else
-      size = math.max(tonumber(size), 0) * 1024
+      size = 1024
     end
     sizes[cnt] = size
   end
@@ -1303,7 +1423,7 @@ function stat(pstate)
     return POPSERVER_ERR_OK
   end
 
-  if internalState.bLiveGUI then
+  if internalState.bLiveGUI and internalState.bLiveLightGUI == false then
     return LiveStat(pstate)
   end
 
@@ -1312,9 +1432,16 @@ function stat(pstate)
   local browser = internalState.browser
   local nPage = 1
   local nMsgs = 0
-  local nTotMsgs = 0;
-  local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-    internalState.strCrumb, internalState.strMBox);
+  local nTotMsgs = 0
+  local lastNMsgs = 0
+  local cmdUrl = ""
+  if (internalState.bLiveLightGUI) then    
+    cmdUrl = string.format(globals.strCmdMsgListLiveLight, internalState.strMailServer, 
+      internalState.strMBox);
+  else
+    cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
+      internalState.strCrumb, internalState.strMBox);
+  end
   local baseUrl = cmdUrl
 
   -- Keep a list of IDs that we've seen.  With yahoo, their message list can 
@@ -1335,6 +1462,8 @@ function stat(pstate)
   -- Local function to process the list of messages, getting id's and sizes
   --
   local function funcProcess(body)
+    lastNMsgs = nMsgs
+
     -- Find out if there are any messages
     -- 
     local nomesg = string.match(body, globals.strMsgListNoMsgPat)
@@ -1365,7 +1494,7 @@ function stat(pstate)
         return nil, "Unable to parse the size and uidl from the html"
       end
 
-      -- Get the message id.  It's in the format of "MSG[numbers].[number(s)]".
+      -- Get the message id..
       --
       uidl = string.match(uidl, 'name="([^"]+)"')
 
@@ -1382,10 +1511,77 @@ function stat(pstate)
       --
       local kbUnit = string.match(size, "([Kk])")
       size = string.match(size, "([%d%.,]+)[KkMm]")
-      if not kbUnit then 
-        size = math.max(tonumber(size), 0) * 1024 * 1024
+      if (size ~= nil) then
+        size = string.gsub(size, ",", ".")
+      end
+      if (size ~= nil and tonumber(size) ~= nil) then
+        if not kbUnit then 
+          size = math.max(tonumber(size), 0) * 1024 * 1024
+        else
+          size = math.max(tonumber(size), 0) * 1024
+        end
       else
-        size = math.max(tonumber(size), 0) * 1024
+        size = 1024
+      end
+
+      -- Save the information
+      --
+      if bUnique == true and ((nMsgs < nTotMsgs and nTotMsgs ~= 0) or nTotMsgs == 0) then
+        nMsgs = nMsgs + 1
+        log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+        set_popstate_nummesg(pstate, nMsgs)
+        set_mailmessage_size(pstate, nMsgs, size)
+        set_mailmessage_uidl(pstate, nMsgs, uidl)
+        knownIDs[nMsgs] = uidl
+      end
+    end
+
+    -- We are done with this page, increment the counter
+    --
+    nPage = nPage + 1		
+    
+    return true, nil
+  end 
+
+
+  -- Local function to process the list of messages, getting id's and sizes
+  --
+  local function funcProcessLiveLight(body)
+    lastNMsgs = nMsgs
+
+    -- Tokenize out the message ID and size for each item in the list
+    --    
+    for uidl, size in string.gfind(body, globals.strMsgLiveLightPattern) do
+
+      if not uidl or not size then
+        log.say("Hotmail Module needs to fix it's individual message list pattern matching.\n")
+        return nil, "Unable to parse the size and uidl from the html"
+      end
+
+      local bUnique = true
+      for j = 0, nMsgs do
+        if knownIDs[j + 1] == uidl then
+          bUnique = false
+          break
+        end        
+      end
+
+      -- Convert the size from it's string (4KB or 2MB) to bytes
+      -- First figure out the unit (KB or just B)
+      --
+      local kbUnit = string.match(size, "([Kk])")
+      size = string.match(size, "([%d%.,]+)[KkMm]")
+      if (size ~= nil) then
+        size = string.gsub(size, ",", ".")
+      end
+      if (size ~= nil and tonumber(size) ~= nil) then
+        if not kbUnit then 
+          size = math.max(tonumber(size), 0) * 1024 * 1024
+        else
+          size = math.max(tonumber(size), 0) * 1024
+        end
+      else
+        size = 1024
       end
 
       -- Save the information
@@ -1419,6 +1615,10 @@ function stat(pstate)
     else
       -- For western languages, our patterns don't work so use a backup pattern.
       --
+      if (lastNMsgs == nMsgs) then
+        return true
+      end
+
       if (nTotMsgs == 0 and 
           string.find(body, globals.strMsgListNextPagePattern) ~= nil) then
         cmdUrl = baseUrl .. string.format(globals.strCmdMsgListNextPage, nPage)
@@ -1445,7 +1645,7 @@ function stat(pstate)
     -- Check to see if we got a good page back.  The folder list is
     -- notorous for returning Server busy or page not available
     --
-    if (string.find(body, globals.strRetStatBusy) == nil) then
+    if (internalState.bLiveLightGUI == false and string.find(body, globals.strRetStatBusy) == nil) then
       return nil, "Hotmail is returning an error page."
     end
 
@@ -1469,8 +1669,14 @@ function stat(pstate)
       -- Reset the local variables		
       --
       browser = internalState.browser
-      cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-        internalState.strCrumb, internalState.strMBox);
+      if (internalState.bLiveLightGUI) then    
+        cmdUrl = string.format(globals.strCmdMsgListLiveLight, internalState.strMailServer, 
+          internalState.strMBox);
+      else
+        cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
+          internalState.strCrumb, internalState.strMBox);
+      end
+      baseUrl = cmdUrl
       if nPage > 1 then
         cmdUrl = cmdUrl .. string.format(globals.strCmdMsgListNextPage, nPage)
       end
@@ -1483,15 +1689,24 @@ function stat(pstate)
     -- Get the total number of messages
     --
     if nTotMsgs == 0 then
-      local strTotMsgs = string.match(body, globals.strMsgListCntPattern)
+      local strTotMsgs
+      if (internalState.bLiveLightGUI == false) then    
+        strTotMsgs = string.match(body, globals.strMsgListCntPattern)
+      else
+        strTotMsgs = string.match(body, globals.strMsgListLiveLightCntPattern)
+      end
       if strTotMsgs == nil then
         nTotMsgs = 0
       else 
         -- The number of messages can be in one of two patterns
         --
-        nTotMsgs = string.match(strTotMsgs, globals.strMsgListCntPattern2)
-        if (nTotMsgs == nil) then
-          nTotMsgs = 0
+        if (internalState.bLiveLightGUI == false) then    
+          nTotMsgs = string.match(strTotMsgs, globals.strMsgListCntPattern2)
+          if (nTotMsgs == nil) then
+            nTotMsgs = 0
+          end
+        else 
+          nTotMsgs = strTotMsgs
         end
         nTotMsgs = tonumber(nTotMsgs)
       end
@@ -1508,7 +1723,7 @@ function stat(pstate)
 
     -- Make sure the page is valid
     -- 
-    if string.find(body, globals.strMsgListGoodBody) == nil then
+    if internalState.bLiveLightGUI == false and string.find(body, globals.strMsgListGoodBody) == nil then
       return nil, "Hotmail returned with an invalid page."
     end
 	
@@ -1519,7 +1734,11 @@ function stat(pstate)
   -- Run through the pages and pull out all the message pieces from
   -- all the message lists
   --
-  if not support.do_until(funcGetPage, funcCheckForMorePages, funcProcess) then
+  local fnProcess = funcProcess
+  if (internalState.bLiveLightGUI) then
+    fnProcess = funcProcessLiveLight
+  end
+  if not support.do_until(funcGetPage, funcCheckForMorePages, fnProcess) then
     log.error_print("STAT Failed.\n")
     session.remove(hash())
     log.raw("Session removed (STAT Failure) - Account: " .. internalState.strUser .. 

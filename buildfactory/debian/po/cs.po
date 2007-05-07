@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: freepops\n"
 "Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
-"POT-Creation-Date: 2007-01-14 18:35+0100\n"
-"PO-Revision-Date: 2005-05-07 17:13+0200\n"
+"POT-Creation-Date: 2007-05-01 11:25+0200\n"
+"PO-Revision-Date: 2007-05-01 12:39+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -25,62 +25,93 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:1001
+#: ../freepops.templates:2001
 msgid "Start freepopsd automatically after each boot?"
 msgstr "Spustit freepopsd automaticky při každém zavádění systému?"
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:1001
+#: ../freepops.templates:2001
+#| msgid ""
+#| "The FreePOPs daemon can be started automatically after each boot for you. "
+#| "By default it will bind on port 2000, but you can change this behaviour "
+#| "editing /etc/default/freepops"
 msgid ""
-"The FreePOPs daemon can be started automatically after each boot for you. By "
-"default it will bind on port 2000, but you can change this behaviour "
-"editing /etc/default/freepops"
+"The FreePOPs daemon can be started automatically after each boot. By "
+"default, it will bind to port 2000. This setting may be changed by editing "
+"the /etc/default/freepops file."
 msgstr ""
-"Daemon FreePOPs můžete spouštět buď ručně, anebo automaticky při každém "
-"startu systému. Implicitně se naváže na port 2000, ale můžete to změnit "
-"úpravou konfiguračního souboru /etc/default/freepops."
+"Daemon FreePOPs se může spouštět automaticky při každém startu systému. "
+"Ve výchozím nastavení se naváže na port 2000, ale můžete to změnit úpravou "
+"konfiguračního souboru /etc/default/freepops."
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:2001
-msgid "Create a chroot jail for freepops?"
-msgstr "Vytvořit pro freepops chrootované vězení?"
+#: ../freepops.templates:3001
+#| msgid "Create a chroot jail for freepops?"
+msgid "Create a chroot jail for FreePOPs?"
+msgstr "Vytvořit pro FreePOPs chrootované vězení?"
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:2001
+#: ../freepops.templates:3001
 msgid ""
-"FreePOPs can be launched in a chrooted environment to improve security. The "
-"jail will be created in /var/lib/freepops/chroot-jail/. This will also "
-"create a start.sh script in the root of the jail that should be used to "
-"launch freepopsd. This is perfectly integrated with the init script, so you "
-"have to change nothing to automatically start freepopsd at boot. This "
-"feature is mostly untested, you are warned."
+"FreePOPs can be launched in a chrooted environment to improve the system's "
+"security."
 msgstr ""
 "FreePOPs můžete spouštět v chrootovaném prostředí a o něco tak zvýšit "
-"bezpečnost. Vězení se vytvoří ve /var/lib/freepops/chroot-jail/. Tím se také "
-"v kořenu vězení vytvoří skript start.sh, kterým by se měl freepopsd "
-"spouštět. Tento skript je automaticky integrován s init skriptem, takže pro "
-"automatický start freepopd při zavádění systému nemusíte vůbec nic měnit. "
-"Buďte ovšem varováni, že tato vlastnost ještě není příliš otestovaná."
-
-#. Type: boolean
-#. Description
-#: ../freepops.templates:3001
-msgid "Remove local updates on upgrade?"
-msgstr ""
+"bezpečnost systému."
 
 #. Type: boolean
 #. Description
 #: ../freepops.templates:3001
 msgid ""
-"freepops-updater-fltk or freepops-updater-dialog can install local updates "
-"in  /var/lib/freepops/lua_updates. These updates are usually integrated in "
-"the next freepops release or can be downloaded again running the updater, so "
-"they can be safely removed.  Modules placed in /var/lib/freepops/lua_updates "
-"have higher priority than the ones in /usr/share/frepops/lua; if you don't "
-"remove them you may end up running outdated modules. Anyway the system "
-"administrator may use this mechanism to freeze some local  modifications "
-"with respect to FreePOPs updates."
+"The jail will be created in /var/lib/freepops/chroot-jail/. The regular init "
+"script will then take care of launching the daemon by calling a script named "
+"start.sh at the root of the chroot jail."
 msgstr ""
+"Vězení bude vytvořeno ve /var/lib/freepops/chroot-jail/. Init skript se "
+"pak postará o spuštění daemona zavoláním skriptu start.sh v kořenu "
+"chrootovaného vězení."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid "Remove local updates on upgrade?"
+msgstr "Odstranit při aktualizaci lokální aktualizace?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The freepops-updater-fltk or freepops-updater-dialog utilities will install "
+"local updates in /var/lib/freepops/lua_updates."
+msgstr ""
+"Nástroje freepops-updater-fltk a freepops-updater-dialog instalují lokální "
+"aktualizace do /var/lib/freepops/lua_updates."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"Such updates are usually integrated in further FreePOPs releases or can be "
+"downloaded again by running the updater. Therefore, they may safely be "
+"removed when the package is upgraded."
+msgstr ""
+"Tuto aktualizace se obvykle stávají součástí novějších vydání FreePOPs, "
+"případně mohou být znovu stáhnuty pomocí aktualizačního nástroje. Je tedy "
+"bezpečné tyto aktualizace při instalaci novějšího balíku smazat."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The modules saved in /var/lib/freepops/lua_updates have a higher priority "
+"than those from /usr/share/freepops/lua. It is thus recommended to remove the "
+"former in order to avoid using outdated modules, unless you intend to freeze "
+"the local modifications regardless of FreePOPs upgrades."
+msgstr ""
+"Moduly uložené ve /var/lib/freepops/lua_updates mají přednost před těmi v "
+"/usr/share/freepops/lua. Abyste předešli použití zastaralých modulů, je "
+"doporučeno ty první smazat. (Pokud ovšem z nějakého důvodu nechcete používat "
+"právě ty z /var/lib/freepops/lua_updates.)"

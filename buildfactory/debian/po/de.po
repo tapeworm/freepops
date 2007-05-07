@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: freepops 0.0.99-1+patches20061018\n"
+"Project-Id-Version: freepops 0.2.2~rc1-4\n"
 "Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
-"POT-Creation-Date: 2006-10-19 18:15+0200\n"
-"PO-Revision-Date: 2007-03-09 23:03+0100\n"
+"POT-Creation-Date: 2007-05-01 11:25+0200\n"
+"PO-Revision-Date: 2007-05-01 11:44+0200\n"
 "Last-Translator: Helge Kreutzmann <debian@helgefjell.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -16,43 +16,112 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:1001
+#: ../freepops.templates:2001
 msgid "Start freepopsd automatically after each boot?"
 msgstr "Freepopsd automatisch nach jedem Systemstart starten?"
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:1001
+#: ../freepops.templates:2001
 msgid ""
-"The FreePOPs daemon can be started automatically after each boot for you. By "
-"default it will bind on port 2000, but you can change this behaviour "
-"editing /etc/default/freepops"
+"The FreePOPs daemon can be started automatically after each boot. By "
+"default, it will bind to port 2000. This setting may be changed by editing "
+"the /etc/default/freepops file."
 msgstr ""
-"Der FreePOPs-Daemon kann nach jedem Systemstart automatisch gestartet werden. "
-"Standardmäßig bindet er sich an Port 2000, aber Sie können dies in der Datei "
-"/etc/default/freepops ändern."
+"Der FreePOPs-Daemon kann nach jedem Systemstart automatisch gestartet "
+"werden. Standardmäßig bindet er sich an Port 2000. Diese Einstellung kann "
+"durch Bearbeiten der Datei /etc/default/freepops geändert werden."
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:2001
-msgid "Create a chroot jail for freepops?"
-msgstr "Ein Chroot-Gefängnis (jail) für Freepops erstellen?"
+#: ../freepops.templates:3001
+#| msgid "Create a chroot jail for freepops?"
+msgid "Create a chroot jail for FreePOPs?"
+msgstr "Ein Chroot-Gefängnis (jail) für FreePOPs erstellen?"
 
 #. Type: boolean
 #. Description
-#: ../freepops.templates:2001
+#: ../freepops.templates:3001
 msgid ""
-"FreePOPs can be launched in a chrooted environment to improve security. The "
-"jail will be created in /var/lib/freepops/chroot-jail/. This will also "
-"create a start.sh script in the root of the jail that should be used to "
-"launch freepopsd. This is perfectly integrated with the init script, so you "
-"have to change nothing to automatically start freepopsd at boot. This "
-"feature is mostly untested, you are warned."
+"FreePOPs can be launched in a chrooted environment to improve the system's "
+"security."
 msgstr ""
-"FreePOPs kann zur Verbesserung der Sicherheit in einer Chroot-Umgebung "
-"gestartet werden. Das Gefängnis wird in /var/lib/freepops/chroot-jail/ "
-"erstellt. Dabei wird auch ein start.sh-Skript im Wurzelverzeichnis des "
-"Gefängnisses erstellt, das zum Starten von Freepopsd verwendet werden sollte. "
-"Das Init-Skript ist so gestaltet, dass Sie dafür keine Änderungen vornehmen "
-"müssen, damit Freepopsd automatisch beim Systemstart startet. Diese "
-"Funktionalität ist größtenteils ungetestet, seien Sie also gewarnt."
+"FreePOPs kann in einer Chroot-Umgebung gestartet werden, um die Sicherheit "
+"des Systems zu verbessern."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"The jail will be created in /var/lib/freepops/chroot-jail/. The regular init "
+"script will then take care of launching the daemon by calling a script named "
+"start.sh at the root of the chroot jail."
+msgstr ""
+"Das Gefängnis wird in /var/lib/freepops/chroot-jail/ erstellt. Das reguläre "
+"Init-Skript wird sich darum kümmern, den Daemon zu starten, indem ein Skript "
+"namens start.sh im Wurzelverzeichnis des Chroot-Gefängnisses gestartet wird."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid "Remove local updates on upgrade?"
+msgstr "Lokale Aktualisierungen beim Upgrade entfernen?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The freepops-updater-fltk or freepops-updater-dialog utilities will install "
+"local updates in /var/lib/freepops/lua_updates."
+msgstr ""
+"Die Hilfswerkzeuge »freepops-updater-fltk« und »freepops-updater-dialog« "
+"werden lokale Aktualisierungen in /var/lib/freepops/lua_updates installieren."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"Such updates are usually integrated in further FreePOPs releases or can be "
+"downloaded again by running the updater. Therefore, they may safely be "
+"removed when the package is upgraded."
+msgstr ""
+"Diese Aktualisierungen werden typischerweise in zukünftige FreePOPs-"
+"Veröffentlichungen integriert oder können durch Aufruf des Aktualisierers "
+"erneut heruntergeladen werden. Daher können sie ohne Probleme entfernt "
+"werden, wenn ein Upgrade des Pakets durchgeführt wird."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+#| msgid ""
+#| "The modules saved in /var/lib/freepops/lua_updates have a higher priority "
+#| "than those from /usr/share/freepops/lua. It is thus recommended to remove "
+#| "them in order to avoid using outdated modules, unless you intend to "
+#| "freeze the local modifications regardless of FreePOPs updates."
+msgid ""
+"The modules saved in /var/lib/freepops/lua_updates have a higher priority "
+"than those from /usr/share/freepops/lua. It is thus recommended to remove the "
+"former in order to avoid using outdated modules, unless you intend to freeze "
+"the local modifications regardless of FreePOPs upgrades."
+msgstr ""
+"Die unter /var/lib/freepops/lua_updates gespeicherten Module haben eine "
+"höhere Priorität als die Module aus /usr/share/freepops/lua. Es wird daher "
+"empfohlen, erstere zu entfernen, um zu vermeiden, veraltete Module zu "
+"verwenden. Es sei denn, Sie möchten lokale Änderungen unabhängig von Upgrades "
+"von FreePOPs einfrieren."
+
+#~ msgid ""
+#~ "FreePOPs can be launched in a chrooted environment to improve security. "
+#~ "The jail will be created in /var/lib/freepops/chroot-jail/. This will "
+#~ "also create a start.sh script in the root of the jail that should be used "
+#~ "to launch freepopsd. This is perfectly integrated with the init script, "
+#~ "so you have to change nothing to automatically start freepopsd at boot. "
+#~ "This feature is mostly untested, you are warned."
+#~ msgstr ""
+#~ "FreePOPs kann zur Verbesserung der Sicherheit in einer Chroot-Umgebung "
+#~ "gestartet werden. Das Gefängnis wird in /var/lib/freepops/chroot-jail/ "
+#~ "erstellt. Dabei wird auch ein start.sh-Skript im Wurzelverzeichnis des "
+#~ "Gefängnisses erstellt, das zum Starten von Freepopsd verwendet werden "
+#~ "sollte. Das Init-Skript ist so gestaltet, dass Sie dafür keine Änderungen "
+#~ "vornehmen müssen, damit Freepopsd automatisch beim Systemstart startet. "
+#~ "Diese Funktionalität ist größtenteils ungetestet, seien Sie also gewarnt."

@@ -1,0 +1,105 @@
+# Portuguese translation of freepops' debconf messages.
+# Copyright (C) 2007
+# This file is distributed under the same license as the freepops package.
+# Ricardo Silva <ardoric@gmail.com>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: freepops\n"
+"Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
+"POT-Creation-Date: 2007-05-01 09:22+0200\n"
+"PO-Revision-Date: 2007-05-01 10:35+0100\n"
+"Last-Translator: Ricardo Silva <ardoric@gmail.com>\n"
+"Language-Team: Portuguese <traduz@debianpt.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid "Start freepopsd automatically after each boot?"
+msgstr "Iniciar o freepopsd automaticamente após cada arranque?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid ""
+"The FreePOPs daemon can be started automatically after each boot. By "
+"default, it will bind to port 2000. This setting may be changed by editing "
+"the /etc/default/freepops file."
+msgstr ""
+"O daemon do FreePOPs pode ser iniciado automaticamente em cada arranque. Por "
+"omissão vai-se ligar ao porto 2000. Esta configuração pode ser modificada "
+"alterando o ficheiro /etc/default/freepops."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid "Create a chroot jail for freepops?"
+msgstr "Criar uma 'prisão' chroot para o freepops?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"FreePOPs can be launched in a chrooted environment to improve the system's "
+"security."
+msgstr ""
+"O FreePOPs pode ser lançado num ambiente chroot para melhorar a segurança "
+"do sistema."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"The jail will be created in /var/lib/freepops/chroot-jail/. The regular init "
+"script will then take care of launching the daemon by calling a script named "
+"start.sh at the root of the chroot jail."
+msgstr ""
+"A prisão será criada em /var/lib/freepops/chroot-jail/. O script de "
+"inicialização (init script) tratará de lançar o daemon chamando o start.sh "
+"na raiz da cadeia chroot."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid "Remove local updates on upgrade?"
+msgstr "Remover alterações locais aquando da actualização do sistema?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The freepops-updater-fltk or freepops-updater-dialog utilities will install "
+"local updates in /var/lib/freepops/lua_updates."
+msgstr ""
+"Os utilitários freepops-updater-fltk ou freepops-updater-dialog irão instalar "
+"actualizações locais em /var/lib/freepops/lua_updates."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"Such updates are usually integrated in further FreePOPs releases or can be "
+"downloaded again by running the updater. Therefore, they may safely be "
+"removed when the package is upgraded."
+msgstr ""
+"Essas actualizações são normalmente integradas em lançamentos posteriores do "
+"FreePOPs ou podem ser novamente obtidos correndo o actualizador. Portanto "
+"podem ser removidos com segurança quando o pacote é actualizado."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The modules saved in /var/lib/freepops/lua_updates have a higher priority "
+"than those from /usr/share/freepops/lua. It is thus recommended to remove "
+"them in order to avoid using outdated modules, unless you intend to freeze "
+"the local modifications regardless of FreePOPs updates."
+msgstr ""
+"Os módulos guardados em /var/lib/freepops/lua_updates têm uma prioridade "
+"maior do que os que estão em /usr/share/freepops/lua. É portanto recomendado "
+"que os remova de forma a evitar usar módulos desactualizados, a não ser que "
+"pretenda congelar as modificações locais independentemente das actualizações "
+"do FreePOPs."

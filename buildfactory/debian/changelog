@@ -1,6 +1,15 @@
 freepops (0.2.3-1) unstable; urgency=low
 
   * New Upstream release 
+  * Integrated l10n sv patch (Closes: #422474)
+  * Integrated l10n ru patch (Closes: #422112)
+  * Integrated l10n eu patch (Closes: #421883)
+  * Integrated l10n gl patch (Closes: #421817)
+  * Integrated l10n cs patch (Closes: #421765)
+  * Integrated l10n pt patch (Closes: #421738)
+  * Integrated l10n de patch (Closes: #421732, #414744)
+  * Integrated l10n nl patch (Closes: #419728)
+  * Integrated l10n ta patch (Closes: #421777)
 
  -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 07 Apr 2007 16:40:26 +0200
 

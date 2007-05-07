@@ -1,0 +1,89 @@
+# translation of freepop.po to TAMIL
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Dr.T.Vasudevan <agnihot3@gmail.com>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: freepop\n"
+"Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
+"POT-Creation-Date: 2007-05-01 11:25+0200\n"
+"PO-Revision-Date: 2007-05-01 17:17+0530\n"
+"Last-Translator: Dr.T.Vasudevan <agnihot3@gmail.com>\n"
+"Language-Team: TAMIL <ubuntu-l10n-tam@lists.ubuntu.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid "Start freepopsd automatically after each boot?"
+msgstr "freepopsd தானியங்கியாக ஒவ்வொரு கணினி துவக்கத்திலும் துவக்க வேண்டுமா? "
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid ""
+"The FreePOPs daemon can be started automatically after each boot. By "
+"default, it will bind to port 2000. This setting may be changed by editing "
+"the /etc/default/freepops file."
+msgstr "ப்ரீபாப்ஸ் கிங்கரனை தானியங்கியாக ஒவ்வொரு கணினி துவக்கத்திலும் துவக்க இயலும். முன்னிருப்பாக இது 2000 துறையை பிணைக்கும். இந்த அமைப்பை /etc/default/freepops கோப்பை திருத்தி மாற்றலாம். "
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid "Create a chroot jail for FreePOPs?"
+msgstr "ப்ரீபாப்ஸ் க்கு சிரூட் சிறை ஒன்றை உருவாக்கலாமா?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"FreePOPs can be launched in a chrooted environment to improve the system's "
+"security."
+msgstr "கணினியின் பாதுகாப்பை அதிகமாக்க ப்ரீபாப்ஸ் ஐ சிரூட் சூழலில் துவக்க இயலும்."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"The jail will be created in /var/lib/freepops/chroot-jail/. The regular init "
+"script will then take care of launching the daemon by calling a script named "
+"start.sh at the root of the chroot jail."
+msgstr "சிறை /var/lib/freepops/chroot-jail/ இல் உருவாக்கப்படும். வழக்கமான இனிட் குறு நிரல் start.sh குறுநிரலை அழைப்பதன் மூலம் அந்த கிங்கரனை துவக்குவதை கவனித்துக் கொள்ளும்."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid "Remove local updates on upgrade?"
+msgstr "மேம்படுத்தலின் போது உள்ளமை இற்றைப்படுத்தலை நீக்கவா? "
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The freepops-updater-fltk or freepops-updater-dialog utilities will install "
+"local updates in /var/lib/freepops/lua_updates."
+msgstr "ப்ரீபாப்ஸ் இற்றைப்படுத்தல் எஃபெல்டிகே (freepops-updater-fltk) அல்லது ப்ரீபாப்ஸ் இற்றைப்படுத்தல் உரையாடல் பயன்பாடுகள் உள்ளமை  இற்றைப்படுத்தலை /var/lib/freepops/lua_updates கோப்பில் செய்யும்."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"Such updates are usually integrated in further FreePOPs releases or can be "
+"downloaded again by running the updater. Therefore, they may safely be "
+"removed when the package is upgraded."
+msgstr "அத்தகைய இற்றைப்படுத்தல்கள் வழக்கமாக அடுத்த ப்ரீபாப்ஸ் பதிப்புகளுடன் ஒருங்கிணைக்கப்படும் அல்லது இற்றைப்படுத்தியை இயக்கி தரவிறக்கிக் கொள்ளலாம். அதனால் பொதி மேம்படுத்தும் போது தாராளமாக நீக்கப்படலாம். "
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The modules saved in /var/lib/freepops/lua_updates have a higher priority "
+"than those from /usr/share/frepops/lua. It is thus recommended to remove the "
+"former in order to avoid using outdated modules, unless you intend to freeze "
+"the local modifications regardless of FreePOPs upgrades."
+msgstr "/var/lib/freepops/lua_updates இல் சேமித்த கூறுகள் /usr/share/frepops/lua வில் உள்ளவற்றை விட முக்கியத்துவம் வாய்ந்தவை. ஆகவே நீங்கள் ப்ரீபாப்ஸ் மேம்படுத்தல் செய்தாலும் உள்ளமை மாற்று அமைப்புகளை அப்படியே வைத்துக் கொள்ள முடிவு செய்தால் ஒழிய பழைய கூறுகளை பயன்படுத்துவதை தவிர்க்க முந்தயவற்றை நீக்கிவிடலாம்."
+

@@ -1,6 +1,15 @@
 freepops (0.2.3-1) unstable; urgency=low
 
   * New Upstream release 
+  * Changed default options, now the daemon lowers its rights to
+    nobody.nogroup (Closes: #413412)
+  * Integrated l10n sv,ru,eu,gl,cs,pt,de,nl,ta patches but bugs are still 
+    open due to the debconf template review.
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 07 Apr 2007 16:40:26 +0200
+
+freepops (0.2.3-1~l10n-1) UNRELEASED; urgency=low
+
   * Integrated l10n sv patch (Closes: #422474)
   * Integrated l10n ru patch (Closes: #422112)
   * Integrated l10n eu patch (Closes: #421883)

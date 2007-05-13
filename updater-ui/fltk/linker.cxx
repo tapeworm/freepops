@@ -30,7 +30,7 @@ extern "C" {
 #define val(name,data) data;int name = lua_gettop(L)
 #define _(x) gettext(x)
 
-#define DEBUG_UPDATER_FLTK
+//#define DEBUG_UPDATER_FLTK
 
 #ifdef DEBUG_UPDATER_FLTK
   #define _mark(print_stack) {\

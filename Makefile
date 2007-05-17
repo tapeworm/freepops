@@ -49,6 +49,7 @@ endif
 distclean: clean
 	$(H)rm -fr dist-*
 	$(H)$(MAKE) -C doc/manual clean
+	$(H)$(MAKE) -C updater-ui/fltk clean CONFIG=$(PWD)/config || true
 
 realclean: distclean
 	$(H)rm -f config

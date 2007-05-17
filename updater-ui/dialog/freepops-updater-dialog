@@ -202,7 +202,7 @@ fi
 }
 
 # here we go! ###############################################################
-if [ ! -x /usr/bin/dialog ]; then
+if [ ! -x /usr/bin/dialog -a -z `which dialog 2>/dev/null` ]; then
 	echo 'dialog' utility not found.
 	echo Please install the dialog package.
 	exit 1

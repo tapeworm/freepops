@@ -2,12 +2,12 @@
 --  FreePOPs @mail.com webmail interface
 --  
 --  Released under the GNU/GPL license
---  Written by Russell Schwager <russells@despammed.com>
+--  Written by Russell Schwager <russell822@yahoo.com>
 -- ************************************************************************** --
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.04"
+PLUGIN_VERSION = "0.1.05"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -15,7 +15,7 @@ PLUGIN_URL = "http://www.freepops.org/download.php?module=mailcom.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = 
-	{"russells (at) despammed (.) com"}
+	{"russell822 (at) yahoo (.) com"}
 PLUGIN_DOMAINS = {"@mail.com","@email.com","@iname.com","@cheerful.com","@consultant.com",
 "@europe.com","@mindless.com","@earthling.net","@myself.com","@post.com",
 "@techie.com","@usa.com","@writeme.com","@2die4.com","@artlover.com",
@@ -302,7 +302,7 @@ function login()
 
   if (domain == "email.com" or domain == "iname.com" or domain ==  
 "mail.org") then
-    url = string.format(globals.strLoginPage, "www", "mail.com")
+    url = string.format(globals.strLoginPage, "www2", "mail.com")
   elseif (domain == "usa.com" or domain == "mexico.com") then
     url = string.format(globals.strLoginPage, "mail", domain)
   elseif (domain == "lycos.com") then
@@ -329,7 +329,7 @@ function login()
   -- Error checking
   --
   if (retval == POPSERVER_ERR_UNKNOWN or retval == POPSERVER_ERR_NETWORK or retval == POPSERVER_ERR_AUTH) then
-    url = string.format(globals.strLoginPage, "www", "mail.com")
+    url = string.format(globals.strLoginPage, "www2", "mail.com")
     retval = postToLoginPage(browser, url, post, 2)  
     if (retval ~= POPSERVER_ERR_OK) then
       return retval

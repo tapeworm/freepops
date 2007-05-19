@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.81"
+PLUGIN_VERSION = "0.1.81a"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -222,6 +222,9 @@ local globals = {
   strCmdEmptyTrashLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=EmptyFolder&d=%s,0",
   strCmdEmptyTrashLiveLight = "http://%s/mail/InboxLight.aspx?EmptyFolder=True&FolderID=%s&", 
   strCmdEmptyTrashLiveLightPost = "__VIEWSTATE=&mt=%s&query=&MoveMessageSelector=&ToolbarActionItem=&InfoPaneActionItem=EmptyFolderConfirmYes",
+  strCmdMsgReadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=&au=%s", 
+  strCmdMsgReadLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MarkMessages&d=true,[%s]&v=1&mt=%s",
+  strCmdMsgReadLiveLight = "http://%s/mail/ReadMessageLight.aspx?Aux=&FolderID=%s&InboxSortAscending=False&InboxSortBy=Date&ReadMessageId=%s",
 }
 
 -- ************************************************************************** --
@@ -811,6 +814,15 @@ function downloadMsg(pstate, msg, nLines, data)
   --
   if internalState.bMarkMsgAsUnread == false and internalState.bLiveGUI == false then
     log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as being done.")
+    browser:get_head(markReadUrl)
+  elseif internalState.bMarkMsgAsUnread == false and internalState.bLiveGUI and internalState.bLiveLightGUI == false then
+    log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as read.")
+    url = string.format(globals.strCmdMsgReadLive, internalState.strMailServer, internalState.strUserId)
+    local post = string.format(globals.strCmdMsgReadLivePost, uidl, internalState.strMT)
+    browser:post_uri(url, post)
+  elseif internalState.bMarkMsgAsUnread == false and internalState.bLiveGUI and internalState.bLiveLightGUI then
+    log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as being done.")
+    url = string.format(globals.strCmdMsgReadLiveLight, internalState.strMailServer, internalState.strMBox, uidl)
     browser:get_head(markReadUrl)
   elseif internalState.bMarkMsgAsUnread == true and internalState.bLiveGUI == true then
     log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as unread.")

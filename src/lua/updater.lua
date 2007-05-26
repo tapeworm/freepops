@@ -423,6 +423,7 @@ function batch(...)
     	pdata, err = get_mdata(type,b)
 	if pdata == nil then
 		log("Error: metadata: "..(err or ""))
+		return "Error: metadata: "..(err or "")
 	end
 
 	for _,mod in ipairs(pdata) do

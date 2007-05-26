@@ -211,7 +211,7 @@ dist-deb-real:
 	$(H)rm -rf _deb_
 
 debian-dsc-etch: deb-preamble dist-deb-hacketch debian-dsc-real
-debian-dsc-bpo: deb-preamble dist-deb-hackbpo debian-dsc-real
+debian-dsc-bpo: deb-preamble dist-deb-hacketch dist-deb-hackbpo debian-dsc-real
 debian-dsc-etch: debian-dsc
 debian-dsc-sid: debian-dsc
 debian-dsc-ubuntu: deb-preamble dist-deb-hackubuntu debian-dsc-real

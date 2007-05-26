@@ -72,6 +72,7 @@ install: all
 		cp updater-ui/fltk/freepops-updater-fltk $(PREFIX)bin; \
 	fi
 	$(H)cp updater-ui/dialog/freepops-updater-dialog $(PREFIX)bin
+	$(H)chmod a+rx $(PREFIX)bin/freepops-updater-dialog
 	$(H)cp src/freepopsd$(EXEEXTENSION) $(PREFIX)bin
 	$(H)cp src/lua/*.lua modules/include/*.lua config.lua \
 		$(PREFIX)share/freepops/lua/

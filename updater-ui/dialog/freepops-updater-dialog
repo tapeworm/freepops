@@ -7,7 +7,7 @@
 RC=""
 
 # XXX should be written at config time
-CORE=${CORE:-freepopsd}
+CORE=${CORE:-`which freepopsd`}
 FREEPOPS="$CORE -e updater.lua php"
 PREAMBLE="dialog --backtitle FreePOPs_Updater"
 GAUGE='--defaultno --gauge %s 10 70'
@@ -202,13 +202,13 @@ fi
 }
 
 # here we go! ###############################################################
-if [ ! -x /usr/bin/dialog -a -z `which dialog 2>/dev/null` ]; then
+if [ -z `which dialog 2>/dev/null` ]; then
 	echo 'dialog' utility not found.
 	echo Please install the dialog package.
 	exit 1
 fi
 if [ ! -x $CORE ]; then
-	echo $CORE not found.
+	echo freepopsd not found.
 	exit 1
 fi
 

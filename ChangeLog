@@ -1,3 +1,7 @@
+- make clean cleans really! all
+- popstate.c now allows to set mailmessage size to 0
+- openwrt: the updater process is started after a sleep of 30s to wait ppp0 to be up, the right solution is to use cron... maybe
+- updater.lua better error reporting if no metadata available
 11/05/2007 0.2.3
 - es: *** empty log message *** (lisar314)
 - fastmail.lua: Fixed login form changed. Submitted by forum user 12769336123 (russell822)

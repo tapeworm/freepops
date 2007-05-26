@@ -1,5 +1,6 @@
 include $(CONFIG)
 include modules
+include src/subscribed
 
 PWD=$(shell pwd)
 
@@ -9,7 +10,7 @@ MODULES=$(MODULES-$(OS)-pre) $(MODULES-Common) $(MODULES-$(OS)-post)
 
 PRESET=	$(MAKE) -C src/ all
 	
-FORALL=	for X in $(MODULES); do						\
+FORALL=	for X in $$MODULES; do						\
 		echo "$$NAME $$X";					\
 		$(MAKE) -C src/$$X $$ACTION 				\
 			TARGET=`echo $$X | cut -d "-" -f 1` 		\
@@ -24,11 +25,13 @@ all: src/config
 	$(H)cd include/;ln -s ../../config.h . 1>/dev/null 2>/dev/null|| true
 	$(H)ACTION="all";\
 	NAME="building";\
+	MODULES="$(MODULES)";\
 	$(FORALL)
 
 clean: src/config
 	$(H)ACTION="clean";\
 	NAME="cleaning";\
+	MODULES="$(MK_TEMPLATE) $(MK_TEMPL_CTRIB)";\
 	$(FORALL)
 	$(H)rm -f lib/* bin/* include/* src/config config 2>/dev/null || true
 	$(H)rm -fr  bin/luafiles/ || true

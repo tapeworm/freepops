@@ -1,0 +1,40 @@
+Source: freepops
+Section: mail
+Priority: optional
+Maintainer: Enrico Tassi <gareuselesinge@debian.org>
+Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl3-gnutls-dev, flex, bison, po-debconf, liblua5.1-filesystem-dev, liblua5.1-expat-dev, liblua5.1-curl-dev, liblua5.1-dev, libfltk1.1-dev
+Build-Depends-Indep: tetex-extra, gs-common
+Standards-Version: 3.7.2
+
+Package: freepops
+Architecture: any
+Depends: ${shlibs:Depends}, debconf | debconf-2.0 , lsb-base (>= 3.0-6)
+Suggests: dialog
+Description: POP3 interface to several webmail sites
+ FreePOPs is a POP3 daemon that translates local POP3 commands
+ to remote HTTP requests to the supported webmail sites.
+ .
+ FreePOPs can also be used as RSS aggregator and POP3 forwarder.
+ .
+ This package also includes a dialog based updater program, to check
+ for updates and optionally download them.
+
+Package: freepops-updater-fltk
+Architecture: any
+Depends: ${shlibs:Depends}, freepops (>= 0.2.0)
+Description: Graphical interface for the freepops updater engine
+ This package provides a click-and-update program to download the lates updates
+ from the freepops website.
+
+Package: freepops-doc
+Section: doc
+Architecture: all
+Depends: 
+Description: FreePOPs user/developer manual
+ FreePOPs is a POP3 daemon that translates local POP3 commands
+ to remote HTTP requests to the supported webmail sites.
+ .
+ FreePOPs can also be used as RSS aggregator and POP3 forwarder.
+ .
+ This package includes the PDF manual for the software.
+ 

@@ -164,23 +164,21 @@ dist-win-e-zip-gnutls: freepops-$(VERSION).tar.gz \
 	dist-win-e-zip-step5 \
 	dist-win-e-zip-step6-gnutls 
 
-dist-deb-hacksarge:
+dist-deb-hacketch:
 	$(H)cd _deb_/freepops-$(VERSION);\
-		cp buildfactory/debian-sarge/* debian/
+		cp buildfactory/debian-etch/* debian/
 		
 dist-deb-hackbpo:
 	$(H)cd _deb_/freepops-$(VERSION);\
 		V=`head -n 1 debian/changelog | sed "s/.*(\([^)]*\)).*/\1/"`;\
-		DR=`echo $$V | cut -d - -f 2`;\
-		UV=`echo $$V | cut -d - -f 1`;\
-		BPOR=`expr $$DR - 1`bpo$$DR;\
-		dch -D sarge-backports -b -v $$UV-$$BPOR backports.org release
+		BPOR=bpo.1;\
+		dch -D etch-backports -b -v $$V~$$BPOR backports.org release
 
 dist-deb-hackubuntu:
 	$(H)cd _deb_/freepops-$(VERSION);\
 		cp buildfactory/debian-ubuntu/* debian/
 
-dist-deb-sarge: deb-preamble dist-deb-hacksarge dist-deb-real
+dist-deb-etch: deb-preamble dist-deb-hacketch dist-deb-real
 dist-deb-sid: dist-deb
 dist-deb-etch: dist-deb
 dist-deb-ubuntu: deb-preamble dist-deb-hackubuntu dist-deb-real
@@ -212,8 +210,8 @@ dist-deb-real:
 
 	$(H)rm -rf _deb_
 
-debian-dsc-sarge: deb-preamble dist-deb-hacksarge debian-dsc-real
-debian-dsc-bpo: deb-preamble dist-deb-hacksarge dist-deb-hackbpo debian-dsc-real
+debian-dsc-etch: deb-preamble dist-deb-hacketch debian-dsc-real
+debian-dsc-bpo: deb-preamble dist-deb-hackbpo debian-dsc-real
 debian-dsc-etch: debian-dsc
 debian-dsc-sid: debian-dsc
 debian-dsc-ubuntu: deb-preamble dist-deb-hackubuntu debian-dsc-real

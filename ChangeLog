@@ -1,3 +1,9 @@
+- moved bpo build to etch
+26/05/2007 0.2.4
+- updater.lua: better error reporting if metadata is nil (gareuselesinge)
+- mailcom.lua: Reaction to a change on the form of mail.com's main page. (russell822)
+- hotmail.lua: Fixed the issue with messages not being marked as read. (russell822)
+- some more fixes from gentoo (thanks Daniel Black)
 - updated debian localizations and fixes to the package description
 - make clean cleans really! all
 - popstate.c now allows to set mailmessage size to 0

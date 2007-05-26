@@ -42,14 +42,11 @@ clean:
 	$(H)rm -f core* *-stamp dh_clean
 	$(H)rm -f doc/manual.ps doc/manual.pdf\
 		doc/manual-it.ps doc/manual-it.pdf
-ifneq "$(FLTKUI)" ""
 	$(H)$(MAKE) -C updater-ui/fltk clean CONFIG=$(PWD)/config || true
-endif
 
 distclean: clean
 	$(H)rm -fr dist-*
 	$(H)$(MAKE) -C doc/manual clean
-	$(H)$(MAKE) -C updater-ui/fltk clean CONFIG=$(PWD)/config || true
 
 realclean: distclean
 	$(H)rm -f config

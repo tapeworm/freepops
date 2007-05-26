@@ -7,14 +7,13 @@
 # /usr/share/doc/po-debconf/README-trans
 # or http://www.debian.org/intl/l10n/po-debconf/README-trans
 # Developers do not need to manually edit POT or PO files.
-# , fuzzy
 #
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: freepops 0.0.31-1\n"
 "Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
-"POT-Creation-Date: 2007-05-01 11:25+0200\n"
+"POT-Creation-Date: 2007-05-01 12:07+0200\n"
 "PO-Revision-Date: 2007-05-06 12:20+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -28,17 +27,18 @@ msgstr ""
 msgid "Start freepopsd automatically after each boot?"
 msgstr "Starta freepopsd automatiskt efter varje uppstart?"
 
-#| msgid ""
-#| "The FreePOPs daemon can be started automatically after each boot for you. "
-#| "By default it will bind on port 2000, but you can change this behaviour "
-#| "editing /etc/default/freepops"
 #. Type: boolean
 #. Description
 #: ../freepops.templates:2001
-msgid "The FreePOPs daemon can be started automatically after each boot. By default, it will bind to port 2000. This setting may be changed by editing the /etc/default/freepops file."
-msgstr "FreePOPs-demonen kan startas automatiskt efter varje uppstart. Som standard kommer den att binda sig till port 2000. Den här inställningen kan ändras genom att redigera filen /etc/default/freepops."
+msgid ""
+"The FreePOPs daemon can be started automatically after each boot. By "
+"default, it will bind to port 2000. This setting may be changed by editing "
+"the /etc/default/freepops file."
+msgstr ""
+"FreePOPs-demonen kan startas automatiskt efter varje uppstart. Som standard "
+"kommer den att binda sig till port 2000. Den här inställningen kan ändras "
+"genom att redigera filen /etc/default/freepops."
 
-#| msgid "Create a chroot jail for freepops?"
 #. Type: boolean
 #. Description
 #: ../freepops.templates:3001
@@ -48,14 +48,24 @@ msgstr "Skapa ett chroot-fängelse för FreePOPs?"
 #. Type: boolean
 #. Description
 #: ../freepops.templates:3001
-msgid "FreePOPs can be launched in a chrooted environment to improve the system's security."
-msgstr "FreePOPs kan startas i en chrootad miljö för att förbättra säkerheten i systemet."
+msgid ""
+"FreePOPs can be launched in a chrooted environment to improve the system's "
+"security."
+msgstr ""
+"FreePOPs kan startas i en chrootad miljö för att förbättra säkerheten i "
+"systemet."
 
 #. Type: boolean
 #. Description
 #: ../freepops.templates:3001
-msgid "The jail will be created in /var/lib/freepops/chroot-jail/. The regular init script will then take care of launching the daemon by calling a script named start.sh at the root of the chroot jail."
-msgstr "Fängelset kommer att skapas i /var/lib/freepops/chroot-jail/. Det vanliga initieringsskriptet kommer att ta hand om uppstarten av demonen genom att anropa ett skript som heter start.sh i roten av chroot-fängelset."
+msgid ""
+"The jail will be created in /var/lib/freepops/chroot-jail/. The regular init "
+"script will then take care of launching the daemon by calling a script named "
+"start.sh at the root of the chroot jail."
+msgstr ""
+"Fängelset kommer att skapas i /var/lib/freepops/chroot-jail/. Det vanliga "
+"initieringsskriptet kommer att ta hand om uppstarten av demonen genom att "
+"anropa ett skript som heter start.sh i roten av chroot-fängelset."
 
 #. Type: boolean
 #. Description
@@ -66,20 +76,38 @@ msgstr "Ta bort lokala uppdateringar vid uppgradering?"
 #. Type: boolean
 #. Description
 #: ../freepops.templates:4001
-msgid "The freepops-updater-fltk or freepops-updater-dialog utilities will install local updates in /var/lib/freepops/lua_updates."
-msgstr "Verktygen freepops-updater-fltk eller freepops-updater-dialog kommer att installera lokala uppdateringar i /var/lib/freepops/lua_updates."
+msgid ""
+"The freepops-updater-fltk or freepops-updater-dialog utilities will install "
+"local updates in /var/lib/freepops/lua_updates."
+msgstr ""
+"Verktygen freepops-updater-fltk eller freepops-updater-dialog kommer att "
+"installera lokala uppdateringar i /var/lib/freepops/lua_updates."
 
 #. Type: boolean
 #. Description
 #: ../freepops.templates:4001
-msgid "Such updates are usually integrated in further FreePOPs releases or can be downloaded again by running the updater. Therefore, they may safely be removed when the package is upgraded."
-msgstr "Sådana uppdateringar är vanligtvis integrerade i framtida utgågor av FreePOPs eller kan hämtas ner igen genom att köra uppdateraren. Därför kan de med säkerhet tas bort när paketet uppgraderas."
+msgid ""
+"Such updates are usually integrated in further FreePOPs releases or can be "
+"downloaded again by running the updater. Therefore, they may safely be "
+"removed when the package is upgraded."
+msgstr ""
+"Sådana uppdateringar är vanligtvis integrerade i framtida utgågor av "
+"FreePOPs eller kan hämtas ner igen genom att köra uppdateraren. Därför kan "
+"de med säkerhet tas bort när paketet uppgraderas."
 
 #. Type: boolean
 #. Description
 #: ../freepops.templates:4001
-msgid "The modules saved in /var/lib/freepops/lua_updates have a higher priority than those from /usr/share/freepops/lua. It is thus recommended to remove the former in order to avoid using outdated modules, unless you intend to freeze the local modifications regardless of FreePOPs upgrades."
-msgstr "Modulerna som sparas i /var/lib/freepops/lua_updates har en högre prioritet än de från /usr/share/freepops/lua. Det är därför rekommenderat att ta bort den tidigare för att undvika att använda utdaterade moduler, såvida du inte tänker frysa de lokala ändringarna oavsett uppgraderingarna för FreePOPs."
+msgid ""
+"The modules saved in /var/lib/freepops/lua_updates have a higher priority "
+"than those from /usr/share/freepops/lua. It is thus recommended to remove "
+"the former in order to avoid using outdated modules, unless you intend to "
+"freeze the local modifications regardless of FreePOPs upgrades."
+msgstr ""
+"Modulerna som sparas i /var/lib/freepops/lua_updates har en högre prioritet "
+"än de från /usr/share/frepops/lua. Det är därför rekommenderat att ta bort "
+"den tidigare för att undvika att använda utdaterade moduler, såvida du inte "
+"tänker frysa de lokala ändringarna oavsett uppgraderingarna för FreePOPs."
 
 #~ msgid ""
 #~ "FreePOPs can be launched in a chrooted environment to improve security. "
@@ -96,4 +124,3 @@ msgstr "Modulerna som sparas i /var/lib/freepops/lua_updates har en högre prior
 #~ "skriptet så du behöver inte ändra något för att automatiskt starta "
 #~ "freepopsd vid uppstart. Denna funktion är mestadels otestad så du är nu "
 #~ "varnad."
-

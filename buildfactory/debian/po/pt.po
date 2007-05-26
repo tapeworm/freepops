@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: freepops\n"
 "Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
-"POT-Creation-Date: 2007-05-01 09:22+0200\n"
+"POT-Creation-Date: 2007-05-01 12:07+0200\n"
 "PO-Revision-Date: 2007-05-01 10:35+0100\n"
 "Last-Translator: Ricardo Silva <ardoric@gmail.com>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -36,8 +36,8 @@ msgstr ""
 #. Type: boolean
 #. Description
 #: ../freepops.templates:3001
-msgid "Create a chroot jail for freepops?"
-msgstr "Criar uma 'prisão' chroot para o freepops?"
+msgid "Create a chroot jail for FreePOPs?"
+msgstr "Criar uma 'prisão' chroot para o FreePOPs?"
 
 #. Type: boolean
 #. Description
@@ -46,8 +46,8 @@ msgid ""
 "FreePOPs can be launched in a chrooted environment to improve the system's "
 "security."
 msgstr ""
-"O FreePOPs pode ser lançado num ambiente chroot para melhorar a segurança "
-"do sistema."
+"O FreePOPs pode ser lançado num ambiente chroot para melhorar a segurança do "
+"sistema."
 
 #. Type: boolean
 #. Description
@@ -74,8 +74,8 @@ msgid ""
 "The freepops-updater-fltk or freepops-updater-dialog utilities will install "
 "local updates in /var/lib/freepops/lua_updates."
 msgstr ""
-"Os utilitários freepops-updater-fltk ou freepops-updater-dialog irão instalar "
-"actualizações locais em /var/lib/freepops/lua_updates."
+"Os utilitários freepops-updater-fltk ou freepops-updater-dialog irão "
+"instalar actualizações locais em /var/lib/freepops/lua_updates."
 
 #. Type: boolean
 #. Description
@@ -95,8 +95,8 @@ msgstr ""
 msgid ""
 "The modules saved in /var/lib/freepops/lua_updates have a higher priority "
 "than those from /usr/share/freepops/lua. It is thus recommended to remove "
-"them in order to avoid using outdated modules, unless you intend to freeze "
-"the local modifications regardless of FreePOPs updates."
+"the former in order to avoid using outdated modules, unless you intend to "
+"freeze the local modifications regardless of FreePOPs upgrades."
 msgstr ""
 "Os módulos guardados em /var/lib/freepops/lua_updates têm uma prioridade "
 "maior do que os que estão em /usr/share/freepops/lua. É portanto recomendado "

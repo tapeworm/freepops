@@ -1,0 +1,171 @@
+# freepops po-debconf translation to Spanish
+# Copyright (C) 2005 Software in the Public Interest
+# This file is distributed under the same license as the freepops package.
+#
+# Changes:
+#  - Initial translation
+#         César Gómez Martín <cesar.gomez@gmail.com>
+#
+#  - Revision and sync
+#         Rudy Godoy Guillén <rudy@stone-head.org>, 2007
+#
+#   Traductores, si no conoce el formato PO, merece la pena leer la
+#   documentación de gettext, especialmente las secciones dedicadas a este
+#   formato, por ejemplo ejecutando:
+#          info -n '(gettext)PO Files'
+#          info -n '(gettext)Header Entry'
+# Equipo de traducción al español, por favor, lean antes de traducir
+# los siguientes documentos:
+#
+#  - El proyecto de traducción de Debian al español
+#    http://www.debian.org/intl/spanish/
+#    especialmente las notas de traducción en
+#    http://www.debian.org/intl/spanish/notas
+#
+#  - La guía de traducción de po's de debconf:
+#    /usr/share/doc/po-debconf/README-trans
+#    o http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: freepops 0.2.2\n"
+"Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
+"POT-Creation-Date: 2007-05-01 12:07+0200\n"
+"PO-Revision-Date: 2007-05-14 09:24-0500\n"
+"Last-Translator: César Gómez Martín <cesar.gomez@gmail.com>\n"
+"Language-Team: Debian l10n spanish <debian-l10n-spanish@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Spanish\n"
+"X-Poedit-Country: SPAIN\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid "Start freepopsd automatically after each boot?"
+msgstr ""
+"¿Desea iniciar freepopsd automáticamente después de cada arranque del "
+"sistema?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid ""
+"The FreePOPs daemon can be started automatically after each boot. By "
+"default, it will bind to port 2000. This setting may be changed by editing "
+"the /etc/default/freepops file."
+msgstr ""
+"Puede iniciar automáticamente el demonio FreePOPs en cada arranque del "
+"sistema. Por omisión se le asignará el puerto 2000. Puede cambiar esta "
+"configuración editando /etc/default/freepops"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid "Create a chroot jail for FreePOPs?"
+msgstr "¿Desea crear un entorno enjaulado para FreePOPs?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"FreePOPs can be launched in a chrooted environment to improve the system's "
+"security."
+msgstr ""
+"Para mejorar la seguridad, FreePOPs se puede ejecutar en un entorno "
+"enjaulado."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"The jail will be created in /var/lib/freepops/chroot-jail/. The regular init "
+"script will then take care of launching the daemon by calling a script named "
+"start.sh at the root of the chroot jail."
+msgstr ""
+"La jaula se creará en /var/lib/freepops/chroot-jail/. Luego, el programa "
+"init se encargará de ejecutar el demonio invocando un programa llamado "
+"«start.sh» en la raíz de la jaula."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid "Remove local updates on upgrade?"
+msgstr "¿Desea eliminar actualizaciones locales cuando actualice?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The freepops-updater-fltk or freepops-updater-dialog utilities will install "
+"local updates in /var/lib/freepops/lua_updates."
+msgstr ""
+"freepops-updater-fltk o freepops-updater-dialog pueden instalar "
+"actualizaciones locales en «/var/lib/freepops/lua_updates»."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"Such updates are usually integrated in further FreePOPs releases or can be "
+"downloaded again by running the updater. Therefore, they may safely be "
+"removed when the package is upgraded."
+msgstr ""
+"Estas actualizaciones están usualmente integradas en la próxima versión de "
+"FreePOPs o se pueden descargar nuevamente ejecutando el actualizador, de "
+"modo que se pueden eliminar sin problema."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The modules saved in /var/lib/freepops/lua_updates have a higher priority "
+"than those from /usr/share/freepops/lua. It is thus recommended to remove "
+"the former in order to avoid using outdated modules, unless you intend to "
+"freeze the local modifications regardless of FreePOPs upgrades."
+msgstr ""
+"Los módulos almacenados en /var/lib/freepops/lua_updates tienen mayor "
+"prioridad que aquellos en /usr/share/frepops/lua; si no los elimina podría "
+"estar ejecutando módulos desactualizados. De cualquier forma el "
+"administrador del sistema podría utilizar este mecanismo para bloquear "
+"algunas modificaciones locales en lo que respecta a actualizaciones de "
+"FreePOPs."
+
+#~ msgid ""
+#~ "FreePOPs can be launched in a chrooted environment to improve security. "
+#~ "The jail will be created in /var/lib/freepops/chroot-jail/. This will "
+#~ "also create a start.sh script in the root of the jail that should be used "
+#~ "to launch freepopsd. This is perfectly integrated with the init script, "
+#~ "so you have to change nothing to automatically start freepopsd at boot. "
+#~ "This feature is mostly untested, you are warned."
+#~ msgstr ""
+#~ "Para mejorar la seguridad, FreePOPs se puede ejecutar en un entorno "
+#~ "enjaulado. La jaula se creará en /var/lib/freepops/chroot-jail/. Esto "
+#~ "también creará un script «start.sh» en la raíz de la jaula, este script "
+#~ "se deberá usar para iniciar freepopsd. Esto está perfectamente integrado "
+#~ "con el programa de inicio (init), por lo que no tiene que cambiar nada "
+#~ "para iniciar freepopsd automáticamente en el arranque del sistema. Esta "
+#~ "característica no está bien probada, queda advertido."
+
+#~ msgid ""
+#~ "freepops-updater-fltk or freepops-updater-dialog can install local "
+#~ "updates in  /var/lib/freepops/lua_updates. These updates are usually "
+#~ "integrated in the next freepops release or can be downloaded again "
+#~ "running the updater, so they can be safely removed.  Modules placed in /"
+#~ "var/lib/freepops/lua_updates have higher priority than the ones in /usr/"
+#~ "share/frepops/lua; if you don't remove them you may end up running "
+#~ "outdated modules. Anyway the system administrator may use this mechanism "
+#~ "to freeze some local  modifications with respect to FreePOPs updates."
+#~ msgstr ""
+#~ "freepops-updater-fltk o freepops-updater-dialog pueden instalar "
+#~ "actualizaciones locales en «/var/lib/freepops/lua_updates». Estas "
+#~ "actualizaciones están usualmente integradas en la próxima versión de "
+#~ "freepops o se pueden descargar nuevamente ejecutando el actualizador, de "
+#~ "modo que se pueden eliminar sin problema. Los módulos ubicados en /var/"
+#~ "lib/freepops/lua_updates tienen mayor prioridad que aquellos en /usr/"
+#~ "share/frepops/lua; si no los elimina podría estar ejecutando módulos "
+#~ "desactualizados. De cualquier forma el administrador del sistema podrúa "
+#~ "utilizar este mecanismo para bloquear algunas modificaciones locales en "
+#~ "lo que respecta a actualizaciones de FreePOPs."

@@ -1,3 +1,4 @@
+- updated debian localizations and fixes to the package description
 - make clean cleans really! all
 - popstate.c now allows to set mailmessage size to 0
 - openwrt: the updater process is started after a sleep of 30s to wait ppp0 to be up, the right solution is to use cron... maybe

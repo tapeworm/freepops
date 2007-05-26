@@ -1,3 +1,12 @@
+# These templates have been reviewed by the debian-l10n-english
+# team
+#
+# If modifications/additions/rewording are needed, please ask
+# for an advice to debian-l10n-english@lists.debian.org
+#
+# Even minor modifications require translation updates and such
+# changes should be coordinated with translators and reviewers.
+
 Template: freepops/init
 Type: boolean
 _Description: Start freepopsd automatically after each boot?
@@ -8,13 +17,13 @@ _Description: Start freepopsd automatically after each boot?
 Template: freepops/jail
 Type: boolean
 Default: false
-_Description: Create a chroot jail for freepops?
+_Description: Create a chroot jail for FreePOPs?
  FreePOPs can be launched in a chrooted environment to improve the
  system's security.
  .
  The jail will be created in /var/lib/freepops/chroot-jail/.
  The regular init script will then take care of launching the daemon
- by calling a script named start.sh atthe root of the chroot jail.
+ by calling a script named start.sh at the root of the chroot jail.
 
 Template: freepops/updates
 Type: boolean
@@ -24,11 +33,11 @@ _Description: Remove local updates on upgrade?
  install local updates in /var/lib/freepops/lua_updates.
  .
  Such updates are usually integrated in further FreePOPs releases or
- can be downloaded again running the updater. Therefore, they
+ can be downloaded again by running the updater. Therefore, they
  may safely be removed when the package is upgraded.
  .
  The modules saved in /var/lib/freepops/lua_updates have a higher
- priority than those from /usr/share/frepops/lua. It is thus
- recommended to remove them in order to avoid using outdated modules,
+ priority than those from /usr/share/freepops/lua. It is thus
+ recommended to remove the former in order to avoid using outdated modules,
  unless you intend to freeze the local modifications regardless of
- FreePOPs updates.
+ FreePOPs upgrades.

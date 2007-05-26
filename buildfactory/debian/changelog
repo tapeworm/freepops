@@ -1,6 +1,22 @@
 freepops (0.2.4-1) unstable; urgency=low
 
   * New upstream release 
+  * Debconf templates and debian/control reviewed by the debian-l10n-
+    english team as part of the Smith review project. 
+    Closes: #420761, #421733
+  * Debconf translation updates:
+    - German. Closes: #421732
+    - Portuguese. Closes: #421738
+    - Tamil. Closes: #421777
+    - Czech. Closes: #421765
+    - Galician. Closes: #421817
+    - Basque. Closes: #421883
+    - Russian. Closes: #422112
+    - Swedish. Closes: #422474
+    - Dutch. Closes: #423056, #419728
+    - Spanish. Closes: #423693
+    - Arabic. Closes: #424698
+    - French. Closes: #424751
 
  -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 26 May 2007 12:01:32 +0200
 

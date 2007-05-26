@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: freepops debconf\n"
 "Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
-"POT-Creation-Date: 2007-05-01 11:25+0200\n"
+"POT-Creation-Date: 2007-05-01 12:07+0200\n"
 "PO-Revision-Date: 2007-05-02 09:57+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <Librezale@librezale.org>\n"
@@ -29,7 +29,10 @@ msgid ""
 "The FreePOPs daemon can be started automatically after each boot. By "
 "default, it will bind to port 2000. This setting may be changed by editing "
 "the /etc/default/freepops file."
-msgstr "FreePOPs deabrua sistema abiaraztean automatikoki abiarazi daiteke. Lehenespen bezala 2000 ataka erabiliko du. Ezarpen hau /etc/default/freepops editatuaz aldatu daiteke."
+msgstr ""
+"FreePOPs deabrua sistema abiaraztean automatikoki abiarazi daiteke. "
+"Lehenespen bezala 2000 ataka erabiliko du. Ezarpen hau /etc/default/freepops "
+"editatuaz aldatu daiteke."
 
 #. Type: boolean
 #. Description
@@ -43,7 +46,9 @@ msgstr "FreePoPs-rentzat chroot kaiola bat sortu?"
 msgid ""
 "FreePOPs can be launched in a chrooted environment to improve the system's "
 "security."
-msgstr "FreePoPs kaiolan itxitako ingurune batetan abiarazi daiteke sistema segurtasuna hobetzeko."
+msgstr ""
+"FreePoPs kaiolan itxitako ingurune batetan abiarazi daiteke sistema "
+"segurtasuna hobetzeko."
 
 #. Type: boolean
 #. Description
@@ -52,7 +57,10 @@ msgid ""
 "The jail will be created in /var/lib/freepops/chroot-jail/. The regular init "
 "script will then take care of launching the daemon by calling a script named "
 "start.sh at the root of the chroot jail."
-msgstr "Kaiola /var/lib/freepops/chroot-jail/-en sortuko da. Abiarazite script arruntak deabrua abiarazteko chroot kaiola barneko erroan dagoen start.sh deitu behar du."
+msgstr ""
+"Kaiola /var/lib/freepops/chroot-jail/-en sortuko da. Abiarazite script "
+"arruntak deabrua abiarazteko chroot kaiola barneko erroan dagoen start.sh "
+"deitu behar du."
 
 #. Type: boolean
 #. Description
@@ -66,7 +74,9 @@ msgstr "Bertsio berritzean eguneraketa lokalak ezabatu?"
 msgid ""
 "The freepops-updater-fltk or freepops-updater-dialog utilities will install "
 "local updates in /var/lib/freepops/lua_updates."
-msgstr "freepops-updater-fltk edo freepops-updater-dialog lanabesek eguneraketa lokalak /var/lib/freepops/lua_updates-en instalatuko dituzte."
+msgstr ""
+"freepops-updater-fltk edo freepops-updater-dialog lanabesek eguneraketa "
+"lokalak /var/lib/freepops/lua_updates-en instalatuko dituzte."
 
 #. Type: boolean
 #. Description
@@ -75,14 +85,22 @@ msgid ""
 "Such updates are usually integrated in further FreePOPs releases or can be "
 "downloaded again by running the updater. Therefore, they may safely be "
 "removed when the package is upgraded."
-msgstr "Eguneraketa hauek normalean FreePOPs bertsio berriagoetan integraturik edondo dira edo eguneratzailea abiaraziz berriz deskargatu daitezke. Beraz segurtasunik ezabatu daitezke paketea bertsio berritzean."
+msgstr ""
+"Eguneraketa hauek normalean FreePOPs bertsio berriagoetan integraturik "
+"edondo dira edo eguneratzailea abiaraziz berriz deskargatu daitezke. Beraz "
+"segurtasunik ezabatu daitezke paketea bertsio berritzean."
 
 #. Type: boolean
 #. Description
 #: ../freepops.templates:4001
 msgid ""
 "The modules saved in /var/lib/freepops/lua_updates have a higher priority "
-"than those from /usr/share/freepops/lua. It is thus recommended to remove the "
-"former in order to avoid using outdated modules, unless you intend to freeze "
-"the local modifications regardless of FreePOPs upgrades."
-msgstr "/var/lib/freepops/lua_updates-en gordetako moduluek  /usr/share/freepops/lua-n gordetako moduluek baino lehentasun handiagoa dute. Horregatik horiek ezabatzea gomendatzen da zaharkituriko moduluak erabiltzen ari ez zarela ziurtatzeko, ez badituzu aldaketa lokalak izoztu nahi FreePoPs eguneraketei jaramonik egin gabe."
+"than those from /usr/share/freepops/lua. It is thus recommended to remove "
+"the former in order to avoid using outdated modules, unless you intend to "
+"freeze the local modifications regardless of FreePOPs upgrades."
+msgstr ""
+"/var/lib/freepops/lua_updates-en gordetako moduluek  /usr/share/freepops/lua-"
+"n gordetako moduluek baino lehentasun handiagoa dute. Horregatik horiek "
+"ezabatzea gomendatzen da zaharkituriko moduluak erabiltzen ari ez zarela "
+"ziurtatzeko, ez badituzu aldaketa lokalak izoztu nahi FreePoPs eguneraketei "
+"jaramonik egin gabe."

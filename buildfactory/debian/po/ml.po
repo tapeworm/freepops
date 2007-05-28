@@ -1,0 +1,89 @@
+# Translation of debconf template of FreePOPs.
+# Copyright (C) 2007 FreePOPs' COPYRIGHT HOLDER
+# This file is distributed under the same license as the FreePOPs package.
+# Sreeraj A<writetosrj@gmail.com>, Sreerenj B<bsreerenj@gmail.com>, 2007
+
+msgid ""
+msgstr ""
+"Project-Id-Version:freepops_1.0.13-5_ml\n"
+"Report-Msgid-Bugs-To: pkg-alsa-devel@lists.alioth.debian.org\n"
+"POT-Creation-Date: 2007-05-26 07:36+0200\n"
+"PO-Revision-Date: 2007-04-08 15:17-0400\n"
+"Last-Translator: Sreeraj A<writetosrj@gmail.com>, Sreerenj B<bsreerenj@gmail.com>\n"
+"Language-Team: Swathanthra|സ്വതന്ത്ര Malayalam|മലയാളം Computing|കമ്പ്യൂട്ടിങ്ങ് <smc-discuss@googlegroups.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid "Start freepopsd automatically after each boot?"
+msgstr "ഓരോ തവണ കമ്പ്യൂട്ടര്‍ ആരംഭിച്ചതിന് ശേഷവും ഫ്രീപോപ്സ്ഡി (freepopsd) തുടങ്ങണമോ?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:2001
+msgid ""
+"The FreePOPs daemon can be started automatically after each boot. By "
+"default, it will bind to port 2000. This setting may be changed by editing "
+"the /etc/default/freepops file."
+msgstr "ഓരോ തവണ കമ്പ്യൂട്ടര്‍ ആരംഭിച്ചതിന് ശേഷവും ഫ്രീപോപ്സ്  ഡീമണ്‍ (FreePOPs daemon) തുടങ്ങാവുന്നതാണ്. "
+"സഹജമായി  ഇത് പോര്‍ട്ട്  2000 -വുമായി ബൈന്‍ഡ്  ചെയ്യപ്പെടും. ഈ സജ്ജീകരണം /etc/default/freepops രേഖ ചിട്ടപ്പെടുത്തി മാറ്റാവുന്നതാണ്."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid "Create a chroot jail for FreePOPs?"
+msgstr "ഫ്രീപോപ്സിനുവേണ്ടി ഒരു സിഎച്ച്റൂട്ട്  ജയില്‍ (chroot jail) സൃഷ്ടിയ്ക്കണമോ?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"FreePOPs can be launched in a chrooted environment to improve the system's "
+"security."
+msgstr "സിസ്റ്റത്തിന്റെ സുരക്ഷിതത്വം മെച്ചപ്പെടുത്തുന്നതിനുവേണ്ടി ഫ്രീപോപ്സ്  സിഎച്ച്റൂട്ടഡ് (chrooted) പരിസരത്തില്‍ തുടങ്ങാവുന്നതാണ്. "
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:3001
+msgid ""
+"The jail will be created in /var/lib/freepops/chroot-jail/. The regular init "
+"script will then take care of launching the daemon by calling a script named "
+"start.sh at the root of the chroot jail."
+msgstr "ഈ  ജയില്‍  /var/lib/freepops/chroot-jail/  -ല്‍ സൃഷ്ടിക്കപ്പെടുന്നതായിരിയ്ക്കും. ഇതിന് ശേഷം സാധാരണ ഇനിറ്റ്  സ്ക്രിപ്റ്റ്  (init script) സിഎച്ച്റൂട്ട് (chroot) ജയിലിന്റെ റൂട്ടിലുള്ള start.sh എന്നു പേരുള്ള സ്ക്രിപ്റ്റിനെ വിളിച്ച് ഡീമണെ തുടങ്ങുന്നതിനുള്ള കാര്യങ്ങള്‍ ശ്രദ്ധിയ്ക്കുുകയും ചെയ്യും."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid "Remove local updates on upgrade?"
+msgstr "പുതുക്കുമ്പോള്‍ പ്രാദേശിക മാറ്റങ്ങള്‍ നീക്കം ചെയ്യണമോ?"
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The freepops-updater-fltk or freepops-updater-dialog utilities will install "
+"local updates in /var/lib/freepops/lua_updates."
+msgstr "ഫ്രീപോപ്സ് -അപ്ഡേറ്റര്‍-എഫ്എല്‍ടികെ (freepops-updater-fltk) യോ ഫ്രീപോപ്സ്-അപ്ഡേറ്റര്‍-ഡയലോഗ് യൂട്ടിലിറ്റികളോ പ്രാദേശിക മാറ്റങ്ങള്‍ /var/lib/freepops/lua_updates ല്‍ ഇന്‍സ്റ്റാള്‍ ചെയ്യും."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"Such updates are usually integrated in further FreePOPs releases or can be "
+"downloaded again by running the updater. Therefore, they may safely be "
+"removed when the package is upgraded."
+msgstr  "അത്തരം മാറ്റങ്ങള്‍ സാധാരണയായി ഇതിനുശേഷം ഇറങ്ങിയ ഫ്രീപോപ്സ് ലക്കങ്ങളില്‍ കൂട്ടിച്ചേര്‍ക്കപ്പെട്ടിട്ടുണ്ടായിരിയ്ക്കുകയോ അല്ലെങ്കില്‍ പുതുക്കല്‍ ഉപാധി ഉപയോഗിച്ച്  ഡൌണ്‍ലോഡ്  ചെയ്യുകയോ ചെയ്യാം. അതിനാല്‍ അവ പാക്കേജുകള്‍ പുതുക്കപ്പെടുമ്പോള്‍ സുരക്ഷിതമായി നീക്കം ചെയ്യാം."
+
+#. Type: boolean
+#. Description
+#: ../freepops.templates:4001
+msgid ""
+"The modules saved in /var/lib/freepops/lua_updates have a higher priority "
+"than those from /usr/share/frepops/lua. It is thus recommended to remove the "
+"former in order to avoid using outdated modules, unless you intend to freeze "
+"the local modifications regardless of FreePOPs upgrades."
+msgstr "/var/lib/freepops/lua_updates-ല്‍ സംരക്ഷിച്ച മൊഡ്യുളുകള്‍ക്ക്  /usr/share/frepops/lua -ല്‍  സംരക്ഷിച്ച മൊഡ്യുളുകളേക്കാള്‍ പരിഗണന കൂടുതലായിരിക്കും. നിങ്ങള്‍ ഫ്രീപോപ്സ് (FreePOPs) പുതുക്കലുകള്‍ പരിഗണിക്കാതെ ലോക്കല്‍ മാറ്റങ്ങള്‍ മരവിപ്പിക്കാന്‍ ഉദ്ദേശിക്കാത്തിടത്തോളം /var/lib/freepops/lua_updates നീക്കം ചെയ്യാനാണ്  ശുപാര്‍ശ ചെയ്യുന്നത്."

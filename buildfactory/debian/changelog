@@ -1,8 +1,9 @@
 freepops (0.2.4-2) UNRELEASED; urgency=low
 
-  * Added ml.po (Closes: #426113) 
+  * Added ml.po (Closes: #426113)
+  * Updated vi.po (Closes: #427176) 
 
- -- Enrico Tassi <gareuselesinge@debian.org>  Mon, 28 May 2007 20:49:11 +0200
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 02 Jun 2007 13:47:53 +0200
 
 freepops (0.2.4-1) unstable; urgency=low
 

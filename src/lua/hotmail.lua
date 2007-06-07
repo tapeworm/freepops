@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.81a"
+PLUGIN_VERSION = "0.1.81b"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -92,7 +92,7 @@ local globals = {
   --
   strRetLoginBadLogin = "(memberservices)",
   strRetLoginSessionExpired = "(Sign in)",
-  strRetLoginSessionExpiredLive = '(HM.FppError."00000005")',
+  strRetLoginSessionExpiredLive = '(HM%.FppError)',
   strRetStatBusy = "(form name=.hotmail.)",
   
   -- Regular expression to extract the mail server
@@ -214,6 +214,7 @@ local globals = {
   strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s&gs=true",
   strCmdEmptyTrash = "http://%s/cgi-bin/dofolders?_HMaction=DoEmpty&curmbox=F000000004&a=%s&i=F000000004",
   strCmdLogout = "http://%s/cgi-bin/logout",
+  strCmdLogoutLive = "http://%s/mail/logout.aspx",
   strCmdFolders = "http://%s/cgi-bin/folders?&curmbox=F000000001&a=%s",
   strCmdFoldersLiveLight = "http://%s/mail/ManageFoldersLight.aspx",
   strCmdMsgUnreadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=", 
@@ -1282,7 +1283,11 @@ function quit_update(pstate)
   local currTime = os.clock()
   local diff = currTime - internalState.loginTime
   if diff > globals.nSessionTimeout then 
-    cmdUrl = string.format(globals.strCmdLogout, internalState.strMailServer)
+    if (internalState.bLiveGUI) then
+      cmdUrl = string.format(globals.strCmdLogoutLive, internalState.strMailServer)
+    else
+      cmdUrl = string.format(globals.strCmdLogout, internalState.strMailServer)
+    end
     log.dbg("Sending Logout URL: " .. cmdUrl .. "\n")
     local body, err = getPage(browser, cmdUrl)
  

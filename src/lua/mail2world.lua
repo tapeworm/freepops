@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2d"
+PLUGIN_VERSION = "0.0.2e"
 PLUGIN_NAME = "mail2world.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -81,7 +81,7 @@ local globals = {
 
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLinePattern = 'ms_message.asp.MsgID=([^&]+)&.-<td nowrap align=right>([^<]+)</td>[^<]+</tr>',
+  strMsgLinePattern = 'ms_message.asp.MsgID=([^&]+)&.-<td class="tdrow"  align=right>([^<]+)</td></tr>',
 
   -- Number of pages
   --
@@ -557,9 +557,9 @@ function stat(pstate)
       local kbUnit = string.match(size, "([Kk])")
       size = string.match(size, "([%d]+)[KkMm]")
       if not kbUnit then 
-        size = math.max(tonumber(size), 0) * 1024 * 1024
+        size = math.max(tonumber(size), 1) * 1024 * 1024
       else
-        size = math.max(tonumber(size), 0) * 1024
+        size = math.max(tonumber(size), 1) * 1024
       end
 
       -- Save the information

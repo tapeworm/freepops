@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.8"
+PLUGIN_VERSION = "0.2.9"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -98,10 +98,14 @@ local libero_string = {
 	-- to cut and paste the html source and work on it. For example
 	-- you could copy a message table row in a blank file, substitute
 	-- every useless field with '.*'.
-	statE = ".*<script>.*TREv.*</script>.*<TD.*>.*<input.*value.*=.*[[:digit:]]+.*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<IMG.*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<[Iid][Mmi][Ggv].*>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<a>.*<script>IMGEv.*</script>.*</a>.*<script>AEv.*</script>[.*]{script}[.*]{b}.*{/b}[.*]{/script}[.*]</a>.*</TD>.*<TD>.*<div.*>.*</TD>.*<TD.*>.*<script>.*AEv.*</script>[.*]{script}[.*]{b}.*{/b}[.*]{/script}[.*]</a>.*</TD>.*<TD>.*<div.*>.*</TD>.*<script>.*TDEv.*</script>[.*]{b}.*{/b}[.*]</TD>[.*]{!--.*--}.*<TD.*>.*<div.*>.*</TD>.*<script>TDEv.*</script>[.*]{b}.*[[:digit:]]+.*{/b}[.*]</TD>[.*]{!--.*--}.*</TR>",
+	 
+	statE = ".*<TR>.*<TD.*>.*<IMG.*>.*</TD>.*</TR>.*<script>.*</script>.*<script>.*</script>.*<TD.*>.*<input.*>.*</TD>.*<TD>.*<div>.*</TD>.*<TD>.*<IMG>.*</TD>.*<TD>.*<div>.*</TD>.*<TD>.*<div>.*</TD>.*<TD>.*<div>.*</TD>.*<TD>.*<a.*doitMsg.*>[.*]{!--.*--}<script>.*IMGEv.*</script>.*</a>.*<script>.*AEv.*</script>[.*]{!--.*--}<script>.*</script>.*</a>.*</TD>.*<TD>.*<div>.*</TD>.*<TD>.*<script>.*</script>[.*]{!--.*--}<script>.*</script>.*</a>.*</TD>.*<TD>.*<div>.*</TD>.*<script>.*</script>[.*]{b}.*{/b}[.*]</TD>[.*]{!--.*--}<TD>.*<div>.*</TD>.*<script>.*</script>[.*]{b}.*{/b}[.*]</TD>[.*]{!--.*--}</TR>";
+	
 	-- This is the mlex get expression to choose the important fields 
 	-- of the message list page. Used in combination with statE
-	statG = "O<O><O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O><O>O<O>O<O><O>[O]{O}[O]{O}O{O}[O]{O}[O]<O>O<O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}[O]{O}O{O}[O]{O}[O]<O>O<O>O<O>O<O>O<O>O<O><O>[O]{O}O{O}[O]<O>[O]{O}O<O>O<O>O<O>O<O><O>[O]{O}X{O}[O]<O>[O]{O}O<O>",
+	
+	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>[O]{O}O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]O{O}O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>[O]{O}O<O>O<O>O<O>O<O>O<O>[O]{O}X{O}[O]O<O>[O]{O}O<O>";
+	
 	-- The uri for the first page with the list of messages
 	first = "http://%s/cgi-bin/webmail.cgi?ID=%s&Act_Msgs=1&"..
 		"C_Folder=%s",
@@ -440,8 +444,9 @@ function stat(pstate)
 	local function action_f (s) 
 		-- calls match on the page s, with the mlexpressions
 		-- statE and statG
+		-- print(s)
 		local x = mlex.match(s,libero_string.statE,libero_string.statG)
-		-- x:print()
+		 x:print()
 		
 		-- the number of results
 		local n = x:count()
@@ -465,7 +470,8 @@ function stat(pstate)
 			local k = nil
 			k = string.match(size,"([Kk][Bb])")
 			size = string.match(size,"(%d+)")
-			uidl = string.match(uidl,"value=\"(%d+)\"")
+			--uidl = string.match(uidl,"value=\"(%d+)\"")
+			uidl = string.match(uidl, "doitMsg.'Act_View',%d+,%d+,'(%d+)'")
 			size = tonumber(size) + 2
 			if k ~= nil then
 				size = size * 1024

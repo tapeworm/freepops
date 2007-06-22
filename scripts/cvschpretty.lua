@@ -8,6 +8,8 @@ for l in io.stdin:lines() do
 	local _,_,comment = string.find(l,"- [%a%.]*:(.*)")
 	--print("ottengo" , fname, comment)
 	--
+	comment = comment or 'nil'
+	fname = fname or 'nil'
 	if comments[comment] == nil then
 		comments[comment] = {fname}
 	else

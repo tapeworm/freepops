@@ -1,3 +1,14 @@
+22/06/2007 0.2.5
+- fixed an ancestral wrong compilation flag for regexes, no more REG_NEWLINE
+- hotmail.lua: bumped to make them released again (gareuselesinge)
+- supereva.lua: supereva plugin updates (gareuselesinge)
+- libero.lua: fixed bug for attachments (gareuselesinge)
+- libero.lua: changed pattern matching (gareuselesinge)
+- hotmail.lua: Update the logout url and try to handle an expired session better. (russell822)
+- libero.lua: bumped to make it released agaiN (gareuselesinge)
+- supereva.lua, tin.lua: fixed attachments in tin and supereva, added dada.net (gareuselesinge)
+- libero.lua: fixed mlex (gareuselesinge)
+- aol.lua: Changed the AOL plugin to use the "classic" web interface. (russell822)
 - added patch by Viruzzo to mimer and supereva.lua
 - moved bpo build to etch
 26/05/2007 0.2.4

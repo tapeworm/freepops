@@ -19,6 +19,26 @@ To ask for help, AFTER you've read the documentation, you may look at:
 
 ChangeLog:
 
+- updated debian localizations and fixes to the package description
+- make clean cleans really! all
+- popstate.c now allows to set mailmessage size to 0
+- openwrt: the updater process is started after a sleep of 30s to wait ppp0 to be up, the right solution is to use cron... maybe
+- updater.lua better error reporting if no metadata available
+11/05/2007 0.2.3
+- es: *** empty log message *** (lisar314)
+- fastmail.lua: Fixed login form changed. Submitted by forum user 12769336123 (russell822)
+- hotmail.lua: A large collection of fixes. Support for the latest code base of Live mail (M10, I believe); support for the live light or classic look; and assorted bug fixes reported by users. (russell822)
+- updater.lua: updater ported to the new light protocol (gareuselesinge)
+- yahoo.lua: Update to crumb pattern for beta interface. Submitted by Przemyslaw Wroblewski (russell822)
+- aol.lua: Updated plugin to handle login changes by AOL. (russell822)
+- yahoo.lua: Add support for yahoo.ie (russell822)
+- yahoo.lua: Update to crumb pattern for beta interface. Updated the version. Submitted by Przemyslaw Wroblewski (russell822)
+- juno.lua: Replaced the table.setn calls with table.insert calls. (russell822)
+- juno.lua: Added code to force juno/netzero to log out every 4 hours. (russell822)
+- updater.lua: bomped version (gareuselesinge)
+- yahoo.lua: Minor fix to remove table.setn and to handle folders with spaces in them. (russell822)
+- integrated gentoo patch to fix gcrypt initialization: http://sources.gentoo.org/viewcvs.py/*checkout*/gentoo-x86/net-mail/freepops/files/freepops-0.2.2-gcrypt.patch; thanks Daniel Black for submitting the patch and Przemyslaw Wroblewski for reporting bug http://bugs.gentoo.org/show_bug.cgi?id=177682
+reporting the bug Przemyslaw Wroblewski 
 - moved all the updater code to the new and small XML metadata file produced by the CGI http://freepops.org/modules.php written by alessiofender
 - added /etc/init.d openwrt scripts
 - added flags for openwrt in configure.sh

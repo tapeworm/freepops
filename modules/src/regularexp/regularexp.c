@@ -36,7 +36,7 @@ pm[0].rm_eo = -1;
 if(from == NULL)
 	return pm[0];
 
-errcode = regcomp(&r,exp,REG_ICASE|REG_NEWLINE|REG_EXTENDED);
+errcode = regcomp(&r,exp,REG_ICASE|REG_EXTENDED);
 if (errcode != 0) {
 	char *errbuf = NULL;
 	size_t errbuf_size;

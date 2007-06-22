@@ -125,7 +125,7 @@ static unsigned int index_in_table(char c){
 
 char *base64dec(const char *input, size_t len){
 	char * rc = calloc(len * 3 / 4 + 4,sizeof(char));
-	int i,o=0;
+	size_t i,o=0;
 	MALLOC_CHECK(rc);
 
 	for(i=0; i+3<=len; ){

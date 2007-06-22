@@ -302,7 +302,7 @@ return m->uidl;
 
 int get_popstate_boxsize(struct popstate_t *p)
 {
-long unsigned int size = 0, i = 0;
+int size = 0, i = 0;
 
 if (p == NULL)
 	ERROR_ABORT("popstate is NULL\n");

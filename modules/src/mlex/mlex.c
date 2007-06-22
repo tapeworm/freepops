@@ -266,7 +266,7 @@ p->end = pos+1;
 HIDDEN list_t *tokenize_html(char* t)
 {
 list_t * l = NULL,*tl=NULL;
-int position=0;
+unsigned int position=0;
 regmatch_t p[1];
 unsigned int len = strlen(t);
 

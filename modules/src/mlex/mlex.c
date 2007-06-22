@@ -393,6 +393,9 @@ regmatch_t p;
 tmp=s[t->stop];
 s[t->stop]='\0';
 p=regfind(&s[t->start],exp);
+#ifdef DEBUG_MLEX
+printf("Regfind '%s' on '%s' is %d\n",exp,&s[t->start],p.begin);
+#endif
 s[t->stop]=tmp;
 return p;
 }

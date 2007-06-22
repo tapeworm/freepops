@@ -142,6 +142,7 @@ freepops.MODULES_MAP["mp4.it"]		= {name="supereva.lua"}
 freepops.MODULES_MAP["dadacasa.com"]	= {name="supereva.lua"}
 freepops.MODULES_MAP["clarence.com"]	= {name="supereva.lua"}
 freepops.MODULES_MAP["concento.it"]	= {name="supereva.lua"}
+freepops.MODULES_MAP["dada.net"]	= {name="supereva.lua"}
 
 -- mail.com
 freepops.MODULES_MAP["mail.com"]		= {name="mailcom.lua"}

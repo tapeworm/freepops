@@ -793,6 +793,7 @@ function tin_parse_webmessage(wherearewe, data)
 	
 	-- extract attachments
 	local x = mlex.match(data, tin_string.attachE, tin_string.attachG) 
+	x:print()
 	for i = 1, x:count() do
 		local url = x:get(0,i-1)
 		local name = x:get(1,i-1)

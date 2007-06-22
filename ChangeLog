@@ -1,3 +1,4 @@
+- added patch by Viruzzo to mimer and supereva.lua
 - moved bpo build to etch
 26/05/2007 0.2.4
 - updater.lua: better error reporting if metadata is nil (gareuselesinge)

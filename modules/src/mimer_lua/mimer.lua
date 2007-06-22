@@ -551,7 +551,7 @@ function pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,in
 
 	body = body or html2txtmail(body_html,base_uri)
 
-	if table.getn(attachments) > 0 then
+	if next(attachments) ~= nil or #attachments > 0 then
 		local boundary = Private.randomize_boundary()
 
 		local cType = "Multipart/Mixed"

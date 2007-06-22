@@ -9,15 +9,15 @@
 -- ************************************************************************** --
 
 
-PLUGIN_VERSION = "0.0.10"
+PLUGIN_VERSION = "0.2.5"
 PLUGIN_NAME = "Supereva web mail"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=supereva.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org"
-PLUGIN_AUTHORS_NAMES = {"Andrea Dalle Molle","Enrico Tassi","Visioning"}
+PLUGIN_AUTHORS_NAMES = {"Andrea Dalle Molle","Enrico Tassi","Visioning","Viruzzo"}
 PLUGIN_AUTHORS_CONTACTS = {"Tund3r (at) fastwebnet (dot) it",
-       "gareuselesinge (at) users (dot) sourceforge (dot) net","unknown"}
+       "gareuselesinge (at) users (dot) sourceforge (dot) net","unknown","unknown"}
 PLUGIN_DOMAINS = {"@supereva.it","@supereva.com","@freemail.it","@freeweb.org","@mybox.it","@superdada.com","@cicciociccio.com","@mp4.it","@dadacasa.com","@clarence.com","@concento.it"}
 PLUGIN_PARAMETERS = {
 	{name="onlynew", description={
@@ -51,64 +51,30 @@ end
 --  Constants
 local strings = {
 	
-  login_url = "http://www.supereva.com/cgi-bin/sn_my/login.chm?"..
-  	"uri=http://webmail.supereva.com/cgi-bin/login.chm&ser=email&username=%s&password=%s",
+	login_url = "http://it.email.dada.net/cgi-bin/sn_my/login.chm?"..
+		"uri=http://it.email.dada.net/cgi-bin/login.chm&ser=email&username=%s&password=%s",
   
-  first = "http://webmail.supereva.it/cgi-bin/main.chm?"..
-  	"mailfolder=in&proaction=readmailbox&mlt_msgs=%d",
+	first = "http://it.email.dada.net/cgi-bin/main.chm?"..
+		"mailfolder=in&proaction=readmailbox&mlt_msgs=%d",
   
-  base = "http://webmail.supereva.it/cgi-bin/",
-  
-  body_begin = '<div id="testomail">',
-  
-  body_end = '</div>\n\n*<div>\n\n*<table width="100%%" border="0" cellpadding="2" cellspacing="0" id="readmsg">',
+	base = 'http://it.email.dada.net/cgi-bin/',
 
-  body_end_with_attach = '</div>\n\n*<div>\n\n*<div id=allegati>',
-  
-  head_begin = '</table>\n<div style="background:#DFEEBD;">',
-  
-  head_end = '</div>\n\n*<div id="testomail">',
-  
-  get_url = "http://webmail.supereva.it/cgi-bin/nrmail03.chm?"..
-  	"setflags=yes&msgnum=%s&mailaction=read&mailfolder=in",
-  
-  next_page = "mailfolder=in&amp;changefolder=changefolder&amp;"..
-  	"proaction=readmailbox&amp;check_mail=&amp;mlt_msgs=%d",
-  
-  e = ".*<tr>.*"..
-      "<td><input></td>.*"..
-	"<td>[.*]{img}.*</td>.*"..
-	"<td>[.*]{b}[.*]{font}[.*]{/font}[.*]{/b}.*<A>[.*]{b}[.*]{/b}.*</a>.*</td>.*"..
-	"<td>.*<p>[.*]{img}[.*]{b}[.*]{/b}.*</p>[.*]</td>.*"..
-	"<td>[.*]{b}[.*]{/b}.*</td>.*"..
-	"<td>.*</td>.*"..
-	"</tr>",
-   g ="O<O>O"..
-      "<O><X><O>O"..
-	"<O>[O]{O}O<O>O"..
-	"<O>[O]{O}[O]{O}[O]{O}[O]{O}O<O>[O]{O}[O]{O}O<O>O<O>O"..
-	"<O>O<O>[O]{O}[O]{O}[O]{O}O<O>[O]<O>O"..
-	"<O>[O]{O}[O]{O}O<O>O"..
-	"<O>X<O>O"..
-	"<O>",
+	body_begin = '<div id="mailbody" class="mailtext">',
 
+	body_end = '</div><!-- google_ad_section_end --></td>\n*',
 
-   attach_a=".*<tr>.*"..
-		"<td>.*<a>.*</a>.*<A>.*"..
-		"<img>.*</a>.*<br>.*<b>.*</b>.*<br>.*<br>.*</td>.*"..
-		"<td>.*<img>.*<a>.*</a>.*<br>.*<br>.*"..
-		"<img>.*<a>.*</a>.*<br>.*<br>.*"..
-		"<img>.*<a>.*</a>.*<br>.*<br>.*</td>.*"..
-		"</tr>",
-   
-   attach_b="O<O>O"..
-		"<O>O<O>O<O>O<X>O"..
-		"<O>O<O>O<O>O<O>X<O>O<O>O<O>O<O>O"..
-		"<O>O<O>O<O>O<O>O<O>O<O>O"..
-		"<O>O<O>O<O>O<O>O<O>O"..
-		"<O>O<O>O<O>O<O>O<O>O<O>O"..
-		"<O>"
+	body_end_with_attach = '</div><!-- google_ad_section_end --></td>\n*</tr>\n\n*'..
+		'<tr>\n*<td colspan="2">\n\n*<table class="attachment">',
 
+	head_begin = '</table>\n<div style="background:#DFEEBD;">',
+  
+	head_end = '</div>\n\n*<div id="testomail">',
+
+	get_url = "http://it.email.dada.net/cgi-bin/nrmail03.chm?"..
+		"setflags=yes&msgnum=%s&mailaction=read&mailfolder=in",
+
+	next_page = "mailfolder=in&changefolder=changefolder&proaction=readmailbox"..
+		"&check_mail=&mlt_msgs=%d&orderby="
 }
 
 --------------------------------------------------------------------------------
@@ -340,7 +306,6 @@ function stat(pstate)
 	--local b = supereva_globals.browser
 
 	repeat
-
 		-- show browser state
 		--supereva_globals.browser:show()
 
@@ -352,31 +317,39 @@ function stat(pstate)
 			return POPSERVER_ERR_NETWORK
 		end
 		
-  		fine = string.find(file,
-			string.format(strings.next_page,pagina+1))
-  
-		local x = mlex.match(file,strings.e,strings.g)
+		-- call twice on first page since there is an hidden link
+		fine = string.find(file,string.format(strings.next_page,pagina+1))
+		if fine ~= nil and pagina == 1 then
+			fine = string.find(string.sub(file,fine+1,-1),string.format(strings.next_page,pagina+1))
+		end
+		
+		-- params for mlex (inbox)
+		local e = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*</td>.*<td>[.*]{div}[.*]{b}.*{/b}[.*]"..
+			"<a>.*<script>.*</script>.*</a>[.*]{/div}.*</td>.*<td>.*</td>.*"..
+			"<td>.*</td>.*<td>[.*]{img}.*</td>.*<td>.*</td>.*</tr>"
 
-		--debug print
-		--x:print()
+		local g = "<O>O<O>O<X>O<O>O<O>O<O>O<O>[O]{O}[O]{O}O{O}[O]<O>O<O>O<O>O<O>[O]{O}O"..
+			"<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>X<O>O<O>"
+
+		local x = mlex.match(file,e,g)
 
 		-- increment message number 
 		if supereva_globals.onlynew then
 			-- we will increase nummesg later
 		else
+  			-- print("\nmessaggi: "..x:count().."\n")
 			set_popstate_nummesg(pstate,x:count()+conta)
-  			--print ("\n\n messaggi: " .. x:count().."\n")
 		end
 	
 		-- set uidl/size for each message
 		for i=1,x:count() do
 			local size = string.match(x:get(1,i-1),"(%d+)")
-			local _,_,size_mult_k = 
-				string.find(x:get(1,i-1),"([Kk])")
-			local _,_,size_mult_m = 
-				string.find(x:get(1,i-1),"([Mm])")
-			local _,_,uidl = 
-				string.find(x:get(0,i-1),'value="([^"]*)"')
+			local size_mult_k = 
+				string.match(x:get(1,i-1),"([Kk])")
+			local size_mult_m = 
+				string.match(x:get(1,i-1),"([Mm])")
+			local uidl = 
+				string.match(x:get(0,i-1),'value="([^"]*)"')
 
 			if size_mult_k ~= nil then
 				size = size * 1024
@@ -404,7 +377,7 @@ function stat(pstate)
 		end -- fox i=1,x:count()
 	
 		conta=get_popstate_nummesg(pstate)
-		--print ("conta: ",conta)
+		-- print ("conta: ",conta)
 		pagina=pagina+1
 		--print("continuare? ",fine)
 		
@@ -461,7 +434,7 @@ function top(pstate,msg,lines,pdata)
 	local cb = mimer.callback_mangler(common.top_cb(global,pdata,true))
 	mimer.pipe_msg(
 		head,body,body_html,
-		"http://" .. b:wherearewe(),attach,b,cb)
+		"http://" .. b:wherearewe(),attach,b,cb,nil,"utf-8")
 
 	return POPSERVER_ERR_OK
 end
@@ -475,7 +448,7 @@ function retr(pstate,msg,data)
 	local cb = mimer.callback_mangler(common.retr_cb(data))
 	mimer.pipe_msg(
 		head,body,body_html,
-		"http://" .. b:wherearewe(),attach,b,cb)
+		"http://" .. b:wherearewe(),attach,b,cb,nil,"utf-8")
 
 	return POPSERVER_ERR_OK
 end
@@ -501,59 +474,66 @@ function supereva_parse_webmessage(pstate,msg)
 	stat_mapping[get_mailmessage_uidl(pstate,msg)] = 
 		string.gsub(get_mailmessage_uidl(pstate,msg),"new","cur")
 
-	-- extract the body an the attach
-	local from,to = string.find(f,strings.body_begin)
-
-	local from1,to1 = string.find(f,strings.body_end_with_attach)
+	local body_begin_text = '<div id="mailbody" class="mailtext">'
+	local body_end_text = '</div><!%-%- google_ad_section_end %-%-></td>'
+		
+	-- extract the body
+	local body_pre_begin, body_begin = string.find(f,body_begin_text)
+	local body_end, body_end_post = string.find(f,body_end_text)
 	
-	if to1 == nil then
-		from1,to1 = string.find(f,strings.body_end)
-	end
+	local body = string.sub(f,body_begin+1,body_end-1)
+	-- mostly useless, just reduces range for mlex
+	local attach = string.sub(f,body_end_post+1,-1)
 
-	local attach = ""
-	local body = ""
-	if to1 ~= nil then
-		-- normal
-		body = string.sub(f,to+1,from1-1)
-	  	attach = string.sub(f,from1+1,-1)
-	else
-		-- no body
-		body = ""
-		attach = string.sub(f,to+1,-1)
-	end
-
+	-- print("--- mail body ---\n"..body.."\n--- end body ---\n")
+	
 	-- extracts the attach list
-	local x = mlex.match(attach,strings.attach_a,strings.attach_b)
-	--x:print()
-
+	local attach_mdata = '<table class="attachment">.*<tr>.*<td>.*<b>.*</b>.*</td>.*</tr>.*'..
+		'<tr>.*<td>.*<a>.*</a>.*<A>.*<img>.*</a>.*<br>.*<b>.*</b>.*<br>.*'..
+		'<br>.*</td>.*<td>.*<A>.*</a>.*<br>.*<br>.*<a>.*</a>.*<sup>.*</sup>.*'..
+		'<br>.*<br>.*<a>.*</a>.*<br>.*</td>.*</tr>.*</table>'
+	
+	local attach_mexp = "<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>O"..
+		"<O>X<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O"..
+		"<O>O<O>O<O>O<O>O<O>O<O>O<O>"
+	
+	-- retrieve the attachments' url list
+	local x = mlex.match(attach,attach_mdata,attach_mexp)
+	
 	local n = x:count()
-	local attach = {}
-	for i = 1,n do
-    		local url = string.match(x:get(0,i-1),'HREF=..([^"]*)"')
+	local attachments = {}
+	for i = 0,n-1 do
+    		local url = string.match(x:get(0,i),'HREF=..([^"]*)"')
 		url = string.gsub(url,"&amp;", "&")
-		--print("\nattach:"..n.."http://" .. b:wherearewe().."/" .. url)
-		attach[x:get(1,i-1)] = "http://" .. b:wherearewe().."/" .. url
-		table.setn(attach,table.getn(attach) + 1)
+		-- print("\nattachments:"..n.."http://" .. b:wherearewe().."/" .. url)
+		-- attachments[] = "http://" .. b:wherearewe().."/" .. url
+		attachments[x:get(1,i)] = "http://" .. b:wherearewe().."/" .. url
+		-- table.insert(attachments, "http://"..b:wherearewe().."/"..url)
 	end
-	
-	
+	--[[
+	print("--- "..#attachments)	
+	for k,v in pairs(attachments) do print(k,v) end
+	print("--- "..#attachments)
+	table.foreach(attachments, print)
+		print("--- "..#attachments)
+	table.foreach(attachments, function(k,v) print(k,v) end)
+	]]
 	-- mangles the body
-	--local body,body_html = mangle_body(body)
+	-- local body,body_html = mangle_body(body)
 	local body_html = body
 	local body = nil
 
 	-- extracts the important part
-	local from,to = string.find(f,strings.head_begin)
-	local f1 = string.sub(f,to+1,-1)
-	local from1,to1 = string.find(f1,strings.head_end)
+	local _,head_begin = string.find(f,"<!%-%-Corpo Leggi messaggio%-%->")
 
-	local head = string.sub(f1,1,from1-1)
-
+	local raw_head = string.sub(f,head_begin,body_pre_begin)
+	
+	-- print("--- mail head ---\n"..raw_head.."\n--- end head ---")
 
 	-- mangles the header
-	head = mangle_head(head)
+	local head = mangle_head(raw_head)
 
-	return head,body,body_html,attach
+	return head,body,body_html,attachments
 end
 
 -- ------------------------------------------------------------------------- --
@@ -659,4 +639,3 @@ end
 
 -- EOF
 -- ************************************************************************** --
-

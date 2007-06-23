@@ -1,3 +1,4 @@
+- osx metadata now reportthe correct version information
 22/06/2007 0.2.5
 - fixed an ancestral wrong compilation flag for regexes, no more REG_NEWLINE
 - hotmail.lua: bumped to make them released again (gareuselesinge)

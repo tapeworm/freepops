@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2c"
+PLUGIN_VERSION = "0.0.2d"
 PLUGIN_NAME = "fastmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -476,7 +476,7 @@ function user(pstate, username)
     return POPSERVER_ERR_OK
   end
 
-  start = string.match(mbox, globals.strSentPat)
+  local start = string.match(mbox, globals.strSentPat)
   if start ~= nil then
     internalState.strMBox = globals.strSent
     return POPSERVER_ERR_OK

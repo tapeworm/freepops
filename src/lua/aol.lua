@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.0"
+PLUGIN_VERSION = "0.1.0a"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -264,8 +264,13 @@ function loginAOL()
   end
   postdata = postdata .. "&" .. 
     string.format(globals.strLoginPostData, username, password)
-  url = "https://" .. browser:wherearewe() .. url
+  --url = "https://" .. browser:wherearewe() .. url
   body, err = browser:post_uri(url, postdata)
+
+  if (err ~= nil) then 
+    log.error_print("Unexpected error (" .. url .. "): " .. err)
+    return POPSERVER_ERR_AUTH
+  end
 
   -- We'll be redirected back to a page which redirects us to a non-ssl
   -- page.

@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.0"
+PLUGIN_VERSION = "0.2.1"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -758,6 +758,10 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "Ã¬", "ì")
 	head = string.gsub(head, "Ã²", "ò")
 	head = string.gsub(head, "Ã¹", "ù")
+	-- patch by galdom
+	head = string.gsub(head, "\\&#39;", "'")
+	head = string.gsub(head, "&amp;", "&")
+
 	
 	-- locate body
 	local _, begin_body = string.find(data, tin_string.body_start)
@@ -791,6 +795,11 @@ function tin_parse_webmessage(wherearewe, data)
 		body = string.gsub(body, "Ã¹", "ù")
 	end
 	
+	-- Added to nvhs to delete scroll bar
+	if not (body_html == nil) then 
+		body_html  = string.gsub(body_html, "auto;width:570px;height", "auto;height")
+	end
+
 	-- extract attachments
 	local x = mlex.match(data, tin_string.attachE, tin_string.attachG) 
 	x:print()

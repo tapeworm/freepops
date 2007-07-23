@@ -440,7 +440,6 @@ freepops.MODULES_MAP["xy.com.tw"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["yankeeman.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["yyhmail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["verizonmail.com"]		= {name="mailcom.lua"}
-freepops.MODULES_MAP["lycos.com" ]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["unforgettable.com" ]	= {name="mailcom.lua"}
 freepops.MODULES_MAP["mail.org" ]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["italymail.com" ]		= {name="mailcom.lua"}

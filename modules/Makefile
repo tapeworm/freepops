@@ -46,20 +46,12 @@ clean: src/config
 
 doc: all
 	$(H)doxygen
+	$(H)rm -rf html_lua
 	$(H)mkdir html_lua 2> /dev/null || true
 	$(H)find src -name \*.luadoc -exec cp \{\} $(PWD)/html_lua/ \;
-	$(H)cd $(PWD)/html_lua/;\
-		for X in *.luadoc ; do\
-			mv $$X `basename $$X | \
-				sed s/\.luadoc/_luadoc.lua/`;\
-		done
-	$(H)bin/luadoc  \
-		$(PWD)/html_lua/*_luadoc.lua \
-		$(PWD)/include/*.lua \
-		$(PWD)/include/*/*.lua \
-		$(PWD)/../src/lua/freepops.lua \
-		-d $(PWD)/html_lua/
-	$(H)rm $(PWD)/html_lua/*_luadoc.lua
+	$(H)cp include/*.lua include/*/*.lua ../src/lua/freepops.lua html_lua/
+	$(H)cd html_lua; luadoc --nomodules *.lua *.luadoc
+	$(H)rm html_lua/*.luadoc html_lua/*.lua
 	
 
 #########################################################################

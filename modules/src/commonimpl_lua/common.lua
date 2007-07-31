@@ -2,6 +2,34 @@
 -- Commonly used POP3 implementation. 
 -- These functions need a <B>stat(pstate)</B> 
 -- that checks if it called more than once.
+-- </p><p>
+-- The callback factory for retr and top:
+-- </p><p>
+-- A callback factory is a function that generates other functions. both retr
+-- and top need a callback. the callback is called when there is some data 
+-- to send to the client. this is done with popserver_callback(s,data) 
+-- where s is the data and data is the opaque data that is passed to 
+-- the retr/top function and is used internally by the popserve callbak. 
+-- no need to know what it is, but we have to pass it. 
+-- </p><p>
+-- The callback function must accept 2 args: the data to send and an optional 
+-- error message. if the data is nil it means the err contains the 
+-- relative error message. If s is "" it means that the trasmission 
+-- ended sucesfully (read: the socket has benn closed correclty). 
+-- </p><p>
+-- Here in the implementation <tt>a</tt> is an opaque data structure used by the
+-- stringhack module. the stringhack module implements some useful string 
+-- manipulation tasks. 
+-- tophack keeps track of how many lines have been 
+-- processed. If more than lines (we talk of lines of mail body) have 
+-- been processed the returned string will be trucated to the 
+-- correct line number. 
+-- dothack simply does a 'sed s/^\.$/../' but is really hard if the data 
+-- is not divided in lines as in our case (ip packets are not line oriented),
+-- so it is implemented in C for you. check_stop checks if the lines 
+-- amount of lines have already been processed.
+--
+
 
 MODULE_VERSION = "0.0.1"
 MODULE_NAME = "common"
@@ -84,33 +112,6 @@ end
 -- @param data userdata the data passed to the retr function.
 -- @return function the callback to use with b:pipe_uri().
 function retr_cb(data)
--- The callbach factory for retr
---
--- A callback factory is a function that generates other functions. both retr
--- and top need a callback. the callback is called when there is some data 
--- to send to the client. this is done with popserver_callback(s,data) 
--- where s is the data and data is the opaque data that is passed to 
--- the retr/top function and is used internally by the popserve callbak. 
--- no need to know what it is, but we have to pass it. 
---
--- The callback function must accept 2 args: the data to send and an optional 
--- error message. if the data is nil it means the err contains the 
--- relative error message. If s is "" it means that the trasmission 
--- ended sucesfully (read: the socket has benn closed correclty). 
--- 
--- Here a is an opaque data structure used by the
--- stringhack module. the stringhack module implements some useful string 
--- manipulation tasks. 
--- tophack keeps track of how many lines have been 
--- processed. If more than lines (we talk of lines of mail body) have 
--- been processed the returned string will be trucated to the 
--- correct line number. 
--- dothack simply does a 'sed s/^\.$/../' but is really hard if the data 
--- is not divided in lines as in our case (ip packets are not line oriented),
--- so it is implemented in C for you. check_stop checks if the lines 
--- amount of lines have already been processed.
---
-
 	local a = stringhack.new()
 	
 	return function(s,len)

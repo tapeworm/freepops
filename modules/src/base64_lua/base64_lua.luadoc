@@ -1,5 +1,6 @@
 ---
--- base64 encoding.
+-- base64 encoding
+--
 
 ---
 -- base64encodes the string.

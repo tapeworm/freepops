@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.1"
+PLUGIN_VERSION = "0.2.2"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -101,6 +101,9 @@ local tin_string = {
 	body_end = [[</div></td>%s*<td width="5"><spacer type="block" width="5" height="1"></td>%s*<td width="1" bgcolor="#FFFFFF"><spacer type="block" width="1" height="1"></td>%s*</tr>%s*</table>%s*<!%-%-FINE TABELLA LISTING MAIL%-%->]],
 	 attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
 	 attachG = "O<X>O<O>X<O>",
+	-- by nvhs for html image
+	 imageE = "<IMG alt.*/cp/ps/Mail/ViewAttachment.*>",
+	 imageG = "<X>",
 	-- The uri to delete some messages
 	--   whearewe(), domain, username, t, s, 
 	delete = "http://%s/cp/ps/Mail/Delete?d=%s&u=%s&t=%s&style=&l=it&s=%s",
@@ -806,15 +809,26 @@ function tin_parse_webmessage(wherearewe, data)
 	for i = 1, x:count() do
 		local url = x:get(0,i-1)
 		local name = x:get(1,i-1)
-
 		local name = string.match(name, "^(.*) %(")
-
-		local url = string.match(url, 
+		local url = string.match(url,
 			"href%s*=%s*'(/cp/ps/Mail/ViewAttachment[^']*)'")
 		
 		attach[name] = "http://"..wherearewe..url
 	end
+
+	-- by nvhs for html image
 	
+	local y = mlex.match(data, tin_string.imageE, tin_string.imageG)
+	-- y:print()
+	for i = 1, y:count() do
+		local url = y:get(0,i-1)
+		local name = "img"..i..".gif"
+		local url = string.match(url,
+			"src%s*=%s*\"(/cp/ps/Mail/ViewAttachment[^']*)\"")
+		attach[name] = "http://"..wherearewe..url
+		
+	end
+
 	return head, body, body_html, attach
 end
 

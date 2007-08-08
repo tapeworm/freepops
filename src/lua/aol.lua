@@ -5,9 +5,10 @@
 --  Written by Russell Schwager <russell822@yahoo.com>
 -- ************************************************************************** --
 
+
 -- Globals
 --
-PLUGIN_VERSION = "0.1.0a"
+PLUGIN_VERSION = "0.1.0b"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -17,16 +18,16 @@ PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
 PLUGIN_AUTHORS_CONTACTS = {"russell822 (at) yahoo (.) com"}
 PLUGIN_DOMAINS = { "@aol.com", "@aim.com"} 
 PLUGIN_PARAMETERS = 
-	{name="folder", description={
-		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox, gli altri valori possibili sono: Sent, Trash, Draft.]],
-		en=[[The folder you want to interact with. Default is Inbox, other values are: Sent, Trash, Draft.]]}
-	}
+        {name="folder", description={
+                it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox, gli altri valori possibili sono: Sent, Trash, Draft.]],
+                en=[[The folder you want to interact with. Default is Inbox, other values are: Sent, Trash, Draft.]]}
+        }
 PLUGIN_DESCRIPTIONS = {
-	it=[[
+        it=[[
 Questo plugin permette di scaricare la posta da mailbox con dominio tipo @netscape.net. 
 Per usare questo plugin dovrete usare il vostro indirizzo email completo come 
 nome utente e la vostra vera password come password.]],
-	en=[[
+        en=[[
 This plugin lets you download mail from @netscape.net mailboxes. 
 To use
 this plugin you have to use your full email address as the username
@@ -34,12 +35,15 @@ and your real password as the password.]]
 }
 
 
+
 -- TODO
 --
+
 
 -- ************************************************************************** --
 --  Global Strings
 -- ************************************************************************** --
+
 
 local globals = {
   -- Server URL
@@ -53,9 +57,11 @@ local globals = {
   strLoginPostData = "loginId=%s&password=%s",
   strLoginFailed = "Login Failed - Invalid User name and/or password",
 
+
   -- Logout
   --
   strLogout = "http://my.screenname.aol.com/_cqr/logout/mcLogout.tmpl?siteId=aolcomnewprod",
+
 
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem
   --
@@ -69,6 +75,7 @@ local globals = {
   --
   strLoginPageParamsPattern='goToLoginUrl.-Redir."([^"]+)"',
 
+
   -- Pattern to pull out the url's we need to go to set some cookies.
   --
   strLoginRetUrlPattern1='LANGUAGE="JavaScript" SRC="(http[^"]*)"',
@@ -76,6 +83,7 @@ local globals = {
   -- Pattern to find the next page of messages
   --
   strMsgListPrevPagePattern = '<A HREF="([^"]+)" CLASS="msglistbottomnav">Next</A>',
+
 
   -- Extract the server to post the login data to
   --
@@ -88,18 +96,23 @@ local globals = {
   --
   strMsgLineIDPattern = 'NAME="msguid" VALUE="([^"]+)"',
 
+
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
   strInbox = "SU5CT1g=",
   
+  strSpamNetscape = "U3BhbQ==",
   strTrashNetscape = "VHJhc2g=",
   strSentNetscape = "U2VudA==",
   strDraftNetscape = "RHJhZnQ=",
 
+
+  strSpamPat = "([Ss]pam)",
   strInboxPat = "([Nn]ew)",
   strSentPat = "([Ss]ent)",
   strTrashPat = "([Tt]rash)",
   strDraftPat = "([Dd]raft)",
+
 
   -- Command URLS
   --
@@ -107,14 +120,17 @@ local globals = {
   strCmdDelete = "http://%s/msglist.adp?folder=%s&start=1&cmd=deletemsgs", --&msguid=X",
   strCmdMsgView = "http://%s/attachment/%s/%s/",
 
+
   -- Site IDs
   --
   strNetscapeID = "vnscpenusmail",
 }
 
+
 -- ************************************************************************** --
 --  State - Declare the internal state of the plugin.  It will be serialized and remembered.
 -- ************************************************************************** --
+
 
 internalState = {
   bStatDone = false,
@@ -128,17 +144,21 @@ internalState = {
   strSiteId = "",
 }
 
+
 -- ************************************************************************** --
 --  Logging functions
 -- ************************************************************************** --
+
 
 -- Set to true to enable Raw Logging
 --
 local ENABLE_LOGRAW = false
 
+
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
 local EOL = "\r\n"
+
 
 -- The raw logging function
 --
@@ -147,6 +167,7 @@ log.raw = function ( line, data )
   if not ENABLE_LOGRAW then
     return
   end
+
 
   local out = assert(io.open("log_raw.txt", "ab"))
   out:write( EOL .. os.date("%c") .. " : " )
@@ -159,9 +180,11 @@ log.raw = function ( line, data )
   assert(out:close())
 end
 
+
 -- ************************************************************************** --
 --  Helper functions
 -- ************************************************************************** --
+
 
 -- Serialize the state
 --
@@ -174,10 +197,11 @@ end
 --
 function serialize_state()
   internalState.bStatDone = false;
-	
+        
   return serial.serialize("internalState", internalState) ..
-		internalState.browser:serialize("internalState.browser")
+                internalState.browser:serialize("internalState.browser")
 end
+
 
 -- Computes the hash of our state.  Concate the user, domain, mailbox and password
 --
@@ -185,8 +209,9 @@ function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
          (internalState.strMBox or "") .. "~"  ..
-	 internalState.strPassword -- this asserts strPassword ~= nil
+         internalState.strPassword -- this asserts strPassword ~= nil
 end
+
 
 -- Issue the command to login to AOL
 --
@@ -197,9 +222,11 @@ function loginAOL()
     return POPSERVER_ERR_OK
   end
 
+
   -- Create a browser to do the dirty work
   --
   internalState.browser = browser.new()
+
 
   -- Define some local variables
   --
@@ -209,27 +236,32 @@ function loginAOL()
   local url = string.format(globals.strLoginUrl, internalState.strSiteId)
   local xml = globals.strFolderQry
   local browser = internalState.browser
-	
+        
   -- DEBUG - Set the browser in verbose mode
   --
 --  browser:verbose_mode()
+
 
   -- Enable SSL
   --
   browser:ssl_init_stuff()
 
+
   -- Let the browser know to follow refresh headers
   --
   browser:setFollowRefreshHeader(true)
+
 
   -- Retrieve the login page.
   --
   local body, err = browser:get_uri(url)
 
+
   -- We need to add a cookie.
   --
   --local c = cookie.parse_cookies("MC_COOKIETEST=YES; path=/", browser:wherearewe())
   browser:add_cookie(url, "MC_COOKIETEST=YES; path=/")
+
 
   -- No connection
   --
@@ -237,6 +269,7 @@ function loginAOL()
     log.error_print("Login Failed: Unable to make connection")
     return POPSERVER_ERR_NETWORK
   end
+
 
   -- The login page sends us to a page that tests cookies and javascript.  We
   -- don't run javascript and thus must do the work here of pulling out the URL that
@@ -247,6 +280,7 @@ function loginAOL()
     return POPSERVER_ERR_UNKNOWN
   end
   body, err = browser:get_uri(url)
+
 
   -- We are now at the signin page.  Let's pull out the action of the signin form and
   -- all the hidden variables.  When done, we'll post the data along with the user and password.
@@ -267,10 +301,12 @@ function loginAOL()
   --url = "https://" .. browser:wherearewe() .. url
   body, err = browser:post_uri(url, postdata)
 
+
   if (err ~= nil) then 
     log.error_print("Unexpected error (" .. url .. "): " .. err)
     return POPSERVER_ERR_AUTH
   end
+
 
   -- We'll be redirected back to a page which redirects us to a non-ssl
   -- page.
@@ -281,6 +317,7 @@ function loginAOL()
     return POPSERVER_ERR_AUTH  
   end  
   body, err = browser:get_uri(url)
+
 
   -- This is where things get a little hokey.  AOL returns a page with three javascript
   -- links that need to be "GET'ed" and then a form that needs to be submitted.  We don't
@@ -296,6 +333,7 @@ function loginAOL()
       browser:add_cookie(value, "MC_CMP_ESK=" .. cval .. "; domain=.aol.com; path=/")
     end
   end
+
 
   url = string.match(body, globals.strLoginPostUrlPattern3)
   local postdata = nil
@@ -313,12 +351,14 @@ function loginAOL()
   end  
   body, err = browser:post_uri(url, postdata)
 
+
   -- Shouldn't happen but you never know
   --
   if body == nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
   end
+
 
   -- We should be logged in now! Let's check and make sure.
   --
@@ -332,6 +372,7 @@ function loginAOL()
   --
   internalState.strMailServer = browser:wherearewe()
 
+
   -- DEBUG Message
   --
   log.dbg("AOL Server: " .. internalState.strMailServer .. "\n")
@@ -339,16 +380,18 @@ function loginAOL()
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true
-	
+        
   -- Debug info
   --
   log.dbg("Created session for " .. 
     internalState.strUser .. "@" .. internalState.strDomain .. "\n")
 
+
   -- Return Success
   --
   return POPSERVER_ERR_OK
 end
+
 
 -- Download a single message
 --
@@ -359,7 +402,7 @@ function downloadMsg(pstate, msg, nLines, data)
   if retCode ~= POPSERVER_ERR_OK then 
     return retCode 
   end
-	
+        
   -- Local Variables
   --
   local browser = internalState.browser
@@ -368,9 +411,11 @@ function downloadMsg(pstate, msg, nLines, data)
   local url = string.format(globals.strCmdMsgView, internalState.strMailServer,
     internalState.strMBox, uidl);
 
+
   -- Debug Message
   --
   log.dbg("Getting message: " .. uidl .. ", URL: " .. url)
+
 
   -- Define a structure to pass between the callback calls
   --
@@ -379,44 +424,52 @@ function downloadMsg(pstate, msg, nLines, data)
     --
     bFirstBlock = true,
 
+
     -- String hacker
     --
     strHack = stringhack.new(),
+
 
     -- Lines requested (-2 means not limited)
     --
     nLinesRequested = nLines,
 
+
     -- Lines Received - Not really used for anything
     --
     nLinesReceived = 0
   }
-	
+        
   -- Define the callback
   --
   local cb = downloadMsg_cb(cbInfo, data)
+
 
   -- Start the download on the body
   -- 
   local f, _ = browser:pipe_uri(url, cb)
 
+
   -- To be safe, add a blank line
   --
   popserver_callback("\r\n\0", data)
 
+
   return POPSERVER_ERR_OK
 end
+
 
 -- Callback for the retr function
 --
 function downloadMsg_cb(cbInfo, data)
-	
+        
   return function(body, len)
     -- Are we done with Top and should just ignore the chunks
     --
     if (cbInfo.nLinesRequested ~= -2 and cbInfo.nLinesReceived == -1) then
       return 0, nil
     end
+
 
     -- Clean up the end of line and other things.  In the HTML portion of a message
     -- AOL encodes it with quoted-printable.  Let's fix the easy stuff here.  This will
@@ -431,10 +484,12 @@ function downloadMsg_cb(cbInfo, data)
 --      body = string.gsub(body, "=20", " ")
 --      body = string.gsub(body, "=3[dD]", "=")
 
+
     -- Perform our "TOP" actions
     --
     if (cbInfo.nLinesRequested ~= -2) then
       body = cbInfo.strHack:tophack(body, cbInfo.nLinesRequested)
+
 
       -- Check to see if we are done and if so, update things
       --
@@ -449,38 +504,45 @@ function downloadMsg_cb(cbInfo, data)
       end
     end
 
+
     -- End the strings properly
     --
     body = cbInfo.strHack:dothack(body) .. "\0"
 
+
     -- Send the data up the stream
     --
     popserver_callback(body, data)
-			
+                        
     return len, nil
   end
 end
+
 
 -- ************************************************************************** --
 --  Pop3 functions that must be defined
 -- ************************************************************************** --
 
+
 -- Extract the user, domain and mailbox from the username
 --
 function user(pstate, username)
-	
+        
   -- Get the user, domain, and mailbox
   -- TODO:  mailbox - for now, just inbox
   --
   local domain = freepops.get_domain(username)
   local user = freepops.get_name(username)
 
+
   internalState.strDomain = domain
   internalState.strUser = user
+
 
   -- Set the site id
   -- 
   internalState.strSiteId = globals.strNetscapeID
+
 
   -- Get the folder
   --
@@ -489,28 +551,38 @@ function user(pstate, username)
     internalState.strMBox = globals.strInbox
     return POPSERVER_ERR_OK
   end
-
-  start = string.match(mbox, globals.strSentPat)
+   
+  local start = string.match(mbox, globals.strSpamPat)
+  if start ~= nil then
+    internalState.strMBox = globals.strSpamNetscape
+    return POPSERVER_ERR_OK
+  end
+  
+  local start = string.match(mbox, globals.strSentPat)
   if start ~= nil then
     internalState.strMBox = globals.strSentNetscape
     return POPSERVER_ERR_OK
   end
 
-  start = string.match(mbox, globals.strTrashPat)
+
+  local start = string.match(mbox, globals.strTrashPat)
   if start ~= nil then
     internalState.strMBox = globals.strTrashNetscape
     return POPSERVER_ERR_OK
   end
 
-  start = string.match(mbox, globals.strDraftPat)
+
+  local start = string.match(mbox, globals.strDraftPat)
   if start ~= nil then
     internalState.strMBox = globals.strDraftNetscape
     return POPSERVER_ERR_OK
   end
 
+
   -- TODO - set the other mailbox here and find it
   -- when we log in.
   -- 
+
 
   -- Defaulting to the inbox
   --
@@ -519,17 +591,21 @@ function user(pstate, username)
   return POPSERVER_ERR_OK
 end
 
+
 -- Perform login functionality
 --
 function pass(pstate, password)
+
 
   -- Store the password
   --
   internalState.strPassword = password
 
+
   -- Get a session
   --
   local sessID = session.load_lock(hash())
+
 
   -- See if we already have a session.  We want to prevent
   -- multiple sessions for a given account
@@ -547,7 +623,7 @@ function pass(pstate, password)
         "@" .. internalState.strDomain .. "\n")
       return POPSERVER_ERR_LOCKED
     end
-	
+        
     -- Load the session which looks to be a function pointer
     --
     local func, err = loadstring(sessID)
@@ -556,14 +632,15 @@ function pass(pstate, password)
         internalState.strUser .. "@" .. internalState.strDomain .. "): ".. err)
       return loginAOL()
     end
-		
+                
     log.dbg("Session loaded - Account: " .. internalState.strUser .. 
       "@" .. internalState.strDomain .. "\n")
+
 
     -- Execute the function saved in the session
     --
     func()
-		
+                
     return POPSERVER_ERR_OK
   else
     -- Create a new session by logging in
@@ -572,12 +649,14 @@ function pass(pstate, password)
   end
 end
 
+
 -- Quit abruptly
 --
 function quit(pstate)
   session.unlock(hash())
   return POPSERVER_ERR_OK
 end
+
 
 -- Update the mailbox status and quit
 --
@@ -589,15 +668,18 @@ function quit_update(pstate)
     return retCode 
   end
 
+
   -- Local Variables
   --
   local browser = internalState.browser
   local cnt = get_popstate_nummesg(pstate)
   local dcnt = 0
 
+
   local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer, 
     internalState.strMBox)
   local baseUrl = cmdUrl
+
 
   -- Cycle through the messages and see if we need to delete any of them
   -- 
@@ -605,6 +687,7 @@ function quit_update(pstate)
     if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
       cmdUrl = cmdUrl .. "&msguid=" .. get_mailmessage_uidl(pstate, i) 
       dcnt = dcnt + 1
+
 
       -- Send out in a batch of 5
       --
@@ -625,6 +708,7 @@ function quit_update(pstate)
     end
   end
 
+
   -- Send whatever is left over
   --
   if dcnt > 0 and dcnt < 5 then
@@ -637,9 +721,11 @@ function quit_update(pstate)
     end
   end
 
+
   -- Log out
   --
   browser:get_uri(globals.strLogout)
+
 
   -- AOL acts retarded if we save the session.  We'll remove it and
   -- force the browser to log out.
@@ -647,20 +733,24 @@ function quit_update(pstate)
   session.remove(hash())
   session.unlock(hash())
 
+
   log.dbg("Session removed - Account: " .. internalState.strUser .. 
     "@" .. internalState.strDomain .. "\n")
   return POPSERVER_ERR_OK
 end
 
+
 -- Stat command - Get the number of messages and their size
 --
 function stat(pstate)
+
 
   -- Have we done this already?  If so, we've saved the results
   --
   if internalState.bStatDone then
     return POPSERVER_ERR_OK
   end
+
 
   -- Local variables
   -- 
@@ -670,13 +760,15 @@ function stat(pstate)
     internalState.strMBox);
   local baseUrl = cmdUrl
 
+
   -- Debug Message
   --
   log.dbg("Stat URL: " .. cmdUrl .. "\n");
-		
+                
   -- Initialize our state
   --
   set_popstate_nummesg(pstate, nMsgs)
+
 
   -- Local function to process the list of messages, getting id's and sizes
   --
@@ -687,6 +779,7 @@ function stat(pstate)
       -- Hard Code the size.
       --
       local size = 4096
+
 
       -- Save the information
       --
@@ -699,6 +792,7 @@ function stat(pstate)
     
     return true, nil
   end 
+
 
   -- Local Function to check for more pages of messages.  AOL lists all
   -- its messages on one page (but Netscape does in pages of 25)
@@ -716,6 +810,7 @@ function stat(pstate)
     end
   end
 
+
   -- Local Function to get the list of messages
   --
   local function funcGetPage()  
@@ -723,12 +818,14 @@ function stat(pstate)
     --
     log.dbg("Debug - Getting page: ".. cmdUrl)
 
+
     -- Get the page and check to see if we got results
     --
     local body, err = browser:get_uri(cmdUrl)
     if body == nil then
       return body, err
     end
+
 
     -- Is the session expired
     --
@@ -739,10 +836,12 @@ function stat(pstate)
       log.dbg("Session expired.  Attempting to reconnect - Account: " .. internalState.strUser .. 
         "@" .. internalState.strDomain .. "\n")
 
+
       -- Invalidate the session
       --
       internalState.bLoginDone = nil
       session.remove(hash())
+
 
       -- Try Logging back in
       --
@@ -750,20 +849,22 @@ function stat(pstate)
       if status ~= POPSERVER_ERR_OK then
         return nil, "Session expired.  Unable to recover"
       end
-	
-      -- Reset the local variables		
+        
+      -- Reset the local variables              
       --
       browser = internalState.browser
       cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
         internalState.strMBox)
 
+
       -- Retry to load the page
       --
       return browser:get_uri(cmdUrl)
     end
-		
+                
     return body, err
   end
+
 
 
   -- Run through the pages and pull out all the message pieces from
@@ -774,15 +875,16 @@ function stat(pstate)
     session.remove(hash())
     return POPSERVER_ERR_UNKNOWN
   end
-	
+        
   -- Update our state
   --
   internalState.bStatDone = true
-	
+        
   -- Return that we succeeded
   --
   return POPSERVER_ERR_OK
 end
+
 
 -- Fill msg uidl field
 --
@@ -790,11 +892,13 @@ function uidl(pstate,msg)
   return common.uidl(pstate, msg)
 end
 
+
 -- Fill all messages uidl field
 --
 function uidl_all(pstate)
   return common.uidl_all(pstate)
 end
+
 
 -- Fill msg size
 --
@@ -802,11 +906,13 @@ function list(pstate,msg)
   return common.list(pstate, msg)
 end
 
+
 -- Fill all messages size
 --
 function list_all(pstate)
   return common.list_all(pstate)
 end
+
 
 -- Unflag each message marked for deletion
 --
@@ -814,17 +920,20 @@ function rset(pstate)
   return common.rset(pstate)
 end
 
+
 -- Mark msg for deletion
 --
 function dele(pstate,msg)
   return common.dele(pstate, msg)
 end
 
+
 -- Do nothing
 --
 function noop(pstate)
   return common.noop(pstate)
 end
+
 
 -- Retrieve the message
 --
@@ -833,12 +942,14 @@ function retr(pstate, msg, data)
   return POPSERVER_ERR_OK
 end
 
+
 -- Top Command (like retr)
 --
 function top(pstate, msg, nLines, data)
   downloadMsg(pstate, msg, nLines, data)
   return POPSERVER_ERR_OK
 end
+
 
 -- Plugin Initialization - Pretty standard stuff.  Copied from the manual
 --  
@@ -847,36 +958,42 @@ function init(pstate)
   --
   log.dbg(PLUGIN_NAME .. "(" .. PLUGIN_VERSION ..") found!\n")
 
+
   -- Import the freepops name space allowing for us to use the status messages
   --
   freepops.export(pop3server)
-	
+        
   -- Load dependencies
   --
+
 
   -- Serialization
   --
   require("serial")
 
+
   -- Browser
   --
   require("browser")
-	
+        
   -- MIME Parser/Generator
   --
   require("mimer")
 
+
   -- Common module
   --
   require("common")
-	
+        
   -- Run a sanity check
   --
   freepops.set_sanity_checks()
 
+
   -- Let the log know that we have initialized ok
   --
   log.dbg(PLUGIN_NAME .. "(" .. PLUGIN_VERSION ..") initialized!\n")
+
 
 
   -- Everything loaded ok
@@ -884,5 +1001,6 @@ function init(pstate)
   return POPSERVER_ERR_OK
 end
 
+
 -- EOF
--- ************************************************************************** --
+-- ************************************************************************** 

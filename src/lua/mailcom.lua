@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.05"
+PLUGIN_VERSION = "0.1.06"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -90,6 +90,11 @@ pulling messages.]]
 		en = [[ Parameter is used to tell the plugin not to change the mail options
 on the mail.com website.  If you use this option, you must have full headers enabled in your
 options.  If the value is 1, the behavior is turned on.]]
+		}
+	},
+	{name = "usemailcomloginpage", description = {
+		en = [[ Parameter is used to tell the plugin to use the login page on mail.com 
+instead of trying to figure it out by the domain. If the value is 1, the behavior is turned on.]]
 		}
 	},
 
@@ -180,6 +185,7 @@ internalState = {
   bEmptyTrash = false,
   bOptionOverride = false,
   loginTime = nil,
+  bUseMailComLoginPage = false,
 }
 
 -- ************************************************************************** --
@@ -300,8 +306,8 @@ function login()
   local url = "";
   local post = string.format(globals.strLoginPostData, username, domain, password, domain)
 
-  if (domain == "email.com" or domain == "iname.com" or domain ==  
-"mail.org") then
+  if (domain == "email.com" or domain == "iname.com" or domain == "mail.org" or 
+        internalState.bUseMailComLoginPage) then
     url = string.format(globals.strLoginPage, "www2", "mail.com")
   elseif (domain == "usa.com" or domain == "mexico.com") then
     url = string.format(globals.strLoginPage, "mail", domain)
@@ -584,6 +590,15 @@ function user(pstate, username)
   if val == "1" then
     log.dbg("Mail.com: Mail preferences will not be changed on website.")
     internalState.bOptionOverride = true
+  end
+
+
+  -- Should we force the login code to use mail.com's default login page.
+  --
+  local val = (freepops.MODULE_ARGS or {}).usemailcomloginpage or 0
+  if val == "1" then
+    log.dbg("Mail.com: Use mail.com's login page.")
+    internalState.bUseMailComLoginPage = true
   end
 
   return POPSERVER_ERR_OK

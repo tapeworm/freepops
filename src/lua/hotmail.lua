@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.81c"
+PLUGIN_VERSION = "0.1.82"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -48,6 +48,12 @@ pulls as unread.  If the value is 1, the behavior is turned on.]]
 	{name = "maxmsgs", description = {
 		en = [[
 Parameter is used to force the plugin to only download a maximum number of messages. ]]
+		}	
+	},
+	{name = "domain", description = {
+		en = [[
+Parameter is used to override the domain in the email address.  This is used so that users don't
+need to add a mapping to config.lua for a hosted hotmail account. ]]
 		}	
 	},
 }
@@ -168,6 +174,7 @@ local globals = {
   -- Pattern used by Stat to get the next page in the list of messages
   --
   strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
+  strMsgListNextPagePatLiveLight = '<a href="([^"]+)"><img class="NextPageGlyph" src="http://.-i_nextpage.gif" [^/]+/></a>',
 
   -- Pattern used to detect a bad STAT page.
   --
@@ -641,7 +648,7 @@ function loginHotmail()
 
     if (internalState.strMBoxName == "Inbox") then
       str = inboxId
-    elseif (internalState.strMBoxName == "Junk") then
+    elseif (internalState.strMBoxName == "Junk" or internalState.strMBoxName == "Junk E%-Mail") then
       str = internalState.strJunkId
     else
       str = getFolderId(inboxId)
@@ -1026,6 +1033,14 @@ function user(pstate, username)
 
   internalState.strDomain = domain
   internalState.strUser = user
+
+  -- Override the domain variable if it is set in the login parameter
+  --
+  local val = (freepops.MODULE_ARGS or {}).domain or nil
+  if val ~= nil then
+    log.dbg("Hotmail: Using overridden domain: " .. val)
+    internalState.strDomain = val
+  end
 
   -- If the flag emptyTrash is set to 1 ,
   -- the trash will be emptied on 'quit'
@@ -1460,6 +1475,7 @@ function stat(pstate)
       internalState.strCrumb, internalState.strMBox);
   end
   local baseUrl = cmdUrl
+  local nextPageUrl = nil
 
   -- Keep a list of IDs that we've seen.  With yahoo, their message list can 
   -- show messages that we've already seen.  This, although a bit hacky, will
@@ -1566,6 +1582,10 @@ function stat(pstate)
   local function funcProcessLiveLight(body)
     lastNMsgs = nMsgs
 
+    -- Figure out if there are more pages with messages
+    --
+    nextPageUrl = string.match(body, globals.strMsgListNextPagePatLiveLight)
+
     -- Tokenize out the message ID and size for each item in the list
     --    
     for uidl, size in string.gfind(body, globals.strMsgLiveLightPattern) do
@@ -1624,6 +1644,16 @@ function stat(pstate)
   -- change the command url
   --
   local function funcCheckForMorePages(body) 
+    -- 
+    if (internalState.bLiveLightGUI) then
+      if (nextPageUrl == nil) then
+        return true
+      else
+        cmdUrl = "http://" .. internalState.strMailServer .. "/mail/" .. nextPageUrl
+        return false
+      end		
+    end
+
     -- See if there are messages remaining
     --
     if nMsgs < nTotMsgs then

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.82"
+PLUGIN_VERSION = "0.1.83"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -804,7 +804,7 @@ function downloadMsg(pstate, msg, nLines, data)
   -- Handle whatever is left in the buffer
   --
   local body = cbInfo.strBuffer
-  if (string.len(body) > 0 and cbInfo.nLinesReceived == -2) then
+  if (string.len(body) > 0 and cbInfo.nLinesRequested == -2) then
     log.raw("Message: " .. cbInfo.cb_uidl .. ", left over buffer being processed: " .. body)
     body = cleanupBody(body, cbInfo)
     
@@ -814,7 +814,7 @@ function downloadMsg(pstate, msg, nLines, data)
     end
     body = cbInfo.strHack:dothack(body) .. "\0"
     popserver_callback(body, data)
-  elseif (cbInfo.bEndReached == false and cbInfo.nLinesReceived == -2) then
+  elseif (cbInfo.bEndReached == false and cbInfo.nLinesRequested == -2) then
       popserver_callback("\r\n\0", data)
   end
 
@@ -998,6 +998,52 @@ function cleanupBody(body, cbInfo)
 
   -- Clean up the end of line, and replace HTML tags
   --
+  body = string.gsub(body, "&#9;", "\t")
+  body = string.gsub(body, "&#09;", "\t")
+  body = string.gsub(body, "&#10;", "\n")
+  body = string.gsub(body, "&#13;", "\r")
+  body = string.gsub(body, "&#32;", " ")
+  body = string.gsub(body, "&#33;", "!")
+  body = string.gsub(body, "&#35;", "#")
+  body = string.gsub(body, "&#36;", "$")
+  body = string.gsub(body, "&#37;", "%")
+  body = string.gsub(body, "&#38;", "&")
+  body = string.gsub(body, "&#39;", "'")
+  body = string.gsub(body, "&#40;", "(")
+  body = string.gsub(body, "&#41;", ")")
+  body = string.gsub(body, "&#42;", "*")
+  body = string.gsub(body, "&#43;", "+")
+  body = string.gsub(body, "&#44;", ",")
+  body = string.gsub(body, "&#45;", "-")
+  body = string.gsub(body, "&#46;", ".")
+  body = string.gsub(body, "&#47;", "/")
+  body = string.gsub(body, "&#58;", ":")
+  body = string.gsub(body, "&#59;", ";")
+  body = string.gsub(body, "&#60;", "<")
+
+  body = string.gsub(body, "&#61;2E", ".")
+  body = string.gsub(body, "&#61;3D", "=")
+  body = string.gsub(body, "&#61;20", " ")
+  body = string.gsub(body, "&#61;09", "\t")
+  body = string.gsub(body, "&#61;96", "-")
+  body = string.gsub(body, "&#61;\r\n", "")
+  body = string.gsub(body, "&#61;92", "'")
+
+  body = string.gsub(body, "&#61;", "=")
+  body = string.gsub(body, "&#62;", ">")
+  body = string.gsub(body, "&#63;", "?")
+  body = string.gsub(body, "&#64;", "@")
+  body = string.gsub(body, "&#91;", "[")
+  body = string.gsub(body, "&#92;", "\\")
+  body = string.gsub(body, "&#93;", "]")
+  body = string.gsub(body, "&#94;", "^")
+  body = string.gsub(body, "&#95;", "_")
+  body = string.gsub(body, "&#96;", "`")
+  body = string.gsub(body, "&#123;", "{")
+  body = string.gsub(body, "&#124;", "|")
+  body = string.gsub(body, "&#125;", "}")
+  body = string.gsub(body, "&#126;", "~")
+
   body = string.gsub(body, "\r", "")
   body = string.gsub(body, "\n", "\r\n")
   body = string.gsub(body, "&amp;", "&")

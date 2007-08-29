@@ -6,11 +6,12 @@
 --  yahoo.it added by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
 --  yahoo.ie added by Bruce Williamson <aztrix@yahoo.com>
 --  Contributions by Przemyslaw Wroblewski <przemyslaw.wroblewski@gmail.com>
+--  Contributions from Kevin Edwards
 -- ************************************************************************** --
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9j"
+PLUGIN_VERSION = "0.1.9k"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -188,7 +189,7 @@ local globals = {
   -- Command URLS
   --
   strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date&reset=1&Norder=up",
-  strCmdMsgView = "%sym/ShowLetter?box=%s&PRINT=1&Nhead=f&toc=1&MsgId=%s&bodyPart=%s",
+  strCmdMsgView = "%sya/download?box=%s&PRINT=1&Nhead=f&MsgId=%s&bodyPart=%s",
   strCmdMsgWebView = "%sym/ShowLetter?box=%s&MsgId=%s",
   strCmdEmptyTrash = "%sym/ShowFolder?ET=1&", 
   strCmdEmptyBulk = "%sym/ShowFolder?EB=1&", 
@@ -705,6 +706,12 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   -- Define the callback
   --
   local cb = downloadMsg_cb(cbInfo, data)
+
+  -- Remove the SMTP envelope From_ line (Yahoo's mbox format) if it's first
+  --
+  if string.sub(headers,1,5) == "From " then
+    headers = string.gsub(headers, "From .-\n", "", 1);
+  end
 
   -- Remove the quote-printed encoding line from the header
   --

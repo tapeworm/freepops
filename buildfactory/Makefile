@@ -176,6 +176,9 @@ dist-deb-hackbpo:
 
 dist-deb-hackubuntu:
 	$(H)cd _deb_/freepops-$(VERSION);\
+	sed -e "/#/d" -e "0,/^$$/{/^$$/d}" < buildfactory/debian/freepops.templates \
+			> buildfactory/debian-ubuntu/freepops.templates
+	$(H)cd _deb_/freepops-$(VERSION);\
 		cp buildfactory/debian-ubuntu/* debian/
 
 dist-deb-etch: deb-preamble dist-deb-hacketch dist-deb-real

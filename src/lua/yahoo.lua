@@ -11,7 +11,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9k"
+PLUGIN_VERSION = "0.1.9l"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -22,7 +22,7 @@ PLUGIN_AUTHORS_CONTACTS =
 	{"russells (at) despammed (.) com",
          "ncocchiaro (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@yahoo.com", "@yahoo.ie", "@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
-                  "@yahoo.co.in", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
+                  "@yahoo.co.in", "@yahoo.co.id", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
                   "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com", "@yahoo.com.au",
 }
 
@@ -223,6 +223,7 @@ local globals = {
   strYahooCn = "cn",  -- China
   strYahooHk = "hk",  -- Hong Kong
   strYahooIn = "in",  -- India
+  strYahooId = "id",  -- Indonesia
   strYahooJp = "jp",  -- Japan
   strYahooKr = "kr",  -- Korea
   strYahooSg = "sg",  -- Singapore
@@ -1205,6 +1206,8 @@ function user(pstate, username)
     internalState.strIntFlag = globals.strYahooIt
   elseif domain == "yahoo.ca" then
     internalState.strIntFlag = globals.strYahooCa
+  elseif domain == "yahoo.co.id" then
+    internalState.strIntFlag = globals.strYahooId
   elseif domain == "yahoo.co.in" then
     internalState.strIntFlag = globals.strYahooIn
   elseif domain == "yahoo.fr" then

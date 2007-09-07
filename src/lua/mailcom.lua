@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.06"
+PLUGIN_VERSION = "0.1.07"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -95,6 +95,11 @@ options.  If the value is 1, the behavior is turned on.]]
 	{name = "usemailcomloginpage", description = {
 		en = [[ Parameter is used to tell the plugin to use the login page on mail.com 
 instead of trying to figure it out by the domain. If the value is 1, the behavior is turned on.]]
+		}
+	},
+
+	{name = "loginpage", description = {
+		en = [[ Parameter is used to tell the plugin which login page to use.]]
 		}
 	},
 
@@ -186,6 +191,7 @@ internalState = {
   bOptionOverride = false,
   loginTime = nil,
   bUseMailComLoginPage = false,
+  strLoginPage = nil,
 }
 
 -- ************************************************************************** --
@@ -306,7 +312,9 @@ function login()
   local url = "";
   local post = string.format(globals.strLoginPostData, username, domain, password, domain)
 
-  if (domain == "email.com" or domain == "iname.com" or domain == "mail.org" or 
+  if (internalState.strLoginPage ~= nil) then
+    url = internalState.strLoginPage
+  elseif (domain == "email.com" or domain == "mail.com" or domain == "iname.com" or domain == "mail.org" or 
         internalState.bUseMailComLoginPage) then
     url = string.format(globals.strLoginPage, "www2", "mail.com")
   elseif (domain == "usa.com" or domain == "mexico.com") then
@@ -592,13 +600,20 @@ function user(pstate, username)
     internalState.bOptionOverride = true
   end
 
-
   -- Should we force the login code to use mail.com's default login page.
   --
   local val = (freepops.MODULE_ARGS or {}).usemailcomloginpage or 0
   if val == "1" then
     log.dbg("Mail.com: Use mail.com's login page.")
     internalState.bUseMailComLoginPage = true
+  end
+
+  -- Non-default login page
+  --
+  local val = (freepops.MODULE_ARGS or {}).loginpage or nil
+  if val ~= nil then
+    log.dbg("Mail.com: using login page of: " .. val)
+    internalState.strLoginPage = val
   end
 
   return POPSERVER_ERR_OK

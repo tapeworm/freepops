@@ -3,11 +3,13 @@
 --  
 --  Released under the GNU/GPL license
 --  Written by Russell Schwager <russell822@yahoo.com>
+--  Patched by cdmackie (2007-09-11). 
+--    Fixed: lite login, live delete, corrupt messages, stuck at 1st message, classic delete more than 1 message
 -- ************************************************************************** --
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.83"
+PLUGIN_VERSION = "0.1.84"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -150,10 +152,14 @@ local globals = {
   strFolderPattern = '<a href="[^"]+curmbox=([^&]+)&[^"]+" >', 
   strFolderLivePattern = '%("([^"]+)","',
   strFolderLiveInboxPattern = 'sysfldrinbox".-"([^"]+)"',
-  strFolderLiveLightInboxPattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&n=[^"]+"[^>]+><img src=".-i_inbox.gif"',
+  strFolderLiveLightInboxPattern = 'href="InboxLight%.aspx%?(FolderID=[^&]+[^"]+)"[^>]+><img src=".-i_inbox.gif"',
+  strFolderLiveLightFolderIdPattern = 'FolderID=([^&]+)&[.]*',
+  strFolderLiveLightNPattern = '&n=([^&]+)[.]*',
+  
   strFolderLiveLightTrashPattern = 'i_trash%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
   strFolderLiveLightJunkPattern = 'i_junkfolder%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
   strFolderLiveLightPattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&n=[^"]+" title="',  
+  strFolderLiveLightManageFoldersPattern = 'href="ManageFoldersLight%.aspx%?n=([^"]+)"',
 
   -- Pattern to determine if we have no messages
   --
@@ -174,7 +180,7 @@ local globals = {
   -- Pattern used by Stat to get the next page in the list of messages
   --
   strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
-  strMsgListNextPagePatLiveLight = '<a href="([^"]+)"><img class="NextPageGlyph" src="http://.-i_nextpage.gif" [^/]+/></a>',
+  strMsgListNextPagePatLiveLight = '<a href="([^"]+)"[^>]*><img src="[^_]*_nextpage.gif"',
 
   -- Pattern used to detect a bad STAT page.
   --
@@ -213,9 +219,10 @@ local globals = {
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
   strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=%s&au=%s", 
   strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
-  strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
-  strCmdDeleteLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&", 
-  strCmdDeletePostLiveLight = "__VIEWSTATE=&mt=%s&query=&MoveMessageSelector=%s&ToolbarActionItem=MoveMessageSelector&", -- SelectedMessages=%s",
+  -- strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
+  strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"0%%5C%%7C0%%5C%%7C8C9BDFF65883200%%5C%%7C00000000-0000-0000-0000-000000000001",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
+  strCmdDeleteLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&",
+  strCmdDeletePostLiveLight = "__VIEWSTATE=&mt=%s&MoveMessageSelector=%s&ToolbarActionItem=MoveMessageSelector&", -- SelectedMessages=%s",
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
   strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s&gs=true",
@@ -223,7 +230,7 @@ local globals = {
   strCmdLogout = "http://%s/cgi-bin/logout",
   strCmdLogoutLive = "http://%s/mail/logout.aspx",
   strCmdFolders = "http://%s/cgi-bin/folders?&curmbox=F000000001&a=%s",
-  strCmdFoldersLiveLight = "http://%s/mail/ManageFoldersLight.aspx",
+  strCmdFoldersLiveLight = "http://%s/mail/ManageFoldersLight.aspx?n=%s",
   strCmdMsgUnreadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=", 
   strCmdMsgUnreadLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MarkMessages&d=false,[%s]",
   strCmdEmptyTrashLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.EmptyFolder&ptid=0&a=&au=%s", 
@@ -662,9 +669,17 @@ function loginHotmail()
       log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
     end
   elseif (internalState.bLiveGUI == true and internalState.bLiveLightGUI == true) then 
-    local url = string.format(globals.strCmdFoldersLiveLight, internalState.strMailServer)
+    -- cdmackie: Live Light has an "n" value in the folders list that we need to get
+    local n = string.match(body, globals.strFolderLiveLightManageFoldersPattern)
+    local url = string.format(globals.strCmdFoldersLiveLight, internalState.strMailServer, n)    
+    
     body, err = browser:get_uri(url)
-    local inboxId = string.match(body, globals.strFolderLiveLightInboxPattern)
+    
+    -- cdmackie: we then extract the querystring and apend the InboxId with the N value
+    local inboxQueryString = string.match(body, globals.strFolderLiveLightInboxPattern)
+    local inboxId = string.match(inboxQueryString, globals.strFolderLiveLightFolderIdPattern)
+    local inboxN = string.match(inboxQueryString, globals.strFolderLiveLightNPattern)
+    inboxId = inboxId .. "&n=" .. inboxN
 
     if (internalState.strMBoxName == "Inbox") then
       str = inboxId
@@ -808,8 +823,27 @@ function downloadMsg(pstate, msg, nLines, data)
     log.raw("Message: " .. cbInfo.cb_uidl .. ", left over buffer being processed: " .. body)
     body = cleanupBody(body, cbInfo)
     
+    -- cdmackie: rather than test for </pre> to determine end, just set it seen
+    -- as we've reached end of buffer..and hotmail doesn't always send "</pre>"
+    cbInfo.bEndReached = true
+    cbInfo.nLinesReceived = -1;
+    -- apply same fixup from cleanupbody to remove dead tags
+    if (string.len(body) > 6) then
+      local idx = string.find(string.sub(body, -6), "([&<])")
+      if (idx ~= nil) then
+        idx = idx - 1
+        cbInfo.strBuffer = string.sub(body, -6 + idx)
+        local len = string.len(body) - 6 + idx
+        body = string.sub(body, 1, len)
+      end
+    end
+    -- make sure we end in a crlf
+    if (string.sub(body, -2, -1) ~= "\r\n") then
+      body = body .. "\r\n"
+    end
+    
     if (cbInfo.bEndReached == false) then
-      log.data("Forcing a CRLF to end the message as it isn't clear the message is ended properly")
+      log.dbg("Forcing a CRLF to end the message as it isn't clear the message is ended properly")
       popserver_callback("\r\n\0", data)
     end
     body = cbInfo.strHack:dothack(body) .. "\0"
@@ -829,9 +863,9 @@ function downloadMsg(pstate, msg, nLines, data)
     local post = string.format(globals.strCmdMsgReadLivePost, uidl, internalState.strMT)
     browser:post_uri(url, post)
   elseif internalState.bMarkMsgAsUnread == false and internalState.bLiveGUI and internalState.bLiveLightGUI then
-    log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as being done.")
+    log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as read.")
     url = string.format(globals.strCmdMsgReadLiveLight, internalState.strMailServer, internalState.strMBox, uidl)
-    browser:get_head(markReadUrl)
+    browser:get_head(url)
   elseif internalState.bMarkMsgAsUnread == true and internalState.bLiveGUI == true then
     log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as unread.")
     url = string.format(globals.strCmdMsgUnreadLive, internalState.strMailServer)
@@ -986,10 +1020,12 @@ function cleanupBody(body, cbInfo)
 
   -- Did we reach the end of the message
   --
-  if (string.find(body, "(</pre>)") ~= nil) then
-    cbInfo.nLinesReceived = -1;
-    cbInfo.bEndReached = true 
-  end
+  -- cdmackie: test for the end after we've processed the buffers instead
+  -- GetMessageSource sometimes returns only "</" instead of "</pre>"
+  --if (string.find(body, "(</pre>)") ~= nil) then
+  --  cbInfo.nLinesReceived = -1;
+  --  cbInfo.bEndReached = true 
+  --end
 
   -- The only parts we care about are within <pre>..</pre>
   --
@@ -1006,7 +1042,8 @@ function cleanupBody(body, cbInfo)
   body = string.gsub(body, "&#33;", "!")
   body = string.gsub(body, "&#35;", "#")
   body = string.gsub(body, "&#36;", "$")
-  body = string.gsub(body, "&#37;", "%")
+  -- cdmackie: this should be escaped
+  body = string.gsub(body, "&#37;", "%%")
   body = string.gsub(body, "&#38;", "&")
   body = string.gsub(body, "&#39;", "'")
   body = string.gsub(body, "&#40;", "(")
@@ -1021,13 +1058,14 @@ function cleanupBody(body, cbInfo)
   body = string.gsub(body, "&#59;", ";")
   body = string.gsub(body, "&#60;", "<")
 
-  body = string.gsub(body, "&#61;2E", ".")
-  body = string.gsub(body, "&#61;3D", "=")
-  body = string.gsub(body, "&#61;20", " ")
-  body = string.gsub(body, "&#61;09", "\t")
-  body = string.gsub(body, "&#61;96", "-")
-  body = string.gsub(body, "&#61;\r\n", "")
-  body = string.gsub(body, "&#61;92", "'")
+  -- cdmackie: these mess up QP and b64 encoded attachments
+  --body = string.gsub(body, "&#61;2E", ".")
+  --body = string.gsub(body, "&#61;3D", "=")
+  --body = string.gsub(body, "&#61;20", " ")
+  --body = string.gsub(body, "&#61;09", "\t")
+  --body = string.gsub(body, "&#61;96", "-")
+  --body = string.gsub(body, "&#61;\r\n", "")
+  --body = string.gsub(body, "&#61;92", "'")
 
   body = string.gsub(body, "&#61;", "=")
   body = string.gsub(body, "&#62;", ">")
@@ -1046,13 +1084,17 @@ function cleanupBody(body, cbInfo)
 
   body = string.gsub(body, "\r", "")
   body = string.gsub(body, "\n", "\r\n")
-  body = string.gsub(body, "&amp;", "&")
-  body = string.gsub(body, "&lt;", "<")
-  body = string.gsub(body, "&gt;", ">")
-  body = string.gsub(body, "&quot;", "\"")
+  -- cdmackie: these mess up QP attachments
+  --body = string.gsub(body, "&amp;", "&")
+  --body = string.gsub(body, "&lt;", "<")
+  --body = string.gsub(body, "&gt;", ">")
+  --body = string.gsub(body, "&quot;", "\"")
   body = string.gsub(body, "&#34;", "\"")
-  body = string.gsub(body, "&nbsp;", " ")
+  --body = string.gsub(body, "&nbsp;", " ")
   body = string.gsub(body, "<!%-%-%$%$imageserver%-%->", internalState.strImgServer)
+
+  -- cdmackie: POP protocol: lines starting with a dot must be escaped dotdot
+  body = string.gsub(body, "\r\n%.", "\r\n%.%.")
 
   -- We've now at least seen one block, attempt to clean up the headers
   --
@@ -1246,7 +1288,8 @@ function quit_update(pstate)
         post = postBase
       end
     elseif internalState.bLiveGUI == true and internalState.bLiveLightGUI and get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
-      uidlsLight = "SelectedMessages=" .. get_mailmessage_uidl(pstate, i) .. "&"
+      -- cdmackie: uidlsLight should be appended for multiple messages
+      uidlsLight = uidlsLight .. "SelectedMessages=" .. get_mailmessage_uidl(pstate, i) .. "&"
       dcnt = dcnt + 1
     elseif internalState.bLiveGUI == true and get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
       if i > 1 then
@@ -1281,7 +1324,7 @@ function quit_update(pstate)
     log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)
     local body, err = browser:post_uri(cmdUrl, post)
     if (body == nil) then -- M7 Only - DELETE SOON!
-      post = string.format(globals.strCmdDeletePostLiveOls, internalState.strMBox, 
+      post = string.format(globals.strCmdDeletePostLiveOld, internalState.strMBox, 
         internalState.strTrashId, uidls)
       local body, err = browser:post_uri(cmdUrl, post)
     end

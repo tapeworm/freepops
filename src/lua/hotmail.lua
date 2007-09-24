@@ -239,7 +239,7 @@ local globals = {
   strCmdEmptyTrashLiveLightPost = "__VIEWSTATE=&mt=%s&query=&MoveMessageSelector=&ToolbarActionItem=&InfoPaneActionItem=EmptyFolderConfirmYes",
   strCmdMsgReadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=&au=%s", 
   strCmdMsgReadLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MarkMessages&d=true,[%s]&v=1&mt=%s",
-  strCmdMsgReadLiveLight = "http://%s/mail/ReadMessageLight.aspx?Aux=&FolderID=%s&InboxSortAscending=False&InboxSortBy=Date&ReadMessageId=%s",
+  strCmdMsgReadLiveLight = "http://%s/mail/ReadMessageLight.aspx?AllowUnsafe=True&Aux=&FolderID=%s&InboxSortAscending=False&InboxSortBy=Date&ReadMessageId=%s",
 }
 
 -- ************************************************************************** --

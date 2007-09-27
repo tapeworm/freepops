@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.2"
+PLUGIN_VERSION = "0.2.3"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -102,7 +102,7 @@ local tin_string = {
 	 attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
 	 attachG = "O<X>O<O>X<O>",
 	-- by nvhs for html image
-	 imageE = "<IMG alt.*/cp/ps/Mail/ViewAttachment.*>",
+	 imageE = "<IMG .*/cp/ps/Mail/ViewAttachment.*>",
 	 imageG = "<X>",
 	-- The uri to delete some messages
 	--   whearewe(), domain, username, t, s, 
@@ -755,6 +755,7 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "&gt;", ">")
 	head = string.gsub(head, "\r([^\n])", 
 		function(capture) return "\r\n" .. capture end)
+	head = string.gsub(head, "([^\r])\n","%1\r\n")
 	head = string.gsub(head, "Ã ", "à")
 	head = string.gsub(head, "Ã¨", "è")
 	head = string.gsub(head, "Ã©", "é")
@@ -821,12 +822,29 @@ function tin_parse_webmessage(wherearewe, data)
 	local y = mlex.match(data, tin_string.imageE, tin_string.imageG)
 	-- y:print()
 	for i = 1, y:count() do
-		local url = y:get(0,i-1)
+		local surl = y:get(0,i-1)
 		local name = "img"..i..".gif"
-		local url = string.match(url,
-			"src%s*=%s*\"(/cp/ps/Mail/ViewAttachment[^']*)\"")
-		attach[name] = "http://"..wherearewe..url
-		
+		local z=0;
+			while not (attach[name]==nil)
+			do
+				z=z+1
+				name="img"..i+z..".gif"
+			end
+		local url = string.match(surl,
+			"src.*=.*(/cp/ps/Mail/ViewAttachment[^']*)\"")
+		if url == nil then
+			url = string.match(surl,
+				"src.*=.*(/cp/ps/Mail/ViewAttachment[^']*)%s")
+		end
+		if url == nil then
+			url = string.match(surl,
+				"src.*=.*(/cp/ps/Mail/ViewAttachment[^']*)")
+		end
+		if not (url == nil) then 
+				print(url)
+				attach[name] = "http://"..wherearewe..url
+		end
+			
 	end
 
 	return head, body, body_html, attach

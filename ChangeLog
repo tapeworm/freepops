@@ -1,3 +1,4 @@
+- removed criticalpath.lua
 - nvhs patch for images as attachments
 - thanks taba.dvd for reporting the patch by nvhs to fix html in tin.lua 
 - osx metadata now reportthe correct version information

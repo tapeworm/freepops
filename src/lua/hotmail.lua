@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.84"
+PLUGIN_VERSION = "0.1.85"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -158,7 +158,7 @@ local globals = {
   
   strFolderLiveLightTrashPattern = 'i_trash%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
   strFolderLiveLightJunkPattern = 'i_junkfolder%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
-  strFolderLiveLightPattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&n=[^"]+" title="',  
+  strFolderLiveLightPattern = 'href="InboxLight%.aspx%?FolderID=([^&]+&n=[^"]+)" title="',  
   strFolderLiveLightManageFoldersPattern = 'href="ManageFoldersLight%.aspx%?n=([^"]+)"',
 
   -- Pattern to determine if we have no messages

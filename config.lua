@@ -127,6 +127,24 @@ freepops.MODULES_MAP["aim.com"]		= {name="aol.lua"}
 -- netscape
 freepops.MODULES_MAP["netscape.net"]    = {name="netscape.lua"}
 
+-- abv
+freepops.MODULES_MAP["abv.bg"]   	= {name="abv.lua"}
+freepops.MODULES_MAP["gyuvetch.bg"]    	= {name="abv.lua"}
+freepops.MODULES_MAP["gbg.bg"]    	= {name="abv.lua"}
+
+-- Orange
+freepops.MODULES_MAP["fsmail.net"]   	= {name="orange.lua"}
+freepops.MODULES_MAP["wanadoo.nl"]    	= {name="orange.lua"}
+freepops.MODULES_MAP["orange.nl"]    	= {name="orange.lua"}
+freepops.MODULES_MAP["bedrijfsnaam.nl"] = {name="orange.lua"}
+
+-- softhome
+freepops.MODULES_MAP["softhome.net"]    = {name="softhome.lua"}
+
+-- excite/myway
+freepops.MODULES_MAP["myway.com"]	= {name="excite.lua"}
+freepops.MODULES_MAP["excite.com"]	= {name="excite.lua"}
+
 -- squirrelmail
 freepops.MODULES_MAP["mydom.com"]	= {name="squirrelmail.lua"}
 

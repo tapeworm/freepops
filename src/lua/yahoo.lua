@@ -11,7 +11,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9l"
+PLUGIN_VERSION = "0.1.9k"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -188,7 +188,7 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&order=up&sort=date&reset=1&Norder=up",
+  strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&view=%s&order=up&sort=date&reset=1&Norder=up",
   strCmdMsgView = "%sya/download?box=%s&PRINT=1&Nhead=f&MsgId=%s&bodyPart=%s",
   strCmdMsgWebView = "%sym/ShowLetter?box=%s&MsgId=%s",
   strCmdEmptyTrash = "%sym/ShowFolder?ET=1&", 
@@ -768,13 +768,13 @@ function downloadYahooMsg(pstate, msg, nLines, data)
 
   -- Do we need to mark the message as unread?
   --
-  if internalState.bMarkMsgAsUnread == true then
-    if internalState.bNewGUI then
-      log.dbg("Marking as message: " .. uidl .. " as unread");
-      markMsgUnread(uidl)
-    else
-      local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
-        internalState.strMBox, msgid);
+  if internalState.bNewGUI and internalState.bMarkMsgAsUnread == true then
+    log.dbg("Marking as message: " .. uidl .. " as unread");
+    markMsgUnread(uidl)
+  else
+    local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
+      internalState.strMBox, msgid);
+    if (internalState.bMarkMsgAsUnread) then
       local str, _ = browser:get_uri(cmdUrl) 
       str = string.match(str, globals.strMsgMarkUnreadPat)
       if str == nil then
@@ -784,6 +784,10 @@ function downloadYahooMsg(pstate, msg, nLines, data)
         log.dbg("Marking as message: " .. msgid .. " as unread, url: " .. cmdUrl);
         browser:get_uri(cmdUrl) -- We don't care about the results.
       end
+    else
+      -- Mark the message as read
+      --
+      local str, _ = browser:get_head(cmdUrl) 
     end
   end
 
@@ -1542,7 +1546,7 @@ function stat(pstate)
   local nPage = 0
   local nMsgs = 0
   local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-    internalState.strMBox, nPage, internalState.strView);
+    internalState.strMBox, nPage, internalState.strView, internalState.strView);
 
   -- Keep a list of IDs that we've seen.  With yahoo, their message list can 
   -- show messages that we've already seen.  This, although a bit hacky, will
@@ -1704,7 +1708,7 @@ function stat(pstate)
       --
       browser = internalState.browser
       cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-        internalState.strMBox, nPage, internalState.strView);
+        internalState.strMBox, nPage, internalState.strView, internalState.strView);
 
       -- Retry to load the page
       --

@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.3"
+PLUGIN_VERSION = "0.2.4"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -27,9 +27,23 @@ dovrebbero funzionare. Ecco un esempio di user name per controllare la
 cartella Spam: foo@virgilio.it?folder=Spam]],
 		}	
 	},
+  {name = "limit", description = {
+		it = [[
+    Se si hanno tante e-mail da scaricare, ad esempio a seguito di un lungo periodo
+    in cui non si &egrave; pi&ugrave; scaricata la posta, si potrebbe voler decidere di scaricare
+    un tot di messaggi alla volta, anche per evitare che eventuali errori di comunicazione
+    in fase di scaricamento di tutti i messaggi compromettano la corretta cancellazione
+    degli stessi sul server, con conseguente necessit&agrave; di riscaricarli tutti dall'inizio.
+    Ad esempio, per scaricare un massimo di 100 e-mail alla volta, si pu&ograve; specificare
+    come nome utente: foo@virgilio.it?limit=100 . Da notare che il limite citato &egrave;
+    indicativo e che il numero esatto di e-mail effettivamente scaricate potrebbe
+    essere superiore al valore specificato (dipende dal numero di messaggi per pagina da visualizzare,
+    impostato nelle opzioni della webmail per la propria casella di posta).]],
+		}	
+	},
 }
 PLUGIN_DESCRIPTIONS = {
-	it="Questo plugin vi per mette di leggere le mail che avete "..
+	it="Questo plugin vi permette di leggere le mail che avete "..
 	   "in una mailbox @virgilio.it, @tin.it, @alice.it o @tim.it. "..
 	   "Per usare questo plugin dovete usare il vostro indirizzo email "..
 	   "completo come username e la vostra password reale come password.",
@@ -137,6 +151,7 @@ internal_state = {
 	password = nil,
 	b = nil,
 	folder="INBOX",
+	limit=nil,
 	reverse_lookup = {},
 	list_begin = -1
 }
@@ -219,6 +234,14 @@ end
 
 function aaa_encode(u,p,s)
 	return asc2hex(curl.escape(base64.encode(u.."|"..p.."|"..s.."|")))
+end
+
+function add_webmail_in_front(s)
+	if string.match(s, '^webmail') then
+		return s
+	else
+		return "webmail."..s
+	end
 end
 
 --------------------------------------------------------------------------------
@@ -420,7 +443,8 @@ function user(pstate,username)
 	internal_state.domain = domain
 	internal_state.name = name
 	internal_state.folder = freepops.MODULE_ARGS.folder or "INBOX"
-	
+	internal_state.limit = tonumber(freepops.MODULE_ARGS.limit) or math.huge
+  
 	return POPSERVER_ERR_OK
 end
 
@@ -487,7 +511,7 @@ function quit_update(pstate)
 
 	-- shorten names, not really important
 	local b = internal_state.b
-	local popserver = b:wherearewe()
+	local popserver = add_webmail_in_front(b:wherearewe())
 	local session_id_s = internal_state.session_id_s
 	local session_id_t = internal_state.session_id_t
 	local domain = internal_state.domain
@@ -539,7 +563,7 @@ function stat(pstate)
 	local session_id_s = internal_state.session_id_s
 	local session_id_t = internal_state.session_id_t
 	local b = internal_state.b
-	local popserver = b:wherearewe()
+	local popserver = add_webmail_in_front(b:wherearewe())
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
@@ -548,7 +572,7 @@ function stat(pstate)
 	-- the check_f function, see later
 	local page = 1
 	local uri = string.format(tin_string.first,
-		b:wherearewe(), internal_state.folder,
+		popserver, internal_state.folder,
 		domain, user, session_id_t, session_id_s, page)
 	
 	-- The action for do_until
@@ -618,7 +642,11 @@ function stat(pstate)
 			domain, user, session_id_t, session_id_s, page)
 		return false
 	end
-	local function check_f (s) 
+	local function check_f (s)
+		if get_popstate_nummesg(pstate) >= internal_state.limit then 
+			-- if a limit was set, stop
+			return true 
+		end
 		local tmp = string.find(s,tin_string.no_next)
 		if tmp ~= nil and count == 0 then
 			return next_page()
@@ -875,7 +903,7 @@ function retr(pstate,msg,data)
 	local session_id_t = internal_state.session_id_t
 	local session_id_s = internal_state.session_id_s
 	local b = internal_state.b
-	local popserver = b:wherearewe()
+	local popserver = add_webmail_in_front(b:wherearewe())
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
@@ -891,17 +919,21 @@ function retr(pstate,msg,data)
 	if relist then
 		-- we do a list that begins with our message
 		local uri_l = string.format(tin_string.first,
-			b:wherearewe(), internal_state.folder,
+			popserver, internal_state.folder,
 			domain, user, session_id_t, session_id_s, msg)
 		local _,_ = b:get_uri(uri_l)
 		internal_state.list_begin = msg
 	end
 	-- whearewe, mailbox, username, username, uidl, t, s
-	local uri = string.format(tin_string.save,b:wherearewe(),
+	local uri = string.format(tin_string.save,popserver,
 		folder, domain, user, user, uidl, session_id_t, session_id_s,sl)
 	
 	-- tell the browser to fetch
-	local head,f,rc = b:get_head_and_body(uri)
+	local head,f = b:get_head_and_body(uri)
+	if head == nil then
+		log.error_print("Error fetching "..uri..": ".. (f or 'nil'))
+		return POPSERVER_ERR_UNKNOWN
+	end
 	local found,_,ctype = string.find(head,
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:"..
 		"%s*[^;\r]+;%s*[Cc][Hh][Aa][Rr][Ss][Ee][Tt]=\"?([^\"\r]*)")
@@ -922,7 +954,7 @@ function retr(pstate,msg,data)
 		return POPSERVER_ERR_UNKNOWN
 	end
 
-	local wherearewe = b:wherearewe()
+	local wherearewe = add_webmail_in_front(b:wherearewe())
 	local head,body,body_html,attach = tin_parse_webmessage(wherearewe, f)
 	local cb = mimer.callback_mangler(common.retr_cb(data))
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,nil,ctype)
@@ -942,7 +974,7 @@ function top(pstate,msg,lines,data)
 	local session_id_t = internal_state.session_id_t
 	local session_id_s = internal_state.session_id_s
 	local b = internal_state.b
-	local popserver = b:wherearewe()
+	local popserver = add_webmail_in_front(b:wherearewe())
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local pop_login = user .. "@" .. domain
@@ -958,17 +990,21 @@ function top(pstate,msg,lines,data)
 	if relist then
 		-- we do a list that begins with our message
 		local uri_l = string.format(tin_string.first,
-			b:wherearewe(), internal_state.folder,
+			popserver, internal_state.folder,
 			domain, user, session_id_t, session_id_s, msg)
 		local _,_ = b:get_uri(uri_l)
 		internal_state.list_begin = msg
 	end
 	-- whearewe, mailbox, username, username, uidl, t, s
-	local uri = string.format(tin_string.save,b:wherearewe(),
+	local uri = string.format(tin_string.save,popserver,
 		folder, domain, user, user, uidl, session_id_t, session_id_s,sl)
 	
 	-- tell the browser to fetch
-	local head,f,rc = b:get_head_and_body(uri)
+	local head,f = b:get_head_and_body(uri)
+	if head == nil then
+		log.error_print("Error fetching "..uri..": ".. (f or 'nil'))
+		return POPSERVER_ERR_UNKNOWN
+	end
 	local found,_,ctype = string.find(head,
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:"..
 		"%s*[^;\r]+;%s*[Cc][Hh][Aa][Rr][Ss][Ee][Tt]=\"?([^\"\r]*)")
@@ -982,7 +1018,7 @@ function top(pstate,msg,lines,data)
 		return POPSERVER_ERR_NETWORK
 	end
 
-	local wherearewe = b:wherearewe()
+	local wherearewe = add_webmail_in_front(b:wherearewe())
 	local head,body,body_html,attach = tin_parse_webmessage(wherearewe, f)
 	local global = common.new_global_for_top(lines,nil)
 	local cb = mimer.callback_mangler(common.top_cb(global,data,true))

@@ -11,7 +11,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9m"
+PLUGIN_VERSION = "0.1.9n"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -771,7 +771,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   if internalState.bNewGUI and internalState.bMarkMsgAsUnread == true then
     log.dbg("Marking as message: " .. uidl .. " as unread");
     markMsgUnread(uidl)
-  else
+  elseif internalState.bNewGUI == false
     local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
       internalState.strMBox, msgid);
     if (internalState.bMarkMsgAsUnread) then

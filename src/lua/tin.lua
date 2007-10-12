@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.4"
+PLUGIN_VERSION = "0.2.5"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -793,7 +793,13 @@ function tin_parse_webmessage(wherearewe, data)
 	-- patch by galdom
 	head = string.gsub(head, "\\&#39;", "'")
 	head = string.gsub(head, "&amp;", "&")
-
+	-- patch by Dylan666
+	head = string.gsub(head, "Ã¿", "È")
+	head = string.gsub(head, "Â°", "°")
+	head = string.gsub(head, "Ã¿", "Ì")
+	head = string.gsub(head, "Ã¿", "É")
+	head = string.gsub(head, "Ã¿", "Ò")
+	head = string.gsub(head, "Ã¿", "Ù")
 	
 	-- locate body
 	local _, begin_body = string.find(data, tin_string.body_start)

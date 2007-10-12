@@ -66,6 +66,46 @@ HIDDEN struct
 HIDDEN pthread_t dispatcher;
 HIDDEN pthread_attr_t att;
 
+int TASKBARCREATED;
+
+
+/*** trayicon helpers *********************************************************/
+
+void tray_icon_add(HWND hwnd)
+{
+NOTIFYICONDATA nid;
+// size
+nid.cbSize = sizeof(NOTIFYICONDATA); 
+// window to receive notification
+nid.hWnd = hwnd; 
+// application-defined ID
+nid.uID = AP_ID; 
+// nid.uCallbackMessage, nid.hIcon,  nid.szTip are valid, use them
+nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+// message sent to nid.hWnd
+nid.uCallbackMessage = UWM_SYSTRAY;
+// load the icon
+nid.hIcon = LoadImage(ghInst, MAKEINTRESOURCE(RES_ICON_16), IMAGE_ICON,
+                        GetSystemMetrics(SM_CXSMICON),
+                        GetSystemMetrics(SM_CYSMICON), 0);
+// ToolTip (64 byte)
+strcpy(nid.szTip,"FreePOPs v " VERSION);
+
+// This adds the ico
+Shell_NotifyIcon(NIM_ADD, &nid);
+DestroyIcon(nid.hIcon); //free the resource... the tray made a copy
+}
+
+void tray_icon_del(HWND hwnd)
+{
+NOTIFYICONDATA nid;
+nid.cbSize = sizeof(NOTIFYICONDATA);
+nid.hWnd = hwnd;
+nid.uID = AP_ID;
+nid.uFlags = 0; 
+Shell_NotifyIcon(NIM_DELETE, &nid);
+}
+
 /*** callback *****************************************************************/
 
 
@@ -87,7 +127,12 @@ HIDDEN LRESULT CALLBACK wndProc(HWND hwnd, UINT message,
 {
 POINT pt;
 HMENU hmenu, hpopup;
-NOTIFYICONDATA nid;
+
+if(message == TASKBARCREATED)
+	{
+		tray_icon_del(hwnd);
+		tray_icon_add(hwnd);
+	}
 
 switch (message) 
 	{
@@ -95,12 +140,8 @@ switch (message)
       		return TRUE;
 	break;
 
-    	case WM_DESTROY:
-		nid.cbSize = sizeof(NOTIFYICONDATA);
-		nid.hWnd = hwnd;
-		nid.uID = AP_ID;
-		nid.uFlags = NIF_TIP; 
-		Shell_NotifyIcon(NIM_DELETE, &nid);
+	case WM_DESTROY:
+		tray_icon_del(hwnd);
 		exit(0);
 		return TRUE;
 
@@ -163,8 +204,9 @@ void tray_init(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 HWND hwnd;
 MSG msg;
 WNDCLASSEX wc;
-NOTIFYICONDATA nid;
 char *classname = "FreePOPs.NOTIFYICONDATA.hWnd";
+
+TASKBARCREATED = RegisterWindowMessage("TaskbarCreated");
 
 ghInst = hInstance;
   
@@ -188,25 +230,7 @@ RegisterClassEx(&wc);
 hwnd = CreateWindowEx(0, classname, classname, WS_POPUP, CW_USEDEFAULT, 0,
 	CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-// size
-nid.cbSize = sizeof(NOTIFYICONDATA); 
-// window to receive notification
-nid.hWnd = hwnd; 
-// application-defined ID
-nid.uID = AP_ID; 
-// nid.uCallbackMessage, nid.hIcon,  nid.szTip are valid, use them
-nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
-// message sent to nid.hWnd
-nid.uCallbackMessage = UWM_SYSTRAY;
-// load the icon
-nid.hIcon = LoadImage(hInstance, MAKEINTRESOURCE(RES_ICON_16), IMAGE_ICON,
-                        GetSystemMetrics(SM_CXSMICON),
-                        GetSystemMetrics(SM_CYSMICON), 0); 
-// ToolTip (64 byte)
-strcpy(nid.szTip,"FreePOPs v " VERSION);
-
-// This adds the ico
-Shell_NotifyIcon(NIM_ADD, &nid); 
+tray_icon_add(hwnd);
 
 //??
 while ( GetMessage(&msg, NULL, 0, 0)) 

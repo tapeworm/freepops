@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.6"
+PLUGIN_VERSION = "0.2.7"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -861,6 +861,7 @@ function tin_parse_webmessage(wherearewe, data)
 		local url = x:get(0,i-1)
 		local name = x:get(1,i-1)
 		local name = string.match(name,"[%a%d].*")
+		name=name..".html"
 		local url = string.match(url,
 			"href%s*=%s*'(/cp/ps/Mail/Email[^']*)'")
 		
@@ -872,7 +873,7 @@ function tin_parse_webmessage(wherearewe, data)
 	local y = mlex.match(data, tin_string.imageE, tin_string.imageG)
 	-- y:print()
 	for i = 1, y:count() do
-		local surl = y:get(0,i-1)
+		local url = y:get(0,i-1)
 		local name = "img"..i..".gif"
 		local z=0;
 			while not (attach[name]==nil)
@@ -880,16 +881,8 @@ function tin_parse_webmessage(wherearewe, data)
 				z=z+1
 				name="img"..i+z..".gif"
 			end
-		local url = string.match(surl,
-			"src.*=.*(/cp/ps/Mail/ViewAttachment[^']*)\"")
-		if url == nil then
-			url = string.match(surl,
-				"src.*=.*(/cp/ps/Mail/ViewAttachment[^']*)%s")
-		end
-		if url == nil then
-			url = string.match(surl,
-				"src.*=.*(/cp/ps/Mail/ViewAttachment[^']*)")
-		end
+		url = string.match(url,
+			"/cp/ps/Mail/ViewAttachment.*&id=%d")
 		if not (url == nil) then 
 				print(url)
 				attach[name] = "http://"..wherearewe..url

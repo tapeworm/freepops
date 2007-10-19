@@ -799,10 +799,14 @@ function tin_parse_webmessage(wherearewe, data)
 	-- patch by Dylan666
 	head = string.gsub(head, "Ã¿", "È")
 	head = string.gsub(head, "Â°", "°")
-	head = string.gsub(head, "Ã¿", "Ì")
-	head = string.gsub(head, "Ã¿", "É")
-	head = string.gsub(head, "Ã¿", "Ò")
-	head = string.gsub(head, "Ã¿", "Ù")
+	head = string.gsub(head, "ÃŒ", "Ì")
+	head = string.gsub(head, "Ã‰", "É")
+	head = string.gsub(head, "Ã’", "Ò")
+	head = string.gsub(head, "Ã™", "Ù")
+	head = string.gsub(head, "â‚¬", "€")
+	head = string.gsub(head, "â€œ", "“")
+	head = string.gsub(head, "â€", "”")
+
 	
 	-- locate body
 	local _, begin_body = string.find(data, tin_string.body_start)

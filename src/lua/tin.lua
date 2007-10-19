@@ -7,8 +7,9 @@
 --  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
+
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.7"
+PLUGIN_VERSION = "0.2.6"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -767,7 +768,7 @@ end
 -- popserver_callback to send the data
 -- 
 function tin_parse_webmessage(wherearewe, data)
-	local head, body, body_html, attach = nil, nil, nil, {}
+	local head, body, body_html, attach ,inlineids = nil, nil, nil, {} , {}
 
 	-- extract headers 
 	local headersE = ".*<script>.*var *hd *=</script>.*<br>.*<br>.*</div>"
@@ -799,14 +800,10 @@ function tin_parse_webmessage(wherearewe, data)
 	-- patch by Dylan666
 	head = string.gsub(head, "√ø", "»")
 	head = string.gsub(head, "¬∞", "∞")
-	head = string.gsub(head, "√å", "Ã")
-	head = string.gsub(head, "√â", "…")
-	head = string.gsub(head, "√í", "“")
-	head = string.gsub(head, "√ô", "Ÿ")
-	head = string.gsub(head, "‚Ç¨", "Ä")
-	head = string.gsub(head, "‚Äú", "ì")
-	head = string.gsub(head, "‚Äù", "î")
-
+	head = string.gsub(head, "√ø", "Ã")
+	head = string.gsub(head, "√ø", "…")
+	head = string.gsub(head, "√ø", "“")
+	head = string.gsub(head, "√ø", "Ÿ")
 	
 	-- locate body
 	local _, begin_body = string.find(data, tin_string.body_start)
@@ -890,11 +887,16 @@ function tin_parse_webmessage(wherearewe, data)
 		if not (url == nil) then 
 				print(url)
 				attach[name] = "http://"..wherearewe..url
+				inlineids[name]=name
+				local id = string.match(url,"%d$")
+				body_html  = string.gsub(body_html,
+					"/cp/ps/Mail/ViewAttachment.*&id="..id,
+					"cid:"..name)
 		end
 			
 	end
 
-	return head, body, body_html, attach
+	return head, body, body_html, attach ,inlineids
 end
 
 function is_a_list_needed(msg, uidl)
@@ -974,9 +976,9 @@ function retr(pstate,msg,data)
 	end
 
 	local wherearewe = add_webmail_in_front(b:wherearewe())
-	local head,body,body_html,attach = tin_parse_webmessage(wherearewe, f)
+	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f)
 	local cb = mimer.callback_mangler(common.retr_cb(data))
-	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,nil,ctype)
+	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,inlineids,ctype)
 		
 	return POPSERVER_ERR_OK
 end
@@ -1038,7 +1040,7 @@ function top(pstate,msg,lines,data)
 	end
 
 	local wherearewe = add_webmail_in_front(b:wherearewe())
-	local head,body,body_html,attach = tin_parse_webmessage(wherearewe, f)
+	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f)
 	local global = common.new_global_for_top(lines,nil)
 	local cb = mimer.callback_mangler(common.top_cb(global,data,true))
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,nil,ctype)

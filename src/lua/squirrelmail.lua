@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "SquirrelMail"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -326,7 +326,6 @@ function squirrelmail_parse_webmessage(pstate,msg)
 		url = string.gsub(url,"&amp;", "&")
 		attach[x:get(1,i-1)] = "http://" .. b:wherearewe() .. squirrelmail_string.partial_path .. url
 		--print (attach[x:get(1,i-1)] .. " ------ " ..  "http://" .. b:wherearewe() .. squirrelmail_string.partial_path .. url)
-		table.setn(attach,table.getn(attach) + 1)
 	end
 	
 	-- mangles the body

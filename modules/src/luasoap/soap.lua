@@ -4,7 +4,7 @@
 -- $Id$
 ---------------------------------------------------------------------
 
-MODULE_VERSION = "0.0.2"
+MODULE_VERSION = "0.0.3"
 MODULE_NAME = "soap.soap"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -14,7 +14,7 @@ MODULE_HOMEPAGE = "http://www.freepops.org/"
 require"lxp.lom"
 
 local assert, ipairs, pairs, tostring, type = assert, ipairs, pairs, tostring, type
-local getn, tconcat, tinsert, tremove = table.getn, table.concat, table.insert, table.remove
+local tconcat, tinsert, tremove = table.concat, table.insert, table.remove
 local format, strfind = string.format, string.find
 local max = math.max
 local parse = lxp.lom.parse
@@ -47,7 +47,7 @@ local function attrs (a)
 				tinsert (c, format ("%s=%q", i, v))
 			end
 		end
-		if getn (c) > 0 then
+		if #c > 0 then
 			return " "..tconcat (c, " ")
 		else
 			return ""
@@ -148,7 +148,7 @@ function encode (namespace, method, entries, header)
 	insert_header (envelope_template, header)
 	-- Sets new body contents (and erase old content).
 	local body = (envelope_template[2] and envelope_template[2][1]) or envelope_template[1][1]
-	for i = 1, max (getn(body), getn(entries)) do
+	for i = 1, max (#body, #entries) do
 		body[i] = entries[i]
 	end
 

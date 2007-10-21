@@ -21,7 +21,7 @@ function basename(s)
 	end
 end
 
-if table.getn(arg) < 2 then
+if #arg < 2 then
 	print([[
 	cvs2changelog.lua should be called with 2 aguments:
 	 1) the number of days

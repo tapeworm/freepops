@@ -10,7 +10,7 @@ for i=0,255 do
 	end
 end
 
-q = math.ceil(table.getn(res)/4)
+q = math.ceil(#res/4)
 fake = "       "
 for i=1,q-1 do
 	print(string.format("\t%s\t\t%s\t\t%s\t\t%s",

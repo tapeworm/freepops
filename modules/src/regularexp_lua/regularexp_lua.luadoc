@@ -19,11 +19,11 @@
 --s = "123aaa456bbb789aaa0"
 --
 --capt = r:match(s)
---print("Capt:",table.getn(capt))
+--print("Capt:",#capt)
 --table.foreach(capt,print)
 --
 --capt = r:match(s,2)
---print("Capt:",table.getn(capt))
+--print("Capt:",#capt)
 --table.foreach(capt,print)
 --
 --r:gmatch(s,function(f,t,m)

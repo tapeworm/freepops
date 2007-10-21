@@ -1154,7 +1154,7 @@ function Private.base64_io_slave(cb)
 			table.insert(todo_table,base64.encode(chunk).."\r\n")
 			buffer = string.sub(buffer,Private.base64wrap + 1,-1)
 		end
-		if table.getn(todo_table) > 0 then
+		if #todo_table > 0 then
 			cb(table.concat(todo_table))
 		end
 
@@ -1256,7 +1256,7 @@ function Private.quoted_printable_io_slave(cb)
 			buffer = string.sub(buffer,len + 1,-1)
 			wrap,forced,len = Private.qpr_eval_expansion(buffer)
 		end
-		if table.getn(todo_table) > 0 then
+		if #todo_table > 0 then
 			cb(table.concat(todo_table))
 		end
 		if len == 0 then

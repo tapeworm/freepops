@@ -7,7 +7,7 @@
 --  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.0.5"
+PLUGIN_VERSION = "0.0.6"
 PLUGIN_NAME = "DAVMAIL"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -316,7 +316,7 @@ function stat(pstate)
 		return POPSERVER_ERR_UNKNOWN
 	end
 	
-	set_popstate_nummesg(pstate,table.getn(msglist))
+	set_popstate_nummesg(pstate,#msglist)
 	for i,t in ipairs(msglist) do
 		local size = t.size
 		local uidl = t.uri

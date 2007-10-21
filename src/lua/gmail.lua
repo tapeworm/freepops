@@ -13,7 +13,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.45"
+PLUGIN_VERSION = "0.0.46"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -698,7 +698,7 @@ function stat(pstate)
 				s, strMessageListRegExp, iPos1)
 		end
 
-		local n = table.getn(MessageList)
+		local n = #MessageList
 
 		if n == 0 then
 			return true,nil

@@ -3,7 +3,7 @@
 -- Module to build on the fly a message from a header, a body (both in html or
 -- plain text format), a list of attachments urls
 
-MODULE_VERSION = "0.0.2"
+MODULE_VERSION = "0.1.0"
 MODULE_NAME = "mimer"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -20,17 +20,65 @@ local Private = {}
 
 -- FIXME add more from: http://www.w3.org/TR/html401/sgml/entities.html
 Private.html_coded = {
-	["amp"]    = "&", 
-	["agrave"] = "à", 
-	["igrave"] = "ì", 
-	["egrave"] = "è",
-	["ograve"] = "ò", 
-	["ugrave"] = "ù", 
-	["quot"]   = '"',
-	["lt"]     = '<',
-	["gt"]     = '>',
-	["nbsp"]   = " ",
-	["iuml"]   = "I",
+
+	["szlig"]	= "ß",
+	["Ntilde"]	= "Ñ",
+	["ntilde"]	= "ñ",
+	["Ccedil"]	= "Ç",
+	["ccedil"]	= "ç",
+	
+	["auml"]	= "ä",
+	["euml"]	= "ë",
+	["iuml"]	= "ï",
+	["ouml"]	= "ö",
+	["uuml"]	= "ü",
+	["Auml"]	= "Ä",
+	["Euml"]	= "Ë",
+	["Iuml"]	= "Ï",
+	["Ouml"]	= "Ö",
+	["Uuml"]	= "Ü",
+	["aacute"]	= "á",
+	["eacute"]	= "é",
+	["iacute"]	= "í",
+	["oacute"]	= "ó",
+	["uacute"]	= "ú",
+	["Aacute"]	= "Á",
+	["Eacute"]	= "É",
+	["Iacute"]	= "Í",
+	["Oacute"]	= "Ó",
+	["Uacute"]	= "Ú",
+	["acirc"]	= "â",
+	["ecirc"]	= "ê",
+	["icirc"]	= "î",
+	["ocirc"]	= "ô",
+	["ucirc"]	= "û",
+	["Acirc"]	= "Â",
+	["Ecirc"]	= "Ê",
+	["Icirc"]	= "Î",
+	["Ocirc"]	= "Ô",
+	["Ucirc"]	= "Û",
+	["agrave"]	= "à",
+	["igrave"]	= "ì",
+	["egrave"]	= "è",
+	["ograve"]	= "ò",
+	["ugrave"]	= "ù",
+	["Agrave"]	= "À",
+	["Igrave"]	= "Ì",
+	["Egrave"]	= "È",
+	["Ograve"]	= "Ò",
+	["Ugrave"]	= "Ù",
+
+	["euro"]	= '€',
+	["pound"]	= '£',
+	["yen"]		= '¥',
+	["cent"]	= '¢',
+	["iquest"]	= '¿',
+	["iexcl"]	= '¡',
+	["quot"]	= '"',
+	["lt"]		= '<',
+	["gt"]		= '>',
+	["nbsp"]	= ' ',
+	["amp"]		= '&',
 }
 
 Private.html_tags = {
@@ -55,8 +103,16 @@ Private.html_tags = {
 	["/pre"] = "",
 	["b"] = " *",
 	["/b"] = "* ",
+	["i"] = "/",
+	["/i"] = "/",
+	["big"] = "",
+	["/big"] = "",
+	["small"] = "",
+	["/small"] = "",
 	["strong"] = " *",
 	["/strong"] = "* ",
+	["em"] = "/",
+	["/em"] = "/",
 	["u"] = " _",
 	["/u"] = "_ ",
 	["div"] = "",
@@ -90,8 +146,6 @@ Private.html_tags = {
 	["hr"] = "\n" .. string.rep("-",72) .. "\n",
 	["font"] = "",
 	["/font"] = "",
-	["em"] = "",
-	["/em"] = "",
 	["!doctype"] = "",
 	["void"] = "",
 	["/void"] = "",
@@ -115,10 +169,18 @@ Private.html_tags_plain = {
 	["/tr"] = '',
 	["pre"] = "",
 	["/pre"] = "",
-	["b"] = "",
-	["/b"] = "",
-	["strong"] = " *",
-	["/strong"] = "* ",
+	["b"] = "*",
+	["/b"] = "*",
+	["i"] = "/",
+	["/i"] = "/",
+	["big"] = "",
+	["/big"] = "",
+	["small"] = "",
+	["/small"] = "",
+	["strong"] = "*",
+	["/strong"] = "*",
+	["em"] = "/",
+	["/em"] = "/",
 	["u"] = "",
 	["/u"] = "",
 	["div"] = "",
@@ -133,11 +195,9 @@ Private.html_tags_plain = {
 	["/p"] = "",
 	["a"] = "",
 	["/a"] = "",
-	["hr"] = "",
+	["hr"] = "\n" .. string.rep("-",44) .. "\n",
 	["font"] = "",
 	["/font"] = "",
-	["em"] = "",
-	["/em"] = "",
 	["!doctype"] = "",
 	["void"] = "",
 	["/void"] = "",
@@ -329,6 +389,18 @@ function Private.attach_it(browser,boundary,send_cb,inlineids)
 	--return Private.attach_it_old(browser,boundary,send_cb)
 end
 
+---
+-- a micro implementation of magic numbers to content types
+Private.sniffer = {
+-- FIXME many more content-types can be addded... :)
+["image/gif"]	= "GIF",
+["image/jpeg"]	= "\255\216", -- FFD8
+["image/png"]	= "\137PNG",
+--[[
+["text/html"]	= "%s-<%s-[Hh][Tt][Mm][Ll]",
+]]
+}
+
 -- ------------------------------------------------------------------------- --
 -- This is the NEW implementation. 
 -- 
@@ -341,9 +413,9 @@ end
 --         404 HTML page attached in your mail if the URL is wrong
 --       - more cpu intense, one check and a function call more than before
 --       
-function Private.attach_it_new(browser,boundary,send_cb,inlineids)	
+function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 	return function(k,uri)
-		
+		local inlineid = inlineids[k]
 		-- the 2 callbacks and the shared variable content_type
 		local cb_h,cb_b = nil,nil
 		local content_type = nil
@@ -354,20 +426,32 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 			
 			-- try to extract the content type
 			local x = string.match(h or "",
-		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")
-			if x ~= nil then
-				content_type = x
-			end
+			  "[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")
+			content_type = x
 			return len
 		end
-		
+
 		-- a static variable for the callback that contains the real
 		-- io slave callback
 		local real_cb = nil
+		
 		cb_b = function(s,len)
-			-- the first time we choos the encoding depending on 
+			-- the first time we choose the encoding depending on 
 			-- the content_type shared variable set by the cb_h
 			if real_cb == nil then
+				local detected_content_type = nil
+				for n,b in pairs(Private.sniffer) do
+					if string.find(s or "", b) == 1 then
+						detected_content_type = n
+						break
+					end
+				end
+				if content_type ~= nil and 
+				   detected_content_type ~= nil and
+				   string.upper(detected_content_type) ~= 
+				   string.upper(content_type) then
+					content_type = detected_content_type
+				end
 				content_type = content_type or 
 					"application/octet-stream"
 				if Private.needs_encoding(content_type) then
@@ -378,8 +462,8 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 					  quoted_printable_io_slave(send_cb)
 				end
 				-- we send the mime header
-				local inlineid = inlineids[k]
-				if (inlineid == nil) then
+
+				if not inlineid then
 					send_cb("--"..boundary.."\r\n"..
 						"Content-Type: "..content_type.."\r\n"..
 						"Content-Disposition: attachment; "..
@@ -390,9 +474,8 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 				else
 					send_cb("--"..boundary.."\r\n"..
 						"Content-Type: "..content_type.."\r\n"..
+						"Content-Disposition: inline\r\n"..
 						"Content-ID: <"..inlineid..">\r\n"..
-						"Content-Disposition: inline; "..
-						"filename=\""..k.."\"\r\n"..
 						Private.content_transfer_encoding_of(
 							content_type)..
 						"\r\n")
@@ -451,34 +534,41 @@ function Private.attach_it_old(browser,boundary,send_cb)
 end
 
 -- ------------------------------------------------------------------------- --
-function Private.send_alternative(text_encoding,body,body_html,send_cb)
-	local boundary = Private.randomize_boundary()
-	local rc = nil
-	
-	rc = send_cb("MIME-Version: 1.0 (produced by FreePOPs/MIMER)\r\n"..
-		"Content-Type: Multipart/alternative; "..
+function Private.send_alternative(text_encoding,body,body_html,send_cb,keep_this_boundary)
+	local boundary, rc
+
+	if keep_this_boundary then
+		boundary = keep_this_boundary
+	else
+		-- we create the boud, thus we write also the ctype
+		boundary = Private.randomize_boundary()
+		rc = send_cb(
+			"MIME-Version: 1.0 (produced by FreePOPs/MIMER)\r\n"..
+			"Content-Type: Multipart/alternative; "..
 			"boundary=\""..boundary.."\"\r\n"..
-		"\r\n")
-	if rc ~= nil then return rc end
-	
+			"\r\n")
+		if rc ~= nil then return rc end
+	end
+
 	rc = send_cb("--"..boundary.."\r\n"..
-		"Content-Type: text/plain; charset=\""..text_encoding.."\"\r\n"..
+		"Content-Type: text/plain; "..
+		"charset=\""..text_encoding.."\"\r\n"..
 		"Content-Transfer-Encoding: quoted-printable\r\n"..
 		"\r\n"..
 		body)
 	if rc ~= nil then return rc end
-	
+
 	rc = send_cb("--"..boundary.."\r\n"..
 		"Content-Type: text/html; charset=\""..text_encoding.."\"\r\n"..
 		"Content-Transfer-Encoding: quoted-printable\r\n"..
 		"\r\n"..
 		body_html)
-	if rc ~= nil then return rc end	
+	if rc ~= nil then return rc end
 
-	send_cb("--"..boundary.."--".."\r\n")
+	if not keep_this_boundary then
+		send_cb("--"..boundary.."--\r\n\r\n")
+	end
 end
-
-
 
 -- ------------------------------------------------------------------------- --
 function Private.token_of(c)
@@ -488,12 +578,8 @@ end
 
 -- ------------------------------------------------------------------------- --
 function Private.html2txt(s,base_uri,html_coded,html_tags,all)
-	s = string.gsub(s,"&(%a-);",function(c)
-		c = string.lower(c)
-		return html_coded[c] or ("["..c.."]")
-	end)
-	s = string.gsub(s,"<%s*[Ss][Cc][Rr][Ii][Pp][Tt][^>]*>.-<%s*/%s*[Ss][Cc][Rr][Ii][Pp][Tt][^>]*>","")
-	s = string.gsub(s,"<%s*[Ss][Tt][Yy][Ll][Ee][^>]*>.-<%s*/%s*[Ss][Tt][Yy][Ll][Ee][^>]*>","")
+	s = string.gsub(s,"<%s*[Ss][Cc][Rr][Ii][Pp][Tt].->.-<%s*/%s*[Ss][Cc][Rr][Ii][Pp][Tt].->","")
+	s = string.gsub(s,"<%s*[Ss][Tt][Yy][Ll][Ee].->.-<%s*/%s*[Ss][Tt][Yy][Ll][Ee].->","")
 	s = string.gsub(s,"<([^>]-)>",function(c)
 		c = string.lower(c)
 		local t = Private.token_of(c)
@@ -510,6 +596,10 @@ function Private.html2txt(s,base_uri,html_coded,html_tags,all)
 			return "<" .. c ..">"
 		end
 	end)
+	s = string.gsub(s,"&(%a-);",function(c)
+		c = string.lower(c)
+		return html_coded[c] or ("["..c.."]")
+	end)
 	if all then
 		local n = 1
 		while n > 0 do 
@@ -517,143 +607,6 @@ function Private.html2txt(s,base_uri,html_coded,html_tags,all)
 		end
 	end
 	return s
-end
-
---<==========================================================================>--
-module("mimer",package.seeall)
-
----
--- Builds a MIME encoded message and pipes it to send_cb.
--- @param headers string the mail headers, already mail encoded (\r\n) but
---        without the blank line separator.
--- @param body string the plain text body, if null it is inferred from the 
---        html body that must be present in that case.
--- @param body_html string the html body, may be null.
--- @param base_uri string is used to mangle hrefs in the mail html body.
--- @param attachments table a table { ["filename"] = "http://url" }.
--- @param browser table used to fetch the attachments.
--- @param send_cb function the callback to send the message, 
---        may be called more then once and may return not nil to stop 
---        the ending process.
--- @param inlineids table a table { ["filename"] = "content-Ids" } which
--- 	  contains the ids for inline attachments (default {}).
--- @param text_encoding string default "iso-8859-1"	  
-function pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,inlineids,text_encoding)
-	attachments = attachments or {}
-        inlineids = inlineids or {}
-	text_encoding = text_encoding or "iso-8859-1"
-	local rc = nil
-
-	if body == nil and body_html == nil then
-		error("one of body/body_html must be non nil")
-		return
-	end
-
-	body = body or html2txtmail(body_html,base_uri)
-
-	if next(attachments) ~= nil then
-		local boundary = Private.randomize_boundary()
-
-		local cType = "Multipart/Mixed"
-		if next(inlineids) ~= nil then
-			cType = "Multipart/Related"
-		end
-		
-		local mime = "MIME-Version: 1.0 "..
-				"(produced by FreePOPS/MIMER)\r\n"..
-				"Content-Type: " .. cType .. "; "..
-				"boundary=\""..boundary.."\"\r\n"
-		
-		-- send headers
-		rc = send_cb(headers .. mime .. "\r\n")
-		if rc ~= nil then return end
-	
-		-- send the body
-		if body_html == nil then
-			rc = send_cb("--"..boundary.."\r\n"..
-				"Content-Type: text/plain; "..
-					"charset=\""..text_encoding.."\"\r\n"..
-				"Content-Disposition: inline\r\n" ..
-				"Content-Transfer-Encoding: "..
-					"quoted-printable\r\n"..
-				"\r\n"..
-				txt2mail(
-					Private.quoted_printable_encode(body))..
-				"\r\n")
-			if rc ~= nil then return end	
-		else
-			rc = send_cb("--"..boundary.."\r\n")
-			if rc ~= nil then return end
-
-			rc = Private.send_alternative(text_encoding,
-				txt2mail(
-					Private.quoted_printable_encode(body)),
-				txt2mail(
-					Private.quoted_printable_encode(
-						body_html)),
-				send_cb)
-			if rc ~= nil then return end	
-		end
-	
-		rc = table.foreach(attachments,
-			Private.attach_it(browser,boundary,send_cb,inlineids))
-		if rc ~= nil then return end
-		
-		-- close message
-		rc = send_cb("--"..boundary.."--".."\r\n")
-		if rc ~= nil then return end
-	else
-		if body_html == nil then
-			rc = send_cb(headers .. "\r\n")
-			if rc ~= nil then return end
-			
-			rc = send_cb(txt2mail(body))
-			if rc ~= nil then return end
-		else
-			rc = send_cb(headers)
-			if rc ~= nil then return end
-			
-			rc = Private.send_alternative(text_encoding,
-				txt2mail(
-					Private.quoted_printable_encode(body)),
-				txt2mail(
-					Private.quoted_printable_encode(
-						body_html)),
-				send_cb)
-			if rc ~= nil then return end	
-		end
-	end
-end
-
----
--- Tryes to convert an HTML document to a human readable plain text.
---
-function html2txtmail(s,base_uri)
-	return Private.html2txt(s,base_uri,Private.html_coded,Private.html_tags,true)
-end
-
----
--- Converts an HTML document to a plain text file, removing tags and
--- unescaping &XXXX; sequences.
---
-function html2txtplain(s,base_uri)
-	return Private.html2txt(s,base_uri,Private.html_coded,
-		Private.html_tags_plain,false)
-end
-
----
--- Converts a plain text string to a \r\n encoded message, ready to send as
--- a RETR response.
--- 
-function txt2mail(s)
-	s = string.gsub(s,'\r','')
-	s = string.gsub(s,'\n','\r\n')
-	s = string.gsub(s,'\r\n.\r\n','\r\n..\r\n')
-	if string.sub(s,-2,-1) ~= '\r\n' then
-		return s .. '\r\n'
-	else
-		return s
-	end
 end
 
 Private.extra = {
@@ -685,17 +638,6 @@ function Private.domatch(b,v,a)
 	return b .. table.concat(r) .. a
 end
 
----
---Removes unwanted tags from an html string.
---@param p table a list of tags in this form {"head","p"}.
---@return string the cleaned html.
-function remove_tags(s,p)
-	table.foreachi(p,function(k,v)
-		s = string.gsub(s,Private.domatch("<%s*[!/]?",v,"[^>]*>"),"")
-	end)
-	return s
-end
-
 function Private.lines_of_string(s)
 	local result = {}
 	while s ~= "" do
@@ -708,6 +650,179 @@ function Private.lines_of_string(s)
 		s = string.sub(s,b+1,-1)
 	end
 	return result
+end
+
+---
+-- Converts a plain text string to a \r\n encoded message, ready to send as
+-- a RETR response.
+-- 
+function Private.txt2mailnotencoded(s)
+	s = string.gsub(s,'\r','')
+	s = string.gsub(s,'\n','\r\n')
+	s = string.gsub(s,'\r\n%.\r\n','\r\n..\r\n')
+	if string.sub(s,-2,-1) ~= '\r\n' then
+		s = s .. '\r\n'
+	end
+	return s
+end
+
+function Private.txt2mailquotedprintable(s)
+	local d = Private.quoted_printable_encode(s)
+	return Private.txt2mailnotencoded(d)
+end
+
+function Private.tablesize(t)
+	local i = 0
+	for _ in pairs(t) do i = i + 1 end
+	return i
+end
+
+--<==========================================================================>--
+module("mimer",package.seeall)
+
+---
+-- Converts a plain text string to a \r\n encoded message, ready to send as
+-- a RETR response.
+-- 
+function txt2mail(s)
+	return Private.txt2mailnotencoded(s)
+end
+
+---
+-- Builds a MIME encoded message and pipes it to send_cb.
+-- @param headers string the mail headers, already mail encoded (\r\n) but
+--        without the blank line separator.
+-- @param body string the plain text body, if null it is inferred from the 
+--        html body that must be present in that case.
+-- @param body_html string the html body, may be null.
+-- @param base_uri string is used to mangle hrefs in the mail html body.
+-- @param attachments table a table { ["filename"] = "http://url" }.
+-- @param browser table used to fetch the attachments.
+-- @param send_cb function the callback to send the message, 
+--        may be called more then once and may return not nil to stop 
+--        the ending process.
+-- @param inlineids table a table { ["filename"] = "content-Ids" } which
+-- 	  contains the ids for inline attachments (default {}).
+-- @param text_encoding string default "iso-8859-1"	  
+function pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,inlineids,text_encoding)
+	attachments = attachments or {}
+	inlineids = inlineids or {}
+	text_encoding = text_encoding or "iso-8859-1"
+	local rc = nil
+
+	if not (body or body_html) then
+		error("Mimer needs either body or body_html. "..
+			"Email wasn't processed.")
+		return
+	end
+
+	local isAlt, isMultipart, isAttached, boundary, cType
+
+	isAttached = Private.tablesize(attachments) > 
+		Private.tablesize(inlineids)
+	body = body or html2txtmail(body_html,base_uri)
+	isAlt = body and body_html
+	isMultipart = next(attachments) ~= nil or isAlt 
+	boundary = Private.randomize_boundary()
+
+	if isAttached then
+		if next(inlineids) == nil then
+			cType = "Multipart/Mixed"
+		else
+			cType = "Multipart/Related"
+		end
+	else
+		if isAlt then
+			cType = "Multipart/Alternative"
+		else
+			cType ="text/plain"
+		end
+	end
+	
+	local mime
+	if isMultipart then
+		mime = 'boundary="' .. boundary .. '"\r\n'
+	else
+		mime =	"charset=\""..text_encoding.."\"\r\n"..
+			"Content-Transfer-Encoding: quoted-printable\r\n\r\n"
+	end
+	mime = "MIME-Version: 1.0 (produced by FreePOPS/MIMER)\r\n" ..
+		"Content-Type: " .. cType .. "; " .. mime
+	
+	-- send headers
+	headers=remove_lines_in_proper_mail_header(headers, 
+		{"content%-type","MIME%-Version"})
+	rc = send_cb(headers .. mime .. "\r\n")
+	if rc ~= nil then return end
+	
+	if not isMultipart then
+		rc = send_cb(Private.txt2mailquotedprintable(body) .. "\r\n")
+		if rc ~= nil then return end
+	else
+		-- send the body
+		if isAlt and isAttached then
+			rc = send_cb("--"..boundary.."\r\n")
+			if rc ~= nil then return end
+
+			rc = Private.send_alternative(text_encoding,
+				Private.txt2mailquotedprintable(body),
+				Private.txt2mailquotedprintable(body_html),
+				send_cb,nil)
+			if rc ~= nil then return end	
+		elseif isAlt then
+			rc = Private.send_alternative(text_encoding,
+				Private.txt2mailquotedprintable(body),
+				Private.txt2mailquotedprintable(body_html),
+				send_cb,boundary)
+			if rc ~= nil then return end	
+		else
+			rc = send_cb("--"..boundary.."\r\n"..
+				"Content-Type: text/plain; "..
+					"charset=\""..text_encoding.."\"\r\n"..
+				"Content-Disposition: inline\r\n" ..
+				"Content-Transfer-Encoding: "..
+					"quoted-printable\r\n"..
+				"\r\n"..
+				Private.txt2mailquotedprintable(body)..
+				"\r\n")
+			if rc ~= nil then return end	
+		end
+	
+		rc = table.foreach(attachments,
+			Private.attach_it(browser,boundary,send_cb,inlineids))
+		if rc ~= nil then return end
+		
+		-- close message
+		rc = send_cb("--"..boundary.."--".."\r\n")
+		if rc ~= nil then return end
+	end
+end
+
+---
+-- Tryes to convert an HTML document to a human readable plain text.
+--
+function html2txtmail(s,base_uri)
+	return Private.html2txt(s,base_uri,Private.html_coded,Private.html_tags,true)
+end
+
+---
+-- Converts an HTML document to a plain text file, removing tags and
+-- unescaping &XXXX; sequences.
+--
+function html2txtplain(s,base_uri)
+	return Private.html2txt(s,base_uri,Private.html_coded,
+		Private.html_tags_plain,false)
+end
+
+---
+--Removes unwanted tags from an html string.
+--@param p table a list of tags in this form {"head","p"}.
+--@return string the cleaned html.
+function remove_tags(s,p)
+	table.foreachi(p,function(k,v)
+		s = string.gsub(s,Private.domatch("<%s*[!/]?",v,"[^>]*>"),"")
+	end)
+	return s
 end
 
 ---

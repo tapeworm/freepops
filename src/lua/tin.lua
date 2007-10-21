@@ -843,7 +843,8 @@ function tin_parse_webmessage(wherearewe, data)
 	
 	-- Added to nvhs to delete scroll bar
 	if not (body_html == nil) then 
-		body_html  = string.gsub(body_html, "auto;width:570px;height", "auto;height")
+		body_html = string.gsub(body_html, 
+			"auto;width:570px;height", "auto;height")
 	end
 
 	-- extract attachments

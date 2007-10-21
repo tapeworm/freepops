@@ -8,7 +8,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "Tre"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -417,7 +417,6 @@ function tre_parse_webmessage(pstate,msg)
 		local fname = string.match(x:get(0,i-1),'^[%s%t]*(.*)')
 		attach[mimer.html2txtplain(fname)] = "http://".. b:wherearewe() .. "/cgi-bin/" .. url
 		log.dbg("DEBUG: attacchment url " .. attach[mimer.html2txtplain(fname)] )
-		table.setn(attach,table.getn(attach) + 1)
 	end
 	
 	-- mangles the body

@@ -59,7 +59,7 @@
 -- <B>ssl_init_stuff()</B> : some stuff for SSL<BR/>
 --<BR/>
 
-MODULE_VERSION = "0.1.0"
+MODULE_VERSION = "0.1.1"
 MODULE_NAME = "browser.browser"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -211,7 +211,7 @@ function Hidden.adjust_path(l,u,location)
 				function(s)table.insert(rc,s)
 			end)
 			-- delete last element
-			table.remove(rc,table.getn(rc))
+			table.remove(rc,#rc)
 			base = "/" .. table.concat(rc,"/") .. "/"
 		end
 		return clean_2_slash(base)
@@ -316,7 +316,7 @@ function Hidden.parse_header(self,gl_h,url)
                 Hidden.is_https_proxy_tunnel(self, url, ret) then
                 local gl_h1 = {} -- to not lose the real header
                 local end_of_1xx = false
-                for i=1,table.getn(gl_h) do
+                for i=1,#gl_h do
                        if end_of_1xx then
                              table.insert(gl_h1,gl_h[i])
                        end

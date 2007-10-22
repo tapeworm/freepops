@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.9"
+PLUGIN_VERSION = "0.2.9b"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -828,7 +828,7 @@ function tin_parse_webmessage(wherearewe, data)
 		body = string.gsub(body, "&gt;", ">")
 		body = string.gsub(body, "&quot;", "\"")
 		body = string.gsub(body, "&#39;", "'")
-		body = string.gsub(body, "&amp;&", "&")
+		body = string.gsub(body, "&amp;", "&")
 		body = string.gsub(body, "Ã ", "à")
 		body = string.gsub(body, "Ã¨", "è")
 		body = string.gsub(body, "Ã©", "é")

@@ -2,6 +2,7 @@ MK_TEMPLATE=	luabind \
 		base64 \
 		dictionary \
 		list \
+		stats \
 		log \
 		log_lua \
 		lock \
@@ -24,6 +25,7 @@ MK_TEMPLATE=	luabind \
 		browser_lua \
 		stringhack_lua \
 		mlex_lua \
+		stats_lua	\
 		portablesocket_lua \
 		base64_lua	\
 		mimer_lua	\

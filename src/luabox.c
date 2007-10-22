@@ -35,6 +35,7 @@
 #include "crypto_lua.h"
 #include "lfs.h"
 #include "dpipe_lua.h"
+#include "stats_lua.h"
 
 #include "log.h"
 #define LOG_ZONE "LUABOX"
@@ -55,6 +56,7 @@ static struct entry_t libs[LUABOX_LAST] = {
 		{"crypto",luaopen_crypto},
 		{"lfs",luaopen_lfs},
 		{"dpipe",luaopen_dpipe},
+		{"stats",luaopen_stats},
 };
 
 lua_State* luabox_genbox(unsigned long intial_stuff){

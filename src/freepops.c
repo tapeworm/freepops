@@ -60,6 +60,7 @@
 #include "engine.h"
 #include "altsocklib.h"
 #include "regularexp.h"
+#include "stats.h"
 
 #include "lua.h"
 #include "luay.h"
@@ -651,6 +652,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	my_putenv("LUA_HTTP_PROXY",proxy);
 	my_putenv("LUA_HTTP_PROXYAUTH",proxyauth);
 	my_putenv("LUA_FORCE_PROXY_AUTH_TYPE",fpat);
+
+	STATS_ACTIVATE(new_connection);
 	
 /*** INTERPRETER MODE ***/
 	if (script != NULL){

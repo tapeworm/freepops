@@ -80,6 +80,7 @@ LIBS=		crypto_lua	\
                 $(LUACURL)      \
                 support_lua     \
                 mlex_lua        \
+                stats_lua        \
                 log_lua         \
                 serialize_lua   \
                 session_lua     \
@@ -93,6 +94,7 @@ LIBS=		crypto_lua	\
                 lock            \
                 pid             \
                 mlex            \
+		stats		\
                 list            \
                 base64          \
                 log             \

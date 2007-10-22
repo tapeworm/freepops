@@ -700,6 +700,11 @@ freepops.MODULES_MAP["linuxgazette.net"] 	= {
 --
 freepops.MODULES_MAP["updater"] = {name="updater.lua"}
 
+-- Monitor
+--
+freepops.MODULES_MAP["monitor"] = {name="monitor.lua"}
+
+
 -- -------------------------------------------------------------------------- --
 -- 2) Policy
 --

@@ -33,6 +33,7 @@
 #include "popserver.h"
 #include "popstate.h"
 #include "threads.h"
+#include "stats.h"
 
 #ifdef HAVE_CONFIG_H
 	#include "config.h"
@@ -842,6 +843,8 @@ if(set_rights != NULL)
 while(1)
 	{
 	new=sock_listen(s);
+
+	STATS_LOG(new_connection);
 
 	thread_clean(); //clean dead threads
 	thread_get_free(&pth,&att); //get a free thread

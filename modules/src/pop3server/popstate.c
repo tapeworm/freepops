@@ -65,7 +65,7 @@ void delete_mailmessage(struct mail_msg_t* m);
 struct mail_msg_t* new_mailmessage();
 
 /******************************************************************************/
-struct popstate_t *new_popstate_t(void *newp(void))
+struct popstate_t *new_popstate_t(void)
 {
 struct popstate_t *tmp;
 

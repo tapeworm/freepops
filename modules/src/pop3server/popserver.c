@@ -293,7 +293,7 @@ else
  * marshaller for retr
  */
 int marshaller_retr(struct popstate_t*p,struct popserver_functions_t *f,
-	struct sock_state_t *s, int msg,int lines)
+	struct sock_state_t *s, int msg,int lines __attribute__((unused)))
 {
 return f->retr(p,msg,s);
 }
@@ -321,7 +321,7 @@ HIDDEN enum states_e send_result_callback(
 		int (*marshaller)
 			(struct popstate_t*p,struct popserver_functions_t *f,
 			struct sock_state_t *s, int msg,int lines),
-		char* err_comment[],
+		char* err_comment[] __attribute__ ((unused)),
 		enum states_e err_next[],
 		int numerr,
 		enum states_e suc_next)

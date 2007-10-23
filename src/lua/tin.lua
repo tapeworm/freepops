@@ -812,10 +812,15 @@ function tin_parse_webmessage(wherearewe, data)
 	if found == nil then
 		head = mimer.remove_lines_in_proper_mail_header(head,{"content%-type"})
 		body_html = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.*)\n\"/>")
+		-- for empty mail
+		if body_html==nil then
+			body_html=" "
+		end
 		body_html = string.gsub(body_html, "&lt;" ,"<")
 		body_html = string.gsub(body_html, "&gt;" ,">")
 		body_html = string.gsub(body_html, "&quot;","\"")
-		body_html = string.gsub(body_html, "&amp;","&")
+		body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?;)","&%1")
+							
 
 	else
 		body = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.*)\n\"/>")
@@ -870,7 +875,7 @@ function tin_parse_webmessage(wherearewe, data)
 	-- by nvhs for html image
 	
 	local y = mlex.match(data, tin_string.imageE, tin_string.imageG)
-	local x = mlex.match(data, tin_string.cidE, tin_string.cidG)
+	local x = mlex.match(body_html, tin_string.cidE, tin_string.cidG)
 	-- y:print()
 	for i = 1, y:count() do
 		local url = y:get(0,i-1)
@@ -887,7 +892,9 @@ function tin_parse_webmessage(wherearewe, data)
 		if not (url == nil) then 
 				print(url)
 				attach[name] = "http://"..wherearewe..url
-				cid=string.match(body_html,"cid:(.*)\"")
+				print(cid.."\n")
+				-- must fix for htlm tollerace
+				cid=string.match(cid,"cid:(.*)\"")
 				print(cid.."\n")
 				inlineids[name]=cid
 		end

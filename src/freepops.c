@@ -102,29 +102,33 @@ HIDDEN void add_to_args(const char * arg){
 
 /*** usage ********************************************************************/
 #define GETOPT_STRING "-b:p:P:A:u:t:l:s:dhVvwknx:e:"
-HIDDEN  struct option opts[] = { { "bind", required_argument, NULL, 'b' },
-				 { "port", required_argument, NULL, 'p' },
-				 { "proxy", required_argument, NULL, 'P' },
-				 { "auth", required_argument, NULL, 'A' },
-				 { "useragent", required_argument, NULL, 'u' },
-				 { "threads", required_argument, NULL, 't' },
-				 { "help" , no_argument , NULL, 'h'},
-				 { "version" , no_argument , NULL , 'V'},
-				 { "verbose", no_argument, NULL, 'v' },
-				 { "veryverbose", no_argument, NULL, 'w' },
-				 { "logmode", required_argument, NULL, 'l' },
-				 { "daemonize", no_argument, NULL, 'd' },
-				 { "suid", required_argument, NULL, 's' },
-				 { "kill", no_argument, NULL, 'k' },
-				 { "no-pid-file", no_argument, NULL, 'n' },
-				 { "toxml", required_argument, NULL, 'x' },
-				 { "force-proxy-auth-type", 
-					 required_argument, NULL, 1000 },
-				 { "fpat", 
-					 required_argument, NULL, 1000 },
-				 { "no-icon",no_argument, NULL, 1001},
-				 { "execute",required_argument, NULL, 'e'},
-	                         { NULL, 0, NULL, 0 } };
+HIDDEN  struct option opts[] = { 
+	{ "bind", required_argument, NULL, 'b' },
+	{ "port", required_argument, NULL, 'p' },
+	{ "proxy", required_argument, NULL, 'P' },
+	{ "auth", required_argument, NULL, 'A' },
+	{ "useragent", required_argument, NULL, 'u' },
+	{ "threads", required_argument, NULL, 't' },
+	{ "help" , no_argument , NULL, 'h'},
+	{ "version" , no_argument , NULL , 'V'},
+	{ "verbose", no_argument, NULL, 'v' },
+	{ "veryverbose", no_argument, NULL, 'w' },
+	{ "logmode", required_argument, NULL, 'l' },
+	{ "daemonize", no_argument, NULL, 'd' },
+	{ "suid", required_argument, NULL, 's' },
+	{ "kill", no_argument, NULL, 'k' },
+	{ "no-pid-file", no_argument, NULL, 'n' },
+	{ "toxml", required_argument, NULL, 'x' },
+	{ "force-proxy-auth-type", required_argument, NULL, 1000 },
+	{ "fpat", required_argument, NULL, 1000 },
+	{ "no-icon",no_argument, NULL, 1001},
+	{ "execute",required_argument, NULL, 'e'},
+	{ "statistics-all",no_argument, NULL, 1002},
+	{ "statistics-session-created",no_argument, NULL, 1003},
+	{ "statistics-session-ok",no_argument, NULL, 1004},
+	{ "statistics-session-err",no_argument, NULL, 1005},
+	{ "statistics-connection-established",no_argument, NULL, 1006},
+	{ NULL, 0, NULL, 0 } };
 
 HIDDEN void usage(const char *progname) {
 	fprintf(stderr, 
@@ -141,6 +145,11 @@ HIDDEN void usage(const char *progname) {
 "\t\t\t[-x|--toxml file]\n"
 "\t\t\t[-e|--execute scriptfile [args...]]\n"
 "\t\t\t[--fpat|--force-proxy-auth-type (basic|digest|ntlm|gss)]\n"
+"\t\t\t[--statistics-all]\n"
+"\t\t\t[--statistics-session-created]\n"
+"\t\t\t[--statistics-session-ok]\n"
+"\t\t\t[--statistics-session-err]\n"
+"\t\t\t[--statistics-connection-established]\n"
 #if defined(WIN32)
 "\t\t\t[--no-icon]\n"
 #endif
@@ -429,6 +438,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                     LPSTR lpszCmdLine, int nCmdShow){
 #endif
 	int res;
+	unsigned long int active_stats=0;
 	int threads_num = MAXTHREADS;
 	unsigned short port = POP3PORT;
 	struct in_addr address;
@@ -632,6 +642,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		} else if (res == 1){
 			/* extra arguments */
 			add_to_args(optarg);
+		} else if (res == 1002) {
+			/* statistics-all */
+			active_stats |= STATS_ALL;
+		} else if (res == 1003) {
+			/* statistics-session-created */
+			active_stats |= STATS_SESSION_CREATED;
+		} else if (res == 1004) {
+			/* statistics-session-ok */
+			active_stats |= STATS_SESSION_OK;
+		} else if (res == 1005) {
+			/* statistics-session-err */
+			active_stats |= STATS_SESSION_ERR;
+		} else if (res == 1006) {
+			/* statistics-connection-established */
+			active_stats |= STATS_CONNECTION_ESTABLISHED;
 		} else {
 			/* unknown param */
 			usage(argv[0]);
@@ -653,7 +678,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	my_putenv("LUA_HTTP_PROXYAUTH",proxyauth);
 	my_putenv("LUA_FORCE_PROXY_AUTH_TYPE",fpat);
 
-	STATS_ACTIVATE(new_connection);
+	stats_activate(active_stats);
 	
 /*** INTERPRETER MODE ***/
 	if (script != NULL){

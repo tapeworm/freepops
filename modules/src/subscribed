@@ -2,7 +2,6 @@ MK_TEMPLATE=	luabind \
 		base64 \
 		dictionary \
 		list \
-		stats \
 		log \
 		log_lua \
 		lock \

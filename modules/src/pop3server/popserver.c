@@ -844,7 +844,7 @@ while(1)
 	{
 	new=sock_listen(s);
 
-	STATS_LOG(new_connection);
+	STATS_LOG(connection_established);
 
 	thread_clean(); //clean dead threads
 	thread_get_free(&pth,&att); //get a free thread
@@ -856,7 +856,6 @@ while(1)
 		SAY("unable to handle connection, no more threads",s);
 		continue;
 		}
-
 
 	p = new_popstate_t();
 
@@ -876,6 +875,8 @@ while(1)
 		free(data);
 		ERROR_ABORT("pthread_create failed\n");
 		}
+	
+	STATS_LOG(session_created);
 
 	#ifdef WIN32
 	//FIXME

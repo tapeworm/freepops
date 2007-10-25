@@ -111,7 +111,12 @@ function retr(pstate,msg,pdata)
 	send("From: freepops@monitor\r\n")
 	send("To: "..internal_state.username.."\r\n")
 	send("\r\n")
-	send("new_connection: "..tostring(stats.new_connection()).."\r\n")
+	local t = {}
+	for name in pairs(stats) do table.insert(t,name) end
+	table.sort(t)
+	for _,name in ipairs(t) do
+		send(name..": "..stats[name]().."\r\n")
+	end
 
 	return POPSERVER_ERR_OK
 end

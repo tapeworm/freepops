@@ -800,7 +800,7 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "Ã‰", "É")
 	head = string.gsub(head, "Ã’", "Ò")
 	head = string.gsub(head, "Ã™", "Ù")
-	head = string.gsub(head, "â‚¬", "€")
+	head = string.gsub(head, "â,¬", "€")
 	head = string.gsub(head, "â€œ", "“")
 	head = string.gsub(head, "â€", "”")
 

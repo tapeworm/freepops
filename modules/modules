@@ -6,11 +6,11 @@ MODULES-Common= $(LUALUA)	\
 		log		\
 		base64 		\
 		list		\
-		stats		\
 		mlex		\
 		pid		\
 		lock		\
 		dictionary	\
+		stats_lua	\
 		session		\
 		portablesocket	\
 		pop3server	\
@@ -18,7 +18,6 @@ MODULES-Common= $(LUALUA)	\
 		session_lua	\
 		serialize_lua	\
 		log_lua		\
-		stats_lua	\
 		mlex_lua	\
 		support_lua	\
 		getdate		\

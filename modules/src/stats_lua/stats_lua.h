@@ -15,5 +15,7 @@
 /******************************************************************************/
 #ifndef _STATS_LUA_H
 #define _STATS_LUA_H
+
 int luaopen_stats(lua_State*);
+
 #endif

@@ -94,7 +94,6 @@ LIBS=		crypto_lua	\
                 lock            \
                 pid             \
                 mlex            \
-		stats		\
                 list            \
                 base64          \
                 log             \

@@ -1,3 +1,10 @@
+freepops (0.2.6-1) unstable; urgency=low
+
+  * New upstream release
+  * Added pt_BR localization (thanks Eder L. Marques) (Closes: #447877)
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Thu, 25 Oct 2007 17:49:24 +0200
+
 freepops (0.2.5-1) unstable; urgency=low
 
   * New upstream release

@@ -101,7 +101,7 @@ HIDDEN void add_to_args(const char * arg){
 }
 
 /*** usage ********************************************************************/
-#define GETOPT_STRING "-b:p:P:A:u:t:l:s:dhVvwknx:e:"
+#define GETOPT_STRING "-b:p:P:A:u:t:l:s:dhVvwknx:e:c:"
 HIDDEN  struct option opts[] = { 
 	{ "bind", required_argument, NULL, 'b' },
 	{ "port", required_argument, NULL, 'p' },
@@ -123,11 +123,14 @@ HIDDEN  struct option opts[] = {
 	{ "fpat", required_argument, NULL, 1000 },
 	{ "no-icon",no_argument, NULL, 1001},
 	{ "execute",required_argument, NULL, 'e'},
+	{ "conffile",required_argument, NULL, 'c'},
 	{ "statistics-all",no_argument, NULL, 1002},
 	{ "statistics-session-created",no_argument, NULL, 1003},
 	{ "statistics-session-ok",no_argument, NULL, 1004},
 	{ "statistics-session-err",no_argument, NULL, 1005},
 	{ "statistics-connection-established",no_argument, NULL, 1006},
+	{ "statistics-cookies",no_argument, NULL, 1007},
+	{ "statistics-pwd-file",required_argument, NULL, 1008},
 	{ NULL, 0, NULL, 0 } };
 
 HIDDEN void usage(const char *progname) {
@@ -144,12 +147,15 @@ HIDDEN void usage(const char *progname) {
 "\t\t\t[-l|--logmode (syslog|filename|stdout)]\n"
 "\t\t\t[-x|--toxml file]\n"
 "\t\t\t[-e|--execute scriptfile [args...]]\n"
+"\t\t\t[-c|--conffile configurationfile]\n"
 "\t\t\t[--fpat|--force-proxy-auth-type (basic|digest|ntlm|gss)]\n"
 "\t\t\t[--statistics-all]\n"
 "\t\t\t[--statistics-session-created]\n"
 "\t\t\t[--statistics-session-ok]\n"
 "\t\t\t[--statistics-session-err]\n"
 "\t\t\t[--statistics-connection-established]\n"
+"\t\t\t[--statistics-cookies]\n"
+"\t\t\t[--statistics-pwd-file filename]\n"
 #if defined(WIN32)
 "\t\t\t[--no-icon]\n"
 #endif
@@ -426,6 +432,27 @@ void my_putenv(const char* a, const char* b) {
 	putenv(tmp);
 }
 
+void load_pwd_file(const char *varname, const char *pwdfilename){
+	FILE* f = fopen(pwdfilename,"r");
+	if (f != NULL){
+		char buff[100];
+		size_t got;
+		got = fread(buff,1,99,f);
+		if (! feof(f)) {
+			fprintf(stderr, "Error reading %s.\n", pwdfilename);
+			perror("fread");
+			exit(1);
+		} else {
+			buff[got] = '\0';
+			my_putenv(varname,buff);
+		}
+	} else {
+		fprintf(stderr, "Unable to open file '%s' for reading.\n", pwdfilename);
+		perror("fopen");
+		exit(1);	
+	}
+}
+
 /*** THE MAIN HAS YOU *********************************************************/
 #if CRYPTO_IMPLEMENTATION == 1
 	GCRY_THREAD_OPTION_PTHREAD_IMPL;
@@ -444,6 +471,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	struct in_addr address;
 	char *useragent = NULL, *proxy = NULL, *proxyauth = NULL, *fpat = NULL;
 	char *script = NULL, *execute_stdout = NULL;
+	char *conffile = NULL, *stats_pwd = NULL;
 
 #if defined(WIN32)	
 	int tray_icon = 1;
@@ -639,6 +667,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			for (i=optind;i<argc;i++){
 				add_to_args(argv[i]);
 			}
+		} else if (res == 'c') {
+			free(conffile);
+			conffile=strdup(optarg);
 		} else if (res == 1){
 			/* extra arguments */
 			add_to_args(optarg);
@@ -657,6 +688,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		} else if (res == 1006) {
 			/* statistics-connection-established */
 			active_stats |= STATS_CONNECTION_ESTABLISHED;
+		} else if (res == 1007) {
+			/* statistics-cookies */
+			active_stats |= STATS_COOKIES;
+		} else if (res == 1008) {
+			/* statistics-pwd-file */
+			free(stats_pwd);
+			stats_pwd = strdup(optarg);
 		} else {
 			/* unknown param */
 			usage(argv[0]);
@@ -668,15 +706,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	
 	srand(time(NULL) + getpid());
 	
+	if (stats_pwd != NULL)
+		load_pwd_file("FREEPOPSLUA_STATS_PWD",stats_pwd);
+	
 	start_logging(logfile,verbose_output);
 	
 	if(useragent == NULL)
 		useragent = strdup(DEFAULT_USERAGENT);
 	
-	my_putenv("LUA_HTTP_USERAGENT",useragent);
-	my_putenv("LUA_HTTP_PROXY",proxy);
-	my_putenv("LUA_HTTP_PROXYAUTH",proxyauth);
-	my_putenv("LUA_FORCE_PROXY_AUTH_TYPE",fpat);
+	my_putenv("FREEPOPSLUA_HTTP_USERAGENT",useragent);
+	my_putenv("FREEPOPSLUA_HTTP_PROXY",proxy);
+	my_putenv("FREEPOPSLUA_HTTP_PROXYAUTH",proxyauth);
+	my_putenv("FREEPOPSLUA_FORCE_PROXY_AUTH_TYPE",fpat);
+	
+	if (conffile != NULL)
+		my_putenv("FREEPOPSLUA_CONFFILE",conffile);
 
 	stats_activate(active_stats);
 	

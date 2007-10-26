@@ -1,5 +1,21 @@
+/******************************************************************************
+ * $Id$
+ * This file is part of FreePOPs (http://www.freepops.org)                    *
+ * This file is distributed under the terms of GNU GPL license.               *
+ ******************************************************************************/
+
+/******************************************************************************
+ * File description:
+ *	session persistency	
+ * Notes:
+ *	
+ * Authors:
+ * 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
+ ******************************************************************************/
+
 #include "session.h"
 #include "dictionary.h"
+#include "stats.h"
 #include "log.h"
 #define LOG_ZONE "SESSION"
 
@@ -22,6 +38,9 @@ if (tmp != NULL )
 		session_remove(key);
 	else
 		return;
+	}
+else 	{
+	STATS_LOG(cookies,1);
 	}
 	
 tmp = (struct data_t*)malloc(sizeof(struct data_t));
@@ -71,6 +90,8 @@ if(tmp != NULL)
 	free(tmp);
 		
 	dictionary_remove(&sessions,key);
+
+	STATS_LOG(cookies,-1);
 	}
 }
 

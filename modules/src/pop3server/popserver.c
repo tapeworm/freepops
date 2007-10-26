@@ -766,6 +766,7 @@ while(!stop)
 			f->quit(p);	
 		sock_disconnect(s);
 		thread_die(pthread_self());
+		STATS_LOG(session_err);
 		break;
 		}
 
@@ -785,6 +786,7 @@ while(!stop)
 			sock_disconnect(s);
 			thread_die(pthread_self());
 			stop=1;
+			STATS_LOG(session_err);
 		break;
 
 		case POPSTATE_END:
@@ -792,6 +794,7 @@ while(!stop)
 			sock_disconnect(s);
 			thread_die(pthread_self());
 			stop=1;
+			STATS_LOG(session_ok);
 		break;
 
 		case POPSTATE_LAST:

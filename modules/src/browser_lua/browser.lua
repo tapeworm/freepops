@@ -61,7 +61,7 @@
 
 MODULE_VERSION = "0.1.1"
 MODULE_NAME = "browser.browser"
-MODULE_REQUIRE_VERSION = "0.2.0"
+MODULE_REQUIRE_VERSION = "0.2.6"
 MODULE_LICENSE = "GNU/GPL"
 MODULE_URL = "http://www.freepops.org/download.php?module=browser.browser.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
@@ -732,11 +732,11 @@ function new(override_useragent)
 		cookies = {},
 		referrer = false, --nil will break the metatable check
 		curl = false,
-		proxy = os.getenv("LUA_HTTP_PROXY"),
-		proxyauth = os.getenv("LUA_HTTP_PROXYAUTH"),
+		proxy = os.getenv("FREEPOPSLUA_HTTP_PROXY"),
+		proxyauth = os.getenv("FREEPOPSLUA_HTTP_PROXYAUTH"),
 		useragent = override_useragent or 
-		  os.getenv("LUA_HTTP_USERAGENT"),
-		fpat = os.getenv("LUA_FORCE_PROXY_AUTH_TYPE"),
+		  os.getenv("FREEPOPSLUA_HTTP_USERAGENT"),
+		fpat = os.getenv("FREEPOPSLUA_FORCE_PROXY_AUTH_TYPE"),
 		followRefreshHeader = false,
 	}
 

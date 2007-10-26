@@ -29,41 +29,62 @@
 
 #define HIDDEN static
 
+#define LUI long unsigned int
+#define LI long int
+
 #define VOID_VOID_LOGGER(name) void (*stats_log_##name)(void)
+#define VOID_LINT_LOGGER(name) void (*stats_log_##name)(LI)
+
+#define LUINT(name) \
+	HIDDEN LUI counter_##name; \
+	HIDDEN LUI get_##name(){  return counter_##name; }\
+
+#define LINT(name) \
+	HIDDEN LI counter_##name; \
+	HIDDEN LI get_##name(){  return counter_##name; }\
+
+#define LUINT_INCR(name) \
+	LUINT(name) \
+	HIDDEN void stats_log_##name##_incr(){ counter_##name++; } 
+
+#define LINT_SUM(name) \
+	LINT(name) \
+	HIDDEN void stats_log_##name##_sum(LI x) { counter_##name += x; }
+
+#define ACTIVATE(name,kind) stats_log_##name = stats_log_##name##_##kind;
 
 VOID_VOID_LOGGER(session_created);
 VOID_VOID_LOGGER(session_ok);
 VOID_VOID_LOGGER(session_err);
 VOID_VOID_LOGGER(connection_established);
+VOID_LINT_LOGGER(cookies);
 
-#define LONG_INT_COUNTER(name) \
-	HIDDEN long unsigned int counter_##name; \
-	HIDDEN long unsigned int get_##name(){  return counter_##name; }\
-	HIDDEN void stats_log_##name##_fun(){ counter_##name++; } 
-
-LONG_INT_COUNTER(session_created);
-LONG_INT_COUNTER(session_ok);
-LONG_INT_COUNTER(session_err);
-LONG_INT_COUNTER(connection_established);
-
-#define ACTIVATE(name) stats_log_##name = stats_log_##name##_fun;
+LUINT_INCR(session_created);
+LUINT_INCR(session_ok);
+LUINT_INCR(session_err);
+LUINT_INCR(connection_established);
+LINT_SUM(cookies);
 
 void stats_activate(long unsigned int mask){
-	if (mask & STATS_SESSION_CREATED) ACTIVATE(session_created); 
-	if (mask & STATS_SESSION_OK) ACTIVATE(session_ok);
-	if (mask & STATS_SESSION_ERR) ACTIVATE(session_err);
-	if (mask & STATS_CONNECTION_ESTABLISHED) ACTIVATE(connection_established);
+	if (mask & STATS_SESSION_CREATED) ACTIVATE(session_created,incr); 
+	if (mask & STATS_SESSION_OK) ACTIVATE(session_ok,incr);
+	if (mask & STATS_SESSION_ERR) ACTIVATE(session_err,incr);
+	if (mask & STATS_CONNECTION_ESTABLISHED) ACTIVATE(connection_established,incr);
+	if (mask & STATS_COOKIES) ACTIVATE(cookies,sum);
 }
 
 /* ============================= LUA BINDINGS =============================== */
 
 #define REGISTER(name,r,p) {#name,r,p,get_##name}
 #define STOP {NULL,stats_void,stats_void,NULL}
+#define CAST_LUI(x) ((LUI)x)
+#define CAST_LI(x) ((LI)x)
 
 HIDDEN const struct luaL_reg empty_reg[] = {{NULL,NULL}};
 
 enum stats_type_e {
 	stats_long_usigned_int,
+	stats_long_int,
 	stats_void,
 	stats_notype,
 };
@@ -85,11 +106,13 @@ HIDDEN struct stats_functions_t stats_functions[] = {
 	REGISTER(session_created,stats_long_usigned_int,stats_void),
 	REGISTER(session_err,stats_long_usigned_int,stats_void),
 	REGISTER(session_ok,stats_long_usigned_int,stats_void),
+	REGISTER(cookies,stats_long_int,stats_void),
 	STOP,
 };
 
 HIDDEN struct stats_types_t stats_types[] = {
 	{"long unsigned int",stats_long_usigned_int},
+	{"long int",stats_long_int},
 	{"void", stats_void},
 	{NULL, stats_notype},
 };
@@ -127,34 +150,51 @@ HIDDEN int generic_function(lua_State* L){
 
 	// I don't want to use libffi for the moment, lets do all possibilities
 	switch(rettype) {
-		case stats_long_usigned_int:
+		case stats_long_usigned_int: {
+			LUI rc=0;
 			switch(intype) {
-				long unsigned int rc;
 				case stats_long_usigned_int: 
-					rc = ((long unsigned int (*)(long unsigned int))f)
-						((long unsigned int)lua_tonumber(L,-1));
-					lua_pushnumber(L,rc);
+					rc = ((LUI (*)(LUI))f)(CAST_LUI(lua_tonumber(L,-1)));
 				break;
-				case stats_void:
-					rc = ((long unsigned int (*)(void))f)();
-					lua_pushnumber(L,rc);
+				case stats_long_int: 
+					rc = ((LUI (*)(LI))f)(CAST_LI(lua_tonumber(L,-1)));
 				break;
+				case stats_void: rc = ((LUI (*)(void))f)(); break;
 				case stats_notype:
 					ERROR_PRINT("Function %p with no intype\n",f);
 					return 0;
 				break;
 			}
-
-		break;
+			lua_pushnumber(L,rc);
+			break;
+		}
+		case stats_long_int: {
+			LI rc=0;
+			switch(intype) {
+				case stats_long_usigned_int: 
+					rc = ((LI (*)(LUI))f)(CAST_LUI(lua_tonumber(L,-1)));
+				break;
+				case stats_long_int: 
+					rc = ((LI (*)(LI))f)(CAST_LI(lua_tonumber(L,-1)));
+				break;
+				case stats_void: rc = ((LI (*)(void))f)(); break;
+				case stats_notype:
+					ERROR_PRINT("Function %p with no intype\n",f);
+					return 0;
+				break;
+			}
+			lua_pushnumber(L,rc);
+			break; 
+		}
 		case stats_void:
 			switch(intype) {
 				case stats_long_usigned_int:
-					((void (*)(long unsigned int))f)
-						((long unsigned int)lua_tonumber(L,-1));
+					((void (*)(LUI))f)(CAST_LUI(lua_tonumber(L,-1)));
 				break;
-				case stats_void:
-					((void (*)(void))f)();
+				case stats_long_int:
+					((void (*)(LI))f)(CAST_LI(lua_tonumber(L,-1)));
 				break;
+				case stats_void: ((void (*)(void))f)(); break;
 				case stats_notype:
 					ERROR_PRINT("Function %p with no intype\n",f);
 					return 0;

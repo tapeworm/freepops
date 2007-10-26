@@ -62,28 +62,37 @@ local __loadfile = loadfile
 
 -- Config file loading.
 local function load_config()
-
-	local paths = { 
-		"/etc/freepops/",
-		"./",
-		os.getenv("FREEPOPSLUA_PATH") or "./" ,
-	}
-
-	local try_load = function (_,p)
-		local h = __loadfile(p .. "config.lua")
-		if h ~= nil then 
-			h() 
-			return true
-		else
-			return nil
+	local conffile = os.getenv("FREEPOPSLUA_CONFFILE")
+	local paths = { "/etc/freepops/", "./", os.getenv("FREEPOPSLUA_PATH") or "./" }
+	
+	local try_load = 
+		function(filename) return
+			function (_,p)
+				local h = __loadfile(p .. filename)
+				if h ~= nil then 
+					h() 
+					return true
+				else
+					return nil
+				end
 		end
 	end
-
-	local rc = table.foreachi(paths,try_load)
-
-	if rc == nil then
-		error("Unable to load config.lua. Path is "..
-			table.concat(paths,":"))
+	
+	if conffile == nil then
+		local rc = table.foreachi(paths,try_load("config.lua"))
+	
+		if rc == nil then
+			error("Unable to load config.lua. Path is "..
+				table.concat(paths,":"))
+		end
+	else
+		if (not string.match(conffile,"^/")) and 
+		   (not string.match(conffile,"^%./")) then
+			conffile = './'..conffile
+		end
+		if not (try_load("")(nil,conffile)) then
+			error("Unable to load the specified conffile: "..conffile)
+		end
 	end
 end
 

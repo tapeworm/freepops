@@ -53,6 +53,16 @@ end
 -- -------------------------------------------------------------------------- --
 -- Must login
 function pass(pstate,password)
+	local pwd = os.getenv("FREEPOPSLUA_STATS_PWD")
+
+	if pwd ~= nil then
+		if password == pwd then 
+			return POPSERVER_ERR_OK 
+		else 
+			return POPSERVER_ERR_AUTH
+		end
+	end
+
 	return POPSERVER_ERR_OK
 end
 -- -------------------------------------------------------------------------- --
@@ -107,24 +117,36 @@ function retr(pstate,msg,pdata)
 		s = a:dothack(s).."\0"
 		popserver_callback(s,pdata)
 	end
-	send("Subject: Monitor\r\n")
+	send("Date: "..os.date().."\r\n")
+	send("Subject: FreePOPs monitor report\r\n")
 	send("From: freepops@monitor\r\n")
-	send("To: "..internal_state.username.."\r\n")
+	send("To: "..freepops.get_name(internal_state.username).."@"..
+		freepops.get_domain(internal_state.username).."\r\n")
 	send("\r\n")
-	local t = {}
-	for name in pairs(stats) do table.insert(t,name) end
-	table.sort(t)
-	for _,name in ipairs(t) do
-		send(name..": "..stats[name]().."\r\n")
+	local args = freepops.get_args(internal_state.username)
+	if args['command'] == 'stats' then
+		local t = {}
+		for name in pairs(stats) do table.insert(t,name) end
+		table.sort(t)
+		for _,name in ipairs(t) do
+			send(name..": "..stats[name]().."\r\n")
+		end
+	else
+		send("Unsupported command:"..(args['command'] or "nil"))
 	end
 
 	return POPSERVER_ERR_OK
 end
 
+-- ===================================================================================== --
+--                                  COMMAND LINE CLIENT
+-- ===================================================================================== --
+
 function assert_ok(s,ifnot)
 	if (not(string.match(s or "","^+OK"))) then
-		print(ifnot)
-		error(ifnot)
+		print(s)
+		print("Command failed: "..ifnot)
+		os.exit(1)
 	end
 end
 
@@ -135,34 +157,31 @@ function main(args)
 
 	local host = args[1] or "localhost"
 	local port = args[2] or 2000
-	local command = args[3] or "help"
+	local pwd = args[3] or "no_pwd_set"
+	local command = args[4] or "help"
 
 	if command == "help" then
-		print("usage: freepopsd -e monitor host port command params")
+		print("usage: freepopsd -e monitor host port pwd command")
 		print()
 		print("defaults are host=localhost port=2000 command=help")
 		print()
-		print("available commands:")
-		for k,_ in pairs(stats) do
-			print('\t'..k)
-		end
-		print('\thelp')
+		print("commands are:")
+		print("\tstats")
 		return 1
 	end
-
 
 	s = psock.connect(host,port,psock.NONE)
 	if s == nil then
 		print("Error connecting to "..host.." port "..port)
 		return 1
 	end
-	assert_ok(s:recv(), "Not a POP3 server")
-	s:send("user foo@monitor?command="..command)
-	assert_ok(s:recv(), "Failed 'user'")
-	s:send("pass xxxx")
-	assert_ok(s:recv(), "Failed 'pass'")
+	assert_ok(s:recv(), "")
+	s:send("user user@monitor?command="..command)
+	assert_ok(s:recv(), "user")
+	s:send("pass "..pwd)
+	assert_ok(s:recv(), "pass")
 	s:send("retr 1")
-	assert_ok(s:recv(), "Failed 'retr'")
+	assert_ok(s:recv(), "retr")
 
 	local lines = function() return s:recv() end
 

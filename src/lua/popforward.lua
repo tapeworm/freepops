@@ -178,7 +178,12 @@ function user(pstate,username)
 		return POPSERVER_ERR_AUTH
 	end
 	
-	local host,port=string.match(freepops.MODULE_ARGS.host,"(.*):(%d+)")
+	local host,port
+	if type(freepops.MODULE_ARGS.host) == "string" then
+		host,port = string.match(freepops.MODULE_ARGS.host,"(.*):(%d+)")
+	elseif type(freepops.MODULE_ARGS.host) == "function" then
+	        host,port = freepops.MODULE_ARGS.host(username)
+	end
 	if host == nil then
 		host = freepops.MODULE_ARGS.host
 	end

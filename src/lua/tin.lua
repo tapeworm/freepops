@@ -811,16 +811,13 @@ function tin_parse_webmessage(wherearewe, data)
 		"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
 	if found == nil then
 		head = mimer.remove_lines_in_proper_mail_header(head,{"content%-type"})
-		body_html = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.*)\n\"/>")
-		-- for empty mail
-		if body_html==nil then
-			body_html=" "
+		body_html = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.-)\"/>")
+		if (body_html~=nil) then 
+			body_html = string.gsub(body_html, "&lt;" ,"<")
+			body_html = string.gsub(body_html, "&gt;" ,">")
+			body_html = string.gsub(body_html, "&quot;","\"")
+			body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?;)","&%1")
 		end
-		body_html = string.gsub(body_html, "&lt;" ,"<")
-		body_html = string.gsub(body_html, "&gt;" ,">")
-		body_html = string.gsub(body_html, "&quot;","\"")
-		body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?;)","&%1")
-							
 
 	else
 		body = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.*)\n\"/>")
@@ -845,7 +842,7 @@ function tin_parse_webmessage(wherearewe, data)
 
 	-- extract attachments
 	local x = mlex.match(data, tin_string.attachE, tin_string.attachG) 
-	x:print()
+	-- x:print()
 	for i = 1, x:count() do
 		local url = x:get(0,i-1)
 		local name = x:get(1,i-1)
@@ -864,7 +861,8 @@ function tin_parse_webmessage(wherearewe, data)
 	for i = 1, x:count() do
 		local url = x:get(0,i-1)
 		local name = x:get(1,i-1)
-		local name = string.match(name,"[%a%d].*")
+		print(name)
+		local name = string.match(name,"%s*%p*(.*)")
 		name=name..".html"
 		local url = string.match(url,
 			"href%s*=%s*'(/cp/ps/Mail/Email[^']*)'")
@@ -873,30 +871,34 @@ function tin_parse_webmessage(wherearewe, data)
 	end
 
 	-- by nvhs for html image
-	
+	if  (body_html~=nil) then 
+		x = mlex.match(body_html, tin_string.cidE, tin_string.cidG)
+	end
 	local y = mlex.match(data, tin_string.imageE, tin_string.imageG)
-	local x = mlex.match(body_html, tin_string.cidE, tin_string.cidG)
 	-- y:print()
 	for i = 1, y:count() do
 		local url = y:get(0,i-1)
-		local name = "img"..i..".gif"
+		local name = "img"..i
 		local cid=x:get(0,i-1)
 		local z=0;
 			while not (attach[name]==nil)
 			do
 				z=z+1
-				name="img"..i+z..".gif"
+				name="img"..i+z
 			end
 		url = string.match(url,
 			"/cp/ps/Mail/ViewAttachment.*&id=%d")
 		if not (url == nil) then 
-				print(url)
-				attach[name] = "http://"..wherearewe..url
-				print(cid.."\n")
-				-- must fix for htlm tollerace
-				cid=string.match(cid,"cid:(.*)\"")
-				print(cid.."\n")
-				inlineids[name]=cid
+				-- print(url)
+				attach[name] = "http://"..wherearewe..url				
+				local cid1=string.match(cid,"cid:(.-)[\"]")
+				if cid1==nil then
+					cid1=string.match(cid,"cid:(.-)%s")
+				end
+				if cid1==nil then
+					cid1=string.match(cid,"cid:(.-)$")
+				end
+				inlineids[name]=cid1
 		end
 			
 	end

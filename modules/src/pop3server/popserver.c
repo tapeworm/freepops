@@ -215,15 +215,15 @@ char * POPSERVER_ERR_MSG[]={
 	"UNKNOWN ERROR, PLEASE FIX"};
 
 enum states_e POPSERVER_ERR_STA[]={
-	POPSTATE_LAST,
-	POPSTATE_ERR,
-	POPSTATE_ERR,
-	POPSTATE_ERR,
-	POPSTATE_LAST,
-	POPSTATE_ERR,
-	POPSTATE_ERR,
-	POPSTATE_ERR,
-	POPSTATE_ERR};
+	POPSTATE_LAST, // <-- POPSERVER_ERR_SYNTAX
+	POPSTATE_ERR,  // <-- POPSERVER_ERR_NETWORK
+	POPSTATE_ERR,  // <-- POPSERVER_ERR_AUTH
+	POPSTATE_ERR,  // <-- POPSERVER_ERR_INTERNAL
+	POPSTATE_LAST, // <-- POPSERVER_ERR_NOMSG
+	POPSTATE_ERR,  // <-- POPSERVER_ERR_LOCKED
+	POPSTATE_ERR,  // <-- POPSERVER_ERR_EOF
+	POPSTATE_ERR,  // <-- POPSERVER_ERR_TOOFAST
+	POPSTATE_ERR}; // <-- POPSERVER_ERR_UNKNOWN
 
 int POPSERVER_ERR_NUM=POPSERVER_ERR_UNKNOWN;
 
@@ -238,7 +238,7 @@ HIDDEN enum states_e send_result_simple(struct sock_state_t *s,int rc,
 {
 char ans[RFC_1939_MAXLINELEN];
 	
-if(rc != 0)
+if(rc != POPSERVER_ERR_OK)
 	{
 	P("%s %s",RFC_1939_ERR,err_comment[MIN(rc-1,numerr-1)]);
 	sock_send(s,ans);
@@ -267,7 +267,7 @@ HIDDEN enum states_e send_result_multiline(struct sock_state_t *s,int rc,
 {
 char ans[RFC_1939_MAXLINELEN];
 	
-if(rc != 0)
+if(rc != POPSERVER_ERR_OK)
 	{
 	P("%s %s",RFC_1939_ERR,err_comment[MIN(rc-1,numerr-1)]);
 	sock_send(s,ans);
@@ -429,8 +429,9 @@ enum states_e next;
 int rc=0;
 
 sock_receive_with_timeout(s,ask,RFC_1939_MAXLINELEN,POPSERVER_NOOP_TIMEOUT);
-if(sock_error_occurred(s))
+if(sock_error_occurred(s)) {
 	return POPSTATE_AUTH;
+}
 
 if(matches(RFC_1939_QUIT,ask)) /*** QUIT *********************/
 	{
@@ -501,6 +502,9 @@ else
 			POPSTATE_ERR);	
 		}
 	}
+
+STATS_LOG_IF(next == POPSTATE_ERR, session_err,rc);
+
 return next;
 }
 
@@ -526,8 +530,9 @@ enum states_e next=POPSTATE_ERR;
 int rc=0;
 
 sock_receive_with_timeout(s,ask,RFC_1939_MAXLINELEN,POPSERVER_NOOP_TIMEOUT);
-if(sock_error_occurred(s))
+if(sock_error_occurred(s)) {
 	return POPSTATE_TRANS;
+}
 
 if(matches(RFC_1939_STAT,ask)) /*** STAT *********************/
 	{
@@ -735,6 +740,9 @@ else
 			POPSTATE_ERR);
 		}
 	}
+
+STATS_LOG_IF(next == POPSTATE_ERR, session_err,rc);
+
 return next;
 }
 
@@ -766,7 +774,7 @@ while(!stop)
 			f->quit(p);	
 		sock_disconnect(s);
 		thread_die(pthread_self());
-		STATS_LOG(session_err);
+		STATS_LOG(session_err,POPSERVER_ERR_NETWORK);
 		break;
 		}
 
@@ -786,7 +794,6 @@ while(!stop)
 			sock_disconnect(s);
 			thread_die(pthread_self());
 			stop=1;
-			STATS_LOG(session_err);
 		break;
 
 		case POPSTATE_END:

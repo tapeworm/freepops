@@ -61,6 +61,7 @@
 #include "altsocklib.h"
 #include "regularexp.h"
 #include "stats.h"
+#include "session.h"
 
 #include "lua.h"
 #include "luay.h"
@@ -710,6 +711,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		load_pwd_file("FREEPOPSLUA_STATS_PWD",stats_pwd);
 	
 	start_logging(logfile,verbose_output);
+	session_init();
 	
 	if(useragent == NULL)
 		useragent = strdup(DEFAULT_USERAGENT);

@@ -28,8 +28,8 @@ clean:
 	$(H)cd win;rm -rf *.exe
 
 
-dist-win: dist-win-e-zip-gnutls
-dist-zip: dist-win-e-zip-gnutls
+dist-win: dist-win-e-zip-openssl
+dist-zip: dist-win-e-zip-openssl
 dist-win-gnutls: dist-win-e-zip-gnutls
 dist-zip-gnutls: dist-win-e-zip-gnutls
 dist-win-openssl: dist-win-e-zip-openssl

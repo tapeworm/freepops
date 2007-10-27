@@ -38,6 +38,7 @@ function init(pstate)
 
 	require("stats")
 	require("stringhack")
+	require("common")
 	
 	-- checks on globals
 	freepops.set_sanity_checks()
@@ -101,10 +102,13 @@ function stat(pstate)
 	if internal_state.stat_done then
 		return POPSERVER_ERR_OK
 	else
+		local d = os.date("*t")
 		set_popstate_nummesg(pstate,1)
 		set_mailmessage_size(pstate,1,100)
-		set_mailmessage_uidl(pstate,1,tostring(os.date("%s")))
+		set_mailmessage_uidl(pstate,1,
+			d.year..d.month..d.day..d.hour..d.min..d.sec)
 	end
+	return POPSERVER_ERR_OK
 end
 
 function top(pstate,msg,lines,pdata)

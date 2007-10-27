@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH FREEPOPSD 1 "July 6, 2004"
+.TH FREEPOPSD 1 "October 27, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -26,9 +26,6 @@ This manual page documents briefly the
 .B freepopsd
 daemon.
 .PP
-.\" TeX users may be more comfortable with the \fB<whatever>\fP and
-.\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
-.\" respectively.
 \fBfreepopsd\fP is a program that converts your local requests to its
 pop3 daemon to remote http requests to supported web mails.
 .SH OPTIONS
@@ -95,6 +92,43 @@ returned from the interpreter.
 Force the use of a specific proxy auth method. Accepted types are
 \fIbasic\fR, \fIdigest\fR, \fIntlm\fR and \fIgss\fR.
 .TP
+\fB\-c\fR, \fB\-\-conffile \fRfile
+Users the specified configuration file instead of looking in default paths like 
+/etc/freepops/config.lua, ./config.lua and /usr/share/frepops/lua/config.lua
+.TP
+\fB\-\-statistics\-all
+Enable all statistics. Results can be viewed with the monitor plugin, either
+with an account like foo@monitor?command=stats or with freepopsd -e monitor host port 
+password command.
+.TP
+\fB\-\-statistics\-session\-created
+Enables statistics regarding threads created to run a plugin. See the documentation 
+of \-\-statistics\-all for an explanation of how to read that statistics.
+.TP
+\fB\-\-statistics\-session\-ok
+Enables statistics regarding sessions ended successfully. See the documentation 
+of \-\-statistics\-all for an explanation of how to read that statistics.
+.TP
+\fB\-\-statistics\-session\-err
+Enables statistics regarding sessions ended with an error. See the documentation 
+of \-\-statistics\-all for an explanation of how to read that statistics.
+.TP
+\fB\-\-statistics\-connection\-established
+Enables statistics regarding connections accepted. See the documentation 
+of \-\-statistics\-all for an explanation of how to read that statistics.
+.TP
+\fB\-\-statistics\-cookies
+Enables statistics regarding persistently stored data (usually cookies). 
+See the documentation 
+of \-\-statistics\-all for an explanation of how to read that statistics.
+.TP
+\fB\-\-statistics\-pwd-file \fRfile
+Data collected by the statistics mechanism can be read using the monitor plugin.
+If a password file is not specified, no password is set and everybody
+connection to the freepops daemon can read such data. Write your password in a text file 
+with no additional end-of-line to restrict access to that data. The password file is read 
+before dropping privileges (on unix).
+.TP
 \fB \-h\fR, \fB\-\-help
 Prints the usage message.
 .TP
@@ -108,10 +142,6 @@ This is the maximum verbosity level available. Combining more parameters of this
 \fB \-V\fR, \fB\-\-version
 Prints the program version.
 .br
-.\".SH LIMIT TOO FREQUENT WEBMAIL ACCESS
-.\"You can put a minimum interval between two webmail request for the same account 
-.\"by changing the MININTERVAL key in libero.cfg. Time is in seconds. This makes 
-.\"sense only in a lan-wide installation.
 .SH FILES
 .TP
 .I /usr/share/frepops/lua/*
@@ -120,12 +150,6 @@ Webmails access implementation
 .I /etc/freepops/config.lua
 Configuration file, interesting only for paths, addresses to modules binding,
 and accept/reject policy on mail addresses
-\".TP
-.\".I ~/.liberopops/libero.cfg
-.\"Configuration file for the libero webmail user defined (read before than the system wide one) - for normal users
-.\".TP
-.\".I ./libero.cfg
-.\"Configuration file for the libero webmail (read after than the system wide one)
 .SH AUTHOR
 This manual page was written by Enrico Tassi <gareuselesinge@users.sourceforge.net>,
 for the Debian project (but may be used by others).

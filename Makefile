@@ -33,6 +33,9 @@ help:
 all : modules src updater-ui-fltk
 	$(H)echo -n
 
+prepare:
+	$(H)make -C modules/ prepare CONFIG=$(PWD)/config
+
 clean: 
 	$(H)#ln -s buildfactory/debian . 2>/dev/null || true
 	$(H)echo "cleaning freepopsd"

@@ -35,7 +35,6 @@ MODULES-Common= $(LUALUA)	\
 		httpmail_lua	\
 		crypto_lua	\
 		$(LUAFILESYSTEM) \
-		luadoc		\
 		plugins2xml_lua	\
 		version_comparer_lua \
 		updater_lua	\

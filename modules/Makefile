@@ -21,8 +21,16 @@ FORALL=	for X in $$MODULES; do						\
 
 ########################################################################
 
-all: src/config
+include/config.h:
 	$(H)cd include/;ln -s ../../config.h . 1>/dev/null 2>/dev/null|| true
+
+prepare: src/config include/config.h
+	$(H)ACTION="prepare";\
+	NAME="building";\
+	MODULES="$(MODULES)";\
+	$(FORALL)
+
+all: src/config include/config.h
 	$(H)ACTION="all";\
 	NAME="building";\
 	MODULES="$(MODULES)";\

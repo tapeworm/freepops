@@ -14,6 +14,7 @@ endif
 
 CDEPFILES=$(shell ls *.c 2> /dev/null)
 ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),prepare)
 ifneq "$(CDEPFILES)" "" 
 	-include $(CDEPFILES:%.c=.%.d)
 endif
@@ -26,6 +27,7 @@ endif
 RCDEPFILES=$(shell ls *.rc 2> /dev/null)
 ifneq "$(RCDEPFILES)" "" 
 	-include $(RCDEPFILES:%.rc=.%.d)
+endif
 endif
 endif
 
@@ -59,16 +61,15 @@ clean:
 	$(H)rm -f  $(CDEPFILES:%.c=.%.d) $(OBJ) \
 		$(LDEPFILES:%.pkg=.%.d) $(LDEPFILES:%.pkg=%.c) \
 		$(LDEPFILES:%.pkg=%.h) $(RCDEPFILES:%.rc=.%.d) *.a *.c~ *.so \
-		lib$(TARGET) $(LIBRARY) $(SHARED)
+		lib$(TARGET) $(LIBRARY) $(SHARED) \
+		installinterfaces-stamp
 
-	
+prepare: 
+	$(H)echo -n
+
 #############################################
 
-$(LIBRARY): $(OBJ) $(INTERFACE)
-	$(H)[  -z "$(OBJ)" ] || echo -n " linking "
-	$(H)[  -z "$(OBJ)" ] || $(AR) -r $(LIBRARY) $(OBJ) 2>/dev/null
-	$(H)[  -z "$(OBJ)" ] || $(RANLIB) $(LIBRARY)
-	$(H)[  -z "$(OBJ)" ] || echo "$(LIBRARY)"
+installinterfaces-stamp: $(INTERFACE)
 	$(H)if [  -z "$(INSTALLATIONMAP)" ]; then\
 		cp $(INTERFACE) $(PREFIX)/include || true;\
 	    else\
@@ -79,6 +80,13 @@ $(LIBRARY): $(OBJ) $(INTERFACE)
 			cp $$SRC $(PREFIX)/include/$$TGT;\
 		done;\
 	    fi
+	$(H)touch installinterfaces-stamp
+
+$(LIBRARY): $(OBJ) $(INTERFACE) installinterfaces-stamp
+	$(H)[  -z "$(OBJ)" ] || echo -n " linking "
+	$(H)[  -z "$(OBJ)" ] || $(AR) -r $(LIBRARY) $(OBJ) 2>/dev/null
+	$(H)[  -z "$(OBJ)" ] || $(RANLIB) $(LIBRARY)
+	$(H)[  -z "$(OBJ)" ] || echo "$(LIBRARY)"
 	$(H)[ ! -z "$(OBJ)" ] || touch $(LIBRARY)
 #	$(H)[ -z "$(OBJ)" ] || cp $(LIBRARY) $(PREFIX)/lib || true
 	$(H)cp $(LIBRARY) $(PREFIX)/lib || true

@@ -11,7 +11,9 @@ endif
 SUBDIR=$(subst .tar.gz,,$(TGZ))
 
 all: $(SUBDIR)
-	$(H)echo -n
+	$(H)cd $(SUBDIR);\
+		$(MAKE) -f Makefile \
+			PREFIX=$(PREFIX) TARGET=$(TARGET) CONFIG=$(CONFIG)
 
 $(SUBDIR):
 	$(H)$(TAR) -xzf $(TGZ)
@@ -23,9 +25,8 @@ $(SUBDIR):
 		fi;\
 		find . -name makefile -exec rm \{\} \;;\
 	fi
-	$(H)cd $(SUBDIR);\
-		$(MAKE) -f Makefile \
-			PREFIX=$(PREFIX) TARGET=$(TARGET) CONFIG=$(CONFIG)
+
+prepare: $(SUBDIR)
 
 clean:
 	$(H)rm -rf $(SUBDIR)

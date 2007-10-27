@@ -325,6 +325,18 @@ freepops-$(VERSION).tar.gz:
 	$(H)mv ../dist-tgz/freepops-$(VERSION).tar.gz .
 	$(H)rm -rf ../dist-tgz
 
+#dist-tgz-msvc: freepops-$(VERSION).tar.gz
+#	$(H)mkdir -p ../dist-tgz-msvc/
+#	$(H)cp freepops-$(VERSION).tar.gz ../dist-tgz-msvc
+#	$(H)cd ../dist-tgz-msvc; tar -xzf freepops-$(VERSION).tar.gz
+#	$(H)cd ../dist-tgz-msvc; rm freepops-$(VERSION).tar.gz
+#	$(H)cd ../dist-tgz-msvc; mv freepops-$(VERSION) freepops-msvc-$(VERSION)
+#	$(H)cd ../dist-tgz-msvc/freepops-msvc-$(VERSION); \
+#		./configure.sh win-msvc; make prepare
+#	$(H)cd ../dist-tgz-msvc; \
+#		zip -r freepops-msvc-$(VERSION).zip freepops-msvc-$(VERSION)/
+#	$(H)cd ../dist-tgz-msvc; rm -rf freepops-msvc-$(VERSION)
+	
 include openbsd/Makefile
 include slackware/Makefile
 include gentoo/Makefile

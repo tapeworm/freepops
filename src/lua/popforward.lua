@@ -26,8 +26,8 @@ PLUGIN_PARAMETERS = {
 		en = [[If you start the plugin with the username foo@popforward.lua then you need this option to set the real username]],}	
 	},
 	{name = "host", description = {
-		it = [[L'hostname del server POP3 a cui connetterti, puoi anche specificare la porta separandola con :. Esempio: 'in.virgilio.it:110'.]],
-		en = [[The POP3 server hostname. You can specify the port in the hostname:portnumber way.]],}	
+		it = [[L'hostname del server POP3 a cui connetterti, puoi anche specificare la porta separandola con :. Esempio: 'in.virgilio.it:110'.If host is a lua function (you can set that changing the config.lua file but not on the fly) it is called with the username and should return both host and port.]],
+		en = [[The POP3 server hostname. You can specify the port in the hostname:portnumber way. If host is a lua function (you can set that changing the config.lua file but not on the fly) it is called with the username and should return both host and port.]],}	
 	},
 	{name = "port", description = {
 		it = [[Per specificare la porta dell'host a cui connettersi, se non gia' specificato in host con i :]],

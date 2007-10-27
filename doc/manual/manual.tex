@@ -109,26 +109,33 @@ is written in the most portable language around the world).
 These are the plugins currently included in FreePOPs:
 
 \begin{description}
-\input{libero.lua.xml.b.en.xmltex}
-\input{tin.lua.xml.b.en.xmltex}
-\input{davmail.lua.xml.b.en.xmltex}
-\input{popforward.lua.xml.b.en.xmltex}
+\input{abv.lua.xml.b.en.xmltex}
 \input{aggregator.lua.xml.b.en.xmltex}
-\input{flatnuke.lua.xml.b.en.xmltex}
-\input{kernel.lua.xml.b.en.xmltex}
-\input{gmail.lua.xml.b.en.xmltex}
-\input{yahoo.lua.xml.b.en.xmltex}
-\input{squirrelmail.lua.xml.b.en.xmltex}
-\input{hotmail.lua.xml.b.en.xmltex}
 \input{aol.lua.xml.b.en.xmltex}
-\input{netscape.lua.xml.b.en.xmltex}
-\input{tre.lua.xml.b.en.xmltex}
-\input{supereva.lua.xml.b.en.xmltex}
-\input{mailcom.lua.xml.b.en.xmltex}
-\input{mail2world.lua.xml.b.en.xmltex}
-\input{juno.lua.xml.b.en.xmltex}
-\input{fastmail.lua.xml.b.en.xmltex}
 \input{criticalpath.lua.xml.b.en.xmltex}
+\input{davmail.lua.xml.b.en.xmltex}
+\input{excite.lua.xml.b.en.xmltex}
+\input{fastmail.lua.xml.b.en.xmltex}
+\input{flatnuke.lua.xml.b.en.xmltex}
+\input{gmail.lua.xml.b.en.xmltex}
+\input{hotmail.lua.xml.b.en.xmltex}
+\input{juno.lua.xml.b.en.xmltex}
+\input{kernel.lua.xml.b.en.xmltex}
+\input{libero.lua.xml.b.en.xmltex}
+\input{lycos.lua.xml.b.en.xmltex}
+\input{mail2world.lua.xml.b.en.xmltex}
+\input{mailcom.lua.xml.b.en.xmltex}
+\input{monitor.lua.xml.b.en.xmltex}
+\input{netscape.lua.xml.b.en.xmltex}
+\input{orange.lua.xml.b.en.xmltex}
+\input{popforward.lua.xml.b.en.xmltex}
+\input{softhome.lua.xml.b.en.xmltex}
+\input{squirrelmail.lua.xml.b.en.xmltex}
+\input{supereva.lua.xml.b.en.xmltex}
+\input{tin.lua.xml.b.en.xmltex}
+\input{tre.lua.xml.b.en.xmltex}
+\input{updater.lua.xml.b.en.xmltex}
+\input{yahoo.lua.xml.b.en.xmltex}
 \end{description}
 
 \section{History}
@@ -235,6 +242,47 @@ freepops libraries.  The interpreter calls the main function that must get a
 table of strings and return an integer. The arguments passed to freepopsd after
 the script file name are put inside the table argument.  The return value is
 returned from the interpreter. 
+
+\item[-c,~-\hspace{1mm}-conffile~file]
+       Users the specified configuration file  instead  of  looking  in
+       default  paths  like  /etc/freepops/config.lua, ./config.lua and
+       /usr/share/frepops/lua/config.lua
+
+\item[-\hspace{1mm}-statistics-all]
+       Enable all statistics. Results can be viewed  with  the  monitor
+       plugin, either with an account like foo@monitor?command=stats or
+       with freepopsd -e monitor host port password command.
+
+\item[-\hspace{1mm}-statistics-session-created]
+       Enables statistics regarding threads created to  run  a  plugin.
+       See  the documentation of -\hspace{1mm}-statistics-all for an explanation of
+       how to read that statistics.
+
+\item[-\hspace{1mm}-statistics-session-ok]
+       Enables statistics regarding sessions  ended  successfully.  See
+       the  documentation of -\hspace{1mm}-statistics-all for an explanation of how
+       to read that statistics.
+
+\item[-\hspace{1mm}-statistics-session-err]
+       Enables statistics regarding sessions ended with an  error.  See
+       the  documentation of -\hspace{1mm}-statistics-all for an explanation of how
+       to read that statistics.
+
+\item[-\hspace{1mm}-statistics-connection-established]
+       Enables statistics regarding connections accepted. See the documentation  of -\hspace{1mm}-statistics-all for an explanation of how to read
+       that statistics.
+
+\item[-\hspace{1mm}-statistics-cookies]
+       Enables statistics regarding persistently stored  data  (usually
+       cookies).   See  the  documentation  of  -\hspace{1mm}-statistics-all for an
+       explanation of how to read that statistics.
+
+\item[-\hspace{1mm}-statistics-pwd-file~file]
+       Data collected by the statistics mechanism can be read using the
+       monitor  plugin.   If a password file is not specified, no password is set and everybody connection to the freepops daemon  can
+       read such data. Write your password in a text file with no additional end-of-line to restrict access to that data. The password
+       file is read before dropping privileges (on unix).
+
 \item [-\hspace{1mm}-fpat~authtype,~-\hspace{1mm}-force-proxy-auth-type~authtype]
 To forse a specific proxy auth method.
 Accepted values are: ntlm, basic, digest e gss.
@@ -456,11 +504,32 @@ Remember that in the case of the use of on-the-fly bindings there
 will be no default arguments, thus \texttt{port=110} can't be omitted
 as in the previous example.
 
-
-\input{libero.lua.xml.en.xmltex}
-\input{tin.lua.xml.en.xmltex}
+\input{abv.lua.xml.en.xmltex}
+\input{aol.lua.xml.en.xmltex}
+\input{criticalpath.lua.xml.en.xmltex}
 \input{davmail.lua.xml.en.xmltex}
+\input{excite.lua.xml.en.xmltex}
+\input{fastmail.lua.xml.en.xmltex}
+\input{gmail.lua.xml.en.xmltex}
+\input{hotmail.lua.xml.en.xmltex}
+\input{juno.lua.xml.en.xmltex}
+\input{kernel.lua.xml.en.xmltex}
+\input{libero.lua.xml.en.xmltex}
+\input{lycos.lua.xml.en.xmltex}
+\input{mail2world.lua.xml.en.xmltex}
+\input{mailcom.lua.xml.en.xmltex}
+\input{monitor.lua.xml.en.xmltex}
+\input{netscape.lua.xml.en.xmltex}
+\input{orange.lua.xml.en.xmltex}
 \input{popforward.lua.xml.en.xmltex}
+\input{softhome.lua.xml.en.xmltex}
+\input{squirrelmail.lua.xml.en.xmltex}
+\input{supereva.lua.xml.en.xmltex}
+\input{tin.lua.xml.en.xmltex}
+\input{tre.lua.xml.en.xmltex}
+\input{updater.lua.xml.en.xmltex}
+\input{yahoo.lua.xml.en.xmltex}
+
 \input{aggregator.lua.xml.en.xmltex}
 This is the list of aliases for the aggregator plugin.\\
 \\
@@ -552,21 +621,6 @@ news (Italian)}\tabularnewline
 news (Italian)}\tabularnewline
 \hline
 \end{tabular}
-
-\input{kernel.lua.xml.en.xmltex}
-\input{gmail.lua.xml.en.xmltex}
-\input{yahoo.lua.xml.en.xmltex}
-\input{squirrelmail.lua.xml.en.xmltex}
-\input{hotmail.lua.xml.en.xmltex}
-\input{aol.lua.xml.en.xmltex}
-\input{netscape.lua.xml.en.xmltex}
-\input{tre.lua.xml.en.xmltex}
-\input{supereva.lua.xml.en.xmltex}
-\input{mailcom.lua.xml.en.xmltex}
-\input{mail2world.lua.xml.en.xmltex}
-\input{juno.lua.xml.en.xmltex}
-\input{fastmail.lua.xml.en.xmltex}
-\input{criticalpath.lua.xml.en.xmltex}
 
 \section{Creating a plugin}
 

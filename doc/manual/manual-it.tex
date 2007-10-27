@@ -113,26 +113,33 @@ potente.
 Questi sono i plugin correntemente inclusi in FreePOPs:
 
 \begin{description}
-\input{libero.lua.xml.b.it.xmltex}
-\input{tin.lua.xml.b.it.xmltex}
-\input{davmail.lua.xml.b.it.xmltex}
-\input{popforward.lua.xml.b.it.xmltex}
+\input{abv.lua.xml.b.it.xmltex}
 \input{aggregator.lua.xml.b.it.xmltex}
-\input{flatnuke.lua.xml.b.it.xmltex}
-\input{kernel.lua.xml.b.it.xmltex}
-\input{gmail.lua.xml.b.it.xmltex}
-\input{yahoo.lua.xml.b.it.xmltex}
-\input{squirrelmail.lua.xml.b.it.xmltex}
-\input{hotmail.lua.xml.b.it.xmltex}
 \input{aol.lua.xml.b.it.xmltex}
-\input{netscape.lua.xml.b.it.xmltex}
-\input{tre.lua.xml.b.it.xmltex}
-\input{supereva.lua.xml.b.it.xmltex}
-\input{mailcom.lua.xml.b.it.xmltex}
-\input{mail2world.lua.xml.b.it.xmltex}
-\input{juno.lua.xml.b.it.xmltex}
-\input{fastmail.lua.xml.b.it.xmltex}
 \input{criticalpath.lua.xml.b.it.xmltex}
+\input{davmail.lua.xml.b.it.xmltex}
+\input{excite.lua.xml.b.it.xmltex}
+\input{fastmail.lua.xml.b.it.xmltex}
+\input{flatnuke.lua.xml.b.it.xmltex}
+\input{gmail.lua.xml.b.it.xmltex}
+\input{hotmail.lua.xml.b.it.xmltex}
+\input{juno.lua.xml.b.it.xmltex}
+\input{kernel.lua.xml.b.it.xmltex}
+\input{libero.lua.xml.b.it.xmltex}
+\input{lycos.lua.xml.b.it.xmltex}
+\input{mail2world.lua.xml.b.it.xmltex}
+\input{mailcom.lua.xml.b.it.xmltex}
+\input{monitor.lua.xml.b.it.xmltex}
+\input{netscape.lua.xml.b.it.xmltex}
+\input{orange.lua.xml.b.it.xmltex}
+\input{popforward.lua.xml.b.it.xmltex}
+\input{softhome.lua.xml.b.it.xmltex}
+\input{squirrelmail.lua.xml.b.it.xmltex}
+\input{supereva.lua.xml.b.it.xmltex}
+\input{tin.lua.xml.b.it.xmltex}
+\input{tre.lua.xml.b.it.xmltex}
+\input{updater.lua.xml.b.it.xmltex}
+\input{yahoo.lua.xml.b.it.xmltex}
 \end{description}
 
 \section{Storia}
@@ -242,6 +249,47 @@ usa FreePOPs. Lo script deve definire una funzione main che prende in
 input una table di stringhe (i parametri passati a freepopd dopo il
 nome dello script) e deve ritornare un intero (che verr\`a poi
 ritornato dall'interprete.
+
+\item[-c,~-\hspace{1mm}-conffile~file]
+       Users the specified configuration file  instead  of  looking  in
+       default  paths  like  /etc/freepops/config.lua, ./config.lua and
+       /usr/share/frepops/lua/config.lua
+
+\item[-\hspace{1mm}-statistics-all]
+       Enable all statistics. Results can be viewed  with  the  monitor
+       plugin, either with an account like foo@monitor?command=stats or
+       with freepopsd -e monitor host port password command.
+
+\item[-\hspace{1mm}-statistics-session-created]
+       Enables statistics regarding threads created to  run  a  plugin.
+       See  the documentation of -\hspace{1mm}-statistics-all for an explanation of
+       how to read that statistics.
+
+\item[-\hspace{1mm}-statistics-session-ok]
+       Enables statistics regarding sessions  ended  successfully.  See
+       the  documentation of -\hspace{1mm}-statistics-all for an explanation of how
+       to read that statistics.
+
+\item[-\hspace{1mm}-statistics-session-err]
+       Enables statistics regarding sessions ended with an  error.  See
+       the  documentation of -\hspace{1mm}-statistics-all for an explanation of how
+       to read that statistics.
+
+\item[-\hspace{1mm}-statistics-connection-established]
+       Enables statistics regarding connections accepted. See the documentation  of -\hspace{1mm}-statistics-all for an explanation of how to read
+       that statistics.
+
+\item[-\hspace{1mm}-statistics-cookies]
+       Enables statistics regarding persistently stored  data  (usually
+       cookies).   See  the  documentation  of  -\hspace{1mm}-statistics-all for an
+       explanation of how to read that statistics.
+
+\item[-\hspace{1mm}-statistics-pwd-file~file]
+       Data collected by the statistics mechanism can be read using the
+       monitor  plugin.   If a password file is not specified, no password is set and everybody connection to the freepops daemon  can
+       read such data. Write your password in a text file with no additional end-of-line to restrict access to that data. The password
+       file is read before dropping privileges (on unix).
+
 \item [-\hspace{1mm}-fpat~authtype,~-\hspace{1mm}-force-proxy-auth-type~authtype]
 Per forzare l'utilizzo di un determinato metodo di autenticazione per
 il proxy.
@@ -484,11 +532,32 @@ Ricordate che in caso di uso di binding {}``al volo'' non ci saranno
 argomenti di default, quindi \texttt{port=110} non può essere omesso,
 come nell'esempio precedente.
 
-
-\input{libero.lua.xml.it.xmltex}
-\input{tin.lua.xml.it.xmltex}
+\input{abv.lua.xml.it.xmltex}
+\input{aol.lua.xml.it.xmltex}
+\input{criticalpath.lua.xml.it.xmltex}
 \input{davmail.lua.xml.it.xmltex}
+\input{excite.lua.xml.it.xmltex}
+\input{fastmail.lua.xml.it.xmltex}
+\input{gmail.lua.xml.it.xmltex}
+\input{hotmail.lua.xml.it.xmltex}
+\input{juno.lua.xml.it.xmltex}
+\input{kernel.lua.xml.it.xmltex}
+\input{libero.lua.xml.it.xmltex}
+\input{lycos.lua.xml.it.xmltex}
+\input{mail2world.lua.xml.it.xmltex}
+\input{mailcom.lua.xml.it.xmltex}
+\input{monitor.lua.xml.it.xmltex}
+\input{netscape.lua.xml.it.xmltex}
+\input{orange.lua.xml.it.xmltex}
 \input{popforward.lua.xml.it.xmltex}
+\input{softhome.lua.xml.it.xmltex}
+\input{squirrelmail.lua.xml.it.xmltex}
+\input{supereva.lua.xml.it.xmltex}
+\input{tin.lua.xml.it.xmltex}
+\input{tre.lua.xml.it.xmltex}
+\input{updater.lua.xml.it.xmltex}
+\input{yahoo.lua.xml.it.xmltex}
+
 \input{aggregator.lua.xml.it.xmltex}
 Questa è la lista di alias per il plugin aggregator.\\
 \\
@@ -579,21 +648,6 @@ news (Italiano)}\tabularnewline
 news (Italiano)}\tabularnewline
 \hline
 \end{tabular}
-
-\input{kernel.lua.xml.it.xmltex}
-\input{gmail.lua.xml.it.xmltex}
-\input{yahoo.lua.xml.it.xmltex}
-\input{squirrelmail.lua.xml.it.xmltex}
-\input{hotmail.lua.xml.it.xmltex}
-\input{aol.lua.xml.it.xmltex}
-\input{netscape.lua.xml.it.xmltex}
-\input{tre.lua.xml.it.xmltex}
-\input{supereva.lua.xml.it.xmltex}
-\input{mailcom.lua.xml.it.xmltex}
-\input{mail2world.lua.xml.it.xmltex}
-\input{juno.lua.xml.it.xmltex}
-\input{fastmail.lua.xml.it.xmltex}
-\input{criticalpath.lua.xml.it.xmltex}
 
 \section{Creare un plugin}
 

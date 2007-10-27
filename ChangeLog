@@ -1,3 +1,5 @@
+- added -c switch to specify a configuration file
+- added staistics facilities and a monitor plugin to read them
 - removed criticalpath.lua
 - nvhs patch for images as attachments
 - thanks taba.dvd for reporting the patch by nvhs to fix html in tin.lua 

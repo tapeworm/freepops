@@ -1,10 +1,10 @@
 -- ************************************************************************** --
---  FreePOPs @--put here domain-- webmail interface
+--  FreePOPs @monitor webmail interface
 -- 
 --  $Id$
 -- 
 --  Released under the GNU/GPL license
---  Written by --put Name here-- <--put email here-->
+--  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
 PLUGIN_VERSION = "0.0.1"
@@ -18,8 +18,8 @@ PLUGIN_AUTHORS_CONTACTS = {"gareuselesinge@users.sourceforge.net"}
 PLUGIN_DOMAINS = {"@monitor"}
 PLUGIN_REGEXES = {}
 PLUGIN_PARAMETERS = { 
-	{name="action", 
-	 description={en="one of: new_connections"}},
+	{name="command", 
+	 description={en="one of: stats"}},
 }
 PLUGIN_DESCRIPTIONS = {
 	en=[[Monitors the internal state and statistics of freepops]]
@@ -123,24 +123,64 @@ function retr(pstate,msg,pdata)
 	send("To: "..freepops.get_name(internal_state.username).."@"..
 		freepops.get_domain(internal_state.username).."\r\n")
 	send("\r\n")
+
 	local args = freepops.get_args(internal_state.username)
+
 	if args['command'] == 'stats' then
 		local t = {}
 		for name in pairs(stats) do table.insert(t,name) end
 		table.sort(t)
 		for _,name in ipairs(t) do
-			send(name..": "..stats[name]().."\r\n")
+			if name == "session_err" then
+			  -- really ugly and strong assumptions
+			  -- over POPSERVER_* representation in lua (int)
+			  local errs = {
+			    --["POPSERVER_ERR_OK"]=POPSERVER_ERR_OK,
+			    --["POPSERVER_ERR_SYNTAX"]=POPSERVER_ERR_SYNTAX,
+			    ["POPSERVER_ERR_NETWORK"]=POPSERVER_ERR_NETWORK,
+			    ["POPSERVER_ERR_AUTH"]=POPSERVER_ERR_AUTH,
+			    ["POPSERVER_ERR_INTERNAL"]=POPSERVER_ERR_INTERNAL,
+			    --["POPSERVER_ERR_NOMSG"]=POPSERVER_ERR_NOMSG,
+			    ["POPSERVER_ERR_LOCKED"]=POPSERVER_ERR_LOCKED,
+			    --["POPSERVER_ERR_EOF"]=POPSERVER_ERR_EOF,	
+			    --["POPSERVER_ERR_TOOFAST"]=POPSERVER_ERR_TOOFAST,
+			    ["POPSERVER_ERR_UNKNOWN"]=POPSERVER_ERR_UNKNOWN,
+			  }
+			  local errs_k = {}
+			  for name in pairs(errs) do 
+				  table.insert(errs_k,name) 
+			  end
+			  table.sort(errs_k)
+			  for _,v in ipairs(errs_k) do
+			  	send(name..": "..v..": "..
+			  		stats["session_err"](errs[v])..'\r\n')
+			end
+
+			else
+				send(name..": "..stats[name]().."\r\n")
+			end
 		end
+		send('\r\n')
+		send('Derived data:\r\n')
+		send(' Connections refused because of no threads left: '..
+			stats['connection_established']() -
+			stats['session_created']() ..'\r\n')
+		send(' Connections per account (approx, cookies based): '..
+			stats['session_created']() /
+			math.max(stats['cookies'](),1)..'\r\n')
 	else
-		send("Unsupported command:"..(args['command'] or "nil"))
+		send("Unsupported command:"..(args['command'] or "nil")..'\r\n')
+		send("Sample username: foo@monitor?command=cmd&params=prms\r\n")
+		send("Supported commands:\r\n")
+		send("\tstats (no params)\r\n")
 	end
 
 	return POPSERVER_ERR_OK
 end
 
--- ===================================================================================== --
+-- ====================================================================== --
 --                                  COMMAND LINE CLIENT
--- ===================================================================================== --
+-- ====================================================================== --
 
 function assert_ok(s,ifnot)
 	if (not(string.match(s or "","^+OK"))) then

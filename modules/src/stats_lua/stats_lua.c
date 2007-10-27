@@ -31,9 +31,11 @@
 
 #define LUI long unsigned int
 #define LI long int
+#define UI unsigned int
 
 #define VOID_VOID_LOGGER(name) void (*stats_log_##name)(void)
 #define VOID_LINT_LOGGER(name) void (*stats_log_##name)(LI)
+#define VOID_LINT_ARRAY_LOGGER(name) void (*stats_log_##name)(UI)
 
 #define LUINT(name) \
 	HIDDEN LUI counter_##name; \
@@ -51,19 +53,24 @@
 	LINT(name) \
 	HIDDEN void stats_log_##name##_sum(LI x) { counter_##name += x; }
 
+#define ARRAY_INCR(name,top) \
+	HIDDEN LUI counter_##name[top]; \
+	HIDDEN LUI get_##name(UI x){  return counter_##name[x % top]; }\
+	HIDDEN void stats_log_##name##_incr(UI x) { counter_##name[x % top]++; }
+
 #define ACTIVATE(name,kind) stats_log_##name = stats_log_##name##_##kind;
 
 VOID_VOID_LOGGER(session_created);
 VOID_VOID_LOGGER(session_ok);
-VOID_VOID_LOGGER(session_err);
 VOID_VOID_LOGGER(connection_established);
 VOID_LINT_LOGGER(cookies);
+VOID_LINT_ARRAY_LOGGER(session_err);
 
 LUINT_INCR(session_created);
 LUINT_INCR(session_ok);
-LUINT_INCR(session_err);
 LUINT_INCR(connection_established);
 LINT_SUM(cookies);
+ARRAY_INCR(session_err,10);
 
 void stats_activate(long unsigned int mask){
 	if (mask & STATS_SESSION_CREATED) ACTIVATE(session_created,incr); 
@@ -77,8 +84,9 @@ void stats_activate(long unsigned int mask){
 
 #define REGISTER(name,r,p) {#name,r,p,get_##name}
 #define STOP {NULL,stats_void,stats_void,NULL}
-#define CAST_LUI(x) ((LUI)x)
-#define CAST_LI(x) ((LI)x)
+#define CAST(t,x) ((t)x)
+#define CALL(t1,f,t2,x) (CAST(t1 (*)(t2),f)(CAST(t2,x)))
+#define CALLV(t1,f) (CAST(t1 (*)(void),f)())
 
 HIDDEN const struct luaL_reg empty_reg[] = {{NULL,NULL}};
 
@@ -104,9 +112,9 @@ struct stats_types_t {
 HIDDEN struct stats_functions_t stats_functions[] = {
 	REGISTER(connection_established,stats_long_usigned_int,stats_void),
 	REGISTER(session_created,stats_long_usigned_int,stats_void),
-	REGISTER(session_err,stats_long_usigned_int,stats_void),
 	REGISTER(session_ok,stats_long_usigned_int,stats_void),
 	REGISTER(cookies,stats_long_int,stats_void),
+	REGISTER(session_err,stats_long_usigned_int,stats_long_usigned_int),
 	STOP,
 };
 
@@ -146,20 +154,16 @@ HIDDEN int generic_function(lua_State* L){
 	enum stats_type_e rettype = type_of_string(rettypes);
 	enum stats_type_e intype = type_of_string(intypes);
 
-	DBG("Calling function %p : %s -> %s\n",f,intypes,rettypes);
+	//DBG("Calling function %p : %s -> %s\n",f,intypes,rettypes);
 
 	// I don't want to use libffi for the moment, lets do all possibilities
 	switch(rettype) {
 		case stats_long_usigned_int: {
 			LUI rc=0;
 			switch(intype) {
-				case stats_long_usigned_int: 
-					rc = ((LUI (*)(LUI))f)(CAST_LUI(lua_tonumber(L,-1)));
-				break;
-				case stats_long_int: 
-					rc = ((LUI (*)(LI))f)(CAST_LI(lua_tonumber(L,-1)));
-				break;
-				case stats_void: rc = ((LUI (*)(void))f)(); break;
+				case stats_long_usigned_int: rc = CALL(LUI,f,LUI,lua_tonumber(L,-1)); break;
+				case stats_long_int:         rc = CALL(LUI,f,LI,lua_tonumber(L,-1)); break;
+				case stats_void:             rc = CALLV(LUI,f); break;
 				case stats_notype:
 					ERROR_PRINT("Function %p with no intype\n",f);
 					return 0;
@@ -171,13 +175,9 @@ HIDDEN int generic_function(lua_State* L){
 		case stats_long_int: {
 			LI rc=0;
 			switch(intype) {
-				case stats_long_usigned_int: 
-					rc = ((LI (*)(LUI))f)(CAST_LUI(lua_tonumber(L,-1)));
-				break;
-				case stats_long_int: 
-					rc = ((LI (*)(LI))f)(CAST_LI(lua_tonumber(L,-1)));
-				break;
-				case stats_void: rc = ((LI (*)(void))f)(); break;
+				case stats_long_usigned_int: rc = CALL(LI,f,LUI,lua_tonumber(L,-1)); break;
+				case stats_long_int:         rc = CALL(LI,f,LI,lua_tonumber(L,-1)); break;
+				case stats_void:             rc = CALLV(LI,f); break;
 				case stats_notype:
 					ERROR_PRINT("Function %p with no intype\n",f);
 					return 0;
@@ -188,13 +188,9 @@ HIDDEN int generic_function(lua_State* L){
 		}
 		case stats_void:
 			switch(intype) {
-				case stats_long_usigned_int:
-					((void (*)(LUI))f)(CAST_LUI(lua_tonumber(L,-1)));
-				break;
-				case stats_long_int:
-					((void (*)(LI))f)(CAST_LI(lua_tonumber(L,-1)));
-				break;
-				case stats_void: ((void (*)(void))f)(); break;
+				case stats_long_usigned_int: CALL(void,f,LUI,lua_tonumber(L,-1)); break;
+				case stats_long_int:         CALL(void,f,LI,lua_tonumber(L,-1)); break;
+				case stats_void:             CALLV(void,f); break;
 				case stats_notype:
 					ERROR_PRINT("Function %p with no intype\n",f);
 					return 0;

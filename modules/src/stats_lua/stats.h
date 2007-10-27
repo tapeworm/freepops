@@ -31,13 +31,18 @@ void stats_activate(long unsigned int mask);
 
 STATS_DECLARE_INCR(session_created);
 STATS_DECLARE_INCR(session_ok);
-STATS_DECLARE_INCR(session_err);
 STATS_DECLARE_INCR(connection_established);
 
-#define STATS_DECLARE_SUM(name) void(*stats_log_##name)(long int)
+#define STATS_DECLARE_LINT(name) void(*stats_log_##name)(long int)
 
-STATS_DECLARE_SUM(cookies);
+STATS_DECLARE_LINT(cookies);
+
+#define STATS_DECLARE_UINT(name) void(*stats_log_##name)(unsigned int)
+
+STATS_DECLARE_UINT(session_err);
 
 #define STATS_LOG(name,params...) if (stats_log_##name) stats_log_##name(params)
+#define STATS_LOG_IF(cond,name,params...) \
+	if (stats_log_##name && (cond)) stats_log_##name(params)
 
 #endif

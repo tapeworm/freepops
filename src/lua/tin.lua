@@ -804,7 +804,6 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "‚Äú", "ì")
 	head = string.gsub(head, "‚Äù", "î")
 
-
 	-- check if it is a plain text message
 	local found = string.find(head,
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
@@ -816,7 +815,7 @@ function tin_parse_webmessage(wherearewe, data)
 			body_html = string.gsub(body_html, "&lt;" ,"<")
 			body_html = string.gsub(body_html, "&gt;" ,">")
 			body_html = string.gsub(body_html, "&quot;","\"")
-			body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?;)","&%1")
+			body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?.?;)","&%1")
 		end
 
 	else

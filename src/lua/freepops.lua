@@ -43,6 +43,10 @@ fp_m = {
 	__index = function(table,k)
 		if k == "MODULE_ARGS" then
 			return nil
+		elseif k == "ACCEPTED_ADDRESSES" then
+			return {}
+		elseif k == "REJECTED_ADDRESSES" then
+			return {}
 		else
 			local err = string.format(
 				"Unable to access to 'freepops.%s'\n",k)
@@ -342,7 +346,7 @@ function freepops.choose_module(d)
 			local x,_ = string.find(d,"^" .. k .. "$")
 			if x ~= nil then
 				found, where, name, args = 
-					true, "official(regex)", v.name, v
+					true, "official(regex)", v.name, v.args or {}
 				return true -- stop iteration
 			end
 		end)

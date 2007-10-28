@@ -58,15 +58,25 @@ pf_state = {
 	pipe_limit = 0,
 	listed = false,
 	stat_done = false,
+	is_freepops = false,
 }
 
 -- ************************************************************************** --
 --  helpers
 -- ************************************************************************** --
 
+-- this should be kept in sync with the pop3 server
+-- initialized by init()
+freepops_pop3_errors = {}
+
 -- ask for command and call f on the result
 function single_line(cmd,f)
-	local l = pf_state.socket:send(cmd)
+	local l
+	if pf_state.socket ~= nil then
+		l = pf_state.socket:send(cmd)
+	else 
+		l = -1
+	end
 	
 	if l < 0 then 
 		log.error_print("Short send of "..l..
@@ -77,7 +87,11 @@ function single_line(cmd,f)
 	local l = pf_state.socket:recv() or "-ERR network error"
 	if not (string.find(l,"^+OK")) then 
 		log.error_print(l)
-		return POPSERVER_ERR_UNKNOWN 
+		if pf_state.is_freepops then
+			return freepops_pop3_errors[l] or POPSERVER_ERR_UNKNOWN
+		else
+			return POPSERVER_ERR_UNKNOWN 
+		end
 	end
 
 	if f then
@@ -215,6 +229,8 @@ function user(pstate,username)
 		return POPSERVER_ERR_NETWORK
 	end
 	
+	pf_state.is_freepops = string.match(l,'^+OK FreePOPs')
+
 	return single_line("USER "..
 		(freepops.MODULE_ARGS.realusername or username),nil)
 end
@@ -392,6 +408,19 @@ function init(pstate)
 	
 	-- checks on globals
 	freepops.set_sanity_checks()
+
+	-- initilize freepops_pop3_errors 
+	freepops_pop3_errors = {
+        	["-ERR SYNTAX ERROR"] = POPSERVER_ERR_SYNTAX,
+        	["-ERR NETWORK ERROR"] = POPSERVER_ERR_NETWORK,
+        	["-ERR AUTH FAILED"] = POPSERVER_ERR_AUTH,
+        	["-ERR INTERNAL ERROR"] = POPSERVER_ERR_INTERNAL,
+        	["-ERR NO SUCH MESSAGE"] = POPSERVER_ERR_NOMSG,
+        	["-ERR MAILBOX LOCKED"] = POPSERVER_ERR_LOCKED,
+        	["-ERR INTERNAL: END OF STREAM"] = POPSERVER_ERR_EOF,
+        	["-ERR DELAY TIME NOT EXPIRED, RETRY LATER"] = POPSERVER_ERR_TOOFAST,
+        	["-ERR UNKNOWN ERROR, PLEASE FIX"] = POPSERVER_ERR_UNKNOWN
+	}
 
 	return POPSERVER_ERR_OK
 end

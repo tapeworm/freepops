@@ -112,7 +112,6 @@ These are the plugins currently included in FreePOPs:
 \input{abv.lua.xml.b.en.xmltex}
 \input{aggregator.lua.xml.b.en.xmltex}
 \input{aol.lua.xml.b.en.xmltex}
-\input{criticalpath.lua.xml.b.en.xmltex}
 \input{davmail.lua.xml.b.en.xmltex}
 \input{excite.lua.xml.b.en.xmltex}
 \input{fastmail.lua.xml.b.en.xmltex}
@@ -195,6 +194,62 @@ Since version 0.0.11 the \texttt{config.lua} file has a policy section.
 In this section you can ban or allow classes of mail addresses. This
 may be useful to network administrators.
 
+\subsection{Simple load balancing}
+A simple way to run multiple instances of FreePOPs to serve the same pool of users
+is to use an additional instance of FreePOPs as a proxy that chooses to which FreePOPs 
+instance each connection has to be forwarded. We will call the the proxy instance of 
+FreePOPs master and the other running instances slaves. Consider also the simple
+case in which the number of concurrent connections accepted by each slave 
+(parameter \texttt{-t}) is five and the number of slaves is three. you may want to run
+the master instance with the following command line:
+
+\begin{verbatim}
+freepopsd -c balance.lua -t 15 -p 110 -b 0.0.0.0
+\end{verbatim}
+
+The configuration file \texttt{balance.lua} is
+
+\begin{verbatim}
+freepops.MODULES_MAP[".*"] = {
+    name = "popforward.lua",
+    regex = true,
+    args = {
+        host = function(mailaddress)
+            local name = freepops.get_name(mailaddress)
+            local slaves = {
+                { rex = '^[0-9]',    host = "localhost", port = 2000 },
+                { rex = '^[a-lA-l]', host = "localhost", port = 2001 },
+                { rex = '^[m-zM-Z]', host = "localhost", port = 2002 },
+            }
+            local host, port = slaves[1].host, slaves[1].port -- defaults
+            for _, slave in ipairs(slaves) do
+                if string.match(name, slave.rex) then
+                    host = slave.host
+                    port = slave.port
+                    break
+                end
+            end
+            return host, port
+        end
+    }    
+}
+freepops.MODULES_PREFIX = {
+    os.getenv("FREEPOPSLUA_PATH_UPDATES") or "./",
+    os.getenv("FREEPOPSLUA_PATH") or "./",
+    "./lua/", "./", "./src/lua/", "./modules/include/", "./modules/lib/"}
+freepops.MODULES_CPREFIX = {
+    os.getenv("FREEPOPSLUA_CPATH") or "./",
+    "./c/", "./", "./updater-ui/fltk/" } 
+freepops.MODULES_PREFIX_UNOFFICIAL = {
+    os.getenv("FREEPOPSLUA_PATH_UNOFFICIAL") or "./",
+    "./src/lua_unofficial/", }
+\end{verbatim}
+
+The whole file is reported for completeness, but the last part is the standard
+one.  The host parameter to the popforward plugin is a function returning
+different host and port according to the email address taken in input. This
+simple balancing mechanism is supported from version 0.2.6. Note that the
+master instance has to keep a connection open for every client.
 
 \section{FreePOPs command line parameters}
 
@@ -506,7 +561,6 @@ as in the previous example.
 
 \input{abv.lua.xml.en.xmltex}
 \input{aol.lua.xml.en.xmltex}
-\input{criticalpath.lua.xml.en.xmltex}
 \input{davmail.lua.xml.en.xmltex}
 \input{excite.lua.xml.en.xmltex}
 \input{fastmail.lua.xml.en.xmltex}

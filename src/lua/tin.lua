@@ -860,7 +860,6 @@ function tin_parse_webmessage(wherearewe, data)
 	for i = 1, x:count() do
 		local url = x:get(0,i-1)
 		local name = x:get(1,i-1)
-		print(name)
 		local name = string.match(name,"%s*%p*(.*)")
 		name=name..".html"
 		local url = string.match(url,
@@ -888,16 +887,19 @@ function tin_parse_webmessage(wherearewe, data)
 		url = string.match(url,
 			"/cp/ps/Mail/ViewAttachment.*&id=%d")
 		if not (url == nil) then 
-				-- print(url)
-				attach[name] = "http://"..wherearewe..url				
-				local cid1=string.match(cid,"cid:(.-)[\"]")
-				if cid1==nil then
-					cid1=string.match(cid,"cid:(.-)%s")
+				-- print(url)				
+				if cid~=nil then
+					local cid1=string.match(cid,"cid:(.-)[\"]")
+					if cid1==nil then
+						cid1=string.match(cid,"cid:(.-)%s")
+					end
+					if cid1==nil then
+						cid1=string.match(cid,"cid:(.-)$")
+					end
+					inlineids[name]=cid1
+					attach[name] = "http://"..wherearewe..url	
 				end
-				if cid1==nil then
-					cid1=string.match(cid,"cid:(.-)$")
-				end
-				inlineids[name]=cid1
+					
 		end
 			
 	end

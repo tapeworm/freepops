@@ -45,7 +45,7 @@ static int io_dpopen(lua_State*l){
 
 	for (i=0;i < narg;i++) {
 		argv[i] = luaL_checkstring(l,i+1);
-		fprintf(stderr,"getting %s",argv[i]);
+		//fprintf(stderr,"getting %s",argv[i]);
 	}
 	argv[i] = NULL;
 	
@@ -80,7 +80,7 @@ static int io_dpopen(lua_State*l){
 			if (rc == -1) {
 				luaL_error(l,strerror(errno));
 			}
-			fprintf(stderr,"starting %s...\n",argv[0]);
+			//fprintf(stderr,"starting %s...\n",argv[0]);
 			rc = execv(argv[0],(char* const*)argv);
 			if (rc == -1) {
 				luaL_error(l,strerror(errno));
@@ -110,7 +110,7 @@ static int io_dpopen(lua_State*l){
 	*pf_r = fdopen(in[READ],"r");
 	*pf_w = fdopen(out[WRITE],"w");
 
-	sleep(2);
+	//sleep(2);
 
 	free(argv);
 	

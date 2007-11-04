@@ -136,7 +136,7 @@ If active = False Then
 
   '==Modification to run updater prior to running FreePOPs
   If FPUpdate = True Then
-    sh.Run """" & GetFreePOPsPath(sh) & "freepopsd.exe" & """ -e lua\updater.lua" & """",1,true
+    sh.Run """" & GetFreePOPsPath(sh) & "freepopsd.exe" & """ -e lua\updater.lua php interactive" & """",1,true
   End If
   '==End of modification
 

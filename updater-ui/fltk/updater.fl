@@ -131,7 +131,7 @@ if (updater_state == 1) {
 if (updater_state == 3) {
 	lock(); 
 	updater_download(); 
-	if (updater_chkbrw_select->nchecked() == 0)
+	//if (updater_chkbrw_select->nchecked() == 0)
 		automata_next();
 	unlock();
 } 

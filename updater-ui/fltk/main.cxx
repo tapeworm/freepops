@@ -1,3 +1,18 @@
+/******************************************************************************
+ * $Id$
+ * This file is part of FreePOPs (http://www.freepops.org)                    *
+ * This file is distributed under the terms of GNU GPL license.               *
+ ******************************************************************************/
+
+/******************************************************************************
+ * File description:
+ *	updater_fltk lua module
+ * Notes:
+ *	
+ * Authors:
+ * 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
+ ******************************************************************************/
+
 #include <stdlib.h>
 #include <lua.hpp>
 
@@ -7,7 +22,7 @@
 static int updater_run(lua_State* l){
 	Fl_Double_Window* win = make_main_window();
 	updater_init(l);
-	char* argv[] = {"freepops"};
+	const char* argv[] = {"freepops"};
 	win->show(1, argv);
 	lua_pushnumber(l,Fl::run());
 	return 1;

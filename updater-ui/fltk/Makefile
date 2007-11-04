@@ -1,7 +1,12 @@
 include $(CONFIG)
 H=@
 
+ifeq "$(OS)" "Windows"
+CFLAGS+=$(FLTKCFLAGS) -I. -I../../modules/include
+else
 CFLAGS+=$(FLTKCFLAGS) -I. -I../../modules/include -fPIC
+endif
+
 LDFLAGS=$(FLTKLDFLAGS) 
 %.o:%.cxx
 	$(H)echo -n " compiling $< -> "

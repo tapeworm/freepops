@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.9b"
+PLUGIN_VERSION = "0.2.10"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -815,11 +815,24 @@ function tin_parse_webmessage(wherearewe, data)
 			body_html = string.gsub(body_html, "&lt;" ,"<")
 			body_html = string.gsub(body_html, "&gt;" ,">")
 			body_html = string.gsub(body_html, "&quot;","\"")
+			body_html = string.gsub(body_html, "&#39;","\'")
 			body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?.?;)","&%1")
+			
+			--check foe plain text message whithout content-type
+			if string.find(body_html , "</[Hh][tT][mM][lL]>" ) == nil then		
+				found = 1
+				body_html=nil
+			else 
+				if string.find(body_html , "</[Bb][Oo][Dd][Yy]>" ) == nil then		
+					found=1
+					body_html=nil
+				end
+			end
 		end
 
-	else
-		body = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.*)\n\"/>")
+	end
+	if found~=nil then
+		body = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.-)\"/>")
 		body = string.gsub(body, "^%s+", "")
 		body = string.gsub(body, "%s+$", "")
 		body = string.gsub(body, "<br/>", "\r\n");
@@ -885,25 +898,23 @@ function tin_parse_webmessage(wherearewe, data)
 				name="img"..i+z
 			end
 		url = string.match(url,
-			"/cp/ps/Mail/ViewAttachment.*&id=%d")
+		"/cp/ps/Mail/ViewAttachment.*&id=%d")
 		if not (url == nil) then 
-				-- print(url)				
-				if cid~=nil then
-					local cid1=string.match(cid,"cid:(.-)[\"]")
-					if cid1==nil then
-						cid1=string.match(cid,"cid:(.-)%s")
-					end
-					if cid1==nil then
-						cid1=string.match(cid,"cid:(.-)$")
-					end
-					inlineids[name]=cid1
-					attach[name] = "http://"..wherearewe..url	
+			-- print(url)				
+			if cid~=nil then
+				local cid1=string.match(cid,"cid:(.-)[\"]")
+				if cid1==nil then
+					cid1=string.match(cid,"cid:(.-)%s")
 				end
-					
-		end
-			
+				if cid1==nil then
+					cid1=string.match(cid,"cid:(.-)$")
+				end
+				inlineids[name]=cid1
+					attach[name] = "http://"..wherearewe..url	
+			end
+		end		
 	end
-
+		
 	return head, body, body_html, attach ,inlineids
 end
 

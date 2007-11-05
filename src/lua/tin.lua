@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.10"
+PLUGIN_VERSION = "0.2.10a"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -759,10 +759,13 @@ function noop(pstate)
 	return common.noop(pstate)
 end
 
+
+
 -- -------------------------------------------------------------------------- --
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
 -- 
+
 function tin_parse_webmessage(wherearewe, data)
 	local head, body, body_html, attach ,inlineids = nil, nil, nil, {} , {}
 
@@ -783,73 +786,34 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "&gt;", ">")
 	head = string.gsub(head, "\r([^\n])", 
 		function(capture) return "\r\n" .. capture end)
-	head = string.gsub(head, "([^\r])\n","%1\r\n")
-	head = string.gsub(head, "√†", "‡")
-	head = string.gsub(head, "√®", "Ë")
-	head = string.gsub(head, "√©", "È")
-	head = string.gsub(head, "√¨", "Ï")
-	head = string.gsub(head, "√≤", "Ú")
-	head = string.gsub(head, "√π", "˘")
-	-- patch by galdom
-	head = string.gsub(head, "\\&#39;", "'")
-	head = string.gsub(head, "&amp;", "&")
-	-- patch by Dylan666
-	head = string.gsub(head, "√ø", "»")
-	head = string.gsub(head, "¬∞", "∞")
-	head = string.gsub(head, "√å", "Ã")
-	head = string.gsub(head, "√â", "…")
-	head = string.gsub(head, "√í", "“")
-	head = string.gsub(head, "√ô", "Ÿ")
-	head = string.gsub(head, "‚,¨", "Ä")
-	head = string.gsub(head, "‚Äú", "ì")
-	head = string.gsub(head, "‚Äù", "î")
+	head=fix_character(head)
+	
+	--Locate body
+	body_html = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.-)\"/>")
+	if (body_html~=nil) then 
+		body_html = string.gsub(body_html, "&lt;" ,"<")
+		body_html = string.gsub(body_html, "&gt;" ,">")
+		body_html = string.gsub(body_html, "&quot;","\"")
+		body_html = string.gsub(body_html, "&#39;","\'")
+		body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?.?;)","&%1")
+	end
 
 	-- check if it is a plain text message
 	local found = string.find(head,
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
 		"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
-	if found == nil then
-		head = mimer.remove_lines_in_proper_mail_header(head,{"content%-type"})
-		body_html = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.-)\"/>")
-		if (body_html~=nil) then 
-			body_html = string.gsub(body_html, "&lt;" ,"<")
-			body_html = string.gsub(body_html, "&gt;" ,">")
-			body_html = string.gsub(body_html, "&quot;","\"")
-			body_html = string.gsub(body_html, "&#39;","\'")
-			body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?.?;)","&%1")
-			
-			--check foe plain text message whithout content-type
-			if string.find(body_html , "</[Hh][tT][mM][lL]>" ) == nil then		
-				found = 1
-				body_html=nil
-			else 
-				if string.find(body_html , "</[Bb][Oo][Dd][Yy]>" ) == nil then		
-					found=1
-					body_html=nil
-				end
-			end
-		end
 
+	--check for plain text message whithout content-type
+	if found~=nil or string.find(body_html , "</[Hh][tT][mM][lL]>" ) == nil then		
+		found = 1
+	elseif string.find(body_html , "</[Bb][Oo][Dd][Yy]>" ) == nil then		
+		found=1
 	end
-	if found~=nil then
-		body = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.-)\"/>")
-		body = string.gsub(body, "^%s+", "")
-		body = string.gsub(body, "%s+$", "")
-		body = string.gsub(body, "<br/>", "\r\n");
-		body = string.gsub(body, "<a href[^>]*>", "");
-		body = string.gsub(body, "</a>", "");
-		body = string.gsub(body, "&lt;", "<")
-		body = string.gsub(body, "&gt;", ">")
-		body = string.gsub(body, "&quot;", "\"")
-		body = string.gsub(body, "&#39;", "'")
-		body = string.gsub(body, "&amp;", "&")
-		body = string.gsub(body, "√†", "‡")
-		body = string.gsub(body, "√®", "Ë")
-		body = string.gsub(body, "√©", "È")
-		body = string.gsub(body, "√¨", "Ï")
-		body = string.gsub(body, "√≤", "Ú")
-		body = string.gsub(body, "√π", "˘")
 
+	if found~=nil then
+		body = body_html
+		body_html= nil
+		body=fix_character(body)
 	end
 
 	-- extract attachments
@@ -916,6 +880,30 @@ function tin_parse_webmessage(wherearewe, data)
 	end
 		
 	return head, body, body_html, attach ,inlineids
+end
+
+function fix_character (string)
+
+	string = string.gsub(string, "√†", "‡")
+	string = string.gsub(string, "√®", "Ë")
+	string = string.gsub(string, "√©", "È")
+	string = string.gsub(string, "√¨", "Ï")
+	string = string.gsub(string, "√≤", "Ú")
+	string = string.gsub(string, "√π", "˘")
+	-- patch by galdom
+	string = string.gsub(string, "\\&#39;", "'")
+	string = string.gsub(string, "&amp;", "&")
+	-- patch by Dylan666
+	string = string.gsub(string, "√ø", "»")
+	string = string.gsub(string, "¬∞", "∞")
+	string = string.gsub(string, "√å", "Ã")
+	string = string.gsub(string, "√â", "…")
+	string = string.gsub(string, "√í", "“")
+	string = string.gsub(string, "√ô", "Ÿ")
+	string = string.gsub(string, "‚,¨", "Ä")
+	string = string.gsub(string, "‚Äú", "ì")
+	string = string.gsub(string, "‚Äù", "î")
+	return string
 end
 
 function is_a_list_needed(msg, uidl)

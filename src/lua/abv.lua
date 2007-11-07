@@ -8,7 +8,7 @@
 
 -- Globals
 -- 
-PLUGIN_VERSION = "0.1.5a"
+PLUGIN_VERSION = "0.1.5b"
 PLUGIN_NAME = "abv.bg"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
@@ -39,7 +39,7 @@ local globals = {
   strLoginUrl = "http://www.abv.bg/",
   strLoginRedirect = 'replace%("(http://[^"]+)"',
   strLoginPostUrl = "https://passport.abv.bg/servlet/passportlogin",
-  strLoginHostPattern = '<input type="hidden" name="host" value="([^"]+)">',
+  strLoginHostPattern = '<input value="([^"]+)" name="host" type="hidden">',
 
   -- Login strings
   --

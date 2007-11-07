@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.85"
+PLUGIN_VERSION = "0.1.86"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -516,9 +516,14 @@ function loginHotmail()
     -- One or two more redirects
     --  
     local oldurl = url
+    local oldbody = body
     url = string.match(body, globals.strLoginDoneReloadToReloadPage)
     if url ~= nil then
       body, err = browser:get_uri(url)
+      if body == nil then
+      	-- cdmackie: switch back to old body because we need to first process img in strLoginDoneReloadToHMHome4
+      	body = oldbody
+      end
     end
     url = string.match(body, globals.strLoginDoneReloadToHMHome1)
     if url == nil then
@@ -1081,16 +1086,20 @@ function cleanupBody(body, cbInfo)
   body = string.gsub(body, "&#124;", "|")
   body = string.gsub(body, "&#125;", "}")
   body = string.gsub(body, "&#126;", "~")
+  body = string.gsub(body, "&#199;", "Ç")
 
   body = string.gsub(body, "\r", "")
   body = string.gsub(body, "\n", "\r\n")
-  -- cdmackie: these mess up QP attachments
-  --body = string.gsub(body, "&amp;", "&")
-  --body = string.gsub(body, "&lt;", "<")
-  --body = string.gsub(body, "&gt;", ">")
-  --body = string.gsub(body, "&quot;", "\"")
   body = string.gsub(body, "&#34;", "\"")
-  --body = string.gsub(body, "&nbsp;", " ")
+  -- cdmackie: these mess up QP attachments in Live
+  -- but still needed for classic
+  if internalState.bLiveGUI == false then
+  	body = string.gsub(body, "&amp;", "&")
+  	body = string.gsub(body, "&lt;", "<")
+  	body = string.gsub(body, "&gt;", ">")
+  	body = string.gsub(body, "&quot;", "\"")
+  	body = string.gsub(body, "&nbsp;", " ")
+  end
   body = string.gsub(body, "<!%-%-%$%$imageserver%-%->", internalState.strImgServer)
 
   -- cdmackie: POP protocol: lines starting with a dot must be escaped dotdot

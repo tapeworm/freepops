@@ -11,7 +11,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9o"
+PLUGIN_VERSION = "0.1.9p"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -315,6 +315,7 @@ internalState = {
 -- Set to true to enable Raw Logging
 --
 local ENABLE_LOGRAW = false
+local LOGRAW_DBG_FIRST = true
 
 -- The platform dependent End Of Line string
 -- e.g. this should be changed to "\n" under UNIX, etc.
@@ -324,6 +325,10 @@ local EOL = "\r\n"
 --
 log = log or {} -- fast hack to make the xml generator happy
 log.raw = function ( line, data )
+  if LOGRAW_DBG_FIRST then
+    log.dbg( line )
+  end
+  
   if not ENABLE_LOGRAW then
     return
   end
@@ -371,6 +376,29 @@ function fixCRLF( data )
   return str
 end
 
+-- Convert any object to a string
+--
+function tostr( val )
+  local val_type = type(val)
+  if val_type == "table" and getmetatable(val) == nil then
+    local tmp = {}
+    table.foreach(val,function (k,v)
+      local s = k .. "=" .. tostr(v)
+      table.insert(tmp,s)
+    end)
+    return "{" .. table.concat(tmp) .. "}"
+  elseif val_type == "number" then
+    return string.format("%d",val)
+  elseif val_type == "string" then
+    return string.format("%q",val)
+  elseif val_type == "boolean" then
+    return tostring(val)
+  elseif val == nil then
+    return "nil"
+  end
+  return val_type .. " : " .. tostring(val)
+end
+
 -- ************************************************************************** --
 --  Helper functions
 -- ************************************************************************** --
@@ -407,7 +435,7 @@ function checkForNewGUI(browser, body)
   local server = string.match(browser:whathaveweread(), globals.strRegExpMailServerNew)
   if (server ~= nil) then 
     log.dbg("Detected New Version of the Yahoo interface!\n")
-    log.raw("Detected New Version of the Yahoo interface!\n")
+    log.raw("Detected New Version of the Yahoo interface!\n", browser:whathaveweread())
     log.dbg("Yahoo Mail Server: " .. server .. "\n")
 
     internalState.strMailServer = server
@@ -427,12 +455,16 @@ function loginYahoo()
   log.raw( "Entering loginYahoo()" )
 
   if internalState.loginDone then
+    log.raw( "internalState.loginDone" )
     return POPSERVER_ERR_OK
   end
 
   -- Create a browser to do the dirty work (It must be set to IE 6.0)
   --
   internalState.browser = browser.new("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; {02ABE9F9-C33D-95EA-0C84-0B70CD0AC3F8}; .NET CLR 1.1.4322)")
+--  internalState.browser = browser.new("Mozilla/4.0 (compatible; U; en)")
+--  internalState.browser = browser.new("Mozilla/3.0 (U; en)")
+--  internalState.browser = browser.new("FreePOPs/2.5 (U; en)")
   local SSLEnabled = browser.ssl_enabled()
 
   -- Define some local variables
@@ -471,7 +503,9 @@ function loginYahoo()
 
   -- Login to Yahoo
   --
+  log.raw( "login get: " .. globals.strLoginPage )
   local body, err = browser:get_uri(globals.strLoginPage)
+  log.raw( "login response: err=" .. tostr(err), body )
   
   if body ~= nil then
     challengeCode = string.match(body, globals.strLoginChallenge)
@@ -490,19 +524,37 @@ function loginYahoo()
   else -- if we didn't get the challenge code, then login in cleartext
     post = string.format(globals.strLoginPostData, intFlag, username, password, uVal)
   end
+
+  log.raw( "login challenge post: \nurl=" .. url .. " \npost=" .. post )
   body, err = browser:post_uri(url, post)
+  log.raw( "login challenge response: err=" .. tostr(err), body )
 
   -- Check for redirect
   --
   local str = string.match(body, globals.strRedirectNew)
   if (str ~= nil) then
+    log.raw( "login redirect get: " .. str )
     body, err = browser:get_uri(str)
+    log.raw( "login redirect response: err=" .. tostr(err), body )
   end
 
-  local bNewGui = checkForNewGUI(browser, body)
-
-  if (bNewGui == true) then
-    return loginNewYahoo(browser, body) 
+  -- Check for NewGUI and Try Beta
+  local bNewGui = false
+  local url = browser:whathaveweread()
+  log.raw("browser:whathaveweread()=" .. url)
+  str = string.match(url, '/dc/try_mail')
+  if (str == nil) then
+    -- it's not a "try" page.  Check if its the new gui.
+    bNewGui = checkForNewGUI(browser, body)
+    if (bNewGui == true) then
+      return loginNewYahoo(browser, body) 
+    end
+  else
+    -- it is a try page, so reply, no thanks
+    post = "newStatus=1"
+    log.raw( "try beta post: \nurl=" .. url .. " \npost=" .. post )
+    body, err = browser:post_uri(url, post)
+    log.raw( "try beta response: err=" .. tostr(err), body )
   end
 
   -- Do some error checking
@@ -510,12 +562,14 @@ function loginYahoo()
   if (body == nil) then
     -- No connection
     --
+    log.raw( "Login Failed: body == nil" )
     log.error_print("Login Failed: Unable to make connection")
     return POPSERVER_ERR_NETWORK
   end
 
   local str = string.match(body, '<input type="text" id="secword" name=".secword"')
   if (str ~= nil) then
+    log.raw("Login Failed: Yahoo is using an image verification.")
     log.error_print("Login Failed: Yahoo is using an image verification.  Please login through the web.")
     return POPSERVER_ERR_NETWORK
   end
@@ -524,9 +578,7 @@ function loginYahoo()
   -- 
   local str = string.match(body, globals.strRetLoginBadPassword)
   if str ~= nil then
-    log.raw("------ Returned Page saying invalid password ------\n")
-    log.raw(body)
-    log.raw("------ End Page saying invalid password -------\n")
+    log.raw("Returned Page saying invalid password: ", body)
     log.error_print("Login Failed: Invalid Password")
     return POPSERVER_ERR_AUTH
   end
@@ -536,10 +588,11 @@ function loginYahoo()
   local str = string.match(body, globals.strRegExpMailServer)
   if str == nil then
     log.error_print("Login Failed: Unable to find mail server")
-    log.raw("Unable to find mail server: " .. body)
+    log.raw("Login Failed: Unable to find mail server url in body.")
     return POPSERVER_ERR_UNKNOWN
   else
     internalState.strMailServer = str
+    log.raw("internalState.strMailServer = " .. str)
   end
 
   -- If we are using HTTPS, we need to look for the meta-refresh link
@@ -547,7 +600,9 @@ function loginYahoo()
   if (challengeCode ~= nil) then
     str = string.match(body, globals.strRegExpMetarefresh)
     if (str ~= nil) then
+      log.raw("HTTPS meta-refresh get: " .. str)
       body, err = browser:get_uri(str)
+      log.raw("HTTPS meta-refresh response: err=" .. tostr(err), body)
       
       -- Here's the other check (SSL) for the beta interface
       --
@@ -568,7 +623,7 @@ function loginYahoo()
 	
   -- Debug info
   --
-  log.dbg("Created session for " .. 
+  log.raw("Created session for " .. 
     internalState.strUser .. "@" .. internalState.strDomain .. "\n")
 
   -- Return Success
@@ -584,8 +639,7 @@ function loginNewYahoo(browser, body)
   local str = string.match(body, globals.strRegExpCrumbNew)
   if str == nil then
     log.error_print("Yahoo - unable to parse out crumb value.  Deletion will fail.")
-    log.raw("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: " .. 
-      body)
+    log.raw("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: ", body)
     return POPSERVER_ERR_UNKNOWN
   end
   log.dbg("Crumb Value: " .. str)
@@ -1363,7 +1417,7 @@ function pass(pstate, password)
     local func, err = loadstring(sessID)
     if not func then
       log.error_print("Unable to load saved session (Account: " ..
-        internalState.strUser .. "@" .. internalState.strDomain .. "): ".. err)
+        internalState.strUser .. "@" .. internalState.strDomain .. "): ".. tostr(err))
       return loginYahoo()
     end
 		

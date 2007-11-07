@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.2d"
+PLUGIN_VERSION = "0.0.3"
 PLUGIN_NAME = "fastmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -82,8 +82,8 @@ local globals = {
   -- Regular expression to get the mailbox id, Ust value and the Udm value
   --
   strMBoxIDPat = '<option value="([^"]+)"[^>]->%s</option>',
-  strUstPat = "Ust=([^;]+);",
-  strUdmPat = "UDm=([^;]+);",
+  strUstPat = "Ust=([^;&]+)[;&]",
+  strUdmPat = "UDm=([^;&]+)[;&]",
 
   -- Expressions to pull out of returned HTML from fastmail corresponding to a problem
   --
@@ -119,7 +119,8 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "http://%s/mail/?MLS=MB-*;SMB-FT-TP=0;SMB-MF-SF=Date_1;SMB-MF-DI=20;Ust=%s;SMB-CF=%s;UDm=%s;MSignal=MB-GotoCF**%s",
+  strCmdMsgList = "http://%s/mail/?MLS=MB-*;SMB-MF-TP=0;SMB-MF-SF=Date_1;SMB-MF-DR=20;Ust=%s;SMB-CF=%s;UDm=%s;MSignal=MB-GF**%s",
+--  strCmdMsgList = "http://%s/mail/?MLS=MB-*;SMB-FT-TP=0;SMB-MF-SF=Date_1;SMB-MF-DI=20;Ust=%s;SMB-CF=%s;UDm=%s;MSignal=MB-GotoCF**%s",
   strCmdMsgListNextPage = "http://%s/mail/?MLS=MB-*;SMB-FT-TP=0;SMB-MF-SF=Date_1;SMB-MF-DI=20;Ust=%s;SMB-CF=%s;UDm=%s;MSignal=MB-MF-SetPage**", -- plus page number, 0 based
   strCmdMsgView = "http://%s/mail/foo.txt?MLS=MR-**%s*;SMB-FT-TP=0;SMB-MF-SF=Date_1;SMR-Part=;SMR-MsgId=%s;SMB-MF-DI=20;Ust=%s;SMR-FM=%s;SMB-CF=%s;UDm=%s;MSignal=MR-RawView*",
   strCmdDelete = "http://%s/mail/?Ust=%s;UDm=%s",
@@ -271,6 +272,13 @@ function login()
     log.error_print(globals.strLoginFailed)
     log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(1):\n" .. body);
     return POPSERVER_ERR_AUTH
+  end
+
+  -- Look for the redirect link
+  --
+  url = string.match(body, 'Click <a href="([^"]+)">here')
+  if (url ~= nil) then
+    body, err = browser:get_uri(url)
   end
 
   -- Save the mail server, and some other things

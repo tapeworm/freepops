@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.10b"
+PLUGIN_VERSION = "0.2.10c"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -789,38 +789,36 @@ function tin_parse_webmessage(wherearewe, data)
 	head=fix_character(head)
 	
 	--Locate body
-	body_html = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"(.-)\"/>")
+	body_html = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"%s*(.-)%s*\"/>")
+	
 	if (body_html~=nil) then 
+		--fix html caracter
 		body_html = string.gsub(body_html, "&lt;" ,"<")
 		body_html = string.gsub(body_html, "&gt;" ,">")
 		body_html = string.gsub(body_html, "&quot;","\"")
 		body_html = string.gsub(body_html, "&#39;","\'")
 		body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?.?;)","&%1")
-	end
+		
+		-- check if it is a plain text message
+		local found
+		if string.find(head,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:") ~= nil then
+			found = string.find(head,
+				"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
+				"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
+		--for plain text mail without CONTENT-TYPE
+		elseif  found~=nil or string.find(body_html , "</[Hh][tT][mM][lL]>" ) == nil then		
+			found = 1
+		elseif string.find(body_html , "</[Bb][Oo][Dd][Yy]>" ) == nil then		
+			found=1
+		elseif string.find(body_html , "</[tT][Aa][bB][lL][Ee]>" ) == nil then		
+			found=1
+		end
 
-	-- check if it is a plain text message
-	local found = string.find(head,
-		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
-		"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
-
-	-- check if it is a plain text message
-	if string.find(head,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:") ~= nil then
-		found = string.find(head,
-			"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
-			"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
-	--for plain text without CONTENT-TYPE
-	elseif found~=nil or string.find(body_html , "</[Hh][tT][mM][lL]>" ) == nil then		
-		found = 1
-	elseif string.find(body_html , "</[Bb][Oo][Dd][Yy]>" ) == nil then		
-		found=1
-	elseif string.find(body_html , "</[tT][Aa][bB][lL][Ee]>" ) == nil then		
-		found=1
-	end
-
-	if found~=nil then
-		body = body_html
-		body_html= nil
-		body=fix_character(body)
+		if found~=nil then
+			body = body_html
+			body_html= nil
+			body=fix_character(body)
+		end
 	end
 
 	-- extract attachments

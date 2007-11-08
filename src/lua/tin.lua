@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.10a"
+PLUGIN_VERSION = "0.2.10b"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -803,10 +803,17 @@ function tin_parse_webmessage(wherearewe, data)
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
 		"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
 
-	--check for plain text message whithout content-type
-	if found~=nil or string.find(body_html , "</[Hh][tT][mM][lL]>" ) == nil then		
+	-- check if it is a plain text message
+	if string.find(head,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:") ~= nil then
+		found = string.find(head,
+			"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
+			"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
+	--for plain text without CONTENT-TYPE
+	elseif found~=nil or string.find(body_html , "</[Hh][tT][mM][lL]>" ) == nil then		
 		found = 1
 	elseif string.find(body_html , "</[Bb][Oo][Dd][Yy]>" ) == nil then		
+		found=1
+	elseif string.find(body_html , "</[tT][Aa][bB][lL][Ee]>" ) == nil then		
 		found=1
 	end
 

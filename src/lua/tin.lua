@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.10c"
+PLUGIN_VERSION = "0.2.11"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -107,14 +107,18 @@ local tin_string = {
 		"uid=%s&t=%s&style=&l=it&s=%s&sl=%d",	
 	save_sl = "http://%s/cp/ps/Mail/Email"..
 		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
-		"uid=&t=%s&style=&l=it&s=%s&sl=%d",
-	attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
-	attachG = "O<X>O<O>X<O>",
+		"uid=&t=%s&style=&l=it&s=%s&sl=%d",	
+	body_start = [[
+</script>	
+			<br>
+			<br>
+          </div>]],
+	body_end = [[</div></td>%s*<td width="5"><spacer type="block" width="5" height="1"></td>%s*<td width="1" bgcolor="#FFFFFF"><spacer type="block" width="1" height="1"></td>%s*</tr>%s*</table>%s*<!%-%-FINE TABELLA LISTING MAIL%-%->]],
+	 attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
+	 attachG = "O<X>O<O>X<O>",
 	-- by nvhs for html image
-	imageE = "<IMG .*/cp/ps/Mail/ViewAttachment.*>",
-	imageG = "<X>",
-	cidE="<IMG .*[Cc][Ii][Dd]:.*>",
-	cidG="<X>",
+	 imageE = "<IMG .*/cp/ps/Mail/ViewAttachment.*>",
+	 imageG = "<X>",
 	-- by nvhs for attach  mail
 	 mailE = ".*<a.*href *= *'/cp/ps/Mail/Email>.*<img>.*</a>",
 	 mailG = "O<X>O<O>X<O>",
@@ -759,13 +763,10 @@ function noop(pstate)
 	return common.noop(pstate)
 end
 
-
-
 -- -------------------------------------------------------------------------- --
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
 -- 
-
 function tin_parse_webmessage(wherearewe, data)
 	local head, body, body_html, attach ,inlineids = nil, nil, nil, {} , {}
 
@@ -786,44 +787,68 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "&gt;", ">")
 	head = string.gsub(head, "\r([^\n])", 
 		function(capture) return "\r\n" .. capture end)
-	head=fix_character(head)
-	
-	--Locate body
-	body_html = string.match(data,"<input type=\"hidden\" name=\"msg\" value=\"%s*(.-)%s*\"/>")
-	
-	if (body_html~=nil) then 
-		--fix html caracter
-		body_html = string.gsub(body_html, "&lt;" ,"<")
-		body_html = string.gsub(body_html, "&gt;" ,">")
-		body_html = string.gsub(body_html, "&quot;","\"")
-		body_html = string.gsub(body_html, "&#39;","\'")
-		body_html = string.gsub(body_html, "&amp;(.?.?.?.?.?.?;)","&%1")
-		
-		-- check if it is a plain text message
-		local found
-		if string.find(head,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:") ~= nil then
-			found = string.find(head,
-				"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
-				"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
-		--for plain text mail without CONTENT-TYPE
-		elseif  found~=nil or string.find(body_html , "</[Hh][tT][mM][lL]>" ) == nil then		
-			found = 1
-		elseif string.find(body_html , "</[Bb][Oo][Dd][Yy]>" ) == nil then		
-			found=1
-		elseif string.find(body_html , "</[tT][Aa][bB][lL][Ee]>" ) == nil then		
-			found=1
-		end
+	head = string.gsub(head, "([^\r])\n","%1\r\n")
+	head = string.gsub(head, "√†", "‡")
+	head = string.gsub(head, "√®", "Ë")
+	head = string.gsub(head, "√©", "È")
+	head = string.gsub(head, "√¨", "Ï")
+	head = string.gsub(head, "√≤", "Ú")
+	head = string.gsub(head, "√π", "˘")
+	-- patch by galdom
+	head = string.gsub(head, "\\&#39;", "'")
+	head = string.gsub(head, "&amp;", "&")
+	-- patch by Dylan666
+	head = string.gsub(head, "√ø", "»")
+	head = string.gsub(head, "¬∞", "∞")
+	head = string.gsub(head, "√å", "Ã")
+	head = string.gsub(head, "√â", "…")
+	head = string.gsub(head, "√í", "“")
+	head = string.gsub(head, "√ô", "Ÿ")
+	head = string.gsub(head, "‚,¨", "Ä")
+	head = string.gsub(head, "‚Äú", "ì")
+	head = string.gsub(head, "‚Äù", "î")
 
-		if found~=nil then
-			body = body_html
-			body_html= nil
-			body=fix_character(body)
-		end
+	
+	-- locate body
+	local _, begin_body = string.find(data, tin_string.body_start)
+	local end_body, _ = string.find(data, tin_string.body_end)
+
+	-- check if it is a plain text message
+	local found = string.find(head,
+		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
+		"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
+	if found == nil then
+		head = mimer.remove_lines_in_proper_mail_header(head,
+			{"content%-type"})
+		body_html = string.sub(data, begin_body + 1, end_body - 1)
+	else
+		body = string.sub(data, begin_body + 1, end_body - 1)
+                body = string.gsub(body, "^%s+", "")
+                body = string.gsub(body, "%s+$", "")
+		body = string.gsub(body, "<br/>", "\r\n");
+		body = string.gsub(body, "<a href[^>]*>", "");
+		body = string.gsub(body, "</a>", "");
+		body = string.gsub(body, "&lt;", "<")
+		body = string.gsub(body, "&gt;", ">")
+                body = string.gsub(body, "&quot;", "\"")
+                body = string.gsub(body, "&#39;", "'")
+                body = string.gsub(body, "&amp;", "&")
+		body = string.gsub(body, "√†", "‡")
+		body = string.gsub(body, "√®", "Ë")
+		body = string.gsub(body, "√©", "È")
+		body = string.gsub(body, "√¨", "Ï")
+		body = string.gsub(body, "√≤", "Ú")
+		body = string.gsub(body, "√π", "˘")
+	end
+	
+	-- Added to nvhs to delete scroll bar
+	if not (body_html == nil) then 
+		body_html  = string.gsub(body_html, "auto;width:570px;height", "auto;height")
 	end
 
 	-- extract attachments
 	local x = mlex.match(data, tin_string.attachE, tin_string.attachG) 
-	-- x:print()
+	--x:print()
 	for i = 1, x:count() do
 		local url = x:get(0,i-1)
 		local name = x:get(1,i-1)
@@ -832,9 +857,8 @@ function tin_parse_webmessage(wherearewe, data)
 			"href%s*=%s*'(/cp/ps/Mail/ViewAttachment[^']*)'")
 		
 		attach[name] = "http://"..wherearewe..url
-		
 	end
-
+	
 	-- by nvhs extract attach mail
 	
 	local x = mlex.match(data, tin_string.mailE, tin_string.mailG) 
@@ -851,15 +875,12 @@ function tin_parse_webmessage(wherearewe, data)
 	end
 
 	-- by nvhs for html image
-	if  (body_html~=nil) then 
-		x = mlex.match(body_html, tin_string.cidE, tin_string.cidG)
-	end
+	
 	local y = mlex.match(data, tin_string.imageE, tin_string.imageG)
 	-- y:print()
 	for i = 1, y:count() do
 		local url = y:get(0,i-1)
-		local name = "img"..i
-		local cid=x:get(0,i-1)
+		local name = "img"..i..".gif"
 		local z=0;
 			while not (attach[name]==nil)
 			do
@@ -867,48 +888,19 @@ function tin_parse_webmessage(wherearewe, data)
 				name="img"..i+z
 			end
 		url = string.match(url,
-		"/cp/ps/Mail/ViewAttachment.*&id=%d")
+			"/cp/ps/Mail/ViewAttachment.*&id=%d")
 		if not (url == nil) then 
-			-- print(url)				
-			if cid~=nil then
-				local cid1=string.match(cid,"cid:(.-)[\"]")
-				if cid1==nil then
-					cid1=string.match(cid,"cid:(.-)%s")
-				end
-				if cid1==nil then
-					cid1=string.match(cid,"cid:(.-)$")
-				end
-				inlineids[name]=cid1
-					attach[name] = "http://"..wherearewe..url	
-			end
-		end		
+				attach[name] = "http://"..wherearewe..url
+				inlineids[name]=name
+				local id = string.match(url,"%d$")
+				body_html  = string.gsub(body_html,
+					"/cp/ps/Mail/ViewAttachment.*&id="..id,
+					"cid:"..name)
+		end
+			
 	end
-		
+
 	return head, body, body_html, attach ,inlineids
-end
-
-function fix_character (string)
-
-	string = string.gsub(string, "√†", "‡")
-	string = string.gsub(string, "√®", "Ë")
-	string = string.gsub(string, "√©", "È")
-	string = string.gsub(string, "√¨", "Ï")
-	string = string.gsub(string, "√≤", "Ú")
-	string = string.gsub(string, "√π", "˘")
-	-- patch by galdom
-	string = string.gsub(string, "\\&#39;", "'")
-	string = string.gsub(string, "&amp;", "&")
-	-- patch by Dylan666
-	string = string.gsub(string, "√ø", "»")
-	string = string.gsub(string, "¬∞", "∞")
-	string = string.gsub(string, "√å", "Ã")
-	string = string.gsub(string, "√â", "…")
-	string = string.gsub(string, "√í", "“")
-	string = string.gsub(string, "√ô", "Ÿ")
-	string = string.gsub(string, "‚,¨", "Ä")
-	string = string.gsub(string, "‚Äú", "ì")
-	string = string.gsub(string, "‚Äù", "î")
-	return string
 end
 
 function is_a_list_needed(msg, uidl)

@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+
+START=50
+start() {
+	mkdir -p /var/lib/freepops/lua_updates/lxp/
+	mkdir -p /var/lib/freepops/lua_updates/browser/
+	mkdir -p /var/lib/freepops/lua_updates/soap/
+	mkdir -p /var/lib/freepops/lua_unofficial/
+	(sleep 30; freepopsd -l syslog -e updater.lua php batch) &
+	freepopsd -p 110 -s nobody.nogroup -v -l syslog &
+}
+  
+stop() {
+      killall freepopsd
+}
+

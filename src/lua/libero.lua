@@ -446,7 +446,7 @@ function stat(pstate)
 		-- statE and statG
 		-- print(s)
 		local x = mlex.match(s,libero_string.statE,libero_string.statG)
-		 x:print()
+		 --x:print()
 		
 		-- the number of results
 		local n = x:count()

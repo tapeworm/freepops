@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.87"
+PLUGIN_VERSION = "0.1.88"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -123,11 +123,10 @@ local globals = {
   -- Pattern to detect if we are using the live or classic version
   --
   strLiveCheckPattern = '(TodayLight%.aspx)',
+  strLiveCheckPattern2 = '(todayPageOptOut: true)',
   strClassicCheckPattern = '(Windows Live Mail was not able to sign into your account at this time)',
   strLiveMainPagePattern = '<frame.-name="main" src="([^"]+)"',
-  -- cdmackie: some version do not have this anymore, so use something common
-  -- strLiveLightPagePattern = 'href="(StylesheetTodayLight)',
-  strLiveLightPagePattern = '"MailClassic"',  
+  strLiveLightPagePattern = 'href="(StylesheetTodayLight)',
 
   -- Get the crumb value that is needed for every command
   --
@@ -137,7 +136,7 @@ local globals = {
 
   -- MSN Inbox Folder Id
   --
-  strPatMSNInboxId = "HMFO%('(%d+)'%)[^>]+><img src=.http://[^/]+/i.p.folder.inbox.gif",
+  strPatMSNInboxId = "HMFO%('(%d+)'%)[^>]+><img src=.http://[^/]+/i%.p%.folder%.inbox%.gif",
 
   -- Image server pattern
   --
@@ -159,9 +158,7 @@ local globals = {
   strFolderLiveLightNPattern = '&n=([^&]+)[.]*',
   
   strFolderLiveLightTrashPattern = 'i_trash%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
-  strFolderLiveLightTrash2Pattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&[^"]+"[^>]+><img src="[^"]+" class="i_trash"',
   strFolderLiveLightJunkPattern = 'i_junkfolder%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
-  strFolderLiveLightJunk2Pattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&[^"]+"[^>]+><img src="[^"]+" class="i_junkfolder"',
   strFolderLiveLightPattern = 'href="InboxLight%.aspx%?FolderID=([^&]+&n=[^"]+)" title="',  
   strFolderLiveLightManageFoldersPattern = 'href="ManageFoldersLight%.aspx%?n=([^"]+)"',
 
@@ -173,7 +170,7 @@ local globals = {
   --
   strMsgListCntPattern = "<td width=100. align=center>([^<]+)</td><td align=right nowrap>",
   strMsgListCntPattern2 = "([%d]+) [MmNnBbVv][eai]",
-  strMsgListLiveLightCntPattern = '<div class="dItemListHeaderMsgInfo">.- (%d+)</div>',
+  strMsgListLiveLightCntPattern = '<div class="dItemListHeaderMsgInfo".->.-(%d+).-</div>',
 
   -- Used by Stat to pull out the message ID and the size
   --
@@ -225,7 +222,7 @@ local globals = {
   strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
   -- strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
   strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"0%%5C%%7C0%%5C%%7C8C9BDFF65883200%%5C%%7C00000000-0000-0000-0000-000000000001",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
-  strCmdDeleteLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&",
+  strCmdDeleteLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&n=%s",
   strCmdDeletePostLiveLight = "__VIEWSTATE=&mt=%s&MoveMessageSelector=%s&ToolbarActionItem=MoveMessageSelector&", -- SelectedMessages=%s",
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
@@ -238,7 +235,7 @@ local globals = {
   strCmdMsgUnreadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=", 
   strCmdMsgUnreadLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MarkMessages&d=false,[%s]",
   strCmdEmptyTrashLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.EmptyFolder&ptid=0&a=&au=%s", 
-  strCmdEmptyTrashLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=EmptyFolder&d=%s,0",
+  strCmdEmptyTrashLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=EmptyFolder&d=%s,1&v=1&mt=%s",
   strCmdEmptyTrashLiveLight = "http://%s/mail/InboxLight.aspx?EmptyFolder=True&FolderID=%s&", 
   strCmdEmptyTrashLiveLightPost = "__VIEWSTATE=&mt=%s&query=&MoveMessageSelector=&ToolbarActionItem=&InfoPaneActionItem=EmptyFolderConfirmYes",
   strCmdMsgReadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=&au=%s", 
@@ -493,9 +490,8 @@ function loginHotmail()
 
   -- Check to see if we are using the new interface and are redirecting.
   --
-  str = string.match(body, globals.strLiveCheckPattern)
   local folderBody = body
-  if str ~= nil then
+  if string.match(body, globals.strLiveCheckPattern) or string.match(body, globals.strLiveCheckPattern2) then
     log.dbg("Hotmail: Detected LIVE version.") 
     str = string.format(globals.strCmdBrowserIgnoreLive, browser:wherearewe())
     body, err = browser:get_uri(str)
@@ -520,14 +516,9 @@ function loginHotmail()
     -- One or two more redirects
     --  
     local oldurl = url
-    local oldbody = body
     url = string.match(body, globals.strLoginDoneReloadToReloadPage)
     if url ~= nil then
       body, err = browser:get_uri(url)
-      if body == nil then
-      	-- cdmackie: switch back to old body because we need to first process img in strLoginDoneReloadToHMHome4
-      	body = oldbody
-      end
     end
     url = string.match(body, globals.strLoginDoneReloadToHMHome1)
     if url == nil then
@@ -711,13 +702,7 @@ function loginHotmail()
       internalState.strTrashId = str
       log.dbg("Hotmail - trash folder id: " .. str)
     else
-      str = string.match(body, globals.strFolderLiveLightTrash2Pattern) 
-      if str ~= nil then
-        internalState.strTrashId = str
-        log.dbg("Hotmail - trash folder id: " .. str)
-      else
       log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
-    end
     end
 
     str = string.match(body, globals.strFolderLiveLightJunkPattern) 
@@ -725,14 +710,8 @@ function loginHotmail()
       internalState.strJunkId = str
       log.dbg("Hotmail - junk folder id: " .. str)
     else
-      str = string.match(body, globals.strFolderLiveLightJunk2Pattern) 
-      if str ~= nil then
-        internalState.strJunkId = str
-        log.dbg("Hotmail - junk folder id: " .. str)
-      else
       log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
     end
-  end
   end
 
   -- Note that we have logged in successfully
@@ -1106,7 +1085,6 @@ function cleanupBody(body, cbInfo)
 
   body = string.gsub(body, "\r", "")
   body = string.gsub(body, "\n", "\r\n")
-  body = string.gsub(body, "&#34;", "\"")
   -- cdmackie: these mess up QP attachments in Live
   -- but still needed for classic
   if internalState.bLiveGUI == false then
@@ -1116,6 +1094,7 @@ function cleanupBody(body, cbInfo)
   	body = string.gsub(body, "&quot;", "\"")
   	body = string.gsub(body, "&nbsp;", " ")
   end
+  body = string.gsub(body, "&#34;", "\"")
   body = string.gsub(body, "<!%-%-%$%$imageserver%-%->", internalState.strImgServer)
 
   -- cdmackie: POP protocol: lines starting with a dot must be escaped dotdot
@@ -1254,6 +1233,22 @@ function pass(pstate, password)
     -- Execute the function saved in the session
     --
     func()
+
+    -- Should we force a logout.  If this session runs for more than a day, things
+    -- stop working
+    --
+    local currTime = os.clock()
+    local diff = currTime - internalState.loginTime
+    if diff > globals.nSessionTimeout then 
+      logout() 
+      log.dbg("Logout forced to keep hotmail session fresh and tasty!  Yum!\n")
+      log.dbg("Session removed - Account: " .. internalState.strUser .. 
+        "@" .. internalState.strDomain .. "\n")
+      log.raw("Session removed (Forced by Hotmail timer) - Account: " .. internalState.strUser .. 
+        "@" .. internalState.strDomain) 
+      session.remove(hash())
+      return loginHotmail()
+    end
 		
     return POPSERVER_ERR_OK
   else
@@ -1378,7 +1373,7 @@ function quit_update(pstate)
     end
   elseif internalState.bEmptyTrash and internalState.bLiveGUI then
     cmdUrl = string.format(globals.strCmdEmptyTrashLive, internalState.strMailServer, internalState.strUserId)
-    local post = string.format(globals.strCmdEmptyTrashLivePost, internalState.strTrashId)
+    local post = string.format(globals.strCmdEmptyTrashLivePost, internalState.strTrashId, internalState.strMT)
     log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
     local body, err = browser:post_uri(cmdUrl, post)
     if not body or err then
@@ -1412,14 +1407,7 @@ function quit_update(pstate)
   local currTime = os.clock()
   local diff = currTime - internalState.loginTime
   if diff > globals.nSessionTimeout then 
-    if (internalState.bLiveGUI) then
-      cmdUrl = string.format(globals.strCmdLogoutLive, internalState.strMailServer)
-    else
-      cmdUrl = string.format(globals.strCmdLogout, internalState.strMailServer)
-    end
-    log.dbg("Sending Logout URL: " .. cmdUrl .. "\n")
-    local body, err = getPage(browser, cmdUrl)
- 
+    logout() 
     log.dbg("Logout forced to keep hotmail session fresh and tasty!  Yum!\n")
     log.dbg("Session removed - Account: " .. internalState.strUser .. 
       "@" .. internalState.strDomain .. "\n")
@@ -1438,6 +1426,24 @@ function quit_update(pstate)
     "@" .. internalState.strDomain .. "\n")
 
   return POPSERVER_ERR_OK
+end
+
+function logout() 
+  local browser = internalState.browser
+  local cmdUrl
+  if (internalState.bLiveGUI) then
+    cmdUrl = string.format(globals.strCmdLogoutLive, internalState.strMailServer)
+  else
+    cmdUrl = string.format(globals.strCmdLogout, internalState.strMailServer)
+  end
+  log.dbg("Sending Logout URL: " .. cmdUrl .. "\n")
+  local body, err = getPage(browser, cmdUrl)
+  if (internalState.bLiveGUI) then
+    cmdUrl = string.match(body, '<meta http-equiv="refresh" content="%d+;url=([^"]+)" />')
+    if (cmdUrl ~= nil) then
+      body, err = getPage(browser, cmdUrl)
+    end
+  end
 end
 
 -- Stat command for the live gui
@@ -1874,7 +1880,7 @@ function stat(pstate)
 
       if internalState.statLimit ~= nil then
         local nMaxMsgs = internalState.statLimit
-        if (nTotMsgs > nMaxMsgs) then
+        if (nTotMsgs == 0 or nTotMsgs > nMaxMsgs) then
           nTotMsgs = nMaxMsgs
         end
       end  

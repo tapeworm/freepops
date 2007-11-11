@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.11"
+PLUGIN_VERSION = "0.2.11a"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -880,26 +880,20 @@ function tin_parse_webmessage(wherearewe, data)
 	-- y:print()
 	for i = 1, y:count() do
 		local url = y:get(0,i-1)
-		local name = "img"..i..".gif"
-		local z=0;
-			while not (attach[name]==nil)
-			do
-				z=z+1
-				name="img"..i+z
-			end
 		url = string.match(url,
-			"/cp/ps/Mail/ViewAttachment.*&id=%d")
-		if not (url == nil) then 
-				attach[name] = "http://"..wherearewe..url
-				inlineids[name]=name
-				local id = string.match(url,"%d$")
-				body_html  = string.gsub(body_html,
-					"/cp/ps/Mail/ViewAttachment.*&id="..id,
-					"cid:"..name)
+			"/cp/ps/Mail/ViewAttachment.-&id=%d*")
+		if url ~= nil then 
+			attach[url] = "http://"..wherearewe..url
+			inlineids[url]=url
 		end
-			
+		
 	end
-
+	-- replace url with cid
+	if body_html ~= nil then
+		body_html  = string.gsub(body_html,
+			"/cp/ps/Mail/ViewAttachment.-&id=%d*","cid:%1")	
+	end
+	
 	return head, body, body_html, attach ,inlineids
 end
 

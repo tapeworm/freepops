@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88"
+PLUGIN_VERSION = "0.1.88a"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -126,7 +126,9 @@ local globals = {
   strLiveCheckPattern2 = '(todayPageOptOut: true)',
   strClassicCheckPattern = '(Windows Live Mail was not able to sign into your account at this time)',
   strLiveMainPagePattern = '<frame.-name="main" src="([^"]+)"',
-  strLiveLightPagePattern = 'href="(StylesheetTodayLight)',
+  -- cdmackie: some version do not have this anymore, so use something common
+  -- strLiveLightPagePattern = 'href="(StylesheetTodayLight)',
+  strLiveLightPagePattern = '"MailClassic"',  
 
   -- Get the crumb value that is needed for every command
   --
@@ -158,7 +160,9 @@ local globals = {
   strFolderLiveLightNPattern = '&n=([^&]+)[.]*',
   
   strFolderLiveLightTrashPattern = 'i_trash%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
+  strFolderLiveLightTrash2Pattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&[^"]+"[^>]+><img src="[^"]+" class="i_trash"',
   strFolderLiveLightJunkPattern = 'i_junkfolder%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
+  strFolderLiveLightJunk2Pattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&[^"]+"[^>]+><img src="[^"]+" class="i_junkfolder"',
   strFolderLiveLightPattern = 'href="InboxLight%.aspx%?FolderID=([^&]+&n=[^"]+)" title="',  
   strFolderLiveLightManageFoldersPattern = 'href="ManageFoldersLight%.aspx%?n=([^"]+)"',
 
@@ -222,7 +226,7 @@ local globals = {
   strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
   -- strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
   strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"0%%5C%%7C0%%5C%%7C8C9BDFF65883200%%5C%%7C00000000-0000-0000-0000-000000000001",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
-  strCmdDeleteLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&n=%s",
+  strCmdDeleteLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&",
   strCmdDeletePostLiveLight = "__VIEWSTATE=&mt=%s&MoveMessageSelector=%s&ToolbarActionItem=MoveMessageSelector&", -- SelectedMessages=%s",
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
@@ -516,9 +520,14 @@ function loginHotmail()
     -- One or two more redirects
     --  
     local oldurl = url
+    local oldbody = body
     url = string.match(body, globals.strLoginDoneReloadToReloadPage)
     if url ~= nil then
       body, err = browser:get_uri(url)
+      if body == nil then
+       	-- cdmackie: switch back to old body because we need to first process img in strLoginDoneReloadToHMHome4
+       	body = oldbody
+      end
     end
     url = string.match(body, globals.strLoginDoneReloadToHMHome1)
     if url == nil then
@@ -642,7 +651,13 @@ function loginHotmail()
       internalState.strTrashId = str
       log.dbg("Hotmail - trash folder id: " .. str)
     else
-      log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
+      str = string.match(body, globals.strFolderLiveLightTrash2Pattern) 
+      if str ~= nil then
+        internalState.strTrashId = str
+        log.dbg("Hotmail - trash folder id: " .. str)
+      else
+        log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
+      end
     end
 
     str = string.match(body, globals.strPatLiveJunkId) 
@@ -650,7 +665,13 @@ function loginHotmail()
       internalState.strJunkId = str
       log.dbg("Hotmail - junk folder id: " .. str)
     else
-      log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
+      str = string.match(body, globals.strFolderLiveLightJunk2Pattern) 
+      if str ~= nil then
+        internalState.strJunkId = str
+        log.dbg("Hotmail - junk folder id: " .. str)
+      else
+        log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
+      end
     end
 
     if (internalState.strMBoxName == "Inbox") then
@@ -1085,6 +1106,7 @@ function cleanupBody(body, cbInfo)
 
   body = string.gsub(body, "\r", "")
   body = string.gsub(body, "\n", "\r\n")
+  body = string.gsub(body, "&#34;", "\"")
   -- cdmackie: these mess up QP attachments in Live
   -- but still needed for classic
   if internalState.bLiveGUI == false then
@@ -1094,7 +1116,6 @@ function cleanupBody(body, cbInfo)
   	body = string.gsub(body, "&quot;", "\"")
   	body = string.gsub(body, "&nbsp;", " ")
   end
-  body = string.gsub(body, "&#34;", "\"")
   body = string.gsub(body, "<!%-%-%$%$imageserver%-%->", internalState.strImgServer)
 
   -- cdmackie: POP protocol: lines starting with a dot must be escaped dotdot

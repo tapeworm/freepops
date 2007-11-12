@@ -136,6 +136,7 @@ freepops.MODULES_MAP["gbg.bg"]    	= {name="abv.lua"}
 freepops.MODULES_MAP["fsmail.net"]   	= {name="orange.lua"}
 freepops.MODULES_MAP["wanadoo.nl"]    	= {name="orange.lua"}
 freepops.MODULES_MAP["orange.nl"]    	= {name="orange.lua"}
+freepops.MODULES_MAP["orange.co.uk"]   	= {name="orange.lua"}
 freepops.MODULES_MAP["bedrijfsnaam.nl"] = {name="orange.lua"}
 
 -- softhome

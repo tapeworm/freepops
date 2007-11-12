@@ -20,7 +20,7 @@ PLUGIN_AUTHORS_CONTACTS = {"themarco (at) fsmail (.) net","evaarties (at) xs4all
 -- if more domains & countries are added, the code in  
 -- function user(pstate, username) needs to be updated accordingly
 --
-PLUGIN_DOMAINS = {"@fsmail.net","@wanadoo.nl","@orange.nl","@bedrijfsnaam.nl"}
+PLUGIN_DOMAINS = {"@fsmail.net","@wanadoo.nl","@orange.nl","@orange.co.uk","@bedrijfsnaam.nl"}
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
 		it=[[La cartella da ispezionare. Quella di default &egrave; inbox, gli altri valori possibili sono: junk, sent, trash, draft o cartella definita dall'utente.]],

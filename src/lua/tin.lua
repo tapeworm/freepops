@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.11a"
+PLUGIN_VERSION = "0.2.11b"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -841,9 +841,10 @@ function tin_parse_webmessage(wherearewe, data)
 		body = string.gsub(body, "Ã¹", "ù")
 	end
 	
-	-- Added to nvhs to delete scroll bar
+	-- Added to nvhs to delete scroll bar 
 	if not (body_html == nil) then 
 		body_html  = string.gsub(body_html, "auto;width:570px;height", "auto;height")
+		body_html  ="<html>  <body> "..body_html.."</body> </html>"
 	end
 
 	-- extract attachments

@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.11c"
+PLUGIN_VERSION = "0.2.11d"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -788,7 +788,9 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "\r([^\n])", 
 		function(capture) return "\r\n" .. capture end)
 	head = string.gsub(head, "([^\r])\n","%1\r\n")
-
+	-- patch by galdom
+	head = string.gsub(head, "\\&#39;", "'")
+	head = string.gsub(head, "&amp;", "&")
 
 	
 	-- locate body
@@ -805,8 +807,8 @@ function tin_parse_webmessage(wherearewe, data)
 			{"content%-type"})
 	else
 		body = string.sub(data, begin_body + 1, end_body - 1)
-                body = string.gsub(body, "^%s+", "")
-                body = string.gsub(body, "%s+$", "")
+		body = string.gsub(body, "^%s+", "")
+            body = string.gsub(body, "%s+$", "")
 		body = string.gsub(body, "<br/>", "\r\n");
 		body = string.gsub(body, "<a href[^>]*>", "");
 		body = string.gsub(body, "</a>", "");
@@ -815,10 +817,6 @@ function tin_parse_webmessage(wherearewe, data)
 		body = string.gsub(body, "&quot;", "\"")
             body = string.gsub(body, "&#39;", "'")
             body = string.gsub(body, "&amp;", "&")
-		-- patch by galdom
-		body = string.gsub(body, "\\&#39;", "'")
-		body = string.gsub(body, "&amp;", "&")
-
 	end
 	
 	

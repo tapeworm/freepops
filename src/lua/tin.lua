@@ -788,25 +788,7 @@ function tin_parse_webmessage(wherearewe, data)
 	head = string.gsub(head, "\r([^\n])", 
 		function(capture) return "\r\n" .. capture end)
 	head = string.gsub(head, "([^\r])\n","%1\r\n")
-	head = string.gsub(head, "√†", "‡")
-	head = string.gsub(head, "√®", "Ë")
-	head = string.gsub(head, "√©", "È")
-	head = string.gsub(head, "√¨", "Ï")
-	head = string.gsub(head, "√≤", "Ú")
-	head = string.gsub(head, "√π", "˘")
-	-- patch by galdom
-	head = string.gsub(head, "\\&#39;", "'")
-	head = string.gsub(head, "&amp;", "&")
-	-- patch by Dylan666
-	head = string.gsub(head, "√ø", "»")
-	head = string.gsub(head, "¬∞", "∞")
-	head = string.gsub(head, "√å", "Ã")
-	head = string.gsub(head, "√â", "…")
-	head = string.gsub(head, "√í", "“")
-	head = string.gsub(head, "√ô", "Ÿ")
-	head = string.gsub(head, "‚,¨", "Ä")
-	head = string.gsub(head, "‚Äú", "ì")
-	head = string.gsub(head, "‚Äù", "î")
+
 
 	
 	-- locate body
@@ -818,9 +800,9 @@ function tin_parse_webmessage(wherearewe, data)
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*"..
 		"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
 	if found == nil then
+		body_html = string.sub(data, begin_body + 1, end_body - 1)
 		head = mimer.remove_lines_in_proper_mail_header(head,
 			{"content%-type"})
-		body_html = string.sub(data, begin_body + 1, end_body - 1)
 	else
 		body = string.sub(data, begin_body + 1, end_body - 1)
                 body = string.gsub(body, "^%s+", "")
@@ -830,16 +812,15 @@ function tin_parse_webmessage(wherearewe, data)
 		body = string.gsub(body, "</a>", "");
 		body = string.gsub(body, "&lt;", "<")
 		body = string.gsub(body, "&gt;", ">")
-                body = string.gsub(body, "&quot;", "\"")
-                body = string.gsub(body, "&#39;", "'")
-                body = string.gsub(body, "&amp;", "&")
-		body = string.gsub(body, "√†", "‡")
-		body = string.gsub(body, "√®", "Ë")
-		body = string.gsub(body, "√©", "È")
-		body = string.gsub(body, "√¨", "Ï")
-		body = string.gsub(body, "√≤", "Ú")
-		body = string.gsub(body, "√π", "˘")
+		body = string.gsub(body, "&quot;", "\"")
+            body = string.gsub(body, "&#39;", "'")
+            body = string.gsub(body, "&amp;", "&")
+		-- patch by galdom
+		body = string.gsub(body, "\\&#39;", "'")
+		body = string.gsub(body, "&amp;", "&")
+
 	end
+	
 	
 	-- Added to nvhs to delete scroll bar 
 	if not (body_html == nil) then 
@@ -856,7 +837,6 @@ function tin_parse_webmessage(wherearewe, data)
 		local name = string.match(name, "^(.*) %(")
 		local url = string.match(url,
 			"href%s*=%s*'(/cp/ps/Mail/ViewAttachment[^']*)'")
-		
 		attach[name] = "http://"..wherearewe..url
 	end
 	
@@ -958,7 +938,7 @@ function retr(pstate,msg,data)
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:"..
 		"%s*[^;\r]+;%s*[Cc][Hh][Aa][Rr][Ss][Ee][Tt]=\"?([^\"\r]*)")
 	if found == nil then
-		ctype = "iso-8859-1"
+		ctype = "UTF-8"
 	end
 	
 	if f == nil then
@@ -973,10 +953,11 @@ function retr(pstate,msg,data)
 		--b:show()
 		return POPSERVER_ERR_UNKNOWN
 	end
-
+	
 	local wherearewe = add_webmail_in_front(b:wherearewe())
 	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f)
 	local cb = mimer.callback_mangler(common.retr_cb(data))
+	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]=).-[;\n]","%1\""..ctype.."\"; ")
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,inlineids,ctype)
 		
 	return POPSERVER_ERR_OK

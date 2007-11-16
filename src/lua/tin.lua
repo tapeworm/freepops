@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.11d"
+PLUGIN_VERSION = "0.2.11e"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -1008,7 +1008,7 @@ function top(pstate,msg,lines,data)
 		"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:"..
 		"%s*[^;\r]+;%s*[Cc][Hh][Aa][Rr][Ss][Ee][Tt]=\"?([^\"\r]*)")
 	if found == nil then
-		ctype = "iso-8859-1"
+		ctype = "UTF-8"
 	end
 	
 	if f == nil then
@@ -1021,6 +1021,7 @@ function top(pstate,msg,lines,data)
 	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f)
 	local global = common.new_global_for_top(lines,nil)
 	local cb = mimer.callback_mangler(common.top_cb(global,data,true))
+	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]=).-[;\n]","%1\""..ctype.."\"; ")
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,nil,ctype)
 		
 	return POPSERVER_ERR_OK

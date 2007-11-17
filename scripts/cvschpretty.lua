@@ -4,29 +4,26 @@ comments = {}
 
 for l in io.stdin:lines() do
 	--print("processo ", l)
-	local _,_,fname = string.find(l,"- ([%a%.]*):")	
-	local _,_,comment = string.find(l,"- [%a%.]*:(.*)")
+	local fname = string.match(l,"- ([^:]*):")	
+	local comment = string.match(l,"- [^:]*:(.*)")
 	--print("ottengo" , fname, comment)
-	--
-	comment = comment or 'nil'
-	fname = fname or 'nil'
-	if comments[comment] == nil then
-		comments[comment] = {fname}
-	else
-		table.insert(comments[comment],fname)
+	if comment and fname and fname ~= 'ChangeLog' then
+		if comments[comment] == nil then
+			comments[comment] = {fname}
+		else
+			table.insert(comments[comment],fname)
+		end
 	end
 end
 
-table.foreach(comments,function(k,v)
-	filename = ""
-	already = {}
-	for _,x in pairs(v) do
-		if already[x] == nil then
- 			filename = filename .. x .. ", "
-			already[x] = true
-		end
-	end
-	filename = string.sub(filename,0,-3)
+lines = {}
+
+for k,v in pairs(comments) do
+	table.sort(v)
+	filename = table.concat(v,", ")
 	k = string.gsub(k,"  "," ")
-	print("- " .. filename .. ":" .. k)
-end)
+	table.insert(lines, "- " .. filename .. ":" .. k)
+end
+
+table.sort(lines)
+for _,l in ipairs(lines) do print(l) end

@@ -39,6 +39,7 @@ f = io.open(file,"r")
 
 log = {}
 current = {}
+passed = {}
 status = "nothing"
 for l in f:lines() do
 	local _,_,x = string.find(l,"^(revision)")
@@ -46,8 +47,15 @@ for l in f:lines() do
 	if x ~= nil and status == "nothing" then
 		table.insert(log,current)
 		status = "revision"
+
+		-- print(table.concat(passed,'\n'))
+		-- table.foreach(current, print)
+
+		passed = {}
 		current = {}
 	end
+
+	table.insert(passed, l)
 
 	if status == "revision" then
 		local _,_,r = string.find(l,"^revision ([%d%.]+)")
@@ -73,7 +81,7 @@ table.insert(log,current)
 
 table.foreach(log,function(_,v)
 	if v.revision ~= nil then
-		print("- " .. basename(arg[2]) .. ": "	.. v.comment ..
+		print("- " .. arg[2] .. ": "	.. v.comment ..
 			" ("..v.author..")")
 	end
 end)

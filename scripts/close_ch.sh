@@ -21,24 +21,26 @@ NEW_DAYS=`date +%s`
 ((DAYS= $NEW_DAYS - $LAST_DAYS ))
 ((DAYS= $DAYS / 86400))
 
-CVS_ROOT="-d :username@cvs.sf.net:/cvsroot/freepos"
-[ -d ../CVSROOT ] || echo -e "You must do:\n\tcd ..\n\tcvs $CVS_ROOT co CVSROOT"
+echo "[`date`] Please wait... cvs mining is slow... (starting from $DAYS days ago)"
 
-echo "Please wait... cvs mining is slow..."
+make distclean >/dev/null 2>/dev/null
 
-grep "^avail|[^,]*|" ../CVSROOT/avail | cut -d "|" -f 2- | sed "s/|/ /" | sed "s/,/ /g" | tr -s "  " " " | awk -f scripts/close_ch.awk -v "day=$DAYS" | scripts/cvschpretty.lua > ChangeLog-CVS
-
-cd ..
-echo freepops/src/lua/*.lua > freepops/ChangeLog-PLUGINS
-cd freepops
-
-cat ChangeLog-PLUGINS | awk -f scripts/close_ch.awk -v "day=$DAYS" | scripts/cvschpretty.lua > ChangeLog-CVS1
-
-# main()
-
+rm ChangeLog-NEW
+ALL=`cvs log -d "> $DAYS days ago" 2>/dev/null | scripts/modified.lua`
+ALL_NO=`echo $ALL | wc -w`
+i=0
+for F in $ALL; do
+	echo -en "\rprocessing file $i of $ALL_NO"
+	scripts/cvs2changelog.lua $DAYS $F >> ChangeLog-NEW
+	((i=$i+1))
+done 
+echo
+cat ChangeLog-NEW | scripts/cvschpretty.lua > ChangeLog-NEW-PRETTY
 echo "$NEW_DATE $NEW_VERSION" > ChangeLog-Head
-cat ChangeLog-Head ChangeLog-CVS ChangeLog-CVS1 ChangeLog > ChangeLog-Complete
+cat ChangeLog-Head ChangeLog-NEW-PRETTY ChangeLog > ChangeLog-Complete
 mv ChangeLog-Complete ChangeLog
-rm ChangeLog-CVS ChangeLog-CVS1 ChangeLog-Head ChangeLog-PLUGINS
+rm ChangeLog-NEW ChangeLog-NEW-PRETTY ChangeLog-Head
+
+echo "[`date`] Finished"
 
 

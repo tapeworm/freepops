@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8f"
+PLUGIN_VERSION = "0.0.8e"
 PLUGIN_NAME = "Orange (ex Wanadoo)"
 PLUGIN_REQUIRE_VERSION = "0.0.99"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -20,7 +20,7 @@ PLUGIN_AUTHORS_CONTACTS = {"themarco (at) fsmail (.) net","evaarties (at) xs4all
 -- if more domains & countries are added, the code in  
 -- function user(pstate, username) needs to be updated accordingly
 --
-PLUGIN_DOMAINS = {"@fsmail.net","@wanadoo.nl","@orange.nl","@orange.co.uk","@bedrijfsnaam.nl"}
+PLUGIN_DOMAINS = {"@fsmail.net","@wanadoo.nl","@orange.nl","@bedrijfsnaam.nl"}
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
 		it=[[La cartella da ispezionare. Quella di default &egrave; inbox, gli altri valori possibili sono: junk, sent, trash, draft o cartella definita dall'utente.]],
@@ -1154,7 +1154,7 @@ function Private.base64_io_slave(cb)
 			table.insert(todo_table,base64.encode(chunk).."\r\n")
 			buffer = string.sub(buffer,Private.base64wrap + 1,-1)
 		end
-		if #todo_table > 0 then
+		if table.getn(todo_table) > 0 then
 			cb(table.concat(todo_table))
 		end
 
@@ -1256,7 +1256,7 @@ function Private.quoted_printable_io_slave(cb)
 			buffer = string.sub(buffer,len + 1,-1)
 			wrap,forced,len = Private.qpr_eval_expansion(buffer)
 		end
-		if #todo_table > 0 then
+		if table.getn(todo_table) > 0 then
 			cb(table.concat(todo_table))
 		end
 		if len == 0 then

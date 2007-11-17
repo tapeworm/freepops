@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88a"
+PLUGIN_VERSION = "0.1.88b"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -651,28 +651,16 @@ function loginHotmail()
       internalState.strTrashId = str
       log.dbg("Hotmail - trash folder id: " .. str)
     else
-      str = string.match(body, globals.strFolderLiveLightTrash2Pattern) 
-      if str ~= nil then
-        internalState.strTrashId = str
-        log.dbg("Hotmail - trash folder id: " .. str)
-      else
         log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
       end
-    end
 
     str = string.match(body, globals.strPatLiveJunkId) 
     if str ~= nil then
       internalState.strJunkId = str
       log.dbg("Hotmail - junk folder id: " .. str)
     else
-      str = string.match(body, globals.strFolderLiveLightJunk2Pattern) 
-      if str ~= nil then
-        internalState.strJunkId = str
-        log.dbg("Hotmail - junk folder id: " .. str)
-      else
         log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
       end
-    end
 
     if (internalState.strMBoxName == "Inbox") then
       str = inboxId
@@ -723,7 +711,13 @@ function loginHotmail()
       internalState.strTrashId = str
       log.dbg("Hotmail - trash folder id: " .. str)
     else
+      str = string.match(body, globals.strFolderLiveLightTrash2Pattern) 
+      if str ~= nil then
+        internalState.strTrashId = str
+        log.dbg("Hotmail - trash folder id: " .. str)
+      else
       log.error_print("Unable to detect the folder id for the trash folder.  Deletion may fail.")
+    end
     end
 
     str = string.match(body, globals.strFolderLiveLightJunkPattern) 
@@ -731,8 +725,14 @@ function loginHotmail()
       internalState.strJunkId = str
       log.dbg("Hotmail - junk folder id: " .. str)
     else
+      str = string.match(body, globals.strFolderLiveLightJunk2Pattern) 
+      if str ~= nil then
+        internalState.strJunkId = str
+        log.dbg("Hotmail - junk folder id: " .. str)
+      else
       log.error_print("Unable to detect the folder id for the junk folder.  Deletion may fail.")
     end
+  end
   end
 
   -- Note that we have logged in successfully

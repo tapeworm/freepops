@@ -316,8 +316,8 @@ dist-osx-finalyze: ../dist-osx/FreePOPs.app
 	$(H)rm -rf ../dist-osx/FreePOPs.app
 
 dist-tgz: freepops-$(VERSION).tar.gz
-	$(H)mkdir -p dist-tgz
-	$(H)mv freepops-$(VERSION).tar.gz dist-tgz
+	$(H)mkdir -p ../dist-tgz
+	$(H)mv freepops-$(VERSION).tar.gz ../dist-tgz
 
 freepops-$(VERSION).tar.gz: 
 	$(H)cd ..;./configure.sh linux || true

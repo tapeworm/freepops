@@ -19,6 +19,30 @@ To ask for help, AFTER you've read the documentation, you may look at:
 
 ChangeLog:
 
+- added -c switch to specify a configuration file
+- added staistics facilities and a monitor plugin to read them
+- removed criticalpath.lua
+- nvhs patch for images as attachments
+- thanks taba.dvd for reporting the patch by nvhs to fix html in tin.lua 
+- osx metadata now reportthe correct version information
+22/06/2007 0.2.5
+- fixed an ancestral wrong compilation flag for regexes, no more REG_NEWLINE
+- hotmail.lua: bumped to make them released again (gareuselesinge)
+- supereva.lua: supereva plugin updates (gareuselesinge)
+- libero.lua: fixed bug for attachments (gareuselesinge)
+- libero.lua: changed pattern matching (gareuselesinge)
+- hotmail.lua: Update the logout url and try to handle an expired session better. (russell822)
+- libero.lua: bumped to make it released agaiN (gareuselesinge)
+- supereva.lua, tin.lua: fixed attachments in tin and supereva, added dada.net (gareuselesinge)
+- libero.lua: fixed mlex (gareuselesinge)
+- aol.lua: Changed the AOL plugin to use the "classic" web interface. (russell822)
+- added patch by Viruzzo to mimer and supereva.lua
+- moved bpo build to etch
+26/05/2007 0.2.4
+- updater.lua: better error reporting if metadata is nil (gareuselesinge)
+- mailcom.lua: Reaction to a change on the form of mail.com's main page. (russell822)
+- hotmail.lua: Fixed the issue with messages not being marked as read. (russell822)
+- some more fixes from gentoo (thanks Daniel Black)
 - updated debian localizations and fixes to the package description
 - make clean cleans really! all
 - popstate.c now allows to set mailmessage size to 0

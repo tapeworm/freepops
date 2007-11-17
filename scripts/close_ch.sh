@@ -25,7 +25,7 @@ echo "[`date`] Please wait... cvs mining is slow... (starting from $DAYS days ag
 
 make distclean >/dev/null 2>/dev/null
 
-rm ChangeLog-NEW
+rm -f ChangeLog-NEW
 ALL=`cvs log -d "> $DAYS days ago" 2>/dev/null | scripts/modified.lua`
 ALL_NO=`echo $ALL | wc -w`
 i=0

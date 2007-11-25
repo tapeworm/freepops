@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88c"
+PLUGIN_VERSION = "0.1.88d"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -871,6 +871,8 @@ function downloadMsg(pstate, msg, nLines, data)
     popserver_callback(body, data)
   elseif (cbInfo.bEndReached == false and cbInfo.nLinesRequested == -2) then
       popserver_callback("\r\n\0", data)
+  elseif (cbInfo.nLinesRequested ~= -2) then
+      popserver_callback("\r\n\0", data)
   end
 
   -- Mark the message as read
@@ -952,9 +954,11 @@ function downloadMsg_cb(cbInfo, data)
       --
       if cbInfo.strHack:check_stop(cbInfo.nLinesRequested) then
         cbInfo.nLinesReceived = -1;
-        if (string.sub(body, -2, -1) ~= "\r\n") then
-          body = body .. "\r\n"
-        end
+        -- This is now handled in the parent function
+        --
+--        if (string.sub(body, -2, -1) ~= "\r\n") then
+--          body = body .. "\r\n"
+--        end
       else
         cbInfo.nLinesReceived = cbInfo.nLinesRequested - 
           cbInfo.strHack:current_lines()

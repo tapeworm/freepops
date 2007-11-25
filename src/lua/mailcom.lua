@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.07"
+PLUGIN_VERSION = "0.1.07a"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -70,7 +70,7 @@ PLUGIN_DOMAINS = {"@mail.com","@email.com","@iname.com","@cheerful.com","@consul
 "@webcity.ca","@webmail.lu","@welcomm.ac","@wenxuecity.net","@westham-mail.com","@wimbledon-mail.com",
 "@windrivers.net","@wolves-mail.com","@wongfaye.com","@worldmail.ac","@worldweb.ac","@isleuthmail.com",
 "@x-lab.cc","@xy.com.tw","@yankeeman.com","@yyhmail.com", "@verizonmail.com", "@lycos.com", "@cyberdude.com",
-"@mail.org", "@italymail.com", "@mexico.com", "@india.com", "@u2club.com" }
+"@mail.org", "@italymail.com", "@mexico.com", "@india.com", "@u2club.com", "@royal.net" }
 PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		en = [[
@@ -315,7 +315,7 @@ function login()
   if (internalState.strLoginPage ~= nil) then
     url = internalState.strLoginPage
   elseif (domain == "email.com" or domain == "mail.com" or domain == "iname.com" or domain == "mail.org" or 
-        internalState.bUseMailComLoginPage) then
+         domain == "royal.net" or internalState.bUseMailComLoginPage) then
     url = string.format(globals.strLoginPage, "www2", "mail.com")
   elseif (domain == "usa.com" or domain == "mexico.com") then
     url = string.format(globals.strLoginPage, "mail", domain)

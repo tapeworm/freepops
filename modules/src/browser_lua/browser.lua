@@ -194,13 +194,7 @@ end
 -- adds dirname(u.path) .. / .. location if needed
 function Hidden.adjust_path(l,u,location)
 	local function clean_2_slash(s)
-                -- Change made by Kevin Edwards
-                --
- 		local subst = 1
- 		while subst > 0 do
- 			s,subst = string.gsub(s,"//","/")
- 		end
- 		return s
+		return (string.gsub(s,"//+","/"))
 	end
 	local function dirname(path)
 		local base = ""

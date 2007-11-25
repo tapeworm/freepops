@@ -11,7 +11,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.9p"
+PLUGIN_VERSION = "0.2.0"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -715,6 +715,8 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   --
   local headers
   if internalState.bNewGUI then
+    local msgid = internalState.msgids[uidl]
+    uidl = msgid
     headers = getMsgHdr(pstate, uidl)
   else
     headers, _ = browser:get_uri(hdrUrl)
@@ -768,9 +770,16 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     headers = string.gsub(headers, "From .-\n", "", 1);
   end
 
-  -- Remove the quote-printed encoding line from the header
+  -- Remove "Content-Transfer-Encoding" line from the header.
   --
-  headers = string.gsub(headers, "Content%-Transfer%-Encoding: quoted%-printable%s+", "");
+  -- Yahoo apparently converts the received encoding to some other
+  -- encoding (7bit, 8bit, or binary?) without updating the headers.
+  -- (quoted-printable and base64 values are incorrect)
+  --
+  -- Case-insensitive
+  --
+  headers = string.gsub(headers, "[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Rr][Aa][Nn][Ss][Ff][Ee][Rr]%-[Ee][Nn][Cc][Oo][Dd][Ii][Nn][Gg]: .-\n", "", 1);
+  --headers = string.gsub(headers, "Content%-Transfer%-Encoding: quoted%-printable%s+", "");
   --headers = string.gsub(headers, "charset=%"UTF%-8%", "charset=%"us%-ascii%"");
 
   -- Send the headers first to the callback
@@ -1046,19 +1055,34 @@ function getSTATList(pstate)
     return POPSERVER_ERR_OK
   end
 
+  local knownIDs = {}
   for i, elem in ipairs (ent) do
     if (type(elem) == "table" and elem["tag"] == "messageInfo") then
       local attrs = elem["attr"]
       local size = attrs["size"]     
-      local uidl = attrs["mid"]
+      local msgid = attrs["mid"]
+
+      local uidl = string.gsub(msgid, "_%d+_", "_000_")
+
+      local bUnique = true
+      for j = 0, nMsgs do
+        if knownIDs[j + 1] == msgid then
+          bUnique = false
+          break
+        end        
+      end
 
       -- Save the information
       --
-      nMsgs = nMsgs + 1
-      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
-      set_popstate_nummesg(pstate, nMsgs)
-      set_mailmessage_size(pstate, nMsgs, size)
-      set_mailmessage_uidl(pstate, nMsgs, uidl)
+      if (bUnique) then
+        nMsgs = nMsgs + 1
+        log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+        set_popstate_nummesg(pstate, nMsgs)
+        set_mailmessage_size(pstate, nMsgs, size)
+        set_mailmessage_uidl(pstate, nMsgs, uidl)
+        knownIDs[nMsgs] = msgid
+        internalState.msgids[uidl] = msgid
+      end
     end
   end
 		
@@ -1210,7 +1234,8 @@ function deleteMsgs(pstate)
   for i = 1, cnt do
     if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
       local uidl = get_mailmessage_uidl(pstate, i)
-      table.insert(param, { tag = "mid", uidl })
+      local msgid = internalState.msgids[uidl]
+      table.insert(param, { tag = "mid", msgid })
       dcnt = dcnt + 1
     end
   end

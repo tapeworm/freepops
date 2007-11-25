@@ -467,6 +467,7 @@ freepops.MODULES_MAP["italymail.com" ]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["computer4u.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["mexico.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["india.com"]		= {name="mailcom.lua"}
+freepops.MODULES_MAP["royal.net"]		= {name="mailcom.lua"}
 
 -- mail2world
 freepops.MODULES_MAP["mail2.*%.com" ]		= {name="mail2world.lua", 

@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.11e"
+PLUGIN_VERSION = "0.2.11f"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -955,7 +955,7 @@ function retr(pstate,msg,data)
 	local wherearewe = add_webmail_in_front(b:wherearewe())
 	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f)
 	local cb = mimer.callback_mangler(common.retr_cb(data))
-	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]=).-[;\n]","%1\""..ctype.."\"; ")
+	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]%s*=).-([;\n])","%1\""..ctype.."\"%2")
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,inlineids,ctype)
 		
 	return POPSERVER_ERR_OK
@@ -1021,7 +1021,7 @@ function top(pstate,msg,lines,data)
 	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f)
 	local global = common.new_global_for_top(lines,nil)
 	local cb = mimer.callback_mangler(common.top_cb(global,data,true))
-	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]=).-[;\n]","%1\""..ctype.."\"; ")
+	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]%s*=).-([;\n])","%1\""..ctype.."\"%2")
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,nil,ctype)
 		
 	return POPSERVER_ERR_OK

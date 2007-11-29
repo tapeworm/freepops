@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88d"
+PLUGIN_VERSION = "0.1.88e"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -186,6 +186,7 @@ local globals = {
   --
   strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
   strMsgListNextPagePatLiveLight = '<a href="([^"]+)"[^>]*><img src="[^_]*_nextpage.gif"',
+  strMsgListNextPagePatLiveLight2 = '<a href="([^"]+)"[^>]*><img src="[^"]+" class="i_nextpage"',
 
   -- Pattern used to detect a bad STAT page.
   --
@@ -1730,6 +1731,10 @@ function stat(pstate)
     -- Figure out if there are more pages with messages
     --
     nextPageUrl = string.match(body, globals.strMsgListNextPagePatLiveLight)
+    -- cdmackie: change in hotmail nextpage link (kept old one incase still used)
+    if nextPageUrl == nil then
+	    nextPageUrl = string.match(body, globals.strMsgListNextPagePatLiveLight2)
+    end
 
     -- Tokenize out the message ID and size for each item in the list
     --    

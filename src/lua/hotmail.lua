@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88e"
+PLUGIN_VERSION = "0.1.88f"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -1064,6 +1064,7 @@ function cleanupBody(body, cbInfo)
   body = string.gsub(body, "&#09;", "\t")
   body = string.gsub(body, "&#10;", "\n")
   body = string.gsub(body, "&#13;", "\r")
+  body = string.gsub(body, "&#27;", "\27")
   body = string.gsub(body, "&#32;", " ")
   body = string.gsub(body, "&#33;", "!")
   body = string.gsub(body, "&#35;", "#")

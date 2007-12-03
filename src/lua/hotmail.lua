@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88g"
+PLUGIN_VERSION = "0.1.88h"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -120,7 +120,7 @@ local globals = {
   strLoginDoneReloadToHMHome4="img src='([^']+)'",
 
   -- Paco
---  strLoginDoneReloadToHMHome5='img src="([^"]+)"',
+  strLoginDoneReloadToHMHome5='img src="([^"]+)"',
 
   strLoginDoneReloadToReloadPage='window%.location=\'([^\']+)\'',
  

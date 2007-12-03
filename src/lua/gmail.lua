@@ -13,7 +13,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.46"
+PLUGIN_VERSION = "0.0.49"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -40,6 +40,11 @@ foo@gmail.com?folder=starred<br/>
 <br/>
 If you created custom labels in gmail, you can access them using
 the label parameter label=name.]],
+		}	
+	},
+	{name = "maxmsgs", description = {
+		en = [[
+Parameter is used to force the plugin to only download a maximum number of messages. ]]
 		}	
 	},
 	{name = "label", description = {
@@ -116,15 +121,15 @@ local globals = {
 	--strLoginUrl = "https://www.google.com/accounts/ServiceLoginBoxAuth",
 	strLoginUrl = "https://www.google.com/accounts/ServiceLoginAuth",
 	strLoginPostData = "continue=https%%3A%%2F%%2Fmail.google.com%%2Fmail%%3Fui%%3Dhtml%%26zy%%3Dl&"..
-			"service=mail&Email=%s&Passwd=%s&null=Sign%%20in&rmShown=1&rm=false&ltmplcache=2&ltmpl=yj_wsad&PersistentCookie=yes",
+			"service=mail&Email=%s&Passwd=%s&null=Sign%%20in&rmShown=1&rm=false&ltmplcache=2&ltmpl=yj_wsad&PersistentCookie=yes&ui=1",
 	strLoginCheckcookie_TODO ="https://www.google.com/accounts/CheckCookie?"..
 			"continue=http%3A%2F%2Fmail.google.com%2Fmail&"..
-			"service=mail&chtml=LoginDoneHtml",
+			"service=mail&chtml=LoginDoneHtml&ui=1",
 	strLoginFailed = "(Username and password do not match)",
 
 	strHomepage_TODO = "http://mail.google.com/mail",
 
-	strViewMessage = "http://mail.google.com/mail?view=om&th=%s&zx=%s",
+	strViewMessage = "http://mail.google.com/mail?view=om&th=%s&zx=%s&ui=1",
 	-- message list (regexp)
 
 	-- strMessageListRegExp = ',%["(%w-)",(%d),(%d),".-","([^"]-)",.-%d%]\n',
@@ -133,7 +138,7 @@ local globals = {
 	-- next 2 lines: link to view a message in html format,
 	-- and regexp to extract sub messages.
 	strMessageThreadUrl = "http://mail.google.com/mail?"..
-		"view=cv&search=%s&th=%s&zx=%s",
+		"view=cv&search=%s&th=%s&zx=%s&ui=1",
 	strMessageThreadRegExp = 
 		'\nD%(%["mi",%d+,%d+,"(%w-)",(%d+),.-,".-",".-","(.-)".-%]\n%);',
 
@@ -142,10 +147,10 @@ local globals = {
 
 	-- The uri for the first page with the list of messages
 	strCmdMsgList = "http://mail.google.com/mail?"..
-		"search=%s&view=tl&start=%s&init=1&zx=%s",
+		"search=%s&view=tl&start=%s&init=1&zx=%s&ui=1",
 	strCmdMsgListChkNext = '\nD%(%["ts",(%d+),(%d+),(%d+),%d.-%]\n%);',
 
-	strCmdMarkMsgUrl = "http://mail.google.com/mail?search=%s&view=tl&start=0",
+	strCmdMarkMsgUrl = "http://mail.google.com/mail?search=%s&view=tl&start=0&ui=1",
 	-- The piece of uri you must append to delete to choose the messages 
 	-- to delete
 	strCmdMarkMsgPostData = "act=%s&at=%s",
@@ -168,6 +173,7 @@ internal_state = {
 	brBrowser = nil,
 	strCookieVal = nil,
 	strCookieSID = nil,
+	statLimit = nil,
 	strGmailAt = ""
 }
 
@@ -207,7 +213,7 @@ function check_sanity(name,pass)
 		log.error_print("password must be from 6 to 24 chars")
 		return false
 	end
-	local x = string.match(pass,"[^0-9A-Za-z%.%_%-àèéìòù]")
+	local x = string.match(pass,"[^0-9A-Za-z%.%_%-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]")
 	if x ~= nil then
 		log.error_print("password contains invalid character "..x.."\n")
 		return false
@@ -614,6 +620,15 @@ function stat(pstate)
 	local folder = internal_state.strFolder
 	local GetNew = false
 
+	-- If the flag maxmsgs is set,
+	-- STAT will limit the number of messages to the flag
+	--
+	local val = (freepops.MODULE_ARGS or {}).maxmsgs or 0
+	if tonumber(val) > 0 then
+	log.dbg("Gmail: A max of " .. val .. " messages will be downloaded.")
+	internal_state.statLimit = tonumber(val)
+	end
+
 	-- Check for action command
 	--
 	if action == "export" then
@@ -708,14 +723,22 @@ function stat(pstate)
 		-- grows automatically... maybe... don't remember now
 		local nmesg_old = get_popstate_nummesg(pstate)
 		local nmesg = nmesg_old + n
+		
+		if internal_state.statLimit ~= nil then
+			if nmesg >= internal_state.statLimit then
+				nmesg = internal_state.statLimit
+				n = nmesg - nmesg_old
+			end
+		end
+
 		set_popstate_nummesg(pstate,nmesg)
 
 		local val
 		-- gets all the results and puts them in the popstate structure
 		for i = 1,n do
-			-- n+1-i to get messages in reverse order, 
-			-- oldest to newest
-			val = MessageList[n+1-i]
+			-- we should leave order newest to oldest, 
+			-- since we have more pages to precess
+			val = MessageList[i]
 			sUIDL = val["sUIDL"]
 			if not sUIDL then
 				return nil, "Unable to parse page"
@@ -733,12 +756,18 @@ function stat(pstate)
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function check_f (s)
 		local iStart, iShow, iTotal = string.match(s, globals.strCmdMsgListChkNext)
+		local val=1
+
+		-- val = 0 if we have maxmsgs and we are finished
+		if internal_state.statLimit ~= nil then
+			val = internal_state.statLimit - get_popstate_nummesg(pstate)
+		end
 
 		if (iStart == nil) then iStart = "0" end
 		if (iShow  == nil) then iShow  = "0" end
 		if (iTotal == nil) then iTotal = "0" end
 
-		if tonumber(iStart)+tonumber(iShow) < tonumber(iTotal) then
+		if tonumber(iStart)+tonumber(iShow) < tonumber(iTotal) and val > 0 then
 		-- TODO: furthur tests with more than 2 pages of emails
 			-- change retrive behaviour
 			uri = string.format(globals.strCmdMsgList, folder,
@@ -767,6 +796,15 @@ function stat(pstate)
 		log.error_print("Stat failed\n")
 		session.remove(key())
 		return POPSERVER_ERR_UNKNOWN
+	end
+
+	-- now reverse order to have old to new
+	
+	local n = get_popstate_nummesg(pstate) / 2
+	for i = 1,n do
+		local sUIDL = get_mailmessage_uidl(pstate, i)
+		set_mailmessage_uidl(pstate, i, get_mailmessage_uidl(pstate, n*2-i+1))
+		set_mailmessage_uidl(pstate, n*2-i+1,sUIDL)
 	end
 
 	-- store in internal_state GMAIL_AT.value

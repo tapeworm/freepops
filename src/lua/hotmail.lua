@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88f"
+PLUGIN_VERSION = "0.1.88g"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -118,6 +118,10 @@ local globals = {
   strLoginDoneReloadToHMHome3="location='([^']+)'",
 --  strLoginDoneReloadToHMHome3='location=.([^"%']+)',
   strLoginDoneReloadToHMHome4="img src='([^']+)'",
+
+  -- Paco
+--  strLoginDoneReloadToHMHome5='img src="([^"]+)"',
+
   strLoginDoneReloadToReloadPage='window%.location=\'([^\']+)\'',
  
   -- Pattern to detect if we are using the live or classic version
@@ -530,12 +534,23 @@ function loginHotmail()
        	body = oldbody
       end
     end
+
+    -- Paco
+    body = cleanupLoginBody(body)
+
     url = string.match(body, globals.strLoginDoneReloadToHMHome1)
     if url == nil then
       url = string.match(body, globals.strLoginDoneReloadToHMHome2)
       if url == nil then
         -- Change suggested by 930     
         local authimgurl = string.match(body, globals.strLoginDoneReloadToHMHome4)
+          -- Paco
+          --
+          if authimgurl == nil then
+            authimgurl = string.match(body, globals.strLoginDoneReloadToHMHome5)
+          end
+          log.raw("Image url: " .. authimgurl)
+
           if authimgurl ~= nil then
             browser:get_uri(authimgurl)
           end
@@ -549,6 +564,13 @@ function loginHotmail()
       end
     end
     body, err = browser:get_uri(url)
+
+    -- Paco
+    if body == nil then
+      log.error_print(globals.strLoginFailed)
+      log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got an error:\n" .. err);
+      return POPSERVER_ERR_NETWORK
+    end
   end
 
   -- Extract the crumb - This is needed for deletion of items
@@ -749,6 +771,28 @@ function loginHotmail()
   --
   log.raw("Successful login")
   return POPSERVER_ERR_OK
+end
+
+function cleanupLoginBody(body)
+  log.raw("Cleaning up login body: " .. body)
+  body = string.gsub(body, "&#58;", ":")
+  body = string.gsub(body, "&#61;", "=")
+  body = string.gsub(body, "&#39;", "'")
+  body = string.gsub(body, "&#92;", "\\")
+  body = string.gsub(body, "&#47;", "/")
+  body = string.gsub(body, "&#63;", "?")
+  body = string.gsub(body, "&#38;", "&")
+  body = string.gsub(body, "&#42;", "*")
+  body = string.gsub(body, "&#33;", "!")
+  body = string.gsub(body, "&#36;", "$")
+  body = string.gsub(body, "\\x3a", ":")
+  body = string.gsub(body, "\\x2f", "/")
+  body = string.gsub(body, "\\x3f", "?")
+  body = string.gsub(body, "\\x3d", "=")
+  body = string.gsub(body, "\\x26", "&")
+  log.raw("Body cleaned: " .. body)
+
+  return body
 end
 
 function getFolderId(inboxId) 

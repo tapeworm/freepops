@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.0b"
+PLUGIN_VERSION = "0.1.0c"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -152,7 +152,7 @@ internalState = {
 
 -- Set to true to enable Raw Logging
 --
-local ENABLE_LOGRAW = false
+local ENABLE_LOGRAW = true
 
 
 -- The platform dependent End Of Line string
@@ -275,12 +275,9 @@ function loginAOL()
   -- don't run javascript and thus must do the work here of pulling out the URL that
   -- the javascript would redirect too.
   url = string.match(body, globals.strLoginPageParamsPattern)
-  if (url == nil) then
-    log.error_print("Unable to figure out the redirect on the login page.")
-    return POPSERVER_ERR_UNKNOWN
+  if (url ~= nil) then
+    body, err = browser:get_uri(url)
   end
-  body, err = browser:get_uri(url)
-
 
   -- We are now at the signin page.  Let's pull out the action of the signin form and
   -- all the hidden variables.  When done, we'll post the data along with the user and password.

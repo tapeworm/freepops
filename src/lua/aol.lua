@@ -152,7 +152,7 @@ internalState = {
 
 -- Set to true to enable Raw Logging
 --
-local ENABLE_LOGRAW = true
+local ENABLE_LOGRAW = false
 
 
 -- The platform dependent End Of Line string

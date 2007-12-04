@@ -11,7 +11,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.0"
+PLUGIN_VERSION = "0.2.0a"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -1150,6 +1150,9 @@ function getMsgBody(pstate, uidl, size, cbInfo)
       if (subtype == "plain") then
         local textElem = elem[1]
         local text = textElem[1]
+        if (text == nil) then
+          text = ""
+        end
         text = text .. "\n"
         cbInfo.strText = getMsgCallBack(cbInfo, text)
       elseif (subtype == "html") then
@@ -1181,6 +1184,11 @@ function getMsgBody(pstate, uidl, size, cbInfo)
     end
   end
 
+  if not (cbInfo.strText or cbInfo.strHtml) then
+    log.dbg("Something isn't right as we got no body back from Yahoo.")
+    cbInfo.strText = ""
+  end
+  
   return 0
 end
 

@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.11f"
+PLUGIN_VERSION = "0.2.11g"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -791,7 +791,8 @@ function tin_parse_webmessage(wherearewe, data)
 	-- patch by galdom
 	head = string.gsub(head, "\\&#39;", "'")
 	head = string.gsub(head, "&amp;", "&")
-
+	
+	head=string.gsub(head,"[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Rr][Aa][Nn][sS][fF][ee][Rr]%-[eE][Nn][Cc][Oo][dD][Ii][Nn][Gg].-[;\n ]","")		
 	
 	-- locate body
 	local _, begin_body = string.find(data, tin_string.body_start)

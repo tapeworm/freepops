@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88h"
+PLUGIN_VERSION = "0.1.88i"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -178,7 +178,7 @@ local globals = {
   --
   strMsgListCntPattern = "<td width=100. align=center>([^<]+)</td><td align=right nowrap>",
   strMsgListCntPattern2 = "([%d]+) [MmNnBbVv][eai]",
-  strMsgListLiveLightCntPattern = '<div class="dItemListHeaderMsgInfo".->.-(%d+).-</div>',
+  strMsgListLiveLightCntPattern = '<div class=".-ItemListHeaderMsgInfo".->.-(%d+).-</div>',
 
   -- Used by Stat to pull out the message ID and the size
   --

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.3"
+PLUGIN_VERSION = "0.0.3a"
 PLUGIN_NAME = "fastmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -103,7 +103,7 @@ local globals = {
 
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLineLitPattern = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*{a}[.*]{/a}[.*]</td>.*<td>.*</td>.*<td>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td><a>.*</a>.*</td>.*</tr>",
+  strMsgLineLitPattern = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*{a}[.*]{/a}[.*]</td>.*<td>.*</td>.*<td>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td>.*<a>.*</a>.*</td>.*</tr>",
   strMsgLineAbsPattern = "O<O>O<O>O<O>O<O>O<O>O{O}[O]{O}[O]<O>O<O>O<O>O<O>X<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O><X>O<O>O<O>O<O>",
 
   -- Mailboxes

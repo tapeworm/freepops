@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.9k"
+PLUGIN_VERSION = "0.1.0"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -36,6 +36,12 @@ pulling messages.]]
 		en = [[
 Parameter is used to force the plugin to turn off full headers when it is done
 pulling messages.]]
+		}	
+	},
+	{name = "noattachments", description = {
+		en = [[
+Parameter is used to force the plugin to skip attachments.  To turn this on, 
+set the value to 1.]]
 		}	
 	},
 }
@@ -139,6 +145,7 @@ internalState = {
   bEmptyTrash = false,
   bResetHeaders = false,
   loginTime = nil,
+  bNoAttach = false,
 }
 
 -- ************************************************************************** --
@@ -367,7 +374,10 @@ function downloadMsg(pstate, msg, nLines, data)
   -- Get the headers and the attachment list
   -- 
   browser:pipe_uri(baseUrl, cb)
-  local attachments = getAttachmentTable(cbInfo, data)
+  local attachments = {}
+  if (internalState.bNoAttach == false) then
+    attachments = getAttachmentTable(cbInfo, data)
+  end
 
   -- Get the body
   --
@@ -793,6 +803,14 @@ function user(pstate, username)
     internalState.bResetHeaders = true
   end
 
+  -- Should we skip attachments?
+  --
+  local val = (freepops.MODULE_ARGS or {}).noattachments or 0
+  if val == "1" then
+    log.dbg("Juno/Netzero: Attachments won't be downloaded.")
+    internalState.bNoAttach = true
+  end
+
   return POPSERVER_ERR_OK
 end
 
@@ -1023,8 +1041,18 @@ function stat(pstate)
       -- Convert the size from it's string (4K) to bytes
       --
       --size = string.match(size, globals.strSizePattern)
-      size = math.max(tonumber(size), 0) * 1024
+      if (internalState.bNoAttach) then
+        size = 2048
+      else
+        size = math.max(tonumber(size), 0) * 1024
 
+        -- This was a reported issue by a user.  It looks like size is exceeding its max
+        -- and rolling over.
+        --
+        if (size < 0) then  
+          size = 1024
+        end
+      end
       -- Save the information
       --
       if bUnique == true then

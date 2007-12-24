@@ -8,7 +8,7 @@
 
 -- Globals
 -- 
-PLUGIN_VERSION = "0.1.5b"
+PLUGIN_VERSION = "0.1.5c"
 PLUGIN_NAME = "abv.bg"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
@@ -59,7 +59,7 @@ local globals = {
 
   -- Used by Stat to pull out the message
   --
-  strMsgLinePattern = '<td.- class="lineBsz" id="noselect"><a href="openmessage.jsp;[^&]+&mid=([^&]+)&pid=[^"]+"[^>]+>[^<]+</a></td><td class="lineBsz"[^>]+>[^<]+</td><td[^>]+>([^<]+ )</td>[^<]-</tr>',
+  strMsgLinePattern = 'openmessage%.jsp;[^&]+&mid=([^&]+)&pid=[^"]+"[^>]+>[^<]+</a></td><td align="left" nowrap="true" class="[^"]+">[^<]+</td><td[^>]+>([^<]+ )</td>[^<]-</tr>',
 
   -- Number of pages and messages
   --

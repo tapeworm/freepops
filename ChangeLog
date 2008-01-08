@@ -1,3 +1,4 @@
+- committed Viruzzo version of supereva, thanks Lance for reporting this version was working
 - added missing cleanup for expired cookies (thanks RISKO Gergely)
 17/11/2007 0.2.6
 - Makefile, buildfactory/Makefile, modules/Makefile, modules/modules, modules/src/Makefile.template, modules/src/Makefile.template-contrib, modules/src/subscribed: removed luadoc, added prepare target to decompress all contrib libraries (gareuselesinge)

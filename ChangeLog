@@ -1,3 +1,4 @@
+- added missing cleanup for expired cookies (thanks RISKO Gergely)
 17/11/2007 0.2.6
 - Makefile, buildfactory/Makefile, modules/Makefile, modules/modules, modules/src/Makefile.template, modules/src/Makefile.template-contrib, modules/src/subscribed: removed luadoc, added prepare target to decompress all contrib libraries (gareuselesinge)
 - buildfactory/Makefile, buildfactory/osx/iceberg/FreePOPs/FreePOPs.packproj.in: osx metadata now contains @@VERSION@@ that is replaced at build time with the actual versione number (gareuselesinge)

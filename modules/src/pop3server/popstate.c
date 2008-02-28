@@ -151,8 +151,14 @@ for( ; p->num_msgs > n ; p->num_msgs--)
 	delete_mailmessage(p->msg_list[p->num_msgs]);
 
 // realloc
-p->msg_list = realloc(p->msg_list, sizeof(struct mail_msg_t*) * n);
-MALLOC_CHECK(p->msg_list);
+if (!(n == 0 && p->msg_list == NULL)){
+	p->msg_list = realloc(p->msg_list, sizeof(struct mail_msg_t*) * n);
+	if (n != 0) {
+		MALLOC_CHECK(p->msg_list);
+	} else {
+		if (p->msg_list != NULL) ERROR_PRINT("realloc is not freeing");
+	}
+}
 
 if(p->num_msgs == -1)
 	p->num_msgs = 0;

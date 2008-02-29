@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.0d"
+PLUGIN_VERSION = "0.1.1"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -97,7 +97,7 @@ local globals = {
   
   -- Extract the AOL internal id for the user
   --
-  strUserIdPattern = "uid:([^&]+)&",
+  strUserIdPattern = "<input type=hidden name='user' value='([^']+)' />",
 
   -- Used by Stat to pull out the message ID and the size
   --
@@ -134,6 +134,7 @@ local globals = {
   strCmdDeletePost = "user=%s&folder=%s&start=0&sort=received&sortDir=descending&showUserFolders=False&searchIn=none&searchQuery=&msgActionRequest=Go&toolbarUniquifier=1&msgActionMenuL10n1=Mark+Read&filterAction1=none&pageJumpAction1=1&msgActionMenuL10n=Actions&filterAction=none&pageJumpAction=1",
   strCmdMsgView = "http://%s/%s/%s/en-us/Lite/ViewSource.aspx?user=%s&folder=%s&uid=%s",
   strCmdWelcome = "http://%s/%s/%s/en-us/MessageList.aspx",
+  strCmdToday = "http://%s/%s/%s/en-us/Lite/Today.aspx",
   strCmdMsgListPost = 'dojo.transport=xmlhttp&automatic=false&requests=%5B%7B%22folder%22%3A%22New%20Mail%22%2C%22start%22%3A0%2C%22count%22%3A20%2C%22indexStart%22%3A0%2C%22indexMax%22%3A1000%2C%22index%22%3Atrue%2C%22info%22%3Atrue%2C%22rows%22%3Atrue%2C%22sort%22%3A%22received%22%2C%22sortDir%22%3A%22descending%22%2C%22search%22%3Aundefined%2C%22searchIn%22%3Aundefined%2C%22seen%22%3A%5B%5D%2C%22action%22%3A%22GetMessageList%22%7D%5D',
 
   -- Site IDs
@@ -334,18 +335,6 @@ function loginAOL()
   --
   log.dbg("AOL/AIM Server: " .. internalState.strMailServer .. "\n")
 
-  -- Get UserID from cookie
-  --
-  local cookie = browser:get_cookie('Auth')
-  if cookie == nil then 
-    log.error_print("Unable to determine AOL internal user id.  The plugin needs to be updated.")
-  else
-    internalState.strUserId = string.match(cookie.value, globals.strUserIdPattern)
-    if internalState.strUserId == nil then 
-      log.error_print("Unable to determine AOL internal user id.  The plugin needs to be updated.")
-    end
-  end
-
   -- Get the webmail version
   --
   str = string.match(body, globals.strVersionPattern)
@@ -355,7 +344,20 @@ function loginAOL()
     internalState.strVersion = str
   end
   log.dbg("AOL webmail version: " .. internalState.strVersion)
+
+  -- Get UserID from cookie
+  --
+  local url = string.format(globals.strCmdToday, internalState.strMailServer, 
+    internalState.strVersion, internalState.strBrand);
+  body, err = browser:get_uri(url)
   
+  str = string.match(body, globals.strUserIdPattern)
+  if str == nil then 
+    log.error_print("Unable to determine AOL internal user id.  The plugin needs to be updated.")
+  else
+    internalState.strUserId = str
+  end
+
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true

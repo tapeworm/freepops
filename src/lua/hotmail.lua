@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88i"
+PLUGIN_VERSION = "0.1.88j"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -346,21 +346,21 @@ end
 function getPage(browser, url)
   local try = 0
   while (try < 3) do
+    try = try + 1
     local body, err = browser:get_uri(url)
 
     if (body == nil) then
       log.raw("Tried to load: " .. url .. " and got error: " .. err)
-    elseif (string.find(body, "We are experiencing higher than normal volume") == nil and 
-        string.find(body, "<[Hh][Tt][Mm][Ll]") ~= nil and
-        string.find(body, "MSN Hotmail %- ERROR") == nil) then
-      return body, err
-    end
-    try = try + 1
-    local newurl = string.match(body, 'Object moved to <a href="([^"]+)"')
-    if (newurl ~= nil) then
-      return getPage(browser, newurl)
-    end
-    if (body ~= nil) then
+    else
+      if (string.find(body, "We are experiencing higher than normal volume") == nil and 
+          string.find(body, "<[Hh][Tt][Mm][Ll]") ~= nil and
+          string.find(body, "MSN Hotmail %- ERROR") == nil) then
+        return body, err
+      end
+      local newurl = string.match(body, 'Object moved to <a href="([^"]+)"')
+      if (newurl ~= nil) then
+        return getPage(browser, newurl)
+      end
       log.raw("Attempt to load: " .. url .. " failed in attempt: " .. try)
     end
   end

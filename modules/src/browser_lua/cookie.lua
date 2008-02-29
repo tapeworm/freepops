@@ -123,6 +123,7 @@ function Private.parse_cookie(s,h)
 	local s1 = s
 	table.foreach(Private.syntax,function(n,f) s1 = f(s1,t) end)
 	if t.expires ~= nil then
+                t.expires = string.gsub(t.expires, "20[4-9]%", "2020")
 		local tmp = getdate.toint(t.expires)
 		t["expires-raw"] = t["expires"]
 		if tmp ~= -1 then

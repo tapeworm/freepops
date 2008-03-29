@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.3a"
+PLUGIN_VERSION = "0.0.3b"
 PLUGIN_NAME = "fastmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -124,7 +124,7 @@ local globals = {
   strCmdMsgListNextPage = "http://%s/mail/?MLS=MB-*;SMB-FT-TP=0;SMB-MF-SF=Date_1;SMB-MF-DI=20;Ust=%s;SMB-CF=%s;UDm=%s;MSignal=MB-MF-SetPage**", -- plus page number, 0 based
   strCmdMsgView = "http://%s/mail/foo.txt?MLS=MR-**%s*;SMB-FT-TP=0;SMB-MF-SF=Date_1;SMR-Part=;SMR-MsgId=%s;SMB-MF-DI=20;Ust=%s;SMR-FM=%s;SMB-CF=%s;UDm=%s;MSignal=MR-RawView*",
   strCmdDelete = "http://%s/mail/?Ust=%s;UDm=%s",
-  strCmdDeletePost = "MLS=MB-*&SMB-FT-TP=0&SMB-MF-TP=0&SMB-MF-SF=Date_1&SMB-MF-DI=20&SMB-CF=%s&FMB-MF-2-CKS=2&MFeedbackSignal=MB-MF-UpdateRows*&_charset_=iso-8859-1&FMB-Action=0&MSignal_MB-ApplyAction*=+Do+&FMB-PeopleTo=&FMB-ST=&FMB-FT-IsMove=1&FMB-FT-GotoCF=%s",
+  strCmdDeletePost = "MLS=MB-*&SMB-FT-TP=0&SMB-MF-TP=0&SMB-MF-SF=Date_1&SMB-CF=%s&SMB-MF-DI=20&FMB-MF-2-CKS=2&MFeedbackSignal=MB-MF-UR*&_charset_=&nojs=1&FMB-AC=0&MSignal_MB-ApplyAction*=+Do+&FMB-PeopleTo=&FMB-ST=&FMB-FT-GF=%s",
   strCmdEmptyTrash = "http://%s/mail/?MLS=MB-*;SMB-FT-TP=0;SMB-MF-SF=Date_1;SMB-MF-DI=20;Ust=%s;SMB-CF=%s;UDm=%s;MSignal=MB-EmptyTrash**%s",
 }
 
@@ -592,7 +592,7 @@ function quit_update(pstate)
   -- 
   for i = 1, cnt do
     if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
-      post = post .. "&" .. "FMB-MF-" .. get_mailmessage_uidl(pstate, i) .. "-Sel=on"
+      post = post .. "&" .. "FMB-MF-R-" .. get_mailmessage_uidl(pstate, i) .. "-Sel=on"
       dcnt = dcnt + 1
 
       -- Send out in a batch of 5

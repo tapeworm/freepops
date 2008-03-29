@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.88j"
+PLUGIN_VERSION = "0.1.89"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -56,6 +56,12 @@ Parameter is used to force the plugin to only download a maximum number of messa
 		en = [[
 Parameter is used to override the domain in the email address.  This is used so that users don't
 need to add a mapping to config.lua for a hosted hotmail account. ]]
+		}	
+	},
+	{name = "keepmsgstatus", description = {
+		en = [[
+Parameter is used to maintain the status of the message in the state it was before being pulling.  If the value is 1, the behavior is turned on
+and will override the markunread flag.. ]]
 		}	
 	},
 }
@@ -221,16 +227,16 @@ local globals = {
   strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s",
   strCmdMsgListNextPage = "&page=%d&wo=",
   strCmdMsgListLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s",
-  strCmdMsgListLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.GetFolderData&ptid=0&a=%s&au=%s", 
-  strCmdMsgListPostLiveOld = "cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,,&MailToken=",
-  strCmdMsgListPostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,"","",true,false&v=1&mt=%s',
+  strCmdMsgListLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.GetFolderData&ptid=0&a=%s&au=%s", 
+  strCmdMsgListPostLiveOld = "cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,,&MailToken=",
+  strCmdMsgListPostLive = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,"","",true,false&v=1&mt=%s',
 
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
-  strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MoveMessages&ptid=0&a=%s&au=%s", 
-  strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
-  -- strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
-  strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"0%%5C%%7C0%%5C%%7C8C9BDFF65883200%%5C%%7C00000000-0000-0000-0000-000000000001",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
+  strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MoveMessages&ptid=0&a=%s&au=%s", 
+  strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
+  -- strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
+  strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"0%%5C%%7C0%%5C%%7C8C9BDFF65883200%%5C%%7C00000000-0000-0000-0000-000000000001",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
   strCmdDeleteLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&",
   strCmdDeletePostLiveLight = "__VIEWSTATE=&mt=%s&MoveMessageSelector=%s&ToolbarActionItem=MoveMessageSelector&", -- SelectedMessages=%s",
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
@@ -241,14 +247,14 @@ local globals = {
   strCmdLogoutLive = "http://%s/mail/logout.aspx",
   strCmdFolders = "http://%s/cgi-bin/folders?&curmbox=F000000001&a=%s",
   strCmdFoldersLiveLight = "http://%s/mail/ManageFoldersLight.aspx?n=%s",
-  strCmdMsgUnreadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=", 
-  strCmdMsgUnreadLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MarkMessages&d=false,[%s]",
-  strCmdEmptyTrashLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.EmptyFolder&ptid=0&a=&au=%s", 
-  strCmdEmptyTrashLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=EmptyFolder&d=%s,1&v=1&mt=%s",
+  strCmdMsgUnreadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MarkMessages&ptid=0&a=%s&au=%s", 
+  strCmdMsgUnreadLivePost = "cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessages&d=false,[%s]",
+  strCmdEmptyTrashLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.EmptyFolder&ptid=0&a=&au=%s", 
+  strCmdEmptyTrashLivePost = "cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=EmptyFolder&d=%s,1&v=1&mt=%s",
   strCmdEmptyTrashLiveLight = "http://%s/mail/InboxLight.aspx?EmptyFolder=True&FolderID=%s&", 
   strCmdEmptyTrashLiveLightPost = "__VIEWSTATE=&mt=%s&query=&MoveMessageSelector=&ToolbarActionItem=&InfoPaneActionItem=EmptyFolderConfirmYes",
-  strCmdMsgReadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.MailBox.MarkMessages&ptid=0&a=&au=%s", 
-  strCmdMsgReadLivePost = "cn=Microsoft.Msn.Hotmail.MailBox&mn=MarkMessages&d=true,[%s]&v=1&mt=%s",
+  strCmdMsgReadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MarkMessages&ptid=0&a=&au=%s", 
+  strCmdMsgReadLivePost = "cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessages&d=true,[%s]&v=1&mt=%s",
   strCmdMsgReadLiveLight = "http://%s/mail/ReadMessageLight.aspx?AllowUnsafe=True&Aux=&FolderID=%s&InboxSortAscending=False&InboxSortBy=Date&ReadMessageId=%s",
 }
 
@@ -279,6 +285,7 @@ internalState = {
   statLimit = nil,
   strUserId = "",
   strMT = "",
+  bKeepMsgStatus = false,
 }
 
 -- ************************************************************************** --
@@ -381,7 +388,8 @@ function loginHotmail()
 
   -- Create a browser to do the dirty work
   --
-  internalState.browser = browser.new("Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; YPC 3.0.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727")
+  --internalState.browser = browser.new("Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; YPC 3.0.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727")
+  internalState.browser = browser.new("Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.12) Gecko/20080207 Ubuntu/7.10 (gutsy) Firefox/2.0.0.12")
 
   -- Define some local variables
   --
@@ -922,7 +930,9 @@ function downloadMsg(pstate, msg, nLines, data)
 
   -- Mark the message as read
   --
-  if internalState.bMarkMsgAsUnread == false and internalState.bLiveGUI == false then
+  if (internalState.bKeepMsgStatus == true) then
+    -- no op
+  elseif internalState.bMarkMsgAsUnread == false and internalState.bLiveGUI == false then
     log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as being done.")
     browser:get_head(markReadUrl)
   elseif internalState.bMarkMsgAsUnread == false and internalState.bLiveGUI and internalState.bLiveLightGUI == false then
@@ -936,7 +946,7 @@ function downloadMsg(pstate, msg, nLines, data)
     browser:get_head(url)
   elseif internalState.bMarkMsgAsUnread == true and internalState.bLiveGUI == true then
     log.raw("Message: " .. cbInfo.cb_uidl .. ", Marking message as unread.")
-    url = string.format(globals.strCmdMsgUnreadLive, internalState.strMailServer)
+    url = string.format(globals.strCmdMsgUnreadLive, internalState.strMailServer, internalState.strCrumb, internalState.strUserId)
     local post = string.format(globals.strCmdMsgUnreadLivePost, uidl)
     browser:post_uri(url, post)
   end
@@ -1240,6 +1250,17 @@ function user(pstate, username)
     log.dbg("Hotmail: A max of " .. val .. " messages will be downloaded.")
     internalState.statLimit = tonumber(val)
   end
+
+  -- If the flag keepmsgstatus=1 is set, then we won't touch the status of 
+  -- messages that we pull.
+  --
+  local val = (freepops.MODULE_ARGS or {}).keepmsgstatus or 0
+  if val == "1" then
+    log.dbg("Hotmail: All messages pulled will have its status left alone.")
+    internalState.bKeepMsgStatus = true
+  end
+
+
 
   -- Get the folder
   --
@@ -1555,13 +1576,19 @@ function LiveStat(pstate)
 
   -- Let's make sure the session is still valid
   --
-  local strSessExpr = string.match(body, globals.strRetLoginSessionExpiredLive)
-  if strSessExpr ~= nil then
+  local sessionExpired = (body == nil) or string.match(body, globals.strRetLoginSessionExpiredLive)
+  if sessionExpired then
     -- Invalidate the session
     --
     internalState.bLoginDone = nil
     session.remove(hash())
-    log.raw("Session Expired - Last page loaded: " .. cmdUrl .. ", Body: " .. body)
+    local strLog = "Session Expired - Last page loaded: " .. cmdUrl .. ", Body"
+    if (body == nil) then
+      strLog = strLog .. " was 'nil'"
+    else
+      strLog = strLog .. ": " .. body
+    end
+    log.raw(strLog)
 
     -- Try Logging back in
     --

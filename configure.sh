@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # vim:ts=4:
 
 usage() {

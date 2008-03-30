@@ -1,3 +1,5 @@
+- use /bin/sh in configure (thanks Spil)
+- removed bad cast from fltk/main.cxx
 - fixed a bug in popstate.c that was calling realloc(NULL,0)
 - added yahoo.co.nz (thanks Picov)
 - committed Viruzzo version of supereva, thanks Lance for reporting this version was working

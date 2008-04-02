@@ -1,3 +1,4 @@
+- replaced math.mod with math.fmod (the former is deprecated in lua5.1)
 - use luaL_register instead of luaL_openlib (thanks Daniel Black)
 - use /bin/sh in configure (thanks Spil)
 - removed bad cast from fltk/main.cxx

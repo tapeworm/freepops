@@ -663,7 +663,7 @@ function stat(pstate)
 				end
 				-- there should be links before and after 
 				-- the list
-				if math.mod(how_many_refs, 2) ~= 0 then
+				if math.fmod(how_many_refs, 2) ~= 0 then
 					log.error_print(
 						"Error in counting list_href")
 					return true

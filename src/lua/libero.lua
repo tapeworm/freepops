@@ -219,7 +219,7 @@ function libero_login()
 
 	-- build the uri
 	local password = internal_state.password
-	local popnumber = math.mod(os.time(),15) + 1  -- == random(1..15)
+	local popnumber = math.fmod(os.time(),15) + 1  -- == random(1..15)
 	local domain = internal_state.domain
 	local site = libero_domain[domain].website
 	local choice = libero_domain[domain].choice
@@ -227,7 +227,7 @@ function libero_login()
 	if internal_state.domain ~= "libero.it" then
 		user = user .. "@" .. domain
 	end
-	local x,y = math.mod(os.time(),16),math.mod(os.time()*2,16)
+	local x,y = math.fmod(os.time(),16),math.fmod(os.time()*2,16)
 	local uri = string.format(libero_string.login_url,popnumber,site)
         log.dbg("Using webserver " .. uri);
 	local post= string.format(libero_string.login_post,

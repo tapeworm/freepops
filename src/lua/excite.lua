@@ -181,9 +181,9 @@ function login()
 	--http://registration.excite.com/excitereg/login.jsp?ref=email&return_url=http://e30.email.excite.com
 		
 	-- seed math.random properly
-	math.randomseed(math.mod(os.time(),37))
+	math.randomseed(math.fmod(os.time(),37))
 	local j = math.random(67)
-	math.randomseed((math.mod((os.time()/j),73)+1)*j)
+	math.randomseed((math.fmod((os.time()/j),73)+1)*j)
 	
 	--get cookie 'uu'
 	--

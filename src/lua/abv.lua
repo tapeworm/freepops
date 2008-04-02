@@ -464,7 +464,7 @@ function quit_update(pstate)
 
       -- Send out in a batch of 25
       --
-      if math.mod(dcnt, 25) == 0 then
+      if math.fmod(dcnt, 25) == 0 then
         log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
         local body, err = browser:get_uri(cmdUrl, post)
        

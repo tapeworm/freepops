@@ -460,7 +460,7 @@ function user(pstate, username)
   
   -- copied from the javascript code on the orange webpage: assign server number randomly
   -- (os.time()%3)+1 -- ... 1 to 3
-  internalState.strBaseUrl= string.format(globals.strBaseUrl, leading, math.mod(os.time(),3)+1 , country, language)
+  internalState.strBaseUrl= string.format(globals.strBaseUrl, leading, math.fmod(os.time(),3)+1 , country, language)
   
   log.dbg ("Domain: " .. domain .. " Initial login uri: " .. internalState.strBaseUrl .. "\n")
 
@@ -1640,9 +1640,9 @@ function omimer.pipe_msg(headers,body,body_html,base_uri,attachments,browser,sen
 	--body = body or html2txtmail(body_html,base_uri)
 	local isAlt, isInline, isAttached, boundary, cType
 	--initialize randomize_boundary
-	math.randomseed(math.mod(os.time(),37))
+	math.randomseed(math.fmod(os.time(),37))
 	local j = math.random(67)
-	math.randomseed((math.mod((os.time()/j),73)+1)*j)
+	math.randomseed((math.fmod((os.time()/j),73)+1)*j)
 
 	isAttached = table.getn(attachments) > table.getn(inlineids)
 	isAlt = body and body_html

@@ -97,12 +97,12 @@ lua_pushnumber(L,(lua_Number)ret);
 return 1;
 }
 
-static const struct luaL_reg mlex_f [] = {
+static const struct luaL_Reg mlex_f [] = {
   {"match",lua_mlex_match},
   {NULL,NULL}
 };
 
-static const struct luaL_reg mlex_m [] = {
+static const struct luaL_Reg mlex_m [] = {
   {"print",lua_mlex_print},
   {"get",lua_mlex_get},
   {"count",lua_mlex_count},
@@ -124,8 +124,8 @@ lua_pushstring(L,"__index");
 lua_pushvalue(L,-2);
 lua_settable(L,-3);
 
-luaL_openlib(L,NULL,mlex_m,0);
-luaL_openlib(L,"mlex",mlex_f,0);
+luaL_register(L,NULL,mlex_m);
+luaL_register(L,"mlex",mlex_f);
 	
 return 1;
 }

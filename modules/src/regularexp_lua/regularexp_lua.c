@@ -150,7 +150,7 @@ static int regularexp_gc (lua_State *L) {
   return 0;
 }
 
-static const luaL_reg regularexpmeta[] = {
+static const luaL_Reg regularexpmeta[] = {
   {"match",   regularexp_match},
   {"gmatch",  regularexp_gmatch},
   {NULL, NULL}
@@ -158,7 +158,7 @@ static const luaL_reg regularexpmeta[] = {
 
 /* Open the library */
 
-static const luaL_reg regularexp[] = {
+static const luaL_Reg regularexp[] = {
   {"new", regularexp_comp},
   {NULL, NULL}
 };
@@ -175,8 +175,8 @@ lua_pushstring(L,"__index");
 lua_pushvalue(L,-2);
 lua_settable(L,-3);
 
-luaL_openlib(L, NULL, regularexpmeta, 0);
-luaL_openlib(L, "regularexp", regularexp, 0);
+luaL_register(L, NULL, regularexpmeta);
+luaL_register(L, "regularexp", regularexp);
 
 return 1;
 }

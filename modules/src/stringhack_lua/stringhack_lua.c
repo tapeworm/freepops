@@ -91,12 +91,12 @@ lua_pushboolean(L,check_stop(a,n));
 return 1;
 }
 
-static const struct luaL_reg stringhack_f [] = {
+static const struct luaL_Reg stringhack_f [] = {
   {"new",lua_stringhack_new_str_hack},
   {NULL,NULL}
 };
 
-static const struct luaL_reg stringhack_m [] = {
+static const struct luaL_Reg stringhack_m [] = {
   {"dothack",lua_stringhack_dothack},
   {"tophack",lua_stringhack_tophack},
   {"current_lines",lua_stringhack_current_lines},
@@ -118,8 +118,8 @@ lua_pushstring(L,"__index");
 lua_pushvalue(L,-2);
 lua_settable(L,-3);
 
-luaL_openlib(L,NULL,stringhack_m,0);
-luaL_openlib(L,"stringhack",stringhack_f,0);
+luaL_register(L,NULL,stringhack_m);
+luaL_register(L,"stringhack",stringhack_f);
 	
 return 1;
 }

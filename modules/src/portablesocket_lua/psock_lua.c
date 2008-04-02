@@ -134,7 +134,7 @@ sock_disconnect(tmp);
 return 0;
 }
 
-static const struct luaL_reg psock_f [] = {
+static const struct luaL_Reg psock_f [] = {
   {"connect",lua_psock_connect},
   {NULL,NULL}
 };
@@ -148,7 +148,7 @@ static const struct L_const psock_c [] = {
   {NULL,0}
 };
 
-static const struct luaL_reg psock_m [] = {
+static const struct luaL_Reg psock_m [] = {
   {"send",lua_psock_send},
   {"recv",lua_psock_recv},
   {NULL,NULL}
@@ -167,8 +167,8 @@ lua_pushstring(L,"__index");
 lua_pushvalue(L,-2);
 lua_settable(L,-3);
 
-luaL_openlib(L,NULL,psock_m,0);
-luaL_openlib(L,"psock",psock_f,0);
+luaL_register(L,NULL,psock_m);
+luaL_register(L,"psock",psock_f);
 L_openconst(L,psock_c);
 	
 return 1;

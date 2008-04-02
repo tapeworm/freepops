@@ -1,3 +1,4 @@
+- use luaL_register instead of luaL_openlib (thanks Daniel Black)
 - use /bin/sh in configure (thanks Spil)
 - removed bad cast from fltk/main.cxx
 - fixed a bug in popstate.c that was calling realloc(NULL,0)

@@ -1,6 +1,185 @@
-diff -rNu luafilesystem-1.0b-old/Makefile luafilesystem-1.0b/Makefile
+diff -ruN luafilesystem-1.0b-old/config luafilesystem-1.0b/config
+--- luafilesystem-1.0b-old/config	2004-11-10 15:45:23.000000000 +0100
++++ luafilesystem-1.0b/config	1970-01-01 01:00:00.000000000 +0100
+@@ -1,23 +0,0 @@
+-# Installation directories
+-# System's libraries directory (where binary libraries are installed)
+-LIB_DIR= /usr/local/lib
+-# System's lua directory (where Lua libraries are installed)
+-LUA_DIR= /usr/local/lua
+-
+-# OS dependent
+-LIB_EXT= .dylib
+-#LIB_EXT= .so
+-LIB_OPTION= -dynamiclib #for MacOS X
+-#LIB_OPTION= -shared #for Linux
+-
+-COMPAT_DIR= .
+-
+-# Compilation directives
+-# On FreeBSD systems, the following line should be commented
+-DLLIB= -ldl
+-WARN= -O2 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings
+-INCS= -I/usr/local/include/lua5 -I$(COMPAT_DIR)
+-LIBS= -L$(LIB_DIR) -llua -llualib -lm $(DLLIB)
+-CFLAGS= $(WARN) $(INCS)
+-CC= gcc
+-
+diff -ruN luafilesystem-1.0b-old/lfs.c luafilesystem-1.0b/lfs.c
+--- luafilesystem-1.0b-old/lfs.c	2004-11-10 15:45:23.000000000 +0100
++++ luafilesystem-1.0b/lfs.c	2008-04-02 11:07:12.000000000 +0200
+@@ -18,7 +18,7 @@
+ #include <time.h>
+ #include <sys/stat.h>
+ 
+-#ifdef WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ #include <direct.h>
+ #include <io.h>
+ #include <sys/locking.h>
+@@ -32,7 +32,7 @@
+ #include <lua.h>
+ #include <lauxlib.h>
+ #include <lualib.h>
+-#include <compat-5.1.h>
++/*#include <compat-5.1.h>*/
+ 
+ #include "lfs.h"
+ 
+@@ -114,7 +114,7 @@
+ */
+ static int _file_lock (lua_State *L, FILE *fh, const char *mode, const long start, long len, const char *funcname) {
+ 	int code;
+-#ifdef WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	/* lkmode valid values are:
+ 	   _LK_LOCK    Locks the specified bytes. If the bytes cannot be locked, the program immediately tries again after 1 second. If, after 10 attempts, the bytes cannot be locked, the constant returns an error.
+ 	   _LK_NBLCK   Locks the specified bytes. If the bytes cannot be locked, the constant returns an error.
+@@ -205,7 +205,7 @@
+ {
+   unsigned int usec = (unsigned int)luaL_check_number( L, 1 );
+ 
+-#ifndef WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+   sleep( (unsigned int)ceil( usec/1000.0 ));
+ #else
+   Sleep( (DWORD)usec );
+@@ -230,7 +230,7 @@
+ static int make_dir (lua_State *L) {
+ 	const char *path = luaL_checkstring (L, 1);
+ 	int fail;
+-#ifdef WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	int oldmask = umask (0);
+ 	fail = _mkdir (path);
+ #else
+@@ -252,7 +252,7 @@
+ ** Directory iterator
+ */
+ static int dir_iter (lua_State *L) {
+-#ifdef _WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	dir_data *d = (dir_data *)lua_touserdata (L, lua_upvalueindex (1));
+ 	struct _finddata_t c_file;
+ 	if (d->hFile == 0L) { /* first entry */
+@@ -289,7 +289,7 @@
+ ** Closes directory iterators
+ */
+ static int dir_close (lua_State *L) {
+-#ifdef _WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	dir_data *d = (dir_data *)lua_touserdata (L, 1);
+ 	if (d->hFile) {
+ 		_findclose (d->hFile);
+@@ -308,7 +308,7 @@
+ */
+ static int dir_iter_factory (lua_State *L) {
+ 	const char *path = luaL_checkstring (L, 1);
+-#ifdef _WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ 	dir_data *dir = (dir_data *) lua_newuserdata (L, sizeof(dir_data));
+ 	dir->hFile = 0L;
+ 	if (strlen(path) > MAX_DIR_LENGTH)
+@@ -344,7 +344,7 @@
+ }
+ 
+ 
+-#ifdef _WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+  #define S_ISDIR(mode)  (mode&_S_IFDIR)
+  #define S_ISREG(mode)  (mode&_S_IFREG)
+  #define S_ISLNK(mode)  (0)
+@@ -353,10 +353,18 @@
+  #define S_ISCHR(mode)  (0)
+  #define S_ISBLK(mode)  (0)
+ #endif
++
++#ifdef BEOS
++ #define S_ISSOCK(mode)  (0)
++ /*#define S_ISFIFO(mode)  (0)*/
++ /*#define S_ISCHR(mode)  (0)*/
++ /*#define S_ISBLK(mode)  (0)*/
++#endif
++
+ /*
+ ** Convert the inode protection mode to a string.
+ */
+-#ifdef WIN32
++#if (defined(WIN32) && !defined(CYGWIN))
+ static const char *mode2string (unsigned short mode) {
+ #else
+ static const char *mode2string (mode_t mode) {
+@@ -437,7 +445,7 @@
+ 	lua_pushliteral (L, "size");
+ 	lua_pushnumber (L, (lua_Number)info.st_size);
+ 	lua_rawset (L, -3);
+-#ifndef WIN32
++#if (!defined(WIN32) && !defined(BEOS))
+ 	/* blocks allocated for file */
+ 	lua_pushliteral (L, "blocks");
+ 	lua_pushnumber (L, (lua_Number)info.st_blocks);
+@@ -455,6 +463,7 @@
+ /*
+ ** Assumes the table is on top of the stack.
+ */
++/*
+ static void set_info (lua_State *L) {
+ 	lua_pushliteral (L, "_COPYRIGHT");
+ 	lua_pushliteral (L, "Copyright (C) 2004 Kepler Project");
+@@ -469,7 +478,7 @@
+ 	lua_pushliteral (L, "1.0a");
+ 	lua_settable (L, -3);
+ }
+-
++*/
+ 
+ static const struct luaL_reg fslib[] = {
+ 	{"attributes", file_info},
+@@ -484,7 +493,7 @@
+ 
+ int luaopen_lfs (lua_State *L) {
+ 	dir_create_meta (L);
+-	luaL_openlib (L, "lfs", fslib, 0);
+-	set_info (L);
++	luaL_register (L, "lfs", fslib);
++	/*set_info (L);*/
+ 	return 1;
+ }
+diff -ruN luafilesystem-1.0b-old/lfs.h luafilesystem-1.0b/lfs.h
+--- luafilesystem-1.0b-old/lfs.h	2004-11-10 15:45:23.000000000 +0100
++++ luafilesystem-1.0b/lfs.h	2008-04-02 11:06:57.000000000 +0200
+@@ -6,5 +6,7 @@
+ #else
+ #define chdir_error	strerror(errno)
+ #endif
+-
++#ifndef LUAFILESYSTEM_H
++#define LUAFILESYSTEM_H
+ int luaopen_lfs (lua_State *L);
++#endif
+diff -ruN luafilesystem-1.0b-old/Makefile luafilesystem-1.0b/Makefile
 --- luafilesystem-1.0b-old/Makefile	2004-11-10 15:45:23.000000000 +0100
-+++ luafilesystem-1.0b/Makefile	2004-11-16 16:01:52.000000000 +0100
++++ luafilesystem-1.0b/Makefile	2008-04-02 11:06:57.000000000 +0200
 @@ -2,39 +2,35 @@
  
  T= lfs
@@ -73,196 +252,3 @@ diff -rNu luafilesystem-1.0b-old/Makefile luafilesystem-1.0b/Makefile
 + clean:
 +	$(H)rm -f *.a *.o
 +.PHONY: all
-diff -rNu luafilesystem-1.0b-old/config luafilesystem-1.0b/config
---- luafilesystem-1.0b-old/config	2004-11-10 15:45:23.000000000 +0100
-+++ luafilesystem-1.0b/config	1970-01-01 01:00:00.000000000 +0100
-@@ -1,23 +0,0 @@
--# Installation directories
--# System's libraries directory (where binary libraries are installed)
--LIB_DIR= /usr/local/lib
--# System's lua directory (where Lua libraries are installed)
--LUA_DIR= /usr/local/lua
--
--# OS dependent
--LIB_EXT= .dylib
--#LIB_EXT= .so
--LIB_OPTION= -dynamiclib #for MacOS X
--#LIB_OPTION= -shared #for Linux
--
--COMPAT_DIR= .
--
--# Compilation directives
--# On FreeBSD systems, the following line should be commented
--DLLIB= -ldl
--WARN= -O2 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings
--INCS= -I/usr/local/include/lua5 -I$(COMPAT_DIR)
--LIBS= -L$(LIB_DIR) -llua -llualib -lm $(DLLIB)
--CFLAGS= $(WARN) $(INCS)
--CC= gcc
--
-diff -rNu luafilesystem-1.0b-old/lfs.c luafilesystem-1.0b/lfs.c
---- luafilesystem-1.0b-old/lfs.c	2004-11-10 15:45:23.000000000 +0100
-+++ luafilesystem-1.0b/lfs.c	2004-11-16 16:05:04.000000000 +0100
-@@ -32,7 +32,7 @@
- #include <lua.h>
- #include <lauxlib.h>
- #include <lualib.h>
--#include <compat-5.1.h>
-+/*#include <compat-5.1.h>*/
- 
- #include "lfs.h"
- 
-@@ -455,6 +455,7 @@
- /*
- ** Assumes the table is on top of the stack.
- */
-+/*
- static void set_info (lua_State *L) {
- 	lua_pushliteral (L, "_COPYRIGHT");
- 	lua_pushliteral (L, "Copyright (C) 2004 Kepler Project");
-@@ -469,7 +470,7 @@
- 	lua_pushliteral (L, "1.0a");
- 	lua_settable (L, -3);
- }
--
-+*/
- 
- static const struct luaL_reg fslib[] = {
- 	{"attributes", file_info},
-@@ -485,6 +486,6 @@
- int luaopen_lfs (lua_State *L) {
- 	dir_create_meta (L);
- 	luaL_openlib (L, "lfs", fslib, 0);
--	set_info (L);
-+	/*set_info (L);*/
- 	return 1;
- }
-diff -rNu luafilesystem-1.0b-old/lfs.h luafilesystem-1.0b/lfs.h
---- luafilesystem-1.0b-old/lfs.h	2004-11-10 15:45:23.000000000 +0100
-+++ luafilesystem-1.0b/lfs.h	2004-11-16 16:01:52.000000000 +0100
-@@ -6,5 +6,7 @@
- #else
- #define chdir_error	strerror(errno)
- #endif
--
-+#ifndef LUAFILESYSTEM_H
-+#define LUAFILESYSTEM_H
- int luaopen_lfs (lua_State *L);
-+#endif
-diff -ruN luafilesystem-1.0b-old/lfs.c luafilesystem-1.0b/lfs.c
---- luafilesystem-1.0b-old/lfs.c	2004-11-10 15:45:23.000000000 +0100
-+++ luafilesystem-1.0b/lfs.c	2004-11-20 10:53:43.000000000 +0100
-@@ -353,6 +353,14 @@
-  #define S_ISCHR(mode)  (0)
-  #define S_ISBLK(mode)  (0)
- #endif
-+
-+#ifdef BEOS
-+ #define S_ISSOCK(mode)  (0)
-+ /*#define S_ISFIFO(mode)  (0)*/
-+ /*#define S_ISCHR(mode)  (0)*/
-+ /*#define S_ISBLK(mode)  (0)*/
-+#endif
-+
- /*
- ** Convert the inode protection mode to a string.
- */
-diff -u luafilesystem-1.0b-old/lfs.c luafilesystem-1.0b/lfs.c
---- luafilesystem-1.0b-old/lfs.c	2004-11-20 18:53:34.000000000 +0100
-+++ luafilesystem-1.0b/lfs.c	2004-11-20 18:54:05.000000000 +0100
-@@ -445,7 +445,7 @@
- 	lua_pushliteral (L, "size");
- 	lua_pushnumber (L, (lua_Number)info.st_size);
- 	lua_rawset (L, -3);
--#ifndef WIN32
-+#if (!defined(WIN32) && !defined(BEOS))
- 	/* blocks allocated for file */
- 	lua_pushliteral (L, "blocks");
- 	lua_pushnumber (L, (lua_Number)info.st_blocks);
-diff -ruN luafilesystem-1.0b/lfs.c luafilesystem-1.0b-new/lfs.c
---- luafilesystem-1.0b/lfs.c	2005-01-08 19:05:14.000000000 +0100
-+++ luafilesystem-1.0b-new/lfs.c	2005-01-08 19:04:25.000000000 +0100
-@@ -18,7 +18,7 @@
- #include <time.h>
- #include <sys/stat.h>
- 
--#ifdef WIN32
-+#if (defined(WIN32) && !defined(CYGWIN))
- #include <direct.h>
- #include <io.h>
- #include <sys/locking.h>
-diff -ruN luafilesystem-1.0b/lfs.c luafilesystem-1.0b-new/lfs.c
---- luafilesystem-1.0b/lfs.c	2005-01-08 19:13:34.000000000 +0100
-+++ luafilesystem-1.0b-new/lfs.c	2005-01-08 19:12:05.000000000 +0100
-@@ -114,7 +114,7 @@
- */
- static int _file_lock (lua_State *L, FILE *fh, const char *mode, const long start, long len, const char *funcname) {
- 	int code;
--#ifdef WIN32
-+#if (defined(WIN32) && !defined(CYGWIN))
- 	/* lkmode valid values are:
- 	   _LK_LOCK    Locks the specified bytes. If the bytes cannot be locked, the program immediately tries again after 1 second. If, after 10 attempts, the bytes cannot be locked, the constant returns an error.
- 	   _LK_NBLCK   Locks the specified bytes. If the bytes cannot be locked, the constant returns an error.
-@@ -205,7 +205,7 @@
- {
-   unsigned int usec = (unsigned int)luaL_check_number( L, 1 );
- 
--#ifndef WIN32
-+#if (defined(WIN32) && !defined(CYGWIN))
-   sleep( (unsigned int)ceil( usec/1000.0 ));
- #else
-   Sleep( (DWORD)usec );
-@@ -230,7 +230,7 @@
- static int make_dir (lua_State *L) {
- 	const char *path = luaL_checkstring (L, 1);
- 	int fail;
--#ifdef WIN32
-+#if (defined(WIN32) && !defined(CYGWIN))
- 	int oldmask = umask (0);
- 	fail = _mkdir (path);
- #else
-@@ -252,7 +252,7 @@
- ** Directory iterator
- */
- static int dir_iter (lua_State *L) {
--#ifdef _WIN32
-+#if (defined(WIN32) && !defined(CYGWIN))
- 	dir_data *d = (dir_data *)lua_touserdata (L, lua_upvalueindex (1));
- 	struct _finddata_t c_file;
- 	if (d->hFile == 0L) { /* first entry */
-@@ -289,7 +289,7 @@
- ** Closes directory iterators
- */
- static int dir_close (lua_State *L) {
--#ifdef _WIN32
-+#if (defined(WIN32) && !defined(CYGWIN))
- 	dir_data *d = (dir_data *)lua_touserdata (L, 1);
- 	if (d->hFile) {
- 		_findclose (d->hFile);
-@@ -308,7 +308,7 @@
- */
- static int dir_iter_factory (lua_State *L) {
- 	const char *path = luaL_checkstring (L, 1);
--#ifdef _WIN32
-+#if (defined(WIN32) && !defined(CYGWIN))
- 	dir_data *dir = (dir_data *) lua_newuserdata (L, sizeof(dir_data));
- 	dir->hFile = 0L;
- 	if (strlen(path) > MAX_DIR_LENGTH)
-@@ -344,7 +344,7 @@
- }
- 
- 
--#ifdef _WIN32
-+#if (defined(WIN32) && !defined(CYGWIN))
-  #define S_ISDIR(mode)  (mode&_S_IFDIR)
-  #define S_ISREG(mode)  (mode&_S_IFREG)
-  #define S_ISLNK(mode)  (0)
-@@ -364,7 +364,7 @@
- /*
- ** Convert the inode protection mode to a string.
- */
--#ifdef WIN32
-+#if (defined(WIN32) && !defined(CYGWIN))
- static const char *mode2string (unsigned short mode) {
- #else
- static const char *mode2string (mode_t mode) {

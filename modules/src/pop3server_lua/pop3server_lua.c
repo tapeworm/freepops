@@ -278,7 +278,7 @@ static int L_get_mailmessage_flag(lua_State* L){
  * the functions
  *
  */ 
-static const struct luaL_reg pop3server_m [] = {
+static const struct luaL_Reg pop3server_m [] = {
   {"set_popstate_nummesg",L_set_popstate_nummesg},
   {"set_popstate_password",L_set_popstate_password},
   {"set_popstate_username",L_set_popstate_username},
@@ -322,7 +322,7 @@ static const struct L_const pop3server_c [] = {
  *
  */ 
 int luaopen_pop3server(lua_State* L) {
- luaL_openlib(L,"pop3server",pop3server_m,0);
+ luaL_register(L,"pop3server",pop3server_m);
  L_openconst(L,pop3server_c);
  
  return 1;

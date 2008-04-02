@@ -148,7 +148,7 @@ static int lbin2hex(lua_State* L){
 
 static int my_free(lua_State* L){/* nothing to do */ return 0;}
 
-static const struct luaL_reg crypto_t [] = {
+static const struct luaL_Reg crypto_t [] = {
   {"md5",lmd5},
   {"hmac",lhmac},
   {"bin2hex",lbin2hex},
@@ -231,7 +231,7 @@ int luaopen_crypto(lua_State* L){
 	lua_pushcfunction(L,my_free);
 	lua_settable(L,-3);
 
-	luaL_openlib(L,"crypto",crypto_t,0);
+	luaL_register(L,"crypto",crypto_t);
 
 	L_openTconst(L,crypto_ALGO,CRYPTO_ALGO_MD);
 

@@ -43,7 +43,7 @@ if (tmp != s)
 return 1;
 }
 
-static const struct luaL_reg stringhack_f [] = {
+static const struct luaL_Reg stringhack_f [] = {
   {"encode",lua_base64_encode},
   {"decode",lua_base64_decode},
   {NULL,NULL}
@@ -53,7 +53,7 @@ static const struct luaL_reg stringhack_f [] = {
 int luaopen_base64 (lua_State*L)
 {
 
-luaL_openlib(L,"base64",stringhack_f,0);
+luaL_register(L,"base64",stringhack_f);
 	
 return 1;
 }

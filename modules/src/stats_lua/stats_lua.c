@@ -88,7 +88,7 @@ void stats_activate(long unsigned int mask){
 #define CALL(t1,f,t2,x) (CAST(t1 (*)(t2),f)(CAST(t2,x)))
 #define CALLV(t1,f) (CAST(t1 (*)(void),f)())
 
-HIDDEN const struct luaL_reg empty_reg[] = {{NULL,NULL}};
+HIDDEN const struct luaL_Reg empty_reg[] = {{NULL,NULL}};
 
 enum stats_type_e {
 	stats_long_usigned_int,
@@ -210,7 +210,7 @@ HIDDEN int generic_function(lua_State* L){
 int luaopen_stats (lua_State* L){
 int i;
 
-luaL_openlib(L,"stats",empty_reg,0);	
+luaL_register(L,"stats",empty_reg);	
 
 for (i=0; stats_functions[i].name != NULL; i++){
 	lua_pushlightuserdata(L, stats_functions[i].fpointer);

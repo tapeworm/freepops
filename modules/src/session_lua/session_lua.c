@@ -91,7 +91,7 @@ session_unlock(key);
 return 0;
 }
 
-static const struct luaL_reg session_f [] = {
+static const struct luaL_Reg session_f [] = {
   {"save",lua_session_save},
   {"remove",lua_session_remove},
   {"unlock",lua_session_unlock},
@@ -102,7 +102,7 @@ static const struct luaL_reg session_f [] = {
 /* Open function */
 int luaopen_session (lua_State* L)
 {
-luaL_openlib(L,"session",session_f,0);	
+luaL_register(L,"session",session_f);	
 lua_pushstring(L,"OVERWRITE");
 lua_pushnumber(L,(lua_Number)OVERWRITE);
 lua_settable(L,-3);	 

@@ -31,14 +31,14 @@ lua_pushnumber(L,rc);
 return 1;
 }
 
-static const struct luaL_reg getdate_f [] = {
+static const struct luaL_Reg getdate_f [] = {
   {"toint",L_getdate},
   {NULL,NULL}
 };
 
 int luaopen_getdate(lua_State* L) {
 	
-	luaL_openlib(L,"getdate",getdate_f,0);
+	luaL_register(L,"getdate",getdate_f);
 
 	return 1;
 }

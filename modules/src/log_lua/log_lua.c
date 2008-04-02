@@ -96,7 +96,7 @@ SAY((char*)m);
 return 0;
 }
 
-static const struct luaL_reg log_f [] = {
+static const struct luaL_Reg log_f [] = {
   {"say",lua_log_say},
   {"dbg",lua_log_dbg},
   {"error_print",lua_log_error_print},
@@ -107,6 +107,6 @@ static const struct luaL_reg log_f [] = {
 /* Open function */
 int luaopen_log (lua_State* L)
 {
-luaL_openlib(L,"log",log_f,0);	
+luaL_register(L,"log",log_f);	
 return 1;
 }

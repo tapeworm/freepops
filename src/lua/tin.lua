@@ -108,11 +108,7 @@ local tin_string = {
 	save_sl = "http://%s/cp/ps/Mail/Email"..
 		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
 		"uid=&t=%s&style=&l=it&s=%s&sl=%d",	
-	body_start = [[
-</script>	
-			<br>
-			<br>
-          </div>]],
+	body_start = [[%s-</script>%s-<br>%s-<br>%s-</div>]],
 	body_end = [[</div></td>%s*<td width="5"><spacer type="block" width="5" height="1"></td>%s*<td width="1" bgcolor="#FFFFFF"><spacer type="block" width="1" height="1"></td>%s*</tr>%s*</table>%s*<!%-%-FINE TABELLA LISTING MAIL%-%->]],
 	 attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
 	 attachG = "O<X>O<O>X<O>",

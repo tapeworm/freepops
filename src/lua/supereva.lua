@@ -6,7 +6,7 @@
 --  Released under the GNU/GPL license
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.2.5c"
+PLUGIN_VERSION = "0.2.6a"
 PLUGIN_NAME = "Supereva"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -118,7 +118,7 @@ end
 -- -------------------------------------------------------------------------- --
 -- Save username
 function user(pstate,username)
-	--print("*** user(" .. username .. ") ***")
+	--print("--- user(" .. username .. ") ---")
 	supereva_globals.username = username
 		
 	return POPSERVER_ERR_OK
@@ -127,7 +127,7 @@ end
 -- -------------------------------------------------------------------------- --
 -- Save password and login
 function pass(pstate,password)
-	--print("*** pass(" .. password .. ") ***")
+	--print("--- pass(***) ---")
 	supereva_globals.password = password
 
 	-- create a new browser and store it in globals
@@ -139,7 +139,7 @@ end
 -- -------------------------------------------------------------------------- --
 -- Try to login with given username and password
 function supereva_login()
-	--print("*** supereva_login() ***")
+	--print("--- supereva_login() ---")
 
 	-- format the post data
   	local login_data = string.format(supereva_strings.login_data,supereva_globals.username,supereva_globals.password)
@@ -158,14 +158,13 @@ end
 -- -------------------------------------------------------------------------- --
 -- Must quit without updating
 function quit(pstate)
-	--session.unlock(key())
 	return POPSERVER_ERR_OK
 end
 
 -- -------------------------------------------------------------------------- --
 -- Update the mailbox status and quit
 function quit_update(pstate)
-	--print("*** quit_update() ***")
+	--print("--- quit_update() ---")
 
 	-- we need the stat
 	local st = stat(pstate)
@@ -204,7 +203,7 @@ function stat(pstate)
 	local file,err = supereva_globals.browser:get_uri(supereva_strings.inbox_uri .. 1)
 
 	if (err) then
-		--print("error on browser:get_uri: " .. err)
+		print("error on browser:get_uri: " .. err)
 		return POPSERVER_ERR_UNKNOWN
 	end
 
@@ -223,7 +222,7 @@ function stat(pstate)
 		file,err = supereva_globals.browser:get_uri(supereva_strings.inbox_uri .. i)
 
 		if (err) then
-			--print("error on browser:get_uri: " .. err)
+			print("error on browser:get_uri: " .. err)
 			return POPSERVER_ERR_UNKNOWN
 		else
 			table.insert(files,file)
@@ -241,7 +240,7 @@ end
 -- -------------------------------------------------------------------------- --
 -- Fill the number of messages and their size
 function parse_inbox(pstate,file)
-	--print("*** parse_inbox() ***")
+	--print("--- parse_inbox() ---")
 	local nummesg = get_popstate_nummesg(pstate)
 
 	-- parse the msg table
@@ -318,7 +317,7 @@ end
 -- Get message msg, must call
 -- popserver_callback to send the data
 function retr(pstate,msg,data)
-	--print("*** retr(" .. msg .. ") ***")	
+	--print("--- retr(" .. msg .. ") ---")	
 
 	-- we need the stat
 	local st = stat(pstate)
@@ -331,7 +330,7 @@ function retr(pstate,msg,data)
 	local file,err = supereva_globals.browser:get_uri(supereva_strings.get_uri .. get_mailmessage_uidl(pstate,msg))
 
 	if (err ~= nil) then
-		--print("error on browser:get_uri: " .. err)
+		print("error on browser:get_uri: " .. err)
 		return POPSERVER_ERR_UNKNOWN
 	end
 
@@ -346,7 +345,7 @@ end
 -- -------------------------------------------------------------------------- --
 -- Extracts the message from the webmail page
 function parse_message(file)
-	--print("*** parse_message() ***")
+	--print("--- parse_message() ---")
 
 	local body_begin_text = '<div id="mailbody" class="mailtext">'
 	local body_end_text = '</div><!%-%- google_ad_section_end %-%-></td>'
@@ -386,37 +385,9 @@ function parse_message(file)
 end
 
 -- ------------------------------------------------------------------------- --
---[[ helper
-function mangle_body(s)
-	
-	local x = string.match(s,"^%s*(<[Pp][Rr][Ee]>)")
-
-	if x ~= nil then
-		local base = "http://" .. supereva_globals.browser:wherearewe()
-		s = mimer.html2txtmail(s,base)
-		return s,nil
-	else
-
-		--s = mimer.remove_lines_in_proper_mail_header(s,
-	       	--{"content%-type",
-	      	--"content%-disposition","mime%-version"})
-
-		-- the webmail damages these tags
-		s = mimer.remove_tags(s,
-			{"html","head","body","doctype","void","style"})
-
---		s = squirrelmail_string.html_preamble .. s ..
---			squirrelmail_string.html_conclusion
-
-		return nil,s
-	end
-end
-]]
--- ------------------------------------------------------------------------- --
 -- given the HTML piece with the header, this returns the *clean* mail header
 --
 function mangle_head(s)
-  
 	-- helper #1 - extract a header field from HTML
 	local function extract(field,data,getaddress)
 		local exM = ".*<td>.*<b>%s</b>.*</td>.*<td>.*<.*>"
@@ -432,8 +403,8 @@ function mangle_head(s)
 		else
 			local s = x:get(0,0)
 			s = string.gsub(s,"%s+"," ")
-			s = string.gsub(s,"\r","")
-			s = string.gsub(s,"\n","")
+			-- s = string.gsub(s,"\r","")
+			-- s = string.gsub(s,"\n","")
 			s = string.gsub(s,"&lt;","<")
 			s = string.gsub(s,"&gt;",">")
 			s = string.gsub(s,"&nbsp;","")
@@ -451,50 +422,40 @@ function mangle_head(s)
 
 	-- helper #2 - translate the date back to english
 	local function translate(data)
-		data=string.gsub(data,"Gen","Jan")
-		data=string.gsub(data,"Mag","May")
-		data=string.gsub(data,"Giu","Jun")
-		data=string.gsub(data,"Lug","Jul")
-		data=string.gsub(data,"Ago","Aug")
-		data=string.gsub(data,"Set","Sep")
-		data=string.gsub(data,"Ott","Oct")
-		data=string.gsub(data,"Dic","Dec")
+		data = string.gsub(data,"Gen","Jan")
+		data = string.gsub(data,"Mag","May")
+		data = string.gsub(data,"Giu","Jun")
+		data = string.gsub(data,"Lug","Jul")
+		data = string.gsub(data,"Ago","Aug")
+		data = string.gsub(data,"Set","Sep")
+		data = string.gsub(data,"Ott","Oct")
+		data = string.gsub(data,"Dic","Dec")
 		return data
 	end
 
-	-- helper #3 - build the header
-	local function build(to,oggetto,from,cc,data)
-		local s = ""
-		if to ~= nil then s = s .. "To: "..to end
-		if oggetto ~= nil then s = s .. "\nSubject: "..oggetto end
-		if from ~= nil then s = s .. "\nFrom: "..from end
-		if cc ~= nil then s = s .. "\nCC: "..cc end
-		if data ~= nil then s = s .. "\nDate: "..data  end
-		return s
-	end
-	
-	-- here we are, now do the job
-	
 	-- extract all interesting fields
-	local from = extract("^Da:",s,true) or ""	
-	local to = extract("^A:",s) or ""
-	local cc = extract("^CC:",s) or ""
-	local data = extract("^Data:",s) or ""
-	local oggetto = extract("^Oggetto:",s) or ""
+	local from = extract("^Da:",s,true)
+	local to = extract("^A:",s)
+	local cc = extract("^CC:",s)
+	local data = extract("^Data:",s)
+	local oggetto = extract("^Oggetto:",s)
 
 	-- magle them
 	data = translate(data)
 	
 	-- build the header
-	s = build(to,oggetto,from,cc,data)
+	-- s = build(to,oggetto,from,cc,data)
+	
+	if (to) then to = to:gsub(" ([%w%.-_]+@[%w%.-_]+)"," <%1>") end
+	if (cc) then cc = cc:gsub(" ([%w%.-_]+@[%w%.-_]+)"," <%1>") end
+	
+	local s = ""
+	if (to) then s = s .. "To: " .. to .. "\r\n" end
+	if (oggetto) then s = s .. "Subject: " .. oggetto .. "\r\n" end
+	if (from) then s = s .. "From: " .. from .. "\r\n" end
+	if (cc) then s = s .. "CC: " .. cc .."\r\n" end
+	if (data) then s = s .. "Date: " .. data .. "\r\n" end
 
-	-- not sure it is needed
-	s = mimer.remove_tags(s,{"tt","nobr","a"})
-
-	-- ??
-	s = mimer.txt2mail(s)
-
-	-- go!
 	return s
 end
 

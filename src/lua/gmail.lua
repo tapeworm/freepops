@@ -13,7 +13,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.49"
+PLUGIN_VERSION = "0.0.50"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -45,6 +45,12 @@ the label parameter label=name.]],
 	{name = "maxmsgs", description = {
 		en = [[
 Parameter is used to force the plugin to only download a maximum number of messages. ]]
+		}	
+	},
+	{name = "enableimap", description = {
+		en = [[
+Parameter is turn on IMAP for the account.  If set to 1, the plugin will enable IMAP access on
+the user's account during the QUIT command. ]]
 		}	
 	},
 	{name = "label", description = {
@@ -126,8 +132,9 @@ local globals = {
 			"continue=http%3A%2F%2Fmail.google.com%2Fmail&"..
 			"service=mail&chtml=LoginDoneHtml&ui=1",
 	strLoginFailed = "(Username and password do not match)",
+	strIDKeyPattern = 'ID_KEY:"([^"]+)"',
 
-	strHomepage_TODO = "http://mail.google.com/mail",
+	strHomepage = "http://mail.google.com/mail",
 
 	strViewMessage = "http://mail.google.com/mail?view=om&th=%s&zx=%s&ui=1",
 	-- message list (regexp)
@@ -154,7 +161,12 @@ local globals = {
 	-- The piece of uri you must append to delete to choose the messages 
 	-- to delete
 	strCmdMarkMsgPostData = "act=%s&at=%s",
-	strCmdMarkMsgNext = "&t=%s"
+	strCmdMarkMsgNext = "&t=%s",
+	
+	-- Set account to enable IMAP
+	--
+	strCmdImapEnable = "http://mail.google.com/mail?ui=2&at=%s&view=up&act=prefs&zx=%s&ik=%s",
+	strCmdImapEnablePost = "p_bx_ie=1",
 }
 
 -- ************************************************************************** --
@@ -166,6 +178,7 @@ local globals = {
 internal_state = {
 	bStatDone = false,
 	bLoginDone = false,
+	bEnableIMAP = false,
 	strUserName = nil,
 	strPassword = nil,
 	strFolder = nil,
@@ -173,6 +186,7 @@ internal_state = {
 	brBrowser = nil,
 	strCookieVal = nil,
 	strCookieSID = nil,
+	strIDKey = nil,
 	statLimit = nil,
 	strGmailAt = ""
 }
@@ -271,7 +285,8 @@ function key()
 		("gmail.com")..
 		internal_state.strPassword.. -- this asserts strPassword ~= nil
 		(internal_state.strFolder or "")..
-		(internal_state.strActions or "")
+		(internal_state.strActions or "") .. 
+		tostring(internal_state.bEnableIMAP)
 end
 
 --------------------------------------------------------------------------------
@@ -331,6 +346,16 @@ function gmail_login()
 	-- 
 	internal_state.strCookieSID = (b:get_cookie("SID")).value
 	internal_state.strCookieVal = (b:get_cookie("GX")).value
+	
+	-- Get the ID Key
+	--
+	body, err = b:get_uri(globals.strHomepage)
+	str = string.match(body, globals.strIDKeyPattern)
+	if (str == nil) then
+		log.error_print("GMail: Unable to retrieve IDKey.  This will cause issues with IMAP settings toggle.")
+	else
+		internal_state.strIDKey = str
+	end
 
 	-- Save all the computed data
 	internal_state.bLoginDone = true
@@ -338,6 +363,8 @@ function gmail_login()
 	-- log the creation of a session
 	log.say("Session started for " .. internal_state.strUserName .. 
 		"@gmail.com " .. "(" .. internal_state.strCookieVal .. ")\n")
+		
+		
 	return POPSERVER_ERR_OK
 end
 
@@ -484,6 +511,7 @@ function user(pstate,username)
 	end
 	internal_state.strFolder = folder
 	internal_state.strActions = freepops.MODULE_ARGS.act or ""
+	internal_state.bEnableIMAP = freepops.MODULE_ARGS.enableimap == "1" or false
 
 	return POPSERVER_ERR_OK
 end
@@ -552,6 +580,16 @@ function quit_update(pstate)
 
 	local Gmail_at = internal_state.strGmailAt
 
+	-- Enable Imap
+	--
+	if (internal_state.bEnableIMAP) then
+		log.dbg("Enabling IMAP")
+		local str = string.format(globals.strCmdImapEnable, Gmail_at, RandNum(), 
+			internal_state.strIDKey)
+		b:post_uri(str, globals.strCmdImapEnablePost)
+	end
+	
+	
 	local uri = string.format(globals.strCmdMarkMsgUrl, folder)
 	--	    act = [rd|ur|rc_^i|tr]
 	--		rd = mark as read

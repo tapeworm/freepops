@@ -4,7 +4,7 @@
 -- Only one function is available to the end user.
 -- Incorporating jbobowski Gmail fix posted 26 April 2006.
 
-MODULE_VERSION = "0.1.1"
+MODULE_VERSION = "0.1.0"
 MODULE_NAME = "browser.cookie"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -123,7 +123,7 @@ function Private.parse_cookie(s,h)
 	local s1 = s
 	table.foreach(Private.syntax,function(n,f) s1 = f(s1,t) end)
 	if t.expires ~= nil then
-                t.expires = string.gsub(t.expires, "20[4-9]%", "2020")
+                t.expires = string.gsub(t.expires, "20[4-9]+", "2020")
 		local tmp = getdate.toint(t.expires)
 		t["expires-raw"] = t["expires"]
 		if tmp ~= -1 then
@@ -220,8 +220,6 @@ function merge(t2,t1)
 	if not t1 then
 		return
 	end
-	clean_expired(t1)
-	clean_expired(t2)
 	table.foreach(t1,function(_,c)
 		local match = 0
 		table.foreach(t2,function(_,c2)

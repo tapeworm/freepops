@@ -13,7 +13,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.50"
+PLUGIN_VERSION = "0.0.51"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -49,8 +49,14 @@ Parameter is used to force the plugin to only download a maximum number of messa
 	},
 	{name = "enableimap", description = {
 		en = [[
-Parameter is turn on IMAP for the account.  If set to 1, the plugin will enable IMAP access on
+Parameter is used to turn on IMAP for the account.  If set to 1, the plugin will enable IMAP access on
 the user's account during the QUIT command. ]]
+		}	
+	},
+	{name = "enableforward", description = {
+		en = [[
+Parameter is turn on forwarding for the account.  If set with an email address, the settings will be updated
+to enable the user's settings to forward messages to the supplied address. ]]
 		}	
 	},
 	{name = "label", description = {
@@ -167,6 +173,12 @@ local globals = {
 	--
 	strCmdImapEnable = "http://mail.google.com/mail?ui=2&at=%s&view=up&act=prefs&zx=%s&ik=%s",
 	strCmdImapEnablePost = "p_bx_ie=1",
+	strSuccessSettingChanged = 'D%(%["a",1,"Your preferences have been saved%."%]',
+	
+	-- Set account to enable forwarding
+	--
+	strCmdForwardingEnablePost = "p_sx_em=", 
+	
 }
 
 -- ************************************************************************** --
@@ -188,7 +200,8 @@ internal_state = {
 	strCookieSID = nil,
 	strIDKey = nil,
 	statLimit = nil,
-	strGmailAt = ""
+	strGmailAt = "",
+	strForwardAddress = nil,
 }
 
 -- ************************************************************************** --
@@ -512,6 +525,7 @@ function user(pstate,username)
 	internal_state.strFolder = folder
 	internal_state.strActions = freepops.MODULE_ARGS.act or ""
 	internal_state.bEnableIMAP = freepops.MODULE_ARGS.enableimap == "1" or false
+	internal_state.strForwardAddress = freepops.MODULE_ARGS.enableforward
 
 	return POPSERVER_ERR_OK
 end
@@ -586,7 +600,16 @@ function quit_update(pstate)
 		log.dbg("Enabling IMAP")
 		local str = string.format(globals.strCmdImapEnable, Gmail_at, RandNum(), 
 			internal_state.strIDKey)
-		b:post_uri(str, globals.strCmdImapEnablePost)
+		local body, err = b:post_uri(str, globals.strCmdImapEnablePost)
+	end
+	
+	-- Enable forwarding
+	--
+	if (internal_state.strForwardAddress ~= nil) then
+		log.dbg("Enabling Forwarding")
+		local str = string.format(globals.strCmdImapEnable, Gmail_at, RandNum(), 
+			internal_state.strIDKey)
+		local body, err = b:post_uri(str, globals.strCmdForwardingEnablePost .. internal_state.strForwardAddress)
 	end
 	
 	

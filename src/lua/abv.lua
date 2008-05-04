@@ -8,7 +8,7 @@
 
 -- Globals
 -- 
-PLUGIN_VERSION = "0.1.5c"
+PLUGIN_VERSION = "0.1.6"
 PLUGIN_NAME = "abv.bg"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
@@ -59,7 +59,7 @@ local globals = {
 
   -- Used by Stat to pull out the message
   --
-  strMsgLinePattern = 'openmessage%.jsp;[^&]+&mid=([^&]+)&pid=[^"]+"[^>]+>[^<]+</a></td><td align="left" nowrap="true" class="[^"]+">[^<]+</td><td[^>]+>([^<]+ )</td>[^<]-</tr>',
+  strMsgLinePattern = 'openmessage%.jsp[^&]+&mid=([^&]+)&pid=[^"]+"[^>]+>[^<]+</a></td><td align="left" nowrap="true" class="[^"]+">[^<]+</td><td[^>]+>([^<]+ )</td>[^<]-</tr>',
 
   -- Number of pages and messages
   --
@@ -72,10 +72,10 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "%sapp/j/box.jsp;jsessionid=%s?fid=%s",
+  strCmdMsgList = "%sapp/j/box.jsp?fid=%s",
   strCmdMsgListNextPage = "&pid=%d",
-  strCmdDelete = '%sapp/servlet/bg.abv.mail.BoxController;jsessionid=%s?fid=%s&pid=1&view=&to_fid=%s&move=doit',
-  strCmdMsgView = '%sapp/servlet/bg.abv.mail.GetData;jsessionid=%s?fid=%s&mid=%s&nid=0&eid=-1&charset=Cp1251&ac=d',
+  strCmdDelete = '%sapp/servlet/box?fid=%s&pid=1&view=&to_fid=%s&move=doit',
+  strCmdMsgView = '%sapp/servlet/getdata?fid=%s&mid=%s&tid=60&nid=0&eid=-1&charset=Cp1251&ac=d',
 }
 
 -- ************************************************************************** --
@@ -173,7 +173,7 @@ function login()
   local domain = internalState.strDomain
   local url = globals.strLoginUrl
   local browser = internalState.browser
-	
+
   -- DEBUG - Set the browser in verbose mode
   --
 --  browser:verbose_mode()
@@ -219,8 +219,9 @@ function login()
   --
   local _, _, str = string.find(body, globals.strRegExpGUID)
   if str == nil then
-    log.error_print(globals.strLoginFailed)
-    return POPSERVER_ERR_AUTH
+    internalState.strGUID = "1";
+    --log.error_print(globals.strLoginFailed)
+    --return POPSERVER_ERR_AUTH
   else
     internalState.strGUID = str
   
@@ -234,7 +235,6 @@ function login()
   internalState.strMailServer = string.gsub(browser:whathaveweread(), "/app.*", "/")
   log.dbg("ABV Server: " .. internalState.strMailServer .. "\n")
   
-
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true
@@ -265,7 +265,7 @@ function downloadMsg(pstate, msg, nLines, data)
   local uidl = get_mailmessage_uidl(pstate, msg)
   
   local url = string.format(globals.strCmdMsgView, internalState.strMailServer,
-    internalState.strGUID, internalState.strMBox, uidl);
+    internalState.strMBox, uidl);
 
   -- Debug Message
   --
@@ -447,7 +447,7 @@ function quit_update(pstate)
   -- Local Variables
   --
   local browser = internalState.browser
-  local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer, internalState.strGUID, 
+  local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer,  
     internalState.strMBox, globals.strTrashId)
 
   local baseUrl = cmdUrl
@@ -464,7 +464,7 @@ function quit_update(pstate)
 
       -- Send out in a batch of 25
       --
-      if math.fmod(dcnt, 25) == 0 then
+      if math.mod(dcnt, 25) == 0 then
         log.dbg("Sending Delete URL: " .. cmdUrl .. "\n")
         local body, err = browser:get_uri(cmdUrl, post)
        
@@ -514,7 +514,7 @@ function stat(pstate)
   local nTotPages = 0;
   local nTotMsgs = 0;
   local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-    internalState.strGUID, internalState.strMBox);
+    internalState.strMBox);
   local baseUrl = cmdUrl
 
   -- Debug Message
@@ -610,7 +610,7 @@ function stat(pstate)
       --
       browser = internalState.browser
       cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-        internalState.strGUID, internalState.strMBox);
+        internalState.strMBox);
       if nPage > 1 then
         cmdUrl = cmdUrl .. string.format(globals.strCmdMsgListNextPage, nPage)
       end

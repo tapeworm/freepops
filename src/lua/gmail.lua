@@ -9,11 +9,12 @@
 --  Revised by Tommaso Colombo <zibo86 at hotmail (single dot) com>
 --  Incorporating jbobowski fix posted 26 April 2006
 --  Incorporating lowang fix posted 25 Aug 2006
+--  Incorporating eoin fix posted 11 Jan 2008
 --
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.51"
+PLUGIN_VERSION = "0.0.52"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -346,15 +347,15 @@ function gmail_login()
 		return POPSERVER_ERR_AUTH
 	end
 
-	local str = string.find(body, "<title>  Redirecting  </title>")
-	if str ~= nil then
-		local pattern = "<meta content=\"0; url='(.*)'"
-		local st2 = string.match(body, pattern)
-		st2 = string.gsub(st2, "&amp;", "&")
-
-		local body2, err2 = b:get_uri(st2)
-	end
-
+    local str = string.find(body, "<title>Redirecting</title>")
+    if str ~= nil then
+		local i,j=string.find(body, "url='")
+        local k,l=string.find(body, "'\"></head>")
+		local URL = string.sub(body,j+1,k-1)
+		URL = string.gsub(URL, "&amp;", "&")
+		local body2, err2 = b:get_uri(URL)
+	end	
+	
 	-- Extract cookie values
 	-- 
 	internal_state.strCookieSID = (b:get_cookie("SID")).value

@@ -1,3 +1,4 @@
+- updated win32 gnutls version to 2.2.5 and curl to 7.18.1
 - simplified cross build using Debian equivs
 - added expansion of &#XX entities in mimer.lua (thanks André Marti)
 - replaced math.mod with math.fmod (the former is deprecated in lua5.1)

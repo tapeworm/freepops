@@ -88,22 +88,25 @@ dist-win-e-zip-step3:
 dist-win-e-zip-step4-openssl:
 	$(H)\
 	  DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d= -f2`;\
-		cp $$DLLPATH/libcurl.dll _win_/freepops/libcurl.dll;\
-		cp $$DLLPATH/cryptoeay32.dll _win_/freepops/cryptoeay32.dll;\
-		cp $$DLLPATH/ssleay32.dll _win_/freepops/ssleay32.dll;\
-		cp $$DLLPATH/libexpat.dll _win_/freepops/libexpat.dll;\
+		cp $$DLLPATH/libcurl-4.dll _win_/freepops/;\
+		cp $$DLLPATH/libexpat.dll _win_/freepops/;\
 		cp $$DLLPATH/libintl-8.dll _win_/freepops/;\
-		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll
+		cp $$DLLPATH/libz.dll _win_/freepops/;\
+		cp $$DLLPATH/cryptoeay32.dll _win_/freepops/;\
+		cp $$DLLPATH/ssleay32.dll _win_/freepops/
+
 dist-win-e-zip-step4-gnutls:
 	$(H)\
 	  DLLPATH=`grep DLLPATH _win_/freepops-$(VERSION)/config|cut -d= -f2`;\
-		cp $$DLLPATH/libcurl.dll _win_/freepops/libcurl.dll;\
-		cp $$DLLPATH/libexpat.dll _win_/freepops/libexpat.dll;\
+		cp $$DLLPATH/libcurl-4.dll _win_/freepops/;\
+		cp $$DLLPATH/libexpat.dll _win_/freepops/;\
 		cp $$DLLPATH/libintl-8.dll _win_/freepops/;\
-		cp $$DLLPATH/libz.dll _win_/freepops/libz.dll; \
-		cp $$DLLPATH/libgnutls-13.dll _win_/freepops/libgnutls-13.dll;\
-		cp $$DLLPATH/libgcrypt.dll _win_/freepops/libgcrypt.dll;\
-		cp $$DLLPATH/libgpg-error.dll _win_/freepops/libgpg-error.dll
+		cp $$DLLPATH/libz.dll _win_/freepops/;\
+		cp $$DLLPATH/libgnutls-26.dll _win_/freepops/;\
+		cp $$DLLPATH/libgcrypt-11.dll _win_/freepops/;\
+		cp $$DLLPATH/libgpg-error-0.dll _win_/freepops/;\
+		cp $$DLLPATH/libtasn1-3.dll _win_/freepops/;
+
 
 dist-win-e-zip-step5:
 	$(H)STRIP=`grep ^STRIP _win_/freepops-$(VERSION)/config|cut -d = -f 2`;\

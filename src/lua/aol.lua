@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.1"
+PLUGIN_VERSION = "0.1.2"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -132,10 +132,11 @@ local globals = {
   strCmdMsgList = "http://%s/%s/%s/en-us/common/rpc/RPC.aspx?user=%s&a=GetMessageList&r=0.8876364238583317",
   strCmdDelete = "http://%s/%s/%s/en-us/Lite/MsgList.aspx",
   strCmdDeletePost = "user=%s&folder=%s&start=0&sort=received&sortDir=descending&showUserFolders=False&searchIn=none&searchQuery=&msgActionRequest=Go&toolbarUniquifier=1&msgActionMenuL10n1=Mark+Read&filterAction1=none&pageJumpAction1=1&msgActionMenuL10n=Actions&filterAction=none&pageJumpAction=1",
+  strCmdDeletePost2 = "user=%s&folder=%s&start=0&sort=received&sortDir=descending&showUserFolders=False&searchIn=none&searchQuery=&msgActionRequest=Delete&toolbarUniquifier=1&msgActionMenuL10n1=Actions&filterAction1=none&pageJumpAction1=1&msgActionMenuL10n=Actions&filterAction=none&pageJumpAction=1",
   strCmdMsgView = "http://%s/%s/%s/en-us/Lite/ViewSource.aspx?user=%s&folder=%s&uid=%s",
   strCmdWelcome = "http://%s/%s/%s/en-us/MessageList.aspx",
   strCmdToday = "http://%s/%s/%s/en-us/Lite/Today.aspx",
-  strCmdMsgListPost = 'dojo.transport=xmlhttp&automatic=false&requests=%5B%7B%22folder%22%3A%22New%20Mail%22%2C%22start%22%3A0%2C%22count%22%3A20%2C%22indexStart%22%3A0%2C%22indexMax%22%3A1000%2C%22index%22%3Atrue%2C%22info%22%3Atrue%2C%22rows%22%3Atrue%2C%22sort%22%3A%22received%22%2C%22sortDir%22%3A%22descending%22%2C%22search%22%3Aundefined%2C%22searchIn%22%3Aundefined%2C%22seen%22%3A%5B%5D%2C%22action%22%3A%22GetMessageList%22%7D%5D',
+  strCmdMsgListPost = 'dojo.transport=xmlhttp&automatic=false&requests=%%5B%%7B%%22folder%%22%%3A%%22%s%%22%%2C%%22start%%22%%3A0%%2C%%22count%%22%%3A20%%2C%%22indexStart%%22%%3A0%%2C%%22indexMax%%22%%3A1000%%2C%%22index%%22%%3Atrue%%2C%%22info%%22%%3Atrue%%2C%%22rows%%22%%3Atrue%%2C%%22sort%%22%%3A%%22received%%22%%2C%%22sortDir%%22%%3A%%22descending%%22%%2C%%22search%%22%%3Aundefined%%2C%%22searchIn%%22%%3Aundefined%%2C%%22seen%%22%%3A%%5B%%5D%%2C%%22action%%22%%3A%%22GetMessageList%%22%%7D%%5D',
 
   -- Site IDs
   --
@@ -628,7 +629,11 @@ function quit_update(pstate)
 
   local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer,
     internalState.strVersion, internalState.strBrand)
-  local post = string.format(globals.strCmdDeletePost, internalState.strUserId, internalState.strMBox) 
+  local postStr = globals.strCmdDeletePost
+  if (internalState.strMBox ~= globals.strInboxAOL) then
+    postStr = globals.strCmdDeletePost2
+  end
+  local post = string.format(postStr, internalState.strUserId, internalState.strMBox) 
 
   -- Cycle through the messages and see if we need to delete any of them
   -- 
@@ -682,7 +687,7 @@ function stat(pstate)
   local nMsgs = 0
   local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer, 
     internalState.strVersion, internalState.strBrand, internalState.strUserId);
-  local post = globals.strCmdMsgListPost --string.format(globals.strCmdMsgListPost, "New Mail") --internalState.strMBox)
+  local post = string.format(globals.strCmdMsgListPost, internalState.strMBox) --internalState.strMBox)
   local baseUrl = cmdUrl
 
   -- Debug Message

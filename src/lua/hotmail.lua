@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.89"
+PLUGIN_VERSION = "0.1.90"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -106,7 +106,9 @@ local globals = {
   --
   strRetLoginBadLogin = "(memberservices)",
   strRetLoginSessionExpired = "(Sign in)",
-  strRetLoginSessionExpiredLive = '(HM%.FppError)',
+  strRetLoginSessionExpiredLiveLight = '(</li></ul><a class="ManageLink" href="ManageFoldersLight%.aspx)',
+  strRetLoginSessionErrorLive = '(HM%.FppError)',
+  strRetLoginSessionExpiredLive = '(new HM%.FppReturnPackage%(0,new HM',
   strRetStatBusy = "(form name=.hotmail.)",
   
   -- Regular expression to extract the mail server
@@ -226,7 +228,7 @@ local globals = {
   strCmdBrowserIgnoreLive = "http://%s/mail/mail.aspx?skipbrowsercheck=true",
   strCmdMsgList = "http://%s/cgi-bin/HoTMaiL?a=%s&curmbox=%s",
   strCmdMsgListNextPage = "&page=%d&wo=",
-  strCmdMsgListLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s",
+  strCmdMsgListLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&InboxSortBy=Date&",
   strCmdMsgListLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.GetFolderData&ptid=0&a=%s&au=%s", 
   strCmdMsgListPostLiveOld = "cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,,&MailToken=",
   strCmdMsgListPostLive = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetFolderData&d=%s,Date,%s,false,0,%s,0,"","",true,false&v=1&mt=%s',
@@ -350,29 +352,42 @@ function hash()
 	 internalState.strPassword -- this asserts strPassword ~= nil
 end
 
-function getPage(browser, url)
+function getPage(browser, url, post, name)
   local try = 0
   while (try < 3) do
     try = try + 1
-    local body, err = browser:get_uri(url)
+    local body, err = fetchPage(browser, url, post, name)
 
     if (body == nil) then
       log.raw("Tried to load: " .. url .. " and got error: " .. err)
+      log.error_print("Tried to load: " .. url .. " and got error: " .. err)
+      return nil, err
     else
       if (string.find(body, "We are experiencing higher than normal volume") == nil and 
           string.find(body, "<[Hh][Tt][Mm][Ll]") ~= nil and
           string.find(body, "MSN Hotmail %- ERROR") == nil) then
         return body, err
       end
+      -- This is a little bizarre -- It seems the condition should not be here.
+      --
       local newurl = string.match(body, 'Object moved to <a href="([^"]+)"')
       if (newurl ~= nil) then
-        return getPage(browser, newurl)
+        return getPage(browser, newurl, nil, name)
       end
       log.raw("Attempt to load: " .. url .. " failed in attempt: " .. try)
     end
   end
 
   return nil, nil
+end
+
+function fetchPage(browser, url, post, name)
+  log.dbg("Fetching Page: " .. name .. " - " .. url)
+  if (post == nil) then
+    return browser:get_uri(url)
+  else
+    return browser:post_uri(url, post)
+  end
 end
 
 -- Issue the command to login to Hotmail
@@ -412,7 +427,7 @@ function loginHotmail()
 
   -- Retrieve the login page.
   --
-  local body, err = getPage(browser, url)
+  local body, err = getPage(browser, url, nil, "Live Mail Login Page")
 
   -- No connection
   --
@@ -466,7 +481,7 @@ function loginHotmail()
     end
   end
   if (postdata ~= nil) then
-    body, err = browser:post_uri(url, postdata)
+    body, err = getPage(browser, url, postdata, "Login Form Page")
   end
  
   -- We should be logged in now!  Unfortunately, we aren't done.  Hotmail returns a page
@@ -488,7 +503,7 @@ function loginHotmail()
     log.raw("Login failed: Sent login info to: " .. (url or "none") .. " and got something we weren't expecting(2):\n" .. body);
     return POPSERVER_ERR_NETWORK
   end
-  body, err = getPage(browser, url)
+  body, err = getPage(browser, url, nil, "Hotmail Today")
 
   -- Shouldn't happen but you never know
   --
@@ -502,7 +517,7 @@ function loginHotmail()
    local str = string.match(body, globals.strClassicCheckPattern)
    if str ~= nil then
      log.dbg("Hotmail: Detected Classic version.") 
-     body, err = browser:get_uri("http://www.hotmail.com")
+     body, err = getPage(browser, "http://www.hotmail.com", nil, "hotmail homepage")
    end 
 
   -- Check to see if we are using the new interface and are redirecting.
@@ -511,11 +526,11 @@ function loginHotmail()
   if string.match(body, globals.strLiveCheckPattern) or string.match(body, globals.strLiveCheckPattern2) then
     log.dbg("Hotmail: Detected LIVE version.") 
     str = string.format(globals.strCmdBrowserIgnoreLive, browser:wherearewe())
-    body, err = browser:get_uri(str)
+    body, err = getPage(browser, str, nil, "browser check")
     str = string.match(body, globals.strLiveMainPagePattern)
     if str ~= nil then
       str = string.format(globals.strCmdBaseLive, browser:wherearewe()) .. str
-      body, err = browser:get_uri(str)
+      body, err = getPage(browser, str, nil, "Main Page?")
     else
       str = string.match(body, globals.strLiveLightPagePattern)
       if (str ~= nil) then
@@ -536,7 +551,7 @@ function loginHotmail()
     local oldbody = body
     url = string.match(body, globals.strLoginDoneReloadToReloadPage)
     if url ~= nil then
-      body, err = browser:get_uri(url)
+      body, err = getPage(browser, url, nil, "Non-Live Login Success and Redirect")
       if body == nil then
        	-- cdmackie: switch back to old body because we need to first process img in strLoginDoneReloadToHMHome4
        	body = oldbody
@@ -560,7 +575,7 @@ function loginHotmail()
           log.raw("Image url: " .. authimgurl)
 
           if authimgurl ~= nil then
-            browser:get_uri(authimgurl)
+            getPage(browser, authimgurl, nil, "Authentication Image Url - NonLive")
           end
         url = string.match(body, globals.strLoginDoneReloadToHMHome3)
         if url == nil then
@@ -571,7 +586,7 @@ function loginHotmail()
         -- End change
       end
     end
-    body, err = browser:get_uri(url)
+    body, err = getPage(browser, url, nil, "NonLive - Login Redirect")
 
     -- Paco
     if body == nil then
@@ -658,7 +673,7 @@ function loginHotmail()
   if (internalState.strMBox == nil and internalState.bLiveGUI == false) then
     local url = string.format(globals.strCmdFolders, internalState.strMailServer, 
       internalState.strCrumb)
-    body, err = browser:get_uri(url)
+    body, err = getPage(browser, url, nil, "Manage Folders Page")
     str = string.match(body, globals.strFolderPattern .. internalState.strMBoxName .. "</a>")
     if (str == nil and domain == "msn.com" and internalState.strMBoxName == "Inbox") then
       str = string.match(body, globals.strPatMSNInboxId)
@@ -713,7 +728,7 @@ function loginHotmail()
     local n = string.match(body, globals.strFolderLiveLightManageFoldersPattern)
     local url = string.format(globals.strCmdFoldersLiveLight, internalState.strMailServer, n)    
     
-    body, err = browser:get_uri(url)
+    body, err = getPage(browser, url, nil, "LiveLight - Manage Folders")
     
     -- cdmackie: we then extract the querystring and apend the InboxId with the N value
     local inboxQueryString = string.match(body, globals.strFolderLiveLightInboxPattern)
@@ -901,7 +916,7 @@ function downloadMsg(pstate, msg, nLines, data)
     -- as we've reached end of buffer..and hotmail doesn't always send "</pre>"
     cbInfo.bEndReached = true
     cbInfo.nLinesReceived = -1;
-    -- apply same fixup from cleanupbody to remove dead tags
+    -- apply same fixup from cleanupbody to remove dead tags -- I have doubts that this ever does anything.
     if (string.len(body) > 6) then
       local idx = string.find(string.sub(body, -6), "([&<])")
       if (idx ~= nil) then
@@ -912,6 +927,7 @@ function downloadMsg(pstate, msg, nLines, data)
       end
     end
     -- make sure we end in a crlf
+	body = string.gsub(body, "</\r\n", "\r\n") 
     if (string.sub(body, -2, -1) ~= "\r\n") then
       body = body .. "\r\n"
     end
@@ -1180,6 +1196,10 @@ function cleanupBody(body, cbInfo)
 
   -- cdmackie: POP protocol: lines starting with a dot must be escaped dotdot
   body = string.gsub(body, "\r\n%.", "\r\n%.%.")
+  
+  -- Experimental -- For non-ascii users
+  --
+  body = string.gsub(body, "&#(%d-);", function(c) return string.byte(c) end)
 
   -- We've now at least seen one block, attempt to clean up the headers
   --
@@ -1389,7 +1409,7 @@ function quit_update(pstate)
       --
       if math.fmod(dcnt, 5) == 0 then
         log.dbg("Sending Delete URL: " .. cmdUrl .. "Post Data: " .. post .. "\n")
-        local body, err = browser:post_uri(cmdUrl, post)
+        local body, err = getPage(browser, cmdUrl, post, "Delete Messages - NonLive")
         if not body or err then
           log.error_print("Unable to delete messages.\n")
         end
@@ -1426,7 +1446,7 @@ function quit_update(pstate)
     post = string.format(globals.strCmdDeletePostLiveLight, internalState.strMT, 
       internalState.strTrashId) .. uidlsLight
     log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)
-    local body, err = browser:post_uri(cmdUrl, post)
+    local body, err = getPage(browser, cmdUrl, post, "Delete Messages - LiveLight")
   elseif dcnt > 0 and internalState.bLiveGUI then
     cmdUrl = string.format(globals.strCmdDeleteLive, internalState.strMailServer, internalState.strCrumb, internalState.strUserId)
     uidls = string.gsub(uidls, ",", '","')
@@ -1434,11 +1454,11 @@ function quit_update(pstate)
     post = string.format(globals.strCmdDeletePostLive, internalState.strMBox, 
       internalState.strTrashId, uidls, internalState.strMT)
     log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)
-    local body, err = browser:post_uri(cmdUrl, post)
+    local body, err = getPage(browser, cmdUrl, post, "Delete Messages - Live")
     if (body == nil) then -- M7 Only - DELETE SOON!
       post = string.format(globals.strCmdDeletePostLiveOld, internalState.strMBox, 
         internalState.strTrashId, uidls)
-      local body, err = browser:post_uri(cmdUrl, post)
+      local body, err = getPage(browser, cmdUrl, post, "Delete Messages - Live")
     end
   end
 
@@ -1448,7 +1468,7 @@ function quit_update(pstate)
     if internalState.strCrumb ~= '' then
       cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer,internalState.strCrumb)
       log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
-      local body, err = getPage(browser, cmdUrl)
+      local body, err = getPage(browser, cmdUrl, nil, "NonLive - Empty Trash")
       if not body or err then
         log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
       end
@@ -1459,7 +1479,7 @@ function quit_update(pstate)
     cmdUrl = string.format(globals.strCmdEmptyTrashLiveLight, internalState.strMailServer, internalState.strTrashId)
     local post = string.format(globals.strCmdEmptyTrashLiveLightPost, internalState.strMT)
     log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
-    local body, err = browser:post_uri(cmdUrl, post)
+    local body, err = getPage(browser, cmdUrl, post, "LiveLight - Empty Trash")
     if not body or err then
       log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
     end
@@ -1467,7 +1487,7 @@ function quit_update(pstate)
     cmdUrl = string.format(globals.strCmdEmptyTrashLive, internalState.strMailServer, internalState.strUserId)
     local post = string.format(globals.strCmdEmptyTrashLivePost, internalState.strTrashId, internalState.strMT)
     log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
-    local body, err = browser:post_uri(cmdUrl, post)
+    local body, err = getPage(browser, cmdUrl, post, "Live - Empty Trash")
     if not body or err then
       log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
     end
@@ -1479,7 +1499,7 @@ function quit_update(pstate)
     cmdUrl = string.format(globals.strCmdEmptyTrashLiveLight, internalState.strMailServer, internalState.strJunkId)
     local post = string.format(globals.strCmdEmptyTrashLiveLightPost, internalState.strMT)
     log.dbg("Sending Empty Junk URL: " .. cmdUrl .."\n")
-    local body, err = browser:post_uri(cmdUrl, post)
+    local body, err = getPage(browser, cmdUrl, post, "LiveLight - Empty Junk")
     if not body or err then
       log.error_print("Error when trying to empty the junk folder with url: ".. cmdUrl .."\n")
     end
@@ -1487,7 +1507,7 @@ function quit_update(pstate)
     cmdUrl = string.format(globals.strCmdEmptyTrashLive, internalState.strMailServer, internalState.strUserId)
     local post = string.format(globals.strCmdEmptyTrashLivePost, internalState.strJunkId)
     log.dbg("Sending Empty Junk URL: " .. cmdUrl .."\n")
-    local body, err = browser:post_uri(cmdUrl, post)
+    local body, err = getPage(browser, cmdUrl, post, "Live - Empty Junk")
     if not body or err then
       log.error_print("Error when trying to empty the junk folder with url: ".. cmdUrl .."\n")
     end
@@ -1529,11 +1549,11 @@ function logout()
     cmdUrl = string.format(globals.strCmdLogout, internalState.strMailServer)
   end
   log.dbg("Sending Logout URL: " .. cmdUrl .. "\n")
-  local body, err = getPage(browser, cmdUrl)
+  local body, err = getPage(browser, cmdUrl, nil, "Logout Page")
   if (internalState.bLiveGUI) then
     cmdUrl = string.match(body, '<meta http-equiv="refresh" content="%d+;url=([^"]+)" />')
     if (cmdUrl ~= nil) then
-      body, err = getPage(browser, cmdUrl)
+      body, err = getPage(browser, cmdUrl, nil, "Redirected Logout Page")
     end
   end
 end
@@ -1576,7 +1596,7 @@ function LiveStat(pstate)
 
   -- Let's make sure the session is still valid
   --
-  local sessionExpired = (body == nil) or string.match(body, globals.strRetLoginSessionExpiredLive)
+  local sessionExpired = (body == nil) or string.match(body, globals.strRetLoginSessionExpiredLive) == nil
   if sessionExpired then
     -- Invalidate the session
     --
@@ -1592,6 +1612,7 @@ function LiveStat(pstate)
 
     -- Try Logging back in
     --
+    logout() 
     local status = loginHotmail()
     if status ~= POPSERVER_ERR_OK then
       return POPSERVER_ERR_NETWORK
@@ -1807,6 +1828,9 @@ function stat(pstate)
     if nextPageUrl == nil then
 	    nextPageUrl = string.match(body, globals.strMsgListNextPagePatLiveLight2)
     end
+    if (nextPageUrl ~= nil) then
+       log.dbg("Found another page of messages: " .. nextPageUrl)
+    end
 
     -- Tokenize out the message ID and size for each item in the list
     --    
@@ -1906,7 +1930,7 @@ function stat(pstate)
 
     -- Get the page and check to see if we got results
     --
-    local body, err = getPage(browser, cmdUrl)
+    local body, err = getPage(browser, cmdUrl, nil, "STAT Page - LiveLight and NonLive")
     if body == nil then
       return body, err
     end
@@ -1921,7 +1945,8 @@ function stat(pstate)
     -- Is the session expired
     --
     local strSessExpr = string.match(body, globals.strRetLoginSessionExpired)
-    if strSessExpr ~= nil then
+    local strSessExprLight = string.match(body, globals.strRetLoginSessionExpiredLiveLight)
+    if strSessExpr ~= nil or strSessExprLight == nil then
       -- Invalidate the session
       --
       internalState.bLoginDone = nil
@@ -1930,6 +1955,7 @@ function stat(pstate)
 
       -- Try Logging back in
       --
+      logout() 
       local status = loginHotmail()
       if status ~= POPSERVER_ERR_OK then
         return nil, "Session expired.  Unable to recover"
@@ -1952,7 +1978,7 @@ function stat(pstate)
 
       -- Retry to load the page
       --
-      return getPage(browser, cmdUrl)
+      return getPage(browser, cmdUrl, nil, "STAT Page - LiveLight and NonLive")
     end
 
     -- Get the total number of messages

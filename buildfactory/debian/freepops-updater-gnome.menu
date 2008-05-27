@@ -1,9 +1,9 @@
-?package(freepops-updater-zenity):\
+?package(freepops-updater-gnome):\
   needs="X11" \
-  section="Apps/System" \
+  section="Applications/System/Administration" \
   title="freepops updater" \
   command="su-to-root -X -c freepops-updater-zenity"\
-  icon="/usr/share/pixmaps/freepops-updater-fltk-32.xpm"\
+  icon="/usr/share/pixmaps/freepops-32.xpm"\
   hints="" \
   longtitle="Check for updates and installs them" \
   description="Graphical and interactive frontend to the freepops updater modules, that allows to check the official website for updates to lua modules and install them"

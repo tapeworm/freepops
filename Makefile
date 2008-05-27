@@ -75,7 +75,7 @@ install: all
 		cp updater-ui/fltk/freepops-updater-fltk $(PREFIX)bin; \
 	fi
 	$(H)cp updater-ui/dialog/freepops-updater-dialog $(PREFIX)bin
-	$(H)cp updater-ui/dialog/freepops-updater-zenity $(PREFIX)bin
+	$(H)cp updater-ui/zenity/freepops-updater-zenity $(PREFIX)bin
 	$(H)chmod a+rx $(PREFIX)bin/freepops-updater-dialog
 	$(H)cp src/freepopsd$(EXEEXTENSION) $(PREFIX)bin
 	$(H)cp src/lua/*.lua modules/include/*.lua config.lua \
@@ -104,6 +104,7 @@ install: all
 	fi
 	$(H)cp doc/freepopsd.1  $(PREFIX)share/man/man1/
 	$(H)cp doc/freepops-updater-dialog.1  $(PREFIX)share/man/man1/
+	$(H)cp doc/freepops-updater-zenity.1  $(PREFIX)share/man/man1/
 	$(H)if [ ! -z "$(FLTKUI)" ]; then \
 		cp doc/freepops-updater-fltk.1  $(PREFIX)share/man/man1/;\
 	fi

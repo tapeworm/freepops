@@ -1,4 +1,4 @@
-?package(freepops):needs="text" section="Apps/Net"\
+?package(freepops):needs="text" section="Applications/Network/Communication"\
   title="freepopsd (start)" command="/usr/bin/freepopsd -v "\
   icon="/usr/share/pixmaps/freepops-32.xpm"
 # this is commented since we have no per-user pid file, so it will be a pain

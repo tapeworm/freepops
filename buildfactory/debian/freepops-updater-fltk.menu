@@ -1,6 +1,6 @@
 ?package(freepops-updater-fltk):\
   needs="X11" \
-  section="Apps/System" \
+  section="Applications/System/Administration" \
   title="freepops updater" \
   command="su-to-root -X -c freepops-updater-fltk"\
   icon="/usr/share/pixmaps/freepops-updater-fltk-32.xpm"\

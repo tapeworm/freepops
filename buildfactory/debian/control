@@ -3,8 +3,9 @@ Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@debian.org>
 Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl4-gnutls-dev (>= 7.15.0-2), flex, bison, po-debconf, liblua5.1-filesystem-dev, liblua5.1-expat-dev, liblua5.1-curl-dev, liblua5.1-dev, libfltk1.1-dev
-Build-Depends-Indep: tetex-extra, gs-common, luadoc
+Build-Depends-Indep: texlive-latex-extra, gs-common, luadoc
 Standards-Version: 3.7.2
+Homepage: http://www.freepops.org
 
 Package: freepops
 Architecture: any

@@ -59,14 +59,19 @@ install-common:
 		$(CURDIR)/debian/freepops-updater-fltk/usr/lib/freepops/
 	mv $(CURDIR)/debian/freepops/usr/share/man/man1/freepops-updater-fltk.1\
 		$(CURDIR)/debian/freepops-updater-fltk/usr/share/man/man1/
-	mv $(CURDIR)/debian/freepops/usr/share/man/man1/freepops-updater-zenity.1\
-		$(CURDIR)/debian/freepops-updater-gnome/usr/share/man/man1/
 	mv $(CURDIR)/debian/freepops/usr/bin/freepops-updater-fltk \
 		$(CURDIR)/debian/freepops-updater-fltk/usr/bin
-	mv $(CURDIR)/debian/freepops/usr/bin/freepops-updater-zenity \
-		$(CURDIR)/debian/freepops-updater-gnome/usr/bin
 	cp  updater-ui/fltk/freepops-updater-fltk-32.xpm \
 		$(CURDIR)/debian/freepops-updater-fltk/usr/share/pixmaps/
+	mv $(CURDIR)/debian/freepops/usr/share/man/man1/freepops-updater-zenity.1\
+		$(CURDIR)/debian/freepops-updater-gnome/usr/share/man/man1/
+	mv $(CURDIR)/debian/freepops/usr/bin/freepops-updater-zenity \
+		$(CURDIR)/debian/freepops-updater-gnome/usr/bin
+	cp  updater-ui/zenity/freepops-updater-zenity.svg \
+		$(CURDIR)/debian/freepops-updater-gnome/usr/share/pixmaps/
+	cp debian/freepops-updater-gnome.desktop \
+		$(CURDIR)/debian/freepops-updater-gnome/usr/share/applications/
+
 
 install-manual: build-manual install-common
 
@@ -94,6 +99,7 @@ install: build install-common
 binary-indep: build build-manual install-manual
 	dh_testdir -i
 	dh_testroot -i
+	dh_desktop -i
 	dh_installchangelogs ChangeLog -i
 	dh_installdocs -i
 	dh_installexamples -i
@@ -113,6 +119,7 @@ binary-indep: build build-manual install-manual
 binary-arch: build install
 	dh_testdir -a
 	dh_testroot -a
+	dh_desktop -a
 	dh_installchangelogs ChangeLog -a
 	dh_installdocs -a
 	dh_installexamples -a

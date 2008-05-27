@@ -1,9 +1,10 @@
 freepops (0.2.7-1) unstable; urgency=low
 
-  * new upstream release
+  * new upstream release (Closes: #460882)
   * added freepops-updater-gnome containing an interactive updater based on
     zenity
   * updated Standsrds Version to 3.7.3, fixing .menu sections
+  * added fi.po (Closes: #456968)
 
  -- Enrico Tassi <gareuselesinge@debian.org>  Tue, 27 May 2008 16:27:52 +0200
 

@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Adapted from freepops-updater-dialog
+# Massimiliano Adamo <maxadamo@gmail.com>
 
 #set -x
 #set -e
@@ -6,13 +9,14 @@
 # the return value of functions
 RC=""
 
+
 # XXX should be written at config time
 CORE=${CORE:-`which freepopsd`}
 FREEPOPS="$CORE -e updater.lua php"
-PREAMBLE="dialog --backtitle FreePOPs_Updater"
-GAUGE='--defaultno --gauge %s 10 70'
-MESSAGE="--title %s --msgbox %s 10 70"
-CHECKLIST="--defaultno --separate-output --output-fd 1 --checklist %s 19 78 10" 
+PREAMBLE="zenity --window-icon=/usr/share/pixmaps/freepops-32.xpm"
+GAUGE='--progress --text=%s --auto-close'
+MESSAGE="--info --title %s --text=%s"
+CHECKLIST="--list --checklist --print-column=2 --column= --column=name --column=description --text=%s" 
 
 # command line argument parsing ##############################################
 
@@ -94,9 +98,13 @@ local I=0
 local CHECKLIST_INPUT=`mk_temp`
 local FAILED=`mk_temp`
 FILES=`$FREEPOPS fetch_modules_metadata 2>$ERR | awk -f $AWK`
-if [ $? != 0 ]; then
-	echo "Error fetching metadata" 
-	cat $ERR
+# Workaround needed as the above command 
+# doesn't have valid exit code other than 0
+# We'll check how many files we have.
+ARRAY=( $FILES )
+if [ ${#ARRAY[@]} -le 1 ]; then
+	$PREAMBLE --warning --title="Error" --text='Error fetching metadata!'
+	$PREAMBLE --text-info --title="Error fetching metadata" --filename=${ARRAY[0]}
 	exit 1
 fi
 # register temp files to the garbage collector
@@ -119,11 +127,7 @@ printf -- " $GAUGE " "'Checking for updates...'" >> $CMD
 	local WHY=`field $METADATA why_cannot_update`
 	if [ "$CAN" = "true" ]; then
 		if [ "$SHOULD" = "true" ]; then
-			if [ "$SWAP" = "yes" ]; then
-			echo -n on $M "'$VLOC -> $VUPS'" ' ' >> $CHECKLIST_INPUT
-			else
-			echo -n $M "'$VLOC -> $VUPS'" on ' ' >> $CHECKLIST_INPUT
-			fi
+			echo -n TRUE $M "'$VLOC -> $VUPS'" ' ' >> $CHECKLIST_INPUT
 		else
 			M=$M
 		fi
@@ -141,18 +145,25 @@ if [ -s $CHECKLIST_INPUT ]; then
 	local SELECTED=`mk_temp`
 	checklist "'Select the plugins to update.'" $CHECKLIST_INPUT > $SELECTED
 
-	for X in `cat $SELECTED`; do
-		local ERR=`mk_temp`
-		$FREEPOPS fetch_module $X 'true' 2>$ERR
-		if [ $? != 0 ]; then
-			echo "Error fetching '$M'" 
-			cat $ERR
-			exit 1
-		fi
+	local DOWNERR=`mk_temp`
+	for X in `cat $SELECTED|tr '|' ' '`; do
+		# Workaround needed as the following command doesn't have a
+		# valid exit code other then 0 and prints out a blank line.
+		# Blank line will be stripped with sed and errors will be sent to file
+		exec 3> >($PREAMBLE --progress --pulsate --auto-close --text="Downloading '$X'")
+		echo . >&3
+		$FREEPOPS fetch_module $X 'true'|sed -e /^$/d >> $DOWNERR 2>&1
+		exec 3>&-
 	done
-
+	if [ -s $DOWNERR ]; then
+		$PREAMBLE --warning --title="Error" --text='Error fetching one\nor more modules!'
+		$PREAMBLE --text-info --title="Error fetching modules(s)" --filename=$DOWNERR
+		exit 1
+	else
+		$PREAMBLE --info --title="FreePOPs Updater" --text='Update completed succesfully!'
+	fi
 else
-	message "'No updates available'" "'Nothing to update!'"
+	message "'No updates available'" "'    Nothing to update!    '"
 fi
 
 if [ -s $FAILED ]; then
@@ -162,15 +173,20 @@ fi
 }
 
 # here we go! ###############################################################
-if [ -z `which dialog 2>/dev/null` ]; then
-	echo 'dialog' utility not found.
-	echo Please install the dialog package.
+if [ -z `which zenity 2>/dev/null` ]; then
+	echo "'zenity' utility not found."
+	echo Please install the zenity package.
 	exit 1
 fi
 if [ ! -x $CORE ]; then
 	echo freepopsd not found.
 	exit 1
 fi
+if [ -z $DISPLAY ]; then
+  echo -e "\nSet your DISPLAY or use freepops-updater-dialog instead\n"
+  exit 1
+fi
+
 
 main "$@"
 

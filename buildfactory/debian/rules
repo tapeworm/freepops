@@ -61,6 +61,8 @@ install-common:
 		$(CURDIR)/debian/freepops-updater-fltk/usr/share/man/man1/
 	mv $(CURDIR)/debian/freepops/usr/bin/freepops-updater-fltk \
 		$(CURDIR)/debian/freepops-updater-fltk/usr/bin
+	mv $(CURDIR)/debian/freepops/usr/bin/freepops-updater-zenity \
+		$(CURDIR)/debian/freepops-updater-zenity/usr/bin
 	cp  updater-ui/fltk/freepops-updater-fltk-32.xpm \
 		$(CURDIR)/debian/freepops-updater-fltk/usr/share/pixmaps/
 

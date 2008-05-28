@@ -97,6 +97,8 @@ local rss,charset
 
 local rss_string = {
 	charsetC = "xml version=\"[^\"]*\" encoding=\"([^\?]*)\"",
+	itemsbC = "<items>",
+	itemseC = "</items>",
 	item_bC = "<item",
 	item_eC = "</item>",
 	itemC = "(</item>)",
@@ -139,10 +141,12 @@ end
 --------------------------------------------------------------------------------
 -- Converts HTML news tag into text
 --
-function html2txt(str)
-	str=string.gsub(str,"\n","") 
+function ripHTML(str)
+	str=string.gsub(str,"\n","")
 	str=string.gsub(str,"\r","") 
 	str=string.gsub(str,"\t","") 
+	str=string.gsub(str,"|","-")
+	str=string.gsub(str,":","-")
 	str=string.gsub(str,"<[Tt][Rr]>","\n") 
 	str=string.gsub(str,"</[Tt][Hh]>","\t") 
 	str=string.gsub(str,"</[Tt][Dd]>","\t") 
@@ -151,21 +155,156 @@ function html2txt(str)
 	str=string.gsub(str,"</[Uu][Ll]>","\n\n") 
 	str=string.gsub(str,"<[Ll][Ii]>","\n\t* ") 
 	str=string.gsub(str,"&amp;","&") 
-	str=string.gsub(str,"&agrave;","à") 
-	str=string.gsub(str,"&igrave;","ì") 
-	str=string.gsub(str,"&egrave;","è") 
-	str=string.gsub(str,"&ograve;","ò") 
-	str=string.gsub(str,"&eacute;","é")
-	str=string.gsub(str,"&ugrave;","ù")
-	str=string.gsub(str,"&quot;","\"") 
+
+	str=string.gsub(str,"&quot;","\"") 	
 	str=string.gsub(str,"&gt;",">") 
 	str=string.gsub(str,"&lt;","<")
 	str=string.gsub(str,"<a href=\"([^\"]*)\"[^>]*>([^<]*)</a>","%2 (%1)")
 	str=string.gsub(str,"</p>","\n")
 	
-
 	str=string.gsub(str,"<.->","") 
 	
+	return str	
+end
+
+----------------------------------------------------------
+-- This function is not intended to be reversible
+-- 
+function fromHTML(str,encoding)
+  if (encoding == nil) then
+	  encoding = "utf-8"
+  end
+
+  if ((string.upper(encoding)=="ISO-8859-1") or (string.upper(encoding)=="ISO-8859-15")) then
+    str=string.gsub(str,"&agrave;","\224")
+    str=string.gsub(str,"&aacute;","\225")
+    str=string.gsub(str,"&egrave;","\232")
+    str=string.gsub(str,"&eacute;","\233")
+    str=string.gsub(str,"&igrave;","\236")
+    str=string.gsub(str,"&iacute;","\237")
+    str=string.gsub(str,"&ograve;","\242")
+    str=string.gsub(str,"&oacute;","\243")
+    str=string.gsub(str,"&ugrave;","\249")
+    str=string.gsub(str,"&uacute;","\250")
+    str=string.gsub(str,"&Agrave;","\192")
+    str=string.gsub(str,"&Aacute;","\193")
+    str=string.gsub(str,"&Egrave;","\200")
+    str=string.gsub(str,"&Eacute;","\201")
+    str=string.gsub(str,"&Igrave;","\204")
+    str=string.gsub(str,"&Iacute;","\205")
+    str=string.gsub(str,"&Ograve;","\210")
+    str=string.gsub(str,"&Oacute;","\211")
+    str=string.gsub(str,"&Ugrave;","\217")
+    str=string.gsub(str,"&Uacute;","\218")
+    str=string.gsub(str,"&ccedil;","\231") 
+    str=string.gsub(str,"&Ccedil;","\199") 
+    str=string.gsub(str,"&ntilde;","\241")
+    str=string.gsub(str,"&Ntilde;","\209")
+	
+    str=string.gsub(str,"&apos;",  "\039")
+    -- for this character the conversion is not simetric
+    -- because it can generate a missbehaviour of the HTML
+    -- in this conversion for sure it will also cause 
+    -- some missbehaviour, but is the functionaliy needed
+    -- for a good conversion of the title
+  elseif (string.upper(encoding)=="UTF-8") then
+    str=string.gsub(str,"&agrave;","\195\160")
+    str=string.gsub(str,"&aacute;","\195\161")
+    str=string.gsub(str,"&egrave;","\195\168")
+    str=string.gsub(str,"&eacute;","\195\168")
+    str=string.gsub(str,"&igrave;","\195\172")
+    str=string.gsub(str,"&iacute;","\195\173")
+    str=string.gsub(str,"&ograve;","\195\178")
+    str=string.gsub(str,"&oacute;","\195\179")
+    str=string.gsub(str,"&ugrave;","\195\185")
+    str=string.gsub(str,"&uacute;","\195\186")
+    str=string.gsub(str,"&Agrave;","\195\128")
+    str=string.gsub(str,"&Aacute;","\195\129")
+    str=string.gsub(str,"&Egrave;","\195\136")
+    str=string.gsub(str,"&Eacute;","\195\137")
+    str=string.gsub(str,"&Igrave;","\195\140")
+    str=string.gsub(str,"&Iacute;","\195\141")
+    str=string.gsub(str,"&Ograve;","\195\146")
+    str=string.gsub(str,"&Oacute;","\195\147")
+    str=string.gsub(str,"&Ugrave;","\195\153")
+    str=string.gsub(str,"&Uacute;","\195\154")
+    str=string.gsub(str,"&ccedil;","\195\167") 
+    str=string.gsub(str,"&Ccedil;","\195\135") 
+    str=string.gsub(str,"&ntilde;","\195\177")
+    str=string.gsub(str,"&Ntilde;","\195\145")
+	
+    str=string.gsub(str,"&apos;",  "\039")	
+  end	
+	
+  return str
+end
+
+
+--------------------------------------------------------------------------------
+-- Recode tilde, acute, grave...
+--      http://www.macchiato.com/unicode/convert.html
+
+function toHTML(str,encoding)
+  if (encoding == nil) then
+	  encoding = "utf-8"
+  end
+
+  if ((string.upper(encoding)=="ISO-8859-1") or (string.upper(encoding)=="ISO-8859-15")) then
+    str=string.gsub(str,"\224",    "&agrave;")
+    str=string.gsub(str,"\225",    "&aacute;")
+    str=string.gsub(str,"\232",    "&egrave;")
+    str=string.gsub(str,"\233",    "&eacute;")
+    str=string.gsub(str,"\236",    "&igrave;")
+    str=string.gsub(str,"\237",    "&iacute;")
+    str=string.gsub(str,"\242",    "&ograve;")
+    str=string.gsub(str,"\243",    "&oacute;")
+    str=string.gsub(str,"\249",    "&ugrave;")
+    str=string.gsub(str,"\250",    "&uacute;")
+    str=string.gsub(str,"\192",    "&Agrave;")
+    str=string.gsub(str,"\193",    "&Aacute;")
+    str=string.gsub(str,"\200",    "&Egrave;")
+    str=string.gsub(str,"\201",    "&Eacute;")
+    str=string.gsub(str,"\204",    "&Igrave;")
+    str=string.gsub(str,"\205",    "&Iacute;")
+    str=string.gsub(str,"\210",    "&Ograve;")
+    str=string.gsub(str,"\211",    "&Oacute;")
+    str=string.gsub(str,"\217",    "&Ugrave;")
+    str=string.gsub(str,"\218",    "&Uacute;")
+    str=string.gsub(str,"\231",    "&ccedil;")
+    str=string.gsub(str,"\199",    "&Ccedil;")
+    str=string.gsub(str,"\241",    "&ntilde;")
+    str=string.gsub(str,"\209",    "&Ntilde;")
+  elseif (string.upper(encoding)=="UTF-8") then
+    str=string.gsub(str,"\195\160","&agrave;")
+    str=string.gsub(str,"\195\161","&aacute;")
+    str=string.gsub(str,"\195\168","&egrave;")
+    str=string.gsub(str,"\195\169","&eacute;")
+    str=string.gsub(str,"\195\172","&igrave;")
+    str=string.gsub(str,"\195\173","&iacute;")
+    str=string.gsub(str,"\195\178","&ograve;")
+    str=string.gsub(str,"\195\179","&oacute;")
+    str=string.gsub(str,"\195\185","&ugrave;")
+    str=string.gsub(str,"\195\186","&uacute;")
+    str=string.gsub(str,"\195\128","&Agrave;")
+    str=string.gsub(str,"\195\129","&Aacute;")
+    str=string.gsub(str,"\195\136","&Egrave;")
+    str=string.gsub(str,"\195\137","&Eacute;")
+    str=string.gsub(str,"\195\140","&Igrave;")
+    str=string.gsub(str,"\195\141","&Iacute;")
+    str=string.gsub(str,"\195\146","&Ograve;")
+    str=string.gsub(str,"\195\147","&Oacute;")
+    str=string.gsub(str,"\195\153","&Ugrave;")
+    str=string.gsub(str,"\195\154","&Uacute;")
+    str=string.gsub(str,"\195\167","&ccedil;")
+    str=string.gsub(str,"\195\135","&Ccedil;")
+    str=string.gsub(str,"\195\177","&ntilde;")
+    str=string.gsub(str,"\195\145","&Ntilde;")
+  end
+    
+  str=string.gsub(str,"&amp;","&") 
+  -- str=string.gsub(str,"&quot;","\"") 	
+  str=string.gsub(str,"&gt;",">") 
+  str=string.gsub(str,"&lt;","<")
 	
 	return str
 end
@@ -185,8 +324,11 @@ end
 -- Build a mail header
 --
 function make_valid_domain(s)
-	s = string.gsub(s,"[^%a%d-_]",".")
+	s = string.gsub(s,"[^%a%d]",".")
 	s = string.gsub(s,"%.+",".")
+	if (string.sub(s,-1)==".") then
+    s = string.sub(s,1,-2)
+	end
 	return s
 end
 
@@ -202,25 +344,36 @@ function build_mail_header(title,uidl,mydate)
 		" plugin "..PLUGIN_VERSION.."\r\n"..
 	"MIME-Version: 1.0\r\n"..
 	"Content-Disposition: inline\r\n"..
-	"Content-Type: text/plain; charset=\""..charset.."\"\r\n"..
+	"Content-Type: text/html; charset=\""..charset.."\"\r\n"
 	-- This header cause some problems with link like [...]id=123[...]
-	-- "Content-Transfer-Encoding: quoted-printable\r\n"..
-	"\r\n"..
-	"News link:\r\n"
+	-- "Content-Transfer-Encoding: quoted-printable\r\n"
 end
 
 function hackw3cdate(mydate)
-	--Wed, 01 Sep 2004 15:50:29
-	--1997-07-16T19:20:30.45+01:00
-	local year=string.match(mydate,"(%d*)%-")
-	local month=string.match(mydate,year.."%-(%d*)%-")
-	local day=string.match(mydate,year.."%-"..month.."%-(%d*)")
-	local hour=string.match(mydate,"T(%d*):")
-	local mins=string.match(mydate,hour..":(%d*)")
-	mydate=getdate.toint(month.."/"..day.."/"..year.." "..hour..":"
-	..mins..":00")
-	return(os.date("%a, %d %b %Y %H:%M:%S",mydate))
+  if (string.find(mydate,",") == nil) then
+    if (string.find(mydate,":") == nil) then
+	    return(nil)
+	  else
+	    --1997-07-16T19:20:30.45+01:00
+	    local year=string.match(mydate,"(%d*)%-")
+	    local month=string.match(mydate,year.."%-(%d*)%-")
+	    local day=string.match(mydate,year.."%-"..month.."%-(%d*)")
+	    local hour=string.match(mydate,"T(%d*):")
+	    local mins=string.match(mydate,hour..":(%d*)")
+	    mydate=getdate.toint(month.."/"..day.."/"..year.." "..hour..":"..mins..":00")
+	    mydate=os.date("%a, %d %b %Y %H:%M:%S",mydate)
+	  end
+  end
+    
+  log.dbg("Date:"..mydate)
+    
+  --Wed, 01 Sep 2004 15:50:29 +2000
+  mydate = string.gsub(mydate,"+(%.*)","")
+    
+  mydate = string.gsub(mydate,"\r","")
+  mydate = string.gsub(mydate,"\n","")    
 
+  return(mydate)
 end
 --------------------------------------------------------------------------------
 -- retr and top aree too similar. discrimitaes only if lines ~= nil
@@ -228,23 +381,31 @@ end
 function retr_or_top(pstate,msg,data,lines)
 	-- we need the stat
 	local st = stat(pstate)
-	if st ~= POPSERVER_ERR_OK then return st end
+  if st ~= POPSERVER_ERR_OK then
+    return st
+  end
 	
-	local uidl = get_mailmessage_uidl(pstate,msg)
+  local uidl = get_mailmessage_uidl(pstate,msg)
 	
+  --get it
+	
+  local s2=rss
+  local starts2
+  local ends2
+  local chunk
 
-	--get it
-	
-	local s2=rss
-	local starts2
-	local ends2
-	local chunk
+  starts2,_,_=string.find(s2,rss_string.itemsbC)
+  ends2,_,_=string.find(s2,rss_string.itemseC)
+  if ((starts2 ~= nil) and (ends2 ~= nil)) then
+    chunk=string.sub(s2,starts2,ends2)
+    s2=string.sub(s2,ends2+3)
+  end
 	
 	for i=1,msg do
-		starts2,_,_=string.find(s2,rss_string.item_bC);
-                ends2,_,_=string.find(s2,rss_string.item_eC);
-		chunk=string.sub(s2,starts2,ends2)
-		s2=string.sub(s2,ends2+3)
+    starts2,_,_=string.find(s2,rss_string.item_bC)
+    ends2,_,_=string.find(s2,rss_string.item_eC)
+    chunk=string.sub(s2,starts2,ends2)
+    s2=string.sub(s2,ends2+3)
 	end
 									
 	local title=string.match(chunk,rss_string.titleC)
@@ -255,6 +416,12 @@ function retr_or_top(pstate,msg,data,lines)
 	if ((header == nil) or (header == "")) then
 		header=string.match(chunk,rss_string.link2C)
 	end
+	if ((header == nil) or (header == "")) then
+		header=string.match(chunk,rss_string.titleC)
+		header = string.gsub(uidl,"[^%a%d]",".")
+		header = string.gsub(uidl,"%.+",".")
+	end
+	
 	
 	local body=string.match(chunk,rss_string.descC)
 	if (body ~= nil) then
@@ -273,39 +440,60 @@ function retr_or_top(pstate,msg,data,lines)
 	end
 	
 	local mydate=string.match(chunk,rss_string.dateC)
-	
-	-- is it W3C date?
 	if (mydate == nil) then
 		 mydate=string.match(chunk,rss_string.dcdateC)
-		 if (mydate ~= nil) then
-		 	--Wed, 01 Sep 2004 15:50:29
-			--1997-07-16T19:20:30.45+01:00
-			mydate=hackw3cdate(mydate)
-
-		 end
+	end
+        
+	-- is it W3C date?	
+	if (mydate ~= nil) then
+    --Wed, 01 Sep 2004 15:50:29
+    --1997-07-16T19:20:30.45+01:00
+    mydate=hackw3cdate(mydate)
 	end
 
-	if ((body == nil) or (body =="") )then
+	if ((body == nil) or (body == "")) then
 		body="Not available"
 	end
 
-	if header == nil or body == nil or title == nil then
+	if ((header == nil) or (body == nil) or (title == nil)) then
 		log.error_print("Error parsing: title="..
 			(title or "nil").." header="..
 			(header or "nil").." body="..(body or "nil"))
 	end
 
-	--clean it
-	header=html2txt(header)
-	title=html2txt(title)
-	body=html2txt(body)
+--log.error_print(title)
+--log.error_print(charset)
 
+	--clean it
+	header=ripHTML(fromHTML(toHTML(header,charset)))
+	title=ripHTML(fromHTML(toHTML(title,charset)))
+	body=toHTML(body,charset)
+	--body=html2txt(body)	
+
+--log.error_print(title)
 
 	--build it
 	local s = build_mail_header(title,uidl,mydate) .. 
-		header .. "\r\n\r\n" .. 
-		"News description:\r\n"..
-		body.. "\r\n"
+		"\r\n\r\n"..
+		"\<html><body>\r\n"
+		
+	if (string.find(header,"http://") or string.find(header,"https://")) then
+	s = s..
+		"<p>\r\n"..		
+		"<b>News link:</b>\r\n"..
+		"<br/>\r\n" ..		
+		"<a href="..header..">\r\n"..
+		header.."\r\n"..
+		"</a>\r\n"..
+		"</p>\r\n<br/>\r\n"
+	end
+	
+	s = s..	
+		"<p>\r\n"..
+		"<b>News description:</b>\r\n"..
+		"<br/>\r\n".."\r\n"..
+		body.."\r\n"..
+		"</body></html>\r\n"
 
 	--hack it
 	local a = stringhack.new()
@@ -342,36 +530,38 @@ end
 -- -------------------------------------------------------------------------- --
 -- Must login
 function pass(pstate,password)
-	if internal_state.login_done then
-		return POPSERVER_ERR_OK
-	end
+  if internal_state.login_done then
+    return POPSERVER_ERR_OK
+  end
 
-	-- save the password
-	-- password is the RSS/RDF file URI 
-	if (freepops.MODULE_ARGS ~= nil) then
-		if freepops.MODULE_ARGS.host ~= nil then
-        	        internal_state.password = freepops.MODULE_ARGS.host
-		else
-			internal_state.password = password
-		end
-	end
+  -- save the password
+  -- password is the RSS/RDF file URI 
+  if (freepops.MODULE_ARGS ~= nil) then
+    if freepops.MODULE_ARGS.host ~= nil then
+      internal_state.password = freepops.MODULE_ARGS.host
+    else
+      internal_state.password = password
+    end
+  end
 
-	
-	if(string.find(internal_state.password,"http://") == nil) then
-		 log.error_print("Not a valid URI: "..internal_state.password.."\n")
-		 return POPSERVER_ERR_NETWORK
-	end
+  if ((string.find(internal_state.password,"http://") == nil) and (string.find(internal_state.password,"https://") == nil)) then
+    log.error_print("Not a valid URI: "..internal_state.password.."\n")
+    return POPSERVER_ERR_NETWORK
+  end
 						 
-	-- build the uri
-	local user = internal_state.name
+  -- build the uri
+  local user = internal_state.name
 	
-	-- the browser must be preserved
-	internal_state.b = browser.new()
---	b:verbose_mode()
+  -- the browser must be preserved
+  internal_state.b = browser.new()
 	
-	internal_state.login_done = true
+  local b = internal_state.b
+  b:ssl_init_stuff()
+  -- b:verbose_mode()
 	
-	return POPSERVER_ERR_OK
+  internal_state.login_done = true
+	
+  return POPSERVER_ERR_OK
 end
 
 -- -------------------------------------------------------------------------- --
@@ -403,9 +593,10 @@ function stat(pstate)
 	local uri = internal_state.password
 	
 	-- extract all the messages uidl
-	local function action_f (s) 
+	local function action_f (s)
 		--	
 		-- sets global var rss
+--log.error_print("start action_f")
 		rss=s
 		charset=string.match(rss,rss_string.charsetC)
 		if (charset == nil) then
@@ -421,8 +612,13 @@ function stat(pstate)
 			end
 			
 		end
-		local n=nmess	
+		local n=nmess
 		
+--log.error_print("nummesg:"..nmess)
+		if (nmess==0) then
+			return true,nil
+		end
+
 		-- this is not really needed since the structure 
 		-- grows automatically... maybe... don't remember now
 		set_popstate_nummesg(pstate,nmess)
@@ -437,16 +633,32 @@ function stat(pstate)
 			local chunk=string.sub(s2,starts2,ends2)
 			s2=string.sub(s2,ends2+3)
 			
-			local uidl = string.match(chunk,rss_string.linkC)
-			if ((uidl == nil) or (uidl=="")) then
-				 uidl = string.match(chunk,rss_string.link2C)
-			end
-			--fucking default size
-			local size=2048
+			uidl = string.match(chunk,rss_string.titleC)
 
-			if not uidl or not size then
+			local link
+			link = string.match(chunk,rss_string.linkC)
+			if (link ~= nil) then
+			    uidl = uidl.."."..link
+			end
+			link = string.match(chunk,rss_string.link2C)
+			if (link ~= nil) then
+			    uidl = uidl..link
+			end
+
+			uidl = string.gsub(uidl,"[^%a%d]",".")
+			uidl = string.gsub(uidl,"%.+",".")
+			uidl = string.gsub(uidl,"^%.","")
+			uidl = string.gsub(uidl,"%.$","")
+			uidl = string.sub(uidl,1,250)
+
+			--fucking default size
+			local size=4096
+
+			if ((not uidl) or (not size)) then
 				return nil,"Unable to parse uidl"
 			end
+
+--log.error_print("uidl: "..uidl)
 
 			-- set it
 			set_mailmessage_size(pstate,i,size)
@@ -547,6 +759,8 @@ function init(pstate)
 
 	-- the browser module
 	require("browser")
+
+	freepops.need_ssl()
 	
 	-- the common implementation module
 	require("common")

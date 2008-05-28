@@ -23,14 +23,15 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.8"
+PLUGIN_VERSION = "0.2.7"
 PLUGIN_NAME = "RSS/RDF aggregator"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=aggregator.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
-PLUGIN_AUTHORS_NAMES = {"Simone Vellei"}
-PLUGIN_AUTHORS_CONTACTS = {"simone_vellei (at) users (.) sourceforge (.) net"}
+PLUGIN_AUTHORS_NAMES = {"Simone Vellei", "Fernando Lucas Rodriguez"}
+PLUGIN_AUTHORS_CONTACTS = {"simone_vellei (at) users (.) sourceforge (.) net",
+ "info (at) fernandolucas (.) es" }
 PLUGIN_DOMAINS = {"@aggregator","@..."}
 PLUGIN_PARAMETERS = {}
 PLUGIN_DESCRIPTIONS = {

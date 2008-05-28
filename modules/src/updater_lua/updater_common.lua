@@ -2,7 +2,7 @@
 -- This is part of FreePOPs (http://www.freepops.org) released under GNU/GPL  
 --============================================================================--
 
-MODULE_VERSION = "0.2.3"
+MODULE_VERSION = "0.2.4"
 MODULE_NAME = "updater_common"
 MODULE_REQUIRE_VERSION = "0.2.3"
 MODULE_LICENSE = "GNU/GPL"
@@ -227,7 +227,10 @@ end
 -- The table of function to print on stdout the result of the functions.
 mangler = {
   ["fetch_modules_metadata"] = function(l, err)
-	  if l == nil then print("error: " .. err);return end
+	  if l == nil then 
+		  print("error: " .. err)
+		  return 1
+	  end
 	  for _,t in ipairs(l) do
 		  print("module_name: ".. t.module_name)
 		  print("version: ".. t.version)
@@ -241,10 +244,15 @@ mangler = {
 		  print("should_update: ".. tostring(t.should_update))
 		  print("")
 	  end
+	  return 0
   end,
   ["fetch_module"] = function(s,err)
-	  if s == nil then print("error: "..err);return end
+	  if s == nil then 
+		  print("error: "..err)
+		  return 1
+	  end
 	  print(s)
+	  return 0
   end,
 }
 

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.3"
+PLUGIN_VERSION = "0.2.4"
 PLUGIN_NAME = "updater"
 PLUGIN_REQUIRE_VERSION = "0.2.3"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -381,7 +381,7 @@ function interactive()
 	if err == false or fltk == nil or 
 	   type(fltk) ~= "table" or fltk.run == nil 
 	then
-		return [[
+		return nil,[[
 The fltk updater is not instealled or cannot be loaded.
 
 Note that our distribution may split the freepops package, separating the fltk
@@ -423,7 +423,7 @@ function batch(...)
     	pdata, err = get_mdata(type,b)
 	if pdata == nil then
 		log("Error: metadata: "..(err or ""))
-		return "Error: metadata: "..(err or "")
+		return nil, "Error: metadata: "..(err or "")
 	end
 
 	for _,mod in ipairs(pdata) do
@@ -503,8 +503,16 @@ function main(args)
 	end
 	table.remove(args,1)
 
-	local printer = updater_common.mangler[op] or print
+	local printer = updater_common.mangler[op] or 
+		function(s,...)
+			if not s then
+				print(...)
+				return 1
+			else
+				print(s,...)
+				return 0
+			end
+		end
 
-	printer(fun(unpack(args)))
-	return 0
+	return printer(fun(unpack(args)))
 end

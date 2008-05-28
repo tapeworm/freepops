@@ -15,7 +15,7 @@ Description: POP3 interface to several webmail sites
  FreePOPs is a POP3 daemon that translates local POP3 commands
  to remote HTTP requests to the supported webmail sites.
  .
- FreePOPs can also be used as RSS aggregator and POP3 forwarder.
+ FreePOPs can also be used as RSS aggregator and POP3 proxy.
  .
  This package also includes a dialog based updater program, to check
  for updates and optionally download them.
@@ -26,6 +26,9 @@ Depends: ${shlibs:Depends}, freepops (>= 0.2.0)
 Description: Graphical interface for the freepops updater engine
  This package provides a click-and-update program to download the lates updates
  from the freepops website.
+ .
+ The user interface is based on FTLK, if you are not using a GTK+ based desktop
+ environment this package is probably what you want to install.
 
 Package: freepops-updater-gnome
 Architecture: any
@@ -33,6 +36,9 @@ Depends: ${shlibs:Depends}, freepops (>= 0.2.0), zenity
 Description: GNOME interface for the freepops updater engine
  This package provides a click-and-update program to download the lates updates
  from the freepops website.
+ .
+ The user interface is based on zenity, thus this package is recommended 
+ for GTK+ desktop environments like GNOME.
 
 Package: freepops-doc
 Section: doc
@@ -42,7 +48,7 @@ Description: FreePOPs user/developer manual
  FreePOPs is a POP3 daemon that translates local POP3 commands
  to remote HTTP requests to the supported webmail sites.
  .
- FreePOPs can also be used as RSS aggregator and POP3 forwarder.
+ FreePOPs can also be used as RSS aggregator and POP3 proxy.
  .
  This package includes the PDF manual for the software.
  

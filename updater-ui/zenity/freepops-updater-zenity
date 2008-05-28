@@ -13,7 +13,7 @@ RC=""
 # XXX should be written at config time
 CORE=${CORE:-`which freepopsd`}
 FREEPOPS="$CORE -e updater.lua php"
-PREAMBLE="zenity --window-icon=/usr/share/pixmaps/freepops-32.xpm"
+PREAMBLE="zenity --window-icon=/usr/share/pixmaps/freepops-updater-zenity.svg"
 GAUGE='--progress --text=%s --auto-close'
 MESSAGE="--info --title %s --text=%s"
 CHECKLIST="--list --checklist --print-column=2 --column= --column=name --column=description --text=%s" 

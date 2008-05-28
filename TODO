@@ -4,7 +4,7 @@ For future versions (wishes)
  * regression tests maybe with netcat or other to make it possible to run 
    some tests at least over some plugin
  * porting pocketpc. lack of a free cross compiler and emulator
- * ipv6, maybe when the switch to APR will be considered this will be 
+ * ipv6, maybe when the switch to APR/glib will be considered this will be 
    automatically gained
  * utf8 - mimer - lstring lua utf8 support
  * add proxy section in config.lua e integrate win-IE settings discovery 

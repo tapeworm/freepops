@@ -97,7 +97,10 @@ local ERR=`mk_temp`
 local I=0
 local CHECKLIST_INPUT=`mk_temp`
 local FAILED=`mk_temp`
+exec 3> >($PREAMBLE --progress --pulsate --auto-close --text="Downloading Metadata...")
+echo . >&3
 FILES=`$FREEPOPS fetch_modules_metadata 2>$ERR | awk -f $AWK`
+exec 3>&-
 # Workaround needed as the above command 
 # doesn't have valid exit code other than 0
 # We'll check how many files we have.
@@ -186,7 +189,6 @@ if [ -z $DISPLAY ]; then
   echo -e "\nSet your DISPLAY or use freepops-updater-dialog instead\n"
   exit 1
 fi
-
 
 main "$@"
 

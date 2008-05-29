@@ -9,4 +9,4 @@ For future versions (wishes)
  * utf8 - mimer - lstring lua utf8 support
  * add proxy section in config.lua e integrate win-IE settings discovery 
    code from LiberoPOPs
-
+ * customize error messages

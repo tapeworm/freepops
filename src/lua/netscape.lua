@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.3b"
+PLUGIN_VERSION = "0.0.3c"
 PLUGIN_NAME = "netscape.net"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"

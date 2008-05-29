@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.8f"
+PLUGIN_VERSION = "0.0.8g"
 PLUGIN_NAME = "Orange (ex Wanadoo)"
 PLUGIN_REQUIRE_VERSION = "0.0.99"
 PLUGIN_LICENSE = "GNU/GPL"

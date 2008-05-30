@@ -17,6 +17,8 @@ PREAMBLE="zenity --window-icon=/usr/share/pixmaps/freepops-updater-zenity.svg"
 GAUGE='--progress --text=%s --auto-close'
 MESSAGE="--info --title %s --text=%s"
 CHECKLIST="--list --checklist --print-column=2 --column= --column=name --column=description --text=%s" 
+TEXTINFO="--text-info --width=600 --height=400 --filename"
+WARNING="--warning --title=Error --text"
 
 # command line argument parsing ##############################################
 
@@ -94,27 +96,25 @@ BEGIN { RS = "\n\n+"; FS = "\n"; }
 }
 EOT
 local ERR=`mk_temp`
-local I=0
-local CHECKLIST_INPUT=`mk_temp`
-local FAILED=`mk_temp`
 exec 3> >($PREAMBLE --progress --pulsate --auto-close --text="Downloading Metadata...")
 echo . >&3
 FILES=`$FREEPOPS fetch_modules_metadata 2>$ERR | awk -f $AWK`
+# Cannot use exit status of above command because of pipe and variable declaration
 exec 3>&-
-# Workaround needed as the above command 
-# doesn't have valid exit code other than 0
-# We'll check how many files we have.
 ARRAY=( $FILES )
 if [ ${#ARRAY[@]} -le 1 ]; then
-	$PREAMBLE --warning --title="Error" --text='Error fetching metadata!'
-	$PREAMBLE --text-info --title="Error fetching metadata" --filename=${ARRAY[0]}
+	$PREAMBLE $WARNING='Error fetching metadata!'
+	$PREAMBLE $TEXTINFO=${ARRAY[0]} --title="Error fetching metadata"
 	exit 1
 fi
 # register temp files to the garbage collector
 echo $FILES >> $TODELETE
 N=`echo $FILES | wc -w `
+local I=0
 local perc=0
 local CMD=`mk_temp`
+local FAILED=`mk_temp`
+local CHECKLIST_INPUT=`mk_temp`
 echo -n $PREAMBLE > $CMD
 printf -- " $GAUGE " "'Checking for updates...'" >> $CMD
 (for METADATA in $FILES; do
@@ -147,21 +147,23 @@ done) | /bin/bash $CMD
 if [ -s $CHECKLIST_INPUT ]; then
 	local SELECTED=`mk_temp`
 	checklist "'Select the plugins to update.'" $CHECKLIST_INPUT > $SELECTED
+	if [ $? != 0 ]; then
+		$PREAMBLE $WARNING='Update canceled by user'
+		exit 1
+	fi
 
 	local DOWNERR=`mk_temp`
 	for X in `cat $SELECTED|tr '|' ' '`; do
-		# Workaround needed as the following command doesn't have a
-		# valid exit code other then 0 and prints out a blank line.
-		# Blank line will be stripped with sed and errors will be sent to file
 		exec 3> >($PREAMBLE --progress --pulsate --auto-close --text="Downloading '$X'")
 		echo . >&3
+		# Fetch command prints out a blank line and will be stripped with sed.
 		$FREEPOPS fetch_module $X 'true'|sed -e /^$/d >> $DOWNERR 2>&1
 		exec 3>&-
 	done
+
 	if [ -s $DOWNERR ]; then
-		$PREAMBLE --warning --title="Error" --text='Error fetching one\nor more modules!'
-		$PREAMBLE --text-info --title="Error fetching modules(s)" --filename=$DOWNERR
-		exit 1
+		$PREAMBLE $WARNING='Error fetching one\nor more modules!'
+		$PREAMBLE $TEXTINFO=$DOWNERR --title="Error fetching module(s)"
 	else
 		$PREAMBLE --info --title="FreePOPs Updater" --text='Update completed succesfully!'
 	fi
@@ -176,18 +178,25 @@ fi
 }
 
 # here we go! ###############################################################
-if [ -z `which zenity 2>/dev/null` ]; then
-	echo "'zenity' utility not found."
-	echo Please install the zenity package.
-	exit 1
-fi
-if [ ! -x $CORE ]; then
-	echo freepopsd not found.
-	exit 1
-fi
 if [ -z $DISPLAY ]; then
   echo -e "\nSet your DISPLAY or use freepops-updater-dialog instead\n"
   exit 1
+fi
+if [ -z `which zenity 2>/dev/null` ]; then
+	IFS=
+	MESSAGE="'zenity' utility not found.
+Please install the zenity package."
+	if [ -z `which xmessage 2>/dev/null` ]; then
+		echo $MESSAGE; exit 1
+	else
+		xmessage -center $MESSAGE; exit 1
+	fi
+fi
+if [ ! -x $CORE ]; then
+	$PREAMBLE $WARNING="freepopsd not found"; exit 1
+fi
+if  [ `id -u` -ne 0 ]; then
+	$PREAMBLE $WARNING="You must run this tool as root"; exit 1
 fi
 
 main "$@"

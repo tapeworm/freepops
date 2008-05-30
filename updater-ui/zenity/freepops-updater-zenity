@@ -11,6 +11,7 @@ RC=""
 
 
 # XXX should be written at config time
+PROC=`basename $0`
 CORE=${CORE:-`which freepopsd`}
 FREEPOPS="$CORE -e updater.lua php"
 PREAMBLE="zenity --window-icon=/usr/share/pixmaps/freepops-updater-zenity.svg"
@@ -24,7 +25,7 @@ WARNING="--warning --title=Error --text"
 
 function parse_args() {
   if [ $# -ge 1 ]; then
-    echo -e "\nUsage: freepops-updater-zenity\n\nRun the command without any option\n"
+    echo -e "\nUsage: $PROC\n\nRun the command without any option\n"
     exit 1
   fi
 }
@@ -187,16 +188,20 @@ if [ -z `which zenity 2>/dev/null` ]; then
 	MESSAGE="'zenity' utility not found.
 Please install the zenity package."
 	if [ -z `which xmessage 2>/dev/null` ]; then
-		echo $MESSAGE; exit 1
+		echo $MESSAGE
+		exit 1
 	else
-		xmessage -center $MESSAGE; exit 1
+		xmessage -center $MESSAGE
+		exit 1
 	fi
 fi
 if [ ! -x $CORE ]; then
-	$PREAMBLE $WARNING="freepopsd not found"; exit 1
+	$PREAMBLE $WARNING="freepopsd not found"
+	exit 1
 fi
 if  [ `id -u` -ne 0 ]; then
-	$PREAMBLE $WARNING="You must run this tool as root"; exit 1
+	$PREAMBLE $WARNING="$PROC must be run as root"
+	exit 1
 fi
 
 main "$@"

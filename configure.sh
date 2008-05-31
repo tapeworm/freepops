@@ -12,9 +12,7 @@ Available options:
 	linux-gnutls	to compile on a linux host and install in /usr/local
 			using gnutls and not openssl
 	linux-slack	to compile on a linux slack box (installs in /usr)
-	osx-i386	to compile on a darwin host (Xcode 2.4.1 + custom expat)
-	osx-ppc		to compile on a darwin host (Xcode 2.4.1 + custom expat)
-	osx-static	to compile on a darwin host with some static libs
+	osx		to compile on a darwin host (sdk10.4u + custom expat)
 	obsd		to compile on a openbsd host
 	fbsd 		to compile on a freebsd host
 	solaris 	to compile on a solaris host
@@ -33,10 +31,6 @@ Flags (need $PKGCONFIG as provided in Debian):
 
 Flags (need fltk-config):
 	-fltk-ui        build the fltk updater user interface
-
-Flags:
-	-expat-lib-dir  looks for libexpat.a in this path (osx only), default
-	                is \$PWD/../lib/lib/
 
 EOT
 
@@ -73,7 +67,7 @@ FLTKCFLAGS=${FLTKCFLAGS:-""}
 FLTKLDFLAGS=${FLTKLDFLAGS:-""}
 MACHOARCH=${MACHOARCH:-""}
 LUAFLAGS=${LUAFLAGS:-""}
-LIBEXPAT_STATIC_PATH=${LIBEXPAT_STATIC_PATH:-$PWD/../lib/lib/}
+OSX_SDK=${OSX_SDK:-""}
 }
 
 set_linux() {
@@ -99,51 +93,20 @@ OS=Linux
 LUAFLAGS=" -DLUA_USE_LINUX "
 }
 
-set_osx_default() {
+set_osx() {
 set_default
 OS=Darwin
-CFLAGS="$CFLAGS -I/sw/include -DMACOSX"
-HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX"
+EXTRALIB_PREFIX=/Users/gares/freepops/
+OSX_SDK=/Developer/SDKs/MacOSX10.4u.sdk/
+OSXV=10.4
+MACHOARCH=" -arch i386 -arch ppc -isysroot $OSX_SDK -mmacosx-version-min=$OSXV"
+CFLAGS="$CFLAGS -I${EXTRALIB_PREFIX}include -DMACOSX"
+HCFLAGS="$HCFLAGS -I${EXTRALIB_PREFIX}include -DMACOSX"
 LUAFLAGS=" -DLUA_USE_MACOSX "
-}
-
-set_osx_i386(){
-set_osx_default
-MACHOARCH=" -arch i386 -isysroot /Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
-LDFLAGS="$LDFLAGS -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
-EXEEXTENSION=.i386-10.4
-}
-set_osx_ppc64(){
-set_osx_default
-MACHOARCH=" -arch ppc64 -isysroot /Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
-LDFLAGS="$LDFLAGS -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
-EXEEXTENSION=.ppc64-10.4
-}
-set_osx_x86_64(){
-set_osx_default
-MACHOARCH=" -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
-LDFLAGS="$LDFLAGS -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
-EXEEXTENSION=.x86_64-10.4
-}
-
-set_osx_ppc(){
-set_osx_default
-MACHOARCH=" -arch ppc -isysroot /Developer/SDKs/MacOSX10.3.9.sdk/ -mmacosx-version-min=10.3"
-LDFLAGS="$LDFLAGS -Wl,-syslibroot,/Developer/SDKs/MacOSX10.3.9.sdk/ -mmacosx-version-min=10.3"
-EXEEXTENSION=.ppc-10.3
-}
-
-set_osx_static() {
-set_default
-OS=Darwin-static
-CFLAGS="$CFLAGS -I/sw/include -DMACOSX -DOSXSTC"
-HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX -DOSXSTC"
-LDFLAGS="$LDFLAGS -L/sw/lib" 
-HLDFLAGS="$HLDFLAGS -L/sw/lib"
-LUAFLAGS=" -DLUA_USE_MACOSX "
-if [ `uname -r` = '8.8.3' ]; then
-	MACHOARCH=" -arch i386 -arch ppc -mmacosx-version-min=10.3"
-fi
+LDFLAGS="$LDFLAGS -Wl,-syslibroot,$OSX_SDK -mmacosx-version-min=$OSXV"
+EXEEXTENSION=".ppc-i386.$OSXV"
+FLTKLDFLAGS="-lfltk -framework Carbon -framework ApplicationServices"
+FLTKPOST="${EXTRALIB_PREFIX}bin/fltk-config --post"
 }
 
 set_solaris() {
@@ -322,20 +285,8 @@ case $1 in
 	fbsd)
 		set_fbsd
 	;;
-	osx-i386)
-		set_osx_i386
-	;;
-	osx-ppc)
-		set_osx_ppc
-	;;
-	osx-x86_64)
-		set_osx_x86_64
-	;;
-	osx-ppc64)
-		set_osx_ppc64
-	;;
-	osx-static)
-		set_osx_static
+	osx)
+		set_osx
 	;;
 	beos)
 		set_beos
@@ -398,10 +349,6 @@ while [ ! -z "$1" ]; do
 				FLTKLDFLAGS=" -lfltk -lintl -lgdi32 -lwsock32 -lole32 -luuid -L ../../src/ -lfp"
 			fi
 		;;
-		-expat-lib-dir)
-			shift
-			LIBEXPAT_STATIC_PATH="$1"
-		;;
 		*)
 			usage
 			exit 1
@@ -454,7 +401,8 @@ FLTKLDFLAGS=$FLTKLDFLAGS
 
 MACHOARCH=$MACHOARCH
 LUAFLAGS=$LUAFLAGS
+OSX_SDK=$SDK
+FLTKPOST=$FLTKPOST
 
-LIBEXPAT_STATIC_PATH=$LIBEXPAT_STATIC_PATH
 EOT
 

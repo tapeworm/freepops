@@ -96,7 +96,7 @@ Section "FreePOPs (required)"
   File "*.txt"
   File "*.vbs"
   File "*.ico"
-  File "LUA/config.lua"
+  ;File "LUA/config.lua"
   File /r "LUA"
   File /r "C"
   CreateDirectory $INSTDIR\LUA_UNOFFICIAL

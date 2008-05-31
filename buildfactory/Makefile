@@ -241,14 +241,8 @@ dist-osx-build: freepops-$(VERSION).tar.gz
 	$(H)[ -d _osx_/freepops-$(VERSION) ] || \
 		$(TAR) -xzf freepops-$(VERSION).tar.gz -C _osx_
 	$(H)cd _osx_/freepops-$(VERSION);\
-	  for X in i386 ppc; do \
-	    make realclean; \
-	    ./configure.sh osx-$$X -expat-lib-dir $$PWD/../../../../lib/lib/; \
-	    $(MAKE) all; \
-	    cp src/freepopsd.$$X* ..; \
-	  done
-	$(H)lipo -create -output _osx_/freepops-$(VERSION)/src/freepopsd \
-		_osx_/freepopsd.*
+	    ./configure.sh osx; \
+	    $(MAKE) all 
 	$(H)mkdir -p ../dist-osx/FreePOPs/doc
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua
 	$(H)mkdir -p ../dist-osx/FreePOPs/src/lua_unofficial
@@ -258,21 +252,14 @@ dist-osx-build: freepops-$(VERSION).tar.gz
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/browser
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/lxp
 	$(H)mkdir -p ../dist-osx/FreePOPs/modules/include/soap
-	$(H)#mkdir -p ../dist-osx/FreePOPs/script
 	$(H)cp osx/README-osx.txt ../dist-osx/FreePOPs/
-	$(H)#cp osx/Install_resources/FreePOPs \
-	       osx/Install_resources/StartupParameters.plist \
-	       osx/Install_resources/freepopsd.plist \
-	       osx/Install_resources/postflight \
-		../dist-osx/FreePOPs/script
 	$(H)cd _osx_/freepops-$(VERSION);\
 		cp COPYING AUTHORS ChangeLog config.lua \
 		../../../dist-osx/FreePOPs/
 	$(H)cd _osx_/freepops-$(VERSION)/doc;\
 		cp LP-FP-HOWTO.txt MANUAL.txt ../../../../dist-osx/FreePOPs/doc/
-	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd;\
+	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd.*;\
 		cp freepopsd ../../../../dist-osx/FreePOPs/src/
-	$(H)cd ../dist-osx/FreePOPs/;ln -s src/freepopsd freepopsd
 	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua
 	$(H)cd _osx_/freepops-$(VERSION)/modules/include;\
@@ -328,18 +315,6 @@ freepops-$(VERSION).tar.gz:
 	$(H)mv ../dist-tgz/freepops-$(VERSION).tar.gz .
 	$(H)rm -rf ../dist-tgz
 
-#dist-tgz-msvc: freepops-$(VERSION).tar.gz
-#	$(H)mkdir -p ../dist-tgz-msvc/
-#	$(H)cp freepops-$(VERSION).tar.gz ../dist-tgz-msvc
-#	$(H)cd ../dist-tgz-msvc; tar -xzf freepops-$(VERSION).tar.gz
-#	$(H)cd ../dist-tgz-msvc; rm freepops-$(VERSION).tar.gz
-#	$(H)cd ../dist-tgz-msvc; mv freepops-$(VERSION) freepops-msvc-$(VERSION)
-#	$(H)cd ../dist-tgz-msvc/freepops-msvc-$(VERSION); \
-#		./configure.sh win-msvc; make prepare
-#	$(H)cd ../dist-tgz-msvc; \
-#		zip -r freepops-msvc-$(VERSION).zip freepops-msvc-$(VERSION)/
-#	$(H)cd ../dist-tgz-msvc; rm -rf freepops-msvc-$(VERSION)
-	
 include openbsd/Makefile
 include slackware/Makefile
 include gentoo/Makefile

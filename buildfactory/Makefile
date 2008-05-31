@@ -68,7 +68,7 @@ dist-win-e-zip-step3:
 			cp -r $$D _win_/freepops/LUA/;\
 		fi;\
 	done
-	#$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/LUA/
+	$(H)cp _win_/freepops-$(VERSION)/config.lua _win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/buildfactory/win/freepopsd.vbs \
 		_win_/freepops/
 	$(H)cp _win_/freepops-$(VERSION)/buildfactory/win/README.FPM.*.txt \
@@ -129,8 +129,6 @@ dist-win-e-zip-step5:
 	
 	# end of installer 
 
-	$(H)cd _win_/freepops/; cp LUA/config.lua .
-	
 	$(H)cd _win_/freepops/; rm freepops-setup.ico
 	$(H)cd _win_/freepops/; rm freepops-remove.ico
 	

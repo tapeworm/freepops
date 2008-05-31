@@ -1,3 +1,4 @@
+- no more useless backup config.lua in windows package
 - added Debian package freepops-updater-gnome using zenity
 - freepopsd -e updater returns 1 on failure
 - freepops-updater-zenity added (Thanks Massimiliano Adamo) 

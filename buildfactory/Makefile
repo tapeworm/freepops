@@ -258,7 +258,7 @@ dist-osx-build: freepops-$(VERSION).tar.gz
 		../../../dist-osx/FreePOPs/
 	$(H)cd _osx_/freepops-$(VERSION)/doc;\
 		cp LP-FP-HOWTO.txt MANUAL.txt ../../../../dist-osx/FreePOPs/doc/
-	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd.*;\
+	$(H)cd _osx_/freepops-$(VERSION)/src;strip freepopsd;\
 		cp freepopsd ../../../../dist-osx/FreePOPs/src/
 	$(H)cd _osx_/freepops-$(VERSION)/src/lua;\
 		cp *.lua ../../../../../dist-osx/FreePOPs/src/lua

@@ -2,11 +2,14 @@ include ../../../config
 
 all: fmessage
 
+#H=@
+
 fmessage: fmessage.cpp
-	@echo Compiling $< -> $@
-	@g++ $(CFLAGS) $(LDFLAGS) $(MACHOARCH) -o $@ $< $(FLTKLDFLAGS)
-	@$(FLTKPOST) $@ 
-	@file $@
+	$(H)echo Compiling $< -> $@
+	$(H)g++ $(CFLAGS) $(LDFLAGS) $(MACHOARCH) -o $@ $< \
+		-L../../../../lib $(FLTKLDFLAGS)
+	$(H)$(FLTKPOST) $@ 
+	$(H)file $@
 
 clean:
 	@rm -f fmessage

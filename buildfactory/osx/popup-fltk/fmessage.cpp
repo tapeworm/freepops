@@ -7,11 +7,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 
-#ifdef MACOSX
-        #include "getopt1.h"
-#else
-        #include <getopt.h>
-#endif
+#include <getopt.h>
 
 #define min(a,b) ((a<b)?a:b)
 #define max(a,b) ((a<b)?b:a)

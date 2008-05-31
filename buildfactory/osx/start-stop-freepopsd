@@ -11,7 +11,7 @@ if [ -e pid.txt ]; then
 	rm -f pid.txt
 fi
 	
-src/freepopsd -b 127.0.0.1 &
+src/freepopsd.* -b 127.0.0.1 &
 
 echo $! > pid.txt
 if [ ! -e no_startup_message ]; then

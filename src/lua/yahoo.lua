@@ -11,7 +11,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.0a"
+PLUGIN_VERSION = "0.2.0b"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -23,7 +23,7 @@ PLUGIN_AUTHORS_CONTACTS =
          "ncocchiaro (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@yahoo.com", "@yahoo.ie", "@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
                   "@yahoo.co.in", "@yahoo.co.id", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
-                  "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com", "@yahoo.com.au",
+                  "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com", "@yahoo.com.au","yahoo.com.nz",
 }
 
 PLUGIN_PARAMETERS = {

@@ -2,7 +2,7 @@ include ../../../config
 
 all: fmessage
 
-#H=@
+H=@
 
 fmessage: fmessage.cpp
 	$(H)echo Compiling $< -> $@
@@ -12,4 +12,4 @@ fmessage: fmessage.cpp
 	$(H)file $@
 
 clean:
-	@rm -f fmessage
+	$(H)rm -f fmessage

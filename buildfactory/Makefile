@@ -294,10 +294,11 @@ dist-osx-finalyze: ../dist-osx/FreePOPs.app
 	$(H)cp osx/start-stop-freepopsd \
 		 ../dist-osx/FreePOPs.app/Contents/MacOS/
 	$(H)$(MAKE) -C osx/popup-fltk/ clean
-	$(H)cat osx/iceberg/FreePOPs/FreePOPs.packproj.in |\
-		sed 's/@@VERSION@@/$(VERSION)/' > \
-		osx/iceberg/FreePOPs/FreePOPs.packproj
-	$(H)freeze osx/iceberg/FreePOPs/FreePOPs.packproj
+	$(H)cd osx/iceberg/FreePOPs/;\
+		cat FreePOPs.packproj | sed 's/@@VERSION/$(VERSION)/' > \
+			FreePOPs.packproj.versioned;\
+		(freeze FreePOPs.packproj.versioned && rm FreePOPs.packproj.versioned) || \
+		(rm FreePOPs.packproj.versioned; false)
 	$(H)mv osx/iceberg/FreePOPs/build/freepops.pkg \
 		../dist-osx/freepops-$(VERSION).pkg
 	$(H)cd ../dist-osx; zip -r freepops-$(VERSION).pkg.zip \

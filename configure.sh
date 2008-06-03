@@ -12,7 +12,10 @@ Available options:
 	linux-gnutls	to compile on a linux host and install in /usr/local
 			using gnutls and not openssl
 	linux-slack	to compile on a linux slack box (installs in /usr)
-	osx		to compile on a darwin host (sdk10.4u + custom expat)
+	osx			to compile on a darwin host (sdk10.4u + custom expat:
+				you can export the EXTRALIB_PREFIX variable pointing
+				to the installation root of your expat installation)
+	osx-static	to compile on a darwin host (old osx versions)
 	obsd		to compile on a openbsd host
 	fbsd 		to compile on a freebsd host
 	solaris 	to compile on a solaris host
@@ -96,17 +99,21 @@ LUAFLAGS=" -DLUA_USE_LINUX "
 set_osx() {
 set_default
 OS=Darwin
-EXTRALIB_PREFIX=/Users/gares/freepops/
 OSX_SDK=/Developer/SDKs/MacOSX10.4u.sdk/
+EXTRALIB_PREFIX=${EXTRALIB_PREFIX:-/Users/gares/freepops/}
 OSXV=10.4
 MACHOARCH=" -arch i386 -arch ppc -isysroot $OSX_SDK -mmacosx-version-min=$OSXV"
 CFLAGS="$CFLAGS -I${EXTRALIB_PREFIX}include -DMACOSX"
 HCFLAGS="$HCFLAGS -I${EXTRALIB_PREFIX}include -DMACOSX"
 LUAFLAGS=" -DLUA_USE_MACOSX "
-LDFLAGS="$LDFLAGS -Wl,-syslibroot,$OSX_SDK -mmacosx-version-min=$OSXV"
+LDFLAGS="$LDFLAGS -L${EXTRALIB_PREFIX}lib -Wl,-syslibroot,$OSX_SDK -mmacosx-version-min=$OSXV"
 EXEEXTENSION=".ppc-i386.$OSXV"
 FLTKLDFLAGS="-lfltk -framework Carbon -framework ApplicationServices"
 FLTKPOST="${EXTRALIB_PREFIX}bin/fltk-config --post"
+}
+set_osx_static() {
+set_osx
+OS=Darwin-static
 }
 
 set_solaris() {

@@ -130,19 +130,12 @@ ifeq "$(OS)" "Windows"
 else
 ifeq "$(OS)" "Darwin"
 	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
-		-lm \
-	 	-lpthread -L/Users/gares/freepops/lib \
-		-L/usr/lib $(EXPAT_LD_FLAGS) -lcurl \
+		-lm -lpthread -L/usr/lib $(EXPAT_LD_FLAGS) -lcurl \
 		-lcrypto -ldl -lssl -lcrypto -lz 
 else
 ifeq "$(OS)" "Darwin-static"
-	OSXLIBDL=-ldl
-	ifneq "$(shell find /usr/local/lib/ -iname libdl.a)" ""
-	  OSXLIBDL=/usr/local/lib/libdl.a
-	endif
-	ifneq "$(shell find /sw/lib/ -iname libdl.a)" ""
-	  OSXLIBDL=/sw/lib/libdl.a
-	endif
+	OSXLIBDL=-ldl 
+	OSXLIBDL=/sw/lib/libdl.a 
 	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
 		$(OSXLIBDL) /sw/lib/libcurl.a \
 		/sw/lib/libssl.a /sw/lib/libcrypto.a \

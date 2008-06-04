@@ -13,6 +13,8 @@
  *		Enrico Tassi <gareuselesinge@users.sourceforge.net>
  ******************************************************************************/
 
+#include <strings.h>
+
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
@@ -28,7 +30,7 @@
 #include "session_lua.h"
 #include "lua-curl.h"
 #include "getdate_lua.h"
-#include "psock_lua.h"
+#include "luasocket.h"
 #include "base64_lua.h"
 #include "regularexp_lua.h"
 #include "lxplib.h"
@@ -47,7 +49,7 @@ static struct entry_t libs[LUABOX_LAST] = {
 		{"stringhack",luaopen_stringhack},
 		{"session",luaopen_session},
 		{"curl",luaopen_curl},
-		{"psock",luaopen_psock},
+		{"socket.core",luaopen_socket_core},
 		{"base64",luaopen_base64},
 		{"getdate",luaopen_getdate},
 		{"regularexp",luaopen_regularexp},
@@ -71,8 +73,29 @@ lua_State* luabox_genbox(unsigned long intial_stuff){
 	lua_getglobal(box,"package");
 	lua_getfield(box,-1,"preload");
 	for ( i = 0 ; i < LUABOX_LAST ; i++) {
+		/*
+		char *dot=NULL;
+		const char *name=libs[i].name;
+		int topop=0;
+		while(dot != NULL){
+			dot = index(name,'.');
+			if (dot != NULL){
+				topop++;
+				lua_pushlstring(box,name,dot-name);
+				lua_gettable(box,-2);
+				if (lua_isnil(box,-1)) {
+					lua_pushlstring(box,name,dot-name);
+					lua_newtable(box);
+					lua_settable(box,-3);
+					lua_pushlstring(box,name,dot-name);
+					lua_gettable(box,-2);
+				}
+				name=dot+1;
+			}
+		}*/
 		lua_pushcfunction(box,libs[i].open);
 		lua_setfield(box,-2,libs[i].name);
+		//lua_pop(box,topop);
 	}
 	luay_emptystack(box);		
 	luabox_addtobox(box,intial_stuff);

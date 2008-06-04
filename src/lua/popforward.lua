@@ -7,10 +7,6 @@
 --  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
--- ************************************************************************** --
--- WARNING        the bindings for psock in lua are really poor       WARNING --
--- ************************************************************************** --
-
 PLUGIN_VERSION = "0.0.4"
 PLUGIN_NAME = "POPforward"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
@@ -214,9 +210,7 @@ function user(pstate,username)
 	port = port or freepops.MODULE_ARGS.port
 
 	--here we are
-	pf_state.socket = psock.connect(host,port,psock.NONE)
-	--for debugging
-	--pf_state.socket = psock.connect(host,port,psock.ALL)
+	pf_state.socket = psock.connect(host,port,false)
 	if not pf_state.socket then
 		log.error_print("unable to connect")
 		return POPSERVER_ERR_NETWORK
@@ -405,6 +399,7 @@ function init(pstate)
 		PLUGIN_NAME.."' version '"..PLUGIN_VERSION.."' started!\n")
 		
 	freepops.export(pop3server)
+	require "psock"
 	
 	-- checks on globals
 	freepops.set_sanity_checks()

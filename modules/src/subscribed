@@ -45,5 +45,6 @@ MK_TEMPL_CTRIB=	lua \
 		getdate \
 		luaexpat \
 		luafilesystem \
+		luasocket \
 		luacurl
 

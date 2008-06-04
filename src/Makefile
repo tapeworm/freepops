@@ -86,7 +86,6 @@ LIBS=		crypto_lua	\
                 session_lua     \
                 pop3server_lua  \
                 pop3server      \
-		portablesocket_lua \
 		base64_lua	\
                 portablesocket  \
                 session         \
@@ -102,6 +101,7 @@ LIBS=		crypto_lua	\
 		luabind		\
 		$(LUAEXPAT)	\
 		$(LUAFILESYSTEM) \
+                $(LUASOCKET)      \
                 luay            \
                 $(LUALUA:%=%5.1) 
 		
@@ -136,11 +136,11 @@ else
 ifeq "$(OS)" "Darwin-static"
 	OSXLIBDL=-ldl 
 	OSXLIBDL=/sw/lib/libdl.a 
-	LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
-		$(OSXLIBDL) /sw/lib/libcurl.a \
-		/sw/lib/libssl.a /sw/lib/libcrypto.a \
-		$(LIBEXPAT_STATIC_PATH)/libexpat.a \
-		-L/usr/lib -lgetopt -lm -lpthread /sw/lib/libz.a
+        LDFLAGS+=-L../modules/lib $(addprefix -l,$(LIBSTOLINK)) \
+                $(OSXLIBDL) /sw/lib/libcurl.a \
+                /sw/lib/libssl.a /sw/lib/libcrypto.a \
+                /sw/lib/libexpat.a \
+                -L/usr/lib -lgetopt -lm -lpthread -lz /sw/lib/libdl.a
 else
 ifeq "$(OS)" "OpenBSD"
 	LIBSTOLINK+= getopt

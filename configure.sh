@@ -30,6 +30,7 @@ Flags (need $PKGCONFIG as provided in Debian):
 	-luaexpat       use system lua5.1-expat
 	-luacurl        use system lua5.1-curl 
 	-luafilesystem  use system lua5.1-filesystem 
+	-luasocket  	use system lua5.1-socket 
 	-lua            use system lua5.1
 
 Flags (need fltk-config):
@@ -172,61 +173,27 @@ local firstpref
 local defpref
 set_default
 firstpref=/usr/bin/i586-mingw32msvc-
-defpref=/usr/local/cross-tools/i386-mingw32msvc/bin/
-if test -x ${firstpref}gcc; then
-	CC=${firstpref}gcc
-	CXX=${firstpref}g++
-	DLLPATH=/usr/i586-mingw32msvc/bin/
-	INCLUDEPATH=/usr/i586-mingw32msvc/include/
-	LDFLAGSDL=
-	CURLNAME=curl
-else
-	CC=${defpref}gcc
-	CXX=${defpref}g++
-	DLLPATH=/usr/local/cross-tools/i386-mingw32msvc/bin/
-	INCLUDEPATH=/usr/local/cross-tools/i386-mingw32msvc/include/
-	LDFLAGSDL=-ldl
-	CURLNAME=curl
-fi
+CC=${firstpref}gcc
+CXX=${firstpref}g++
+DLLPATH=/usr/i586-mingw32msvc/bin/
+INCLUDEPATH=/usr/i586-mingw32msvc/include/
+LDFLAGSDL=
+CURLNAME=curl
 HCC=gcc
-if test -x ${firstpref}ld; then
-	LD=${firstpref}ld
-else
-	LD=${defpref}ld
-fi
+LD=${firstpref}ld
 HLD=ld
-if test -x ${firstpref}ar; then
-	AR=${firstpref}ar
-else
-	AR=${defpref}ar
-fi
+AR=${firstpref}ar
 HAR=ar
-if test -x ${firstpref}strip; then
-	STRIP=${firstpref}strip
-else
-	STRIP=${defpref}strip
-fi
+STRIP=${firstpref}strip
 HSTRIP=strip
-if test -x ${firstpref}ranlib; then
-	RANLIB=${firstpref}ranlib
-else
-	RANLIB=${defpref}ranlib
-fi
+RANLIB=${firstpref}ranlib
 HRANLIB=ranlib
-if test -x ${firstpref}windres; then
-	WINDRES=${firstpref}windres
-else
-	WINDRES=/usr/local/cross-tools/bin/i386-mingw32msvc-windres
-fi
+WINDRES=${firstpref}windres
 EXEEXTENSION=.exe
 SHAREDEXTENSION=.dll
 CFLAGS="$CFLAGS -DWIN32 -mwindows " # " -mms-bitfields"
 LDFLAGS="$LDFLAGS -lmsvcrt -lmingw32  -lwsock32 -mwindows " # "-mms-bitfields"
-if test -x ${firstpref}dlltool; then
-	DLLTOOL=${firstpref}dlltool
-else
-	DLLTOOL=${defpref}dlltool
-fi
+DLLTOOL=${firstpref}dlltool
 OS=Windows
 LUAFLAGS=" -DLUA_WIN"
 }
@@ -249,6 +216,7 @@ LUAEXPAT=luaexpat
 LUACURL=luacurl
 LUALUA=lua
 LUAFILESYSTEM=luafilesystem
+LUASOCKET=luasocket
 
 PKGCONFIG=${PKGCONFIG:-pkg-config}
 
@@ -346,6 +314,13 @@ while [ ! -z "$1" ]; do
 			CFLAGS="$CFLAGS `$PKGCONFIG lua5.1-filesystem --cflags`"
 			LDFLAGS="$LDFLAGS `$PKGCONFIG lua5.1-filesystem --libs`"
 		;;
+		-luasocket)
+			LUASOCKET=
+			HCFLAGS="$HCFLAGS `$PKGCONFIG lua5.1-socket --cflags`"
+			HLDFLAGS="$HLDFLAGS `$PKGCONFIG lua5.1-socket --libs`"
+			CFLAGS="$CFLAGS `$PKGCONFIG lua5.1-socket --cflags`"
+			LDFLAGS="$LDFLAGS `$PKGCONFIG lua5.1-socket --libs`"
+		;;
 		-fltk-ui)
 			FLTKUI=1
 			if [ "$OS" != "Windows" ]; then
@@ -401,6 +376,7 @@ LUAEXPAT=$LUAEXPAT
 LUACURL=$LUACURL
 LUALUA=$LUALUA
 LUAFILESYSTEM=$LUAFILESYSTEM
+LUASOCKET=$LUASOCKET
 
 FLTKUI=$FLTKUI
 FLTKCFLAGS=$FLTKCFLAGS

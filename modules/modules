@@ -1,4 +1,5 @@
 MODULES-Common= $(LUALUA)	\
+		$(LUASOCKET)	\
 		luay		\
 		luabind 	\
 		oscompatibility	\

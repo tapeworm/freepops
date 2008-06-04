@@ -7,9 +7,9 @@
 --  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.0.4"
+PLUGIN_VERSION = "0.0.5"
 PLUGIN_NAME = "POPforward"
-PLUGIN_REQUIRE_VERSION = "0.2.0"
+PLUGIN_REQUIRE_VERSION = "0.2.7"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=popforward.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

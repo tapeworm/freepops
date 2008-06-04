@@ -12,7 +12,7 @@ configure-stamp:
 	# Add here commands to configure the package.
 
 	rm -f config
-	./configure.sh linux-gnutls -lua -luafilesystem -luacurl -luaexpat -fltk-ui
+	./configure.sh linux-gnutls -lua -luafilesystem -luacurl -luaexpat -fltk-ui -luasocket
 
 	touch configure-stamp
 

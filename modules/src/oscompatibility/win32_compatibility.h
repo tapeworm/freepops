@@ -92,7 +92,8 @@ int win_vsnprintf(const char *format, va_list ap);
 				__result = vsnprintf(a,b,c,d);	\
 			__result; }))
 
-int inet_aton(const char *cp, struct in_addr *inp);
+#define inet_aton(a,b) inet_aton_w32(a,b)
+int inet_aton_w32(const char *cp, struct in_addr *inp);
 
 #endif
 

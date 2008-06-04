@@ -71,7 +71,7 @@ return NULL;
 }
 #endif
 
-int inet_aton(const char *cp, struct in_addr *inp){
+int inet_aton_w32(const char *cp, struct in_addr *inp){
 inp->s_addr = inet_addr(cp);
 return inp->s_addr != -1;
 }

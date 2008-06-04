@@ -1,0 +1,37 @@
+diff -ruN luasocket-2.0.2/Makefile luasocket-2.0.2-new/Makefile
+--- luasocket-2.0.2/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ luasocket-2.0.2-new/Makefile	2008-06-04 18:35:48.000000000 +0200
+@@ -0,0 +1,33 @@
++include $(CONFIG)
++
++H=@
++
++C= auxiliar.c buffer.c except.c inet.c io.c \
++	luasocket.c options.c select.c tcp.c \
++	timeout.c udp.c
++
++U_C = usocket.c
++W_C = wsocket.c
++
++all: src/libluasocket.a
++	$(H)echo -n
++
++src/libluasocket.a:
++	$(H)echo -n ' building luasocket... '
++	$(H)cd src ; 					\
++		$(CC) $(CFLAGS) -I $(PREFIX)/include $(MACHOARCH) -c $(C) ; 		\
++		if [ $(OS) = "Windows" ]; then \
++			$(CC) $(CFLAGS) -I $(PREFIX)/include $(MACHOARCH) -c $(W_C) ; 		\
++		else \
++			$(CC) $(CFLAGS) -I $(PREFIX)/include $(MACHOARCH) -c $(U_C) ; 		\
++		fi; \
++		$(AR) rc libluasocket.a *.o; 		\
++		$(RANLIB) libluasocket.a ;			\
++		rm -f *.o
++	$(H)echo "done."
++	$(H)cp src/libluasocket.a $(PREFIX)/lib
++	$(H)cp src/socket.lua $(PREFIX)/include
++	$(H)echo 'int luaopen_socket_core(lua_State*);'> $(PREFIX)/include/luasocket.h
++clean:
++	$(H)rm -f src/*.a src/*.o
++

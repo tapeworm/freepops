@@ -42,23 +42,27 @@
 #include "log.h"
 #define LOG_ZONE "LUABOX"
 
-struct entry_t { const char* name; int (*open)(lua_State*); }; 
+struct entry_t { 
+	const char* name_to_preload; 
+	const char* name_to_require; 
+	int (*open)(lua_State*); 
+}; 
 static struct entry_t libs[LUABOX_LAST] = {
-		{"pop3server",luaopen_pop3server},
-		{"mlex",luaopen_mlex},
-		{"stringhack",luaopen_stringhack},
-		{"session",luaopen_session},
-		{"curl",luaopen_curl},
-		{"socket.core",luaopen_socket_core},
-		{"base64",luaopen_base64},
-		{"getdate",luaopen_getdate},
-		{"regularexp",luaopen_regularexp},
-		{"lxp",luaopen_lxp},
-		{"log",luaopen_log},
-		{"crypto",luaopen_crypto},
-		{"lfs",luaopen_lfs},
-		{"dpipe",luaopen_dpipe},
-		{"stats",luaopen_stats},
+	{"pop3server","pop3server",luaopen_pop3server},
+	{"mlex","mlex",luaopen_mlex},
+	{"stringhack","stringhack",luaopen_stringhack},
+	{"session","session",luaopen_session},
+	{"curl","curl",luaopen_curl},
+	{"socket.core","socket",luaopen_socket_core},
+	{"base64","base64",luaopen_base64},
+	{"getdate","getdate",luaopen_getdate},
+	{"regularexp","regularexp",luaopen_regularexp},
+	{"lxp","lxp",luaopen_lxp},
+	{"log","log",luaopen_log},
+	{"crypto","crypto",luaopen_crypto},
+	{"lfs","lfs",luaopen_lfs},
+	{"dpipe","dpipe",luaopen_dpipe},
+	{"stats","stats",luaopen_stats},
 };
 
 lua_State* luabox_genbox(unsigned long intial_stuff){
@@ -73,29 +77,8 @@ lua_State* luabox_genbox(unsigned long intial_stuff){
 	lua_getglobal(box,"package");
 	lua_getfield(box,-1,"preload");
 	for ( i = 0 ; i < LUABOX_LAST ; i++) {
-		/*
-		char *dot=NULL;
-		const char *name=libs[i].name;
-		int topop=0;
-		while(dot != NULL){
-			dot = index(name,'.');
-			if (dot != NULL){
-				topop++;
-				lua_pushlstring(box,name,dot-name);
-				lua_gettable(box,-2);
-				if (lua_isnil(box,-1)) {
-					lua_pushlstring(box,name,dot-name);
-					lua_newtable(box);
-					lua_settable(box,-3);
-					lua_pushlstring(box,name,dot-name);
-					lua_gettable(box,-2);
-				}
-				name=dot+1;
-			}
-		}*/
 		lua_pushcfunction(box,libs[i].open);
-		lua_setfield(box,-2,libs[i].name);
-		//lua_pop(box,topop);
+		lua_setfield(box,-2,libs[i].name_to_preload);
 	}
 	luay_emptystack(box);		
 	luabox_addtobox(box,intial_stuff);
@@ -107,7 +90,7 @@ void luabox_addtobox(lua_State* box,unsigned long stuff){
 	for ( i = 0 ; i < LUABOX_LAST ; i++) {
 		int j = 1<<i;
 		if (j & stuff) {
-			luay_call(box,"s|","require", libs[i].name);
+			luay_call(box,"s|","require", libs[i].name_to_require);
 			luay_emptystack(box);		
 		}
 	}

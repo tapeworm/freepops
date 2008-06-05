@@ -1,10 +1,13 @@
+- osx build cleaned up to work on 10.5 with 10.4 SDK universal
+- added UTF8 encode/decode function to momer (thanks André Martin)
+- luasocket added to the preloaded modules, psock reimplemented on top of that
 - no more useless backup config.lua in windows package
 - added Debian package freepops-updater-gnome using zenity
 - freepopsd -e updater returns 1 on failure
-- freepops-updater-zenity added (Thanks Massimiliano Adamo) 
+- freepops-updater-zenity added (thanks Massimiliano Adamo) 
 - updated win32 gnutls version to 2.2.5 and curl to 7.18.1
 - simplified cross build using Debian equivs
-- added expansion of &#XX entities in mimer.lua (thanks André Marti)
+- added expansion of &#XX entities in mimer.lua (thanks André Martin)
 - replaced math.mod with math.fmod (the former is deprecated in lua5.1)
 - use luaL_register instead of luaL_openlib (thanks Daniel Black)
 - use /bin/sh in configure (thanks Spil)

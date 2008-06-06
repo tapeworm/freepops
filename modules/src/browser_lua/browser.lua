@@ -33,6 +33,12 @@
 -- Since the browser module doesn't know the result of the GET it 
 -- will not follow redirects. The mimer module uses this.<BR/>
 -- <BR/>
+-- <B>process_header(self,url,h)</B> :
+-- Force the browser to process the header string h as though
+-- the browser went to url and received te header.<BR/>
+-- Updates referer and cookies from header h and returns 1,newurl if 3xx code.
+-- For use with pipe_uri_with_header.<BR/>
+-- <BR/>
 -- <B>post_uri(uri,post,exhed)</B> : returns string,err and takes the uri in 
 -- "http://" form, the post data in "name=val&..." form 
 -- (you may need to urlescape it by hand), exhed<BR/>
@@ -194,6 +200,7 @@ end
 -- adds dirname(u.path) .. / .. location if needed
 function Hidden.adjust_path(l,u,location)
 	local function clean_2_slash(s)
+		-- Change made by Kevin Edwards
 		return (string.gsub(s,"//+","/"))
 	end
 	local function dirname(path)
@@ -490,7 +497,7 @@ function Private.get_head_and_body(self,url,exhed)
 	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
 
 	return Hidden.continue_or_return(rc,err,{gl_h,gl_b},
-		Private.get_uri,self,Hidden.mangle_location(self,err),exhed)
+		Private.get_head_and_body,self,Hidden.mangle_location(self,err),exhed)
 end
 
 function Private.custom_get_uri(self,url,custom,exhed)
@@ -581,6 +588,35 @@ function Private.get_head(self,url,exhed,fallback)
 		Private.get_head,self,Hidden.mangle_location(self,err),exhed)
 end
 
+function Private.get_head_raw(self,url,exhed,fallback)
+	local gl_b,gl_h = {},{}
+	
+	self.curl:setopt(curl.OPT_HTTPGET,1)
+	self.curl:setopt(curl.OPT_CUSTOMREQUEST,"HEAD")
+	self.curl:setopt(curl.OPT_NOBODY,1)
+	
+	Hidden.build_header(self,url,exhed)
+	
+	local rc,err = Hidden.perform(self,url,gl_h,gl_b)
+	
+	self.curl:setopt(curl.OPT_NOBODY,0)
+
+	-- since some server do not implement it we try the last thing
+	if rc == nil and fallback then
+		gl_b,gl_h = {},{}
+		self.curl:setopt(curl.OPT_HTTPGET,1)
+		self.curl:setopt(curl.OPT_CUSTOMREQUEST,"GET")
+		Hidden.build_header(self,url,{"Range: bytes=0-1"})
+		
+		rc,err = Hidden.perform(self,url,gl_h,gl_b)
+	end
+
+    -- NOTE: rather than passing rc, we just set it to Hidden.DONE, so that
+    --  no redirect occurs.
+	return Hidden.continue_or_return(Hidden.DONE,err,gl_h,
+		Private.get_head,self,Hidden.mangle_location(self,err),exhed)
+end
+
 function Private.pipe_uri(self,url,cb,exhed) 
 	local gl_h = {}
 	
@@ -606,6 +642,12 @@ function Private.pipe_uri_with_header(self,url,cb_h,cb_b,exhed)
 	return Hidden.continue_or_return(rc,err,{""},
 		 Private.pipe_uri_with_header,self,
 		 Hidden.mangle_location(self,err),cb_h,cb_b,exhed)
+end
+
+function Private.process_header(self,url,h)
+	local gl_h = {h}
+	Hidden.cookie_and_referer(self,url,gl_h)
+	return Hidden.parse_header(self,gl_h,url)
 end
 
 function Private.show(self)

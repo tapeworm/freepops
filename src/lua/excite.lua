@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.5"
+PLUGIN_VERSION = "0.0.5a"
 PLUGIN_NAME = "excite"
 PLUGIN_REQUIRE_VERSION = "0.0.99"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -338,6 +338,10 @@ function downloadMsg(pstate, msg, nLines, data)
     -- Lines Received - Not really used for anything
     --
     nLinesReceived = 0,
+	
+	-- Buffer of last characters sent to the client.
+	--
+	strBuffer = nil,
   }
 	
   -- Define the callback
@@ -351,6 +355,11 @@ function downloadMsg(pstate, msg, nLines, data)
     -- An empty message.  Throw an error
     --
     return POPSERVER_ERR_NETWORK
+  end
+
+  if (cbInfo.strBuffer ~= "\r\n") then
+	log.dbg("Message doesn't end in CRLF, adding to prevent client timeout.")
+	popserver_callback("\r\n\0", data)
   end
 
   return POPSERVER_ERR_OK
@@ -395,6 +404,7 @@ function downloadMsg_cb(cbInfo, data)
 
     -- End the strings properly
     --
+	cbInfo.strBuffer = string.sub(body, -2, -1)
     body = cbInfo.strHack:dothack(body) .. "\0"
 	--log.dbg ("Msg ::" ..body)
     -- Send the data up the stream

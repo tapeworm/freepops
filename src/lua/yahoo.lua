@@ -2,7 +2,7 @@
 --  FreePOPs @yahoo.com webmail interface
 --  
 --  Released under the GNU/GPL license
---  Written by Russell Schwager <russells@despammed.com>
+--  Written by Russell Schwager <russell822@yahoo.com>
 --  yahoo.it added by Nicola Cocchiaro <ncocchiaro@users.sourceforge.net>
 --  yahoo.ie added by Bruce Williamson <aztrix@yahoo.com>
 --  Contributions by Przemyslaw Wroblewski <przemyslaw.wroblewski@gmail.com>
@@ -11,7 +11,10 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.0b"
+local _DEBUG = false
+local DBG_LEN = nil -- 500
+
+PLUGIN_VERSION = "0.2.1"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -19,11 +22,11 @@ PLUGIN_URL = "http://www.freepops.org/download.php?module=yahoo.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager","Nicola Cocchiaro"}
 PLUGIN_AUTHORS_CONTACTS = 
-	{"russells (at) despammed (.) com",
+	{"russell822 (at) yahoo (.) com",
          "ncocchiaro (at) users (.) sourceforge (.) net"}
 PLUGIN_DOMAINS = {"@yahoo.com", "@yahoo.ie", "@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
                   "@yahoo.co.in", "@yahoo.co.id", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
-                  "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com", "@yahoo.com.au","yahoo.co.nz",
+                  "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com", "@yahoo.com.au", "@yahoo.co.nz",
 }
 
 PLUGIN_PARAMETERS = {
@@ -126,7 +129,7 @@ local globals = {
 
   -- Get the mail server for Yahoo
   --
-  strRegExpMailServer = '(http://[^/]+/)ym/',
+  strRegExpMailServer = '(http://[^/]+/)([my][mc])/',
   
   -- Redirect site on login
   --
@@ -138,7 +141,7 @@ local globals = {
 
   -- Get the crumb value that is needed for deleting messages and emptying the trash
   --
-  strRegExpCrumb = '<input type=hidden name=".crumb" value="([^"]+)">',
+  strRegExpCrumb = '<input.-name="[%.m]crumb" value="([^"]+)">',
 
   -- Delete Form hidden items
   --
@@ -147,7 +150,7 @@ local globals = {
 
   -- Mark unread url
   -- 
-  strMsgMarkUnreadPat = '<a href="/(ym[^"]*UNR=1[^"]*)">',
+  strMsgMarkUnreadPat = '<a href="/([my][cm][^"]*UNR=1[^"]*)">',
 
   -- Pattern to determine if we have no messages.  If this is found, we have messages.
   --
@@ -155,16 +158,17 @@ local globals = {
 
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLineLitPattern = ".*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
-  strMsgLineAbsPattern = "O<O>O<X>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
-
+  strMsgLineLitPattern = ".*<td>[.*]{div}[.*]{h2}.*<a>.*</a>[.*]{/h2}[.*]{/div}.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
+  strMsgLineAbsPattern = "O<O>[O]{O}[O]{O}O<X>O<O>[O]{O}[O]{O}O<O>O<O>O<O>O<O>X<O>O<O>",
+    
   -- MSGID Pattern
   -- 
   strMsgIDPattern = 'MsgId=([^&]*)&',
+  strMsgIDMCPattern = 'mid=([^&]*)&',
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
-  strMsgListPrevPagePattern = '<a href="/(ym[^"]*previous=1[^"]*)">',
+  strMsgListPrevPagePattern = '<a href="/([my][cm][^"]*previous=1[^"]*)">',
 
   -- Pattern for emptying all
   --
@@ -188,12 +192,18 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "%sym/ShowFolder?box=%s&Npos=%d&Nview=%s&view=%s&order=up&sort=date&reset=1&Norder=up",
-  strCmdMsgView = "%sya/download?box=%s&PRINT=1&Nhead=f&MsgId=%s&bodyPart=%s",
-  strCmdMsgWebView = "%sym/ShowLetter?box=%s&MsgId=%s",
-  strCmdEmptyTrash = "%sym/ShowFolder?ET=1&", 
-  strCmdEmptyBulk = "%sym/ShowFolder?EB=1&", 
-  strCmdUnread = "%sym/ShowLetter?box=%s&MsgId=%s&.crumb=%s&UNR=1",
+  strCmdMsgList = "%s%s/ShowFolder?box=%s&Npos=%d&Nview=%s&view=%s&order=down&sort=date&reset=1&Norder=up",
+  strCmdMsgListMC = "%s%s/showFolder?fid=%s&startMid=%s&ymv=0&&sort=date&order=down&filterBySelect=%s&filterBySelect=%s&prefNumOfMid=500",
+  strCmdMsgView = "%sya/download?box=%s&MsgId=%s&bodyPart=%s&download=1&YY=38663&y5beta=yes&y5beta=yes&order=down&sort=date&pos=0&view=a&head=b&DataName=&tnef=&Idx=0",
+  strCmdMsgWebView = "%s%s/ShowLetter?box=%s&MsgId=%s",
+  strCmdMsgWebViewMC = "%s%s/showMessage?fid=%s&midIndex=0&mid=%s&eps=&f=1&",
+  strCmdEmptyTrash = "%s%s/ShowFolder?ET=1&", 
+  strCmdEmptyTrashMC = "%s%s/showFolder?Etrash=1&",
+  strCmdDeleteMC = "%s%s/showFolder?fid=%s&top_bpress_delete=Delete&top_mark_select=0&top_move_select=&mcrumb=",
+
+  strCmdEmptyBulk = "%s%s/ShowFolder?EB=1&", 
+  strCmdEmptyBulkMC = "%s%s/showFolder?Ebulk=1&",
+  strCmdUnread = "%s%s/ShowLetter?box=%s&MsgId=%s&.crumb=%s&UNR=1",
 
   -- Emails to list - These define the filter on the messages to grab
   --
@@ -240,7 +250,7 @@ local globals = {
   strSoapCmd = "%s%s?m=%s&wssid=%s&appid=YahooMailRC", 
   --strCmdAttach = "%sya/download?fid=%s&mid=%s&pid=2&tnef=&YY=189019855&newid=1&clean=0&inline=1",
   strCmdAttach = "%sya/download?fid=%s&mid=%s&pid=%s&tnef=&clean=0&redirectURL=%sdc/virusresults.html%%3Ffrom%%3Ddownload_response%%26ui%%3Diframe%%26YY%%3D1163030279984",
-
+  
 --"%sym/cgdownload/?box=%s&MsgId=%s&bodyPart=%s&download=1",
 --"%sya/download?fid=%s&mid=%s&pid=%s&tnef=&clean=0&",                   
 
@@ -278,6 +288,7 @@ internalState = {
   strPassword = nil,
   browser = nil,
   strMailServer = nil,
+  strFileServer = nil,
   strDomain = nil,
   strMBox = nil,
   strIntFlag = nil,
@@ -289,6 +300,7 @@ internalState = {
   msgids = {},
   strStatCache = nil,
   statLimit = nil,
+  classicType = nil,
 
   -- New Interface pieces
   --
@@ -297,10 +309,120 @@ internalState = {
   strGSS = nil,
 }
 
+
+
+
 -- ************************************************************************** --
---  Temporary functions for debugging and fixing CRLF bug
+--  Utility functions
 -- ************************************************************************** --
 
+-- copies all elements from src into dest
+function copy_from(dest, src)
+  for i, v in pairs(src) do
+    dest[i] = v
+  end
+end
+
+-- split str into parts separated by div
+function split(str, div)
+  if (div=='') then return false end
+  local pos,arr = 0,{}
+  -- for each divider found
+  for st,sp in function() return string.find(str,div,pos,true) end do
+    table.insert(arr,string.sub(str,pos,st-1)) -- chars left of divider
+    pos = sp + 1 -- sp points to the last character in the divider
+  end
+  table.insert(arr,string.sub(str,pos)) -- chars right of divider
+  return arr
+end
+
+function quote_string(val) return string.format("%q",val) end
+function get_nil_string() return "nil" end
+
+function table_to_string(t, depth)
+  local result
+  if (depth >= 0) then -- and getmetatable(val) == nil then
+    local tmp = {}
+    table.foreach( t,
+      function (k,v)
+        table.insert(tmp, tostr(k, depth-1) .. "=" .. repr(v, depth-1))
+      end
+    )
+    result = "{" .. table.concat(tmp,", ") .. "}"
+  else
+    result = tostring(val)
+  end
+  return result
+end
+
+-- Create a literal string representation of the given object
+local repr_map = {
+  ["table"] = table_to_string
+  ,["string"] = quote_string
+  ,["nil"] = get_nil_string
+  ,["number"] = tostring
+  ,["boolean"] = tostring
+  ,["default"] = tostring
+}
+
+local repr_max_depth=2
+function repr( val, depth )
+  local val_type = type(val)
+  local func
+  depth = depth or repr_max_depth
+  func = repr_map[val_type] or repr_map["default"]
+  return func(val, depth)
+end
+
+-- Convert any object to a string
+-- Unlike repr, tostr is idempotent and does not add double quotes to a string.
+function tostr( val )
+  if type(val) == "string" then
+    return val
+  end
+  return repr(val)
+end
+
+
+
+-- ************************************************************************** --
+--  CRLF string functions
+-- ************************************************************************** --
+
+-- Returns "data" with "{LF}" prefixing all \n and "{CR}" prefixing all \r,
+--   so hex viewing for those bytes isn't necessary.
+--
+function showCRLF( data )
+  local str = data
+  if str then
+    str = string.gsub(str, "\n", "{LF}\n")
+    str = string.gsub(str, "\r", "{CR}\r")
+  end
+  return str
+end
+
+-- Returns a new string with all single \r and \n replaced by \r\n
+function fixCRLF( str )
+  if str then
+    -- temporarily convert proper ending to \n
+    str = string.gsub(str, "\r\n", "\n")
+    str = string.gsub(str, "\r", "\n") -- should we worry about embedded \r?
+    str = string.gsub(str, "\n", "\r\n")
+    
+    -- this alternative is actually a bit slower:
+--    str = string.gsub(str, "([^\r]-)\n", "%1\r\n")
+  end
+  return str
+end
+
+
+
+-- ************************************************************************** --
+--  Logging functions
+-- ************************************************************************** --
+
+-- We intercept log.dbg, log.err, etc. to add more detailed logging to 
+--  the raw log file in addition to the usual log.txt.
 -- Raw Logging does not modify the given log line or data in any way:
 --   i.e. the strings are not truncated and any CR / LFs are written unchanged.
 --   The current date and time is also prefixed.
@@ -314,29 +436,47 @@ internalState = {
 
 -- Set to true to enable Raw Logging
 --
-local ENABLE_LOGRAW = false
-local LOGRAW_DBG_FIRST = true
+local ENABLE_LOGRAW = _DEBUG
 
 -- The platform dependent End Of Line string
--- e.g. this should be changed to "\n" under UNIX, etc.
+-- e.g. this can be changed to "\n" under UNIX, etc.
+-- this is presently just used for the log file.
 local EOL = "\r\n"
 
--- The raw logging function
+-- The raw logging functions
 --
 log = log or {} -- fast hack to make the xml generator happy
-log.raw = function ( line, data )
-  if LOGRAW_DBG_FIRST then
-    log.dbg( line )
-  end
-  
-  if not ENABLE_LOGRAW then
-    return
-  end
+log.err = log.error_print
+-- logging functions:
+log.kinds = { "err", "dbg", "warn", "say" }
 
+-- keep a copy of the original log function table
+local log_original = {}
+
+-- modify the log table to reroute calls to do_log
+function use_do_log()
+  copy_from(log_original, log)
+  -- redirect log functions to use do_log
+  for i,kind in pairs(log.kinds) do
+    log[kind] = function( line, data )
+      log_do_log(kind, line, data)
+    end
+  end
+  -- use log.err but also intercept log.error_print
+  log.error_print = log.err
+end
+
+-- NOTE: the standard log functions will not accept a second data
+--  parameter.  e.g. something like log.dbg(line, data) will cause
+--  lua to crash with "L: lua stack image...", so we must always
+--  install replacements.
+use_do_log()
+
+log_raw_write = function( line, data )
   local out = assert(io.open("log_raw.txt", "ab"))
-  out:write( EOL .. os.date("%c") .. " : " )
-  out:write( line )
-  if data ~= nil then
+  out:write( EOL .. os.date("%c") .. ": " )
+  out:write( tostr(line) )
+  if (data ~= nil) and (data ~= "") then
     out:write( EOL .. "--------------------------------------------------" .. EOL )
     out:write( data )
     out:write( EOL .. "--------------------------------------------------" )
@@ -344,60 +484,44 @@ log.raw = function ( line, data )
   assert(out:close())
 end
 
--- Returns "data" with "{LF}" prefixing all \n and "{CR}" prefixing all \r,
---   so hex viewing for those bytes isn't necessary.
---
-function showCRLF( data )
-  local str = data
-  
-  if (str == nil) then
-    return str
+-- central logging function
+log_do_log = function( kind, line, data )
+  -- intercepting the logger calls adds stack frames, causing
+  --  the currentline in log.txt to be incorrect, so we add
+  --  the actual line number as a prefix.
+  -- 1=this, 2=caller (generated), 3=caller's caller (source)
+  local info = debug.getinfo(3, "l") -- l=currentline, S=info.short_src
+  local prefix = ""
+  if info then
+    prefix = "["..kind.."@"..tostr(info.currentline).."] "
+  else
+    prefix = "["..kind.."@?] "
   end
 
-  str = string.gsub(str, "\n", "{LF}\n")
-  str = string.gsub(str, "\r", "{CR}\r")
+--  if data ~= nil then
+--    data = tostr(data)
+--    if DBG_MAX_LEN and DBG_MAX_LEN >= 0 then
+--      data = data:sub(1,DBG_MAX_LEN)
+--    end
+--  end
+
+  -- write all data to log_raw.txt
+  if ENABLE_LOGRAW then
+    log_raw_write( prefix .. line, data )
+  end
+
+  -- call original logger to write to FreePOPs log.txt
+  func = log_original[kind]
+  func( prefix .. line )
+end
+
+function dbg_limit(str)
+  if (str ~= nil) and (type(str) == "string") and DBG_LEN and (DBG_LEN >= 0) then
+    str = string.sub(str,1,DBG_LEN)
+  end
   return str
 end
 
--- Returns "data" with all single \r and \n replaced by \r\n
---
-function fixCRLF( data )
-  local str = data
-
-  if (str == nil) then
-    return str
-  end
-
-  -- temporarily convert proper ending to \n
-  --
-  str = string.gsub(str, "\r\n", "\n")
-  str = string.gsub(str, "\r", "\n") -- should we worry about embedded \r?
-  str = string.gsub(str, "\n", "\r\n")
-  return str
-end
-
--- Convert any object to a string
---
-function tostr( val )
-  local val_type = type(val)
-  if val_type == "table" and getmetatable(val) == nil then
-    local tmp = {}
-    table.foreach(val,function (k,v)
-      local s = k .. "=" .. tostr(v)
-      table.insert(tmp,s)
-    end)
-    return "{" .. table.concat(tmp) .. "}"
-  elseif val_type == "number" then
-    return string.format("%d",val)
-  elseif val_type == "string" then
-    return string.format("%q",val)
-  elseif val_type == "boolean" then
-    return tostring(val)
-  elseif val == nil then
-    return "nil"
-  end
-  return val_type .. " : " .. tostring(val)
-end
 
 -- ************************************************************************** --
 --  Helper functions
@@ -434,9 +558,8 @@ end
 function checkForNewGUI(browser, body)
   local server = string.match(browser:whathaveweread(), globals.strRegExpMailServerNew)
   if (server ~= nil) then 
-    log.dbg("Detected New Version of the Yahoo interface!\n")
-    log.raw("Detected New Version of the Yahoo interface!\n", browser:whathaveweread())
-    log.dbg("Yahoo Mail Server: " .. server .. "\n")
+    log.dbg("Detected New Version of the Yahoo interface!", browser:whathaveweread())
+    log.dbg("Yahoo Mail Server: " .. server)
 
     internalState.strMailServer = server
     internalState.bNewGUI = true
@@ -452,10 +575,10 @@ function loginYahoo()
   -- Check to see if we've already logged in
   --
 
-  log.raw( "Entering loginYahoo()" )
+  log.dbg( "Entering loginYahoo()" )
 
   if internalState.loginDone then
-    log.raw( "internalState.loginDone" )
+    log.dbg( "internalState.loginDone" )
     return POPSERVER_ERR_OK
   end
 
@@ -503,9 +626,9 @@ function loginYahoo()
 
   -- Login to Yahoo
   --
-  log.raw( "login get: " .. globals.strLoginPage )
+  log.dbg( "login get: " .. globals.strLoginPage )
   local body, err = browser:get_uri(globals.strLoginPage)
-  log.raw( "login response: err=" .. tostr(err), body )
+  log.dbg( "login response: err=" .. tostr(err), dbg_limit(body) )
   
   if body ~= nil then
     challengeCode = string.match(body, globals.strLoginChallenge)
@@ -525,23 +648,23 @@ function loginYahoo()
     post = string.format(globals.strLoginPostData, intFlag, username, password, uVal)
   end
 
-  log.raw( "login challenge post: \nurl=" .. url .. " \npost=" .. post )
+  log.dbg( "login challenge post: \nurl=" .. url .. " \npost=" .. post )
   body, err = browser:post_uri(url, post)
-  log.raw( "login challenge response: err=" .. tostr(err), body )
+  log.dbg( "login challenge response: err=" .. tostr(err), dbg_limit(body) )
 
   -- Check for redirect
   --
   local str = string.match(body, globals.strRedirectNew)
   if (str ~= nil) then
-    log.raw( "login redirect get: " .. str )
+    log.dbg( "login redirect get: " .. str )
     body, err = browser:get_uri(str)
-    log.raw( "login redirect response: err=" .. tostr(err), body )
+    log.dbg( "login redirect response: err=" .. tostr(err), dbg_limit(body) )
   end
 
   -- Check for NewGUI and Try Beta
   local bNewGui = false
   local url = browser:whathaveweread()
-  log.raw("browser:whathaveweread()=" .. url)
+  log.dbg("browser:whathaveweread()=" .. url)
   str = string.match(url, '/dc/try_mail')
   if (str == nil) then
     -- it's not a "try" page.  Check if its the new gui.
@@ -552,9 +675,9 @@ function loginYahoo()
   else
     -- it is a try page, so reply, no thanks
     post = "newStatus=1"
-    log.raw( "try beta post: \nurl=" .. url .. " \npost=" .. post )
+    log.dbg( "try beta post: \nurl=" .. url .. " \npost=" .. post )
     body, err = browser:post_uri(url, post)
-    log.raw( "try beta response: err=" .. tostr(err), body )
+    log.dbg( "try beta response: err=" .. tostr(err), dbg_limit(body) )
   end
 
   -- Do some error checking
@@ -562,15 +685,13 @@ function loginYahoo()
   if (body == nil) then
     -- No connection
     --
-    log.raw( "Login Failed: body == nil" )
-    log.error_print("Login Failed: Unable to make connection")
+    log.err( "Login Failed: Unable to make connection (body == nil)" )
     return POPSERVER_ERR_NETWORK
   end
 
   local str = string.match(body, '<input type="text" id="secword" name=".secword"')
   if (str ~= nil) then
-    log.raw("Login Failed: Yahoo is using an image verification.")
-    log.error_print("Login Failed: Yahoo is using an image verification.  Please login through the web.")
+    log.err("Login Failed: Yahoo is using an image verification.  Please login through the web.")
     return POPSERVER_ERR_NETWORK
   end
 
@@ -578,21 +699,21 @@ function loginYahoo()
   -- 
   local str = string.match(body, globals.strRetLoginBadPassword)
   if str ~= nil then
-    log.raw("Returned Page saying invalid password: ", body)
-    log.error_print("Login Failed: Invalid Password")
+    log.err("Returned Page saying invalid password: ", body)
     return POPSERVER_ERR_AUTH
   end
 
   -- Extract the mail server
   --
-  local str = string.match(body, globals.strRegExpMailServer)
-  if str == nil then
-    log.error_print("Login Failed: Unable to find mail server")
-    log.raw("Login Failed: Unable to find mail server url in body.")
+  local lastUrl = browser:whathaveweread()
+  local str, version = string.match(lastUrl, globals.strRegExpMailServer)
+  if str == nil or version == nil then
+    log.err("Login Failed: Unable to find mail server url in body.")
     return POPSERVER_ERR_UNKNOWN
   else
     internalState.strMailServer = str
-    log.raw("internalState.strMailServer = " .. str)
+	internalState.classicType = version
+    log.dbg("internalState.strMailServer = " .. str)
   end
 
   -- If we are using HTTPS, we need to look for the meta-refresh link
@@ -600,9 +721,9 @@ function loginYahoo()
   if (challengeCode ~= nil) then
     str = string.match(body, globals.strRegExpMetarefresh)
     if (str ~= nil) then
-      log.raw("HTTPS meta-refresh get: " .. str)
+      log.dbg("HTTPS meta-refresh get: " .. str)
       body, err = browser:get_uri(str)
-      log.raw("HTTPS meta-refresh response: err=" .. tostr(err), body)
+      log.dbg("HTTPS meta-refresh response: err=" .. tostr(err), dbg_limit(body))
       
       -- Here's the other check (SSL) for the beta interface
       --
@@ -612,10 +733,20 @@ function loginYahoo()
       end
     end
   end
+  
+  if (internalState.classicType == "mc") then
+    str = string.match(body, 'var classicHost = "([^"]+)";')
+	if (str ~= nil) then
+	  internalState.strFileServer = str
+	else 
+      internalState.strFileServer = string.gsub(internalState.strMailServer, "mc", "f")
+	end
+    log.dbg("Yahoo download Server: " .. internalState.strFileServer)
+  end
     
   -- DEBUG Message
   --
-  log.dbg("Yahoo Mail Server: " .. internalState.strMailServer .. "\n")
+  log.dbg("Yahoo Mail Server: " .. internalState.strMailServer)
 
   -- Note that we have logged in successfully
   --
@@ -623,8 +754,8 @@ function loginYahoo()
 	
   -- Debug info
   --
-  log.raw("Created session for " .. 
-    internalState.strUser .. "@" .. internalState.strDomain .. "\n")
+  log.dbg("Created session for " .. 
+    internalState.strUser .. "@" .. internalState.strDomain)
 
   -- Return Success
   --
@@ -638,8 +769,7 @@ function loginNewYahoo(browser, body)
   --
   local str = string.match(body, globals.strRegExpCrumbNew)
   if str == nil then
-    log.error_print("Yahoo - unable to parse out crumb value.  Deletion will fail.")
-    log.raw("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: ", body)
+    log.err("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: ", tostr(body))
     return POPSERVER_ERR_UNKNOWN
   end
   log.dbg("Crumb Value: " .. str)
@@ -649,9 +779,8 @@ function loginNewYahoo(browser, body)
   --
 --  local str = string.match(body, globals.strRegExpWebSrvUrl)
 --  if str == nil then
---    log.error_print("Yahoo - unable to parse out web service Url.")
---    log.raw("Yahoo - unable to parse out web service value.  Body: " .. 
---      body)
+--    log.dbg("Yahoo - unable to parse out web service Url.  Body: " .. 
+--      tostr(body))
 --    return POPSERVER_ERR_UNKNOWN
 --    str = "ws/mail/v1/soap"
 --  end
@@ -672,12 +801,142 @@ function loginNewYahoo(browser, body)
   -- Debug info
   --
   log.dbg("Created session for " .. 
-    internalState.strUser .. "@" .. internalState.strDomain .. "\n")
+    internalState.strUser .. "@" .. internalState.strDomain)
 
   -- Return Success
   --
   return POPSERVER_ERR_OK
 end
+
+
+-- converts the given regex str to a case insensitive version
+function case_insensitive_regex(str)
+  local re = str:gsub("%a",
+    function (c)
+      return "["..c:upper()..c:lower().."]"
+    end )
+  return re
+end
+
+-- case insensitive regular expressions
+local re_ctype_boundary = case_insensitive_regex('\nContent%-Type: multipart.-boundary="+(.-)"+[\r\n]')
+local re_cdisp = case_insensitive_regex('(Content%-Disposition')..':%s.-)\r\n'
+local re_ctype = case_insensitive_regex('(Content%-Type')..':%s.-)\r\n'
+
+function yahoo_classic_get_header(browser, hdrUrl)
+  local headers, http_head, http_body, err
+  local bFail = true
+
+  log.dbg("hdrUrl = " .. hdrUrl)
+
+  for i=1,3 do
+    log.dbg("Getting header... attempt # "..tostr(i))
+--    headers, err = browser:get_uri(hdrUrl)
+    http_head, http_body, err = browser:get_head_and_body(hdrUrl)
+    log.dbg("get_header i="..tostr(i)..", http_head=", tostr(http_head))
+    headers = http_body
+  
+    if headers then
+      -- Remove the SMTP envelope From_ line (Yahoo's mbox format) if it's first
+      if (string.sub(headers,1,5) == "From ") then
+        headers = string.gsub(headers, "From .-\n", "", 1);
+      end
+    
+      -- sanity check: verify the first field of the header has the proper format:
+      --  Field-Name: Field-Value
+      --    Field-Value-Continued
+      local s, e, field_name, field_value
+      s, e, field_name, field_value = headers:find("^([%w%-_]+):[ ]*(.-)\n%w", 1)
+      -- require:
+      -- 1. first line in mail header is a valid field, and
+      -- 2. Content-Disposition in http_head
+      -- could also check redirect url
+      if (s == nil) or (string.match(http_head, re_cdisp) == nil) then
+        log.err("*** INVALID e-mail header! i="..tostr(i)..", err="..tostr(err)..", headers=", headers)
+      else
+        log.dbg("Header # "..tostr(i).." passed basic check.  First field = "..tostr(field_name))
+        bFail = false
+        break
+      end
+    else
+      log.err("*** RECEIVED A NIL HEADER?  BAD URL? i="..tostr(i))
+    end
+    
+  end
+  
+  if bFail then
+    log.err("*** ERROR!!! COULD NOT DOWNLOAD A VALID HEADER!, last header=", tostr(headers))
+    return "ERROR"
+  end
+  
+  return http_head, headers, err
+end
+
+function yahoo_classic_mc_get_header(browser, hdrUrl) 
+  local http_head, headers, err = yahoo_classic_get_header(browser, hdrUrl)
+  
+  if (headers ~= nil) then
+	headers = string.gsub(headers, "\n", "~~~")
+	headers = string.gsub(headers, "~~~", "\r\n")
+  end
+  
+  return http_head, headers, err
+end
+
+function yahoo_classic_get_body(browser, bodyUrl)
+  local http_head, http_body, err
+  local bFail = true
+
+  log.dbg("bodyUrl = " .. bodyUrl)
+
+  for i=1,3 do
+    log.dbg("Getting body... attempt # "..tostr(i))
+    http_head, http_body, err = browser:get_head_and_body(bodyUrl)
+    log.dbg("get_body i="..tostr(i)..", err="..tostr(err)..", http_head=", tostr(http_head))
+
+    -- http_head should not be empty, but the browser is broken.
+    -- 404: asked for a bad Url (at the end of the body parts)
+    if (http_head == nil) and (
+      (not http_body) or
+      (http_body:match('^404: Not Found'))
+      )
+    then
+      bFail = false
+      break
+    end
+
+    -- check for bad body
+    -- Content-Disposition http field is required for a valid body
+    -- could also check redirect url
+    if err or (http_head == nil) or (string.match(http_head, re_cdisp) == nil)
+--      http_body:match('^The document has moved <A HREF="https://login.yahoo.com/config/login_verify') or
+--      http_body:match('^SSL certificate problem, verify that the CA cert is OK') or
+--      (
+--        -- commented out because it may change more often.
+----      http_body:match('^\n\n\n\n\n\n\n  \n<!DOCTYPE HTML PUBLIC') and
+--      http_body:match('<title>Sign in to Yahoo!</title>') and
+--      http_body:match('<h1>Please verify your password</h1>')
+--      )
+    then
+      log.err("*** INVALID e-mail body! i="..tostr(i)..", err="..tostr(err)..", http_head=", http_head)
+      log.dbg("*** INVALID e-mail body! http_body=", http_body)
+    else
+--      log.dbg("Body passed basic check. i="..tostr(i))
+      log.dbg("Body passed basic check. i="..tostr(i)..", err="..tostr(err)..", http_head=", http_head)
+      log.dbg("Body passed basic check.  http_body=", http_body)
+      bFail = false
+      break
+    end
+  end
+  
+  if bFail then
+    log.err("*** ERROR!!! COULD NOT DOWNLOAD A VALID BODY!, last body=", tostr(http_body))
+    return "ERROR"
+  end
+  
+  return http_head, http_body, err
+end
+
 
 -- Download a single message
 --
@@ -685,13 +944,13 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   -- Make sure we aren't jumping the gun
   --
   
-  log.raw("Entering downloadYahooMsg")
+  log.dbg("Entering downloadYahooMsg")
   
   local retCode = stat(pstate)
   if retCode ~= POPSERVER_ERR_OK then 
     return retCode 
   end
-	
+
   -- Local Variables
   --
   local browser = internalState.browser
@@ -700,26 +959,36 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   local msgid = nil
   local hdrUrl = nil
   local bodyUrl = nil
-  if internalState.bNewGUI == false then
-    msgid = internalState.msgids[uidl]
-    hdrUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
-      internalState.strMBox, msgid, "HEADER");
-    bodyUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
-      internalState.strMBox, msgid, "TEXT");
-
-    log.raw("hdrUrl = " .. hdrUrl)
-    log.raw("bodyUrl = " .. bodyUrl)
-  end
+  local result, err, http_head, http_body, headers
 
   -- Get the header
   --
-  local headers
   if internalState.bNewGUI then
     local msgid = internalState.msgids[uidl]
     uidl = msgid
     headers = getMsgHdr(pstate, uidl)
+  elseif (internalState.classicType == 'mc') then
+    msgid = internalState.msgids[uidl]
+	hdrUrl = string.format(globals.strCmdAttach, internalState.strFileServer,
+		internalState.strMBox, msgid, "HEADER", internalState.strMailServer)
+
+    http_head, headers, err = yahoo_classic_mc_get_header(browser, hdrUrl)	
   else
-    headers, _ = browser:get_uri(hdrUrl)
+    msgid = internalState.msgids[uidl]
+    hdrUrl = string.format(globals.strCmdMsgView, internalState.strMailServer, 
+	  internalState.strMBox, msgid, "HEADER");
+
+--      local escUidl = string.gsub(msgid, "%+", "%%2B")
+--      hdrUrl = string.format(globals.strCmdMsgView,
+--        internalState.strMailServer,
+--        internalState.strMBox,
+--        escUidl, "HEADER", internalState.strMailServer)
+
+    http_head, headers, err = yahoo_classic_get_header(browser,hdrUrl)
+   
+    if http_head == "ERROR" then
+      return POPSERVER_ERR_UNKNOWN
+    end
   end
 
   -- Define a structure to pass between the callback calls
@@ -778,25 +1047,18 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   --
   -- Case-insensitive
   --
-  headers = string.gsub(headers, "[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Rr][Aa][Nn][Ss][Ff][Ee][Rr]%-[Ee][Nn][Cc][Oo][Dd][Ii][Nn][Gg]: .-\n", "", 1);
+  headers = string.gsub(headers, "[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Rr][Aa][Nn][Ss][Ff][Ee][Rr]%-[Ee][Nn][Cc][Oo][Dd][Ii][Nn][Gg]: .-\n", "");
   --headers = string.gsub(headers, "Content%-Transfer%-Encoding: quoted%-printable%s+", "");
   --headers = string.gsub(headers, "charset=%"UTF%-8%", "charset=%"us%-ascii%"");
 
-  -- Send the headers first to the callback
-  --
-  if (internalState.bNewGUI ~= true) then
-    cb(headers) 
-  else
-    headers = string.gsub(headers, "\n", "\r\n")
-    headers = string.gsub(headers, "\r\n$", "")
-  end
-
-  -- Start the download on the body
+  -- Send headers and start download on the body
   -- 
   if (internalState.bNewGUI) then
+    headers = string.gsub(headers, "\n", "\r\n")
+    headers = string.gsub(headers, "\r\n$", "")
+
     headers = mimer.remove_lines_in_proper_mail_header(headers, {"content%-type",
 		"content%-disposition", "mime%-version", "boundary"})
-
 
     if nLines == 0 then
       cbInfo.strText = ""
@@ -810,23 +1072,145 @@ function downloadYahooMsg(pstate, msg, nLines, data)
       internalState.strMailServer, 
       cbInfo.attachments, browser, 
       function(s)
+--        if s then log.dbg("sending s=",s) end
         popserver_callback(s,data)
       end, cbInfo.inlineids)
-  elseif (nLines ~= 0) then  
-    local f, _ = browser:pipe_uri(bodyUrl,cb)
-    if not f then
-      -- An empty message.  Send the headers anyway
-      --
-      log.dbg("Empty message")
+  else -- Yahoo Classic
+    -- send the headers directly
+    popserver_callback(headers,data)
+    log.dbg("sent headers = ", headers)
+
+    -- if multipart, then get all the parts
+    local boundary = headers:match(re_ctype_boundary)
+    log.dbg("boundary="..tostr(boundary))
+    if boundary then
+      local send_base64 = mimer.base64_io_slave( cb )
+      log.dbg("Processing a multipart!")
+
+      -- until we put in more error checks,
+      -- set to a maximum of 10 sub-parts.
+      for i=1,10 do
+        local bSendBodyBase64 = false
+
+		if (internalState.classicType ~= 'mc') then
+          bodyUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
+            internalState.strMBox, msgid, tostr(i))
+		else  
+		  bodyUrl = string.format(globals.strCmdAttach, internalState.strFileServer,
+		    internalState.strMBox, msgid, i, internalState.strMailServer)
+		end
+
+--        local escUidl = string.gsub(msgid, "%+", "%%2B")
+--        bodyUrl = string.format(globals.strCmdMsgView,
+--          internalState.strMailServer,
+--          internalState.strMBox,
+--          escUidl, tostr(i), internalState.strMailServer)
+
+        http_head, http_body, err = yahoo_classic_get_body(browser, bodyUrl)
+
+        if http_head == "ERROR" then
+          return POPSERVER_ERR_UNKNOWN
+        end
+        
+--        http_head, http_body, err = browser:get_head_and_body(bodyUrl)
+--        log.dbg("browser:get_uri: err="..tostr(err))
+--        log.dbg("http_head = ", http_head)
+--        log.dbg("http_body = ", http_body)
+
+        if http_head == nil then
+          log.dbg("Finished all "..tostr(i-1).." parts.")
+          break
+        end
+
+        local cdisp = nil
+        local ctype = http_head:match(re_ctype)
+        log.dbg("ctype = "..tostr(ctype))
+        local ctenc = nil
+
+        if ctype == nil then
+          log.dbg("ERROR: could not find Content-Type field!")
+          break
+        end
+        
+        if ctype:match('multipart/') then
+          local boundary_inner = http_body:match('%s*%-%-(.-)[\r\n]')
+          log.dbg("boundary_inner="..tostr(boundary_inner))
+          if boundary_inner == nil then
+            log.dbg("ERROR: multipart, but no boundary separator found!")
+            break
+          end
+          ctype = ctype .. string.format(';\r\n boundary="%s"\r\n', boundary_inner)
+          log.dbg("fixed ctype = "..tostr(ctype))
+        elseif
+          ctype:match('application/') or 
+          ctype:match('image/') or
+          ctype:match('video/') or
+          ctype:match('audio/') then
+
+          ctenc = "Content-Transfer-Encoding: base64"
+          bSendBodyBase64 = true
+
+          cdisp = http_head:match(re_cdisp)
+          log.dbg("cdisp = "..tostr(cdisp))
+          cdisp = string.gsub(cdisp, "%%(%x%x)",
+            function(h) return string.char(tonumber(h,16)) end
+          )
+          log.dbg("fixed cdisp = "..tostr(cdisp))
+
+        end
+
+        local t = {}
+        table.insert(t, ctype)
+        table.insert(t, ctenc)
+        table.insert(t, cdisp)
+        table.insert(t, "\r\n") -- end with 2 CRLFs, just to be safe
+
+        cb("\r\n--"..boundary.."\r\n")
+
+        cb(table.concat(t,"\r\n"))
+
+        if bSendBodyBase64 then
+          send_base64(http_body, #http_body)
+          send_base64("",0)
+        else
+          cb(http_body, #http_body)
+        end
+        
+      end -- for
+
+      cb("\r\n--"..boundary.."--".."\r\n\r\n")
+      
+      result = true
+      
+    else -- just one part
+      log.dbg("Only one part.  downloading...")
+		
+	  if (internalState.classicType ~= 'mc') then
+        bodyUrl = string.format(globals.strCmdMsgView, internalState.strMailServer,
+          internalState.strMBox, msgid, "TEXT")
+	  else  
+	    bodyUrl = string.format(globals.strCmdAttach, internalState.strFileServer,
+		  internalState.strMBox, msgid, "TEXT", internalState.strMailServer)
+	  end
+		
+      http_head, http_body, err = yahoo_classic_get_body(browser, bodyUrl)
+      cb(http_body, #http_body)
+--      result, err = browser:pipe_uri(bodyUrl,cb)
+
+      result = http_body
+    end
+
+    if not result then
+      log.dbg("Empty message. err="..tostr(err))
     else
       -- Just send an extra carriage return
-      --
       log.dbg("Message Body has been processed.")
       if (cbInfo.strBuffer ~= "\r\n") then
         log.dbg("Message doesn't end in CRLF, adding to prevent client timeout.")
         popserver_callback("\r\n\0", data)
       end
     end
+
   end
 
   -- Do we need to mark the message as unread?
@@ -834,9 +1218,9 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   if internalState.bNewGUI and internalState.bMarkMsgAsUnread == true then
     log.dbg("Marking as message: " .. uidl .. " as unread");
     markMsgUnread(uidl)
-  elseif internalState.bNewGUI == false then
+  elseif internalState.bNewGUI == false and internalState.classicType ~= 'mc' then
     local cmdUrl = string.format(globals.strCmdMsgWebView, internalState.strMailServer,
-      internalState.strMBox, msgid);
+      internalState.classicType, internalState.strMBox, msgid);
     if (internalState.bMarkMsgAsUnread) then
       local str, _ = browser:get_uri(cmdUrl) 
       str = string.match(str, globals.strMsgMarkUnreadPat)
@@ -844,7 +1228,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
         log.warn("Unable to get the url for marking message as unread.")
       else
         cmdUrl = internalState.strMailServer .. str;
-        log.dbg("Marking as message: " .. msgid .. " as unread, url: " .. cmdUrl);
+        log.dbg("Marking message: " .. msgid .. " as unread, url: " .. cmdUrl);
         browser:get_uri(cmdUrl) -- We don't care about the results.
       end
     else
@@ -852,9 +1236,17 @@ function downloadYahooMsg(pstate, msg, nLines, data)
       --
       local str, _ = browser:get_head(cmdUrl) 
     end
+  elseif internalState.bNewGUI == false and internalState.classicType == 'mc' then
+    if (internalState.bMarkMsgAsUnread == false) then
+      -- Mark the message as read
+      --
+      local cmdUrl = string.format(globals.strCmdMsgWebViewMC, internalState.strMailServer, 
+	    internalState.classicType, internalState.strMBox, msgid)
+      local str, _ = browser:get_uri(cmdUrl) 
+    end
   end
 
-  log.raw("Exiting downloadYahooMsg")
+  log.dbg("Exiting downloadYahooMsg")
 
   return POPSERVER_ERR_OK
 end
@@ -865,19 +1257,28 @@ function downloadMsg_cb(cbInfo, data)
 	
   return function(body, len)
 
-    log.raw("Entering downloadMsg_cb generated function")
+    log.dbg("Entering downloadMsg_cb generated function")
 
-    log.raw("cbInfo.nLinesRequested = " .. cbInfo.nLinesRequested)
-    log.raw("cbInfo.nLinesReceived = " .. cbInfo.nLinesReceived)
-    log.raw("cbInfo.strHack:current_lines() = " .. cbInfo.strHack:current_lines())
+    log.dbg("cbInfo.nLinesRequested = " .. cbInfo.nLinesRequested)
+    log.dbg("cbInfo.nLinesReceived = " .. cbInfo.nLinesReceived)
+    log.dbg("cbInfo.strHack:current_lines() = " .. cbInfo.strHack:current_lines())
+
+--    log.dbg("received text = ", body)
 
     -- Are we done with Top and should just ignore the chunks
     --
     if (cbInfo.nLinesRequested ~= -2 and cbInfo.nLinesReceived == -1) then
-      log.raw("downloadMsg_cb: return 0, nil")
+      log.dbg("downloadMsg_cb: return 0, nil")
       return 0, nil
     end
-  
+
+    -- 3/4/2008 - dothack cannot handle embedded NULLs (0x0)
+    --  nor can later code somewhere in freepops which causes a timeout,
+    --  (probably due to it seeing 0x0 as end-of-string and
+    --  truncating the rest, then waiting for more data),
+    --  so we remove embedded NULLs (0x0) == %z
+    body = string.gsub(body, "%z", "")
+
     -- Clean up the end of line
     --
     body = fixCRLF(body)
@@ -893,7 +1294,7 @@ function downloadMsg_cb(cbInfo, data)
       if cbInfo.strHack:check_stop(cbInfo.nLinesRequested) then
         cbInfo.nLinesReceived = -1;
         if (string.sub(body, -2, -1) ~= "\r\n") then
-          log.error_print("Does NOT end in CRLF, adding it!")
+          log.err("Does NOT end in CRLF, adding it!")
           body = body .. "\r\n"
         end
       else
@@ -906,13 +1307,13 @@ function downloadMsg_cb(cbInfo, data)
     --
     body = cbInfo.strHack:dothack(body) .. "\0"
 
-    log.raw("finished text = ", body)
+    log.dbg("finished text = ", body)
 
     -- Send the data up the stream
     --
     popserver_callback(body, data)
 			
-    log.raw("Exiting downloadMsg_cb generated function")
+    log.dbg("Exiting downloadMsg_cb generated function")
     
     return len, nil
   end
@@ -990,7 +1391,7 @@ function getUserData()
 --  end
 
 --  if (str == nil) then
---    log.error_print("Unable to parse out the gss value.")
+--    log.err("Unable to parse out the gss value.")
 --    return 1
 --  end
 --  internalState.strGSS = str
@@ -1116,7 +1517,7 @@ function getMsgHdr(pstate, uidl)
   -- Make sure we have a valid header
   --
   if (header == nil) then 
-    log.error_print("Invalid header!")
+    log.err("Invalid header!")
     return nil
   end
 
@@ -1140,6 +1541,7 @@ function getMsgBody(pstate, uidl, size, cbInfo)
   -- Get the parts
   --
   local part = nil
+  local major = nil
   for i, elem in ipairs (ent[3]) do
     if (type(elem) == "table" and elem["tag"] == "part") then
       part = elem
@@ -1147,6 +1549,12 @@ function getMsgBody(pstate, uidl, size, cbInfo)
       local partId = attrs["partId"]
       local type = attrs["type"]
       local subtype = attrs["subtype"]
+--      log.dbg("YahooNew getMsgBody partId="..tostr(partId)..
+--        ", type="..tostr(type)..", subtype="..tostr(subtype)..
+--        ", attrs=",tostr(attrs))
+      -- partId=1 is usually the main text (1.1) and html (1.2),
+      --  which is handled above and therefore not included in attachments.
+      -- don't assume any other plain or html is the main text
       if (subtype == "plain") then
         local textElem = elem[1]
         local text = textElem[1]
@@ -1155,6 +1563,10 @@ function getMsgBody(pstate, uidl, size, cbInfo)
         end
         text = text .. "\n"
         cbInfo.strText = getMsgCallBack(cbInfo, text)
+        -- remove major part from attachments
+        major = string.match(partId,"(.-)%.")
+        major = major or partId
+        cbInfo.attachments[major] = nil
       elseif (subtype == "html") then
         local textElem = elem[1]
         local text = textElem[1]
@@ -1162,28 +1574,41 @@ function getMsgBody(pstate, uidl, size, cbInfo)
 --        text = string.gsub(text, "(</[^>]+>) ", "%1\r\n") 
         text = text .. "\n"
         cbInfo.strHtml = getMsgCallBack(cbInfo, text)
+        -- remove major part from attachments
+        major = string.match(partId,"(.-)%.")
+        major = major or partId
+        cbInfo.attachments[major] = nil
       elseif (partId == "HEADER" or partId == "TEXT") then
         -- no-op
       else
-        local file = attrs["dispParams"]
-        local contentId = attrs["contentId"]
-        if (file ~= nil) then
-          file = string.gsub(file, "^.-=", "")
-          local escUidl = string.gsub(uidl, "%+", "%%2B")
-          url = string.format(globals.strCmdAttach, internalState.strMailServer,
-             internalState.strMBox, escUidl, partId, internalState.strMailServer)
-          cbInfo.attachments[file] = getRealAttachmentUrl(url)
-          table.insert(cbInfo.attachments, table.getn(cbInfo.attachments) + 1, cbInfo.attachments[file])
-          if (contentId ~= nil) then
-            contentId = string.sub(contentId, 2, -2)
-            cbInfo.inlineids[file] = contentId
-            table.insert(cbInfo.inlineids, table.getn(cbInfo.inlineids) + 1, contentId)
+        -- Only add to attachments once, by partId
+        -- We want only whole parts, not subparts (so no ".")
+        if (string.match(partId,"%.") == nil) then
+          local file = attrs["dispParams"]
+          local contentId = attrs["contentId"]
+          if (file ~= nil) then
+            file = string.gsub(file, "^.-=", "")
+            local escUidl = string.gsub(uidl, "%+", "%%2B")
+            url = string.format(globals.strCmdAttach, internalState.strMailServer,
+               internalState.strMBox, escUidl, partId, internalState.strMailServer)
+            cbInfo.attachments[partId] = getRealAttachmentUrl(url)
+  --          cbInfo.attachments[file] = getRealAttachmentUrl(url)
+  --          table.insert(cbInfo.attachments, cbInfo.attachments[file])
+            -- an empty contentId is not a valid contentId
+            if ((contentId ~= nil) and (contentId ~= "")) then
+              contentId = string.sub(contentId, 2, -2)
+              cbInfo.inlineids[partId] = contentId
+  --            cbInfo.inlineids[file] = contentId
+  --            table.insert(cbInfo.inlineids, table.getn(cbInfo.inlineids) + 1, contentId)
+            end
           end
         end
       end
     end
   end
-
+  
+--  log.dbg("cbInfo=",tostr(cbInfo))
+  
   if not (cbInfo.strText or cbInfo.strHtml) then
     log.dbg("Something isn't right as we got no body back from Yahoo.")
     cbInfo.strText = ""
@@ -1262,13 +1687,25 @@ end
 --
 function getRealAttachmentUrl(url)
   local browser = internalState.browser
-  local h, err = browser:get_head(url, {}, true)
+  -- get_head redirects, so location will always be nil.
+  -- so use get_head_raw which does not redirect:
+  local h, err = browser:get_head_raw(url, {}, true)
+--  log.dbg("getRealAttachmentUrl: url="..tostr(url))
+--  log.dbg("getRealAttachmentUrl: err="..tostr(err)..", h=", h)
   if (err ~= nil) then
     log.dbg(err)
     return nil
   end
   local x = string.match(h,
                 "[Ll][Oo][Cc][Aa][Tt][Ii][Oo][Nn]%s*:%s*([^\r]*)")
+--  log.dbg("getRealAttachmentUrl: location match: "..tostr(x))
+  -- DEBUG:
+--  if x then
+--    local http_head, http_body, err = browser:get_head_and_body(x)
+--    log.dbg("browser:get_get_head_and_body: err="..tostr(err)..", http_head=",
+--      tostr(http_head))
+--    log.dbg("http_body = ", http_body)
+--  end
   return (x or nil)
 end
 
@@ -1441,7 +1878,7 @@ function pass(pstate, password)
     --
     if sessID == "\a" then
       log.dbg("Error: Session locked - Account: " .. internalState.strUser .. 
-        "@" .. internalState.strDomain .. "\n")
+        "@" .. internalState.strDomain)
       return POPSERVER_ERR_LOCKED
     end
 	
@@ -1449,13 +1886,13 @@ function pass(pstate, password)
     --
     local func, err = loadstring(sessID)
     if not func then
-      log.error_print("Unable to load saved session (Account: " ..
+      log.err("Unable to load saved session (Account: " ..
         internalState.strUser .. "@" .. internalState.strDomain .. "): ".. tostr(err))
       return loginYahoo()
     end
 		
     log.dbg("Session loaded - Account: " .. internalState.strUser .. 
-      "@" .. internalState.strDomain .. "\n")
+      "@" .. internalState.strDomain)
 
     -- Execute the function saved in the session
     --
@@ -1501,7 +1938,7 @@ function quit_update(pstate)
     session.unlock(hash())
 
     log.dbg("Session saved - Account: " .. internalState.strUser .. 
-      "@" .. internalState.strDomain .. "\n")
+      "@" .. internalState.strDomain)
 
     return POPSERVER_ERR_OK
   end
@@ -1520,7 +1957,11 @@ function quit_update(pstate)
     if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
       local uidl = get_mailmessage_uidl(pstate, i)
       local msgid = internalState.msgids[uidl]
-      postdata = postdata .. "Mid=" .. msgid .. "&"
+	  if internalState.classicType == "mc" then
+	    postdata = postdata .. "mid=" .. msgid .. "&"
+	  else
+        postdata = postdata .. "Mid=" .. msgid .. "&"
+	  end
       dcnt = dcnt + 1
     end
   end
@@ -1536,8 +1977,7 @@ function quit_update(pstate)
   --
   local strCrumb = string.match(internalState.strStatCache, globals.strRegExpCrumb)
   if strCrumb == nil then
-    log.error_print("Yahoo - unable to parse out crumb value.  Deletion will fail.")
-    log.raw("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: " .. 
+    log.err("Yahoo - unable to parse out crumb value.  Deletion will fail, Body: " .. 
       internalState.strStatCache)
     return POPSERVER_ERR_OK
   end
@@ -1545,28 +1985,32 @@ function quit_update(pstate)
   -- We have things to delete, let's do it!
   --
   if (dcnt > 0) then
-    -- Lets get the form variables
-    --
-    local name, value  
-    for name, value in string.gfind(internalState.strStatCache, globals.strHiddenItems) do
-      postdata = postdata .. name .. "=" .. curl.escape(value) .. "&" 
-    end
-    postdata = string.gsub(postdata, "DEL=&", "DEL=1&")
-    postdata = postdata .. ".crumb=" .. strCrumb
+    if (internalState.classicType ~= "mc") then
+      -- Lets get the form variables
+      --
+      local name, value  
+      for name, value in string.gfind(internalState.strStatCache, globals.strHiddenItems) do
+        postdata = postdata .. name .. "=" .. curl.escape(value) .. "&" 
+      end
+      postdata = string.gsub(postdata, "DEL=&", "DEL=1&")
+      postdata = postdata .. ".crumb=" .. strCrumb
    
-    -- Get the url to post to
-    --
-    cmdUrl = string.match(internalState.strStatCache, globals.strDeletePostPat)
-    if (cmdUrl == nil) then 
-      log.error_print("Yahoo - unable to parse out delete url.  Deletion will fail.")
-      log.raw("Yahoo - unable to parse out delete url.  Deletion will fail, Body: " .. 
-        internalState.strStatCache)
-      return POPSERVER_ERR_OK
-    end
-
+      -- Get the url to post to
+      --
+      cmdUrl = string.match(internalState.strStatCache, globals.strDeletePostPat)
+      if (cmdUrl == nil) then 
+        log.err("Yahoo - unable to parse out delete url.  Deletion will fail, Body: " .. 
+          internalState.strStatCache)
+        return POPSERVER_ERR_OK
+      end
+      cmdUrl = internalState.strMailServer .. cmdUrl
+    else
+	  cmdUrl = string.format(globals.strCmdDeleteMC, internalState.strMailServer,
+        internalState.classicType, internalState.strMBox) .. strCrumb
+	end
+	
     -- Do it!
     -- 
-    cmdUrl = internalState.strMailServer .. cmdUrl
     log.dbg("Yahoo - Sending delete url: " .. cmdUrl .. ", data: " .. postdata)
     browser:post_uri(cmdUrl, postdata)
   end
@@ -1576,14 +2020,20 @@ function quit_update(pstate)
   local strAll = string.match(internalState.strStatCache, globals.strEmptyAllPat)
   if internalState.bEmptyTrash then
     if strAll ~= nil then
-      cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer) .. strAll
-      log.dbg("Sending Empty Trash URL: ".. cmdUrl .."\n")
+	  if (internalState.classicType == "mc") then
+        cmdUrl = string.format(globals.strCmdEmptyTrashMC, internalState.strMailServer, 
+		  internalState.classicType) .. strAll
+	  else
+        cmdUrl = string.format(globals.strCmdEmptyTrash, internalState.strMailServer, 
+		  internalState.classicType) .. strAll
+	  end
+      log.dbg("Sending Empty Trash URL: ".. cmdUrl)
       local body, err = browser:get_uri(cmdUrl)
       if not body or err then
-        log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
+        log.err("Error when trying to empty the trash with url: ".. cmdUrl)
       end
     else
-      log.error_print("Cannot empty trash - crumb not found\n")
+      log.err("Cannot empty trash - crumb not found")
     end
   end
 
@@ -1591,14 +2041,20 @@ function quit_update(pstate)
   --
   if internalState.bEmptyBulk then
     if strAll ~= nil then
-      cmdUrl = string.format(globals.strCmdEmptyBulk, internalState.strMailServer) .. strAll
-      log.dbg("Sending Empty Bulk URL: ".. cmdUrl .."\n")
+	  if (internalState.classicType == "mc") then
+		cmdUrl = string.format(globals.strCmdEmptyBulkMC, internalState.strMailServer,
+			internalState.classicType) .. strAll
+	  else
+		cmdUrl = string.format(globals.strCmdEmptyBulk, internalState.strMailServer,
+			internalState.classicType) .. strAll
+	  end
+      log.dbg("Sending Empty Bulk URL: ".. cmdUrl)
       local body, err = browser:get_uri(cmdUrl)
       if not body or err then
-        log.error_print("Error when trying to empty the bulk with url: ".. cmdUrl .."\n")
+        log.err("Error when trying to empty the bulk with url: ".. cmdUrl)
       end
     else
-      log.error_print("Cannot empty bulk - crumb not found\n")
+      log.err("Cannot empty bulk - crumb not found")
     end
   end
 
@@ -1606,7 +2062,7 @@ function quit_update(pstate)
   session.unlock(hash())
 
   log.dbg("Session saved - Account: " .. internalState.strUser .. 
-    "@" .. internalState.strDomain .. "\n")
+    "@" .. internalState.strDomain)
 
   return POPSERVER_ERR_OK
 end
@@ -1629,11 +2085,16 @@ function stat(pstate)
 
   -- Local variables
   -- 
+  local strCmd = globals.strCmdMsgList
+  if (internalState.classicType == "mc") then
+	strCmd = globals.strCmdMsgListMC
+  end
   local browser = internalState.browser
   local nPage = 0
   local nMsgs = 0
-  local cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-    internalState.strMBox, nPage, internalState.strView, internalState.strView);
+  local cmdUrl = string.format(strCmd, internalState.strMailServer,
+    internalState.classicType, internalState.strMBox, nPage, internalState.strView, 
+	internalState.strView);
 
   -- Keep a list of IDs that we've seen.  With yahoo, their message list can 
   -- show messages that we've already seen.  This, although a bit hacky, will
@@ -1648,7 +2109,7 @@ function stat(pstate)
 
   -- Debug Message
   --
-  log.dbg("Stat URL: " .. cmdUrl .. "\n");
+  log.dbg("Stat URL: " .. cmdUrl);
 		
   -- Initialize our state
   --
@@ -1668,7 +2129,7 @@ function stat(pstate)
     --
     local subBody = string.match(body, globals.strMsgListHTMLPattern)
     if (subBody == nil) then
-      log.say("Yahoo Module needs to fix it's message list pattern matching.\n")
+      log.say("Yahoo Module needs to fix it's message list pattern matching.")
       return false, nil
     end
 
@@ -1695,14 +2156,14 @@ function stat(pstate)
       end
 
       if not msgid or not size then
-        log.say("Yahoo Module needs to fix it's individual message list pattern matching.\n")
+        log.say("Yahoo Module needs to fix it's individual message list pattern matching.")
         return nil, "Unable to parse the size and uidl from the html"
       end
 
       -- Get the message id.  It's a series of a numbers followed by
       -- an underscore repeated.  
       --
-      msgid = string.match(msgid, globals.strMsgIDPattern) --'value="([%d-_]+)"')
+      msgid = string.match(msgid, globals.strMsgIDPattern) or string.match(msgid, globals.strMsgIDMCPattern) 
       local uidl = string.gsub(msgid, "_[^_]-_[^_]-_", "_000_000_", 1);
       uidl = string.sub(uidl, 1, 60)
 
@@ -1794,8 +2255,9 @@ function stat(pstate)
       -- Reset the local variables		
       --
       browser = internalState.browser
-      cmdUrl = string.format(globals.strCmdMsgList, internalState.strMailServer,
-        internalState.strMBox, nPage, internalState.strView, internalState.strView);
+      cmdUrl = string.format(strCmd, internalState.strMailServer,
+        internalState.classicType, internalState.strMBox, nPage, internalState.strView, 
+		internalState.strView);
 
       -- Retry to load the page
       --
@@ -1811,7 +2273,7 @@ function stat(pstate)
   -- all the message lists
   --
   if not support.do_until(funcGetPage, funcCheckForMorePages, funcProcess) then
-    log.error_print("STAT Failed.\n")
+    log.err("STAT Failed.")
     session.remove(hash())
     return POPSERVER_ERR_UNKNOWN
   end
@@ -1870,15 +2332,17 @@ end
 -- Retrieve the message
 --
 function retr(pstate, msg, data)
-  downloadYahooMsg(pstate, msg, -2, data)
-  return POPSERVER_ERR_OK
+  local ret = downloadYahooMsg(pstate, msg, -2, data)
+--  log.dbg("RETR returning = "..tostr(ret))
+  return ret
+--  return POPSERVER_ERR_OK
 end
 
 -- Top Command (like retr)
 --
 function top(pstate, msg, nLines, data)
-  downloadYahooMsg(pstate, msg, nLines, data)
-  return POPSERVER_ERR_OK
+  return downloadYahooMsg(pstate, msg, nLines, data)
+--  return POPSERVER_ERR_OK
 end
 
 -- Plugin Initialization - Pretty standard stuff.  Copied from the manual
@@ -1886,7 +2350,7 @@ end
 function init(pstate)
   -- Let the log know that we have been found
   --
-  log.dbg(PLUGIN_NAME .. "(" .. PLUGIN_VERSION ..") found!\n")
+  log.dbg(PLUGIN_NAME .. "(" .. PLUGIN_VERSION ..") found!")
 
   -- Import the freepops name space allowing for us to use the status messages
   --
@@ -1921,7 +2385,7 @@ function init(pstate)
 
   -- Let the log know that we have initialized ok
   --
-  log.dbg(PLUGIN_NAME .. "(" .. PLUGIN_VERSION ..") initialized!\n")
+  log.dbg(PLUGIN_NAME .. "(" .. PLUGIN_VERSION ..") initialized!")
 
 
   -- Everything loaded ok

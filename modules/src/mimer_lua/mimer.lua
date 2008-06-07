@@ -419,7 +419,7 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 		-- the 2 callbacks and the shared variable content_type
 		local cb_h,cb_b = nil,nil
 		local content_type = nil
-		local file_name = nil
+		local file_name = k
 		
 		-- the header parser, simply sets the content_type variable
 		-- this is fed the header one line at a time
@@ -444,7 +444,7 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 			local x = string.match(h or "",
 			  '[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Dd][Ii][Ss][Pp][Oo][Ss][Ii][Tt][Ii][Oo][Nn]:.-[Ff][Ii][Ll][Ee][Nn][Aa][Mm][Ee]="(.-)"')
 			if x then
-				file_name = x or k
+				file_name = x
 				--log.dbg("mimer cb_h: file_name="..(file_name or "?"))
 			end
             

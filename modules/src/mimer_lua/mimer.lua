@@ -3,7 +3,7 @@
 -- Module to build on the fly a message from a header, a body (both in html or
 -- plain text format), a list of attachments urls
 
-MODULE_VERSION = "0.1.1"
+MODULE_VERSION = "0.1.2"
 MODULE_NAME = "mimer"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -419,15 +419,35 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 		-- the 2 callbacks and the shared variable content_type
 		local cb_h,cb_b = nil,nil
 		local content_type = nil
+		local file_name = nil
 		
 		-- the header parser, simply sets the content_type variable
+		-- this is fed the header one line at a time
+		-- strangely, the len given is not the length but is identical to h!
 		cb_h = function(h,len)
 			-- FIXME, may be an incorrect URL and not a 200 HTTP
+			
+--			log.dbg("mimer cb_h: header=\n"..h)
+--			log.dbg("mimer cb_h: len="..h)
 			
 			-- try to extract the content type
 			local x = string.match(h or "",
 			  "[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Tt][Yy][Pp][Ee]%s*:%s*([^\r]*)")
-			content_type = x
+			-- we might not be processing the right line, so only
+			--  set if we found something.
+			if x then
+			  content_type = x
+			  --log.dbg("mimer cb_h: content_type="..(content_type or "?"))
+			end
+
+			-- try to extract the filename
+			local x = string.match(h or "",
+			  '[Cc][Oo][Nn][Tt][Ee][Nn][Tt]%-[Dd][Ii][Ss][Pp][Oo][Ss][Ii][Tt][Ii][Oo][Nn]:.-[Ff][Ii][Ll][Ee][Nn][Aa][Mm][Ee]="(.-)"')
+			if x then
+				file_name = x or k
+				--log.dbg("mimer cb_h: file_name="..(file_name or "?"))
+			end
+            
 			return len
 		end
 
@@ -436,6 +456,7 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 		local real_cb = nil
 		
 		cb_b = function(s,len)
+--			log.dbg("mimer cb_b: body=\n"..s)
 			-- the first time we choose the encoding depending on 
 			-- the content_type shared variable set by the cb_h
 			if real_cb == nil then
@@ -454,6 +475,9 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 				end
 				content_type = content_type or 
 					"application/octet-stream"
+				
+--				log.dbg("mimer cb_b: content_type="..content_type)
+					
 				if Private.needs_encoding(content_type) then
 					real_cb = Private.
 					  base64_io_slave(send_cb)
@@ -463,11 +487,11 @@ function Private.attach_it_new(browser,boundary,send_cb,inlineids)
 				end
 				-- we send the mime header
 
-				if not inlineid then
+				if ((not inlineid) or (inlineid == "")) then
 					send_cb("--"..boundary.."\r\n"..
 						"Content-Type: "..content_type.."\r\n"..
 						"Content-Disposition: attachment; "..
-						"filename=\""..k.."\"\r\n"..
+						'filename="'..file_name..'"\r\n'..
 						Private.content_transfer_encoding_of(
 							content_type)..
 						"\r\n")
@@ -544,7 +568,7 @@ function Private.send_alternative(text_encoding,body,body_html,send_cb,keep_this
 		boundary = Private.randomize_boundary()
 		rc = send_cb(
 			"MIME-Version: 1.0 (produced by FreePOPs/MIMER)\r\n"..
-			"Content-Type: Multipart/alternative; "..
+			"Content-Type: multipart/alternative; "..
 			"boundary=\""..boundary.."\"\r\n"..
 			"\r\n")
 		if rc ~= nil then return rc end
@@ -728,13 +752,13 @@ function pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,in
 
 	if isAttached then
 		if next(inlineids) == nil then
-			cType = "Multipart/Mixed"
+			cType = "multipart/mixed"
 		else
-			cType = "Multipart/Related"
+			cType = "multipart/related"
 		end
 	else
 		if isAlt then
-			cType = "Multipart/Alternative"
+			cType = "multipart/alternative"
 		else
 			cType ="text/plain"
 		end
@@ -886,3 +910,86 @@ function callback_mangler(f)
 	end
 end
 
+---
+-- Converts all unicode characters (>127) into UTF-8 character sets
+--@param unicode ASCII or unicoded string
+--@return a UTF-8 representation
+function encodeUTF8(unicode)
+
+   local math = math
+   local utf8 = ""
+
+   for i=1,string.len(unicoden) do
+      local v = string.byte(unicode,i)
+      local n, s, b = 1, "", 0
+      if v >= 67108864 then n = 6; b = 252
+      elseif v >= 2097152 then n = 5; b = 248
+      elseif v >= 65536 then n = 4; b = 240
+      elseif v >= 2048 then n = 3; b = 224
+      elseif v >= 128 then n = 2; b = 192
+      end
+      for i = 2, n do
+         local c = math.mod(v, 64); v = math.floor(v / 64)
+         s = string.char(c + 128)..s
+      end
+      s = string.char(v + b)..s
+      utf8 = utf8..s
+   end
+
+   return utf8
+end
+
+---
+-- Converts all UTF-8 character sets to unicode/ASCII characters
+-- to generate ISO-8859-1 email bodies etc.
+--@param utf8 UTF-8 encoded string
+--@return a ASCII/ISO-8859-1 8-bit conform string
+function decodeUTF8(utf8)
+
+   local unicode = ""
+   local mod = math.mod
+
+   local pos = 1
+   while pos < string.len(utf8)+1 do
+
+      local v = 1
+      local c = string.byte(utf8,pos)
+      local n = 0
+
+      if c < 128 then v = c
+      elseif c < 192 then v = c
+      elseif c < 224 then v = mod(c, 32) n = 2
+      elseif c < 240 then v = mod(c, 16) n = 3
+      elseif c < 248 then v = mod(c,  8) n = 4
+      elseif c < 252 then v = mod(c,  4) n = 5
+      elseif c < 254 then v = mod(c,  2) n = 6
+      else v = c end
+
+      for i = 2, n do
+         pos = pos + 1
+         c = string.byte(utf8,pos)
+         v = v * 64 + mod(c, 64)
+      end
+
+      pos = pos + 1
+      if v < 255 then unicode = unicode..string.char(v) end
+
+   end
+
+   return unicode
+end
+
+---
+-- Decodes a quoted printable string (7-bit) into an 8-bit encoded string
+--@param qp quoted printable string
+--@return a ASCII/ISO-8859-1 8-bit conform string
+function decodeQuotedPrintable(qp)
+
+   local plain = string.gsub(qp,"=(%w%w)", function (c)
+      local num = tonumber("0x"..c, 16)
+      if num > 255 then return "" end
+      return string.char(num)
+   end)
+
+   return plain
+end

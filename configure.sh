@@ -112,9 +112,18 @@ EXEEXTENSION=".ppc-i386.$OSXV"
 FLTKLDFLAGS="-lfltk -framework Carbon -framework ApplicationServices"
 FLTKPOST="${EXTRALIB_PREFIX}bin/fltk-config --post"
 }
+
 set_osx_static() {
-set_osx
+set_default
 OS=Darwin-static
+CFLAGS="$CFLAGS -I/sw/include -DMACOSX -DOSXSTC"
+HCFLAGS="$HCFLAGS -I/sw/include -DMACOSX -DOSXSTC"
+LDFLAGS="$LDFLAGS -L/sw/lib"
+HLDFLAGS="$HLDFLAGS -L/sw/lib"
+LUAFLAGS=" -DLUA_USE_MACOSX "
+if [ `uname -r` = '8.8.3' ]; then
+        MACHOARCH=" -arch i386 -arch ppc -mmacosx-version-min=10.3"
+fi
 }
 
 set_solaris() {
@@ -262,6 +271,9 @@ case $1 in
 	;;
 	osx)
 		set_osx
+	;;
+	osx-static)
+		set_osx_static
 	;;
 	beos)
 		set_beos

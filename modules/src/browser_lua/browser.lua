@@ -65,7 +65,7 @@
 -- <B>ssl_init_stuff()</B> : some stuff for SSL<BR/>
 --<BR/>
 
-MODULE_VERSION = "0.1.1"
+MODULE_VERSION = "0.1.2"
 MODULE_NAME = "browser.browser"
 MODULE_REQUIRE_VERSION = "0.2.6"
 MODULE_LICENSE = "GNU/GPL"

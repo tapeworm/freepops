@@ -1,5 +1,7 @@
-- patch by Blackmoon to internationalize and localize the updater (it translation included)
 07/06/2008 0.2.7
+- Makefile, buildfactory/Makefile, buildfactory/debian-etch/control, buildfactory/debian-ubuntu/control, buildfactory/debian-ubuntu/freepops-updater-fltk.dirs, buildfactory/debian-ubuntu/rules, buildfactory/debian/control, buildfactory/debian/freepops-updater-fltk.dirs, buildfactory/debian/rules, buildfactory/win/freepops.nsi.in, configure.sh, updater-ui/fltk/Makefile, updater-ui/fltk/main.cxx: internationalization and localization of the fltk updater by blackmoon (gareuselesinge)
+- modules/src/browser_lua/browser.lua: bumped browser version (gareuselesinge)
+- modules/src/log/log.c: removed printf XXX (gareuselesinge)
 - Makefile, buildfactory/debian/changelog, buildfactory/debian/control, buildfactory/debian/freepops-updater-fltk.menu, buildfactory/debian/freepops-updater-gnome.dirs, buildfactory/debian/freepops-updater-gnome.menu, buildfactory/debian/freepops.menu, buildfactory/debian/rules, doc/freepops-updater-zenity.1: manpage for -zenity and Makefile fixed, debian package updated (gareuselesinge)
 - Makefile, buildfactory/debian/control, buildfactory/debian/freepops-updater-gnome.dirs, buildfactory/debian/freepops-updater-gnome.menu, buildfactory/debian/rules, updater-ui/dialog/freepops-updater-dialog, updater-ui/zenity/freepops-updater-zenity: added zenity updater (gareuselesinge)
 - buildfactory/Makefile, buildfactory/osx/Install_resources/English.lproj/ReadMe.txt, buildfactory/osx/Install_resources/Italian.lproj/ReadMe.txt, buildfactory/osx/popup-fltk/Makefile, buildfactory/osx/popup-fltk/fmessage.cpp, buildfactory/osx/start-stop-freepopsd: fixes or osx compilation and startup (gareuselesinge)

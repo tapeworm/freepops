@@ -1,0 +1,93 @@
+# LANGUAGE translations for FreePOPs Updater
+#
+# This file is distributed under the same license as the FreePOPs package.
+#
+# Translator: YOUR NAME < YOUR E-MAIL ADDRESS > YYYY-MM-DD
+
+msgid "FreePOPs updater"
+msgstr ""
+
+msgid "Select the modules to update"
+msgstr ""
+
+msgid "Downloading: plugin list"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "Next   @->"
+msgstr ""
+
+msgid "Step 0 / Welcome"
+msgstr ""
+
+msgid "Step 1 / Metadata download"
+msgstr ""
+
+msgid "Step 2 / Selection"
+msgstr ""
+
+msgid "Step 3 / Update"
+msgstr ""
+
+msgid "Step 4 / Report"
+msgstr ""
+
+msgid ""
+"Update not yet completed.\n"
+"Do you really want to quit?"
+msgstr ""
+""
+""
+
+msgid "No"
+msgstr ""
+
+msgid "Yes, quit!"
+msgstr ""
+
+msgid "Welcome"
+msgstr ""
+
+msgid "Welcome to the FreePOPs updater!"
+msgstr ""
+
+msgid " This wizard will guide you trough the few simple steps to get your FreePOPs modules updated."
+msgstr ""
+
+msgid "Click <i>Next</i> to move to the first step."
+msgstr ""
+
+msgid "Downloading: modules metadata"
+msgstr ""
+
+msgid "Unable to download the modules metadata:\n%s"
+msgstr ""
+
+msgid "Done."
+msgstr ""
+
+msgid "No need to update %s: %s"
+msgstr ""
+
+msgid "Unable to update %s: %s"
+msgstr ""
+
+msgid "Downloading: %s"
+msgstr ""
+
+msgid "Not attempted."
+msgstr ""
+
+msgid "Error downloading %s:\n%s"
+msgstr ""
+
+msgid "Updated!"
+msgstr ""
+
+msgid "Report"
+msgstr ""
+
+msgid "Did nothing!"
+msgstr ""

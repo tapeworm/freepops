@@ -1,0 +1,95 @@
+# Italian translations for FreePOPs Updater
+#
+# This file is distributed under the same license as the FreePOPs package.
+#
+# Translator: Marco Giorgi (Blackmoon) < blackmoon-wolit@tiscali.it >, 2008-06-08
+
+msgid "FreePOPs updater"
+msgstr "FreePOPs updater"
+
+msgid "Select the modules to update"
+msgstr "Seleziona i moduli da aggiornare"
+
+msgid "Downloading: plugin list"
+msgstr "Download: lista plugin"
+
+msgid "Quit"
+msgstr "Esci"
+
+msgid "Next   @->"
+msgstr "Avanti   @->"
+
+msgid "Step 0 / Welcome"
+msgstr "Passo 0 / Benvenuto"
+
+msgid "Step 1 / Metadata download"
+msgstr "Passo 1 / Download metadata"
+
+msgid "Step 2 / Selection"
+msgstr "Passo 2 / Selezione"
+
+msgid "Step 3 / Update"
+msgstr "Passo 3 / Aggiornamento"
+
+msgid "Step 4 / Report"
+msgstr "Passo 4 / Report"
+
+msgid ""
+"Update not yet completed.\n"
+"Do you really want to quit?"
+msgstr ""
+"Aggiornamento non ancora completato\n"
+"Vuoi veramente uscire?"
+
+msgid "No"
+msgstr "No"
+
+msgid "Yes, quit!"
+msgstr "Si, esci!"
+
+msgid "Welcome"
+msgstr "Benvenuto"
+
+msgid "Welcome to the FreePOPs updater!"
+msgstr "Benvenuto nell'updater di FreePOPs!"
+
+msgid " This wizard will guide you trough the few simple steps to get your FreePOPs modules updated."
+msgstr " Questo wizard ti guidera' attreverso semplici passi per aggiornare i tuoi moduli di FreePOPs."
+
+msgid "Click <i>Next</i> to move to the first step."
+msgstr "Clicca su <i>Avanti</i> per fare il primo passo."
+
+msgid "Downloading: modules metadata"
+msgstr "Download: metadati moduli"
+
+msgid "Unable to download the modules metadata:\n%s"
+msgstr "Impossibile scricare i metadati dei moduli:\n%s"
+
+msgid "Done."
+msgstr "Fatto."
+
+msgid "No need to update %s: %s"
+msgstr "Non e' necessario aggiornare %s: %s"
+
+msgid "Unable to update %s: %s"
+msgstr "Impossibile aggiornare %s: %s"
+
+msgid "Downloading: %s"
+msgstr "Download: %s"
+
+msgid "Not attempted."
+msgstr "Non tentato."
+
+msgid "Error downloading %s:\n%s"
+msgstr "Errore durante il download %s:\n%s"
+
+msgid "Updated!"
+msgstr "Aggiornato!"
+
+msgid "Report"
+msgstr "Report"
+
+msgid "Did nothing!"
+msgstr "Non ho fatto niente!"
+
+

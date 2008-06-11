@@ -15,11 +15,21 @@
 
 #include <stdlib.h>
 #include <lua.hpp>
+#include <libintl.h>
+#include <locale.h>
 
 #include "updater.h"
 #include "linker.h"
 
 static int updater_run(lua_State* l){
+	setlocale(LC_MESSAGES, "");
+	#ifdef WIN32
+	  bindtextdomain("updater_fltk", "LANG");
+	#else
+	  bindtextdomain("updater_fltk", LOCALEDIR);
+	#endif
+	textdomain("updater_fltk");
+	
 	Fl_Double_Window* win = make_main_window();
 	updater_init(l);
 	char* argv[] = {"freepops"};

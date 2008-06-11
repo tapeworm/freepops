@@ -10,6 +10,7 @@ else
 endif
 
 VERSION=$(shell grep "\#define VERSION" ../config.h | cut -d \" -f 2)
+GMOWIN=$(shell ls "$(PWD)/buildfactory/_win_/freepops-$(VERSION)/updater-ui/fltk/po" | grep ".mo")
 
 H=@
 
@@ -76,6 +77,13 @@ dist-win-e-zip-step3:
 	$(H)cp _win_/freepops-$(VERSION)/buildfactory/win/SERVICE.*.txt \
 		_win_/freepops/	
 	$(H)cp win/*.exe _win_/freepops/
+	$(H)mkdir -p _win_/freepops/LANG/
+	for gmo in $(GMOWIN); do \
+		lang=`echo $$gmo | sed -e "s/\.gmo//g"`; \
+		mkdir -p _win_/freepops/LANG/$$lang/LC_MESSAGES/; \
+		cp _win_/freepops-$(VERSION)/updater-ui/fltk/po/$$lang.gmo \
+			_win_/freepops/LANG/$$lang/LC_MESSAGES/updater_fltk.mo; \
+	done;
 
 	$(H)cp _win_/freepops-$(VERSION)/COPYING _win_/freepops/COPYING.txt
 	$(H)cp _win_/freepops-$(VERSION)/ChangeLog _win_/freepops/ChangeLog.txt

@@ -12,7 +12,7 @@ configure-stamp:
 	# Add here commands to configure the package.
 
 	rm -f config
-	./configure.sh linux-gnutls -fltk-ui
+	./configure.sh linux-gnutls -lua -luafilesystem -luacurl -luaexpat -fltk-ui
 
 	touch configure-stamp
 
@@ -24,7 +24,7 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE) all WHERE=/usr/
+	$(MAKE) all WHERE=/usr/ LOCALEDIR=/usr/share/locale/
 
 	touch build-stamp
 
@@ -52,7 +52,7 @@ install-common:
 	dh_testroot
 	dh_clean -k 
 	dh_installdirs
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops/ WHERE=/usr/
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops/ WHERE=/usr/ LOCALEDIR=/usr/share/locale/
 	mv $(CURDIR)/debian/freepops/usr/share/doc/freepops/*.pdf \
 		$(CURDIR)/debian/freepops-doc/usr/share/doc/freepops-doc/ 
 	mv $(CURDIR)/debian/freepops/usr/lib/freepops/*.so \
@@ -63,6 +63,7 @@ install-common:
 		$(CURDIR)/debian/freepops-updater-fltk/usr/bin
 	cp  updater-ui/fltk/freepops-updater-fltk-32.xpm \
 		$(CURDIR)/debian/freepops-updater-fltk/usr/share/pixmaps/
+	mv $(CURDIR)/debian/freepops/usr/share/locale/ $(CURDIR)/debian/freepops-updater-fltk/usr/share/;
 
 install-manual: build-manual install-common
 

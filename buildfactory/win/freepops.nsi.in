@@ -99,11 +99,13 @@ Section "FreePOPs (required)"
   File "config.lua"
   File /r "LUA"
   File /r "C"
+  File /r "LANG"
   CreateDirectory $INSTDIR\LUA_UNOFFICIAL
   CreateDirectory $INSTDIR\LUA_UPDATES
   CreateDirectory $INSTDIR\LUA_UPDATES\LXP
   CreateDirectory $INSTDIR\LUA_UPDATES\BROWSER
   CreateDirectory $INSTDIR\LUA_UPDATES\SOAP
+  CreateDirectory $INSTDIR\LANG
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\NSIS_FreePOPs "Install_Dir" "$INSTDIR"
   ; Write the uninstall keys for Windows
@@ -212,6 +214,7 @@ Section "Uninstall"
   Delete $INSTDIR\LUA_UPDATES\LXP\*.lua
   Delete $INSTDIR\LUA_UPDATES\BROWSER\*.lua
   Delete $INSTDIR\LUA_UPDATES\SOAP\*.lua
+  Delete $INSTDIR\LANG\*.mo
   RMDir $INSTDIR\LUA\LXP
   RMDir $INSTDIR\LUA\SOAP
   RMDir $INSTDIR\LUA\BROWSER
@@ -222,6 +225,7 @@ Section "Uninstall"
   RMDir $INSTDIR\LUA_UPDATES\BROWSER
   RMDir $INSTDIR\LUA_UPDATES\SOAP
   RMDir $INSTDIR\LUA_UPDATES
+  RMDir $INSTDIR\LANG
   ; remove shortcuts, if any.
   Delete "$SMPROGRAMS\FreePOPs\*.*"
   Delete "$SMPROGRAMS\FreePOPs\Debug\*.*"

@@ -7,6 +7,8 @@ PREFIX=$(DESTDIR)$(WHERE)
 VERSION=$(shell grep "\#define VERSION" config.h | cut -d \" -f 2)
 MAKEFLAGS+=--no-print-directory
 PWD=$(shell pwd)
+GMO=$(shell ls "$(PWD)/updater-ui/fltk/po" | grep ".gmo")
+LANGDIR=$(shell ls -d "$(PREFIX)share/locale/"*"/" | sed -e "s/\/*$$//g" -e "s/ /$$/g" -e "s/.*\///g")
 
 H=@
 
@@ -73,6 +75,12 @@ install: all
 		cp updater-ui/fltk/updater_fltk$(SHAREDEXTENSION) \
 			$(PREFIX)lib/freepops/; \
 		cp updater-ui/fltk/freepops-updater-fltk $(PREFIX)bin; \
+		for gmo in $(GMO); do \
+			lang=`echo $$gmo | sed -e "s/\.gmo//g"`; \
+			mkdir -p $(PREFIX)share/locale/$$lang/LC_MESSAGES/; \
+			cp updater-ui/fltk/po/$$lang.gmo \
+				$(PREFIX)share/locale/$$lang/LC_MESSAGES/updater_fltk.mo; \
+		done; \
 	fi
 	$(H)cp updater-ui/dialog/freepops-updater-dialog $(PREFIX)bin
 	$(H)cp updater-ui/zenity/freepops-updater-zenity $(PREFIX)bin
@@ -134,6 +142,9 @@ uninstall:
 	$(H)rmdir $(PREFIX)share/freepops/
 	$(H)-rmdir $(PREFIX)bin
 	$(H)-rmdir $(PREFIX)
+	$(H)for lang in $(LANGIDIR); do \
+		rm -f $(PREFIX)share/locale/$$lang/LC_MESSAGES/updater_fltk.mo; \
+	done
 
 tgz-dist: 
 	$(H)#ln -s buildfactory/debian . 2>/dev/null || true

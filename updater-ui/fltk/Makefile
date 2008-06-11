@@ -7,7 +7,9 @@ else
 CFLAGS+=$(FLTKCFLAGS) -I. -I../../modules/include -fPIC
 endif
 
-LDFLAGS=$(FLTKLDFLAGS) 
+CFLAGS+=-DLOCALEDIR="\"$(LOCALEDIR)\""
+
+LDFLAGS=$(FLTKLDFLAGS)
 %.o:%.cxx
 	$(H)echo -n " compiling $< -> "
 	$(H)$(CXX) $(CFLAGS) $(MACHOARCH) -c $< -o $@
@@ -15,7 +17,7 @@ LDFLAGS=$(FLTKLDFLAGS)
 
 SO=updater_fltk$(SHAREDEXTENSION)
 
-all: $(SO)
+all: $(SO) lang
 	$(H)echo -n
 
 updater.cxx updater.h:updater.fl
@@ -36,6 +38,11 @@ ifneq ($(MAKECMDGOALS),clean)
 	-include .updater.d .main.d .linker.d
 endif
 
+lang:
+	$(H)echo "building language files for updater_fltk"
+	$(H)$(MAKE) -C po all CONFIG="$(PWD)/config" || true
+
 clean:
 	$(H)echo cleaning updater_fltk
 	$(H)rm -f *.o $(SO) .*.d
+	$(H)$(MAKE) -C po clean CONFIG="$(PWD)/config" || true

@@ -344,7 +344,7 @@ int logit(char* zone, char* preamble, char*filename,int line,char *str, ...)
 	
 		// put an endline if the string was truncated
 		if (rc >= MAX_LOG_STRING-1 && strtmp[MAX_LOG_STRING-2] != '\n')
-		{	printf("XXX\n");	strtmp[MAX_LOG_STRING-2] = '\n';}
+			strtmp[MAX_LOG_STRING-2] = '\n';
 
 		fprintf(fd, "%s", strtmp);
 		fflush(fd);

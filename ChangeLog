@@ -1,3 +1,4 @@
+- patch by Blackmoon to internationalize and localize the updater (it translation included)
 07/06/2008 0.2.7
 - Makefile, buildfactory/debian/changelog, buildfactory/debian/control, buildfactory/debian/freepops-updater-fltk.menu, buildfactory/debian/freepops-updater-gnome.dirs, buildfactory/debian/freepops-updater-gnome.menu, buildfactory/debian/freepops.menu, buildfactory/debian/rules, doc/freepops-updater-zenity.1: manpage for -zenity and Makefile fixed, debian package updated (gareuselesinge)
 - Makefile, buildfactory/debian/control, buildfactory/debian/freepops-updater-gnome.dirs, buildfactory/debian/freepops-updater-gnome.menu, buildfactory/debian/rules, updater-ui/dialog/freepops-updater-dialog, updater-ui/zenity/freepops-updater-zenity: added zenity updater (gareuselesinge)

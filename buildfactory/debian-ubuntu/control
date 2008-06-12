@@ -2,23 +2,23 @@ Source: freepops
 Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@debian.org>
-Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl3-gnutls-dev (>= 7.15.0-2) | libcurl4-gnutls-dev, flex, bison, po-debconf, libfltk1.1-dev, gettext
+Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl3-gnutls-dev (>= 7.15.0-2) | libcurl4-gnutls-dev, flex, bison, po-debconf, liblua5.1-filesystem-dev, liblua5.1-expat-dev, liblua5.1-curl-dev, liblua5.1-0-dev, libfltk1.1-dev, liblua5.1-socket-dev, gettext
 Build-Depends-Indep: tetex-extra, texlive-latex-extra, texlive-fonts-recommended, texlive-latex-recommended, gs-common
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
+Homepage: http://www.freepops.org
 
 Package: freepops
 Architecture: any
 Depends: ${shlibs:Depends}, debconf | debconf-2.0 , lsb-base (>= 3.0-6)
 Suggests: dialog
-Description: POP3 interface to several webmails
- freepopsd is a POP3 daemon that translates local POP3 commands
+Description: POP3 interface to several webmail sites
+ FreePOPs is a POP3 daemon that translates local POP3 commands
  to remote HTTP requests to the supported webmail sites.
  .
- freepopsd can also be used as RSS aggregator and POP3 forwarder.
+ FreePOPs can also be used as RSS aggregator and POP3 proxy.
  .
- This package also includes a dialog based updater program, to check for updates
- and eventually download them. The package freepops-updater-fltk provides
- a graphical interface to the same updater engine.
+ This package also includes a dialog based updater program, to check
+ for updates and optionally download them.
 
 Package: freepops-updater-fltk
 Architecture: any
@@ -26,16 +26,29 @@ Depends: ${shlibs:Depends}, freepops (>= 0.2.0)
 Description: Graphical interface for the freepops updater engine
  This package provides a click-and-update program to download the lates updates
  from the freepops website.
+ .
+ The user interface is based on FTLK, if you are not using a GTK+ based desktop
+ environment this package is probably what you want to install.
+
+Package: freepops-updater-gnome
+Architecture: any
+Depends: ${shlibs:Depends}, freepops (>= 0.2.0), zenity
+Description: GNOME interface for the freepops updater engine
+ This package provides a click-and-update program to download the lates updates
+ from the freepops website.
+ .
+ The user interface is based on zenity, thus this package is recommended 
+ for GTK+ desktop environments like GNOME.
 
 Package: freepops-doc
 Section: doc
 Architecture: all
 Depends: 
-Description: freepops user/developer manual
- freepopsd is a POP3 daemon that translates local POP3 commands
+Description: FreePOPs user/developer manual
+ FreePOPs is a POP3 daemon that translates local POP3 commands
  to remote HTTP requests to the supported webmail sites.
  .
- freepopsd can also be used as RSS aggregator and POP3 forwarder.
+ FreePOPs can also be used as RSS aggregator and POP3 proxy.
  .
- This is the manual in PDF format for freepops.
+ This package includes the PDF manual for the software.
  

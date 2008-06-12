@@ -63,7 +63,16 @@ install-common:
 		$(CURDIR)/debian/freepops-updater-fltk/usr/bin
 	cp  updater-ui/fltk/freepops-updater-fltk-32.xpm \
 		$(CURDIR)/debian/freepops-updater-fltk/usr/share/pixmaps/
-	mv $(CURDIR)/debian/freepops/usr/share/locale/ $(CURDIR)/debian/freepops-updater-fltk/usr/share/;
+	mv $(CURDIR)/debian/freepops/usr/share/locale/ $(CURDIR)/debian/freepops-updater-fltk/usr/share/
+	mv $(CURDIR)/debian/freepops/usr/share/man/man1/freepops-updater-zenity.1\
+		$(CURDIR)/debian/freepops-updater-gnome/usr/share/man/man1/
+	mv $(CURDIR)/debian/freepops/usr/bin/freepops-updater-zenity \
+		$(CURDIR)/debian/freepops-updater-gnome/usr/bin
+	cp  updater-ui/zenity/freepops-updater-zenity.svg \
+		$(CURDIR)/debian/freepops-updater-gnome/usr/share/pixmaps/
+	cp debian/freepops-updater-gnome.desktop \
+		$(CURDIR)/debian/freepops-updater-gnome/usr/share/applications/
+
 
 install-manual: build-manual install-common
 
@@ -76,7 +85,7 @@ install: build install-common
 	 echo "#                                    ">> $$FILE; \
 	 echo "# man freepopsd for more info.     ">> $$FILE; 	\
 	 echo "DAEMON=\"/usr/bin/freepopsd\"">> $$FILE;		\
-	 echo "DAEMON_OPTS=\" -n\"">> $$FILE; 		\
+	 echo "DAEMON_OPTS=\" -n -s nobody.nogroup\"">> $$FILE; \
 	 echo "PIDFILE=\"/var/run/freepops.pid\"">> $$FILE; 	\
 	 echo "CHROOTED_DAEMON_OPTS=\" -n -s nobody.nogroup\"">> $$FILE
 
@@ -99,6 +108,7 @@ install: build install-common
 binary-indep: build build-manual install-manual
 	dh_testdir -i
 	dh_testroot -i
+	dh_desktop -i
 	dh_installchangelogs ChangeLog -i
 	dh_installdocs -i
 	dh_installexamples -i
@@ -118,6 +128,7 @@ binary-indep: build build-manual install-manual
 binary-arch: build install
 	dh_testdir -a
 	dh_testroot -a
+	dh_desktop -a
 	dh_installchangelogs ChangeLog -a
 	dh_installdocs -a
 	dh_installexamples -a

@@ -14,7 +14,7 @@
 local _DEBUG = false
 local DBG_LEN = nil -- 500
 
-PLUGIN_VERSION = "0.2.1"
+PLUGIN_VERSION = "0.2.1a"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -155,6 +155,10 @@ local globals = {
   -- Pattern to determine if we have no messages.  If this is found, we have messages.
   --
   strMsgListNoMsgPat = "(<tbody>)",
+  
+  -- Pattern to determine if we have no messages with 'mc'.  If found, there is no messages.
+  --
+  strMsgListNoMsgPatMC = '(modulecontainer filled nomessages)',
 
   -- Used by Stat to pull out the message ID and the size
   --
@@ -2122,8 +2126,11 @@ function stat(pstate)
     -- Find out if there are any messages
     -- 
     local nomesg = string.match(body, globals.strMsgListNoMsgPat)
-    if (nomesg == nil) then
+	local nomesgMC = string.match(body, globals.strMsgListNoMsgPatMC)
+    if (nomesg == nil and internalState.classicType ~= "mc") then
       return true, nil
+	elseif (nomesgMC ~= nil and internalState.classicType == "mc") then
+	  return true, nil
     end
 
     -- Find only the HTML containing the message list

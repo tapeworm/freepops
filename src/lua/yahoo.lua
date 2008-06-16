@@ -169,6 +169,7 @@ local globals = {
   -- Pattern used by Stat to get the next page in the list of messages
   --
   strMsgListPrevPagePattern = '<a href="/([my][cm][^"]*previous=1[^"]*)">',
+  strMsgListNextPagePatternMC = '| <a href="([^"]+)"><span[^|]+| <a href="[^"]+&last=1">',
 
   -- Pattern for emptying all
   --
@@ -2218,6 +2219,12 @@ function stat(pstate)
       cmdUrl = internalState.strMailServer .. nextURL
       return false
     else
+	  nextURL = string.match(body, globals.strMsgListNextPagePatternMC)
+	  if (nextURL ~= nil) then
+	    cmdUrl = internalState.strMailServer  .. internalState.classicType .. "/" .. nextURL
+	    return false
+	  end
+	
       return true
     end
   end

@@ -110,6 +110,7 @@ freepops.MODULES_MAP["live.it"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["live.nl"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["live.co.uk"]		= {name="hotmail.lua"}
 freepops.MODULES_MAP["live.com.au"]		= {name="hotmail.lua"}
+freepops.MODULES_MAP["milanosemplice.it"] = {name="hotmail.lua"}
 
 -- aol
 freepops.MODULES_MAP["aol.com"]		= {name="aol.lua"}

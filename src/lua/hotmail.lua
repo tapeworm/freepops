@@ -21,7 +21,8 @@ PLUGIN_DOMAINS = { "@hotmail.com","@msn.com","@webtv.com",
       "@charter.com", "@compaq.net","@passport.com", 
       "@hotmail.de", "@hotmail.it", "@hotmail.co.uk", 
       "@hotmail.co.jp", "@hotmail.fr", "@messengeruser.com",
-      "@hotmail.com.ar", "@hotmail.co.th", "@hotmail.com.tr"  
+      "@hotmail.com.ar", "@hotmail.co.th", "@hotmail.com.tr",
+      "@milanosemplice.it"
       }
 PLUGIN_PARAMETERS = {
 	{name="folder", description={

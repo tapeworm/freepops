@@ -14,7 +14,7 @@
 local _DEBUG = false
 local DBG_LEN = nil -- 500
 
-PLUGIN_VERSION = "0.2.1c"
+PLUGIN_VERSION = "0.2.1b"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -2207,14 +2207,11 @@ function stat(pstate)
       -- First figure out the unit (KB or just B)
       --
       local kbUnit = string.match(size, "([Kk])")
-	  local mbUnit = string.match(size, "([Mm])")
-      size = string.match(size, "([%d]+)[KkMmbB]")
-      if kbUnit then 
-        size = math.max(tonumber(size), 0) * 1024
-  	  elseif mbUnit then
-        size = math.max(tonumber(size), 0) * 1024 * 1024
-      else
+      size = string.match(size, "([%d]+)[KkbB]")
+      if not kbUnit then 
         size = math.max(tonumber(size), 0)
+      else
+        size = math.max(tonumber(size), 0) * 1024
       end
 
       -- Save the information

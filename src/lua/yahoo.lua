@@ -14,7 +14,7 @@
 local _DEBUG = false
 local DBG_LEN = nil -- 500
 
-PLUGIN_VERSION = "0.2.1a"
+PLUGIN_VERSION = "0.2.1b"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -355,7 +355,7 @@ function table_to_string(t, depth)
     )
     result = "{" .. table.concat(tmp,", ") .. "}"
   else
-    result = tostring(val)
+    result = tostring(t)
   end
   return result
 end
@@ -1456,7 +1456,7 @@ function getSTATList(pstate)
 
   -- Parse the message id's and sizes
   --
-  if (ipairs == nil) then
+  if (ent == nil) then
     internalState.bStatDone = true
     return POPSERVER_ERR_OK
   end
@@ -1530,6 +1530,8 @@ function getMsgHdr(pstate, uidl)
 end
 
 function getMsgBody(pstate, uidl, size, cbInfo)
+  log.dbg("YahooNew getMsgBody - Entering")
+
   local browser = internalState.browser
   local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
     internalState.strWebSrvUrl, "GetMessage", internalState.strCrumb)
@@ -1545,50 +1547,70 @@ function getMsgBody(pstate, uidl, size, cbInfo)
 
   -- Get the parts
   --
-  local part = nil
-  local major = nil
+  
+--  log.dbg("YahooNew getMsgBody ent[3]=",tostr(ent[3]))
+
   for i, elem in ipairs (ent[3]) do
     if (type(elem) == "table" and elem["tag"] == "part") then
-      part = elem
       local attrs = elem["attr"]
       local partId = attrs["partId"]
       local type = attrs["type"]
       local subtype = attrs["subtype"]
+      local textElem = elem[1]
+      
+      local idPlain = nil
+      local idHtml = nil
+
 --      log.dbg("YahooNew getMsgBody partId="..tostr(partId)..
 --        ", type="..tostr(type)..", subtype="..tostr(subtype)..
+--        ", textElem="..tostr(textElem)..
 --        ", attrs=",tostr(attrs))
-      -- partId=1 is usually the main text (1.1) and html (1.2),
-      --  which is handled above and therefore not included in attachments.
-      -- don't assume any other plain or html is the main text
-      if (subtype == "plain") then
-        local textElem = elem[1]
+
+      -- The main body plain-text and html are handled by the first
+      --  two tests and should not be included in attachments.
+      -- multipart/alternative results in two parts: text (1), html (2)
+      -- if there are more parts (e.g. attachments), the multi/alt body
+      --  is usually within the first part, so: text (1.1) and html (1.2)
+      -- Don't assume any other plain or html is part of the main body
+
+      if (cbInfo.strText == nil) and
+          textElem and textElem["tag"] == "text" and
+          (subtype == "plain" or
+            (type == "text" and subtype == "")) then
+        idPlain = partId
+        log.dbg("YahooNew getMsgBody: adding plain text body = "..tostr(idPlain))
         local text = textElem[1]
         if (text == nil) then
           text = ""
         end
         text = text .. "\n"
         cbInfo.strText = getMsgCallBack(cbInfo, text)
-        -- remove major part from attachments
-        major = string.match(partId,"(.-)%.")
-        major = major or partId
-        cbInfo.attachments[major] = nil
-      elseif (subtype == "html") then
-        local textElem = elem[1]
+        -- remove part from attachments
+        cbInfo.attachments[idPlain] = nil
+
+      elseif (cbInfo.strHtml == nil) and
+        textElem and textElem["tag"] == "text" and
+          subtype == "html" then
+        idHtml = partId
+        log.dbg("YahooNew getMsgBody: adding html body = "..tostr(idHtml))
         local text = textElem[1]
         text = string.gsub(text, "&amp;", "&")
 --        text = string.gsub(text, "(</[^>]+>) ", "%1\r\n") 
         text = text .. "\n"
         cbInfo.strHtml = getMsgCallBack(cbInfo, text)
-        -- remove major part from attachments
-        major = string.match(partId,"(.-)%.")
-        major = major or partId
-        cbInfo.attachments[major] = nil
+        -- remove part from attachments
+        cbInfo.attachments[idHtml] = nil
+
       elseif (partId == "HEADER" or partId == "TEXT") then
+        log.dbg("YahooNew getMsgBody: partId ignored: "..tostr(partId))
         -- no-op
+
       else
         -- Only add to attachments once, by partId
-        -- We want only whole parts, not subparts (so no ".")
-        if (string.match(partId,"%.") == nil) then
+        -- We only want the leaves, not the multipart groupings
+        if (type ~= "multipart") and
+          (partId ~= idPlain) and (partId ~= idHtml) then
+          log.dbg("YahooNew getMsgBody: adding an attachment = "..tostr(partId))
           local file = attrs["dispParams"]
           local contentId = attrs["contentId"]
           if (file ~= nil) then
@@ -1597,15 +1619,13 @@ function getMsgBody(pstate, uidl, size, cbInfo)
             url = string.format(globals.strCmdAttach, internalState.strMailServer,
                internalState.strMBox, escUidl, partId, internalState.strMailServer)
             cbInfo.attachments[partId] = getRealAttachmentUrl(url)
-  --          cbInfo.attachments[file] = getRealAttachmentUrl(url)
-  --          table.insert(cbInfo.attachments, cbInfo.attachments[file])
             -- an empty contentId is not a valid contentId
             if ((contentId ~= nil) and (contentId ~= "")) then
               contentId = string.sub(contentId, 2, -2)
               cbInfo.inlineids[partId] = contentId
-  --            cbInfo.inlineids[file] = contentId
-  --            table.insert(cbInfo.inlineids, table.getn(cbInfo.inlineids) + 1, contentId)
             end
+          else
+            log.dbg("YahooNew getMsgBody: nil dispParams -- attachment NOT ADDED.")
           end
         end
       end

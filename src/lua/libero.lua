@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.16"
+PLUGIN_VERSION = "0.2.17"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -166,13 +166,6 @@ function check_range(pstate,msg)
 end
 
 --------------------------------------------------------------------------------
--- Checks the validity of a domain
---
-function check_domain(domain)
-	return 	libero_domain[domain] ~= nil
-end
-
---------------------------------------------------------------------------------
 -- Serialize the internal_state
 --
 -- serial. serialize is not enough powerful to correcly serialize the 
@@ -216,9 +209,6 @@ function libero_login()
 	local domain = internal_state.domain
 	local site = libero_string.site 
 	local user = internal_state.name
-	if internal_state.domain ~= "libero.it" then
-		user = user .. "@" .. domain
-	end
 	local x,y = math.fmod(os.time(),16),math.fmod(os.time()*2,16)
 	local uri = libero_string.login_url
         log.dbg("Using webserver " .. uri);

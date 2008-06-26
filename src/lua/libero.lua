@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.15"
+PLUGIN_VERSION = "0.2.16"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -84,6 +84,7 @@ PLUGIN_DESCRIPTIONS = {
 -- expressions), mlex expressions, mlex get expressions.
 -- 
 local libero_string = {
+	site = ".libero.it",
 	-- The uri the browser uses when you click the "login" button
 	login_url = "https://login.libero.it/logincheck.php",		
 	login_post = "DOMAIN=%s&USERNAME=%s&PASSWORD=%s&AJAX=0&"..
@@ -134,14 +135,6 @@ local libero_string = {
 	delete_next = "&Msg_Sel_%d=%s"
 }
 
--- this table contains the realtion between the mail address domain, the
--- webmail domain name and the mailbox domain
-local libero_domain = {
-	["libero.it"] = { website=".libero.it",        choice="libero" },
-	["inwind.it"] = { website=".inwind.libero.it", choice="inwind" },
-	["iol.it"]    = { website=".iol.libero.it",    choice="iol"    },
-	["blu.it"]    = { website=".blu.libero.it",    choice="blu"    }
-}
 
 -- ************************************************************************** --
 --  State
@@ -221,8 +214,7 @@ function libero_login()
 	local password = internal_state.password
 	local popnumber = math.fmod(os.time(),15) + 1  -- == random(1..15)
 	local domain = internal_state.domain
-	local site = libero_domain[domain].website
-	local choice = libero_domain[domain].choice
+	local site = libero_string.site 
 	local user = internal_state.name
 	if internal_state.domain ~= "libero.it" then
 		user = user .. "@" .. domain
@@ -301,12 +293,6 @@ function user(pstate,username)
 		domain = "libero.it"
 	end
 
-	-- check if the domain is valid
-	if not check_domain(domain) then
-		-- dead code
-		return POPSERVER_ERR_AUTH
-	end
-	
 	-- save domain and name
 	internal_state.domain = domain
 	internal_state.name = name

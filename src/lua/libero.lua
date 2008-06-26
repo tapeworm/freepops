@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.13"
+PLUGIN_VERSION = "0.2.14"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -85,9 +85,9 @@ PLUGIN_DESCRIPTIONS = {
 -- 
 local libero_string = {
 	-- The uri the browser uses when you click the "login" button
-	login_url = "http://wpop%d%s/email.php",		
-	login_post = "dominio=%s&"..
-		"LOGIN=%s&PASSWD=%s&choice=%s&Act_Login.x=%d&Act_Login.y=%d",		
+	login_url = "https://login.libero.it/logincheck.php",		
+	login_post = "DOMAIN=%s&USERNAME=%s&PASSWORD=%s&AJAX=0&"..
+		"RET_URL=http://wpop%d%s/email.php&SERVICE_ID=old_email",
 	-- This is the capture to get the session ID from the login-done webpage
 	sessionC = "/cgi%-bin/webmail%.[ce][gx][ie]%?ID=([a-zA-Z0-9_%-]+)&",
 	-- This is the mlex expression to interpret the message list page.
@@ -228,15 +228,17 @@ function libero_login()
 		user = user .. "@" .. domain
 	end
 	local x,y = math.fmod(os.time(),16),math.fmod(os.time()*2,16)
-	local uri = string.format(libero_string.login_url,popnumber,site)
+	local uri = libero_string.login_url
         log.dbg("Using webserver " .. uri);
 	local post= string.format(libero_string.login_post,
-	            domain,user,password,choice,x,y)
+		domain,user,password,popnumber,site)
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()
 	local b = internal_state.b
 	--b:verbose_mode()
+
+	-- load some cookies
 	
 	-- the functions for do_until
 	-- extract_f uses the support function to extract a capture specifyed 

@@ -14,7 +14,7 @@
 local _DEBUG = false
 local DBG_LEN = nil -- 500
 
-PLUGIN_VERSION = "0.2.1c"
+PLUGIN_VERSION = "0.2.1d"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -2237,7 +2237,7 @@ function stat(pstate)
   -- change the command url
   --
   local function funcCheckForMorePages(body) 
-    if internalState.statLimit ~= nil and internalState.statLimit >= nMsgs then
+    if internalState.statLimit ~= nil and internalState.statLimit <= nMsgs then
       return true
     end
 

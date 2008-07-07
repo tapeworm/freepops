@@ -3,7 +3,7 @@
 -- Module to build on the fly a message from a header, a body (both in html or
 -- plain text format), a list of attachments urls
 
-MODULE_VERSION = "0.1.2"
+MODULE_VERSION = "0.1.3"
 MODULE_NAME = "mimer"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -624,6 +624,13 @@ function Private.html2txt(s,base_uri,html_coded,html_tags,all)
 		c = string.lower(c)
 		return html_coded[c] or ("["..c.."]")
 	end)
+	s = string.gsub(s,"&#(%d-);", function(c)
+--	  log.dbg("html2txt &#(%d-); substitution: "..tostring(c))
+      if tonumber(c) < 256 then
+	    return string.char(c)
+	  end
+	  -- FIXME: handle unicode characters?
+	  return "?"
 	s = string.gsub(s,"&#(%d-);",function(c) return string.char(c) end)
 	if all then
 		local n = 1

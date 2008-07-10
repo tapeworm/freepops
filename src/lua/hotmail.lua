@@ -3,8 +3,6 @@
 --  
 --  Released under the GNU/GPL license
 --  Written by Russell Schwager <russell822@yahoo.com>
---  Patched by cdmackie (2007-09-11). 
---    Fixed: lite login, live delete, corrupt messages, stuck at 1st message, classic delete more than 1 message
 -- ************************************************************************** --
 
 -- Globals

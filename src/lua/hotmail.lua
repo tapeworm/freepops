@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.90d"
+PLUGIN_VERSION = "0.1.90e"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -307,6 +307,7 @@ internalState = {
   strUserId = "",
   strMT = "",
   bKeepMsgStatus = false,
+  msgIds = {},
 }
 
 -- ************************************************************************** --
@@ -871,11 +872,6 @@ function downloadMsg(pstate, msg, nLines, data)
   local browser = internalState.browser
   local uidl = get_mailmessage_uidl(pstate, msg)
   
-  -- cdmackie: 2008-07-05 live light has the mad value encoded in the uidl as uidl&mad
-  if internalState.bLiveGUI == true and internalState.bLiveLightGUI == true then
-    uidl = string.match(uidl, "(.-)&.*")
-  end
-  
   local url = string.format(globals.strCmdMsgView, internalState.strMailServer,
     uidl, internalState.strMBox, internalState.strCrumb);
   local markReadUrl = url
@@ -1166,6 +1162,8 @@ function cleanupBody(body, cbInfo)
   --
   body = string.gsub(body, "<pre>[%s]*", "")
   body = string.gsub(body, "</pre>.-$", "\n")
+  -- cdmackie: sometimes we get only "</"
+  body = string.gsub(body, "</$", "\n")
 
   -- Clean up the end of line, and replace HTML tags
   --
@@ -1237,8 +1235,12 @@ function cleanupBody(body, cbInfo)
   body = string.gsub(body, "\r\n%.", "\r\n%.%.")
   
   -- Experimental -- For non-ascii users
-  --
-  body = string.gsub(body, "&#(%d-);", function(c) return string.byte(c) end)
+  body = string.gsub(body, "&#(%d*);",
+  	function(c)
+  		c = tonumber(c)
+  		return string.char(c)
+  	end
+  )
 
   -- We've now at least seen one block, attempt to clean up the headers
   --
@@ -1460,8 +1462,8 @@ function quit_update(pstate)
         post = postBase
       end
     elseif internalState.bLiveGUI == true and internalState.bLiveLightGUI and get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
-      -- cdmackie: 2008-07-05 string contains UIDLS and "mad" attribute from inbox
-      local uidl, mad = string.match(get_mailmessage_uidl(pstate, i), "(.-)&(.*)")
+      -- cdmackie: 2008-07-09 string contains UIDLS and "mad" attribute from inbox
+      local uidl, mad = string.match(internalState.msgIds[i], "(.-)&(.*)")
       if i > 1 then
         uidlsLight = uidlsLight .. ',"' .. uidl .. '"'
         madsLight = madsLight .. ',{"' .. mad .. '",null}'
@@ -1779,6 +1781,9 @@ function stat(pstate)
   -- really sucks!
   --
   local knownIDs = {}
+  
+  -- keep msgIds for Hotmail to include the n value
+  internalState.msgIds = {}
 
   -- Debug Message
   --
@@ -1912,7 +1917,7 @@ function stat(pstate)
     
       local mad = string.match(msgrow, globals.strMsgLiveLightPatternMad)
       local uidl = string.match(msgrow, globals.strMsgLiveLightPatternUidl)
-      uidl = string.match(msgrow, globals.strMsgLiveLightPatternUidl) .. "&" .. mad
+      local fulluidl = uidl .. "&" .. mad
       local size = string.match(msgcells, globals.strMsgLiveLightPatternSize)
 
       if not uidl or not size then
@@ -1955,6 +1960,7 @@ function stat(pstate)
         set_mailmessage_size(pstate, nMsgs, size)
         set_mailmessage_uidl(pstate, nMsgs, uidl)
         knownIDs[nMsgs] = uidl
+        internalState.msgIds[nMsgs] = fulluidl
       end
     end
 

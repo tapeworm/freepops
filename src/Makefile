@@ -81,6 +81,7 @@ LIBS=		crypto_lua	\
                 support_lua     \
                 mlex_lua        \
                 stats_lua        \
+		lwel 		\
                 log_lua         \
                 serialize_lua   \
                 session_lua     \

@@ -41,7 +41,8 @@ MODULES-Common= $(LUALUA)	\
 		updater_lua	\
 		xml2tex_lua \
 		luasoap \
-		dpipe_lua
+		dpipe_lua \
+		lwel
 	
 MODULES-Windows-pre=regex pthread 
 MODULES-Windows-post=winsystray

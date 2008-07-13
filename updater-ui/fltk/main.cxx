@@ -32,8 +32,8 @@ static int updater_run(lua_State* l){
 	
 	Fl_Double_Window* win = make_main_window();
 	updater_init(l);
-	char* argv[] = {"freepops"};
-	win->show(1, argv);
+	char argv[] = "freepops";
+	win->show(1, (char **)&argv);
 	lua_pushnumber(l,Fl::run());
 	return 1;
 }

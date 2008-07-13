@@ -60,6 +60,8 @@ dist-win-e-zip-step3:
 		_win_/freepops/C/
 	$(H)cp _win_/freepops-$(VERSION)/modules/lib/libpthread.dll \
 		_win_/freepops
+	$(H)cp _win_/freepops-$(VERSION)/modules/lib/lwel-manifest.dll \
+		_win_/freepops
 	$(H)cp _win_/freepops-$(VERSION)/src/lua/*.lua _win_/freepops/LUA/
 	$(H)cp _win_/freepops-$(VERSION)/modules/include/*.lua \
 		_win_/freepops/LUA/

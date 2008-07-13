@@ -46,5 +46,5 @@ MK_TEMPL_CTRIB=	lua \
 		luaexpat \
 		luafilesystem \
 		luasocket \
-		luacurl
-
+		luacurl \
+		lwel

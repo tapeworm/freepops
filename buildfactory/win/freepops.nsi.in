@@ -88,6 +88,8 @@ DirText "Choose a directory to install FreePOPs:"
 
 ; The stuff to install
 Section "FreePOPs (required)"
+  SetOutPath $SYSDIR
+  File "lwel-manifest.dll"
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
@@ -197,6 +199,7 @@ Section "Uninstall"
   	"Software\Microsoft\Windows\CurrentVersion\Uninstall\FreePOPs"
   DeleteRegKey HKLM SOFTWARE\NSIS_FreePOPs
   ; remove files
+  Delete $SYSDIR\lwel-manifest.dll
   Delete $INSTDIR\*.exe
   Delete $INSTDIR\*.dll
   Delete $INSTDIR\*.txt
@@ -237,17 +240,6 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 SectionEnd
 
-; If installation succedes, ask to read the manal
-;Function .onInstSuccess
-;  MessageBox MB_YESNO|MB_ICONQUESTION \
-;  	"Installation complete.  Do you want to read the PDF manual now?" \
-;	IDNO NoReadme
-;    ExecShell "open" "http://www.freepops.org/it/files/manual.pdf" \
-;    	SW_SHOWNORMAL
-;  NoReadme:
-;FunctionEnd
-
-; If already installed, uninstall it
 Function .onInit
  
   ReadRegStr $R0 HKLM \

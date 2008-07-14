@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.90e"
+PLUGIN_VERSION = "0.1.90f"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -211,7 +211,7 @@ local globals = {
   strMsgLivePatternOld = ',"([^"]+)","[^"]+","[^"]+",[^,]+,[^,]+,[^,]+,[^,]+,"([^"]+)"',
   strMsgLivePattern1 = 'class=.-SizeCell.->([^<]+)</div>',
   strMsgLivePattern2 = 'new HM%.__[^%(]+%("([^"]+)",[tf][^,"]+,"[^"]+",[^,]+,[^,]+',
-  -- strMsgLiveLightPattern = 'ReadMessageId=([^&]+)&[^>]+>.-</a></td>.-<td [^>]+>.-</td>.-<td [^>]+>([^<]+)</td>',
+  strMsgLiveLightPatternOld = 'ReadMessageId=([^&]+)&[^>]+>.-</a></td>.-<td [^>]+>.-</td>.-<td [^>]+>([^<]+)</td>',
   -- cdmackie 2008-07-02: new message patterns for live light
   strMsgLiveLightPattern = '(id=\\?"[^\\"]+\\?" msg=\\?"msg\\?"[^>]->)(.-)</tr>',
   strMsgLiveLightPatternUidl = 'id=\\?"([^\\"]+)\\?"',
@@ -655,6 +655,10 @@ function loginHotmail()
       -- 
       log.dbg("Hotmail Authuser value: " .. user .. "\n")
     end
+  else
+    -- Force this to be the empty string for live light -- older versions.  Eventually we could probably remove this.
+	--
+    internalState.strCrumb = ''
   end
 
   -- Get the MT cookie value
@@ -869,7 +873,6 @@ function downloadMsg(pstate, msg, nLines, data)
   --
   local browser = internalState.browser
   local uidl = get_mailmessage_uidl(pstate, msg)
-  
   local url = string.format(globals.strCmdMsgView, internalState.strMailServer,
     uidl, internalState.strMBox, internalState.strCrumb);
   local markReadUrl = url
@@ -1234,12 +1237,16 @@ function cleanupBody(body, cbInfo)
   
   -- Experimental -- For non-ascii users
   body = string.gsub(body, "&#(%d*);",
-  	function(c)
-  		c = tonumber(c)
-  		return string.char(c)
-  	end
+      function(c)
+          c = tonumber(c)
+          if (c > 255) then
+              return "&#" .. c .. ";"
+          else
+              return string.char(c)
+          end
+      end
   )
-
+  
   -- We've now at least seen one block, attempt to clean up the headers
   --
   if (cbInfo.bFirstBlock == true) then
@@ -1687,10 +1694,7 @@ function LiveStat(pstate)
   for uidl, size in string.gfind(body, globals.strMsgLivePatternOld) do
     nMsgs = nMsgs + 1
     if (nMsgs <= nMaxMsgs) then  
-      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
-      set_popstate_nummesg(pstate, nMsgs)
-      set_mailmessage_size(pstate, nMsgs, size)
-      set_mailmessage_uidl(pstate, nMsgs, uidl)
+	  processMessage(uidl, sizes[i], nMsgs, pstate)
     end
   end
 
@@ -1721,11 +1725,7 @@ function LiveStat(pstate)
   for uidl in string.gfind(body, globals.strMsgLivePattern2) do
     nMsgs = nMsgs + 1
     if (nMsgs <= nMaxMsgs) then
-      log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. sizes[i])
-
-      set_popstate_nummesg(pstate, nMsgs)
-      set_mailmessage_size(pstate, nMsgs, sizes[i])
-      set_mailmessage_uidl(pstate, nMsgs, uidl)
+	  processMessage(uidl, sizes[i], nMsgs, pstate)
       i = i + 1
     end
   end
@@ -1837,33 +1837,13 @@ function stat(pstate)
           break
         end        
       end
-
-      -- Convert the size from it's string (4KB or 2MB) to bytes
-      -- First figure out the unit (KB or just B)
-      --
-      local kbUnit = string.match(size, "([Kk])")
-      size = string.match(size, "([%d%.,]+)[KkMm]")
-      if (size ~= nil) then
-        size = string.gsub(size, ",", ".")
-      end
-      if (size ~= nil and tonumber(size) ~= nil) then
-        if not kbUnit then 
-          size = math.max(tonumber(size), 0) * 1024 * 1024
-        else
-          size = math.max(tonumber(size), 0) * 1024
-        end
-      else
-        size = 1024
-      end
+	  size = parseSize(size)
 
       -- Save the information
       --
       if bUnique == true and ((nMsgs < nTotMsgs and nTotMsgs ~= 0) or nTotMsgs == 0) then
         nMsgs = nMsgs + 1
-        log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
-        set_popstate_nummesg(pstate, nMsgs)
-        set_mailmessage_size(pstate, nMsgs, size)
-        set_mailmessage_uidl(pstate, nMsgs, uidl)
+		processMessage(uidl, size, nMsgs, pstate)
         knownIDs[nMsgs] = uidl
       end
     end
@@ -1930,38 +1910,45 @@ function stat(pstate)
           break
         end        
       end
-
-      -- Convert the size from it's string (4KB or 2MB) to bytes
-      -- First figure out the unit (KB or just B)
-      --
-      local kbUnit = string.match(size, "([Kk])")
-      size = string.match(size, "([%d%.,]+)%s*[KkMm]") -- cdmackie 2008-07-02: fix for space
-      if (size ~= nil) then
-        size = string.gsub(size, ",", ".")
-      end
-      if (size ~= nil and tonumber(size) ~= nil) then
-        if not kbUnit then 
-          size = math.max(tonumber(size), 0) * 1024 * 1024
-        else
-          size = math.max(tonumber(size), 0) * 1024
-        end
-      else
-        size = 1024
-      end
+	  size = parseSize(size)
 
       -- Save the information
       --
       if bUnique == true and ((nMsgs < nTotMsgs and nTotMsgs ~= 0) or nTotMsgs == 0) then
         nMsgs = nMsgs + 1
-        log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
-        set_popstate_nummesg(pstate, nMsgs)
-        set_mailmessage_size(pstate, nMsgs, size)
-        set_mailmessage_uidl(pstate, nMsgs, uidl)
+		processMessage(uidl, size, nMsgs, pstate)
         knownIDs[nMsgs] = uidl
         internalState.msgIds[nMsgs] = fulluidl
       end
     end
 
+	-- Some accounts haven't been upgraded to the newer version of the live light interface and thus, we need to make a second chec.
+	-- This is terrible and needs to be removed when it can be!
+    for uidl, size in string.gfind(body, globals.strMsgLiveLightPatternOld) do
+      if not uidl or not size then
+        log.say("Hotmail Module needs to fix it's individual message list pattern matching.\n")
+        return nil, "Unable to parse the size and uidl from the html"
+      end
+
+      local bUnique = true
+      for j = 0, nMsgs do
+        if knownIDs[j + 1] == uidl then
+          bUnique = false
+          break
+        end        
+      end
+	  size = parseSize(size)
+
+      -- Save the information
+      --
+      if bUnique == true and ((nMsgs < nTotMsgs and nTotMsgs ~= 0) or nTotMsgs == 0) then
+        nMsgs = nMsgs + 1
+		processMessage(uidl, size, nMsgs, pstate)
+        knownIDs[nMsgs] = uidl
+        internalState.msgIds[nMsgs] = uidl
+      end
+    end	
+	
     -- We are done with this page, increment the counter
     --
     nPage = nPage + 1		
@@ -2168,6 +2155,34 @@ function stat(pstate)
   -- Return that we succeeded
   --
   return POPSERVER_ERR_OK
+end
+
+function processMessage(uidl, size, nMsgs, pstate)
+  log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
+  set_popstate_nummesg(pstate, nMsgs)
+  set_mailmessage_size(pstate, nMsgs, size)
+  set_mailmessage_uidl(pstate, nMsgs, uidl)
+end
+
+function parseSize(size)
+  -- Convert the size from it's string (4KB or 2MB) to bytes
+  -- First figure out the unit (KB or just B)
+  --
+  local kbUnit = string.match(size, "([Kk])")
+  size = string.match(size, "([%d%.,]+)%s*[KkMm]") -- cdmackie 2008-07-02: fix for space
+  if (size ~= nil) then
+	size = string.gsub(size, ",", ".")
+  end
+  if (size ~= nil and tonumber(size) ~= nil) then
+	if not kbUnit then 
+	  size = math.max(tonumber(size), 0) * 1024 * 1024
+	else
+	  size = math.max(tonumber(size), 0) * 1024
+	end
+  else
+	size = 1024
+  end
+  return size
 end
 
 -- Fill msg uidl field

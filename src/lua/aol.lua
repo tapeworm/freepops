@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.2"
+PLUGIN_VERSION = "0.1.3"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -23,6 +23,9 @@ PLUGIN_PARAMETERS =
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox. Gli altri valori possibili sono: Junk, Trash, Draft, Sent.]],
 		en=[[The folder you want to interact with. Default is New (AOL)/Inbox (Netscape), other values are for AOL: Old, Sent, Saved, Spam and Deleted and Netscape: Sent, Trash, Draft.]]}
+	},
+	{name="forcedelete", description={
+		en=[[If set to "1", all messages marked for delete in the inbox will be moved to the trash and not the read folder.]]}
 	}
 PLUGIN_DESCRIPTIONS = {
 	it=[[
@@ -136,7 +139,7 @@ local globals = {
   strCmdMsgView = "http://%s/%s/%s/en-us/Lite/ViewSource.aspx?user=%s&folder=%s&uid=%s",
   strCmdWelcome = "http://%s/%s/%s/en-us/MessageList.aspx",
   strCmdToday = "http://%s/%s/%s/en-us/Lite/Today.aspx",
-  strCmdMsgListPost = 'dojo.transport=xmlhttp&automatic=false&requests=%%5B%%7B%%22folder%%22%%3A%%22%s%%22%%2C%%22start%%22%%3A0%%2C%%22count%%22%%3A20%%2C%%22indexStart%%22%%3A0%%2C%%22indexMax%%22%%3A1000%%2C%%22index%%22%%3Atrue%%2C%%22info%%22%%3Atrue%%2C%%22rows%%22%%3Atrue%%2C%%22sort%%22%%3A%%22received%%22%%2C%%22sortDir%%22%%3A%%22descending%%22%%2C%%22search%%22%%3Aundefined%%2C%%22searchIn%%22%%3Aundefined%%2C%%22seen%%22%%3A%%5B%%5D%%2C%%22action%%22%%3A%%22GetMessageList%%22%%7D%%5D',
+  strCmdMsgListPost = 'dojo.transport=xmlhttp&automatic=false&requests=%%5B%%7B%%22folder%%22%%3A%%22%s%%22%%2C%%22start%%22%%3A0%%2C%%22count%%22%%3A999%%2C%%22indexStart%%22%%3A0%%2C%%22indexMax%%22%%3A1000%%2C%%22index%%22%%3Atrue%%2C%%22info%%22%%3Atrue%%2C%%22rows%%22%%3Atrue%%2C%%22sort%%22%%3A%%22received%%22%%2C%%22sortDir%%22%%3A%%22descending%%22%%2C%%22search%%22%%3Aundefined%%2C%%22searchIn%%22%%3Aundefined%%2C%%22seen%%22%%3A%%5B%%5D%%2C%%22action%%22%%3A%%22GetMessageList%%22%%7D%%5D',
 
   -- Site IDs
   --
@@ -161,6 +164,7 @@ internalState = {
   strUserId = nil,
   strVersion = "",
   strBrand = "",
+  bForceDelete = false,
 }
 
 -- ************************************************************************** --
@@ -498,6 +502,11 @@ function user(pstate, username)
     internalState.strBrand = "aol"
   end
 
+  if ((freepops.MODULE_ARGS or {}).forcedelete == "1") then
+    log.dbg("All Inbox messages will be moved to the trash and not the read folder.")
+    internalState.bForceDelete = true
+  end
+  
   -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
@@ -630,7 +639,7 @@ function quit_update(pstate)
   local cmdUrl = string.format(globals.strCmdDelete, internalState.strMailServer,
     internalState.strVersion, internalState.strBrand)
   local postStr = globals.strCmdDeletePost
-  if (internalState.strMBox ~= globals.strInboxAOL) then
+  if (internalState.strMBox ~= globals.strInboxAOL or internalState.bForceDelete) then
     postStr = globals.strCmdDeletePost2
   end
   local post = string.format(postStr, internalState.strUserId, internalState.strMBox) 

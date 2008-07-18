@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.17"
+PLUGIN_VERSION = "0.2.18"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -87,7 +87,7 @@ local libero_string = {
 	site = ".libero.it",
 	-- The uri the browser uses when you click the "login" button
 	login_url = "https://login.libero.it/logincheck.php",		
-	login_post = "DOMAIN=%s&USERNAME=%s&PASSWORD=%s&AJAX=0&"..
+	login_post = "LOGINID=%s&PASSWORD=%s&AJAX=0&"..
 		"RET_URL=http://wpop%d%s/email.php&SERVICE_ID=old_email",
 	-- This is the capture to get the session ID from the login-done webpage
 	sessionC = "/cgi%-bin/webmail%.[ce][gx][ie]%?ID=([a-zA-Z0-9_%-]+)&",
@@ -213,7 +213,7 @@ function libero_login()
 	local uri = libero_string.login_url
         log.dbg("Using webserver " .. uri);
 	local post= string.format(libero_string.login_post,
-		domain,user,password,popnumber,site)
+		user .. "@" .. domain,password,popnumber,site)
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()

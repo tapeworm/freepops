@@ -51,14 +51,14 @@ local globals = {
   -- strLoginUrl = "http://email01.orange.co.uk/webmail/en_GB/login.html ",
   -- http://email01.orange.nl/webmail/nl_NL/
 
-  strBaseUrl ="http://email%s%d.orange.%s/webmail/%s/",
+  strBaseUrl ="http://fsmail%s%d.orange.%s/webmail/%s/",
   strLogin = "connexion_submit.html",
   
   --strLoginGood = "http://email01.orange.co.uk/webmail/en_GB/inbox.html",
 
   -- Login strings
   --
-  strLoginPostData = "LOGIN=%s&PASSWORD=%s",
+  strLoginPostData = "LOGIN=%s&PASSWORD=%s&DOMAINE=%s&URL_REDIRECT_TO=connexion_submit.html&Email=%s&Password=%s&FLAG=E",
   strLoginFailed = "MESSAGE=AUTH_FAILED",
 
   strSessionExpired = '<div id="infoLoginMessage',
@@ -188,6 +188,10 @@ function login()
     --
     internalState.browser = browser.new()
     
+	-- Enable SSL
+	--
+	internalState.browser:ssl_init_stuff()
+
     -- Define some local variables
     --
     local username = internalState.strUser .. "@" .. internalState.strDomain
@@ -201,7 +205,7 @@ function login()
     
     -- Create the post string
     --
-    local post = string.format(globals.strLoginPostData, username, password)
+    local post = string.format(globals.strLoginPostData, username, password, domain, username, password)
     
     -- Retrieve the login page.
     --
@@ -213,12 +217,16 @@ function login()
       return POPSERVER_ERR_NETWORK
     end
     
+	local url = string.match(body, '<p>The document has moved <a href="([^"]+)">')
+	if (url ~= nil) then
+      body, err = browser:get_uri(url)
+	end
+	
     local str = browser:whathaveweread() 
     log.dbg ("Login redirected to... " .. str)
     str = string.gsub(str, "/[^/]+$", "/")
     internalState.strBaseUrl = str
     log.dbg ("Server url stored as: " .. str)
-
     
     local failed = string.find(str,globals.strLoginFailed)
     if failed  then

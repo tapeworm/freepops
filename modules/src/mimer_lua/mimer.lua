@@ -3,7 +3,7 @@
 -- Module to build on the fly a message from a header, a body (both in html or
 -- plain text format), a list of attachments urls
 
-MODULE_VERSION = "0.1.3"
+MODULE_VERSION = "0.1.4"
 MODULE_NAME = "mimer"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -255,7 +255,7 @@ end
 -- ------------------------------------------------------------------------- --
 Private.base64wrap = 45
 
-function Private.base64_io_slave(cb)
+function base64_io_slave(cb)
 	local buffer = ""
 	return function(s,len)
 		buffer = buffer .. s
@@ -279,6 +279,8 @@ function Private.base64_io_slave(cb)
 		return len
 	end
 end
+
+Private.base64_io_slave = base64_io_slave
 
 -- ------------------------------------------------------------------------- --
 Private.qpewrap=73
@@ -631,7 +633,7 @@ function Private.html2txt(s,base_uri,html_coded,html_tags,all)
 	  end
 	  -- FIXME: handle unicode characters?
 	  return "?"
-	s = string.gsub(s,"&#(%d-);",function(c) return string.char(c) end)
+	end)
 	if all then
 		local n = 1
 		while n > 0 do 
@@ -926,7 +928,7 @@ function encodeUTF8(unicode)
    local math = math
    local utf8 = ""
 
-   for i=1,string.len(unicoden) do
+   for i=1,string.len(unicode) do
       local v = string.byte(unicode,i)
       local n, s, b = 1, "", 0
       if v >= 67108864 then n = 6; b = 252

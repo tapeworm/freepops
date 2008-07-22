@@ -64,7 +64,7 @@ static struct entry_t libs[LUABOX_LAST] = {
 	{"lfs","lfs",luaopen_lfs},
 	{"dpipe","dpipe",luaopen_dpipe},
 	{"stats","stats",luaopen_stats},
-	{"lwel","lwel",luaopen_wel},
+	{"wel.core","wel",luaopen_wel_core},
 };
 
 lua_State* luabox_genbox(unsigned long intial_stuff){

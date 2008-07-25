@@ -312,6 +312,9 @@ internalState = {
   bNewGUI = false,
   strWebSrvUrl = nil,
   strGSS = nil,
+
+  -- Windows event logging
+  logger = nil
 }
 
 
@@ -545,7 +548,8 @@ function serialize_state()
   internalState.bStatDone = false;
 	
   return serial.serialize("internalState", internalState) ..
-		internalState.browser:serialize("internalState.browser")
+		internalState.browser:serialize("internalState.browser") ..
+		 internalState.logger:serialize("internalState.logger")
 end
 
 -- Computes the hash of our state.  Concate the user, domain, mailbox and password
@@ -594,6 +598,9 @@ function loginYahoo()
 --  internalState.browser = browser.new("Mozilla/3.0 (U; en)")
 --  internalState.browser = browser.new("FreePOPs/2.5 (U; en)")
   local SSLEnabled = browser.ssl_enabled()
+  
+  -- Create the windows event logger
+  internalState.logger = wel.new('FreePOPs','yahoo')
 
   -- Define some local variables
   --
@@ -705,6 +712,7 @@ function loginYahoo()
   local str = string.match(body, globals.strRetLoginBadPassword)
   if str ~= nil then
     log.err("Returned Page saying invalid password: ", body)
+    internalState.logger:error("user: " .. username .. "\nerror: bad password")
     return POPSERVER_ERR_AUTH
   end
 
@@ -1922,6 +1930,9 @@ function pass(pstate, password)
     -- Execute the function saved in the session
     --
     func()
+
+    internalState.logger:info("user: ".. internalState.strUser ..
+          "@" .. internalState.strDomain .. "\n" .. "info: session loaded")
 		
     return POPSERVER_ERR_OK
   else
@@ -2415,6 +2426,10 @@ function init(pstate)
   -- Soap
   --
   require("soap.http")
+
+  -- Windows event logging
+  --
+  require("wel")
 
   -- Run a sanity check
   --

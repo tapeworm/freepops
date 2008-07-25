@@ -14,9 +14,9 @@
 local _DEBUG = false
 local DBG_LEN = nil -- 500
 
-PLUGIN_VERSION = "0.2.1d"
+PLUGIN_VERSION = "0.2.1e"
 PLUGIN_NAME = "yahoo.com"
-PLUGIN_REQUIRE_VERSION = "0.2.0"
+PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=yahoo.lua"
 PLUGIN_HOMEPAGE = "http://www.freepops.org/"

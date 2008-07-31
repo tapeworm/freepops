@@ -14,7 +14,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.52"
+PLUGIN_VERSION = "0.0.53"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -349,6 +349,7 @@ function gmail_login()
 
     local str = string.find(body, "<title>Redirecting</title>")
     if str ~= nil then
+		body = string.gsub(body, "&#39;", "'")
 		local i,j=string.find(body, "url='")
         local k,l=string.find(body, "'\"></head>")
 		local URL = string.sub(body,j+1,k-1)

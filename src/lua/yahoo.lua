@@ -673,10 +673,22 @@ function loginYahoo()
     log.dbg( "login redirect response: err=" .. tostr(err), dbg_limit(body) )
   end
 
+  -- Check for interstitial page (advertisements)
+  url = browser:whathaveweread()
+  log.dbg("browser:whathaveweread()=" .. url)
+  str = string.match( url, '(http://.-interstitial.-/)[^/]*' )
+  if (str ~= nil) then
+    url = str .. "mail_act.php?mpref=2" -- from skip() in http://us.i1.yimg.com/us.yimg.com/lib/tb7/mail_interstitial/mail_20080612.js
+    log.dbg( "interstitial get: url=" .. url )
+    body, err = browser:get_uri(url)
+    log.dbg( "interstitial response: err=" .. tostr(err), dbg_limit(body) )
+
+    url = browser:whathaveweread()
+    log.dbg("browser:whathaveweread()=" .. url)
+  end
+
   -- Check for NewGUI and Try Beta
   local bNewGui = false
-  local url = browser:whathaveweread()
-  log.dbg("browser:whathaveweread()=" .. url)
   str = string.match(url, '/dc/try_mail')
   if (str == nil) then
     -- it's not a "try" page.  Check if its the new gui.
@@ -2219,7 +2231,10 @@ function stat(pstate)
       --
       local kbUnit = string.match(size, "([Kk])")
 	  local mbUnit = string.match(size, "([Mm])")
-      size = string.match(size, "([%d]+)[KkMmbB]")
+      size = string.match(size, "([%d]+)[ ]-[KkMmbB]")
+	  if size == nil then
+	    size = 1024
+	  end
       if kbUnit then 
         size = math.max(tonumber(size), 0) * 1024
   	  elseif mbUnit then

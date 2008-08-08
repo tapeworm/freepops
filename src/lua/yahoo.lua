@@ -14,7 +14,7 @@
 local _DEBUG = false
 local DBG_LEN = nil -- 500
 
-PLUGIN_VERSION = "0.2.1e"
+PLUGIN_VERSION = "0.2.1f"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -27,6 +27,7 @@ PLUGIN_AUTHORS_CONTACTS =
 PLUGIN_DOMAINS = {"@yahoo.com", "@yahoo.ie", "@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
                   "@yahoo.co.in", "@yahoo.co.id", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
                   "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com", "@yahoo.com.au", "@yahoo.co.nz",
+				  "@ymail.com",
 }
 
 PLUGIN_PARAMETERS = {
@@ -618,7 +619,7 @@ function loginYahoo()
   if (domain == "rocketmail.com") then
     domain = "yahoo.com"
     username = username .. ".rm"
-  elseif (domain == "btinternet.com" or domain == "talk21.com") then
+  elseif (domain == "btinternet.com" or domain == "talk21.com" or domain == "ymail.com") then
     username = username .. "@" .. domain
   end
 	

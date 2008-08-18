@@ -187,7 +187,7 @@ Section "Start Menu Shortcuts"
   	"http://www.freepops.org/" "" \
 	"http://www.freepops.org/" 0
   CreateShortCut "$SMPROGRAMS\FreePOPs\Forum.lnk" \
-	  "http://freepops.diludovico.it" "" "http://freepops.diludovico.it" 0
+	  "http://www.diludovico.org/forum/" "" "http://www.diludovico.org/forum/" 0
 SectionEnd
 
 ; uninstall stuff

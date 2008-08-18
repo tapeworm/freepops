@@ -104,7 +104,8 @@ LIBS=		crypto_lua	\
 		$(LUAFILESYSTEM) \
                 $(LUASOCKET)      \
                 luay            \
-                $(LUALUA:%=%5.1) 
+                $(LUALUA:%=%5.1) \
+		lgettext 
 		
 EXCLUDELIBS=	serialize_lua \
 		browser_lua \
@@ -120,13 +121,14 @@ ifeq "$(OS)" "Windows"
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
 		-lregex -lm -l$(CURLNAME) -lcrypto -lmingw32 -lwsock32 \
-			-lpthread -lexpat -lgdi32 -mwindows 
+			-lpthread -lexpat -lgdi32 -mwindows -lintl 
   else
 	LDFLAGS+= -L ../modules/lib \
 		-Wl,-whole-archive -lwinsystray -Wl,-no-whole-archive\
 		$(addprefix -l,$(LIBSTOLINK)) \
 		-lregex -lm -l$(CURLNAME) -lmingw32 -lwsock32 \
-			-lpthread -lexpat -lgdi32 -mwindows -lgcrypt -lgpg-error
+		-lpthread -lexpat -lgdi32 -mwindows -lgcrypt -lgpg-error \
+		-lintl
   endif
 else
 ifeq "$(OS)" "Darwin"
@@ -161,7 +163,7 @@ else
 ifeq "$(OS)" "Cygwin"
 	LDFLAGS+= -L ../modules/lib \
 		$(addprefix -l,$(LIBSTOLINK)) -lregex -lm -lpthread -lcurl \
-		-lwsock32 -lexpat -lgdi32 -lz -lssl -lcrypto -lcygwin
+		-lwsock32 -lexpat -lgdi32 -lz -lssl -lcrypto -lcygwin -lintl
 else
 ifeq "$(OS)" "BeOS"
 	LDFLAGS+=-L ../modules/lib $(addprefix -l,$(LIBSTOLINK)) \

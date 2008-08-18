@@ -91,3 +91,12 @@ msgstr ""
 
 msgid "Did nothing!"
 msgstr ""
+
+msgid "Already at the newest version"
+msgstr ""
+
+msgid "FreePOPs is too old, needs version "
+msgstr ""
+
+msgid "New version available"
+msgstr ""

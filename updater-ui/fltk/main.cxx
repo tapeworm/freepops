@@ -17,9 +17,12 @@
 #include <lua.hpp>
 #include <libintl.h>
 #include <locale.h>
+#include <string.h>
 
 #include "updater.h"
 #include "linker.h"
+
+static char fp [10];
 
 static int updater_run(lua_State* l){
 	setlocale(LC_MESSAGES, "");
@@ -32,8 +35,9 @@ static int updater_run(lua_State* l){
 	
 	Fl_Double_Window* win = make_main_window();
 	updater_init(l);
-	char argv[] = "freepops";
-	win->show(1, (char **)&argv);
+	strncpy(fp, "freepops", 10);
+	char *argv[] = {fp,fp};
+	win->show(1, argv);
 	lua_pushnumber(l,Fl::run());
 	return 1;
 }

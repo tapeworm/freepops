@@ -39,6 +39,7 @@
 #include "dpipe_lua.h"
 #include "stats_lua.h"
 #include "lwel.h"
+#include "lgettext.h"
 
 #include "log.h"
 #define LOG_ZONE "LUABOX"
@@ -65,6 +66,7 @@ static struct entry_t libs[LUABOX_LAST] = {
 	{"dpipe","dpipe",luaopen_dpipe},
 	{"stats","stats",luaopen_stats},
 	{"wel.core","wel",luaopen_wel_core},
+	{"lgettext","lgettext",luaopen_lgettext},
 };
 
 lua_State* luabox_genbox(unsigned long intial_stuff){

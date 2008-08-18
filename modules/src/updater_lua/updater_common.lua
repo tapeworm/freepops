@@ -18,6 +18,8 @@ local ipairs = ipairs
 local print = print
 local tostring = tostring
 local assert = assert
+local gettext = require("lgettext")
+local _ = gettext.translate
 
 module("updater_common")
 
@@ -79,15 +81,15 @@ function check_if_updatable(module, reqversion, newversion, oldvers)
     if not isFPOk then
       log.dbg("Warning: Unable to update the module as it requires " .. 
          "a newer version of FreePOPS (" .. reqversion .. ")")
-      return false, true, "FreePOPs is too old, needs version "..reqversion
+      return false, true, (_("FreePOPs is too old, needs version "))..reqversion
     end
   -- The version is the same.
   --
   elseif (rc <= 0) then
-    return true, false, "Already at the newest version"
+    return true, false, (_("Already at the newest version"))
   end
 
-  return true, true, "New version available"
+  return true, true, (_("New version available"))
 end
 
 ---

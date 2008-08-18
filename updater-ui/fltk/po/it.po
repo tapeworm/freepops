@@ -92,4 +92,11 @@ msgstr "Report"
 msgid "Did nothing!"
 msgstr "Non ho fatto niente!"
 
+msgid "Already at the newest version"
+msgstr "Gia' alla versione recente"
 
+msgid "FreePOPs is too old, needs version "
+msgstr "FreePOPs e' troppo vecchio, necessita versione "
+
+msgid "New version available"
+msgstr "Nuova versione disponibile"

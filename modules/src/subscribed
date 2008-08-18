@@ -38,7 +38,8 @@ MK_TEMPLATE=	luabind \
 		version_comparer_lua \
 		xml2tex_lua \
 		luasoap	\
-		dpipe_lua
+		dpipe_lua \
+		lgettext
 
 MK_TEMPL_CTRIB=	lua \
 		pthread \

@@ -64,7 +64,7 @@ WINDMC=${WINDMC:-windmc}
 DLLTOOL=${DLLTOOL:-dlltool}
 MAKE=${MAKE:-make}
 WHERE=${WHERE:-/usr/local/}
-LOCALEDIR=${LOCALEDIR:-/usr/local/share/locale/}
+LOCALEDIR=${LOCALEDIR:-/usr/local/share/locale}
 TAR=${TAR:-tar}
 PATCH=${PATCH:-patch}
 SSL=${SSL:-openssl}
@@ -95,7 +95,7 @@ set_linux_slack() {
 set_default
 CFLAGS="-O2 -g3 -march=i486 -Wall -DHAVE_CONFIG_H -I$PWD"
 WHERE=/usr/
-LOCALEDIR=/usr/share/locale/
+LOCALEDIR=/usr/share/locale
 OS=Linux
 LUAFLAGS=" -DLUA_USE_LINUX "
 }

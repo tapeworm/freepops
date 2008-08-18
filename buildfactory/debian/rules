@@ -24,7 +24,7 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE) all WHERE=/usr/ LOCALEDIR=/usr/share/locale/
+	$(MAKE) all WHERE=/usr/ LOCALEDIR=/usr/share/locale
 
 	touch build-stamp
 
@@ -52,7 +52,7 @@ install-common:
 	dh_testroot
 	dh_clean -k 
 	dh_installdirs
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops/ WHERE=/usr/ LOCALEDIR=/usr/share/locale/
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops/ WHERE=/usr/ LOCALEDIR=/usr/share/locale
 	-mv $(CURDIR)/debian/freepops/usr/share/doc/freepops/*.pdf \
 		$(CURDIR)/debian/freepops-doc/usr/share/doc/freepops-doc/ 
 	mv $(CURDIR)/debian/freepops/usr/lib/freepops/*.so \

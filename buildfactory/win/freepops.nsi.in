@@ -227,7 +227,7 @@ Section "Uninstall"
   RMDir $INSTDIR\LUA_UPDATES\BROWSER
   RMDir $INSTDIR\LUA_UPDATES\SOAP
   RMDir $INSTDIR\LUA_UPDATES
-  RMDir $INSTDIR\LANG
+  RMDir /r $INSTDIR\LANG
   ; remove shortcuts, if any.
   Delete "$SMPROGRAMS\FreePOPs\*.*"
   Delete "$SMPROGRAMS\FreePOPs\Debug\*.*"

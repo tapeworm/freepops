@@ -23,7 +23,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.7"
+PLUGIN_VERSION = "0.2.8"
 PLUGIN_NAME = "RSS/RDF aggregator"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -342,10 +342,10 @@ function build_mail_header(title,uidl,mydate)
 	"Subject: "..title.."\r\n"..
 	"From: freepops@"..make_valid_domain(internal_state.password).."\r\n"..
 	"User-Agent: freepops "..PLUGIN_NAME..
-		" plugin "..PLUGIN_VERSION.."\r\n"..
-	"MIME-Version: 1.0\r\n"..
-	"Content-Disposition: inline\r\n"..
-	"Content-Type: text/html; charset=\""..charset.."\"\r\n"
+		" plugin "..PLUGIN_VERSION.."\r\n"--..
+	--"MIME-Version: 1.0\r\n"..
+	--"Content-Disposition: inline\r\n"..
+	--"Content-Type: text/html; charset=\""..charset.."\"\r\n"
 	-- This header cause some problems with link like [...]id=123[...]
 	-- "Content-Transfer-Encoding: quoted-printable\r\n"
 end
@@ -474,19 +474,19 @@ function retr_or_top(pstate,msg,data,lines)
 --log.error_print(title)
 
 	--build it
-	local s = build_mail_header(title,uidl,mydate) .. 
-		"\r\n\r\n"..
-		"\<html><body>\r\n"
+	local h = build_mail_header(title,uidl,mydate) 
+	local s = "\<html><body>\r\n"
 		
-	if (string.find(header,"http://") or string.find(header,"https://")) then
-	s = s..
-		"<p>\r\n"..		
-		"<b>News link:</b>\r\n"..
-		"<br/>\r\n" ..		
-		"<a href="..header..">\r\n"..
-		header.."\r\n"..
-		"</a>\r\n"..
-		"</p>\r\n<br/>\r\n"
+	if (string.find(header,"http://") or 
+		string.find(header,"https://")) then
+		s = s..
+			"<p>\r\n"..		
+			"<b>News link:</b>\r\n"..
+			"<br/>\r\n" ..		
+			"<a href="..header..">\r\n"..
+			header.."\r\n"..
+			"</a>\r\n"..
+			"</p>\r\n<br/>\r\n"
 	end
 	
 	s = s..	
@@ -496,18 +496,14 @@ function retr_or_top(pstate,msg,data,lines)
 		body.."\r\n"..
 		"</body></html>\r\n"
 
-	--hack it
-	local a = stringhack.new()
-	if lines ~= nil then
-		s = a:tophack(s,lines)
+	local cb
+	if lines == nil then 
+		cb = common.retr_cb(data)
+	else
+		local global = common.new_global_for_top(lines,nil)
+		cb = common.top_cb(global, data,true)
 	end
-	s = a:dothack(s,a)
-	
-	--end it
-	s = s .. "\0"
-		
-	--send it
-	popserver_callback(s,data)
+	mimer.pipe_msg(h,nil,s,"",{},nil,mimer.callback_mangler(cb),{},charset)
 	
 	return POPSERVER_ERR_OK
 end
@@ -765,6 +761,8 @@ function init(pstate)
 	
 	-- the common implementation module
 	require("common")
+
+	require("mimer")
 	
 	-- checks on globals
 	freepops.set_sanity_checks()

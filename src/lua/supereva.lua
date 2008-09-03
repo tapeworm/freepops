@@ -6,7 +6,7 @@
 --  Released under the GNU/GPL license
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.2.6a"
+PLUGIN_VERSION = "0.2.7a"
 PLUGIN_NAME = "Supereva"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -36,7 +36,7 @@ supereva_globals = {
 -- ------------------------------------------------------------------------ --
 --  Constants
 local supereva_strings = {
-	login_uri = "http://it.email.dada.net/cgi-bin/sn_my/login.chm",
+	login_uri = "http://it.email.dada.net/cgi-bin/sso/login.cgi", -- "http://it.email.dada.net/cgi-bin/sn_my/login.chm",
 	login_data = "username=%s&password=%s",
 
 	inbox_uri = "http://it.email.dada.net/cgi-bin/main.chm?mlt_msgs=",
@@ -65,18 +65,14 @@ local supereva_strings = {
 		"<O>O",
 
 	attach_e = "" ..
-		"<table>.*" ..
-		"<tr>.*<td>.*<b>.*</b>.*</td>.*</tr>.*" ..
-		"<tr>.*<td>.*<a>.*</a>.*<a>.*<img>.*</a>.*<br>.*" ..
-		"<b>.*</b>.*<br>.*<br>.*</td>.*" ..
-		"<td>.*<a>.*</a>.*<br>.*<br>.*" ..
-		"<a>.*</a>.*<sup>.*</sup>.*<br>.*" ..
-		"<br>.*<a>.*</a>.*<br>.*</td>.*" ..
-		"</tr>.*</table>",
-	
-	attach_g = "<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>O"..
-		"<O>X<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O"..
-		"<O>O<O>O<O>O<O>O<O>O<O>O<O>"	
+		"<tr>.*<td>.*<a>.*</a>.*<img>.*</td>.*<td>.*<br>.*<br>.*<ul>.*<li>.*<a>.*</a>.*" ..
+		"<ul>.*<li>.*<a>.*</a>.*</li>.*<li>.*<a>.*</a>.*</li>.*</ul>.*</li>.*</ul>.*</td>.*" ..
+		"</tr>",
+
+	attach_g = "" ..
+		"<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>O<O>O<O>O<X>O<O>O" ..
+		"<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O" ..
+		"<O>"
 }
 
 -- ************************************************************************** --
@@ -147,11 +143,13 @@ function supereva_login()
 	-- post the login data
 	local file,err = supereva_globals.browser:post_uri(supereva_strings.login_uri,login_data)
 
+	-- removed, would receive 404 when it's actually a 302
+--[[	
 	if (err) then
 		--print("error on browser:post_uri: " .. err)
 		return POPSERVER_ERR_UNKNOWN
 	end
-
+]]
 	return POPSERVER_ERR_OK
 end
 
@@ -203,7 +201,7 @@ function stat(pstate)
 	local file,err = supereva_globals.browser:get_uri(supereva_strings.inbox_uri .. 1)
 
 	if (err) then
-		print("error on browser:get_uri: " .. err)
+		--print("error on browser:get_uri: " .. err)
 		return POPSERVER_ERR_UNKNOWN
 	end
 
@@ -363,10 +361,12 @@ function parse_message(file)
 	
 	local n = x:count()
 	local attachments = {}
-	for i = 0,n-1 do
-		local url = string.match(x:get(0,i),'HREF=..([^"]*)"')
-		url = string.gsub(url,"&amp;", "&")
-		attachments[x:get(1,i)] = "http://" .. supereva_globals.browser:wherearewe() .. "/" .. url
+	for i = 0, n - 1 do
+		local url = string.match(x:get(1,i),'href=..([^"]*)"')
+		if (not url) then print("url non trovato per l'allegato " .. i)
+		else url = string.gsub(url,"&amp;", "&") end
+		local name = string.match(x:get(0,i),"%s*(.*)")
+		attachments[name] = "http://" .. supereva_globals.browser:wherearewe() .. "/" .. url
 	end
 
 	-- mangles the body
@@ -389,13 +389,11 @@ end
 --
 function mangle_head(s)
 	-- helper #1 - extract a header field from HTML
-	local function extract(field,data,getaddress)
-		local exM = ".*<td>.*<b>%s</b>.*</td>.*<td>.*<.*>"
-		local exG = "O<O>O<O>O<O>O<O>O<O>X<O>"
-		
-		if getaddress then
-			exG = "O<O>O<O>O<O>O<O>O<O>X<X>"
-		end
+	local function extract(field,data) -- ,getaddress)
+		local exM = ".*<tr>.*<th>.*<b>%s</b>.*</th>.*<th>.*<.*>" -- ".*<td>.*<b>%s</b>.*</td>.*<td>.*<.*>"
+		local exG = "O<O>O<O>O<O>O<O>O<O>O<O>X<O>" -- "O<O>O<O>O<O>O<O>O<O>X<O>"
+
+		-- if getaddress then exG = "O<O>O<O>O<O>O<O>O<O>O<O>X<X>" end
 		local x = mlex.match(data,string.format(exM,field),exG)
 		
 		if x:count() < 1 then
@@ -408,7 +406,7 @@ function mangle_head(s)
 			s = string.gsub(s,"&lt;","<")
 			s = string.gsub(s,"&gt;",">")
 			s = string.gsub(s,"&nbsp;","")
-			
+		--[[	
 			if getaddress then
 				local addr = x:get(1,0)
 				if s == nil then return addr
@@ -417,34 +415,24 @@ function mangle_head(s)
 			else
 				return s
 			end
+		]]
+			return s
 		end
 	end
 
-	-- helper #2 - translate the date back to english
-	local function translate(data)
-		data = string.gsub(data,"Gen","Jan")
-		data = string.gsub(data,"Mag","May")
-		data = string.gsub(data,"Giu","Jun")
-		data = string.gsub(data,"Lug","Jul")
-		data = string.gsub(data,"Ago","Aug")
-		data = string.gsub(data,"Set","Sep")
-		data = string.gsub(data,"Ott","Oct")
-		data = string.gsub(data,"Dic","Dec")
-		return data
-	end
-
+	-- fix che risolve il bug nell'oggetto della pagina
+	local a, b = s:find("<th><b>Oggetto:</b></td>")
+	if (a) then s = s:sub(1,a) .. "<th><b>Oggetto:</b></th>" .. s:sub(b,-1) end
+	
 	-- extract all interesting fields
-	local from = extract("^Da:",s,true)
+	local from = extract("^Da:",s)
 	local to = extract("^A:",s)
 	local cc = extract("^CC:",s)
 	local data = extract("^Data:",s)
 	local oggetto = extract("^Oggetto:",s)
 
-	-- magle them
-	data = translate(data)
-	
-	-- build the header
-	-- s = build(to,oggetto,from,cc,data)
+	-- pare che adesso la data sia gia' in inglese
+	-- if (data) then data = translate(data) end
 	
 	if (to) then to = to:gsub(" ([%w%.-_]+@[%w%.-_]+)"," <%1>") end
 	if (cc) then cc = cc:gsub(" ([%w%.-_]+@[%w%.-_]+)"," <%1>") end

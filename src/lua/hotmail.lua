@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.90f"
+PLUGIN_VERSION = "0.1.91"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -194,7 +194,6 @@ local globals = {
   strMsgLineLitPattern = ".*<tr>.*<td>[.*]{img}.*</td>.*<td>.*<img>.*</td>.*<td>[.*]{img}.*</td>.*<td>.*<input>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
   strMsgLineAbsPattern = "O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
 
-
   -- Pattern used by Stat to get the next page in the list of messages
   --
   strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
@@ -213,10 +212,11 @@ local globals = {
   strMsgLivePattern2 = 'new HM%.__[^%(]+%("([^"]+)",[tf][^,"]+,"[^"]+",[^,]+,[^,]+',
   strMsgLiveLightPatternOld = 'ReadMessageId=([^&]+)&[^>]+>.-</a></td>.-<td [^>]+>.-</td>.-<td [^>]+>([^<]+)</td>',
   -- cdmackie 2008-07-02: new message patterns for live light
-  strMsgLiveLightPattern = '(id=\\?"[^\\"]+\\?" msg=\\?"msg\\?"[^>]->)(.-)</tr>',
+  strMsgLiveLightPattern = '(<tr[^<>]-id=\\?"[^\\"]+\\?" msg=\\?"msg\\?"[^>]->)(.-)</tr>',
   strMsgLiveLightPatternUidl = 'id=\\?"([^\\"]+)\\?"',
   strMsgLiveLightPatternMad = 'mad=\\?"([^\\"]+)\\?"',
   strMsgLiveLightPatternSize = 'class=\\?"TextAlignRight\\?"[^>]->(.-)</td>',
+  strMsgLiveLightPatternUnread = "(Unread)",
 
   -- The amount of time that the session should time out at.
   -- This is expressed in seconds
@@ -306,6 +306,7 @@ internalState = {
   strMT = "",
   bKeepMsgStatus = false,
   msgIds = {},
+  unreadStatus = {},
 }
 
 -- ************************************************************************** --
@@ -1095,50 +1096,57 @@ function cleanupHeaders(headers, cbInfo)
   local bMissingID = false    -- when no Message-ID -field seems to have been automatically generated ?
   local bodyrest = ""
 
-  headers, bodyrest = string.match(headers, "^(.-)\r*\n%s*\r*\n(.*)$" )
+  headers, bodyrest = string.match(headers, "^(.-\r\n.-)\r\n(.*)$" )
 
   if (headers == nil) then
     log.dbg("Hotmail: unable to parse out message headers.  Extra headers will not be used.")
     return origHeaders
   end  
 
-  headers = string.gsub(headers, "%s+$", "\n")
-  headers = headers .. "\n";
-  headers = string.gsub(headers, "\n\n", "\n")
-  headers = string.gsub(headers, "\r\n", "\n")
-  headers = string.gsub(headers, "\n", "\r\n")
+  --headers = string.gsub(headers, "%s+$", "\n")
+  --headers = headers .. "\n";
+  --headers = string.gsub(headers, "\n\n", "\n")
+  --headers = string.gsub(headers, "\r\n", "\n")
+  --headers = string.gsub(headers, "\n", "\r\n")
 
   --
   -- some checking...
   --
-  if string.find(headers, "(To:)") == nil then
-    bMissingTo = true
-  end
-  if string.find(headers, "(Message%-I[dD]:)") == nil then
-    bMissingID = true
-  end
+--  if string.find(headers, "(To:)") == nil then
+--    bMissingTo = true
+--  end
+--  if string.find(headers, "(Message%-I[dD]:)") == nil then
+--    bMissingID = true
+--  end
 
   -- Add some headers
   --
+  local newheaders = ""
   if bMissingTo ~= false then
-    headers = headers .. "To: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\r\n" ;
+    newheaders = newheaders .. "To: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\r\n" ;
   end
 
   if bMissingID ~= false then
     local msgid = cbInfo.cb_uidl .. "@" .. internalState.strMailServer -- well, if we do not have any better choice...
-    headers = headers .. "Message-ID: <" .. msgid .. ">\r\n"  
+    newheaders = newheaders .. "Message-ID: <" .. msgid .. ">\r\n"  
+  end
+  
+  local readStatus = "read"
+  if (internalState.unreadStatus[cbInfo.cb_uidl]) then
+    readStatus = "unread"
   end
 
-  headers = headers .. "X-FreePOPs-User: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\r\n"
-  headers = headers .. "X-FreePOPs-Domain: " .. internalState.strDomain .. "\r\n"
-  headers = headers .. "X-FreePOPs-Folder: " .. internalState.strMBox .. "\r\n"
-  headers = headers .. "X-FreePOPs-MailServer: " .. internalState.strMailServer .. "\r\n"
-  headers = headers .. "X-FreePOPs-ImageServer: " .. internalState.strImgServer .. "\r\n"
-  headers = headers .. "X-FreePOPs-MsgNumber: " .. "<" .. cbInfo.cb_uidl .. ">" .. "\r\n"
+  newheaders = newheaders .. "X-FreePOPs-User: " .. internalState.strUser .. "@" .. internalState.strDomain .. "\r\n"
+  newheaders = newheaders .. "X-FreePOPs-Domain: " .. internalState.strDomain .. "\r\n"
+  newheaders = newheaders .. "X-FreePOPs-Folder: " .. internalState.strMBox .. "\r\n"
+  newheaders = newheaders .. "X-FreePOPs-MailServer: " .. internalState.strMailServer .. "\r\n"
+  newheaders = newheaders .. "X-FreePOPs-ImageServer: " .. internalState.strImgServer .. "\r\n"
+  newheaders = newheaders .. "X-FreePOPs-MsgNumber: " .. "<" .. cbInfo.cb_uidl .. ">" .. "\r\n"
+  newheaders = newheaders .. "X-FREEPOPS-READ-STATUS: " .. readStatus .. "\r\n"
 
   -- make the final touch...
   --
-  headers = headers .. "\r\n" .. bodyrest
+  headers = headers .. "\r\n" .. newheaders .. bodyrest
 
   return headers 
 end
@@ -1168,10 +1176,11 @@ function cleanupBody(body, cbInfo)
 
   -- Clean up the end of line, and replace HTML tags
   --
+  body = string.gsub(body, "&#13;&#10; &#13;&#10;", "\n") -- appears in some spam messages and destroys the headers
   body = string.gsub(body, "&#9;", "\t")
   body = string.gsub(body, "&#09;", "\t")
   body = string.gsub(body, "&#10;", "\n")
-  body = string.gsub(body, "&#13;", "\r")
+  body = string.gsub(body, "&#13;", "")
   body = string.gsub(body, "&#27;", "\27")
   body = string.gsub(body, "&#32;", " ")
   body = string.gsub(body, "&#33;", "!")
@@ -1902,6 +1911,10 @@ function stat(pstate)
         log.say("Hotmail Module needs to fix it's individual message list pattern matching.\n")
         return nil, "Unable to parse the size and uidl from the html"
       end
+
+  	  if (string.match(msgrow, globals.strMsgLiveLightPatternUnread)) then
+	    internalState.unreadStatus[uidl] = true
+	  end
 
       local bUnique = true
       for j = 0, nMsgs do

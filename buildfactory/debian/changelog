@@ -1,6 +1,30 @@
+freepops (0.2.7-2.3) UNRELEASED; urgency=low
+
+  * Fixed typo in package description (Closes: #486151)
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 20 Sep 2008 13:31:44 +0200
+
+freepops (0.2.7-2.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Brown paper bag NMU
+  * Really add Japanese debconf translation. Really Closes: #493383
+
+ -- Christian Perrier <bubulle@debian.org>  Fri, 19 Sep 2008 07:45:49 +0200
+
+freepops (0.2.7-2.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix pending l10n issues
+  * Debconf translations:
+    - Turkish. Closes: #488192, #493383
+
+ -- Christian Perrier <bubulle@debian.org>  Wed, 17 Sep 2008 07:22:52 +0200
+
 freepops (0.2.7-2) unstable; urgency=low
 
-  * Fix typo in package description (Closes: #486151)
+  * Fixed LSB headers in init script to require $network instead of $all
+    (thanks to Alessio Caprari for the patch)
 
  -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 14 Jun 2008 11:26:02 +0200
 

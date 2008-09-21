@@ -63,7 +63,7 @@ msgid "Downloading: modules metadata"
 msgstr "Download: metadati moduli"
 
 msgid "Unable to download the modules metadata:\n%s"
-msgstr "Impossibile scricare i metadati dei moduli:\n%s"
+msgstr "Impossibile scaricare i metadati dei moduli:\n%s"
 
 msgid "Done."
 msgstr "Fatto."

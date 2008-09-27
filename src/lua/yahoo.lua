@@ -14,7 +14,7 @@
 local _DEBUG = false
 local DBG_LEN = nil -- 500
 
-PLUGIN_VERSION = "0.2.1f"
+PLUGIN_VERSION = "0.2.1f (0.2.8 version)"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -27,7 +27,7 @@ PLUGIN_AUTHORS_CONTACTS =
 PLUGIN_DOMAINS = {"@yahoo.com", "@yahoo.ie", "@yahoo.it", "@yahoo.ca", "@rocketmail.com", "@yahoo.com.ar",
                   "@yahoo.co.in", "@yahoo.co.id", "@yahoo.com.tw", "@yahoo.co.uk", "@yahoo.com.cn",
                   "@yahoo.es", "@yahoo.de", "@talk21.com", "@btinternet.com", "@yahoo.com.au", "@yahoo.co.nz",
-				  "@ymail.com",
+				  "@ymail.com", "@yahoo.in"
 }
 
 PLUGIN_PARAMETERS = {
@@ -86,6 +86,18 @@ pulling messages.  Set the value to 1.]]
 	{name = "maxmsgs", description = {
 		en = [[
 Parameter is used to force the plugin to only download a maximum number of messages. ]]
+		}	
+	},
+	{name = "keepmsgstatus", description = {
+		en = [[
+Parameter is used to maintain the status of the message in the state it was before being pulling.  If the value is 1, the behavior is turned on
+and will override the markunread flag. ]]
+		}	
+	},
+	{name = "domain", description = {
+		en = [[
+Parameter is used to override the domain in the email address.  This is used so that users don't
+need to add a mapping to config.lua for a hosted hotmail account. ]]
 		}	
 	},
 }
@@ -165,11 +177,14 @@ local globals = {
   --
   strMsgLineLitPattern = ".*<td>[.*]{div}[.*]{h2}.*<a>.*</a>[.*]{/h2}[.*]{/div}.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
   strMsgLineAbsPattern = "O<O>[O]{O}[O]{O}O<X>O<O>[O]{O}[O]{O}O<O>O<O>O<O>O<O>X<O>O<O>",
-    
+
+  strMCUnreadPattern = '<tr class="([^"]-)"><td><b>[^<]-</b></td><td[^>]-><input type="checkbox" name="mid" value="([^"]-)">',    
+                        
   -- MSGID Pattern
   -- 
-  strMsgIDPattern = 'MsgId=([^&]*)&',
-  strMsgIDMCPattern = 'mid=([^&]*)&',
+  strMsgIDPattern = 'MsgId=([^&"]*)[&"]',
+  strMsgIDMCPattern = 'mid=([^&"]*)[&"]',
+  strMsgIDMIPattern = 'DMid=([^&"]*)[&"]',
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
@@ -198,8 +213,8 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "%s%s/ShowFolder?box=%s&Npos=%d&Nview=%s&view=%s&order=down&sort=date&reset=1&Norder=up",
-  strCmdMsgListMC = "%s%s/showFolder?fid=%s&startMid=%s&ymv=0&&sort=date&order=down&filterBySelect=%s&filterBySelect=%s&prefNumOfMid=500",
+  strCmdMsgList = "%s%s/ShowFolder?box=%s&Npos=%d&filterBySelect=%s&order=down&sort=date&reset=1&Norder=up&filterButton=Go",
+  strCmdMsgListMC = "%s%s/showFolder?fid=%s&startMid=%s&ymv=0&&sort=date&order=down&filterBySelect=%s&prefNumOfMid=500&filterButton=Go",
   strCmdMsgView = "%sya/download?box=%s&MsgId=%s&bodyPart=%s&download=1&YY=38663&y5beta=yes&y5beta=yes&order=down&sort=date&pos=0&view=a&head=b&DataName=&tnef=&Idx=0",
   strCmdMsgWebView = "%s%s/ShowLetter?box=%s&MsgId=%s",
   strCmdMsgWebViewMC = "%s%s/showMessage?fid=%s&midIndex=0&mid=%s&eps=&f=1&",
@@ -213,9 +228,9 @@ local globals = {
 
   -- Emails to list - These define the filter on the messages to grab
   --
-  strViewAll = "a",
-  strViewUnread = "u",
-  strViewFlagged = "f",
+  strViewAll = "all",
+  strViewUnread = "unread",
+  strViewFlagged = "flagged",
 
   strViewAllPat = "([Aa]ll)",
   strViewUnreadPat = "([Uu]nread)",
@@ -304,17 +319,20 @@ internalState = {
   bEmptyTrash = false,
   bEmptyBulk = false,
   msgids = {},
+  unreadMsgs = {},
   strStatCache = nil,
   statLimit = nil,
   classicType = nil,
+  bKeepMsgStatus = false,
 
   -- New Interface pieces
   --
   bNewGUI = false,
   strWebSrvUrl = nil,
   strGSS = nil,
-
-  -- Windows event logging
+  
+  -- Windows Logger
+  -- 
   logger = nil
 }
 
@@ -550,7 +568,7 @@ function serialize_state()
 	
   return serial.serialize("internalState", internalState) ..
 		internalState.browser:serialize("internalState.browser") ..
-		 internalState.logger:serialize("internalState.logger")
+		internalState.logger:serialize("internalState.logger")
 end
 
 -- Computes the hash of our state.  Concate the user, domain, mailbox and password
@@ -594,7 +612,8 @@ function loginYahoo()
 
   -- Create a browser to do the dirty work (It must be set to IE 6.0)
   --
-  internalState.browser = browser.new("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; {02ABE9F9-C33D-95EA-0C84-0B70CD0AC3F8}; .NET CLR 1.1.4322)")
+  internalState.browser = browser.new("Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_2; en) AppleWebKit/525.9 (KHTML, like Gecko) Version/3.1 Safari/525.9")
+  --browser.new("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; {02ABE9F9-C33D-95EA-0C84-0B70CD0AC3F8}; .NET CLR 1.1.4322)")
 --  internalState.browser = browser.new("Mozilla/4.0 (compatible; U; en)")
 --  internalState.browser = browser.new("Mozilla/3.0 (U; en)")
 --  internalState.browser = browser.new("FreePOPs/2.5 (U; en)")
@@ -614,15 +633,10 @@ function loginYahoo()
   local post
   local challengeCode, uVal
 
-  -- Handle rocketmail
+  -- Add the domain always
   --
-  if (domain == "rocketmail.com") then
-    domain = "yahoo.com"
-    username = username .. ".rm"
-  elseif (domain == "btinternet.com" or domain == "talk21.com" or domain == "ymail.com") then
-    username = username .. "@" .. domain
-  end
-	
+  username = username .. "@" .. domain
+  
   -- DEBUG - Set the browser in verbose mode
   --
   -- browser:verbose_mode()
@@ -675,15 +689,24 @@ function loginYahoo()
   end
 
   -- Check for interstitial page (advertisements)
+  -- 
   url = browser:whathaveweread()
   log.dbg("browser:whathaveweread()=" .. url)
   str = string.match( url, '(http://.-interstitial.-/)[^/]*' )
   if (str ~= nil) then
-    url = str .. "mail_act.php?mpref=2" -- from skip() in http://us.i1.yimg.com/us.yimg.com/lib/tb7/mail_interstitial/mail_20080612.js
+    local str2 = string.match(body, '<a id="skip" href="([^"]+")>')
+	if (str2 ~= nil) then
+	  str2 = string.gsub(str2, "./", "")
+	  log.dbg("Found the link to get by interstitutial ad.")
+	  url = str .. str2
+	else
+	  log.dbg("Did not find the link to get by interstitutial ad.  Try one that worked at some point.")
+	  log.dbg("Page Body: " .. body)
+      url = str .. "mail_act.php?mpref=2" -- from skip() in http://us.i1.yimg.com/us.yimg.com/lib/tb7/mail_interstitial/mail_20080612.js	
+	end
     log.dbg( "interstitial get: url=" .. url )
     body, err = browser:get_uri(url)
     log.dbg( "interstitial response: err=" .. tostr(err), dbg_limit(body) )
-
     url = browser:whathaveweread()
     log.dbg("browser:whathaveweread()=" .. url)
   end
@@ -725,7 +748,7 @@ function loginYahoo()
   local str = string.match(body, globals.strRetLoginBadPassword)
   if str ~= nil then
     log.err("Returned Page saying invalid password: ", body)
-    internalState.logger:error("user: " .. username .. "\nerror: bad password")
+	internalState.logger:error("user: " .. username .. "\nerror: bad password")
     return POPSERVER_ERR_AUTH
   end
 
@@ -990,7 +1013,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   -- Get the header
   --
   if internalState.bNewGUI then
-    local msgid = internalState.msgids[uidl]
+    msgid = internalState.msgids[uidl]
     uidl = msgid
     headers = getMsgHdr(pstate, uidl)
   elseif (internalState.classicType == 'mc') then
@@ -1064,6 +1087,22 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   if string.sub(headers,1,5) == "From " then
     headers = string.gsub(headers, "From .-\n", "", 1);
   end
+  
+  -- Add custom headers
+  --
+  local readStatus = "read"
+  if (internalState.unreadMsgs[msgid] == 1) then
+    readStatus = "unread"
+  end
+  local crlf
+  if (internalState.bNewGUI) then
+    crlf = "\n"
+    headers = string.gsub(headers, "\n+$", "")
+  else
+    crlf = "\r\n"
+    headers = string.gsub(headers, "\r\n\r\n$", "")
+  end
+  headers = headers .. crlf .. "X-FREEPOPS-READ-STATUS: " .. readStatus .. crlf .. crlf
 
   -- Remove "Content-Transfer-Encoding" line from the header.
   --
@@ -1241,7 +1280,9 @@ function downloadYahooMsg(pstate, msg, nLines, data)
 
   -- Do we need to mark the message as unread?
   --
-  if internalState.bNewGUI and internalState.bMarkMsgAsUnread == true then
+  if (internalState.bKeepMsgStatus == true) then
+    -- no op
+  elseif internalState.bNewGUI and internalState.bMarkMsgAsUnread == true then
     log.dbg("Marking as message: " .. uidl .. " as unread");
     markMsgUnread(uidl)
   elseif internalState.bNewGUI == false and internalState.classicType ~= 'mc' then
@@ -1446,7 +1487,7 @@ function getSTATList(pstate)
   local browser = internalState.browser
   local url = string.format(globals.strSoapCmd, internalState.strMailServer, 
     internalState.strWebSrvUrl, "ListMessages", internalState.strCrumb)
-  local nMaxMsgs = 999 
+  local nMaxMsgs = 9999 
   if internalState.statLimit ~= nil then
     nMaxMsgs = internalState.statLimit
   end
@@ -1498,6 +1539,16 @@ function getSTATList(pstate)
           break
         end        
       end
+	  
+	  local flagElem = elem[1]
+	  if (flagElem["tag"] == "flags") then
+	    attrs = flagElem["attr"]
+		local readAttr = attrs["isRead"]
+		if (readAttr == "0") then
+		  log.dbg("Message: " .. uidl .. " is unread.")
+		  internalState.unreadMsgs[uidl] = 1
+		end
+	  end
 
       -- Save the information
       --
@@ -1769,7 +1820,16 @@ function user(pstate, username)
   local domain = freepops.get_domain(username)
   local user = freepops.get_name(username)
 
-  internalState.strDomain = domain
+  -- Override the domain variable if it is set in the login parameter
+  --
+  local val = (freepops.MODULE_ARGS or {}).domain or nil
+  if val ~= nil then
+    log.dbg("Yahoo: Using overridden domain: " .. val)
+    internalState.strDomain = val
+  else
+    internalState.strDomain = domain
+  end
+
   internalState.strUser = user
 
   -- Figure out the domain specific flags
@@ -1896,6 +1956,15 @@ function user(pstate, username)
     internalState.statLimit = tonumber(val)
   end
 
+  -- If the flag keepmsgstatus=1 is set, then we won't touch the status of 
+  -- messages that we pull.
+  --
+  local val = (freepops.MODULE_ARGS or {}).keepmsgstatus or 0
+  if val == "1" then
+    log.dbg("Yahoo: All messages pulled will have its status left alone.")
+    internalState.bKeepMsgStatus = true
+  end
+
   return POPSERVER_ERR_OK
 end
 
@@ -1943,9 +2012,9 @@ function pass(pstate, password)
     -- Execute the function saved in the session
     --
     func()
-
-    internalState.logger:info("user: ".. internalState.strUser ..
-          "@" .. internalState.strDomain .. "\n" .. "info: session loaded")
+	
+	internalState.logger:info("user: ".. internalState.strUser ..
+  	  "@" .. internalState.strDomain .. "\n" .. "info: session loaded")
 		
     return POPSERVER_ERR_OK
   else
@@ -2142,8 +2211,7 @@ function stat(pstate)
   local nPage = 0
   local nMsgs = 0
   local cmdUrl = string.format(strCmd, internalState.strMailServer,
-    internalState.classicType, internalState.strMBox, nPage, internalState.strView, 
-	internalState.strView);
+    internalState.classicType, internalState.strMBox, nPage, internalState.strView);
 
   -- Keep a list of IDs that we've seen.  With yahoo, their message list can 
   -- show messages that we've already seen.  This, although a bit hacky, will
@@ -2181,8 +2249,7 @@ function stat(pstate)
     --
     local subBody = string.match(body, globals.strMsgListHTMLPattern)
     if (subBody == nil) then
-      log.say("Yahoo Module needs to fix it's message list pattern matching.")
-      return false, nil
+      return true, nil
     end
 
     -- Tokenize out the message ID and size for each item in the list
@@ -2215,7 +2282,9 @@ function stat(pstate)
       -- Get the message id.  It's a series of a numbers followed by
       -- an underscore repeated.  
       --
-      msgid = string.match(msgid, globals.strMsgIDPattern) or string.match(msgid, globals.strMsgIDMCPattern) 
+log.dbg("MSGID: " .. msgid)	  
+      msgid = string.match(msgid, globals.strMsgIDPattern) or 
+	    string.match(msgid, globals.strMsgIDMCPattern) or string.match(msgid, globals.strMsgIDMIPattern)
       local uidl = string.gsub(msgid, "_[^_]-_[^_]-_", "_000_000_", 1);
       uidl = string.sub(uidl, 1, 60)
 
@@ -2256,6 +2325,15 @@ function stat(pstate)
         internalState.msgids[uidl] = msgid
        end
     end
+	
+	log.dbg("Looking for unread messages.")
+	for clazz, uidl in string.gfind(body, globals.strMCUnreadPattern) do
+	  uidl = string.gsub(uidl, "/", "%%2F")
+	  if (clazz == "msgnew") then
+		  log.dbg("Message: " .. uidl .. " is unread.")
+		  internalState.unreadMsgs[uidl] = 1
+	  end
+	end
 		
     return true, nil
   end 

@@ -1,3 +1,4 @@
+- OSX scrips supports paths with whitespaces (thanks nx2000car)
 - added support to Windows Event Logging
 07/06/2008 0.2.7
 - Makefile, buildfactory/Makefile, buildfactory/debian-etch/control, buildfactory/debian-ubuntu/control, buildfactory/debian-ubuntu/freepops-updater-fltk.dirs, buildfactory/debian-ubuntu/rules, buildfactory/debian/control, buildfactory/debian/freepops-updater-fltk.dirs, buildfactory/debian/rules, buildfactory/win/freepops.nsi.in, configure.sh, updater-ui/fltk/Makefile, updater-ui/fltk/main.cxx: internationalization and localization of the fltk updater by blackmoon (gareuselesinge)

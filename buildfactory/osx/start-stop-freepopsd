@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "`dirname $0`/../../"
+cd "`dirname "$0"`/../../"
 if [ -e pid.txt ]; then
 	PID=`cat pid.txt`
 	if ps ax | grep $PID | grep -q freepopsd; then

@@ -14,7 +14,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.53"
+PLUGIN_VERSION = "0.0.54"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -139,7 +139,7 @@ local globals = {
 			"continue=http%3A%2F%2Fmail.google.com%2Fmail&"..
 			"service=mail&chtml=LoginDoneHtml&ui=1",
 	strLoginFailed = "(Username and password do not match)",
-	strIDKeyPattern = 'ID_KEY:"([^"]+)"',
+	strIDKeyPattern = 'var GLOBALS=%[,,"[^"]+","[^"]+","[^"]+","[^"]+","[^"]+","[^"]+",%d+,"([^"]+)",',
 
 	strHomepage = "http://mail.google.com/mail",
 

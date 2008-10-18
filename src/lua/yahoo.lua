@@ -14,7 +14,7 @@
 local _DEBUG = false
 local DBG_LEN = nil -- 500
 
-PLUGIN_VERSION = "0.2.1f (0.2.8 version)"
+PLUGIN_VERSION = "0.2.1g (0.2.8 version)"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -178,7 +178,7 @@ local globals = {
   strMsgLineLitPattern = ".*<td>[.*]{div}[.*]{h2}.*<a>.*</a>[.*]{/h2}[.*]{/div}.*</td>.*<td>.*</td>.*<td>.*</td>.*</tr>",
   strMsgLineAbsPattern = "O<O>[O]{O}[O]{O}O<X>O<O>[O]{O}[O]{O}O<O>O<O>O<O>O<O>X<O>O<O>",
 
-  strMCUnreadPattern = '<tr class="([^"]-)"><td><b>[^<]-</b></td><td[^>]-><input type="checkbox" name="mid" value="([^"]-)">',    
+  strMCUnreadPattern = '<tr class="([^"]+)"><td><b>[^<]+</b></td><td[^>]+><input type="checkbox" name="mid" value="([^"]+)"',    
                         
   -- MSGID Pattern
   -- 
@@ -1014,8 +1014,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   --
   if internalState.bNewGUI then
     msgid = internalState.msgids[uidl]
-    uidl = msgid
-    headers = getMsgHdr(pstate, uidl)
+    headers = getMsgHdr(pstate, msgid)
   elseif (internalState.classicType == 'mc') then
     msgid = internalState.msgids[uidl]
 	hdrUrl = string.format(globals.strCmdAttach, internalState.strFileServer,
@@ -1091,7 +1090,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
   -- Add custom headers
   --
   local readStatus = "read"
-  if (internalState.unreadMsgs[msgid] == 1) then
+  if (internalState.unreadMsgs[uidl] == 1) then
     readStatus = "unread"
   end
   local crlf
@@ -1128,7 +1127,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     if nLines == 0 then
       cbInfo.strText = ""
     else
-      getMsgBody(pstate, uidl, size, cbInfo)
+      getMsgBody(pstate, msgid, size, cbInfo)
     end
     mimer.pipe_msg(
       headers, 
@@ -2282,7 +2281,6 @@ function stat(pstate)
       -- Get the message id.  It's a series of a numbers followed by
       -- an underscore repeated.  
       --
-log.dbg("MSGID: " .. msgid)	  
       msgid = string.match(msgid, globals.strMsgIDPattern) or 
 	    string.match(msgid, globals.strMsgIDMCPattern) or string.match(msgid, globals.strMsgIDMIPattern)
       local uidl = string.gsub(msgid, "_[^_]-_[^_]-_", "_000_000_", 1);
@@ -2329,6 +2327,8 @@ log.dbg("MSGID: " .. msgid)
 	log.dbg("Looking for unread messages.")
 	for clazz, uidl in string.gfind(body, globals.strMCUnreadPattern) do
 	  uidl = string.gsub(uidl, "/", "%%2F")
+      uidl = string.gsub(uidl, "_[^_]-_[^_]-_", "_000_000_", 1);
+      uidl = string.sub(uidl, 1, 60)
 	  if (clazz == "msgnew") then
 		  log.dbg("Message: " .. uidl .. " is unread.")
 		  internalState.unreadMsgs[uidl] = 1

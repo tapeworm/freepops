@@ -1,3 +1,4 @@
+- new version of lua-curl revamped to curl 7.18.1
 - OSX scrips supports paths with whitespaces (thanks nx2000car)
 - added support to Windows Event Logging
 07/06/2008 0.2.7

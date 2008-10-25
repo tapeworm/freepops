@@ -1,6 +1,6 @@
-diff -ruN luacurl-0.2.1/find_curl.sh luacurl-0.2.1.new/find_curl.sh
---- luacurl-0.2.1/find_curl.sh	1970-01-01 01:00:00.000000000 +0100
-+++ luacurl-0.2.1.new/find_curl.sh	2007-02-23 17:24:42.000000000 +0100
+diff -ruN lua-curl-0.3.0-orig/find_curl.sh lua-curl-0.3.0/find_curl.sh
+--- lua-curl-0.3.0-orig/find_curl.sh	1970-01-01 01:00:00.000000000 +0100
++++ lua-curl-0.3.0/find_curl.sh	2008-10-25 17:27:40.000000000 +0200
 @@ -0,0 +1,31 @@
 +#!/bin/bash
 +
@@ -33,10 +33,10 @@ diff -ruN luacurl-0.2.1/find_curl.sh luacurl-0.2.1.new/find_curl.sh
 +	fi
 +
 +fi
-diff -ruN luacurl-0.2.1/Makefile luacurl-0.2.1.new/Makefile
---- luacurl-0.2.1/Makefile	2007-02-15 17:08:56.000000000 +0100
-+++ luacurl-0.2.1.new/Makefile	2007-02-23 17:24:31.000000000 +0100
-@@ -1,105 +1,35 @@
+diff -ruN lua-curl-0.3.0-orig/Makefile lua-curl-0.3.0/Makefile
+--- lua-curl-0.3.0-orig/Makefile	2008-10-25 17:26:26.000000000 +0200
++++ lua-curl-0.3.0/Makefile	2008-10-25 17:27:48.000000000 +0200
+@@ -1,110 +1,35 @@
 -# TODO: support for abi&libtool, installation of lua-curl.h
 +include $(CONFIG)
  
@@ -49,7 +49,8 @@ diff -ruN luacurl-0.2.1/Makefile luacurl-0.2.1.new/Makefile
 -LUADOC= luadoc
 -VERSION_INFO=0:0:0
 -
--CONSTANTS:= curlopt.h curl_netrcopt.h curl_form.h curl_authopt.h 
+-CONSTANTS:= curlopt.h curl_netrcopt.h \
+-	curl_form.h curl_authopt.h curl_ftpauthopt.h curl_ftpmethods.h
 -CURL_CFLAGS:= $(shell curl-config --cflags 2>/dev/null) $(shell getconf LFS_CFLAGS)
 -CURL_LDFLAGS:= $(shell curl-config --libs 2>/dev/null)
 -REALSO:=$(LIBNAME).so.$(subst :,.,$(VERSION_INFO))
@@ -80,10 +81,7 @@ diff -ruN luacurl-0.2.1/Makefile luacurl-0.2.1.new/Makefile
 +	# HEADER=your path here
 +	###################################################################
  endif
-+CONSTANTS:= curlopt.h curl_netrcopt.h curl_form.h curl_authopt.h 
-+CURL_CFLAGS:= $(shell pkg-config libcurl --cflags 2>/dev/null)
-+CURL_LDFLAGS:= $(shell pkg-config libcurl --libs 2>/dev/null)
- 
+-
 -# ------------------------------ lua50 stuff ---------------------------------
 -ifeq "$(LUA)" "lua50"
 -LUA_CFLAGS := $(shell pkg-config lua50 --cflags) 
@@ -96,9 +94,7 @@ diff -ruN luacurl-0.2.1/Makefile luacurl-0.2.1.new/Makefile
 -#compat-5.1.[ch] are not provided in this package
 -OBJS:= lua-curl.lo luabind.lo compat-5.1.lo
 -endif
-+CFLAGS+=$(CURL_CFLAGS) -I$(PREFIX)/include
-+LDFLAGS+=$(CURL_LDFLAGS)
- 
+-
 -# ------------------------- Here the Makefile --------------------------------
 -all: $(LIBNAME).la
 -constants:$(CONSTANTS)
@@ -152,8 +148,19 @@ diff -ruN luacurl-0.2.1/Makefile luacurl-0.2.1.new/Makefile
 -
 -dist: clean
 -	DIR=`basename $$PWD`;\
+-	VERSION=`grep LUACURL_VERSION version.h|cut -d \" -f 2`;\
 -		cd ..;\
--		tar -cvzf $$DIR.tar.gz -X $$DIR/exclude-dist $$DIR
+-		cp -r $$DIR lua-curl-$$VERSION; \
+-		tar -cvzf lua-curl_$$VERSION.orig.tar.gz \
+-		-X $$DIR/exclude-dist lua-curl-$$VERSION;\
+-		rm -rf lua-curl-$$VERSION
++CONSTANTS:= curlopt.h curl_netrcopt.h curl_form.h curl_authopt.h curl_ftpauthopt.h curl_ftpmethods.h
++CURL_CFLAGS:= $(shell pkg-config libcurl --cflags 2>/dev/null)
++CURL_LDFLAGS:= $(shell pkg-config libcurl --libs 2>/dev/null)
++
++CFLAGS+=$(CURL_CFLAGS) -I$(PREFIX)/include
++LDFLAGS+=$(CURL_LDFLAGS)
++
 +all: $(LIBRARY)
 +	$(H)echo -n
 +
@@ -170,62 +177,3 @@ diff -ruN luacurl-0.2.1/Makefile luacurl-0.2.1.new/Makefile
  
  # Constants genereated starting from the cURL headers:
  
-@@ -123,58 +53,4 @@
- 		sed 's/^ *CFINIT(\([^)]*\)),.*$$/{"FORM_\1",CURLFORM_\1},/' \
- 		> curl_form.h
- 
--# win32 stuff
--
--.PHONY: win32-gnutls win32-openssl
--win32-gnutls:
--	make clean
--	make constants HEADER=/usr/i586-mingw32msvc/include/curl/curl.h
--	mkdir -p win32-gnutls
--	i586-mingw32msvc-gcc -I . -I /usr/i586-mingw32msvc/include/ \
--		-c lua-curl.c -o win32-gnutls/lua-curl.o 
--	i586-mingw32msvc-gcc -I . -I /usr/i586-mingw32msvc/include/ \
--		-c luabind.c -o win32-gnutls/luabind.o 
--	i586-mingw32msvc-dlltool -e win32-gnutls/exports.o -l win32-gnutls/lua-curl.lib win32-gnutls/*.o
--	i586-mingw32msvc-gcc win32-gnutls/*.o -o win32-gnutls/curl.dll -shared \
--		-L /usr/i586-mingw32msvc/bin/ \
--		-llua5.1 -lcurl
--	cp /usr/i586-mingw32msvc/bin/lua5.1.exe win32-gnutls
--	for X in libcurl libgcrypt libgnutls libgpg-error libz; do\
--		cp /usr/i586-mingw32msvc/bin/$$X.dll win32-gnutls;\
--	done
--	cp test.lua win32-gnutls
--	rm win32-gnutls/*.o
--	i586-mingw32msvc-strip win32-gnutls/*.dll
--	cp /usr/i586-mingw32msvc/bin/lua5.1.dll win32-gnutls
--	cp -r win32-gnutls freepops-luacurl-binary-win32-gnutls
--	zip -r freepops-luacurl-binary-win32-gnutls.zip freepops-luacurl-binary-win32-gnutls
--	rm -rf freepops-luacurl-binary-win32-gnutls
--	mv freepops-luacurl-binary-win32-gnutls.zip ..
--
--win32-openssl:
--	make clean
--	make constants HEADER=/usr/i586-mingw32msvc/include/curl/curl.h
--	mkdir -p win32-openssl
--	i586-mingw32msvc-gcc -I . -I /usr/i586-mingw32msvc/include/ \
--		-c lua-curl.c -o win32-openssl/lua-curl.o 
--	i586-mingw32msvc-gcc -I . -I /usr/i586-mingw32msvc/include/ \
--		-c luabind.c -o win32-openssl/luabind.o 
--	i586-mingw32msvc-dlltool -e win32-openssl/exports.o -l win32-openssl/lua-curl.lib win32-openssl/*.o
--	i586-mingw32msvc-gcc win32-openssl/*.o -o win32-openssl/curl.dll -shared \
--		-L /usr/i586-mingw32msvc/bin/ \
--		-llua5.1 -lcurl
--	cp /usr/i586-mingw32msvc/bin/lua5.1.exe win32-openssl
--	for X in libcurl libz; do\
--		cp /usr/i586-mingw32msvc/bin/$$X.dll win32-openssl;\
--	done
--	cp test.lua win32-openssl
--	rm win32-openssl/*.o
--	i586-mingw32msvc-strip win32-openssl/*.dll
--	cp /usr/i586-mingw32msvc/bin/lua5.1.dll win32-openssl
--	cp -r win32-openssl freepops-luacurl-binary-win32-openssl
--	zip -r freepops-luacurl-binary-win32-openssl.zip freepops-luacurl-binary-win32-openssl
--	rm -rf freepops-luacurl-binary-win32-openssl
--	mv freepops-luacurl-binary-win32-openssl.zip ..
--
--
- # eof

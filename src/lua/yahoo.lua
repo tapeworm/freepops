@@ -9,12 +9,7 @@
 --  Contributions from Kevin Edwards
 -- ************************************************************************** --
 
--- Globals
---
-local _DEBUG = false
-local DBG_LEN = nil -- 500
-
-PLUGIN_VERSION = "0.2.1g (0.2.8 version)"
+PLUGIN_VERSION = "0.2.1h"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -269,12 +264,8 @@ local globals = {
   -- SOAP Urls
   --
   strSoapCmd = "%s%s?m=%s&wssid=%s&appid=YahooMailRC", 
-  --strCmdAttach = "%sya/download?fid=%s&mid=%s&pid=2&tnef=&YY=189019855&newid=1&clean=0&inline=1",
   strCmdAttach = "%sya/download?fid=%s&mid=%s&pid=%s&tnef=&clean=0&redirectURL=%sdc/virusresults.html%%3Ffrom%%3Ddownload_response%%26ui%%3Diframe%%26YY%%3D1163030279984",
   
---"%sym/cgdownload/?box=%s&MsgId=%s&bodyPart=%s&download=1",
---"%sya/download?fid=%s&mid=%s&pid=%s&tnef=&clean=0&",                   
-
   strRedirectNew = 'content="0; url=([^"]+)">',
   strYahooxlms = "ymws",
 
@@ -342,13 +333,6 @@ internalState = {
 -- ************************************************************************** --
 --  Utility functions
 -- ************************************************************************** --
-
--- copies all elements from src into dest
-function copy_from(dest, src)
-  for i, v in pairs(src) do
-    dest[i] = v
-  end
-end
 
 -- split str into parts separated by div
 function split(str, div)
@@ -448,108 +432,6 @@ end
 --  Logging functions
 -- ************************************************************************** --
 
--- We intercept log.dbg, log.err, etc. to add more detailed logging to 
---  the raw log file in addition to the usual log.txt.
--- Raw Logging does not modify the given log line or data in any way:
---   i.e. the strings are not truncated and any CR / LFs are written unchanged.
---   The current date and time is also prefixed.
--- 
--- Example entry:
---   12/05/04 03:48:17 : My Log Line
---   --------------------------------------------------
---   My Data
---   --------------------------------------------------
---
-
--- Set to true to enable Raw Logging
---
-local ENABLE_LOGRAW = _DEBUG
-
--- The platform dependent End Of Line string
--- e.g. this can be changed to "\n" under UNIX, etc.
--- this is presently just used for the log file.
-local EOL = "\r\n"
-
--- The raw logging functions
---
-log = log or {} -- fast hack to make the xml generator happy
-log.err = log.error_print
--- logging functions:
-log.kinds = { "err", "dbg", "warn", "say" }
-
--- keep a copy of the original log function table
-local log_original = {}
-
--- modify the log table to reroute calls to do_log
-function use_do_log()
-  copy_from(log_original, log)
-  -- redirect log functions to use do_log
-  for i,kind in pairs(log.kinds) do
-    log[kind] = function( line, data )
-      log_do_log(kind, line, data)
-    end
-  end
-  -- use log.err but also intercept log.error_print
-  log.error_print = log.err
-end
-
--- NOTE: the standard log functions will not accept a second data
---  parameter.  e.g. something like log.dbg(line, data) will cause
---  lua to crash with "L: lua stack image...", so we must always
---  install replacements.
-use_do_log()
-
-log_raw_write = function( line, data )
-  local out = assert(io.open("log_raw.txt", "ab"))
-  out:write( EOL .. os.date("%c") .. ": " )
-  out:write( tostr(line) )
-  if (data ~= nil) and (data ~= "") then
-    out:write( EOL .. "--------------------------------------------------" .. EOL )
-    out:write( data )
-    out:write( EOL .. "--------------------------------------------------" )
-  end
-  assert(out:close())
-end
-
--- central logging function
-log_do_log = function( kind, line, data )
-  -- intercepting the logger calls adds stack frames, causing
-  --  the currentline in log.txt to be incorrect, so we add
-  --  the actual line number as a prefix.
-  -- 1=this, 2=caller (generated), 3=caller's caller (source)
-  local info = debug.getinfo(3, "l") -- l=currentline, S=info.short_src
-  local prefix = ""
-  if info then
-    prefix = "["..kind.."@"..tostr(info.currentline).."] "
-  else
-    prefix = "["..kind.."@?] "
-  end
-
---  if data ~= nil then
---    data = tostr(data)
---    if DBG_MAX_LEN and DBG_MAX_LEN >= 0 then
---      data = data:sub(1,DBG_MAX_LEN)
---    end
---  end
-
-  -- write all data to log_raw.txt
-  if ENABLE_LOGRAW then
-    log_raw_write( prefix .. line, data )
-  end
-
-  -- call original logger to write to FreePOPs log.txt
-  func = log_original[kind]
-  func( prefix .. line )
-end
-
-function dbg_limit(str)
-  if (str ~= nil) and (type(str) == "string") and DBG_LEN and (DBG_LEN >= 0) then
-    str = string.sub(str,1,DBG_LEN)
-  end
-  return str
-end
-
-
 -- ************************************************************************** --
 --  Helper functions
 -- ************************************************************************** --
@@ -637,10 +519,6 @@ function loginYahoo()
   --
   username = username .. "@" .. domain
   
-  -- DEBUG - Set the browser in verbose mode
-  --
-  -- browser:verbose_mode()
-
   if internalState.bNoSSL == true then
     log.dbg("Yahoo: SSL login will not be used.")
     SSLEnabled = false
@@ -655,7 +533,7 @@ function loginYahoo()
   --
   log.dbg( "login get: " .. globals.strLoginPage )
   local body, err = browser:get_uri(globals.strLoginPage)
-  log.dbg( "login response: err=" .. tostr(err), dbg_limit(body) )
+  log.dbg( "login response: err=" .. tostr(err), smartlog.dbg_limit(body) )
   
   if body ~= nil then
     challengeCode = string.match(body, globals.strLoginChallenge)
@@ -677,7 +555,7 @@ function loginYahoo()
 
   log.dbg( "login challenge post: \nurl=" .. url .. " \npost=" .. post )
   body, err = browser:post_uri(url, post)
-  log.dbg( "login challenge response: err=" .. tostr(err), dbg_limit(body) )
+  log.dbg( "login challenge response: err=" .. tostr(err), smartlog.dbg_limit(body) )
 
   -- Check for redirect
   --
@@ -685,7 +563,7 @@ function loginYahoo()
   if (str ~= nil) then
     log.dbg( "login redirect get: " .. str )
     body, err = browser:get_uri(str)
-    log.dbg( "login redirect response: err=" .. tostr(err), dbg_limit(body) )
+    log.dbg( "login redirect response: err=" .. tostr(err), smartlog.dbg_limit(body) )
   end
 
   -- Check for interstitial page (advertisements)
@@ -706,7 +584,7 @@ function loginYahoo()
 	end
     log.dbg( "interstitial get: url=" .. url )
     body, err = browser:get_uri(url)
-    log.dbg( "interstitial response: err=" .. tostr(err), dbg_limit(body) )
+    log.dbg( "interstitial response: err=" .. tostr(err), smartlog.dbg_limit(body) )
     url = browser:whathaveweread()
     log.dbg("browser:whathaveweread()=" .. url)
   end
@@ -725,7 +603,7 @@ function loginYahoo()
     post = "newStatus=1"
     log.dbg( "try beta post: \nurl=" .. url .. " \npost=" .. post )
     body, err = browser:post_uri(url, post)
-    log.dbg( "try beta response: err=" .. tostr(err), dbg_limit(body) )
+    log.dbg( "try beta response: err=" .. tostr(err), smartlog.dbg_limit(body) )
   end
 
   -- Do some error checking
@@ -772,7 +650,7 @@ function loginYahoo()
     if (str ~= nil) then
       log.dbg("HTTPS meta-refresh get: " .. str)
       body, err = browser:get_uri(str)
-      log.dbg("HTTPS meta-refresh response: err=" .. tostr(err), dbg_limit(body))
+      log.dbg("HTTPS meta-refresh response: err=" .. tostr(err), smartlog.dbg_limit(body))
       
       -- Here's the other check (SSL) for the beta interface
       --
@@ -876,6 +754,10 @@ function yahoo_classic_get_header(browser, hdrUrl)
   local headers, http_head, http_body, err
   local bFail = true
 
+  -- Have the browser ignore the content length.  For some reason, this call has issues with content length.
+  --
+  browser:setIgnoreContentLength()
+
   log.dbg("hdrUrl = " .. hdrUrl)
 
   for i=1,3 do
@@ -935,6 +817,10 @@ end
 function yahoo_classic_get_body(browser, bodyUrl)
   local http_head, http_body, err
   local bFail = true
+
+  -- Have the browser ignore the content length.  For some reason, this call has issues with content length.
+  --
+  browser:setIgnoreContentLength()
 
   log.dbg("bodyUrl = " .. bodyUrl)
 
@@ -1129,6 +1015,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     else
       getMsgBody(pstate, msgid, size, cbInfo)
     end
+    browser:setIgnoreContentLength()
     mimer.pipe_msg(
       headers, 
       cbInfo.strText, 
@@ -1164,23 +1051,12 @@ function downloadYahooMsg(pstate, msg, nLines, data)
 		    internalState.strMBox, msgid, i, internalState.strMailServer)
 		end
 
---        local escUidl = string.gsub(msgid, "%+", "%%2B")
---        bodyUrl = string.format(globals.strCmdMsgView,
---          internalState.strMailServer,
---          internalState.strMBox,
---          escUidl, tostr(i), internalState.strMailServer)
-
         http_head, http_body, err = yahoo_classic_get_body(browser, bodyUrl)
 
         if http_head == "ERROR" then
           return POPSERVER_ERR_UNKNOWN
         end
         
---        http_head, http_body, err = browser:get_head_and_body(bodyUrl)
---        log.dbg("browser:get_uri: err="..tostr(err))
---        log.dbg("http_head = ", http_head)
---        log.dbg("http_body = ", http_body)
-
         if http_head == nil then
           log.dbg("Finished all "..tostr(i-1).." parts.")
           break
@@ -2504,6 +2380,21 @@ function init(pstate)
   -- Serialization
   --
   require("serial")
+  
+  -- Logging
+  --
+  require("smartlog")
+  smartlog.setLoggingPrefixCallBack(function(kind, info) 
+    local prefix = ""
+    if info then
+      prefix = "(".. info.short_src .. ", " .. info.currentline 
+    end
+	if (internalState ~= nil and internalState.strUser ~= nil) then
+	  prefix = prefix .. ", " .. internalState.strUser .. "@" .. internalState.strDomain
+	end
+	prefix = prefix .. ") "
+    return prefix
+  end)
 
   -- Browser
   --

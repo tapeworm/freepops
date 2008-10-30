@@ -43,7 +43,8 @@ MODULES-Common= $(LUALUA)	\
 		luasoap \
 		dpipe_lua \
 		lwel \
-		lgettext
+		lgettext \
+		smartlog_lua
 	
 MODULES-Windows-pre=regex pthread 
 MODULES-Windows-post=winsystray

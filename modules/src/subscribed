@@ -39,7 +39,8 @@ MK_TEMPLATE=	luabind \
 		xml2tex_lua \
 		luasoap	\
 		dpipe_lua \
-		lgettext
+		lgettext \
+		smartlog_lua
 
 MK_TEMPL_CTRIB=	lua \
 		pthread \

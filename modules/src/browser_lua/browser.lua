@@ -65,9 +65,9 @@
 -- <B>ssl_init_stuff()</B> : some stuff for SSL<BR/>
 --<BR/>
 
-MODULE_VERSION = "0.1.2"
+MODULE_VERSION = "0.1.3"
 MODULE_NAME = "browser.browser"
-MODULE_REQUIRE_VERSION = "0.2.6"
+MODULE_REQUIRE_VERSION = "0.2.8"
 MODULE_LICENSE = "GNU/GPL"
 MODULE_URL = "http://www.freepops.org/download.php?module=browser.browser.lua"
 MODULE_HOMEPAGE = "http://www.freepops.org/"
@@ -761,7 +761,9 @@ function Private.verbose_mode(self)
 	self.curl:setopt(curl.OPT_VERBOSE,1)
 end
 
-
+function Private.setIgnoreContentLength(self)
+	self.curl:setopt(curl.OPT_IGNORE_CONTENT_LENGTH, 1)
+end
 --<==========================================================================>--
 
 module("browser",package.seeall)

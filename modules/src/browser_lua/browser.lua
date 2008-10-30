@@ -63,6 +63,8 @@
 -- <B>verbose_mode()</B> : activates the verbose logging of CURL<BR/>
 -- <BR/>
 -- <B>ssl_init_stuff()</B> : some stuff for SSL<BR/>
+-- <BR/>
+-- <B>setIgnoreContentLength()</B> : ignore content len HTTP header<BR/>
 --<BR/>
 
 MODULE_VERSION = "0.1.3"

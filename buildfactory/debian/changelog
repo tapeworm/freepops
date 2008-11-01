@@ -5,6 +5,8 @@ freepops (0.2.8-1) experimental; urgency=low
   * Acknowledge NMU by Christian Perrier for #488192, #493383
   * Bumped standards-version to 3.8.0, no changes needed
   * Added crontab to copy updates inside the chroot (Closes: #499039)
+  * Fixed postins script to call 'sh' instead '/bin/sh' to make lintian happy
+  * Removed -i to make invocation in rules file to make lintian happy
 
  -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 20 Sep 2008 13:31:44 +0200
 

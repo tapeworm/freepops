@@ -107,6 +107,7 @@ binary-indep: build build-manual install-manual
 	dh_installdebconf -i
 	dh_installinit -n -i
 	dh_installman -i
+	dh_installcron -i
 	dh_link -i
 	dh_strip -i
 	dh_compress -X.pdf -i
@@ -125,6 +126,7 @@ binary-arch: build install
 	dh_installdocs -a
 	dh_installexamples -a
 	dh_installmenu -a
+	dh_installcron -a
 	dh_installdebconf -a
 	dh_installinit -n -a
 	dh_installman -a

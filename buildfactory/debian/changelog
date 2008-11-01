@@ -1,6 +1,10 @@
-freepops (0.2.7-2.3) UNRELEASED; urgency=low
+freepops (0.2.8-1) experimental; urgency=low
 
   * Fixed typo in package description (Closes: #486151)
+  * New upstream release
+  * Acknowledge NMU by Christian Perrier for #488192, #493383
+  * Bumped standards-version to 3.8.0, no changes needed
+  * Added crontab to copy updates inside the chroot (Closes: #499039)
 
  -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 20 Sep 2008 13:31:44 +0200
 

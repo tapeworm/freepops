@@ -1,0 +1,6 @@
+#!/bin/sh
+
+if [ -d /var/lib/freepops/chroot-jail/ ]; then
+	cp -rf /var/lib/freepops/lua_updates \
+       		/var/lib/freepops/chroot-jail/var/lib/freepops/
+fi

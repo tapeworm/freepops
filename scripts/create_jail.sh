@@ -46,7 +46,7 @@ rm -rf $CHROOTDIR
 # create the dir tree
 mkdir -p $CHROOTDIR
 cd $CHROOTDIR
-for X in var/log/ var/run/ etc/ usr/share/freepops/ usr/bin/ usr/lib/ lib/ dev/ home/nobody; do
+for X in var/log/ var/lib/freepops/lua_updates/ var/run/ etc/ usr/share/freepops/ usr/bin/ usr/lib/ lib/ dev/ home/nobody; do
 	mkdir -p $X
 done
 # set permissions 

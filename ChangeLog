@@ -1,3 +1,4 @@
+- osx package will report the correct version
 01/11/2008 0.2.8
 - Makefile, buildfactory/Makefile, buildfactory/debian-etch/control, buildfactory/debian-ubuntu/control, buildfactory/debian-ubuntu/freepops-updater-fltk.dirs, buildfactory/debian-ubuntu/rules, buildfactory/debian/control, buildfactory/debian/freepops-updater-fltk.dirs, buildfactory/debian/rules, buildfactory/win/freepops.nsi.in, configure.sh, updater-ui/fltk/Makefile, updater-ui/fltk/main.cxx: internationalization and localization of the fltk updater by blackmoon (gareuselesinge)
 - buildfactory/Makefile, buildfactory/win/freepops.nsi.in, configure.sh, modules/modules, modules/src/lwel/lwel-0.0.1.tar.gz, modules/src/subscribed, src/Makefile, src/luabox.c, src/luabox.h, updater-ui/fltk/main.cxx: windows event logging (gareuselesinge)

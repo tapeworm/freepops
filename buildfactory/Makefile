@@ -296,7 +296,8 @@ dist-osx-finalyze: ../dist-osx/FreePOPs.app
 	$(H)$(MAKE) -C osx/popup-fltk/
 	$(H)mkdir -p ../dist-osx/FreePOPs.app/Contents/MacOS
 	$(H)mkdir -p ../dist-osx/FreePOPs.app/Contents/Resources
-	$(H)cp osx/Info.plist ../dist-osx/FreePOPs.app/Contents
+	$(H)cat osx/Info.plist.in | sed "s/@@VERSION/$(VERSION)/" > \
+	       	../dist-osx/FreePOPs.app/Contents/Info.plist
 	$(H)cp osx/freepops.icns ../dist-osx/FreePOPs.app/Contents/Resources
 	$(H)cp osx/popup-fltk/fmessage ../dist-osx/FreePOPs.app/Contents/MacOS/
 	$(H)cp osx/start-stop-freepopsd \

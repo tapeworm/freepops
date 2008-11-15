@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.93"
+PLUGIN_VERSION = "0.2.20081114"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -197,12 +197,23 @@ local globals = {
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
-  strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
-  strMsgListNextPagePatLiveLight = '<a href="([^"]+)"[^>]*><img src="[^_]*_nextpage.gif"',
-  strMsgListNextPagePatLiveLight2 = '<a href="([^"]+)"[^>]*><img src="[^"]+" class="i_nextpage"',
+  
+  -- gboudreau fix (patched by doglan) - Part 1 (start)
+  --strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
+  --strMsgListNextPagePatLiveLight = '<a href="([^"]+)"[^>]*><img src="[^_]*_nextpage.gif"',
+  --strMsgListNextPagePatLiveLight2 = '<a href="([^"]+)"[^>]*><img src="[^"]+" class="i_nextpage"',
+
+	strMsgListNextPagePattern = '(nextpg%.gif\\?" border=0></a>)',
+	strMsgListNextPagePatLiveLight = '<a href=\\?"([^"]+)\\?"[^>]*><img src=\\?"[^_]*_nextpage.gif\\?"',
+	strMsgListNextPagePatLiveLight2 = '<a href=\\?"([^"]+)\\?"[^>]*><img src=\\?"[^"]+\\?" class=\\?"i_nextpage\\?"',
+  -- gboudreau fix - Part 1 (end)
+
   strMsgListNextPagePatLiveLight3 = 'pnCur=\\?"([^\\"]+)\\?" pnAm=\\?"([^\\"]+)\\?" pnAd=\\?"([^\\"]+)\\?" pnDir=\\?"NextPage\\?" pnMid=\\?"([^\\"]+)\\?" [^>]*>.-<[^>]+>.-<img [^_]*_nextpage\\?"',
   
-  strMsgListNextPagePatLiveLight4 = '<li id="nextPageLink" pnCur="([^"]+)" pnAm="([^"]+)" pnAd="([^"]+)" pnDir="NextPage" pnMid="([^"]+)" pnSkip="0">',
+  -- gboudreau fix (patched by doglan) - Part 2 (start)
+  --strMsgListNextPagePatLiveLight4 = '<li id="nextPageLink" pnCur="([^"]+)" pnAm="([^"]+)" pnAd="([^"]+)" pnDir="NextPage" pnMid="([^"]+)" pnSkip="0">',
+	strMsgListNextPagePatLiveLight4 = '<li id=\\?"nextPageLink\\?" pnCur=\\?"([^\\"]+)\\?" pnAm=\\?"([^\\"]+)\\?" pnAd=\\?"([^\\"]+)\\?" pnDir=\\?"NextPage\\?" pnMid=\\?"([^\\"]+)\\?" pnSkip=\\?"0\\?">',
+  -- gboudreau fix - Part 2 (end)
 
   -- Pattern used to detect a bad STAT page.
   --
@@ -246,7 +257,11 @@ local globals = {
   -- cdmackie 2008-07-02: new calls for STAT for live light
   strCmdMsgListLive3 = "mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.GetInboxData&ptid=0&a=%s&au=%s", 
   strCmdMsgListPostLive3 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,25,NextPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,false,%s},false,null&v=1&mt=%s',
-  strCmdMsgListPostLive4 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,LastPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,%s,-1,Bottom},false,null&v=1&mt=%s',
+
+  -- gboudreau fix (patched by doglan) - Part 3 (start)
+  --strCmdMsgListPostLive4 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,LastPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,%s,-1,Bottom},false,null&v=1&mt=%s',
+	strCmdMsgListPostLive4 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,NextPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,%s,-1,Bottom},false,null&v=1&mt=%s',
+  -- gboudreau fix - Part 3 (end)
 
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
@@ -279,7 +294,10 @@ local globals = {
   strCmdMsgReadLivePost = "cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessages&d=true,[%s]&v=1&mt=%s",
   --strCmdMsgReadLiveLight = "http://%s/mail/ReadMessageLight.aspx?AllowUnsafe=True&Aux=&FolderID=%s&InboxSortAscending=False&InboxSortBy=Date&ReadMessageId=%s",
   strCmdMsgReadLiveLight = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MarkMessagesReadState&ptid=0&a=%s&au=%s", 
-  strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],{"%s",25,FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",false,0}&v=1&mt=%s',
+  --strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],{"%s",25,FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",false,0}&v=1&mt=%s',
+  -- Submitted by Barlad
+  --
+  strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",1085,0,Right}&v=1&mt=%s',
 }
 
 -- ************************************************************************** --

@@ -9,7 +9,7 @@
 --  Contributions from Kevin Edwards
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.2.1h"
+PLUGIN_VERSION = "0.2.20081116"
 PLUGIN_NAME = "yahoo.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -87,6 +87,12 @@ Parameter is used to force the plugin to only download a maximum number of messa
 		en = [[
 Parameter is used to maintain the status of the message in the state it was before being pulling.  If the value is 1, the behavior is turned on
 and will override the markunread flag. ]]
+		}	
+	},
+	{name = "useeventlib", description = {
+		en = [[
+Parameter is used to turn on windows event library logging.  If the value is 1, 
+the behavior is turned on. ]]
 		}	
 	},
 	{name = "domain", description = {
@@ -315,6 +321,7 @@ internalState = {
   statLimit = nil,
   classicType = nil,
   bKeepMsgStatus = false,
+  bUseWel = false,
 
   -- New Interface pieces
   --
@@ -429,7 +436,7 @@ end
 
 
 -- ************************************************************************** --
---  Logging functions
+--  smartlog functions
 -- ************************************************************************** --
 
 -- ************************************************************************** --
@@ -447,10 +454,13 @@ end
 --
 function serialize_state()
   internalState.bStatDone = false;
-	
-  return serial.serialize("internalState", internalState) ..
+  if (internalState.bUseWel) then	
+    return serial.serialize("internalState", internalState) ..
 		internalState.browser:serialize("internalState.browser") ..
 		internalState.logger:serialize("internalState.logger")
+  end
+  return serial.serialize("internalState", internalState) ..
+		internalState.browser:serialize("internalState.browser")
 end
 
 -- Computes the hash of our state.  Concate the user, domain, mailbox and password
@@ -502,7 +512,12 @@ function loginYahoo()
   local SSLEnabled = browser.ssl_enabled()
   
   -- Create the windows event logger
-  internalState.logger = wel.new('FreePOPs','yahoo')
+  if (internalState.bUseWel) then
+    -- Windows event smartlog
+    --
+    require("wel")
+    internalState.logger = wel.new('FreePOPs','yahoo')
+  end
 
   -- Define some local variables
   --
@@ -626,7 +641,9 @@ function loginYahoo()
   local str = string.match(body, globals.strRetLoginBadPassword)
   if str ~= nil then
     log.err("Returned Page saying invalid password: ", body)
-	internalState.logger:error("user: " .. username .. "\nerror: bad password")
+    if (internalState.bUseWel) then
+	  internalState.logger:error("user: " .. username .. "\nerror: bad password")
+	end
     return POPSERVER_ERR_AUTH
   end
 
@@ -987,6 +1004,7 @@ function downloadYahooMsg(pstate, msg, nLines, data)
     crlf = "\r\n"
     headers = string.gsub(headers, "\r\n\r\n$", "")
   end
+  headers = headers .. crlf .. "X-FREEPOPS-UIDL: " .. msgid
   headers = headers .. crlf .. "X-FREEPOPS-READ-STATUS: " .. readStatus .. crlf .. crlf
 
   -- Remove "Content-Transfer-Encoding" line from the header.
@@ -1834,12 +1852,18 @@ function user(pstate, username)
   -- If the flag keepmsgstatus=1 is set, then we won't touch the status of 
   -- messages that we pull.
   --
-  local val = (freepops.MODULE_ARGS or {}).keepmsgstatus or 0
+  val = (freepops.MODULE_ARGS or {}).keepmsgstatus or 0
   if val == "1" then
     log.dbg("Yahoo: All messages pulled will have its status left alone.")
     internalState.bKeepMsgStatus = true
   end
 
+  val = (freepops.MODULE_ARGS or {}).useeventlib or nil
+  if val == 1 then
+    log.dbg("Yahoo: Using windows event library logging")
+	internalState.bUseWel = true
+  end
+  
   return POPSERVER_ERR_OK
 end
 
@@ -1887,13 +1911,14 @@ function pass(pstate, password)
     -- Execute the function saved in the session
     --
     func()
-	
-	internalState.logger:info("user: ".. internalState.strUser ..
-  	  "@" .. internalState.strDomain .. "\n" .. "info: session loaded")
+    if (internalState.bUseWel) then
+	  internalState.logger:info("user: ".. internalState.strUser ..
+  	    "@" .. internalState.strDomain .. "\n" .. "info: session loaded")
+	end
 		
     return POPSERVER_ERR_OK
   else
-    -- Create a new session by logging in
+    -- Create a new session by smartlog in
     --
     return loginYahoo()
   end
@@ -2263,7 +2288,7 @@ function stat(pstate)
       internalState.bLoginDone = nil
       session.remove(hash())
 
-      -- Try Logging back in
+      -- Try smartlog back in
       --
       local status = loginYahoo()
       if status ~= POPSERVER_ERR_OK then
@@ -2381,7 +2406,7 @@ function init(pstate)
   --
   require("serial")
   
-  -- Logging
+  -- smartlog
   --
   require("smartlog")
   smartlog.setLoggingPrefixCallBack(function(kind, info) 
@@ -2411,10 +2436,6 @@ function init(pstate)
   -- Soap
   --
   require("soap.http")
-
-  -- Windows event logging
-  --
-  require("wel")
 
   -- Run a sanity check
   --

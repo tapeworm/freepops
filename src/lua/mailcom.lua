@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.07b"
+PLUGIN_VERSION = "0.1.20081128"
 PLUGIN_NAME = "mail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -145,12 +145,14 @@ local globals = {
   -- Used by Stat to pull out the message ID and the size
   --
   strMsgLinePattern = '<td[^>]->[^<]-<a.-href="[^"]+msg_uid=([^&]+)&[^"]+".-</a>[^<]-</td>[^<]-<td.-</td>[^<]-<td[^>]+>.-(%d+)[kK].-</td>[^<]-</tr>',
+  strMsgLinePattern2 = '<input type="checkbox" name="sel_([^"]+)".-</nobr></td>.-<td width="[^"]+" align="center">.-(%d+)[kK].-</td>',
 
   -- Pattern used by Stat to get the total number of messages
   --
 --  strMsgListCntPattern = "Showing [^%d]*[%d]+[^%s]* to [^%d]*[%d]+[^%s]* of [^%d]*([%d]+)",
   strMsgListCntPattern = "(%d+) [Mm]essage%(s%)",
   strMsgListCntPattern2 = "(%d+) Total Messages",
+  strMsgListCntPattern3 = "<span> %d+ to %d+ of (%d+)</span>",
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
@@ -317,7 +319,7 @@ function login()
   elseif (domain == "email.com" or domain == "mail.com" or domain == "iname.com" or domain == "mail.org" or 
          domain == "royal.net" or internalState.bUseMailComLoginPage) then
     url = string.format(globals.strLoginPage, "www2", "mail.com")
-  elseif (domain == "usa.com" or domain == "mexico.com") then
+  elseif (domain == "usa.com" or domain == "mexico.com" or domain == "india.com") then
     url = string.format(globals.strLoginPage, "mail", domain)
   elseif (domain == "lycos.com") then
     url = string.format(globals.strLoginPage3, "mail", "lycos.com")
@@ -791,7 +793,11 @@ function stat(pstate)
     -- Cycle through the items and store the msg id and size
     --
     local uidl, size
-    for uidl, size in string.gfind(body, globals.strMsgLinePattern) do
+	local pattern = globals.strMsgLinePattern
+	if (internalState.strDomain == "india.com") then
+	  pattern = globals.strMsgLinePattern2
+	end
+    for uidl, size in string.gfind(body, pattern) do
       -- Get the message id.  It's a series of a numbers followed by
       -- an underscore repeated.  .
       --
@@ -872,6 +878,9 @@ function stat(pstate)
       nTotMsgs = string.match(body, globals.strMsgListCntPattern)
       if nTotMsgs == nil then -- Try a different pattern
         nTotMsgs = string.match(body, globals.strMsgListCntPattern2)
+      end
+      if nTotMsgs == nil then -- Try a different pattern
+        nTotMsgs = string.match(body, globals.strMsgListCntPattern3)
       end
 
       if nTotMsgs == nil then

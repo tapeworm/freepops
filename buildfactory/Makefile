@@ -185,6 +185,14 @@ dist-deb-hackbpo:
 		BPOR=bpo.1;\
 		dch -D etch-backports -b -v $$V~$$BPOR backports.org release
 
+dist-deb-hackubuntudapper:
+	$(H)cd _deb_/freepops-$(VERSION);\
+	sed -e "/#/d" -e "0,/^$$/{/^$$/d}" < buildfactory/debian/freepops.templates \
+			> buildfactory/debian-ubuntu-dapper/freepops.templates
+	$(H)cd _deb_/freepops-$(VERSION);\
+		cp buildfactory/debian-ubuntu/* debian/;\
+		cp buildfactory/debian-ubuntu-dapper/* debian/
+
 dist-deb-hackubuntu:
 	$(H)cd _deb_/freepops-$(VERSION);\
 	sed -e "/#/d" -e "0,/^$$/{/^$$/d}" < buildfactory/debian/freepops.templates \
@@ -196,6 +204,7 @@ dist-deb-etch: deb-preamble dist-deb-hacketch dist-deb-real
 dist-deb-sid: dist-deb
 dist-deb-etch: dist-deb
 dist-deb-ubuntu: deb-preamble dist-deb-hackubuntu dist-deb-real
+dist-deb-ubuntu-dapper: deb-preamble dist-deb-hackubuntudapper dist-deb-real
 	
 dist-deb: deb-preamble dist-deb-real
 
@@ -228,6 +237,7 @@ debian-dsc-etch: deb-preamble dist-deb-hacketch debian-dsc-real
 debian-dsc-bpo: deb-preamble dist-deb-hacketch dist-deb-hackbpo debian-dsc-real
 debian-dsc-etch: debian-dsc
 debian-dsc-sid: debian-dsc
+debian-dsc-ubuntu-dapper: deb-preamble dist-deb-hackubuntudapper debian-dsc-real
 debian-dsc-ubuntu: deb-preamble dist-deb-hackubuntu debian-dsc-real
 
 debian-dsc: deb-preamble debian-dsc-real

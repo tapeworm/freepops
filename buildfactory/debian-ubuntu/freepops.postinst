@@ -38,7 +38,7 @@ case "$1" in
 	TMPFILE=`tempfile`
 	if [ "$RET" = true ]; then
 		# create it
-		/bin/sh $JAIL_SCRIPT create
+		sh $JAIL_SCRIPT create
 		# set the CHROOT variable
 		mv /etc/default/freepops $TMPFILE
 		echo "CHROOT=\"$JAIL_DIR\"" >> $TMPFILE

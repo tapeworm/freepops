@@ -1,3 +1,4 @@
+- osx uses a custom version of curl, since osx 10.4 has an old version
 - osx package will report the correct version
 01/11/2008 0.2.8
 - Makefile, buildfactory/Makefile, buildfactory/debian-etch/control, buildfactory/debian-ubuntu/control, buildfactory/debian-ubuntu/freepops-updater-fltk.dirs, buildfactory/debian-ubuntu/rules, buildfactory/debian/control, buildfactory/debian/freepops-updater-fltk.dirs, buildfactory/debian/rules, buildfactory/win/freepops.nsi.in, configure.sh, updater-ui/fltk/Makefile, updater-ui/fltk/main.cxx: internationalization and localization of the fltk updater by blackmoon (gareuselesinge)

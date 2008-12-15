@@ -6,7 +6,7 @@
 --  Released under the GNU/GPL license
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.2.7a"
+PLUGIN_VERSION = "0.2.7b"
 PLUGIN_NAME = "Supereva"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -423,6 +423,8 @@ function mangle_head(s)
 	-- fix che risolve il bug nell'oggetto della pagina
 	local a, b = s:find("<th><b>Oggetto:</b></td>")
 	if (a) then s = s:sub(1,a) .. "<th><b>Oggetto:</b></th>" .. s:sub(b,-1) end
+	-- fix che risolve il bug nel campo "to"
+	s = string.gsub(s," <p class=\"fixwidth\">","")
 	
 	-- extract all interesting fields
 	local from = extract("^Da:",s)

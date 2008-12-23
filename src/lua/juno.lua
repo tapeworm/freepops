@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.1"
+PLUGIN_VERSION = "0.1.20081222"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -59,9 +59,11 @@ name and your real password as the password.]]
 local globals = {
   -- Login strings
   --
-  strLoginURL = "http://webmail.%s/cgi-bin/login.cgi",   
-  strLoginURL2 = "http://webmail.%s/cgi-bin/nz-login.cgi",   
-  strLoginPostData = "domain=%s&submit=Log&PASSWORD=%s&LOGIN=%s",
+  strLoginHomeUrl = "http://webmail.%s/",
+  strLoginCookieCRC = '_jsFileCrc = "([^"]+)"';
+  strLoginURL = "http://webmail.%s/cgi-bin/login.cgi?rememberMe=0",   
+  strLoginURL2 = "http://webmail.%s/cgi-bin/nz-login.cgi?rememberMe=0",   
+  strLoginPostData = "domain=%s&PASSWORD=%s&LOGIN=%s",
   strLoginFailed = "Login Failed - Invalid User name and password",
 
   -- Expressions to pull out of returned HTML from Yahoo corresponding to a problem
@@ -94,6 +96,7 @@ local globals = {
   --strMsgListPat = 'var msgnum = "([^"]+)";.-&nbsp;&nbsp;&nbsp;[^&]+&nbsp;.-&nbsp;&nbsp;&nbsp;([^K]+)K&nbsp;',
   strMsgListPat = 'msgNum=([^&]+)&block=.-&nbsp;&nbsp;&nbsp;[^&]+&nbsp;.-&nbsp;&nbsp;&nbsp;([^K]+)K&nbsp;',
   --strMsgListPat = "%[ '([^']+)' , '[^']+' , '[^']+' , '[^']+' , '([^']+)' , '[^']+' , '[^']*' , '[^']+' , '[^']+' , '[^']+' , '[^']+' , '[^']+' , '[^']*'%]",
+  --strMsgListPat = '&msgNum=([^&]+)&block=.->&nbsp;&nbsp;&nbsp;([%d]+)K&nbsp;<',
                     
   -- Attachment patterns
   --
@@ -202,6 +205,7 @@ function login()
     password, username)
   local browser = internalState.browser
 
+  local homeUrl = string.format(globals.strLoginHomeUrl, domain)
   local url = string.format(globals.strLoginURL, domain)
   if (domain == "netzero.net") then
     url = string.format(globals.strLoginURL2, domain)
@@ -213,7 +217,14 @@ function login()
 
   -- Login
   --
-  local body, err = browser:post_uri(url, post)
+  local body, err = browser:get_uri(homeUrl)
+
+  -- set a cookie
+  local crc = string.match(body, globals.strLoginCookieCRC)
+  browser:add_cookie(homeUrl, "ajaxSupported=1/" .. crc .. "; domain=." .. domain .. "; path=/")
+
+  -- Login
+  body, err = browser:post_uri(url, post)
 
   -- Error checking
   --

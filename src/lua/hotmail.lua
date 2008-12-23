@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.20081114"
+PLUGIN_VERSION = "0.2.20081219"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -549,13 +549,19 @@ function loginHotmail()
    local hasMsgAtLogin = false
    url = string.match(body, '<form name="MessageAtLoginForm" method="post" action="([^"]+)"')
    if (url ~= nil) then
+    log.dbg("Found Message at login")
 	hasMsgAtLogin = true
 	url = string.gsub(url, "&amp;", "&")
 	local post = ""
     for name, value in string.gfind(body, '<input type="hidden" name="([^"]+)".-value="([^"]+)"') do
 	  post = post .. name .. "=" .. value .. "&"
 	end
+	post = post .. "TakeMeToInbox=Continue"
+	post = string.gsub(post, "/", "%%2F")
+	post = string.gsub(post, "+", "%%2B")
+	
 	url = "http://" .. browser:wherearewe() .. "/mail/" .. url
+    log.dbg("Leaving message at login: " .. url .. " - " .. post)
     body, err = getPage(browser, url, post, "Message At Login Form")
   end
    

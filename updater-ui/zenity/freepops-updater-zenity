@@ -20,6 +20,7 @@ MESSAGE="--info --title %s --text=%s"
 CHECKLIST="--list --checklist --print-column=2 --column= --column=name --column=description --text=%s" 
 TEXTINFO="--text-info --width=600 --height=400 --filename"
 WARNING="--warning --title=Error --text"
+MKTEMP="$(which tempfile >/dev/null 2>/dev/null && echo tempfile || echo mktemp)"
 
 # command line argument parsing ##############################################
 
@@ -31,14 +32,14 @@ function parse_args() {
 }
 
 # tempfile handling, with garbage collection #################################
-TODELETE=`tempfile`
+TODELETE=`$MKTEMP`
 
 function erase_tmp_files() {
   rm -f `cat $TODELETE` $TODELETE
 }
 
 function mk_temp(){
-  local tmp=`tempfile`
+  local tmp=`$MKTEMP`
   echo $tmp >> $TODELETE
   echo $tmp
 }

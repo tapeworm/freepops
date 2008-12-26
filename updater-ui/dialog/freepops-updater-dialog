@@ -13,6 +13,7 @@ PREAMBLE="dialog --backtitle FreePOPs_Updater"
 GAUGE='--defaultno --gauge %s 10 70'
 MESSAGE="--title %s --msgbox %s 10 70"
 CHECKLIST="--defaultno --separate-output --output-fd 1 --checklist %s 19 78 10" 
+MKTEMP="$(which tempfile >/dev/null 2>/dev/null && echo tempfile || echo mktemp)"
 
 # command line argument parsing ##############################################
 
@@ -24,14 +25,14 @@ function parse_args() {
 }
 
 # tempfile handling, with garbage collection #################################
-TODELETE=`tempfile`
+TODELETE=`$MKTEMP`
 
 function erase_tmp_files() {
   rm -f `cat $TODELETE` $TODELETE
 }
 
 function mk_temp(){
-  local tmp=`tempfile`
+  local tmp=`$MKTEMP`
   echo $tmp >> $TODELETE
   echo $tmp
 }

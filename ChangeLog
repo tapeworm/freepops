@@ -1,16 +1,12 @@
 26/12/2008 0.2.9
 - src/lua/hotmail.lua, src/lua/juno.lua: Fixed login issues (russell822)
 - src/lua/supereva.lua: added patch by la scimmia to fix To: problem (gareuselesinge)
-- updater-ui/dialog/freepops-updater-dialog,
-updater-ui/zenity/freepops-updater-zenity: use mktem if tempfile not available
-(gareuselesinge), thanks Vito De Tullio)
+- updater-ui/dialog/freepops-updater-dialog, updater-ui/zenity/freepops-updater-zenity: use mktem if tempfile not available (gareuselesinge), thanks Vito De Tullio
 - buildfactory/Makefile, buildfactory/debian-ubuntu/control, buildfactory/debian-ubuntu/freepops.postinst, buildfactory/debian-ubuntu/rules: patch by blackmoon for ubuntu (gareuselesinge)
 - buildfactory/Makefile, buildfactory/osx/Info.plist, buildfactory/osx/Info.plist.in: osx version will be reported correctly from now on (gareuselesinge)
 - buildfactory/debian-ubuntu-dapper/control, buildfactory/debian-ubuntu-dapper/rules: added dapper stuff (gareuselesinge)
-- buildfactory/debian-ubuntu/freepops-updater-gnome.desktop: ... (gareuselesinge)
-- buildfactory/debian/changelog, buildfactory/debian/control,
-buildfactory/debian/freepops.cron.hourly, buildfactory/debian/rules,
-scripts/create_jail.sh: approaching 2.9.0 (gareuselesinge)
+- buildfactory/debian-ubuntu/freepops-updater-gnome.desktop: minor fix (gareuselesinge)
+- buildfactory/debian/changelog, buildfactory/debian/control, buildfactory/debian/freepops.cron.hourly, buildfactory/debian/rules, scripts/create_jail.sh: approaching 2.9.0 (gareuselesinge)
 - buildfactory/debian/changelog, buildfactory/debian/freepops.postinst, buildfactory/debian/rules: some debian fixes (gareuselesinge)
 - buildfactory/osx/Install_resources/English.lproj/ReadMe.txt, buildfactory/osx/Install_resources/Italian.lproj/ReadMe.txt, buildfactory/osx/iceberg/FreePOPs/FreePOPs.packproj, scripts/compile-gettext-universal.sh, src/Makefile: added gettext library, fixed installer (gareuselesinge)
 - buildfactory/osx/Install_resources/English.lproj/ReadMe.txt, buildfactory/osx/Install_resources/Italian.lproj/ReadMe.txt, configure.sh, scripts/compile-curl-universal.sh, src/Makefile: use of an embedded version of libcurl for osx to avoid the old and crappy 10.4 version (gareuselesinge)

@@ -311,7 +311,7 @@ int logit(char* zone, char* preamble, char*filename,int line,char *str, ...)
 #ifndef WIN32
 	if (do_syslog) {
 		// syslog adds date and process name
-		syslog(LOG_DEBUG, logstr);
+		syslog(LOG_DEBUG, "%s", logstr);
 	} else {
 #endif
 		

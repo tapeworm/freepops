@@ -4,7 +4,7 @@
 -- Only one function is available to the end user.
 -- Incorporating jbobowski Gmail fix posted 26 April 2006.
 
-MODULE_VERSION = "0.1.3"
+MODULE_VERSION = "0.1.4"
 MODULE_NAME = "browser.cookie"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -51,7 +51,7 @@ Private.cookie_av={
 -- some captures for the cookie fields
 Private.value = {}
 Private.value.token='=%s*("?[^";]*"?)'
-Private.value.name="^(%s*[%w%_%-%.]+)"
+Private.value.name="^(%s*[^=]+)"
 Private.value.domain='=%s*("?%.?[%w%.%_%-%%%/%+%-%*]+"?)'
 Private.value.expires="=%s*(%a+%s*,%s*[%w%:%s%-]+)"
 Private.value.secure="(%s?)"

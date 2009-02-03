@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.3"
+PLUGIN_VERSION = "0.2.20090202"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -311,12 +311,9 @@ function loginAOL()
   -- Need to redirect
   --
   url = string.match(body, "checkErrorAndSubmitForm%([^,]+, [^,]+, '([^']+)'")
-  if url == nil then
-    log.raw(body)
-    log.error_print(globals.strLoginFailed)
-    return POPSERVER_ERR_AUTH  
+  if url ~= nil then
+    body, err = browser:get_uri(url)
   end
-  body, err = browser:get_uri(url)
 
   -- We should be logged in now! Let's check and make sure.
   --

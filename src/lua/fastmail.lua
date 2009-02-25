@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.0.3c"
+PLUGIN_VERSION = "0.1.20090224"
 PLUGIN_NAME = "fastmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -77,7 +77,7 @@ local globals = {
 
   -- Regular expression to extract the mail server
   --
-  strFormActionPat = '<form name="[^"]+" action="([^"]+)"',
+  strFormActionPat = '<form id="[^"]+" action="([^"]+)"',
 
   -- Regular expression to get the mailbox id, Ust value and the Udm value
   --

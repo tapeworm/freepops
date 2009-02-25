@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.20081219"
+PLUGIN_VERSION = "0.2.20080224"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -572,6 +572,11 @@ function loginHotmail()
     log.dbg("Hotmail: Detected LIVE version.") 
     str = string.format(globals.strCmdBrowserIgnoreLive, browser:wherearewe())
     body, err = getPage(browser, str, nil, "browser check")
+    local strTemp = string.match(body, '<iframe.* src="([^"]+)"')
+    if strTemp ~= nil then
+      str = cleanupLoginBody(strTemp)
+      body, err = getPage(browser, str, nil, "Main Page?")
+    end	
     str = string.match(body, globals.strLiveMainPagePattern)
     if str ~= nil then
       str = string.format(globals.strCmdBaseLive, browser:wherearewe()) .. str

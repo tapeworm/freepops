@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.14"
+PLUGIN_VERSION = "0.2.15"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -351,7 +351,7 @@ function geta3p(b, email)
 	return url, post
 end
 
-function tin_login()
+function tin_http_login()
 	if internal_state.login_done then
 		return POPSERVER_ERR_OK
 	end
@@ -522,6 +522,15 @@ function tin_https_login()
 			internal_state.session_id_s .. ")\n")
 
 	return POPSERVER_ERR_OK
+end
+
+function tin_login()
+	local rc = tin_http_login()
+	if rc ~= POPSERVER_ERR_OK then
+		return tin_https_login()
+	else
+		return rc
+	end
 end
 		
 -- ************************************************************************** --

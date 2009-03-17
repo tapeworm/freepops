@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.11h"
+PLUGIN_VERSION = "0.2.12"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -86,9 +86,9 @@ local tin_string = {
 	login2Ct="&t=([^&]+)",
 	login2Cs="&s=([%d]+)",
 	-- mesage list mlex
-	statE = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a.*Email>.*</a>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*</tr>",
+	statE = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a.*>.*</a>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*</tr>",
 	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
-	
+
 	-- The uri for the first page with the list of messages
 	-- parameters all %s except fi that is %d: 
 	--   wherearewe(), folder, domain, username, t, s, fi
@@ -102,14 +102,14 @@ local tin_string = {
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
 	-- The uri to save a message (read download the message)
 	--   wherearewe(), mailbox, domain, username, username, uidl, t, s
-	save = "http://%s/cp/ps/Mail/Email"..
+	save = "http://%s/cp/ps/Mail/EmailSecure"..
 		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
 		"uid=%s&t=%s&style=&l=it&s=%s&sl=%d",	
-	save_sl = "http://%s/cp/ps/Mail/Email"..
+	save_attach = "http://%s/cp/ps/Mail/Email"..
 		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
-		"uid=&t=%s&style=&l=it&s=%s&sl=%d",	
+		"uid=%s&t=%s&style=&l=it&s=%s&sl=%d",	
 	body_start = [[%s-</script>%s-<br>%s-<br>%s-</div>]],
-	body_end = [[</div></td>%s*<td width="5"><spacer type="block" width="5" height="1"></td>%s*<td width="1" bgcolor="#FFFFFF"><spacer type="block" width="1" height="1"></td>%s*</tr>%s*</table>%s*<!%-%-FINE TABELLA LISTING MAIL%-%->]],
+	body_end = [[</td>%s*</tr>%s*</table>]],
 	 attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
 	 attachG = "O<X>O<O>X<O>",
 	-- by nvhs for html image
@@ -368,23 +368,52 @@ function tin_login()
 	local b = internal_state.b
  	--b:verbose_mode()
 
-	-- step 0: create some dummy bisquits and fetch some
-	local post = string.format(tin_string.prelogin_post,
-		user,domain,password,10,10)
-	local body, err = b:post_uri(tin_string.prelogin,post)
+	local initial_uri = "http://pf.rossoalice.alice.it/Vpf.html?"
+	local body, err = b:get_uri(initial_uri)
+
+	local post =
+"usernameDisplay=" .. user .. "&password="..password.. 
+"&dominio="..domain.."&imageField.x=31&imageField.y=13&"..
+"login="..pop_login.."&pwd="..password.."&channel=Vmail&"..
+"URL_OK=https%3A%2F%2Fauthsrs.alice.it%2Faap%2Faap_redir.jsp%3Fentry%3DVmail&"..
+"URL_KO=https%3A%2F%2Fauthsrs.alice.it%2Faap%2Faap_redir_ko.jsp%3Fentry%3DVmail&"..
+"servizio=mail&msisdn="..user.."&username="..pop_login.."&user="..pop_login..
+"&a3afep=http%3A%2F%2Fportale.rossoalice.alice.it%2Fps%2FManageCodError.do%3Fcode%3D470%26channel%3DVmail&"..
+"DOMAIN=&PASS="..password.."&self=true&a3si=none&a3st=VCOMM&totop=true&nototopa3ep=true&a3aid=lvmes&a3flag=0&"..
+"a3ep=http%3A%2F%2Fdise.alice.it%2Fdest%2Fwebmail&"..
+"a3se=http%3A%2F%2Fportale.rossoalice.alice.it%2Fps%2FManageCodError.do%3Fcode%3D470%26channel%3DVmail&"..
+"a3dcep=http%3A%2F%2Fcommunicator.alice.it%2Fasp%2Fhomepage.asp%3Fs%3D005&"..
+"a3l="..pop_login.."&a3p="..password.."&rememberUsernameChk=checkbox"
+
+	local login_uri = "https://aaacsc.alice.it/piattaformaAAA/aapm/amI"
+	local body, err = b:post_uri(login_uri, post)
 	if body == nil then
-		log.error_print("Error getting "..
-			tin_string.prelogin..": "..err)
+		log.error_print("Error getting "..login_uri.. ": "..err)
 		return POPSERVER_ERR_AUTH
 	end
 
-	local url, post = geta3p(b, pop_login)
+	-- look for redirect
+	local newurl_match = "window%.[a-z%.]*%.href%s=%s\"([^\"]+)\""
+	local newurl = string.match(body, newurl_match)
+	if newurl == nil then 
+		log.error_print("Error matching "..newurl_match)
+		return POPSERVER_ERR_AUTH
+	end
 	
-	-- step 1: fetch bisquits
-	
-	local body, err = b:post_uri(url,post)
+	local body, err = b:get_uri(newurl)
 	if body == nil then
-		log.error_print("Error getting "..tin_string.login..": "..err)
+		log.error_print("Error getting "..newurl..": "..err)
+		return POPSERVER_ERR_AUTH
+	end
+	local newurl = string.match(body, newurl_match)
+	if newurl == nil then 
+		log.error_print("Error matching "..newurl_match)
+		return POPSERVER_ERR_AUTH
+	end
+	
+	local body, err = b:get_uri(newurl)
+	if body == nil then
+		log.error_print("Error getting "..newurl..": "..err)
 		return POPSERVER_ERR_AUTH
 	end
 
@@ -528,7 +557,6 @@ function quit_update(pstate)
 			local post = string.format(tin_string.delete_post,
 				folder, uidl, user)
 			local body, err = b:post_uri(uri, post)
-			print(uri, post)--, body)
 			if body == nil then
 				log.error_print("Error getting "..uri..":"..err)
 				return POPSERVER_ERR_UNKNOWN
@@ -578,6 +606,7 @@ function stat(pstate)
 	-- The action for do_until
 	--
 	-- uses mlex to extract all the messages uidl and size
+	local stop = false
 	local function action_f (s) 
 		-- calls match on the page s, with the mlexpressions
 		-- statE and statG
@@ -587,6 +616,10 @@ function stat(pstate)
 		
 		-- the number of results
 		local n = x:count()
+		if n < 10 then 
+			stop = true 
+		end
+		
 
 		if n == 0 then
 			return true,nil
@@ -608,7 +641,7 @@ function stat(pstate)
 			k = string.match(size,"([Kk][Bb])")
 			m = string.match(size,"([Mm][Bb])")
 			size = string.match(size,"([%.%d]+)")
-			uidl = string.match(uidl,'uid=([%d]+)')
+			uidl = string.match(uidl,"read%s*%(%s*'"..internal_state.folder.."'%s*,%s*'([%d]+)'")
 
 			if not uidl or not size then
 				return nil,"Unable to parse page"
@@ -627,14 +660,12 @@ function stat(pstate)
 			set_mailmessage_uidl(pstate,i+nmesg_old,uidl)
 			internal_state.reverse_lookup[uidl] = i+nmesg_old
 		end
-		
+
 		return true,nil
 	end 
 
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
-	local count = 0
-	local how_many_refs = 0
 	local function next_page()
 		page = page + 10
 		uri = string.format(tin_string.first,
@@ -647,32 +678,8 @@ function stat(pstate)
 			-- if a limit was set, stop
 			return true 
 		end
-		local tmp = string.find(s,tin_string.no_next)
-		if tmp ~= nil and count == 0 then
-			return next_page()
-		else
-			if count == 0 then
-				-- we are on the last page only if we have seen
-				-- this 3 times
-				for x in string.gfind(s,tin_string.list_href) do
-					how_many_refs = how_many_refs + 1
-				end
-				-- there should be links before and after 
-				-- the list
-				if math.fmod(how_many_refs, 2) ~= 0 then
-					log.error_print(
-						"Error in counting list_href")
-					return true
-				end
-				how_many_refs = how_many_refs / 2
-			end
-			count = count + 1
-			if count >= how_many_refs then 
-				return true 
-			else
-				return next_page()
-			end
-		end
+		if stop then return true end
+		return next_page()
 	end
 
 	-- this is simple and uri-dependent
@@ -763,9 +770,13 @@ end
 -- Get first lines message msg lines, must call 
 -- popserver_callback to send the data
 -- 
-function tin_parse_webmessage(wherearewe, data)
+--
+function tin_parse_webmessage(wherearewe, data, data_attach)
 	local head, body, body_html, attach ,inlineids = nil, nil, nil, {} , {}
 
+	local f = io.open("/tmp/x.html","w")
+	f:write(data)
+	f:close()
 	-- extract headers 
 	local headersE = ".*<script>.*var *hd *=</script>.*<br>.*<br>.*</div>"
 	local headersG = "O<O>X<O>O<O>O<O>O<O>"
@@ -824,7 +835,7 @@ function tin_parse_webmessage(wherearewe, data)
 	end
 
 	-- extract attachments
-	local x = mlex.match(data, tin_string.attachE, tin_string.attachG) 
+	local x = mlex.match(data_attach,tin_string.attachE,tin_string.attachG) 
 	--x:print()
 	for i = 1, x:count() do
 		local url = x:get(0,i-1)
@@ -837,7 +848,7 @@ function tin_parse_webmessage(wherearewe, data)
 	
 	-- by nvhs extract attach mail
 	
-	local x = mlex.match(data, tin_string.mailE, tin_string.mailG) 
+	local x = mlex.match(data_attach, tin_string.mailE, tin_string.mailG) 
 	--x:print()
 	for i = 1, x:count() do
 		local url = x:get(0,i-1)
@@ -852,7 +863,7 @@ function tin_parse_webmessage(wherearewe, data)
 
 	-- by nvhs for html image
 	
-	local y = mlex.match(data, tin_string.imageE, tin_string.imageG)
+	local y = mlex.match(data_attach, tin_string.imageE, tin_string.imageG)
 	-- y:print()
 	for i = 1, y:count() do
 		local url = y:get(0,i-1)
@@ -949,8 +960,18 @@ function retr(pstate,msg,data)
 		return POPSERVER_ERR_UNKNOWN
 	end
 	
+	local uri = string.format(tin_string.save_attach,popserver,
+		folder, domain, user, user, uidl, session_id_t, session_id_s,sl)
+	
+	-- tell the browser to fetch
+	local f_attach, err = b:get_uri(uri)
+	if f_attach == nil then
+		log.error_print("Error fetching "..uri..": ".. (err or 'nil'))
+		return POPSERVER_ERR_UNKNOWN
+	end
+
 	local wherearewe = add_webmail_in_front(b:wherearewe())
-	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f)
+	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f, f_attach)
 	local cb = mimer.callback_mangler(common.retr_cb(data))
 	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]%s*=).-([;\n])","%1\""..ctype.."\"%2")
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,inlineids,ctype)
@@ -1014,8 +1035,18 @@ function top(pstate,msg,lines,data)
 		return POPSERVER_ERR_NETWORK
 	end
 
+	local uri = string.format(tin_string.save_attach,popserver,
+		folder, domain, user, user, uidl, session_id_t, session_id_s,sl)
+	
+	-- tell the browser to fetch
+	local f_attach, err = b:get_uri(uri)
+	if f_attach == nil then
+		log.error_print("Error fetching "..uri..": ".. (err or 'nil'))
+		return POPSERVER_ERR_UNKNOWN
+	end
+
 	local wherearewe = add_webmail_in_front(b:wherearewe())
-	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f)
+	local head,body,body_html,attach,inlineids = tin_parse_webmessage(wherearewe, f, f_attach)
 	local global = common.new_global_for_top(lines,nil)
 	local cb = mimer.callback_mangler(common.top_cb(global,data,true))
 	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]%s*=).-([;\n])","%1\""..ctype.."\"%2")

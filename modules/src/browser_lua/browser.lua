@@ -67,7 +67,7 @@
 -- <B>setIgnoreContentLength()</B> : ignore content len HTTP header<BR/>
 --<BR/>
 
-MODULE_VERSION = "0.1.3"
+MODULE_VERSION = "0.1.4"
 MODULE_NAME = "browser.browser"
 MODULE_REQUIRE_VERSION = "0.2.8"
 MODULE_LICENSE = "GNU/GPL"
@@ -151,7 +151,13 @@ function Hidden.build_header(self,url,exhed)
 	cookie.clean_expired(self.cookies)
 
 	-- the header
-	local head = exhed or {}
+	local head = {}
+	-- if exhed is provided, copy its elements to head
+	if exhed ~= nil then
+		for i, str in ipairs(exhed) do
+			table.insert(head, str)
+		end
+	end
 	
 	local cook = cookie.get(self.cookies,u.path,u.host,u.host)
 	

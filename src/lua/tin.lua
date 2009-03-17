@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.12"
+PLUGIN_VERSION = "0.2.13"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -774,9 +774,6 @@ end
 function tin_parse_webmessage(wherearewe, data, data_attach)
 	local head, body, body_html, attach ,inlineids = nil, nil, nil, {} , {}
 
-	local f = io.open("/tmp/x.html","w")
-	f:write(data)
-	f:close()
 	-- extract headers 
 	local headersE = ".*<script>.*var *hd *=</script>.*<br>.*<br>.*</div>"
 	local headersG = "O<O>X<O>O<O>O<O>O<O>"

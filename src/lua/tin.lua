@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.13"
+PLUGIN_VERSION = "0.2.14"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -352,6 +352,78 @@ function geta3p(b, email)
 end
 
 function tin_login()
+	if internal_state.login_done then
+		return POPSERVER_ERR_OK
+	end
+
+	-- build the uri
+	local password = internal_state.password
+	local domain = internal_state.domain
+	local user = internal_state.name
+	local pop_login = user .. "@" .. domain
+	
+	-- the browser must be preserved
+	internal_state.b = browser.new()
+
+	local b = internal_state.b
+ 	--b:verbose_mode()
+
+	-- step 0: create some dummy bisquits and fetch some
+	local post = string.format(tin_string.prelogin_post,
+		user,domain,password,10,10)
+	local body, err = b:post_uri(tin_string.prelogin,post)
+	if body == nil then
+		log.error_print("Error getting "..
+			tin_string.prelogin..": "..err)
+		return POPSERVER_ERR_AUTH
+	end
+
+	local url, post = geta3p(b, pop_login)
+	
+	-- step 1: fetch bisquits
+	
+	local body, err = b:post_uri(url,post)
+	if body == nil then
+		log.error_print("Error getting "..tin_string.login..": "..err)
+		return POPSERVER_ERR_AUTH
+	end
+
+	-- step 2: get session id_s and id_t
+	local tincctoken = assert(b:get_cookie("tincctoken"),
+		"unable to find cookie tincctoken").value
+	local url = string.format(tin_string.login2, domain,
+		curl.escape(pop_login), curl.unescape(tincctoken))
+	local body,err = b:get_uri(url)
+	if body == nil then
+		log.error_print("Error getting "..url..": "..err)
+		return POPSERVER_ERR_AUTH
+	end
+	local capt = string.match(body, tin_string.login2C)
+	local t = string.match(capt, tin_string.login2Ct) 
+	local s = string.match(capt, tin_string.login2Cs) 
+	
+	internal_state.session_id_s = s
+	internal_state.session_id_t = t
+	
+	if internal_state.session_id_s == nil or
+	   internal_state.session_id_t == nil then
+		log.error_print("Login failed\n")
+		return POPSERVER_ERR_AUTH
+	end
+
+	-- save all the computed data
+	internal_state.login_done = true
+	
+	-- log the creation of a session
+	log.say("Session started for " .. internal_state.name .. "@" .. 
+		internal_state.domain .. 
+		"(" .. internal_state.session_id_t .. ", " .. 
+			internal_state.session_id_s .. ")\n")
+
+	return POPSERVER_ERR_OK
+end
+
+function tin_https_login()
 	if internal_state.login_done then
 		return POPSERVER_ERR_OK
 	end

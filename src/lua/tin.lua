@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.15"
+PLUGIN_VERSION = "0.2.16"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -108,7 +108,7 @@ local tin_string = {
 	save_attach = "http://%s/cp/ps/Mail/Email"..
 		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
 		"uid=%s&t=%s&style=&l=it&s=%s&sl=%d",	
-	body_start = [[%s-</script>%s-<br>%s-<br>%s-</div>]],
+	body_start = [[%s-</script>%s-<br>%s-<br>%s-</div>.-<table bgcolor=.?#FFFFFF.-=.?testogrigio10verdana.?>%s*]],
 	body_end = [[</td>%s*</tr>%s*</table>]],
 	 attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
 	 attachG = "O<X>O<O>X<O>",

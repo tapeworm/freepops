@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.18"
+PLUGIN_VERSION = "0.2.19"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -109,7 +109,7 @@ local tin_string = {
 		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
 		"uid=%s&t=%s&style=&l=it&s=%s&sl=%d",	
 	body_start = [[%s-</script>%s-<br>%s-<br>%s-</div>.-<table bgcolor=.?#FFFFFF.-=.?testogrigio10verdana.?>%s*]],
-	body_end = [[%s*</td></tr>.-CALC%s-LENGHT.->]],
+	body_end = [[</td></tr> %s*</table>%s*<.?.?.?.?DO NOT REMOVE THIS USED TO CALC LENGHT OF PAGE .->]],
 	 attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
 	 attachG = "O<X>O<O>X<O>",
 	-- by nvhs for html image
@@ -889,6 +889,7 @@ function tin_parse_webmessage(wherearewe, data, data_attach)
 		"[Tt][Ee][Xx][Tt]/[Pp][Ll][Aa][Ii][Nn]")
 	if found == nil then
 		body_html = string.sub(data, begin_body + 1, end_body - 1)
+		-- body_html = string.gsub(data, "</td></tr>%s*</table>%s-%s*", "")
 		head = mimer.remove_lines_in_proper_mail_header(head,
 			{"content%-type"})
 	else

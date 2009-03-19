@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.17"
+PLUGIN_VERSION = "0.2.18"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -113,7 +113,7 @@ local tin_string = {
 	 attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
 	 attachG = "O<X>O<O>X<O>",
 	-- by nvhs for html image
-	 imageE = "<IMG .*/cp/ps/Mail/ViewAttachment.*>",
+	 imageE = "<IMG .*cp/ps/Mail/SecureViewAttachment.*>",
 	 imageG = "<X>",
 	-- by nvhs for attach  mail
 	 mailE = ".*<a.*href *= *'/cp/ps/Mail/Email>.*<img>.*</a>",
@@ -941,12 +941,12 @@ function tin_parse_webmessage(wherearewe, data, data_attach)
 
 	-- by nvhs for html image
 	
-	local y = mlex.match(data_attach, tin_string.imageE, tin_string.imageG)
+	local y = mlex.match(data, tin_string.imageE, tin_string.imageG)
 	-- y:print()
 	for i = 1, y:count() do
 		local url = y:get(0,i-1)
 		url = string.match(url,
-			"/cp/ps/Mail/ViewAttachment.-&id=%d*")
+			"/cp/ps/Mail/SecureViewAttachment?.-&id=%d*")
 		if url ~= nil then 
 			attach[url] = "http://"..wherearewe..url
 			inlineids[url]=url
@@ -956,7 +956,7 @@ function tin_parse_webmessage(wherearewe, data, data_attach)
 	-- replace url with cid
 	if body_html ~= nil then
 		body_html  = string.gsub(body_html,
-			"/cp/ps/Mail/ViewAttachment.-&id=%d*","cid:%1")	
+			"/cp/ps/Mail/SecureViewAttachment.-&id=%d*","cid:%1")	
 	end
 	
 	return head, body, body_html, attach ,inlineids

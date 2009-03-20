@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.19"
+PLUGIN_VERSION = "0.2.20"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -113,7 +113,7 @@ local tin_string = {
 	 attachE = ".*<a.*href='/cp/ps/Mail/ViewAttachment>.*<img>.*</a>",
 	 attachG = "O<X>O<O>X<O>",
 	-- by nvhs for html image
-	 imageE = "<IMG .*cp/ps/Mail/SecureViewAttachment.*>",
+	 imageE = "<.?.?[Ii][Mm][Gg].*cp/ps/Mail/SecureViewAttachment.*>",
 	 imageG = "<X>",
 	-- by nvhs for attach  mail
 	 mailE = ".*<a.*href *= *'/cp/ps/Mail/Email>.*<img>.*</a>",
@@ -946,6 +946,7 @@ function tin_parse_webmessage(wherearewe, data, data_attach)
 	-- y:print()
 	for i = 1, y:count() do
 		local url = y:get(0,i-1)
+		print(url)
 		url = string.match(url,
 			"/cp/ps/Mail/SecureViewAttachment?.-&id=%d*")
 		if url ~= nil then 

@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.20"
+PLUGIN_VERSION = "0.2.21"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -958,7 +958,7 @@ function tin_parse_webmessage(wherearewe, data, data_attach)
 	-- replace url with cid
 	if body_html ~= nil then
 		body_html  = string.gsub(body_html,
-			"/cp/ps/Mail/SecureViewAttachment.-&id=%d*","cid:%1")	
+			"src%s*=%s*\".-(/cp/ps/Mail/SecureViewAttachment.-&id=%d*).-\"",'src="cid:%1"')	
 	end
 	
 	return head, body, body_html, attach ,inlineids

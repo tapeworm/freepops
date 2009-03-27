@@ -10,7 +10,7 @@ Homepage: http://www.freepops.org
 Package: freepops
 Architecture: any
 Depends: ${shlibs:Depends}, debconf | debconf-2.0 , lsb-base (>= 3.0-6)
-Suggests: dialog
+Recommends: dialog
 Description: POP3 interface to several webmail sites
  FreePOPs is a POP3 daemon that translates local POP3 commands
  to remote HTTP requests to the supported webmail sites.

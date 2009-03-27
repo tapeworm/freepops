@@ -1,8 +1,20 @@
+freepops (0.2.9-3) unstable; urgency=low
+
+  * Recommend dialog (Closes: #521430)
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Fri, 27 Mar 2009 19:45:16 +0100
+
+freepops (0.2.9-2) unstable; urgency=low
+
+  * Uploaded to unstable
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sun, 15 Feb 2009 14:03:32 +0100
+
 freepops (0.2.9-1) experimental; urgency=low
 
   * New upstream release with minor fixes
 
- -- Enrico Tassi <gareuselesinge@debian.org>  Mon, 08 Dec 2008 10:19:57 +0100
+ -- Enrico Tassi <gareuselesinge@debian.org>  Sat, 27 Dec 2008 16:55:54 +0100
 
 freepops (0.2.8-1) experimental; urgency=low
 

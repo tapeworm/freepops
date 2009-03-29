@@ -6,7 +6,7 @@
 --  Released under the GNU/GPL license
 -- ************************************************************************** --
 
-PLUGIN_VERSION = "0.2.7b"
+PLUGIN_VERSION = "0.2.7c"
 PLUGIN_NAME = "Supereva"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -36,11 +36,11 @@ supereva_globals = {
 -- ------------------------------------------------------------------------ --
 --  Constants
 local supereva_strings = {
-	login_uri = "http://it.email.dada.net/cgi-bin/sso/login.cgi", -- "http://it.email.dada.net/cgi-bin/sn_my/login.chm",
+	login_uri = "http://sso.dada.it/cgi-bin/sso/login.cgi", --"http://it.email.dada.net/cgi-bin/sso/login.cgi", -- "http://it.email.dada.net/cgi-bin/sn_my/login.chm",
 	login_data = "username=%s&password=%s",
 
-	inbox_uri = "http://it.email.dada.net/cgi-bin/main.chm?mlt_msgs=",
-	get_uri = "http://it.email.dada.net/cgi-bin/nrmail03.chm?msgnum=",
+	inbox_uri = "http://email.dada.it/cgi-bin/main.chm?mlt_msgs=",
+	get_uri = "http://email.dada.it/cgi-bin/nrmail03.chm?msgnum=",
 
 	inbox_e = "" ..
 		"<tr>.*" ..

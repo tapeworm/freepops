@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.20081222"
+PLUGIN_VERSION = "0.1.20090411"
 PLUGIN_NAME = "juno.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -615,6 +615,7 @@ end
 -- -------------------------------------------------------------------------- --
 function getAttachmentTable(cbInfo, data)
   local attachments = {}
+  local lookup = {}
   local body = cbInfo.strBuffer
 
   -- find attachments
@@ -630,7 +631,6 @@ function getAttachmentTable(cbInfo, data)
     filename = getFilename(url, filename)
     log.dbg("Found Attachment, File: " .. filename .. " - Url: " .. url)
     attachments[filename] = url
-    table.insert(attachments, table.maxn(attachments) + 1, url)
   end
   
   return attachments

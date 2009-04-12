@@ -439,6 +439,7 @@ freepops.MODULES_MAP["supermail.ac"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["supermail.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["surfmail.ac"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["surfy.net"]		= {name="mailcom.lua"}
+freepops.MODULES_MAP["surgical.net"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["taiwan.com"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["talknet.ac"]		= {name="mailcom.lua"}
 freepops.MODULES_MAP["teddy.cc"]		= {name="mailcom.lua"}

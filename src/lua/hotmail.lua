@@ -3,11 +3,12 @@
 --  
 --  Released under the GNU/GPL license
 --  Written by Russell Schwager <russell822@yahoo.com>
+--  contributions from D. Milne <drmilne (at) safe-mail (.) net>
 -- ************************************************************************** --
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.20080224"
+PLUGIN_VERSION = "0.2.20090411"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -20,7 +21,7 @@ PLUGIN_DOMAINS = { "@hotmail.com","@msn.com","@webtv.com",
       "@hotmail.de", "@hotmail.it", "@hotmail.co.uk", 
       "@hotmail.co.jp", "@hotmail.fr", "@messengeruser.com",
       "@hotmail.com.ar", "@hotmail.co.th", "@hotmail.com.tr",
-      "@milanosemplice.it"
+      "@windowslive.com", "@milanosemplice.it"
       }
 PLUGIN_PARAMETERS = {
 	{name="folder", description={
@@ -197,23 +198,11 @@ local globals = {
 
   -- Pattern used by Stat to get the next page in the list of messages
   --
-  
-  -- gboudreau fix (patched by doglan) - Part 1 (start)
-  --strMsgListNextPagePattern = '(nextpg%.gif" border=0></a>)',
-  --strMsgListNextPagePatLiveLight = '<a href="([^"]+)"[^>]*><img src="[^_]*_nextpage.gif"',
-  --strMsgListNextPagePatLiveLight2 = '<a href="([^"]+)"[^>]*><img src="[^"]+" class="i_nextpage"',
-
-	strMsgListNextPagePattern = '(nextpg%.gif\\?" border=0></a>)',
-	strMsgListNextPagePatLiveLight = '<a href=\\?"([^"]+)\\?"[^>]*><img src=\\?"[^_]*_nextpage.gif\\?"',
-	strMsgListNextPagePatLiveLight2 = '<a href=\\?"([^"]+)\\?"[^>]*><img src=\\?"[^"]+\\?" class=\\?"i_nextpage\\?"',
-  -- gboudreau fix - Part 1 (end)
-
+  strMsgListNextPagePattern = '(nextpg%.gif\\?" border=0></a>)',
+  strMsgListNextPagePatLiveLight = '<a href=\\?"([^"]+)\\?"[^>]*><img src=\\?"[^_]*_nextpage.gif\\?"',
+  strMsgListNextPagePatLiveLight2 = '<a href=\\?"([^"]+)\\?"[^>]*><img src=\\?"[^"]+\\?" class=\\?"i_nextpage\\?"',
   strMsgListNextPagePatLiveLight3 = 'pnCur=\\?"([^\\"]+)\\?" pnAm=\\?"([^\\"]+)\\?" pnAd=\\?"([^\\"]+)\\?" pnDir=\\?"NextPage\\?" pnMid=\\?"([^\\"]+)\\?" [^>]*>.-<[^>]+>.-<img [^_]*_nextpage\\?"',
-  
-  -- gboudreau fix (patched by doglan) - Part 2 (start)
-  --strMsgListNextPagePatLiveLight4 = '<li id="nextPageLink" pnCur="([^"]+)" pnAm="([^"]+)" pnAd="([^"]+)" pnDir="NextPage" pnMid="([^"]+)" pnSkip="0">',
-	strMsgListNextPagePatLiveLight4 = '<li id=\\?"nextPageLink\\?" pnCur=\\?"([^\\"]+)\\?" pnAm=\\?"([^\\"]+)\\?" pnAd=\\?"([^\\"]+)\\?" pnDir=\\?"NextPage\\?" pnMid=\\?"([^\\"]+)\\?" pnSkip=\\?"0\\?">',
-  -- gboudreau fix - Part 2 (end)
+  strMsgListNextPagePatLiveLight4 = '<li id=\\?"nextPageLink\\?" pnCur=\\?"([^\\"]+)\\?" pnAm=\\?"([^\\"]+)\\?" pnAd=\\?"([^\\"]+)\\?" pnDir=\\?"NextPage\\?" pnMid=\\?"([^\\"]+)\\?" pnSkip=\\?"0\\?">',
 
   -- Pattern used to detect a bad STAT page.
   --
@@ -258,20 +247,14 @@ local globals = {
   strCmdMsgListLive3 = "mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.GetInboxData&ptid=0&a=%s&au=%s", 
   strCmdMsgListPostLive3 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,25,NextPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,false,%s},false,null&v=1&mt=%s',
 
-  -- gboudreau fix (patched by doglan) - Part 3 (start)
-  --strCmdMsgListPostLive4 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,LastPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,%s,-1,Bottom},false,null&v=1&mt=%s',
-	strCmdMsgListPostLive4 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,NextPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,%s,-1,Bottom},false,null&v=1&mt=%s',
-  -- gboudreau fix - Part 3 (end)
+  strCmdMsgListPostLive4 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,NextPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,%s,-1,Bottom},false,null&v=1&mt=%s',
 
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
   strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MoveMessages&ptid=0&a=%s&au=%s", 
   strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
-  -- strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632750213035330000",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
   strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"0%%5C%%7C0%%5C%%7C8C9BDFF65883200%%5C%%7C00000000-0000-0000-0000-000000000001",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
 
-  --strCmdDeleteLiveLight = "http://%s/mail/InboxLight.aspx?FolderID=%s&",
-  --strCmdDeletePostLiveLight = "__VIEWSTATE=&mt=%s&MoveMessageSelector=%s&ToolbarActionItem=MoveMessageSelector&", -- SelectedMessages=%s",
   strCmdDeleteLiveLight = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MoveMessagesToFolder&ptid=0&a=%s&au=%s", 
   strCmdDeletePostLiveLight = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessagesToFolder&d="%s","%s",[%s],[%s],{"%s",25,FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",false,0},null&v=1&mt=%s',
   strCmdDeletePostLiveLight2 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessagesToFolder&d="%s","%s",[%s],[%s],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",26,0,Bottom}&v=1&mt=%s',
@@ -292,9 +275,8 @@ local globals = {
   strCmdEmptyTrashLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=ClearFolder&d="%s",{"%s",25,FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",false,0}&v=1&mt=%s',
   strCmdMsgReadLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MarkMessages&ptid=0&a=&au=%s", 
   strCmdMsgReadLivePost = "cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessages&d=true,[%s]&v=1&mt=%s",
-  --strCmdMsgReadLiveLight = "http://%s/mail/ReadMessageLight.aspx?AllowUnsafe=True&Aux=&FolderID=%s&InboxSortAscending=False&InboxSortBy=Date&ReadMessageId=%s",
   strCmdMsgReadLiveLight = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MarkMessagesReadState&ptid=0&a=%s&au=%s", 
-  --strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],{"%s",25,FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",false,0}&v=1&mt=%s',
+
   -- Submitted by Barlad
   --
   strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",1085,0,Right}&v=1&mt=%s',
@@ -417,6 +399,35 @@ function fetchPage(browser, url, post, name)
   
   return body, err
 end
+
+
+function CheckForMessageAtLogin(browser, url, body)
+  local err
+  -- Let's look for a message at login
+  --
+  local hasMsgAtLogin = false
+  url = string.match(body, '<form name="MessageAtLoginForm" method="post" action="([^"]+)"')
+  if (url ~= nil) then
+    log.dbg("Found Message at login")
+    hasMsgAtLogin = true
+    url = string.gsub(url, "&amp;", "&")
+	local post = ""
+    for name, value in string.gfind(body, '<input type="hidden" name="([^"]+)".-value="([^"]+)"') do
+	  post = post .. name .. "=" .. value .. "&"
+	end
+
+	post = post .. "TakeMeToInbox=Continue"
+	post = string.gsub(post, "/", "%%2F")
+	post = string.gsub(post, "+", "%%2B")
+	
+	url = "http://" .. browser:wherearewe() .. "/mail/" .. url
+    log.dbg("Leaving message at login: " .. url .. " - " .. post)
+    body, err = getPage(browser, url, post, "Message At Login Form")
+  end
+
+  return url, body, err, hasMsgAtLogin
+end
+
 
 -- Issue the command to login to Hotmail
 --
@@ -544,27 +555,11 @@ function loginHotmail()
      body, err = getPage(browser, "http://www.hotmail.com", nil, "hotmail homepage")
    end 
 
-   -- Let's look for a message at login
-   --
-   local hasMsgAtLogin = false
-   url = string.match(body, '<form name="MessageAtLoginForm" method="post" action="([^"]+)"')
-   if (url ~= nil) then
-    log.dbg("Found Message at login")
-	hasMsgAtLogin = true
-	url = string.gsub(url, "&amp;", "&")
-	local post = ""
-    for name, value in string.gfind(body, '<input type="hidden" name="([^"]+)".-value="([^"]+)"') do
-	  post = post .. name .. "=" .. value .. "&"
-	end
-	post = post .. "TakeMeToInbox=Continue"
-	post = string.gsub(post, "/", "%%2F")
-	post = string.gsub(post, "+", "%%2B")
-	
-	url = "http://" .. browser:wherearewe() .. "/mail/" .. url
-    log.dbg("Leaving message at login: " .. url .. " - " .. post)
-    body, err = getPage(browser, url, post, "Message At Login Form")
-  end
-   
+  -- Let's have a look for a message at login
+  --
+  local hasMsgAtLogin = false
+  url, body, err, hasMsgAtLogin = CheckForMessageAtLogin(browser, url, body)
+
   -- Check to see if we are using the new interface and are redirecting.
   --
   local folderBody = body
@@ -577,6 +572,13 @@ function loginHotmail()
       str = cleanupLoginBody(strTemp)
       body, err = getPage(browser, str, nil, "Main Page?")
     end	
+
+    -- Let's have another look for a message at login
+    --
+    if (hasMsgAtLogin ~= true) then
+      url, body, err, hasMsgAtLogin = CheckForMessageAtLogin(browser, url, body)
+    end
+
     str = string.match(body, globals.strLiveMainPagePattern)
     if str ~= nil then
       str = string.format(globals.strCmdBaseLive, browser:wherearewe()) .. str
@@ -869,7 +871,6 @@ function cleanupLoginBody(body)
   body = string.gsub(body, "&#92;", "\\")
   body = string.gsub(body, "&#47;", "/")
   body = string.gsub(body, "&#63;", "?")
-  body = string.gsub(body, "&#38;", "&")
   body = string.gsub(body, "&#42;", "*")
   body = string.gsub(body, "&#33;", "!")
   body = string.gsub(body, "&#36;", "$")
@@ -878,6 +879,7 @@ function cleanupLoginBody(body)
   body = string.gsub(body, "\\x3f", "?")
   body = string.gsub(body, "\\x3d", "=")
   body = string.gsub(body, "\\x26", "&")
+  body = string.gsub(body, "&#38;", "&")   -- maybe best to be last
 
   return body
 end

@@ -3,7 +3,7 @@
 -- Module to build on the fly a message from a header, a body (both in html or
 -- plain text format), a list of attachments urls
 
-MODULE_VERSION = "0.1.4"
+MODULE_VERSION = "0.1.5"
 MODULE_NAME = "mimer"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -752,8 +752,9 @@ function pipe_msg(headers,body,body_html,base_uri,attachments,browser,send_cb,in
 
 	local isAlt, isMultipart, isAttached, boundary, cType
 
-	isAttached = Private.tablesize(attachments) > 
-		Private.tablesize(inlineids)
+	isAttached = Private.tablesize(attachments) >= 
+		     Private.tablesize(inlineids) 
+	    	 and Private.tablesize(attachments) >0
 	body = body or html2txtmail(body_html,base_uri)
 	isAlt = body and body_html
 	isMultipart = next(attachments) ~= nil or isAlt 

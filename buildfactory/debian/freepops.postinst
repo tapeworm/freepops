@@ -31,7 +31,7 @@ case "$1" in
 
 	# Check their answers.
 	JAIL_SCRIPT=/usr/lib/freepops/create_jail.sh
-	JAIL_DIR=`/bin/sh $JAIL_SCRIPT get-dir`
+	JAIL_DIR=`sh $JAIL_SCRIPT get-dir`
 
 	# jail script........
 	db_get freepops/jail

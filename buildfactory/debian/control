@@ -2,14 +2,14 @@ Source: freepops
 Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@debian.org>
-Build-Depends: debhelper (>= 4.1.16), libexpat1-dev, libcurl4-gnutls-dev (>= 7.15.0-2), flex, bison, po-debconf, liblua5.1-filesystem-dev, liblua5.1-expat-dev, liblua5.1-curl-dev (>= 0.3.0), liblua5.1-dev, libfltk1.1-dev, liblua5.1-socket-dev, gettext
+Build-Depends: debhelper (>= 7), libexpat1-dev, libcurl4-gnutls-dev (>= 7.15.0-2), flex, bison, po-debconf, liblua5.1-filesystem-dev, liblua5.1-expat-dev, liblua5.1-curl-dev (>= 0.3.0), liblua5.1-dev, libfltk1.1-dev, liblua5.1-socket-dev, gettext
 Build-Depends-Indep: texlive-latex-extra, texlive-fonts-recommended, texlive-latex-recommended, gs-common, luadoc
-Standards-Version: 3.8.0
+Standards-Version: 3.8.2
 Homepage: http://www.freepops.org
 
 Package: freepops
 Architecture: any
-Depends: ${shlibs:Depends}, debconf | debconf-2.0 , lsb-base (>= 3.0-6)
+Depends: ${misc:Depends}, ${shlibs:Depends}, debconf | debconf-2.0 , lsb-base (>= 3.0-6)
 Recommends: dialog
 Description: POP3 interface to several webmail sites
  FreePOPs is a POP3 daemon that translates local POP3 commands
@@ -22,7 +22,7 @@ Description: POP3 interface to several webmail sites
 
 Package: freepops-updater-fltk
 Architecture: any
-Depends: ${shlibs:Depends}, freepops (>= 0.2.0)
+Depends: ${misc:Depends}, ${shlibs:Depends}, freepops (>= 0.2.0)
 Description: Graphical interface for the freepops updater engine
  This package provides a click-and-update program to download the latest updates
  from the freepops website.
@@ -32,7 +32,7 @@ Description: Graphical interface for the freepops updater engine
 
 Package: freepops-updater-gnome
 Architecture: any
-Depends: ${shlibs:Depends}, freepops (>= 0.2.0), zenity
+Depends: ${misc:Depends}, ${shlibs:Depends}, freepops (>= 0.2.0), zenity
 Description: GNOME interface for the freepops updater engine
  This package provides a click-and-update program to download the latest updates
  from the freepops website.
@@ -43,7 +43,7 @@ Description: GNOME interface for the freepops updater engine
 Package: freepops-doc
 Section: doc
 Architecture: all
-Depends: 
+Depends: ${misc:Depends}
 Description: FreePOPs user/developer manual
  FreePOPs is a POP3 daemon that translates local POP3 commands
  to remote HTTP requests to the supported webmail sites.

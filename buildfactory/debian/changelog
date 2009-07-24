@@ -1,3 +1,12 @@
+freepops (0.2.9-4) unstable; urgency=low
+
+  * updated standards-version to 3.8.2, no changes
+  * added ${misc:Depends} to make lintian happy
+  * removed call to deprecated dh_desktop, .desktop file now installed
+    using dh_install 
+
+ -- Enrico Tassi <gareuselesinge@debian.org>  Fri, 24 Jul 2009 17:21:13 +0200
+
 freepops (0.2.9-3) unstable; urgency=low
 
   * Recommend dialog (Closes: #521430)

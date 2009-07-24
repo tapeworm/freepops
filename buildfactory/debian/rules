@@ -50,7 +50,7 @@ clean:
 install-common:
 	dh_testdir
 	dh_testroot
-	dh_clean -k 
+	dh_clean 
 	dh_installdirs
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/freepops/ WHERE=/usr/ LOCALEDIR=/usr/share/locale
 	-mv $(CURDIR)/debian/freepops/usr/share/doc/freepops/*.pdf \
@@ -100,7 +100,6 @@ install: build install-common
 binary-indep: build build-manual install-manual
 	dh_testdir -i
 	dh_testroot -i
-	dh_desktop -i
 	dh_installchangelogs ChangeLog -i
 	dh_installdocs -i
 	dh_installexamples -i
@@ -121,7 +120,6 @@ binary-indep: build build-manual install-manual
 binary-arch: build install
 	dh_testdir -a
 	dh_testroot -a
-	dh_desktop -a
 	dh_installchangelogs ChangeLog -a
 	dh_installdocs -a
 	dh_installexamples -a

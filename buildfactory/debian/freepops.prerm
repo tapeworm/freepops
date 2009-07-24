@@ -23,7 +23,7 @@ case "$1" in
 	invoke-rc.d freepops stop 2>/dev/null  || true
 
 	JAIL_SCRIPT=/usr/lib/freepops/create_jail.sh
-	JAIL_DIR=`/bin/sh $JAIL_SCRIPT get-dir`
+	JAIL_DIR=`sh $JAIL_SCRIPT get-dir`
 	rm -rf $JAIL_DIR
 
 	rm -f /var/lib/freepops/lua_updates/*.bak

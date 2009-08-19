@@ -492,12 +492,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 #if CRYPTO_IMPLEMENTATION == 1
-       if (!gcry_check_version("1.2.2")) {
-	       fprintf(stderr, "gcrypt version older than 1.2.2\n");
-	       exit(1);
+	if (!gcry_control (GCRYCTL_ANY_INITIALIZATION_P)) { 
+		/* No other library has already initialized libgcrypt. */
+		if (!gcry_check_version("1.2.2")) {
+			fprintf(stderr, "gcrypt version older than 1.2.2\n");
+			exit(1);
+		}
+		gcry_control(GCRYCTL_SET_THREAD_CBS,&gcry_threads_pthread);
+		gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
+		gcry_control (GCRYCTL_INITIALIZATION_FINISHED);
 	}
-	gcry_control(GCRYCTL_SET_THREAD_CBS,&gcry_threads_pthread);
-	gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
 #endif
 	
 	curl_global_init(CURL_GLOBAL_ALL);

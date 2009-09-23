@@ -4,7 +4,7 @@
 -- Only one function is available to the end user.
 -- Incorporating jbobowski Gmail fix posted 26 April 2006.
 
-MODULE_VERSION = "0.1.5"
+MODULE_VERSION = "0.1.6"
 MODULE_NAME = "browser.cookie"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -155,7 +155,7 @@ end
      end
 
      if c["max-age"] then
-         if c["max-age"] > date then
+         if tonumber(c["max-age"]) > date then
              return true
 		end
 	end

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.1.20091013"
+PLUGIN_VERSION = "0.1.20091013a"
 PLUGIN_NAME = "fastmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -331,7 +331,7 @@ function user(pstate, username)
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder or globals.strInbox
   mbox = string.gsub(mbox, " ", "+") 
-  internalState.strMBox = mbox
+  internalState.strMBox = "INBOX." .. mbox
 
   -- Get the view to use in STAT (ALL, UNREAD or FLAG)
   --

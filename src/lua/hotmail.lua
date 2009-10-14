@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.20090411"
+PLUGIN_VERSION = "0.2.20091013"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -246,19 +246,19 @@ local globals = {
   -- cdmackie 2008-07-02: new calls for STAT for live light
   strCmdMsgListLive3 = "mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.GetInboxData&ptid=0&a=%s&au=%s", 
   strCmdMsgListPostLive3 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,25,NextPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,false,%s},false,null&v=1&mt=%s',
-
-  strCmdMsgListPostLive4 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,true,{%%22%s%%22,NextPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,%s,-1,Bottom},false,null&v=1&mt=%s',
-
+	-- doglan @ 2009-10-10: Updated URL
+  strCmdMsgListPostLive4 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=GetInboxData&d=true,false,true,{%%22%s%%22,NextPage,0,Date,false,%%22%s%%22,%%22%s%%22,%s,%s,false,%%22%%22,%s,-1,Off},false,null&v=1&mt=%s',
+	
   strCmdDelete = "http://%s/cgi-bin/HoTMaiL",
   strCmdDeletePost = "curmbox=%s&_HMaction=delete&wo=&SMMF=0", -- &<MSGID>=on
   strCmdDeleteLive = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MoveMessages&ptid=0&a=%s&au=%s", 
   strCmdDeletePostLiveOld = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"%%5C%%7C%%5C%%7C%%5C%%7C0%%5C%%7C%%5C%%7C%%5C%%7C00000000-0000-0000-0000-000000000001%%5C%%7C632901424233870000",{2,"00000000-0000-0000-0000-000000000000",0}}],null,null,0,false,Date&v=1',
   strCmdDeletePostLive = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessages&d="%s","%s",[%s],[{"0%%5C%%7C0%%5C%%7C8C9BDFF65883200%%5C%%7C00000000-0000-0000-0000-000000000001",null}],null,null,0,false,Date,false,true&v=1&mt=%s',
 
-  strCmdDeleteLiveLight = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MoveMessagesToFolder&ptid=0&a=%s&au=%s", 
+  strCmdDeleteLiveLight = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MoveMessagesToFolder&ptid=0&a=%s&au=%s",  
   strCmdDeletePostLiveLight = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessagesToFolder&d="%s","%s",[%s],[%s],{"%s",25,FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",false,0},null&v=1&mt=%s',
-  strCmdDeletePostLiveLight2 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessagesToFolder&d="%s","%s",[%s],[%s],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",26,0,Bottom}&v=1&mt=%s',
-  
+	-- doglan @ 2009-10-10: Updated URL
+  strCmdDeletePostLiveLight2 = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MoveMessagesToFolder&d="%s","%s",[%s],[%s],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",0,-1,Off}&v=1&mt=%s',
   strCmdMsgView = "http://%s/cgi-bin/getmsg?msg=%s&imgsafe=y&curmbox=%s&a=%s",
   strCmdMsgViewRaw = "&raw=0",
   strCmdMsgViewLive = "http://%s/mail/GetMessageSource.aspx?msgid=%s&gs=true",
@@ -278,8 +278,8 @@ local globals = {
   strCmdMsgReadLiveLight = "http://%s/mail/mail.fpp?cnmn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox.MarkMessagesReadState&ptid=0&a=%s&au=%s", 
 
   -- Submitted by Barlad
-  --
-  strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",1085,0,Right}&v=1&mt=%s',
+	-- doglan @ 2009-10-10: Updated URL (["%s"],)
+  strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",18,-1,Off}&v=1&mt=%s',
 }
 
 -- ************************************************************************** --
@@ -348,9 +348,9 @@ function getPage(browser, url, post, name)
   local try = 0
 
   if post ~= nil then
-    --log.dbg("LOADING: " .. url .. "\nPOST: " .. post .. "\n")
+    log.dbg("LOADING: " .. url .. "\nPOST: " .. post .. "\n")
   else
-    --log.dbg("LOADING: " .. url .. "\n")
+    log.dbg("LOADING: " .. url .. "\n")
   end
 
   while (try < 3) do
@@ -1026,8 +1026,9 @@ function downloadMsg(pstate, msg, nLines, data)
     --url = string.format(globals.strCmdMsgReadLiveLight, internalState.strMailServer, internalState.strMBox, uidl)
     url = string.format(globals.strCmdMsgReadLiveLight, internalState.strMailServer, internalState.strCrumb, internalState.strUserId)
 		local inboxid = string.gsub(internalState.strMBox, "&n=.*", "")
-    local post = string.format(globals.strCmdMsgReadLiveLightPost, uidl, inboxid, internalState.strMT)
+    local post = string.format(globals.strCmdMsgReadLiveLightPost, uidl, inboxid, internalState.strMT) -- needs madsLight before inboxid
 		post = string.gsub(post, '"', "%%22") 
+		log.dbg("****" .. post .. "****")
     browser:post_uri(url, post)
   elseif internalState.bMarkMsgAsUnread == true and internalState.bLiveGUI == true then
     log.dbg("Message: " .. cbInfo.cb_uidl .. ", Marking message as unread.")
@@ -1503,10 +1504,12 @@ function quit_update(pstate)
       local uidl, mad = string.match(internalState.msgIds[i], "(.-)&(.*)")
       if i > 1 then
         uidlsLight = uidlsLight .. ',"' .. uidl .. '"'
-        madsLight = madsLight .. ',{"' .. mad .. '",null}'
+        -- doglan @ 2009-10-10: ",null" no longer needed before "}"
+        madsLight = madsLight .. ',{"' .. mad .. '"}'
       else
         uidlsLight = '"' .. uidl .. '"'
-        madsLight = '{"' .. mad .. '",null}'
+        -- doglan @ 2009-10-10: ",null" no longer needed before "}"
+        madsLight = '{"' .. mad .. '"}' -- ,null
       end
       dcnt = dcnt + 1
     elseif internalState.bLiveGUI == true and get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
@@ -1529,20 +1532,11 @@ function quit_update(pstate)
     end
   elseif dcnt > 0 and internalState.bLiveGUI and internalState.bLiveLightGUI == true then
     cmdUrl = string.format(globals.strCmdDeleteLiveLight, internalState.strMailServer, internalState.strCrumb, internalState.strUserId)
-	
-	-- This is the older interface's way to delete it.
-	--
     local inboxid = string.gsub(internalState.strMBox, "&n=.*", "")
-    post = string.format(globals.strCmdDeletePostLiveLight,
-    	inboxid, internalState.strTrashId,
-    	uidlsLight, madsLight,
-      inboxid, internalState.strMT)
-    post = string.gsub(post, '"', "%%22")      
---    log.dbg("Sending Trash url: " .. cmdUrl .. " - " .. post)
-    local body, err = getPage(browser, cmdUrl, post, "Delete Messages - LiveLight")
 
 	-- This is less than ideal and will need to be fixed soon.  This is the newer way to delete.
 	--
+	madsLight = string.gsub(madsLight, "|", "%%5C%%7C") 
     post = string.format(globals.strCmdDeletePostLiveLight2,
    	inboxid, internalState.strTrashId,
    	uidlsLight, madsLight,
@@ -1550,7 +1544,7 @@ function quit_update(pstate)
     post = string.gsub(post, '"', "%%22")      
     local body, err = getPage(browser, cmdUrl, post, "Delete Messages - LiveLight - Newer version")
 	
-	elseif dcnt > 0 and internalState.bLiveGUI then
+  elseif dcnt > 0 and internalState.bLiveGUI then
     cmdUrl = string.format(globals.strCmdDeleteLive, internalState.strMailServer, internalState.strCrumb, internalState.strUserId)
     uidls = string.gsub(uidls, ",", '","')
     uidls = '"' .. uidls .. '"'
@@ -1573,7 +1567,7 @@ function quit_update(pstate)
       log.dbg("Sending Empty Trash URL: " .. cmdUrl .."\n")
       local body, err = getPage(browser, cmdUrl, nil, "NonLive - Empty Trash")
       if not body or err then
-        log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .."\n")
+        log.error_print("Error when trying to empty the trash with url: ".. cmdUrl .. "\n")
       end
     else
       log.error_print("Cannot empty trash - crumb not found\n")
@@ -2363,3 +2357,4 @@ end
 
 -- EOF
 -- ************************************************************************** --
+

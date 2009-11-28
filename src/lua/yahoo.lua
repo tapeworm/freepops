@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.3.20090301"
+PLUGIN_VERSION = "0.3.20091127"
 PLUGIN_NAME = "yahoo.lua"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -206,7 +206,8 @@ function sendCmd(cmd, f)
     local newstr = internalState.socket:recv()
 	if f then 
 	  f(newstr)
-      if (string.match(newstr, internalState.cnt .. " OK")) then
+      if (string.match(newstr, internalState.cnt .. " OK") or 
+	      string.match(newstr, internalState.cnt .. " BAD")) then
 	    done = true
 	  end
 	else
@@ -217,6 +218,7 @@ function sendCmd(cmd, f)
 	
 	  if (done == false) then
 	    if (string.match(newstr, internalState.cnt .. " OK") or 
+		    string.match(newstr, internalState.cnt .. " BAD") or
 		    string.match(newstr, internalState.cnt .. " NO")) then
 	      done = true
 	    end

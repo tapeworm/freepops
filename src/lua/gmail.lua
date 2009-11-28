@@ -14,7 +14,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.0.54"
+PLUGIN_VERSION = "0.0.55"
 PLUGIN_NAME    = "GMail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -131,9 +131,9 @@ as read.]]
 -- 
 local globals = {
 	-- The uri the browser uses when you click the "login" button
-	--strLoginUrl = "https://www.google.com/accounts/ServiceLoginBoxAuth",
-	strLoginUrl = "https://www.google.com/accounts/ServiceLoginAuth",
-	strLoginPostData = "continue=https%%3A%%2F%%2Fmail.google.com%%2Fmail%%3Fui%%3Dhtml%%26zy%%3Dl&"..
+	strLoginUrl = "https://www.google.com/accounts/ServiceLogin",
+	strAuthUrl = "https://www.google.com/accounts/ServiceLoginAuth",
+	strAuthPostData = "continue=https%%3A%%2F%%2Fmail.google.com%%2Fmail%%3Fui%%3Dhtml%%26zy%%3Dl&"..
 			"service=mail&Email=%s&Passwd=%s&null=Sign%%20in&rmShown=1&rm=false&ltmplcache=2&ltmpl=yj_wsad&PersistentCookie=yes&ui=1",
 	strLoginCheckcookie_TODO ="https://www.google.com/accounts/CheckCookie?"..
 			"continue=http%3A%2F%2Fmail.google.com%2Fmail&"..
@@ -315,8 +315,8 @@ function gmail_login()
 	-- 
 	local password = internal_state.strPassword
 	local username = internal_state.strUserName
-	local uri = globals.strLoginUrl
-	local post = string.format(globals.strLoginPostData,
+	local uri = globals.strAuthUrl
+	local post = string.format(globals.strAuthPostData,
 					username, curl.escape(password))
 
 	-- The browser must be preserved
@@ -329,6 +329,22 @@ function gmail_login()
 
 	-- Connect to gmail login page
 	-- 
+	local body, err = b:get_uri(globals.strLoginUrl)
+	
+	-- Find the appropriate GALX value
+	local str = string.find(body, "GALX")
+	if str ~= nil then
+		body = string.sub(body, str)
+		local i,j = string.find(body, "value=")
+		local GALX = string.sub(body, j+2, j+12)
+		post = post .. "&GALX=" .. GALX
+		log.dbg("Found GALX value: " .. GALX)
+    else
+	    log.dbg("Unable to find GALX value.  Login will probably fail.")
+	end
+	
+	-- Connect to gmail auth page
+	-- 
 	local body, err = b:post_uri(uri, post)
 	-- print(body)
 	
@@ -339,6 +355,7 @@ function gmail_login()
 		return POPSERVER_ERR_UNKNOWN
 	end
 
+	--
 	-- Check for invalid password
 	-- 
 	local str = string.match(body, globals.strLoginFailed)
@@ -347,8 +364,8 @@ function gmail_login()
 		return POPSERVER_ERR_AUTH
 	end
 
-    local str = string.find(body, "<title>Redirecting</title>")
-    if str ~= nil then
+	local str = string.find(body, "<title>Redirecting</title>")
+	if str ~= nil then
 		body = string.gsub(body, "&#39;", "'")
 		local i,j=string.find(body, "url='")
         local k,l=string.find(body, "'\"></head>")

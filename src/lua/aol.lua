@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.20090202"
+PLUGIN_VERSION = "0.2.20091201"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -26,6 +26,9 @@ PLUGIN_PARAMETERS =
 	},
 	{name="forcedelete", description={
 		en=[[If set to "1", all messages marked for delete in the inbox will be moved to the trash and not the read folder.]]}
+	},
+	{name="domain", description={
+		en=[[Set the domain to use on login, if not aol.com]]}
 	}
 PLUGIN_DESCRIPTIONS = {
 	it=[[
@@ -55,7 +58,6 @@ local globals = {
   -- 
   strLoginUrlAOL = "http://webmail.aol.com",
 --"http://my.screenname.aol.com/_cqr/login/login.psp?sitedomain=registration.aol.com&authLev=1&siteState=OrigUrl%3Dhttp%253a%252f%252fregistration%252eaol%252ecom%252fmail%253fs%255furl%253dhttp%25253a%25252f%25252fwebmail%25252eaol%25252ecom%25252f%25255fcqr%25252fLoginSuccess%25252easpx%25253fsitedomain%25253dsns%25252ewebmail%25252eaol%25252ecom%252526siteState%25253dver%2525253a1%252525252c0%25252526ld%2525253awebmail%25252eaol%25252ecom%25252526pv%2525253aAOL%25252526lc%2525253aen%25252dus%25252526ud%2525253aaol%25252ec",
-  strLoginUrlNetscape = "http://mail.netscape.com",
 
   -- Login strings
   --
@@ -90,7 +92,7 @@ local globals = {
 
   -- Pattern to extract the version of webmail
   --
-  strVersionPattern = 'var gSuccessPath = "/([^/]+)/', 
+  strVersionPattern = 'var gSuccessPath = "/([^/]+)/([^/]+)/', 
 
   -- Extract the server to post the login data to
   --
@@ -104,7 +106,7 @@ local globals = {
 
   -- Used by Stat to pull out the message ID and the size
   --
-  strMsgLinePattern = '%["([^"]+)","[^"]+","","[^"]+",%d+,(%d+),%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d%]',
+  strMsgLinePattern = '%["([^"]+)","[^"]+","","[^"]+",%d+,(%d+),%d,[^%]]+]',
 
   -- Defined Mailbox names - These define the names to use in the URL for the mailboxes
   --
@@ -242,9 +244,12 @@ function loginAOL()
 
   -- Define some local variables
   --
-  local username = internalState.strUser
-  local password = curl.escape(internalState.strPassword)
   local domain = internalState.strDomain
+  local username = internalState.strUser
+  if (domain ~= "aol.com") then
+    username = username .. "@" .. internalState.strDomain
+  end
+  local password = curl.escape(internalState.strPassword)
   local url = globals.strLoginUrlAOL  
   if (domain == "netscape.net") then
     url = globals.strLoginUrlNetscape
@@ -339,13 +344,20 @@ function loginAOL()
 
   -- Get the webmail version
   --
-  str = string.match(body, globals.strVersionPattern)
+  local str, str2 = string.match(body, globals.strVersionPattern)
   if (str == nil) then 
     internalState.strVersion = "_SRV_1_0_0_12281_"
   else
     internalState.strVersion = str
   end
+  if (str2 == nil) then 
+    internalState.strBrand = "aol-1"
+  else
+    internalState.strBrand = str2
+  end
+  
   log.dbg("AOL webmail version: " .. internalState.strVersion)
+  log.dbg("AOL Brand: " .. internalState.strBrand)
 
   -- Get UserID from cookie
   --
@@ -489,26 +501,23 @@ function user(pstate, username)
   internalState.strDomain = domain
   internalState.strUser = user
 
-  -- Set the site id
-  -- 
-  if domain == "aim.com" then
-    internalState.strBrand = "aim"
-  elseif domain == "netscape.net" then
-    internalState.strBrand = "nc"
-  else
-    internalState.strBrand = "aol"
-  end
-
   if ((freepops.MODULE_ARGS or {}).forcedelete == "1") then
     log.dbg("All Inbox messages will be moved to the trash and not the read folder.")
     internalState.bForceDelete = true
   end
+
+  local domainOpt = (freepops.MODULE_ARGS or {}).domain
+  if (domainOpt ~= nil) then
+    domain = domainOpt
+	internalState.strDomain = domainOpt
+  end
+  log.dbg("Domain used: " .. domain)
   
   -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder
   if mbox == nil then
-    if domain == "aim.com" or domain == "netscape.net" then
+    if domain ~= "aol.com" then
       internalState.strMBox = globals.strInboxAim
     else
       internalState.strMBox = globals.strInboxAOL

@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.20091201"
+PLUGIN_VERSION = "0.2.20091218"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -56,7 +56,7 @@ and your real password as the password.]]
 local globals = {
   -- Server URL
   -- 
-  strLoginUrlAOL = "http://webmail.aol.com",
+  strLoginUrlAOL = "http://my.screenname.aol.com/_cqr/login/login.psp?sitedomain=sns.webmail.aol.com&lang=en&locale=us&authLev=0&uitype=mini&siteSta te=ver%3a4%7crt%3aSTANDARD%7cat%3aSNS%7cld%3awebma il.aol.com%7cuv%3aAOL%7clc%3aen-us%7cmt%3aAOL%7csnt%3aScreenName%7csid%3a149ba95c-869c-461e-aa06-6bb3ef10ac0d&seamless=novl&loginId=&_sns_width_=17 4&_sns_height_=196&_sns_fg_color_=373737&_sns_err_ color_=C81A1A&_sns_link_color_=0066CC&_sns_bg_colo r_=FFFFFF&redirType=js",
 --"http://my.screenname.aol.com/_cqr/login/login.psp?sitedomain=registration.aol.com&authLev=1&siteState=OrigUrl%3Dhttp%253a%252f%252fregistration%252eaol%252ecom%252fmail%253fs%255furl%253dhttp%25253a%25252f%25252fwebmail%25252eaol%25252ecom%25252f%25255fcqr%25252fLoginSuccess%25252easpx%25253fsitedomain%25253dsns%25252ewebmail%25252eaol%25252ecom%252526siteState%25253dver%2525253a1%252525252c0%25252526ld%2525253awebmail%25252eaol%25252ecom%25252526pv%2525253aAOL%25252526lc%2525253aen%25252dus%25252526ud%2525253aaol%25252ec",
 
   -- Login strings

@@ -5,20 +5,22 @@
 --  Written by Russell Schwager <russell822@yahoo.com>
 -- ************************************************************************** --
 
+--require("base.util")
+
 -- Globals
 --
-PLUGIN_VERSION = "0.3.20091127"
+PLUGIN_VERSION = "0.3.20091217"
 PLUGIN_NAME = "yahoo.lua"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
-PLUGIN_URL = "http://freepops.sourceforge.net/download.php?contrib=yahoo.lua"
+PLUGIN_URL = "http://www.freepops.org/download.php?module=yahoo.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
-PLUGIN_AUTHORS_NAMES = {"Russell Schwager"}
+PLUGIN_AUTHORS_NAMES = {"Russell Schwager", "Kevin Edwards"}
 PLUGIN_AUTHORS_CONTACTS = {"russell822 (at) yahoo (.) com"}
 PLUGIN_DOMAINS = {"@yahoo.com"}
 PLUGIN_PARAMETERS = {
-	{name = "folder", description = {
-		it = [[
+    {name = "folder", description = {
+        it = [[
 Viene usato per scegliere la cartella (Inbox &egrave; il 
 default) con cui volete interagire. Le cartelle disponibili sono quelle 
 standard di Yahoo, chiamate 
@@ -27,7 +29,7 @@ Trash (per domini yahoo.it potete usare gli stessi nomi per oppure
 quelli corrispondenti in Italiano: InArrivo, Bozza, 
 Inviati, Anti-spam, Cestino). Se avete creato delle 
 cartelle potete usarle con i loro nomi.]],
-		en = [[
+        en = [[
 Parameter is used to select the folder (Inbox is the default)
 that you wish to access. The folders that are available are the standard 
 Yahoo folders, called 
@@ -35,48 +37,48 @@ Inbox, Draft, Sent, Bulk and
 Trash (for yahoo.it domains you may use the same folder names or the 
 corresponding names in Italian: InArrivo, Bozza, 
 Inviati,Anti-spam, Cestino). For user defined folders, use their name as the value.]]
-		}	
-	},
-	{name = "view", description = {
-		it = [[ Viene usato per determinare la lista di messaggi da scaricare. I valori possibili sono All (tutti), Unread (non letti) e Flag.]],
-		en = [[ Parameter is used when getting the list of messages to 
+        }   
+    },
+    {name = "view", description = {
+        it = [[ Viene usato per determinare la lista di messaggi da scaricare. I valori possibili sono All (tutti), Unread (non letti) e Flag.]],
+        en = [[ Parameter is used when getting the list of messages to 
 pull.  It determines what messages to be pulled.  Possible values are All, Unread and Flag.]]
-		}
-	},
-	{name = "emptytrash", description = {
-		it = [[ Viene usato per forzare il plugin a svuotare il cestino quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
-		en = [[
+        }
+    },
+    {name = "emptytrash", description = {
+        it = [[ Viene usato per forzare il plugin a svuotare il cestino quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
+        en = [[
 Parameter is used to force the plugin to empty the trash folder when it is done
 pulling messages.  Set the value to 1.]]
-		}	
-	},
-	{name = "emptybulk", description = {
-		it = [[ Viene usato per forzare il plugin a svuotare la cartella AntiSpam quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
-		en = [[
+        }   
+    },
+    {name = "emptybulk", description = {
+        it = [[ Viene usato per forzare il plugin a svuotare la cartella AntiSpam quando ha finito di scaricare i messaggi. Se il valore &egrave; 1 questo comportamento viene attivato.]],
+        en = [[
 Parameter is used to force the plugin to empty the bulk folder when it is done
 pulling messages.  Set the value to 1.]]
-		}	
-	},
-	{name = "keepmsgstatus", description = {
-		en = [[
+        }   
+    },
+    {name = "keepmsgstatus", description = {
+        en = [[
 Parameter is used to maintain the status of the message in the state it was before being pulling.  If the value is 1, the behavior is turned on
 and will override the markunread flag. ]]
-		}	
-	},
-	{name = "domain", description = {
-		en = [[
+        }   
+    },
+    {name = "domain", description = {
+        en = [[
 Parameter is used to override the domain in the email address.  This is used so that users don't
 need to add a mapping to config.lua for a hosted hotmail account. ]]
-		}
-	},		
+        }
+    },      
 }
 PLUGIN_DESCRIPTIONS = {
-	it=[[
+    it=[[
 Questo plugin vi per mette di leggere le mail che avete in una 
 mailbox con dominio come @yahoo.com, @yahoo.ca o @yahoo.it.
 Per usare questo plugin dovete usare il vostro indirizzo email completo come
 user name e la vostra password reale come password.]],
-	en=[[
+    en=[[
 This is the webmail support for @yahoo.com, @yahoo.ca and @yahoo.it and similar mailboxes. 
 To use this plugin you have to use your full email address as the user 
 name and your real password as the password.]]
@@ -141,7 +143,7 @@ function login()
   local username = internalState.strUser
   local domain = internalState.strDomain
   local password = internalState.strPassword
-	
+    
   -- Note that we have logged in successfully
   --
   internalState.bLoginDone = true
@@ -150,34 +152,37 @@ function login()
   --
   internalState.socket = psock.connect(globals.host, globals.port, false)
   if not internalState.socket then
-	log.error_print("Yahoo: Connection failed!")
-	return POPSERVER_ERR_NETWORK
+    log.error_print("Yahoo: Connection failed!")
+    return POPSERVER_ERR_NETWORK
   end
-	
+    
   local str = nil
   str = internalState.socket:recv()
   if not str or string.match(str, "OK IMAP") == nil then
     log.error_print("Error receiving the welcome")
-	return POPSERVER_ERR_NETWORK
+    return POPSERVER_ERR_NETWORK
   end
 
   local rc, str = sendCmd('id ("GUID" "1")', nil)
   if (rc ~= POPSERVER_ERR_OK or string.match(str, "OK ID completed") == nil) then
     log.error_print("Unable to initialize server")
-	return POPSERVER_ERR_NETWORK
+    return POPSERVER_ERR_NETWORK
   end
   
   rc, str = sendCmd("login " .. username .. "@" .. domain .. " " .. password, nil)
   if (rc ~= POPSERVER_ERR_OK or string.match(str, "OK LOGIN completed") == nil) then
     log.error_print("Login failed")
-	return POPSERVER_ERR_AUTH
+    return POPSERVER_ERR_AUTH
   end
-  
-  rc, str = sendCmd("examine " .. internalState.strMBox, nil)
-  if (rc ~= POPSERVER_ERR_OK or string.match(str, "NO EXAMINE failure") ~= nil) then
-    log.error_print("Folder: " .. internalState.strMBox .. " is invalid.")
-	return POPSERVER_ERR_AUTH
-  end
+
+---- 20091212 (Kevin) Yahoo has become very finicky and will not allow us to
+----  store flags if we examine the folder before selecting it.  It's like
+----  Yahoo gets stuck in examine's read-only state.
+--  rc, str = sendCmd("examine " .. internalState.strMBox, nil)
+--  if (rc ~= POPSERVER_ERR_OK or string.match(str, "NO EXAMINE failure") ~= nil) then
+--    log.error_print("Folder: " .. internalState.strMBox .. " is invalid.")
+--    return POPSERVER_ERR_AUTH
+--  end
   
   -- Return Success
   --
@@ -187,54 +192,68 @@ end
 function sendCmd(cmd, f)
   internalState.cnt = internalState.cnt + 1
   cmd = internalState.cnt .. " " .. cmd
+
+  -- don't show the password when debug logging
+  -- if we could test for debug mode, this could be in an "if" block
+  local logLine = cmd
+  local username = internalState.strUser
+  local domain = internalState.strDomain
+  local loginCmd = "login " .. username .. "@" .. domain .. " "
+  if string.match(cmd, loginCmd) then
+    logLine = loginCmd .. "PASSWORD"
+  end
+  
+  log.dbg("sendCmd: "..logLine)
+
   local rc
   if internalState.socket ~= nil then
-	rc = internalState.socket:send(cmd)
+    rc = internalState.socket:send(cmd)
   else 
-	tc = -1
+    tc = -1
   end
-	
+    
   if rc < 0 then 
-	log.error_print("Short send of "..rc..
-		" instead of "..string.len(cmd).."\n")
-	return POPSERVER_ERR_NETWORK 
+    log.error_print("Short send of "..rc..
+        " instead of "..string.len(cmd).."\n")
+    return POPSERVER_ERR_NETWORK 
   end
 
   local str = ""
   local done = false
   while (not done) do
     local newstr = internalState.socket:recv()
-	if f then 
-	  f(newstr)
+    log.dbg("   rcvd: "..tostring(newstr))
+    if f then 
+      f(newstr)
       if (string.match(newstr, internalState.cnt .. " OK") or 
-	      string.match(newstr, internalState.cnt .. " BAD")) then
-	    done = true
-	  end
-	else
-  	  if (newstr == nil) then
-	    str = "-ERR network error"
-	    done = true
-	  end
-	
-	  if (done == false) then
-	    if (string.match(newstr, internalState.cnt .. " OK") or 
-		    string.match(newstr, internalState.cnt .. " BAD") or
-		    string.match(newstr, internalState.cnt .. " NO")) then
-	      done = true
-	    end
-	    if (str ~= nil) then
-	      str = str .. "\n" .. newstr
-	    else
-	      str = newstr
-	    end
-	  end
+          string.match(newstr, internalState.cnt .. " BAD")) then
+        done = true
+      end
+    else
+      if (newstr == nil) then
+        str = "-ERR network error"
+        done = true
+      end
+    
+      if (done == false) then
+        if (string.match(newstr, internalState.cnt .. " OK") or 
+            string.match(newstr, internalState.cnt .. " BAD") or
+            string.match(newstr, internalState.cnt .. " NO")) then
+          done = true
+        end
+        if (str ~= nil) then
+          str = str .. "\n" .. newstr
+        else
+          str = newstr
+        end
+      end
     end
   end
   
   if f then
-	return POPSERVER_ERR_OK, ""
+    return POPSERVER_ERR_OK, ""
   else
-	return POPSERVER_ERR_OK, str
+    return POPSERVER_ERR_OK, str
   end
 end
 
@@ -247,7 +266,7 @@ function downloadMsg(pstate, msg, nLines, data)
   if retCode ~= POPSERVER_ERR_OK then 
     return retCode 
   end
-	
+    
   -- Local Variables
   --
   local uidl = get_mailmessage_uidl(pstate, msg)
@@ -271,16 +290,16 @@ function downloadMsg(pstate, msg, nLines, data)
     -- Lines Received - Not really used for anything
     --
     nLinesReceived = 0,
-	
-	-- data
-	--
-	dataptr = data,
-	
-	-- uidl
-	--
-	uidlptr = uidl
+    
+    -- data
+    --
+    dataptr = data,
+    
+    -- uidl
+    --
+    uidlptr = uidl
   }
-	
+    
   internalState.cbInfo = cbInfo
   
   local f = function(line)
@@ -290,9 +309,9 @@ function downloadMsg(pstate, msg, nLines, data)
     end
   
     local cbInfo = internalState.cbInfo
-	if (line == "") then
+    if (line == "") then
       line = "X-FREEPOPS-UIDL: " .. cbInfo.uidlptr .. "\r\n"
-	end
+    end
     line = cbInfo.strHack:dothack(line) .. "\r\n\0"
     popserver_callback(line, cbInfo.dataptr)
     return POPSERVER_ERR_OK
@@ -314,7 +333,7 @@ function downloadMsg(pstate, msg, nLines, data)
     line = cbInfo.strHack:dothack(line) .. "\r\n\0"
     if (cbInfo.nLinesReceived <= cbInfo.nLinesRequested or cbInfo.nLinesRequested < 0) then
       popserver_callback(line, cbInfo.dataptr)
-	end
+    end
     return POPSERVER_ERR_OK
   end
   cmd = " BODY[TEXT]"
@@ -422,19 +441,23 @@ function quit_update(pstate)
     if get_mailmessage_flag(pstate, i, MAILMESSAGE_DELETE) then
       local uidl = get_mailmessage_uidl(pstate, i)
       local msgid = internalState.msgids[uidl]
-	  -- Copy the message to the trash
-	  --
+      -- Copy the message to the trash
+      --
       local rc, str = sendCmd("copy " .. msgid .. " " .. globals.strTrash, nil)
-	  
-	  if (string.match(str, "OK ")) then
-	    -- Mark it as deleted
-	    --
-        local rc, str = sendCmd("store " .. msgid .. [[ +FLAGS (\Deleted) ]], nil)
-	    log.dbg("Marking message: " .. uidl .. " as deleted")
-	  else 
-	    log.error_print("Delete operation failed.  Unknown trash folder name.")
-	    return POPSERVER_ERR_UNKNOWN
-	  end
+      
+      if (string.match(str, "OK ")) then
+        -- Mark it as deleted
+        --
+        log.dbg("Marking message: " .. uidl .. " as deleted")
+
+---- 20091212 (Kevin) Yahoo has become very finicky and will not allow
+----  whitespace at the end of a command.
+        local rc, str = sendCmd("store " .. msgid .. [[ +FLAGS (\Deleted)]], nil)
+        
+      else 
+        log.error_print("Delete operation failed.  Unknown trash folder name.")
+        return POPSERVER_ERR_UNKNOWN
+      end
     end
   end
 
@@ -464,37 +487,47 @@ function stat(pstate)
   --
   local rc, str = sendCmd("select " .. internalState.strMBox, nil)
   if (rc ~= POPSERVER_ERR_OK) then
-	log.error_print("Error Received selecting folder: " .. str .. "\n")
-	return POPSERVER_ERR_NETWORK 
+    log.error_print("Error Received selecting folder: " .. str .. "\n")
+    return POPSERVER_ERR_NETWORK 
   end
 
+  -- Test for response "* 0 EXISTS"
+---- alternative solution if we wanted to extract nMsgs:
+--  local nMsgs = tonumber( string.match(str, "* (%d+) EXISTS") )
+--  if (nMsgs == 0) then
+  if (string.match(str, "* 0 EXISTS")) then
+    log.dbg("stat: 'select' response indicates no messages available.")
+    internalState.nMsgs = 0
+    return POPSERVER_ERR_OK
+  end
+  
   local f = function(l)
     internalState.nTotMsgs = internalState.nTotMsgs + 1
-    if (string.match(l, "\Deleted")) then
-	  log.dbg("Found a deleted message.  Ignoring!")
-	  return POPSERVER_ERR_OK
-	end
-	if (internalState.strView == globals.strViewUnread and 
-	    string.match(l, globals.strViewUnread) ~= nil) then
-	  return POPSERVER_ERR_OK
+    if (string.match(l, [[\Deleted]])) then
+      log.dbg("Found a deleted message.  Ignoring!")
+      return POPSERVER_ERR_OK
     end
-	if (internalState.strView == globals.strViewFlagged and 
-	    string.match(l, globals.strViewFlagged) == nil) then
-	  return POPSERVER_ERR_OK
+    if (internalState.strView == globals.strViewUnread and 
+        string.match(l, globals.strViewUnread) ~= nil) then
+      return POPSERVER_ERR_OK
     end
-	
-	local nMsgs = internalState.nMsgs
-	local size, uidl = string.match(l, "RFC822.SIZE (%d+) UID (%d+)")
-	if (size ~= nil and uidl ~= nil) then
+    if (internalState.strView == globals.strViewFlagged and 
+        string.match(l, globals.strViewFlagged) == nil) then
+      return POPSERVER_ERR_OK
+    end
+    
+    local nMsgs = internalState.nMsgs
+    local size, uidl = string.match(l, "RFC822.SIZE (%d+) UID (%d+)")
+    if (size ~= nil and uidl ~= nil) then
       nMsgs = nMsgs + 1
       log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
       set_popstate_nummesg(pstate, nMsgs)
       set_mailmessage_size(pstate, nMsgs, size)
       set_mailmessage_uidl(pstate, nMsgs, tostring(uidl))
-	  internalState.msgids[uidl] = internalState.nTotMsgs
-	end
-	internalState.nMsgs = nMsgs
-	return POPSERVER_ERR_OK
+      internalState.msgids[uidl] = internalState.nTotMsgs
+    end
+    internalState.nMsgs = nMsgs
+    return POPSERVER_ERR_OK
   end
   
   local rc, _ = sendCmd("fetch 1:* (flags uid RFC822.SIZE)", f)
@@ -568,10 +601,10 @@ function init(pstate)
   -- Import the freepops name space allowing for us to use the status messages
   --
   freepops.export(pop3server)
-	
+    
   -- Load dependencies
   --
-	
+    
   -- MIME Parser/Generator
   --
   require("mimer")

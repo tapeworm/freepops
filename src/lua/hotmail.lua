@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.20091013"
+PLUGIN_VERSION = "0.2.20100111"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -279,7 +279,8 @@ local globals = {
 
   -- Submitted by Barlad
 	-- doglan @ 2009-10-10: Updated URL (["%s"],)
-  strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",18,-1,Off}&v=1&mt=%s',
+  --strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",18,-1,Off}&v=1&mt=%s',
+  strCmdMsgReadLiveLightPost = 'cn=Microsoft.Msn.Hotmail.Ui.Fpp.MailBox&mn=MarkMessagesReadState&d=true,["%s"],[{%%220%%5C%%7C0%%5C%%7C8CC610430EE14B0%%5C%%7C%%5C%%7C%%22}],{"%s",FirstPage,0,Date,false,"00000000-0000-0000-0000-000000000000","",1,2,false,"",71,-1,Off}&v=1&mt=%s',
 }
 
 -- ************************************************************************** --

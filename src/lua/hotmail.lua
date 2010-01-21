@@ -8,7 +8,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.20100111"
+PLUGIN_VERSION = "0.2.20100121"
 PLUGIN_NAME = "hotmail.com"
 PLUGIN_REQUIRE_VERSION = "0.2.8"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -27,6 +27,10 @@ PLUGIN_PARAMETERS = {
 	{name="folder", description={
 		it=[[La cartella che vuoi ispezionare. Quella di default &egrave; Inbox.]],
 		en=[[The folder you want to interact with. Default is Inbox.]]}
+	},
+	{name="folderid", description={
+		en=[[The folder id you want to interact with. Default is Inbox.  Using this option
+		will override the folder parameter.]]}
 	},
 	{name = "emptyjunk", description = {
 		en = [[
@@ -172,12 +176,12 @@ local globals = {
   strFolderLiveLightInboxPattern = 'fst="NONE".-href="InboxLight%.aspx%?(FolderID=[^&]+[^"]+)"[^>]+>',
   strFolderLiveLightFolderIdPattern = 'FolderID=([^&]+)&[.]*',
   strFolderLiveLightNPattern = '&n=([^&]+)[.]*',
-  
+  strFolderWithIdLiveLightNPattern = '&.-n=([^"]+)"',  
   strFolderLiveLightTrashPattern = 'i_trash%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
   strFolderLiveLightTrash2Pattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&[^"]+"[^>]+><img src="[^"]+" class="i_trash"',
   strFolderLiveLightJunkPattern = 'i_junkfolder%.gif" border="0" alt=""/></td>.-<td class="dManageFoldersFolderNameCol"><a href="InboxLight%.aspx%?FolderID=([^&]+)&',
   strFolderLiveLightJunk2Pattern = 'href="InboxLight%.aspx%?FolderID=([^&]+)&[^"]+"[^>]+><img src="[^"]+" class="i_junkfolder"',
-  strFolderLiveLightPattern = 'href="InboxLight%.aspx%?(FolderID=[^&]+[^"]+)" title="',  
+  strFolderLiveLightPattern = 'href="InboxLight%.aspx%?(FolderID=[^&]+[^"]+)" title="', 
   strFolderLiveLightManageFoldersPattern = 'href="ManageFoldersLight%.aspx%?n=([^"]+)"',
 
   -- Pattern to determine if we have no messages
@@ -341,6 +345,7 @@ function hash()
   return (internalState.strUser or "") .. "~" ..
          (internalState.strDomain or "") .. "~"  ..
          (internalState.strMBoxName or "") .. "~"  ..
+         (internalState.strMBox or "") .. "~"  ..
          (internalState.statLimit or "") .. "~"  ..
 	 internalState.strPassword -- this asserts strPassword ~= nil
 end
@@ -390,7 +395,7 @@ function fetchPage(browser, url, post, name)
   end
   
   local lastpage = browser:whathaveweread()
-  if (string.match(lastpage, "browsersupport")) then
+  if (lastpage ~= nil and string.match(lastpage, "browsersupport")) then
     if (post == nil) then
       body, err = browser:get_uri(url)
     else
@@ -521,6 +526,9 @@ function loginHotmail()
   if (postdata ~= nil) then
     body, err = getPage(browser, url, postdata, "Login Form Page")
   end
+  if (body == nil) then
+    return POPSERVER_ERR_NETWORK
+  end
  
   -- We should be logged in now!  Unfortunately, we aren't done.  Hotmail returns a page
   -- that should auto-reload in a browser but not in curl.  It's the URL for Hotmail Today.
@@ -554,6 +562,9 @@ function loginHotmail()
    if str ~= nil then
      log.dbg("Hotmail: Detected Classic version.") 
      body, err = getPage(browser, "http://www.hotmail.com", nil, "hotmail homepage")
+	 if (body == nil) then
+	   return POPSERVER_ERR_NETWORK
+	 end
    end 
 
   -- Let's have a look for a message at login
@@ -568,10 +579,16 @@ function loginHotmail()
     log.dbg("Hotmail: Detected LIVE version.") 
     str = string.format(globals.strCmdBrowserIgnoreLive, browser:wherearewe())
     body, err = getPage(browser, str, nil, "browser check")
+	if (body == nil) then
+	  return POPSERVER_ERR_NETWORK
+	end
     local strTemp = string.match(body, '<iframe.* src="([^"]+)"')
     if strTemp ~= nil then
       str = cleanupLoginBody(strTemp)
       body, err = getPage(browser, str, nil, "Main Page?")
+  	  if (body == nil) then
+	    return POPSERVER_ERR_NETWORK
+	  end
     end	
 
     -- Let's have another look for a message at login
@@ -584,6 +601,10 @@ function loginHotmail()
     if str ~= nil then
       str = string.format(globals.strCmdBaseLive, browser:wherearewe()) .. str
       body, err = getPage(browser, str, nil, "Main Page?")
+      if (body == nil) then
+	    return POPSERVER_ERR_NETWORK
+	  end
+
     else
       str = string.match(body, globals.strLiveLightPagePattern)
       if (str ~= nil) then
@@ -629,6 +650,9 @@ function loginHotmail()
 
         if authimgurl ~= nil then
           getPage(browser, authimgurl, nil, "Authentication Image Url - NonLive")
+  	  	  if (body == nil) then
+	        return POPSERVER_ERR_NETWORK
+	      end
         end
         url = string.match(body, globals.strLoginDoneReloadToHMHome3)
         if url == nil then
@@ -727,6 +751,10 @@ function loginHotmail()
     local url = string.format(globals.strCmdFolders, internalState.strMailServer, 
       internalState.strCrumb)
     body, err = getPage(browser, url, nil, "Manage Folders Page")
+	if (body == nil) then
+	  return POPSERVER_ERR_NETWORK
+	end
+
     str = string.match(body, globals.strFolderPattern .. internalState.strMBoxName .. "</a>")
     if (str == nil and domain == "msn.com" and internalState.strMBoxName == "Inbox") then
       str = string.match(body, globals.strPatMSNInboxId)
@@ -782,27 +810,39 @@ function loginHotmail()
     local url = string.format(globals.strCmdFoldersLiveLight, internalState.strMailServer, n)    
     
     body, err = getPage(browser, url, nil, "LiveLight - Manage Folders")
+	if (body == nil) then
+	  return POPSERVER_ERR_NETWORK
+	end
     
     -- cdmackie 2008-07-06: fix patter to get folder IDs
-    if (internalState.strMBoxName == "Inbox") then
-      str = string.match(body, globals.strFolderLiveLightInboxPattern)
-      local id = string.match(str, globals.strFolderLiveLightFolderIdPattern)
-      local n = string.match(str, globals.strFolderLiveLightNPattern)
-      str = id .. "&n=" .. n
-    else
-      str = string.match(body, globals.strFolderLiveLightPattern .. internalState.strMBoxName)
-      local id = string.match(str, globals.strFolderLiveLightFolderIdPattern)
-      local n = string.match(str, globals.strFolderLiveLightNPattern)
-      str = id .. "&n=" .. n
-    end
+	if (internalState.strMBox == nil) then
+      if (internalState.strMBoxName == "Inbox") then
+        str = string.match(body, globals.strFolderLiveLightInboxPattern)
+        local id = string.match(str, globals.strFolderLiveLightFolderIdPattern)
+        local n = string.match(str, globals.strFolderLiveLightNPattern)
+        str = id .. "&n=" .. n
+      else
+        str = string.match(body, globals.strFolderLiveLightPattern .. internalState.strMBoxName)
+        local id = string.match(str, globals.strFolderLiveLightFolderIdPattern)
+        local n = string.match(str, globals.strFolderLiveLightNPattern)
+        str = id .. "&n=" .. n
+      end
 
-    if (str == nil) then
-      log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
-      return POPSERVER_ERR_NETWORK
-    else
+      if (str == nil) then
+        log.error_print("Unable to figure out folder id with name: " .. internalState.strMBoxName)
+        return POPSERVER_ERR_NETWORK
+	  end
       internalState.strMBox = str
-      log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
-    end
+	else
+	    local folder = string.gsub(internalState.strMBox, '%-', "%%-")
+        local n = string.match(body, folder .. globals.strFolderWithIdLiveLightNPattern)
+		if (n == nil) then
+          log.error_print("Unable to figure out the n value for folder id: " .. internalState.strMBox)
+          return POPSERVER_ERR_NETWORK
+		end
+		internalState.strMBox = internalState.strMBox .. "&n=" .. n
+	end
+    log.dbg("Hotmail - Using folder (" .. internalState.strMBox .. ")")
 
     -- Get the trash folder id and the junk folder id
     --
@@ -1369,11 +1409,16 @@ function user(pstate, username)
   local mbox = (freepops.MODULE_ARGS or {}).folder
   if mbox == nil then
     internalState.strMBoxName = "Inbox"
-    return POPSERVER_ERR_OK
   else
     mbox = curl.unescape(mbox)
     internalState.strMBoxName = mbox
-    log.say("Using Custom mailbox set to: " .. internalState.strMBoxName .. ".\n")
+    log.dbg("Using Custom mailbox set to: " .. internalState.strMBoxName .. ".\n")
+  end
+
+  local mboxid = (freepops.MODULE_ARGS or {}).folderid or nil
+  if mboxid ~= nil then
+    internalState.strMBox = mboxid
+    log.dbg("Using Custom mailbox id set to: " .. internalState.strMBoxName .. ".\n")
   end
 
   return POPSERVER_ERR_OK

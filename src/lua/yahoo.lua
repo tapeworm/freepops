@@ -9,7 +9,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.3.20091217"
+PLUGIN_VERSION = "0.3.20100222"
 PLUGIN_NAME = "yahoo.lua"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -376,7 +376,10 @@ function user(pstate, username)
   -- Get the folder
   --
   local mbox = (freepops.MODULE_ARGS or {}).folder or globals.strInbox
-  mbox = string.gsub(mbox, " ", "+") 
+  mbox = string.gsub(mbox, "+", " ") 
+  if (string.match(mbox, " ")) then
+    mbox = '"' .. mbox .. '"'
+  end
   internalState.strMBox = mbox
 
   -- Get the view to use in STAT (ALL, UNREAD or FLAG)

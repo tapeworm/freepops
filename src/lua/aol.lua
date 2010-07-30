@@ -7,7 +7,7 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.2.20100111"
+PLUGIN_VERSION = "0.2.20100730"
 PLUGIN_NAME = "aol.com"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -70,7 +70,7 @@ local globals = {
 
   -- Expressions to pull out of returned HTML from Hotmail corresponding to a problem
   --
-  strRetLoginGoodLogin = 'var AV_PAGE="http://([^/]+)/';
+  strRetLoginGoodLogin = 'var gErrorURL = "http://([^/]+)/';
   strRetLoginGoodLoginAim = 'g.-Host = "([^"]+)"';
   strRetLoginSessionNotExpired = "(mail session has expired)",
   
@@ -92,7 +92,7 @@ local globals = {
 
   -- Pattern to extract the version of webmail
   --
-  strVersionPattern = 'var gSuccessPath = "/([^/]+)/([^/]+)/', 
+  strVersionPattern = 'var gSuccessURL = "/([^/]+)/([^/]+)/', 
 
   -- Extract the server to post the login data to
   --
@@ -329,6 +329,7 @@ function loginAOL()
       str = string.match(body, globals.strRetLoginGoodLogin)
     end
   end
+
   if str == nil then
     log.error_print(globals.strLoginFailed)
     return POPSERVER_ERR_AUTH
@@ -364,7 +365,7 @@ function loginAOL()
   local url = string.format(globals.strCmdToday, internalState.strMailServer, 
     internalState.strVersion, internalState.strBrand);
   body, err = browser:get_uri(url)
-  
+
   str = string.match(body, globals.strUserIdPattern)
   if str == nil then 
     log.error_print("Unable to determine AOL internal user id.  The plugin needs to be updated.")

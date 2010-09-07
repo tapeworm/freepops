@@ -9,7 +9,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.21"
+PLUGIN_VERSION = "0.2.22"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -343,7 +343,7 @@ function geta3p(b, email)
 		local sCPTX = curl.unescape(CPTX.value)
 		sCPTX = hex2ascii(sCPTX)
 		local a3p = dec(sCPTX,2);
-		url = "http://aaacsc.virgilio.it/piattaformaAAA/controller/AuthenticationServlet"
+		url = "http://aaacsc.alice.it/piattaformaAAA/controller/AuthenticationServlet"
 		post=string.format("a3l=%s&a3p=%s&a3si=-1&percmig=100&a3st=VCOMM&a3aid=comhpma&a3flag=0&a3ep=http://communicator.alice.it/asp/login.asp&a3afep=http://communicator.alice.it/asp/login.asp&a3se=http://communicator.alice.it/asp/login.asp&a3dcep=http://communicator.alice.it/asp/homepage.asp?s=005",email,a3p)
 	end
 

@@ -1,15 +1,13 @@
 -- ************************************************************************** --
 --  FreePOPs @virgilio.it, @tin.it webmail interface
 --  
---  $Id$
---  
 --  Released under the GNU/GPL license
---  Written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
+--  Originally written by Enrico Tassi <gareuselesinge@users.sourceforge.net>
 -- ************************************************************************** --
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.22"
+PLUGIN_VERSION = "0.2.24"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -64,47 +62,65 @@ PLUGIN_DESCRIPTIONS = {
 -- expressions), mlex expressions, mlex get expressions.
 -- 
 local tin_string = {
-	prelogin = "http://communicator.alice.it/asp/a3login.asp",
-	prelogin_post = "a3aid=comhpma&"..
-		"a3afep=http://mail.virgilio.it/mail/home/mail_error.html&"..
-		"USER=%s&DOMAIN=%s&"..
-		"PASS=%s&Act_Login.x=%d&Act_Login.y=%d",
---	login = "http://aaacsc.virgilio.it/piattaformaAAA/controller/"..
---		"AuthenticationServlet",
-	login = "http://communicator.alice.it/asp/login.asp",
-	login_post= "a3l=%s&a3p=%s&a3st=VCOMM&"..
-		"a3aid=communicator&a3flag=0&"..
-		"a3ep=http://communicator.alice.it/asp/login.asp&"..
-		"a3afep=http://communicator.alice.it/asp/login.asp&"..
-		"a3se=http://communicator.alice.it/asp/login.asp&"..
-		"a3dcep=http://communicator.alice.it/asp/homepage.asp?s=005",
-	-- domain, email, tincctoken
-	login2 = "http://webmail.communicator.alice.it/"..
-		"cp/ps/Main/login/PreLogin?"..
-		"d=%s&sa=webmail&style=&mail=%s&token=%s",
-	login2C = 'src="(/cp/ps/Mail/EmailList[^"]*)"',
+	prelogin = "https://aaacsc.alice.it/piattaformaAAA/aapm/amI",
+        prelogin_post = "usernameDisplay=%s&".. -- USER
+                        "password=%s&".. -- PASSWORD
+                        "dominio=%s&".. -- 	@DOMAIN
+                        "imageField.x=35&"..
+                        "imageField.y=15&"..
+                        "login=%s&".. -- USER@DOMAIN
+                        "pwd=%s&".. -- 	PASSWORD
+                        "channel=Vmail&".. 	
+                        "URL_OK=https://authsrs.alice.it/aap/aap_redir.jsp?entry=Vmail&"..
+                        "URL_KO=https://authsrs.alice.it/aap/aap_redir_ko.jsp?entry=Vmail&"..
+                        "servizio=mail&"..
+                        "msisdn=%s&".. -- 	USER
+                        "username=%s&".. -- 	USER@DOMAIN
+                        "user=%s&".. -- 	USER@DOMAIN
+                        "a3afep=http://portale.rossoalice.alice.it/ps/ManageCodError.do?code=470&channel=Vmail&"..
+                        "DOMAIN=&"..
+                        "PASS=%s&".. -- 	PASSWORD
+                        "self=true&"..
+                        "a3si=none&"..
+                        "a3st=VCOMM&"..
+                        "totop=true&"..
+                        "nototopa3ep=true&"..
+                        "a3aid=lvmes&"..
+                        "a3flag=0&"..
+                        "a3ep=http://feulogin.alice.it/feulogin/login/Login.action&"..
+                        "a3epvf=http://webmailvtin.alice.it/cp/ps/Main/login/SSOLogin&"..
+                        "a3se=http://portale.rossoalice.alice.it/ps/ManageCodError.do?code=470&channel=Vmail&"..
+                        "a3dcep=http://communicator.alice.it/asp/homepage.asp?s=005&"..
+                        "a3l=%s&".. -- 	USER@DOMAIN
+                        "a3p=%s&", -- 	PASSWORD
+
+	login2 = "http://webmailcommunicator.alice.it/cp/ps/Main/login/AAAPreLogin?d=alice.it&style=light&l=it",
+	login2C = 'src="(/cp/ps/Mail/MailFrame[^"]*)"',
 	login2Ct="&t=([^&]+)",
 	login2Cs="&s=([%d]+)",
+
+
 	-- mesage list mlex
 	statE = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a.*>.*</a>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*</tr>",
 	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
 
 	-- The uri for the first page with the list of messages
 	-- parameters all %s except fi that is %d: 
-	--   wherearewe(), folder, domain, username, t, s, fi
+	-- folder, domain, username, username, t, s, fi
 	first = "http://%s/cp/ps/Mail/EmailList?"..
-		"fp=%s&d=%s&an=&u=%s&t=%s&style="..
+		"fp=%s&d=%s&an=&u=%s&t=%s&style=light"..
 		"&l=it&s=%s&fi=%d&sc=&sd=",
 	-- The regex that, if not found, means we are on the last stat page
 	no_next = "href%s*=%s*'/cp/ps/Mail/EmailList[^']*fi=[^']*'>&gt;&gt;",
 	list_href = "href%s*=%s*'/cp/ps/Mail/EmailList",
 	-- The capture to understand if the session ended
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
+
 	-- The uri to save a message (read download the message)
 	--   wherearewe(), mailbox, domain, username, username, uidl, t, s
 	save = "http://%s/cp/ps/Mail/EmailSecure"..
 		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
-		"uid=%s&t=%s&style=&l=it&s=%s&sl=%d",	
+		"uid=%s&t=%s&style=light&l=it&s=%s&sl=%d",	
 	save_attach = "http://%s/cp/ps/Mail/Email"..
 		"?sh=&fp=%s&d=%s&sd=&sc=&an=%s&u=%s&"..
 		"uid=%s&t=%s&style=&l=it&s=%s&sl=%d",	
@@ -117,12 +133,13 @@ local tin_string = {
 	 imageG = "<X>",
 	-- by nvhs for attach  mail
 	 mailE = ".*<a.*href *= *'/cp/ps/Mail/Email>.*<img>.*</a>",
+
 	 mailG = "O<X>O<O>X<O>",
 	-- The uri to delete some messages
-	--   whearewe(), domain, username, t, s, 
-	delete = "http://%s/cp/ps/Mail/Delete?d=%s&u=%s&t=%s&style=&l=it&s=%s",
-	-- folder, uidl, username
-	delete_post = "fp=%s&uid=%s&dellist=&an=%s",
+	--  whearewe(), domain, user, t, s
+        delete = "http://%s/cp/ps/Mail/Delete?d=%s&u=%s&t=%s&style=light&s=%s",
+	-- user, folder, idx, uid
+	delete_post = "an=%s&fp=%s&sl=%s&uid=%s&dellist=",
 	error_title = "<title>An error has occurred</title>",
 }
 
@@ -360,44 +377,41 @@ function tin_http_login()
 	local password = internal_state.password
 	local domain = internal_state.domain
 	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
+	local user_at_domain = user .. "@" .. domain
 	
-	-- the browser must be preserved
-	internal_state.b = browser.new()
+	-- browser must be set to some modern one
+	internal_state.b = browser.new("Mozilla/5.0")
+	-- enable SSL
+	internal_state.b:ssl_init_stuff()
+
+--	if SSLEnabled then
+--	   internal_state.b:ssl_init_stuff()
+--	else
+--	   log.dbg("Error: SSL not enabled in browser!")
+--	end
+
+        local SSLEnabled = browser.ssl_enabled()
 
 	local b = internal_state.b
  	--b:verbose_mode()
 
-	-- step 0: create some dummy bisquits and fetch some
-	local post = string.format(tin_string.prelogin_post,
-		user,domain,password,10,10)
-	local body, err = b:post_uri(tin_string.prelogin,post)
+	-- step 0: send login data to obtain back some cookies
+	local post = string.format(tin_string.prelogin_post, user, password, domain, user_at_domain, password, user, user_at_domain, user_at_domain, password, user_at_domain, password)
+
+	local body, err = b:post_uri(tin_string.prelogin, post)
 	if body == nil then
 		log.error_print("Error getting "..
 			tin_string.prelogin..": "..err)
 		return POPSERVER_ERR_AUTH
 	end
 
-	local url, post = geta3p(b, pop_login)
-	
-	-- step 1: fetch bisquits
-	
-	local body, err = b:post_uri(url,post)
+	-- step 2: get session id_s and id_t
+        local body, err = b:get_uri(tin_string.login2)
 	if body == nil then
 		log.error_print("Error getting "..tin_string.login..": "..err)
 		return POPSERVER_ERR_AUTH
-	end
+	     end
 
-	-- step 2: get session id_s and id_t
-	local tincctoken = assert(b:get_cookie("tincctoken"),
-		"unable to find cookie tincctoken").value
-	local url = string.format(tin_string.login2, domain,
-		curl.escape(pop_login), curl.unescape(tincctoken))
-	local body,err = b:get_uri(url)
-	if body == nil then
-		log.error_print("Error getting "..url..": "..err)
-		return POPSERVER_ERR_AUTH
-	end
 	local capt = string.match(body, tin_string.login2C)
 	local t = string.match(capt, tin_string.login2Ct) 
 	local s = string.match(capt, tin_string.login2Cs) 
@@ -432,7 +446,7 @@ function tin_https_login()
 	local password = internal_state.password
 	local domain = internal_state.domain
 	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
+	local user_at_domain = user .. "@" .. domain
 	
 	-- the browser must be preserved
 	internal_state.b = browser.new()
@@ -446,16 +460,16 @@ function tin_https_login()
 	local post =
 "usernameDisplay=" .. user .. "&password="..password.. 
 "&dominio="..domain.."&imageField.x=31&imageField.y=13&"..
-"login="..pop_login.."&pwd="..password.."&channel=Vmail&"..
+"login="..user_at_domain.."&pwd="..password.."&channel=Vmail&"..
 "URL_OK=https%3A%2F%2Fauthsrs.alice.it%2Faap%2Faap_redir.jsp%3Fentry%3DVmail&"..
 "URL_KO=https%3A%2F%2Fauthsrs.alice.it%2Faap%2Faap_redir_ko.jsp%3Fentry%3DVmail&"..
-"servizio=mail&msisdn="..user.."&username="..pop_login.."&user="..pop_login..
+"servizio=mail&msisdn="..user.."&username="..user_at_domain.."&user="..user_at_domain..
 "&a3afep=http%3A%2F%2Fportale.rossoalice.alice.it%2Fps%2FManageCodError.do%3Fcode%3D470%26channel%3DVmail&"..
 "DOMAIN=&PASS="..password.."&self=true&a3si=none&a3st=VCOMM&totop=true&nototopa3ep=true&a3aid=lvmes&a3flag=0&"..
 "a3ep=http%3A%2F%2Fdise.alice.it%2Fdest%2Fwebmail&"..
 "a3se=http%3A%2F%2Fportale.rossoalice.alice.it%2Fps%2FManageCodError.do%3Fcode%3D470%26channel%3DVmail&"..
 "a3dcep=http%3A%2F%2Fcommunicator.alice.it%2Fasp%2Fhomepage.asp%3Fs%3D005&"..
-"a3l="..pop_login.."&a3p="..password.."&rememberUsernameChk=checkbox"
+"a3l="..user_at_domain.."&a3p="..password.."&rememberUsernameChk=checkbox"
 
 	local login_uri = "https://aaacsc.alice.it/piattaformaAAA/aapm/amI"
 	local body, err = b:post_uri(login_uri, post)
@@ -493,7 +507,7 @@ function tin_https_login()
 	local tincctoken = assert(b:get_cookie("tincctoken"),
 		"unable to find cookie tincctoken").value
 	local url = string.format(tin_string.login2, domain,
-		curl.escape(pop_login), curl.unescape(tincctoken))
+		curl.escape(user_at_domain), curl.unescape(tincctoken))
 	local body,err = b:get_uri(url)
 	if body == nil then
 		log.error_print("Error getting "..url..": "..err)
@@ -626,7 +640,7 @@ function quit_update(pstate)
 	local session_id_t = internal_state.session_id_t
 	local domain = internal_state.domain
 	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
+	local user_at_domain = user .. "@" .. domain
 	local folder = internal_state.folder
 	
 	local uri = string.format(tin_string.delete, popserver, domain, 
@@ -636,7 +650,7 @@ function quit_update(pstate)
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
 			local uidl = get_mailmessage_uidl(pstate,i)
 			local post = string.format(tin_string.delete_post,
-				folder, uidl, user)
+				user, folder, i, uidl)
 			local body, err = b:post_uri(uri, post)
 			if body == nil then
 				log.error_print("Error getting "..uri..":"..err)
@@ -675,7 +689,10 @@ function stat(pstate)
 	local popserver = add_webmail_in_front(b:wherearewe())
 	local domain = internal_state.domain
 	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
+	local user_at_domain = user .. "@" .. domain
+        
+	-- number of messages per page
+	local msg_per_page = 10
 
 	-- this string will contain the uri to get. it may be updated by 
 	-- the check_f function, see later
@@ -697,7 +714,7 @@ function stat(pstate)
 		
 		-- the number of results
 		local n = x:count()
-		if n < 10 then 
+		if n < msg_per_page then 
 			stop = true 
 		end
 		
@@ -748,7 +765,7 @@ function stat(pstate)
 	-- check must control if we are not in the last page and 
 	-- eventually change uri to tell retrive_f the next page to retrive
 	local function next_page()
-		page = page + 10
+		page = page + msg_per_page
 		uri = string.format(tin_string.first,
 			b:wherearewe(), internal_state.folder,
 			domain, user, session_id_t, session_id_s, page)
@@ -992,7 +1009,7 @@ function retr(pstate,msg,data)
 	local popserver = add_webmail_in_front(b:wherearewe())
 	local domain = internal_state.domain
 	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
+	local user_at_domain = user .. "@" .. domain
 	local folder = internal_state.folder
 	local uidl = get_mailmessage_uidl(pstate,msg)
 
@@ -1074,7 +1091,7 @@ function top(pstate,msg,lines,data)
 	local popserver = add_webmail_in_front(b:wherearewe())
 	local domain = internal_state.domain
 	local user = internal_state.name
-	local pop_login = user .. "@" .. domain
+	local user_at_domain = user .. "@" .. domain
 	local folder = internal_state.folder
 	local uidl = get_mailmessage_uidl(pstate,msg)
 	
@@ -1163,6 +1180,8 @@ function init(pstate)
 	
 	-- checks on globals
 	freepops.set_sanity_checks()
+
+	freepops.need_ssl()
 
 	return POPSERVER_ERR_OK
 end

@@ -6,9 +6,17 @@
 -- Rewritten by Russell Schwager <russell822@yahoo.com>
 -- ************************************************************************** --
 
+
+--  edit: 15.04.2011 by Georgi Saev
+--   fixed login error
+--     changed login post data and url ( abv.bg no longer uses separate variables for username and domain )
+--     changed login host pattern 
+--   changed strNumPagesPat
+--  changed strMsgLinePattern
+
 -- Globals
 -- 
-PLUGIN_VERSION = "0.1.6"
+PLUGIN_VERSION = "0.1.7"
 PLUGIN_NAME = "abv.bg"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_REQUIRE_VERSION = "0.0.97"
@@ -38,12 +46,12 @@ local globals = {
   --
   strLoginUrl = "http://www.abv.bg/",
   strLoginRedirect = 'replace%("(http://[^"]+)"',
-  strLoginPostUrl = "https://passport.abv.bg/servlet/passportlogin",
-  strLoginHostPattern = '<input value="([^"]+)" name="host" type="hidden">',
+  strLoginPostUrl = "https://passport.abv.bg/acct/passport/login",
+  strLoginHostPattern = '<input value="([^"]+)" name="host" type="hidden".->',
 
   -- Login strings
   --
-  strLoginPostData = "username=%s&hostname=%s&password=%s&LOGIN_LOGIN= Влез &host=%s&",
+  strLoginPostData = "username=%s@%s&password=%s&LOGIN_LOGIN= пїЅпїЅпїЅпїЅ &host=%s&service=mail",
   strLoginFailed = "Login Failed - Invalid User name and/or password",
 
   -- Expressions to pull out of returned HTML from 30gigs corresponding to a problem
@@ -59,12 +67,14 @@ local globals = {
 
   -- Used by Stat to pull out the message
   --
-  strMsgLinePattern = 'openmessage%.jsp[^&]+&mid=([^&]+)&pid=[^"]+"[^>]+>[^<]+</a></td><td align="left" nowrap="true" class="[^"]+">[^<]+</td><td[^>]+>([^<]+ )</td>[^<]-</tr>',
+  strMsgLinePattern = 'name="mid" value="(%d+)".->(%d+%.?%d* %w+)%s?</td>%s?\n%s?</tr>'
+,
 
   -- Number of pages and messages
   --
-  strNumPagesPat = "Стр. 1 от (%w+)",
-
+  -- strNumPagesPat = "пїЅпїЅпїЅ. 1 пїЅпїЅ (%w+)",
+ --
+  strNumPagesPat = "<b class=\"black\">1</b>&nbsp;РѕС‚&nbsp;(%w+)",
   -- Default mailboxes
   --
   strInboxId = "10",
@@ -72,10 +82,10 @@ local globals = {
 
   -- Command URLS
   --
-  strCmdMsgList = "%sapp/j/box.jsp?fid=%s",
+  strCmdMsgList = "%s/app/j/box.jsp?fid=%s",
   strCmdMsgListNextPage = "&pid=%d",
-  strCmdDelete = '%sapp/servlet/box?fid=%s&pid=1&view=&to_fid=%s&move=doit',
-  strCmdMsgView = '%sapp/servlet/getdata?fid=%s&mid=%s&tid=60&nid=0&eid=-1&charset=Cp1251&ac=d',
+  strCmdDelete = '%s/app/servlet/box?fid=%s&pid=1&view=&to_fid=%s&move=doit',
+  strCmdMsgView = '%s/app/servlet/getdata?fid=%s&mid=%s&tid=60&nid=0&eid=-1&charset=utf-8&ac=d',
 }
 
 -- ************************************************************************** --
@@ -176,7 +186,7 @@ function login()
 
   -- DEBUG - Set the browser in verbose mode
   --
---  browser:verbose_mode()
+  -- browser:verbose_mode()
 
   -- Enable SSL
   --
@@ -205,14 +215,19 @@ function login()
 
   -- Retrieve the login page.
   --
+  -- log.error_print(post)
+
   url = globals.strLoginPostUrl 
   local body, err = browser:post_uri(url, post)
-
+  -- print(body)
   local _, _, str = string.find(body, globals.strLoginRedirect)
   if (str == nil) then
     log.error_print("Login Failed: Unable to find server")
     return POPSERVER_ERR_NETWORK    
   end  
+  
+  -- print("location_replace:"..str)
+  -- browser:verbose_mode()
   body, err = browser:get_uri(str)
 
   -- Extract the GUID - This is needed for everything
@@ -503,7 +518,7 @@ function stat(pstate)
   -- Have we done this already?  If so, we've saved the results
   --
   if internalState.bStatDone then
-    return POPSERVER_ERR_OK
+    return POPSERVER_ERR_OK	
   end
 
   -- Local variables
@@ -519,6 +534,7 @@ function stat(pstate)
 
   -- Debug Message
   --
+  
   log.dbg("Stat URL: " .. cmdUrl .. "\n");
 		
   -- Initialize our state
@@ -530,8 +546,9 @@ function stat(pstate)
   local function funcProcess(body)
     -- Cycle through the items and store the msg id and size.  
     ---    
+    --log.error_print(body)
     for uidl, size in string.gfind(body, globals.strMsgLinePattern) do
-
+      --log.error_print("uidl=" .. uidl)
       if not uidl or not size then
         log.say("ABV Module needs to fix it's individual message list pattern matching.\n")
         return nil, "Unable to parse the size and uidl from the html"
@@ -589,7 +606,9 @@ function stat(pstate)
     if body == nil then
       return body, err
     end
-
+    log.dbg("Got page: "..browser:whathaveweread())
+    -- print(body)
+    -- log.dbg(body)
     -- Is the session expired
     --
     local _, _, strSessExpr = string.find(body, globals.strRetLoginSessionExpired)
@@ -632,7 +651,6 @@ function stat(pstate)
       end
       log.dbg("Total Pages in message list: " .. nTotPages)
     end
-
     return body, err
   end
 

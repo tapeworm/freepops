@@ -23,7 +23,7 @@
 -- ************************************************************************** --
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.8"
+PLUGIN_VERSION = "0.2.9"
 PLUGIN_NAME = "RSS/RDF aggregator"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -315,7 +315,8 @@ end
 --
 function build_date(str)
 	if(str==nil) then
-		return(os.date("%a, %d %b %Y %H:%M:%S"))
+		-- return(os.date("%a, %d %b %Y %H:%M:%S"))
+		return("Sun, 01 Jan 2008 00:00:00")
 	else
 		return(str)
 	end	

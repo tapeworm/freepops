@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.18"
+PLUGIN_VERSION = "0.2.19"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -205,7 +205,7 @@ function libero_login()
 
 	-- build the uri
 	local password = internal_state.password
-	local popnumber = math.fmod(os.time(),15) + 1  -- == random(1..15)
+	local popnumber = math.fmod(os.time(),4) + 1  -- == random(1..15)
 	local domain = internal_state.domain
 	local site = libero_string.site 
 	local user = internal_state.name
@@ -214,7 +214,7 @@ function libero_login()
         log.dbg("Using webserver " .. uri);
 	local post= string.format(libero_string.login_post,
 		user .. "@" .. domain,password,popnumber,site)
-	
+
 	-- the browser must be preserved
 	internal_state.b = browser.new()
 	local b = internal_state.b

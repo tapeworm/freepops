@@ -9,14 +9,14 @@
 
 -- Globals
 --
-PLUGIN_VERSION = "0.3.20100222"
+PLUGIN_VERSION = "0.4.20110625"
 PLUGIN_NAME = "yahoo.lua"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
 PLUGIN_URL = "http://www.freepops.org/download.php?module=yahoo.lua"
 PLUGIN_HOMEPAGE = "http://freepops.sourceforge.net/"
 PLUGIN_AUTHORS_NAMES = {"Russell Schwager", "Kevin Edwards"}
-PLUGIN_AUTHORS_CONTACTS = {"russell822 (at) yahoo (.) com"}
+PLUGIN_AUTHORS_CONTACTS = {"russell822 (at) yahoo (.) com", "ingenuus (at) users (.) sf (.) net"}
 PLUGIN_DOMAINS = {"@yahoo.com"}
 PLUGIN_PARAMETERS = {
     {name = "folder", description = {
@@ -125,6 +125,55 @@ internalState = {
   bKeepMsgStatus = false,  
 }
 
+-- *** Replacement for psock.lua that returns actual line length of recv
+--     Required because yahoo doesn't always include CR at end of line
+--     and decoding IMAP requires an exact count.
+
+function connect(host, port, verbose)
+	local handler = socket.tcp()
+	local rc, err = handler:connect(host,port)
+	if rc ~= 1 then 
+		log.error_print(err) 
+		return nil, err
+	end
+	return {handler = handler,
+		send = function(self,s)
+			local msg = s..'\r\n'
+			if verbose then log.dbg('SEND: '..msg) end
+			local len = string.len(msg)
+			local i,err,j=1,nil,1
+			repeat 
+				j, err = self.handler:send(msg,i)
+				if j then i=i+j end
+			until (j == nil or i > len)
+			if not j then return -1 else return len end
+		end,
+		recv = function(self)
+			local llength = 0;
+			local line = '';
+			repeat
+				local data = self.handler:receive(1)
+				if data == nil then 
+					line = nil
+					llength = 0
+					break
+				end
+				llength = llength + 1
+				if data:byte(1) == 10 then
+					break
+				elseif data:byte(1) ~= 13 then
+					line = line .. data
+				end
+			until ( false );		
+
+			if verbose then 
+				log.dbg('RECV: '..(data or 'nil')..'\r\n') 
+			end
+			return line, llength
+		end}
+end
+
+
 -- ************************************************************************** --
 --  Helper functions
 -- ************************************************************************** --
@@ -148,9 +197,9 @@ function login()
   --
   internalState.bLoginDone = true
 
-  -- let's connect
+  -- let's connect -- use local version of connect
   --
-  internalState.socket = psock.connect(globals.host, globals.port, false)
+  internalState.socket = connect(globals.host, globals.port, false)
   if not internalState.socket then
     log.error_print("Yahoo: Connection failed!")
     return POPSERVER_ERR_NETWORK
@@ -158,20 +207,39 @@ function login()
     
   local str = nil
   str = internalState.socket:recv()
-  if not str or string.match(str, "OK IMAP") == nil then
+  log.dbg("   rcvd: "..tostring(str))
+  -- * OK IMAP4rev1 server ready (3.6.11)
+  --- OR ---
+  -- * OK [CAPABILITY IMAP4rev1 ID NAMESPACE X-ACL-ID AUTH=PLAIN AUTH=LOGIN AUTH=XYMCOOKIE AUTH=XYMECOOKIE AUTH=XYMCOOKIEB64 AUTH=XYMPKI STARTTLS] IMAP4rev1 ymail_nginx-0.7.65_8 imap161.mail.ne1.yahoo.com
+--  if str:match("ymail_nginx") then
+--    log.error_print("New style server for " .. username)
+--    log.error_print(str)
+--  end
+  if not str or string.match(str, "^[%s%*%+]+OK") == nil then
     log.error_print("Error receiving the welcome")
+    log.error_print(str)
     return POPSERVER_ERR_NETWORK
   end
 
   local rc, str = sendCmd('id ("GUID" "1")', nil)
-  if (rc ~= POPSERVER_ERR_OK or string.match(str, "OK ID completed") == nil) then
+  -- * ID ("name" "imapgate" "support-url" "http://help.yahoo.com/" "version" "3.6.11")
+  -- 1001 OK ID completed
+  --- OR ---
+  -- * ID ("name" "ymail_nginx" "version" "0.7.65_8" "support-url" "http://help.yahoo.com/")
+  -- 1001 OK completed
+  if (rc ~= POPSERVER_ERR_OK or
+      string.match(str, internalState.cnt .. " OK") == nil) then
     log.error_print("Unable to initialize server")
+    log.error_print(str)
     return POPSERVER_ERR_NETWORK
   end
   
   rc, str = sendCmd("login " .. username .. "@" .. domain .. " " .. password, nil)
-  if (rc ~= POPSERVER_ERR_OK or string.match(str, "OK LOGIN completed") == nil) then
+  -- 1002 OK LOGIN completed
+  if (rc ~= POPSERVER_ERR_OK or
+      string.match(str, internalState.cnt .. " OK") == nil) then
     log.error_print("Login failed")
+    log.error_print(str)
     return POPSERVER_ERR_AUTH
   end
 
@@ -221,10 +289,10 @@ function sendCmd(cmd, f)
   local str = ""
   local done = false
   while (not done) do
-    local newstr = internalState.socket:recv()
+    local newstr, llength = internalState.socket:recv()
     log.dbg("   rcvd: "..tostring(newstr))
     if f then 
-      f(newstr)
+      f(newstr, llength)
       if (string.match(newstr, internalState.cnt .. " OK") or 
           string.match(newstr, internalState.cnt .. " BAD")) then
         done = true
@@ -257,6 +325,112 @@ function sendCmd(cmd, f)
   end
 end
 
+
+-- sends a line to the popserver_callback
+function send_line(cbInfo, line)
+  cbInfo.nLinesReceived = cbInfo.nLinesReceived + 1
+--  log.dbg("dothack before: " .. line:len())
+--  log.dbg(line)
+
+--  line = line:gsub("^%.$", "..")
+  -- faster:
+  if line == "." then
+    line = ".."
+  end
+  
+  line = cbInfo.strHack:dothack(line) .. "\r\n\0"
+  
+--  log.dbg("dothack after: " .. line:len())
+--  log.dbg(line)
+--  line = cbInfo.strHack:dothack(line) .. "\r\n\0"
+  if (cbInfo.nLinesReceived <= cbInfo.nLinesRequested or
+      cbInfo.nLinesRequested < 0) then
+    popserver_callback(line, cbInfo.dataptr)
+  end
+end
+
+-- tracks the imap state for lines received from imap.
+function imap_fetch_rcv(cbInfo, line, llength)
+  if cbInfo.strState == "prefix" then
+    cbInfo.nBytesReceived = 0
+    cbInfo.nLinesReceived = 0
+    -- get the size of the data to receive
+    cbInfo.nBytes = tonumber( string.match(line, "{(%d+)}") )
+    log.dbg("imap_fetch_rcv bytes to receive: " .. cbInfo.nBytes)
+    if cbInfo.nBytes == nil then
+      log.error_print("imap_fetch_rcv bad prefix received in " .. cbInfo.strName)
+      log.error_print(line)
+    end
+    cbInfo.strState = "data"
+    -- do not pass the line on to client.
+  
+  elseif cbInfo.strState == "data" then
+    cbInfo.nBytesReceived = cbInfo.nBytesReceived + llength
+    log.dbg("imap_fetch_rcv line_len: " .. llength)
+    if cbInfo.nBytes <= cbInfo.nBytesReceived then
+      log.dbg("imap_fetch_rcv received all bytes: " .. cbInfo.nBytesReceived)
+      cbInfo.strState = "postfix"
+    end
+    -- pass the line on to client.
+    return true
+  
+  elseif cbInfo.strState == "postfix" then
+    -- 1004 OK FETCH completed
+    if (not string.match(line, internalState.cnt .. " OK") and
+        not string.match(line, "%* ") and
+	-- Removed $ in pattern because there is no \n in line.
+        not string.match(line, "^%)") ) then
+      log.error_print("imap_fetch_rcv unknown postfix received in " .. cbInfo.strName)
+      log.error_print(line)
+    end
+    -- do not pass the line on to client.
+    
+  else
+    log.error_print(
+      "imap_fetch_rcv BAD STATE!:" .. cbInfo.strName .. ", " .. cbInfo.strState
+    )
+    log.error_print(line)
+  end
+
+  return false
+end
+
+-- tracks the imap state for lines received from imap.
+function new_cbInfo(name, nLines, data, uidl)
+  -- Define a structure to pass between the callback calls
+  --
+  local cbInfo = {
+    -- String hacker
+    strHack = stringhack.new(),
+
+    -- Number of total bytes (octets) to receive from IMAP.
+    nBytes = 0,
+    
+    -- Number of bytes received from IMAP so far.
+    nBytesReceived = 0,
+    
+    -- IMAP receive state.
+    strState = "prefix",
+
+    -- Name of current task.
+    strName = name,
+    
+    -- Lines requested (-2 means not limited)
+    nLinesRequested = nLines,
+
+    -- Lines Received - Not really used for anything
+    nLinesReceived = 0,
+    
+    -- data
+    dataptr = data,
+    
+    -- uidl
+    uidlptr = uidl
+  }
+  
+  return cbInfo
+end
+  
 -- Download a single message
 --
 function downloadMsg(pstate, msg, nLines, data)
@@ -276,69 +450,40 @@ function downloadMsg(pstate, msg, nLines, data)
   --
   log.dbg("Getting message: " .. uidl)
 
-  -- Define a structure to pass between the callback calls
-  --
-  local cbInfo = {
-    -- String hacker
-    --
-    strHack = stringhack.new(),
-
-    -- Lines requested (-2 means not limited)
-    --
-    nLinesRequested = nLines,
-
-    -- Lines Received - Not really used for anything
-    --
-    nLinesReceived = 0,
-    
-    -- data
-    --
-    dataptr = data,
-    
-    -- uidl
-    --
-    uidlptr = uidl
-  }
-    
-  internalState.cbInfo = cbInfo
-  
-  local f = function(line)
-    if (string.match(line, "OK FETCH completed") or string.match(line, "^%)$") 
-      or string.match(line, " FETCH %(")) then
-      return POPSERVER_ERR_OK
-    end
-  
-    local cbInfo = internalState.cbInfo
-    if (line == "") then
-      line = "X-FREEPOPS-UIDL: " .. cbInfo.uidlptr .. "\r\n"
-    end
-    line = cbInfo.strHack:dothack(line) .. "\r\n\0"
-    popserver_callback(line, cbInfo.dataptr)
-    return POPSERVER_ERR_OK
-  end
+  -- fetch the header
   local cmd = " BODY[HEADER]"
   if (internalState.bKeepMsgStatus) then
     cmd = " BODY.PEEK[HEADER]"
   end
-  local rc, _ = sendCmd("fetch " .. msgid .. cmd, f)
-
-  local f = function(line)
-    if (string.match(line, "OK FETCH completed") or string.match(line, "^%)$") 
-      or string.match(line, " FETCH %(")) then
-      return POPSERVER_ERR_OK
-    end
- 
+  -- -2 == get all header lines
+  internalState.cbInfo = new_cbInfo(cmd, -2, data, uidl)
+  local f = function (line, llength)
     local cbInfo = internalState.cbInfo
-      cbInfo.nLinesReceived = cbInfo.nLinesReceived + 1
-    line = cbInfo.strHack:dothack(line) .. "\r\n\0"
-    if (cbInfo.nLinesReceived <= cbInfo.nLinesRequested or cbInfo.nLinesRequested < 0) then
-      popserver_callback(line, cbInfo.dataptr)
+    if imap_fetch_rcv(cbInfo, line, llength) then
+      -- append FREEPOPS header field at the end (marked by the empty line)
+      if llength == 2 then
+        -- there's already an implicit \r\n that will be sent, but we add
+        -- another one here to also send the empty line we are replacing.
+        line = "X-FREEPOPS-UIDL: " .. cbInfo.uidlptr .. "\r\n"
+      end
+      send_line(cbInfo, line)
     end
     return POPSERVER_ERR_OK
   end
+  local rc, _ = sendCmd("fetch " .. msgid .. cmd, f)
+
+  -- fetch the body
   cmd = " BODY[TEXT]"
   if (internalState.bKeepMsgStatus) then
     cmd = " BODY.PEEK[TEXT]"
+  end
+  internalState.cbInfo = new_cbInfo(cmd, nLines, data, uidl)
+  local f = function (line, llength)
+    local cbInfo = internalState.cbInfo
+    if imap_fetch_rcv(cbInfo, line, llength) then
+      send_line(cbInfo, line)
+    end
+    return POPSERVER_ERR_OK
   end
   if (nLines ~= 0) then
     local rc, _ = sendCmd("fetch " .. msgid .. cmd, f)
@@ -464,7 +609,10 @@ function quit_update(pstate)
     end
   end
 
-  -- Logout
+  -- CLOSE - this also EXPUNGEs the emails marked as \Deleted
+  local rc, str = sendCmd("close", nil)
+  
+  -- LOGOUT
   --
   local rc, str = sendCmd("logout", nil)
   
@@ -496,9 +644,9 @@ function stat(pstate)
 
   -- Test for response "* 0 EXISTS"
 ---- alternative solution if we wanted to extract nMsgs:
---  local nMsgs = tonumber( string.match(str, "* (%d+) EXISTS") )
+--  local nMsgs = tonumber( string.match(str, "%* (%d+) EXISTS") )
 --  if (nMsgs == 0) then
-  if (string.match(str, "* 0 EXISTS")) then
+  if (string.match(str, "%* 0 EXISTS")) then
     log.dbg("stat: 'select' response indicates no messages available.")
     internalState.nMsgs = 0
     return POPSERVER_ERR_OK
@@ -520,7 +668,8 @@ function stat(pstate)
     end
     
     local nMsgs = internalState.nMsgs
-    local size, uidl = string.match(l, "RFC822.SIZE (%d+) UID (%d+)")
+    local size = string.match(l, "RFC822.SIZE (%d+)")
+    local uidl = string.match(l, "UID (%d+)")
     if (size ~= nil and uidl ~= nil) then
       nMsgs = nMsgs + 1
       log.dbg("Processed STAT - Msg: " .. nMsgs .. ", UIDL: " .. uidl .. ", Size: " .. size)
@@ -528,6 +677,8 @@ function stat(pstate)
       set_mailmessage_size(pstate, nMsgs, size)
       set_mailmessage_uidl(pstate, nMsgs, tostring(uidl))
       internalState.msgids[uidl] = internalState.nTotMsgs
+--    else
+--      log.dbg("FAILED to match RFC822.SIZE ("..tostring(size)..") or UID ("..tostring(uidl)..") in: " .. tostring(l))
     end
     internalState.nMsgs = nMsgs
     return POPSERVER_ERR_OK
@@ -616,9 +767,9 @@ function init(pstate)
   --
   require("common")
 
-  -- Common module
+  -- Common module (Not used due to line length issues)
   --
-  require("psock")
+  --  require("psock")
   
   -- Run a sanity check
   --

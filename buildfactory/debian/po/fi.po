@@ -6,6 +6,7 @@ msgstr ""
 "PO-Revision-Date: 2007-12-18 21:15+0200\n"
 "Last-Translator: Esko Arajärvi <edu@iki.fi>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,8 +22,14 @@ msgstr "Käynnistetäänkö freepopsd automaattisesti käynnistettäessä tietok
 #. Type: boolean
 #. Description
 #: ../freepops.templates:2001
-msgid "The FreePOPs daemon can be started automatically after each boot. By default, it will bind to port 2000. This setting may be changed by editing the /etc/default/freepops file."
-msgstr "FreePOPs-taustaohjelma voidaan käynnistää automaattisesti käynnistettäessä tietokone. Oletuksena se kuuntelee porttia 2000. Tätä asetusta voidaan muuttaa muokkaamalla tiedostoa /etc/default/freepops."
+msgid ""
+"The FreePOPs daemon can be started automatically after each boot. By "
+"default, it will bind to port 2000. This setting may be changed by editing "
+"the /etc/default/freepops file."
+msgstr ""
+"FreePOPs-taustaohjelma voidaan käynnistää automaattisesti käynnistettäessä "
+"tietokone. Oletuksena se kuuntelee porttia 2000. Tätä asetusta voidaan "
+"muuttaa muokkaamalla tiedostoa /etc/default/freepops."
 
 #. Type: boolean
 #. Description
@@ -33,14 +40,24 @@ msgstr "Luodaanko FreePOPsille chroot-vankila?"
 #. Type: boolean
 #. Description
 #: ../freepops.templates:3001
-msgid "FreePOPs can be launched in a chrooted environment to improve the system's security."
-msgstr "FreePOPs voidaan ajaa chroot-ympäristössä järjestelmän turvallisuuden parantamiseksi."
+msgid ""
+"FreePOPs can be launched in a chrooted environment to improve the system's "
+"security."
+msgstr ""
+"FreePOPs voidaan ajaa chroot-ympäristössä järjestelmän turvallisuuden "
+"parantamiseksi."
 
 #. Type: boolean
 #. Description
 #: ../freepops.templates:3001
-msgid "The jail will be created in /var/lib/freepops/chroot-jail/. The regular init script will then take care of launching the daemon by calling a script named start.sh at the root of the chroot jail."
-msgstr "Vankila luodaan hakemistoon /var/lib/freepops/chroot-jail/. Tavallinen käynnistyskomentosarja pitää tällöin huolen taustaohjelman käynnistämisestä kutsumalla chroot-vankilan juuressa olevaa ”start.sh”-komentosarjaa."
+msgid ""
+"The jail will be created in /var/lib/freepops/chroot-jail/. The regular init "
+"script will then take care of launching the daemon by calling a script named "
+"start.sh at the root of the chroot jail."
+msgstr ""
+"Vankila luodaan hakemistoon /var/lib/freepops/chroot-jail/. Tavallinen "
+"käynnistyskomentosarja pitää tällöin huolen taustaohjelman käynnistämisestä "
+"kutsumalla chroot-vankilan juuressa olevaa ”start.sh”-komentosarjaa."
 
 #. Type: boolean
 #. Description
@@ -51,18 +68,36 @@ msgstr "Poistetaanko paikalliset päivitykset päivitettäessä?"
 #. Type: boolean
 #. Description
 #: ../freepops.templates:4001
-msgid "The freepops-updater-fltk or freepops-updater-dialog utilities will install local updates in /var/lib/freepops/lua_updates."
-msgstr "Työkalut freepops-updater-fltk ja freepops-updater-dialog asentavat paikalliset päivitykset hakemistoon /var/lib/freepops/lua_updates."
+msgid ""
+"The freepops-updater-fltk or freepops-updater-dialog utilities will install "
+"local updates in /var/lib/freepops/lua_updates."
+msgstr ""
+"Työkalut freepops-updater-fltk ja freepops-updater-dialog asentavat "
+"paikalliset päivitykset hakemistoon /var/lib/freepops/lua_updates."
 
 #. Type: boolean
 #. Description
 #: ../freepops.templates:4001
-msgid "Such updates are usually integrated in further FreePOPs releases or can be downloaded again by running the updater. Therefore, they may safely be removed when the package is upgraded."
-msgstr "Tällaiset päivitykset yleensä sisällytetään myöhempiin FreePOPsin versioihin tai voidaan ladata uudelleen ajamalla päivittäjä. Niinpä ne voidaan turvallisesti poistaa, kun paketti päivitetään."
+msgid ""
+"Such updates are usually integrated in further FreePOPs releases or can be "
+"downloaded again by running the updater. Therefore, they may safely be "
+"removed when the package is upgraded."
+msgstr ""
+"Tällaiset päivitykset yleensä sisällytetään myöhempiin FreePOPsin versioihin "
+"tai voidaan ladata uudelleen ajamalla päivittäjä. Niinpä ne voidaan "
+"turvallisesti poistaa, kun paketti päivitetään."
 
 #. Type: boolean
 #. Description
 #: ../freepops.templates:4001
-msgid "The modules saved in /var/lib/freepops/lua_updates have a higher priority than those from /usr/share/freepops/lua. It is thus recommended to remove the former in order to avoid using outdated modules, unless you intend to freeze the local modifications regardless of FreePOPs upgrades."
-msgstr "Hakemistoon /var/lib/freepops/lua_updates tallennetuilla moduuleilla on korkeampi prioriteetti kuin hakemiston /usr/share/freepops/lua moduuleilla. Täten on suositeltavaa poistaa ensin mainittu, jotta käytössä ei ole vanhoja moduuleita, ellei tarkoituksena ole säilyttää paikallisia muutoksia FreePOPsin päivityksistä huolimatta."
-
+msgid ""
+"The modules saved in /var/lib/freepops/lua_updates have a higher priority "
+"than those from /usr/share/freepops/lua. It is thus recommended to remove "
+"the former in order to avoid using outdated modules, unless you intend to "
+"freeze the local modifications regardless of FreePOPs upgrades."
+msgstr ""
+"Hakemistoon /var/lib/freepops/lua_updates tallennetuilla moduuleilla on "
+"korkeampi prioriteetti kuin hakemiston /usr/share/freepops/lua moduuleilla. "
+"Täten on suositeltavaa poistaa ensin mainittu, jotta käytössä ei ole vanhoja "
+"moduuleita, ellei tarkoituksena ole säilyttää paikallisia muutoksia "
+"FreePOPsin päivityksistä huolimatta."

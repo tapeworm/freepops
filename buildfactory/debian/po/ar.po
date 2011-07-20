@@ -2,21 +2,22 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# Ossama M. Khayat <okhayat@yahoo.com>, 2007.
+# Ossama M. Khayat <okhayat@yahoo.com>, 2007, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: freepops\n"
 "Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
-"POT-Creation-Date: 2007-05-01 11:25+0200\n"
-"PO-Revision-Date: 2007-05-17 03:22+0300\n"
+"POT-Creation-Date: 2007-05-01 12:07+0200\n"
+"PO-Revision-Date: 2009-12-10 19:17+0300\n"
 "Last-Translator: Ossama M. Khayat <okhayat@yahoo.com>\n"
-"Language-Team: Arabic <support@arabeyes.org>\n"
+"Language-Team: Arabic <doc@arabeyes.org>\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.4\n"
-"Plural-Forms: nplurals=6; plural=n==1 ? 0 : n==0 ? 1 : n==2 ? 2"
-": n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5\n"
+"X-Generator: Lokalize 1.0\n"
+"Plural-Forms: nplurals=6; plural=n==1 ? 0 : n==0 ? 1 : n==2 ? 2: n%100>=3 && "
+"n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5\n"
 
 #. Type: boolean
 #. Description
@@ -32,9 +33,9 @@ msgid ""
 "default, it will bind to port 2000. This setting may be changed by editing "
 "the /etc/default/freepops file."
 msgstr ""
-"يمكن تشغيل عفريت FreePOPs آلياً عقب كل عملية إقلاع. بطبيعة "
-"الحال، سوف تقوم بالإصغاء للمنفذ 2000. يمكن تعديل هذا الإعداد بتعديل "
-"الملف /etc/default/freepops."
+"يمكن تشغيل عفريت FreePOPs آلياً عقب كل عملية إقلاع. بطبيعة الحال، سوف تقوم "
+"بالإصغاء للمنفذ 2000. يمكن تعديل هذا الإعداد بتعديل الملف /etc/default/"
+"freepops."
 
 #. Type: boolean
 #. Description
@@ -58,9 +59,8 @@ msgid ""
 "script will then take care of launching the daemon by calling a script named "
 "start.sh at the root of the chroot jail."
 msgstr ""
-"سيتم إنشاء السجن في /var/lib/freepops/chroot-jail/. تقوم "
-"عملية init بعد ذلك بتشغيل العفريت عبر نداء النص البرمجي "
-"المسمى start.sh في جذر سجن chroot."
+"سيتم إنشاء السجن في /var/lib/freepops/chroot-jail/. تقوم عملية init بعد ذلك "
+"بتشغيل العفريت عبر نداء النص البرمجي المسمى start.sh في جذر سجن chroot."
 
 #. Type: boolean
 #. Description
@@ -75,8 +75,8 @@ msgid ""
 "The freepops-updater-fltk or freepops-updater-dialog utilities will install "
 "local updates in /var/lib/freepops/lua_updates."
 msgstr ""
-"ستقوم البرامج المساعدة freepops-updater-fltk أو freepops-updater-dialog بتثبيت "
-"التحديثات المحلية في /var/lib/freepops/lua_updates."
+"ستقوم البرامج المساعدة freepops-updater-fltk أو freepops-updater-dialog "
+"بتثبيت التحديثات المحلية في /var/lib/freepops/lua_updates."
 
 #. Type: boolean
 #. Description
@@ -86,20 +86,19 @@ msgid ""
 "downloaded again by running the updater. Therefore, they may safely be "
 "removed when the package is upgraded."
 msgstr ""
-"تكون هذه التحديثات عادة في إصدارات FreePOPs اللاحقة أو يمكن "
-"تنزيلها بتشغيل برنامج التحديث. لذا، يمكنك إزالتها بأمان عند ترقية الحزمة."
+"تكون هذه التحديثات عادة في إصدارات FreePOPs اللاحقة أو يمكن تنزيلها بتشغيل "
+"برنامج التحديث. لذا، يمكنك إزالتها بأمان عند ترقية الحزمة."
 
 #. Type: boolean
 #. Description
 #: ../freepops.templates:4001
 msgid ""
 "The modules saved in /var/lib/freepops/lua_updates have a higher priority "
-"than those from /usr/share/frepops/lua. It is thus recommended to remove the "
-"former in order to avoid using outdated modules, unless you intend to freeze "
-"the local modifications regardless of FreePOPs upgrades."
+"than those from /usr/share/freepops/lua. It is thus recommended to remove "
+"the former in order to avoid using outdated modules, unless you intend to "
+"freeze the local modifications regardless of FreePOPs upgrades."
 msgstr ""
-"الوحدات المحفوظة في /var/lib/freepops/lua_updates لها أولوية أعلى "
-"من تلك التي في /usr/share/frepops/lua. وبالتالي فمن المستحسن إزالة الأولى "
-"كي تتجنب استخدام الوحدات القديمة، إلا إن كنت تنوي إبقاء "
-"التعديلات المحلية بغض النظر عن ترقيات FreePOPs."
-
+"الوحدات المحفوظة في /var/lib/freepops/lua_updates لها أولوية أعلى من تلك "
+"التي في /usr/share/frepops/lua. وبالتالي فمن المستحسن إزالة الأولى كي تتجنب "
+"استخدام الوحدات القديمة، إلا إن كنت تنوي إبقاء التعديلات المحلية بغض النظر "
+"عن ترقيات FreePOPs."

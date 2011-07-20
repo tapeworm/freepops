@@ -5,16 +5,18 @@
 # Eder L. Marques (frolic) <frolic@debian-ce.org>, 2007.
 #
 msgid ""
-msgstr "pt_BR utf-8\n"
+msgstr ""
 "Project-Id-Version: freepops-0.2.5-1\n"
 "Report-Msgid-Bugs-To: gareuselesinge@debian.org\n"
 "POT-Creation-Date: 2007-05-01 12:07+0200\n"
 "PO-Revision-Date: 2007-10-23 16:28-0200\n"
 "Last-Translator: Eder L. Marques (frolic) <frolic@debian-ce.org>\n"
 "Language-Team: l10n Portuguese <debian-l10n-portuguese@lists.debian.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"pt_BR utf-8\n"
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms:  nplurals=2; plural=(n > 1);\n"
 
@@ -61,8 +63,8 @@ msgid ""
 "start.sh at the root of the chroot jail."
 msgstr ""
 "A jaula será criada em /var/lib/freepops/chroot-jail/. O init script "
-"habitual irá cuidar da execução do daemon chamando um script nomeado "
-"start.sh na raiz da jaula chroot."
+"habitual irá cuidar da execução do daemon chamando um script nomeado start."
+"sh na raiz da jaula chroot."
 
 #. Type: boolean
 #. Description
@@ -88,9 +90,9 @@ msgid ""
 "downloaded again by running the updater. Therefore, they may safely be "
 "removed when the package is upgraded."
 msgstr ""
-"Tais atualizações são geralmente integradas em futuras versões do FreePOPs ou "
-"podem ser baixadas novamente executando o atualizador. Conseqüentemente, elas "
-"podem ser removidas com segurança quando o pacote é atualizado."
+"Tais atualizações são geralmente integradas em futuras versões do FreePOPs "
+"ou podem ser baixadas novamente executando o atualizador. Conseqüentemente, "
+"elas podem ser removidas com segurança quando o pacote é atualizado."
 
 #. Type: boolean
 #. Description

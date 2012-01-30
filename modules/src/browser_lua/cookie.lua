@@ -4,7 +4,7 @@
 -- Only one function is available to the end user.
 -- Incorporating jbobowski Gmail fix posted 26 April 2006.
 
-MODULE_VERSION = "0.1.6"
+MODULE_VERSION = "0.1.7"
 MODULE_NAME = "browser.cookie"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -155,7 +155,12 @@ end
      end
 
      if c["max-age"] then
-         if tonumber(c["max-age"]) > date then
+      	-- this should not be necessary, but...
+      	if c["max-age"] ~= nil and type(c["max-age"]) == "string" then
+      		c["max-age"] = getdate.toint(c["max-age"])
+          log.say("cookie.Private.is_expired - max-age conversion")
+      	end
+         if c["max-age"] > date then
              return true
 		end
 	end

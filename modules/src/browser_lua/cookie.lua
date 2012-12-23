@@ -4,7 +4,7 @@
 -- Only one function is available to the end user.
 -- Incorporating jbobowski Gmail fix posted 26 April 2006.
 
-MODULE_VERSION = "0.1.7"
+MODULE_VERSION = "0.1.8"
 MODULE_NAME = "browser.cookie"
 MODULE_REQUIRE_VERSION = "0.2.0"
 MODULE_LICENSE = "GNU/GPL"
@@ -122,6 +122,7 @@ function Private.parse_cookie(s,h)
 	local t = {}
 	local s1 = s
 	table.foreach(Private.syntax,function(n,f) s1 = f(s1,t) end)
+	if t.path == nil then t.path='/' end
 	if t.expires ~= nil then
 	    -- Fix to deal with a date expiration that is larger than our data structure can handle.  This needs to be revisited
 		-- in at least 2019.
@@ -191,7 +192,7 @@ end
 -- counts how many parts of path are in common
 function Private.subpath_len(path,sub)
 	if not sub then
-		return -1 --no path was
+		return -1 --no path
 	end
 	--print(path,sub)
 	local t1 = Private.split_uri(path)
@@ -309,7 +310,7 @@ function parse_url(url, default)
         return ""
     end)
     -- path is whatever was left
-    if url ~= "" then parsed.path = url end
+    if url ~= "" then parsed.path = url else parsed.path = '/' end
     local authority = parsed.authority
     if not authority then return parsed end
     authority = string.gsub(authority,"^([^@]*)@",

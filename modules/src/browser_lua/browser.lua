@@ -67,7 +67,7 @@
 -- <B>setIgnoreContentLength()</B> : ignore content len HTTP header<BR/>
 --<BR/>
 
-MODULE_VERSION = "0.1.4"
+MODULE_VERSION = "0.1.5"
 MODULE_NAME = "browser.browser"
 MODULE_REQUIRE_VERSION = "0.2.8"
 MODULE_LICENSE = "GNU/GPL"
@@ -170,7 +170,8 @@ function Hidden.build_header(self,url,exhed)
         if cook ~= nil then
            -- the excite website adds "\r\n" to the cookies...
            if string.find(cook,"\r\n$") then cook =string.sub(cook,1,-3) end
-           table.insert(head,"Cookie: "..cook)
+           if string.find(cook,"\n$") then cook =string.sub(cook,1,-2) end
+           table.insert(head,"Cookie: "..cook:gsub("^%s*",""))
         end
 	if u.host ~= nil then
 		-- This is a terrible hack.  I had to put it so that hotmail would work.  The

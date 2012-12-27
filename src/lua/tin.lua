@@ -7,7 +7,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.24"
+PLUGIN_VERSION = "0.2.31"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -62,7 +62,7 @@ PLUGIN_DESCRIPTIONS = {
 -- expressions), mlex expressions, mlex get expressions.
 -- 
 local tin_string = {
-	prelogin = "https://aaacsc.alice.it/piattaformaAAA/aapm/amI",
+	prelogin = "https://aaacsc.%s/piattaformaAAA/aapm/amI",
         prelogin_post = "usernameDisplay=%s&".. -- USER
                         "password=%s&".. -- PASSWORD
                         "dominio=%s&".. -- 	@DOMAIN
@@ -77,7 +77,7 @@ local tin_string = {
                         "msisdn=%s&".. -- 	USER
                         "username=%s&".. -- 	USER@DOMAIN
                         "user=%s&".. -- 	USER@DOMAIN
-                        "a3afep=http://portale.rossoalice.alice.it/ps/ManageCodError.do?code=470&channel=Vmail&"..
+                        "a3afep=http://mail.virgilio.it/common/iframe_mail/pf/ps/ManageCodError.html?code=470&channel=Vmail&"..
                         "DOMAIN=&"..
                         "PASS=%s&".. -- 	PASSWORD
                         "self=true&"..
@@ -87,14 +87,14 @@ local tin_string = {
                         "nototopa3ep=true&"..
                         "a3aid=lvmes&"..
                         "a3flag=0&"..
-                        "a3ep=http://feulogin.alice.it/feulogin/login/Login.action&"..
-                        "a3epvf=http://webmailvtin.alice.it/cp/ps/Main/login/SSOLogin&"..
-                        "a3se=http://portale.rossoalice.alice.it/ps/ManageCodError.do?code=470&channel=Vmail&"..
+                        "a3ep=http://webmail.virgilio.it/cp/ps/Main/login/SSOLogin&"..
+                        "a3epvf=http://webmail.virgilio.it/cp/ps/Main/login/SSOLogin&"..
+                        "a3se=http://mail.virgilio.it/common/iframe_mail/pf/ps/ManageCodError.html?code=470&channel=Vmail&"..
                         "a3dcep=http://communicator.alice.it/asp/homepage.asp?s=005&"..
                         "a3l=%s&".. -- 	USER@DOMAIN
                         "a3p=%s&", -- 	PASSWORD
 
-	login2 = "http://webmailcommunicator.alice.it/cp/ps/Main/login/AAAPreLogin?d=alice.it&style=light&l=it",
+	login2 = "http://webmailcommunicator.%s/cp/ps/Main/login/AAAPreLogin?d=%s&style=light&l=it",
 	login2C = 'src="(/cp/ps/Mail/MailFrame[^"]*)"',
 	login2Ct="&t=([^&]+)",
 	login2Cs="&s=([%d]+)",
@@ -378,6 +378,8 @@ function tin_http_login()
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local user_at_domain = user .. "@" .. domain
+	-- svrdomain will be changed later
+	local svrdomain = internal_state.domain
 	
 	-- browser must be set to some modern one
 	internal_state.b = browser.new("Mozilla/5.0")
@@ -395,10 +397,18 @@ function tin_http_login()
 	local b = internal_state.b
  	--b:verbose_mode()
 
+	-- select mail server according to the mail domain
+	if (domain == "virgilio.it") then
+	  svrdomain = "virgilio.it"
+        else
+	  svrdomain = "alice.it"
+        end
+
 	-- step 0: send login data to obtain back some cookies
 	local post = string.format(tin_string.prelogin_post, user, password, domain, user_at_domain, password, user, user_at_domain, user_at_domain, password, user_at_domain, password)
 
-	local body, err = b:post_uri(tin_string.prelogin, post)
+	local prelogin_url = string.format(tin_string.prelogin, svrdomain)
+	local body, err = b:post_uri(prelogin_url, post)
 	if body == nil then
 		log.error_print("Error getting "..
 			tin_string.prelogin..": "..err)
@@ -406,9 +416,10 @@ function tin_http_login()
 	end
 
 	-- step 2: get session id_s and id_t
-        local body, err = b:get_uri(tin_string.login2)
+	local login2_url = string.format(tin_string.login2, svrdomain, domain)
+        local body, err = b:get_uri(login2_url)
 	if body == nil then
-		log.error_print("Error getting "..tin_string.login..": "..err)
+		log.error_print("Error getting "..tin_string.login2..": "..err)
 		return POPSERVER_ERR_AUTH
 	     end
 
@@ -438,6 +449,11 @@ function tin_http_login()
 end
 
 function tin_https_login()
+        ----------------------------------------
+        -- THIS FUNCTION IS OLD
+        -- AND NEED TO BE UPDATED Or MAYBE CAN
+        -- BE SIMPLY DELETED
+        ----------------------------------------
 	if internal_state.login_done then
 		return POPSERVER_ERR_OK
 	end

@@ -7,7 +7,7 @@
 
 
 -- these are used in the init function
-PLUGIN_VERSION = "0.2.31"
+PLUGIN_VERSION = "0.2.32"
 PLUGIN_NAME = "Tin.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -20,13 +20,12 @@ PLUGIN_PARAMETERS = {
 	{name = "folder", description = {
 		it = [[
 Visto che potresti aver bisogno di scaricare altre cartelle oltre alle 
-INBOX (che &egrave; quella di default) il plugin accetta il parametro folder 
-e l' unico valore attualmente testato &egrave; Spam , ma anche altre cartelle
-dovrebbero funzionare. Ecco un esempio di user name per controllare la 
+INBOX (che &egrave; quella di default) il plugin accetta il parametro folder. 
+Ecco un esempio di user name per controllare la 
 cartella Spam: foo@virgilio.it?folder=Spam]],
 		}	
 	},
-  {name = "limit", description = {
+	{name = "limit", description = {
 		it = [[
     Se si hanno tante e-mail da scaricare, ad esempio a seguito di un lungo periodo
     in cui non si &egrave; pi&ugrave; scaricata la posta, si potrebbe voler decidere di scaricare
@@ -40,6 +39,16 @@ cartella Spam: foo@virgilio.it?folder=Spam]],
     impostato nelle opzioni della webmail per la propria casella di posta).]],
 		}	
 	},
+	{name = "webmail", description = {
+		it = [[
+    Se si vole si può contribuire allo sviluppo del plugin per la nuova webmail usando il parametro new
+	L'unico parametro ammesso per nuova webmail è new 
+	tutti gli altri parametri permettono l'uso della nuova webmail 
+	Ad esempio, per scaricare dalla nuova webmail, si pu&ograve; specificare
+    come nome utente: foo@virgilio.it?webmail=new
+	]],
+		}	
+	},
 }
 PLUGIN_DESCRIPTIONS = {
 	it="Questo plugin vi permette di leggere le mail che avete "..
@@ -48,6 +57,8 @@ PLUGIN_DESCRIPTIONS = {
 	   "completo come username e la vostra password reale come password.",
 	en="This plugin is for italian users only."
 }
+ require("table2xml")
+
 
 -- ************************************************************************** --
 --  strings
@@ -98,8 +109,6 @@ local tin_string = {
 	login2C = 'src="(/cp/ps/Mail/MailFrame[^"]*)"',
 	login2Ct="&t=([^&]+)",
 	login2Cs="&s=([%d]+)",
-
-
 	-- mesage list mlex
 	statE = ".*<tr>.*<td>.*<input>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a>.*<img>.*</a>.*</td>.*<td>.*<a.*>.*</a>.*</td>.*<td>.*</td>.*<td>.*<a>.*</a>.*</td>.*<td>.*</td>.*</tr>",
 	statG = "O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>O<O>",
@@ -115,7 +124,16 @@ local tin_string = {
 	list_href = "href%s*=%s*'/cp/ps/Mail/EmailList",
 	-- The capture to understand if the session ended
 	timeoutC = '(window.parent.location.*/mail/main?.*err=24)',
-
+	
+	--webmail address
+	alice_webmail="webmail.communicator.alice.it",
+	virgilio_webmail="webmailcommunicator.virgilio.it",
+	---new webmail
+	rnd="http://webmail.virgilio.it/cp/ps/Main/login/SSOLogin",
+	new_webmail_login="http://webmail.virgilio.it/cp/ps/Main/login/PreLogin?u=%s&d=%s&rnd=%s",
+	listC="/cp/ps/mail/SLcommands/SLEmailList.-&l=it",
+	message_list="http://webmail.virgilio.it%s&start=0&limit=%s&fp=%s",
+	
 	-- The uri to save a message (read download the message)
 	--   wherearewe(), mailbox, domain, username, username, uidl, t, s
 	save = "http://%s/cp/ps/Mail/EmailSecure"..
@@ -133,7 +151,6 @@ local tin_string = {
 	 imageG = "<X>",
 	-- by nvhs for attach  mail
 	 mailE = ".*<a.*href *= *'/cp/ps/Mail/Email>.*<img>.*</a>",
-
 	 mailG = "O<X>O<O>X<O>",
 	-- The uri to delete some messages
 	--  whearewe(), domain, user, t, s
@@ -141,6 +158,8 @@ local tin_string = {
 	-- user, folder, idx, uid
 	delete_post = "an=%s&fp=%s&sl=%s&uid=%s&dellist=",
 	error_title = "<title>An error has occurred</title>",
+
+
 }
 
 tin_domains = {
@@ -163,12 +182,14 @@ internal_state = {
 	popserver = nil,
 	session_id_s = nil,
 	session_id_t = nil,
+	session_id_rnd = nil,
 	domain = nil,
 	name = nil,
 	password = nil,
 	b = nil,
 	folder="INBOX",
 	limit=nil,
+	webmail="new",
 	reverse_lookup = {},
 	list_begin = -1
 }
@@ -415,9 +436,19 @@ function tin_http_login()
 		return POPSERVER_ERR_AUTH
 	end
 
-	-- step 2: get session id_s and id_t
+	-- step 2: get session rnd ,id_s and id_t
+	
+	local uri=tin_string.rnd
+	local body,err=b:get_uri(uri)
+
+	if body ~= nil then
+		internal_state.session_id_rnd = string.match(body, "rnd=(%d-)\"")
+	end	
+		
+	-- id_s and id_t
+
 	local login2_url = string.format(tin_string.login2, svrdomain, domain)
-        local body, err = b:get_uri(login2_url)
+    local body, err = b:get_uri(login2_url)
 	if body == nil then
 		log.error_print("Error getting "..tin_string.login2..": "..err)
 		return POPSERVER_ERR_AUTH
@@ -429,7 +460,7 @@ function tin_http_login()
 	
 	internal_state.session_id_s = s
 	internal_state.session_id_t = t
-	
+		
 	if internal_state.session_id_s == nil or
 	   internal_state.session_id_t == nil then
 		log.error_print("Login failed\n")
@@ -583,8 +614,10 @@ function user(pstate,username)
 	internal_state.domain = domain
 	internal_state.name = name
 	internal_state.folder = freepops.MODULE_ARGS.folder or "INBOX"
+	-- set maximun number of mail
 	internal_state.limit = tonumber(freepops.MODULE_ARGS.limit) or math.huge
-  
+	-- set new or old  webmail
+	internal_state.webmail = freepops.MODULE_ARGS.webmail or "old"
 	return POPSERVER_ERR_OK
 end
 
@@ -692,7 +725,69 @@ end
 
 -- -------------------------------------------------------------------------- --
 -- Fill the number of messages and their size
-function stat(pstate)
+function stat_new(pstate)
+		-- check if already called
+	if internal_state.stat_done then
+		return POPSERVER_ERR_OK
+	end
+	-- shorten names, not really important
+	local session_id_s = internal_state.session_id_s
+	local session_id_t = internal_state.session_id_t
+	local b = internal_state.b
+	local domain = internal_state.domain
+	local user = internal_state.name
+	local limit=internal_state.limit
+	--limit input parameter
+	if limit==math.huge then limit=10000 end
+	--new webmail login
+	local uri= string.format(tin_string.new_webmail_login,user,domain,internal_state.session_id_rnd)
+	local body,err = b:get_uri(uri)
+	--get email list
+	local sub_uri=string.match(body,tin_string.listC)
+	if sub_uri==nil then
+		return  POPSERVER_ERR_UNKNOWN 
+	end
+	uri=string.format(tin_string.message_list,sub_uri,limit,internal_state.folder)
+	local message_l,err = b:get_uri(uri)
+	--delete secondary information, take only message list
+	message_l=string.match(message_l,"%s*{.-%[(.+)%]}%s*")
+	--insert message in the table
+	local i=1
+	local mail_table= {}
+	while message_l~=nil   do
+		--inizialize table
+		mail_table[i]= {}
+		--extract first mail
+		local mail=string.match(message_l,"{.-}")
+		--delete first mail
+		message_l=string.match(message_l,"%s*{.-}(.+)%s*")
+		--exstract uid and size
+		mail_table[i]["uid"]=string.match(mail,"\"uid\":\"(%d-)\"")
+		mail_table[i]["size"]=tonumber(string.match(mail,"\"size\":(%d-),"))
+		i=i+1
+	end
+	--initialize message list on pop3 server
+	local n=i-1
+	set_popstate_nummesg(pstate,n)
+	--send message from table to pop3 server
+	i=1
+	while i<=n do
+		set_mailmessage_size(pstate,i,mail_table[i]["size"])
+		set_mailmessage_uidl(pstate,i,mail_table[i]["uid"])
+		-- this is not really needed since the structure 
+		-- grows automatically... maybe... don't remember now
+		internal_state.reverse_lookup[mail_table[i]["uid"]] = i
+		i=i+1
+	end
+
+	--return to old webmail
+	internal_state.login_done=false
+	tin_login()
+	internal_state.stat_done=true
+	return POPSERVER_ERR_OK
+end
+
+function stat_old(pstate)
 	-- check if already called
 	if internal_state.stat_done then
 		return POPSERVER_ERR_OK
@@ -842,6 +937,14 @@ function stat(pstate)
 	internal_state["stat_done"] = true
 	
 	return POPSERVER_ERR_OK
+end
+
+function stat(pstate)
+	if internal_state.domain =="virgilio.it" and internal_state.webmail=="new" then
+		return stat_new(pstate)
+	else
+		return stat_old(pstate)
+	end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -1006,7 +1109,7 @@ function is_a_list_needed(msg, uidl)
 	
 	-- before the begin of the list
 	if delta < 0 then return true, 1 end
-	-- in the following 9 items
+	-- in the following 9 items 
 	if delta < 10 then return false, delta end
 	
 	return true, 1
@@ -1022,7 +1125,10 @@ function retr(pstate,msg,data)
 	local session_id_t = internal_state.session_id_t
 	local session_id_s = internal_state.session_id_s
 	local b = internal_state.b
-	local popserver = add_webmail_in_front(b:wherearewe())
+	local popserver =add_webmail_in_front(b:wherearewe())
+	if internal_state.domain=="virgilio.it" then
+		popserver =tin_string.virgilio_webmail
+	end
 	local domain = internal_state.domain
 	local user = internal_state.name
 	local user_at_domain = user .. "@" .. domain
@@ -1046,7 +1152,6 @@ function retr(pstate,msg,data)
 	-- whearewe, mailbox, username, username, uidl, t, s
 	local uri = string.format(tin_string.save,popserver,
 		folder, domain, user, user, uidl, session_id_t, session_id_s,sl)
-	
 	-- tell the browser to fetch
 	local head,f = b:get_head_and_body(uri)
 	if head == nil then
@@ -1088,7 +1193,6 @@ function retr(pstate,msg,data)
 	local cb = mimer.callback_mangler(common.retr_cb(data))
 	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]%s*=).-([;\n])","%1\""..ctype.."\"%2")
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,inlineids,ctype)
-		
 	return POPSERVER_ERR_OK
 end
 
@@ -1164,7 +1268,6 @@ function top(pstate,msg,lines,data)
 	local cb = mimer.callback_mangler(common.top_cb(global,data,true))
 	head = string.gsub(head,"([Cc][Hh][Aa][Rr][Ss][Ee][Tt]%s*=).-([;\n])","%1\""..ctype.."\"%2")
 	mimer.pipe_msg(head,body,body_html,"http://"..wherearewe,attach,b,cb,nil,ctype)
-		
 	return POPSERVER_ERR_OK
 end
 

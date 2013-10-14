@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.26"
+PLUGIN_VERSION = "0.2.27"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -382,7 +382,7 @@ function quit_update(pstate)
 	for i=1,get_popstate_nummesg(pstate) do
 		if get_mailmessage_flag(pstate,i,MAILMESSAGE_DELETE) then
 			post = post .. string.match(
-				get_mailmessage_uidl(pstate,i)," id=\"([0-9a-f]+)\"")..","
+				get_mailmessage_uidl(pstate,i),";([0-9a-f]+)")..","
 			delete_something = true	
 		end
 	end
@@ -473,15 +473,16 @@ function stat(pstate)
 
 		-- gets all the results and puts them in the popstate structure
 		for i = 1,n do
-			local uidl = x:get (0,i-1) 
-			local size = x:get (1,i-1)
+			local uidl = x:get (0,n-i) 
+			local size = x:get (1,n-i)
 
 			-- arrange message size
 			local k,m = nil
 			k = string.match(size,"([Kk][Bb])")
 			m = string.match(size,"([Mm][Bb])")
 			size = string.match(size,"(%d+%.?%d+)")
-			--uidl = string.match(uidl,"value=\"(%d+)\"")
+			uidl = string.match(uidl,"uid=\"(%d+)\"")..";"..string.match(
+				uidl,"id=\"([0-9a-f]+)\"")
 			size = tonumber(size) -- + 2
 			if k ~= nil then
 				size = size * 1024
@@ -495,8 +496,8 @@ function stat(pstate)
 			end
 
 			-- set it
-			set_mailmessage_size(pstate,i+nmesg_old,size)
-			set_mailmessage_uidl(pstate,i+nmesg_old,uidl)
+			set_mailmessage_size(pstate,n-i+1+nmesg_old,size)
+			set_mailmessage_uidl(pstate,n-i+1+nmesg_old,uidl)
 		end
 		
 		return true,nil
@@ -622,7 +623,7 @@ function retr(pstate,msg,data)
 	local b = internal_state.b
 	
 	-- build the uri
-	local uidl = string.match(get_mailmessage_uidl(pstate,msg),"uid=\"(%d+)\"")
+	local uidl = string.match(get_mailmessage_uidl(pstate,msg),"(%d+);")
 	local uri = string.format(libero_string.save,popserver,uidl,
 		domain,user,session_id,internal_state.folder)
 	
@@ -657,7 +658,7 @@ function top(pstate,msg,lines,data)
 	local size = get_mailmessage_size(pstate,msg)
 
 	-- build the uri
-	local uidl = string.match(get_mailmessage_uidl(pstate,msg),"uid=\"(%d+)\"")
+	local uidl = string.match(get_mailmessage_uidl(pstate,msg),"(%d+);")
 	local uri = string.format(libero_string.save,popserver,uidl,
 		domain,user,session_id,internal_state.folder)
 

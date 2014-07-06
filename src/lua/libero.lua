@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.27"
+PLUGIN_VERSION = "0.2.28"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -90,7 +90,7 @@ local libero_string = {
 	login_post = "LOGINID=%s&PASSWORD=%s"..
 		"&SERVICE_ID=beta_email&RET_URL=http://mailbeta.libero.it/cp/WindMailPS.jsp",
 	-- This is the capture to get the session ID from the login-done webpage
-	sessionC = "<frame name=\"main\" id=\"main\" src=\"(.-)\"",
+	sessionC = "<frame name=\"main\" id=\"main\" src=\"(.-)\"",	-- Alternate version of previous	sessionCAlt = "<iframe name=\"main\" id=\"main\" src=\"(.-)\"",
 	-- This is the mlex expression to interpret the message list page.
 	-- Read the mlex C module documentation to understand the meaning
 	--
@@ -101,12 +101,13 @@ local libero_string = {
 	-- every useless field with '.*'.
 	 
 	--statE = ".*<a.*doitMsg.*>[.*]{!--.*--}.*<script>.*IMGEv.*</script>.*</a>.*<script>.*AEv.*</script>[.*]{!--.*--}.*<script>.*</script>.*</a>.*</TD>.*<TD>.*<div>.*</TD>.*<TD>.*<script>.*</script>[.*]{!--.*--}.*<script>.*</script>.*</a>.*</TD>.*<TD>.*<div>.*</TD>.*<script>.*</script>[.*]{b}.*{/b}[.*]</TD>[.*]{!--.*--}.*<TD>.*<div>.*</TD>.*<script>.*</script>[.*]{b}.*{/b}[.*]</TD>[.*]{!--.*--}.*</TR>";
-	statE = ".*<tr.*uid.*from.*>.*<td.*>.*<input.*>.*<td.*>.*<td.*>.*<td.*>.*<td>.*<td>.*<td.*>.*</tr>";
+	statE = ".*<tr.*uid.*from.*>.*<td.*>.*<input.*>.*<td.*>.*<td.*>.*<td.*>.*<td>.*<td>.*<td.*>.*</tr>";	statEAlt = ".*<tr.*uid.*from.*>.*<td.*>.*<div.*>.*<input.*>.*</div>.*<td.*>.*<img.*>.*<img.*>.*<td.*>.*<span>.*</span><br>.*<td><nobr>.*</nobr>.*<td.*>.*<img.*>.*<td.*>.*<span>.*</span>.*<span.*>.*</span>.*<td.*>.*<img.*>.*</tr>";
+	
 	-- This is the mlex get expression to choose the important fields 
 	-- of the message list page. Used in combination with statE
 	
 	--statG = "O<X>[O]{O}O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>[O]{O}O<O>O<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>[O]{O}O<O>";
-	statG = "O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>";
+	statG = "O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>";	statGAlt = "O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>";
 	
 	-- The uri for the first page with the list of messages
 	first = "http://%s/cp/ps/Mail/commands/SyncFolder?d=%s&u=%s&t=%s",
@@ -140,7 +141,7 @@ internal_state = {
 	domain = nil,
 	name = nil,
 	password = nil,
-	b = nil
+	b = nil,	newMail = false
 }
 
 -- ************************************************************************** --
@@ -234,7 +235,7 @@ function libero_login()
 		3,support.do_post(internal_state.b,uri,post))
 	check_f = support.check_fail
 	extract_f = support.do_extract(
-		internal_state,"session_id",libero_string.sessionC)
+		internal_state,"session_id",libero_string.sessionC)	if not support.do_until(retrive_f,check_f,extract_f) then		extract_f = support.do_extract(			internal_state,"session_id",libero_string.sessionCAlt)		internal_state["newMail"] = true	end
 	
 
 	-- maybe implement a do_once
@@ -258,7 +259,7 @@ function libero_login()
 	end
 	
 	internal_state["server_number"] = string.match(
-		internal_state.session_id,"(posta%d+[a-z]?%.[a-z]-%.libero%.it)")
+		internal_state.session_id,"([a-z]-%d+[a-z]?%.[a-z]-%.libero%.it)")
 	internal_state["session_id"] = string.match(internal_state.session_id,"t=([a-z0-9]+)")
 
 	-- check if do_extract has correctly extracted the session ID
@@ -338,8 +339,7 @@ function pass(pstate,password)
 		
 		-- exec the code loaded from the session string
 		c()
-
-		log.say("Session loaded for " .. internal_state.name .. "@" .. 
+		log.say("Session loaded for " .. internal_state.name .. "@" .. 
 			internal_state.domain .. 
 			"(" .. internal_state.session_id .. ","..internal_state.server_number..")\n")
 		
@@ -454,8 +454,8 @@ function stat(pstate)
 		-- statE and statG
 		--print(s)
 		local temp = string.gsub(s,"<tr","</tr><tr")
-		local temp = string.gsub(temp,"</tbody>","</tr></tbody>")
-		local x = mlex.match(temp,libero_string.statE,libero_string.statG)
+		local temp = string.gsub(temp,"</tbody>","</tr></tbody>")		local x		if internal_state.newMail == true then
+			x = mlex.match(temp,libero_string.statEAlt,libero_string.statGAlt)		else			x = mlex.match(temp,libero_string.statE,libero_string.statG)		end
 		--x:print()
 		
 		-- the number of results
@@ -473,23 +473,27 @@ function stat(pstate)
 
 		-- gets all the results and puts them in the popstate structure
 		for i = 1,n do
-			local uidl = x:get (0,n-i) 
-			local size = x:get (1,n-i)
-
+			local uidl = x:get (0,n-i)
+			local size
+			if internal_state.newMail == true then
+				size = 100
+			else
+				size = x:get (1,n-i)
 			-- arrange message size
-			local k,m = nil
-			k = string.match(size,"([Kk][Bb])")
-			m = string.match(size,"([Mm][Bb])")
-			size = string.match(size,"(%d+%.?%d+)")
+				local k,m = nil
+				k = string.match(size,"([Kk][Bb])")
+				m = string.match(size,"([Mm][Bb])")
+				size = string.match(size,"(%d+%.?%d+)")
+				size = tonumber(size) -- + 2
+				if k ~= nil then
+					size = size * 1024
+				elseif m ~= nil then
+					size = size * 1024 * 1024
+				end
+			end
 			uidl = string.match(uidl,"uid=\"(%d+)\"")..";"..string.match(
-				uidl,"id=\"([0-9a-f]+)\"")
-			size = tonumber(size) -- + 2
-			if k ~= nil then
-				size = size * 1024
-			end
-			if m ~= nil then
-				size = size * 1024 * 1024
-			end
+					uidl,"id=\"([0-9a-f]+)\"")
+				
 
 			if not uidl or not size then
 				return nil,"Unable to parse page"

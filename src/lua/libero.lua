@@ -27,7 +27,7 @@
 -- fill them in the right way
 
 -- single string, all required
-PLUGIN_VERSION = "0.2.29"
+PLUGIN_VERSION = "0.2.30"
 PLUGIN_NAME = "Libero.IT"
 PLUGIN_REQUIRE_VERSION = "0.2.0"
 PLUGIN_LICENSE = "GNU/GPL"
@@ -102,22 +102,25 @@ local libero_string = {
 	 
 	--statE = ".*<a.*doitMsg.*>[.*]{!--.*--}.*<script>.*IMGEv.*</script>.*</a>.*<script>.*AEv.*</script>[.*]{!--.*--}.*<script>.*</script>.*</a>.*</TD>.*<TD>.*<div>.*</TD>.*<TD>.*<script>.*</script>[.*]{!--.*--}.*<script>.*</script>.*</a>.*</TD>.*<TD>.*<div>.*</TD>.*<script>.*</script>[.*]{b}.*{/b}[.*]</TD>[.*]{!--.*--}.*<TD>.*<div>.*</TD>.*<script>.*</script>[.*]{b}.*{/b}[.*]</TD>[.*]{!--.*--}.*</TR>";
 	statE = ".*<tr.*uid.*from.*>.*<td.*>.*<input.*>.*<td.*>.*<td.*>.*<td.*>.*<td>.*<td>.*<td.*>.*</tr>";
-	statEAlt = ".*<tr.*uid.*from.*>.*<td.*>.*<div.*>.*<input.*>.*</div>.*<td.*>.*<img.*>.*<img.*>.*<td.*>.*<span>.*</span><br>.*<td><nobr>.*</nobr>.*<td.*>.*<img.*>.*<td.*>.*<span>.*</span>.*<span.*>.*</span>.*<td.*>.*<img.*>.*</tr>";
+	statEAltOld = ".*<tr.*uid.*from.*>.*<td.*>.*<div.*>.*<input.*>.*</div>.*<td.*>.*<img.*>.*<img.*>.*<td.*>.*<span>.*</span><br>.*<td><nobr>.*</nobr>.*<td.*>.*<img.*>.*<td.*>.*<span>.*</span>.*<span.*>.*</span>.*<td.*>.*<img.*>.*</tr>";
+	statEAlt = ".*<tr.*id.*uid.*from.*>";
 	
 	-- This is the mlex get expression to choose the important fields 
 	-- of the message list page. Used in combination with statE
 	
 	--statG = "O<X>[O]{O}O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>[O]{O}O{O}[O]<O>[O]{O}O<O>O<O>O<O>O<O>O<O>[O]{O}X{O}[O]<O>[O]{O}O<O>";
 	statG = "O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>X<O>";
-	statGAlt = "O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>";
+	statGAltOld = "O<X>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>O<O>";
+	statGAlt = "O<X>";
 	
 	-- The uri for the first page with the list of messages
 	first = "http://%s/cp/ps/Mail/commands/SyncFolder?d=%s&u=%s&t=%s",
-	firstpost = "accountName=DefaultMailAccount&folderPath=%s&listPosition=%s",
+	firstpost = "accountName=DefaultMailAccount&folderPath=%s&listPosition=%s"..
+			"&sortColumn=SendDateVal&sortDirection=Desc",
 	-- The capture to check if there is one more page of message list
 	next_checkC = "lastPage:.-([%+%-]?%d+)",
 	-- The capture to understand if the session ended
-	timeoutC = "(Sessione non valida. Riconnettersi)",
+	timeoutC = "(<title>Libero - Login</title>)",
 	-- The uri to save a message (read download the message)
 	save = "http://%s/cp/ps/Main/Downloader/message.eml?uid=%s"..
 		"&d=%s&u=%s&ai=-1&t=%s&c=yes&an=DefaultMailAccount"..
@@ -460,6 +463,80 @@ function stat(pstate)
 	local uri = string.format(libero_string.first,popserver,domain,user,session_id)
 	local post = string.format(libero_string.firstpost,internal_state.folder,msgpoint)
 
+	--this is temporary solution to retrive message sizes
+	local sizes = {}
+	local page = 1
+	local sGet = "http://m.mailbeta.libero.it/m/wmm/folder/INBOX/%s"
+	local sUri = string.format(sGet,page)
+	
+	if internal_state.newMail == true then
+	local function action_s (s)
+		local x = mlex.match(s,"<div.*row_mail_date.*>.*</div>","<O>X<O>")
+		local n = x:count()
+		if n == 0 then
+			return true,nil
+		end
+		for i = 0,n-1 do
+			local size = x:get (0,i)
+			-- arrange message size
+			local k,m = nil
+			k = string.match(size,"([Kk][Bb])")
+			m = string.match(size,"([Mm][Bb])")
+			size = string.match(size,"- (%d+%.?%d*)")
+			size = tonumber(size)
+			if k ~= nil then
+				size = size * 1024
+			elseif m ~= nil then
+				size = size * 1024 * 1024
+			end
+			if not size then
+				return nil,"Unable to parse size"
+			end
+			sizes[i+1+15*(page-1)] = size
+		end
+		return true,nil
+	end
+
+	local function check_s (s)
+		local tmp1 = string.match(s,"<img src=.*/wmm/img/ico_next_off.*png")
+		if tmp1 == nil then
+			page = page + 1
+			sUri = string.format(sGet,page)
+			return false
+		else
+			return true
+		end
+	end
+	
+	local function retrive_s ()
+		local f,err = b:get_uri(sUri)
+		if f == nil then
+			return f,err
+		end
+		local c = string.match(f,libero_string.timeoutC)
+		if c ~= nil then
+			internal_state.login_done = nil
+			session.remove(key())
+
+			local rc = libero_login()
+			if rc ~= POPSERVER_ERR_OK then
+				return nil,--{
+					--error=
+					"Session ended,unable to recover"
+					--} hope it is ok now
+			end
+			return b:get_uri(sUri)
+		end
+		return f,err
+	end
+	
+	if not support.do_until(retrive_s,check_s,action_s) then
+		log.error_print("Stat sizes failed\n")
+		session.remove(key())
+		return POPSERVER_ERR_UNKNOWN
+	end
+	end
+
 	-- The action for do_until
 	--
 	-- uses mlex to extract all the messages uidl and size
@@ -467,13 +544,13 @@ function stat(pstate)
 		-- calls match on the page s, with the mlexpressions
 		-- statE and statG
 		--print(s)
-		local temp = string.gsub(s,"<tr","</tr><tr")
-		local temp = string.gsub(temp,"</tbody>","</tr></tbody>")
+		--local temp = string.gsub(s,"<tr","</tr><tr")
+		--temp = string.gsub(temp,"</tbody>","</tr></tbody>")
 		local x
 		if internal_state.newMail == true then
-			x = mlex.match(temp,libero_string.statEAlt,libero_string.statGAlt)
+			x = mlex.match(s,libero_string.statEAlt,libero_string.statGAlt)
 		else
-			x = mlex.match(temp,libero_string.statE,libero_string.statG)
+			x = mlex.match(s,libero_string.statE,libero_string.statG)
 		end
 		--x:print()
 		
@@ -491,8 +568,8 @@ function stat(pstate)
 		set_popstate_nummesg(pstate,nmesg)
 
 		-- gets all the results and puts them in the popstate structure
-		for i = 1,n do
-			local uidl = x:get (0,n-i)
+		for i = 0,n-1 do
+			local uidl = x:get (0,i)
 			uidl = string.match(uidl,"uid=\"(%d+)\"")..";"..string.match(
 					uidl,"id=\"([0-9a-f]+)\"")
 			local size
@@ -511,14 +588,14 @@ function stat(pstate)
 				--	return POPSERVER_ERR_NETWORK
 				--end
 				--size = array.size:len()
-				size=1
+				size=sizes[i+1+nmesg_old]
 			else
-				size = x:get (1,n-i)
+				size = x:get (1,i)
 			-- arrange message size
 				local k,m = nil
 				k = string.match(size,"([Kk][Bb])")
 				m = string.match(size,"([Mm][Bb])")
-				size = string.match(size,"(%d+%.?%d+)")
+				size = string.match(size,"(%d+%.?%d*)")
 				size = tonumber(size) -- + 2
 				if k ~= nil then
 					size = size * 1024
@@ -534,8 +611,8 @@ function stat(pstate)
 			end
 
 			-- set it
-			set_mailmessage_size(pstate,n-i+1+nmesg_old,size)
-			set_mailmessage_uidl(pstate,n-i+1+nmesg_old,uidl)
+			set_mailmessage_size(pstate,i+1+nmesg_old,size)
+			set_mailmessage_uidl(pstate,i+1+nmesg_old,uidl)
 		end
 		
 		return true,nil
